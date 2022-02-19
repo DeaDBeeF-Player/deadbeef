@@ -170,7 +170,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)saveSelectionStateWithItem:(MediaLibraryItem *)item {
-    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem == NULL) {
         return;
     }
@@ -189,7 +189,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)restoreSelectedExpandedStateForItem:(MediaLibraryItem *)item selectedRows:(NSMutableIndexSet *)selectedRows {
-    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem == NULL) {
         return;
     }
@@ -598,7 +598,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
     MediaLibraryItem *item = (MediaLibraryItem *)object;
 
-    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem != NULL) {
         self.medialibPlugin->set_tree_item_expanded (self.medialibSource, medialibItem, 1);
     }
@@ -612,7 +612,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
     MediaLibraryItem *item = (MediaLibraryItem *)object;
 
-    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem != NULL) {
         self.medialibPlugin->set_tree_item_expanded (self.medialibSource, medialibItem, 0);
     }

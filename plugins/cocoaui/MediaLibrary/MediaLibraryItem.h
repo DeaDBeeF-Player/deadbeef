@@ -14,7 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MediaLibraryItem : NSObject
 
-- (id)initWithItem:(ddb_medialib_item_t *)item NS_DESIGNATED_INITIALIZER;
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithItem:(const ddb_medialib_item_t *)item;
 
 @property (nonatomic,readonly) NSUInteger numberOfChildren;
 - (MediaLibraryItem *)childAtIndex:(NSUInteger)index;
@@ -28,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) BOOL coverObtained;
 
-@property (nonatomic,readonly) ddb_medialib_item_t *medialibItem;
+@property (nonatomic,readonly) const ddb_medialib_item_t *medialibItem;
 
 @end
 

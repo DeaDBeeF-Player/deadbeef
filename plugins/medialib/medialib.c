@@ -126,13 +126,13 @@ ml_create_item_tree (ddb_mediasource_source_t _source, ddb_mediasource_list_sele
         root = _create_item_tree_from_collection(coll, filter, index, source);
     });
 
-    return &root->item;
+    return (ddb_medialib_item_t *)root;
 }
 
 #pragma mark - Select / Expand
 
 static int
-ml_is_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t *_item) {
+ml_is_tree_item_selected (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
@@ -144,7 +144,7 @@ ml_is_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t 
 }
 
 static void
-ml_set_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t *_item, int selected) {
+ml_set_tree_item_selected (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item, int selected) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
@@ -160,7 +160,7 @@ ml_set_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t
 }
 
 static int
-ml_is_tree_item_expanded (ddb_mediasource_source_t _source, ddb_medialib_item_t *_item) {
+ml_is_tree_item_expanded (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
@@ -172,7 +172,7 @@ ml_is_tree_item_expanded (ddb_mediasource_source_t _source, ddb_medialib_item_t 
 }
 
 static void
-ml_set_tree_item_expanded (ddb_mediasource_source_t _source, ddb_medialib_item_t *_item, int expanded) {
+ml_set_tree_item_expanded (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item, int expanded) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
@@ -397,6 +397,37 @@ ml_append_folder (ddb_mediasource_source_t _source, const char *folder) {
 }
 
 #pragma mark -
+static const char *
+ml_tree_item_get_text (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return item->text;
+}
+
+static ddb_playItem_t *
+ml_tree_item_get_track (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return item->track;
+}
+
+static const ddb_medialib_item_t *
+ml_tree_item_get_next (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return (ddb_medialib_item_t *)item->next;
+}
+
+static const ddb_medialib_item_t *
+ml_tree_item_get_children (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return (ddb_medialib_item_t *)item->children;
+}
+
+static int
+ml_tree_item_get_children_count (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return item->num_children;
+}
+
+#pragma mark -
 
 ddb_medialib_plugin_api_t api = {
     ._size = sizeof(ddb_medialib_plugin_api_t),
@@ -471,6 +502,11 @@ static DB_mediasource_t plugin = {
     .set_tree_item_expanded = ml_set_tree_item_expanded,
     .free_item_tree = ml_free_list,
     .scanner_state = ml_scanner_state,
+    .tree_item_get_text = ml_tree_item_get_text,
+    .tree_item_get_track = ml_tree_item_get_track,
+    .tree_item_get_next = ml_tree_item_get_next,
+    .tree_item_get_children = ml_tree_item_get_children,
+    .tree_item_get_children_count = ml_tree_item_get_children_count,
 };
 
 DB_plugin_t *

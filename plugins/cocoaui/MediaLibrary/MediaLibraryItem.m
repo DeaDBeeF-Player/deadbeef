@@ -9,23 +9,29 @@
 #import "MediaLibraryItem.h"
 
 extern DB_functions_t *deadbeef;
+static DB_mediasource_t *medialibPlugin;
 
 @interface MediaLibraryItem() {
     NSString *_stringValue;
 
-    ddb_medialib_item_t *_item;
+    const ddb_medialib_item_t *_item;
     NSMutableArray *_children;
 }
+
+@property (nonatomic,readonly) DB_mediasource_t *plugin;
+
 @end
 
 @implementation MediaLibraryItem
 
-- (instancetype)init {
-    static ddb_medialib_item_t item;
-    return [self initWithItem:&item];
+- (DB_mediasource_t *)plugin {
+    if (medialibPlugin == nil) {
+        medialibPlugin = (DB_mediasource_t *)deadbeef->plug_get_for_id ("medialib");
+    }
+    return medialibPlugin;
 }
 
-- (id)initWithItem:(ddb_medialib_item_t *)item {
+- (id)initWithItem:(const ddb_medialib_item_t *)item {
     _item = item;
     return self;
 }
@@ -34,7 +40,7 @@ extern DB_functions_t *deadbeef;
     if (_item == NULL) {
         return 0;
     }
-    return _item->num_children;
+    return self.plugin->tree_item_get_children_count(_item);
 }
 
 - (MediaLibraryItem *)childAtIndex:(NSUInteger)index {
@@ -42,12 +48,14 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSArray *)children {
-    if (!_children && _item->num_children > 0) {
-        _children = [[NSMutableArray alloc] initWithCapacity:_item->num_children];
-        ddb_medialib_item_t *c = _item->children;
-        for (int i = 0; i < _item->num_children; i++) {
+    DB_mediasource_t *plugin = self.plugin;
+    int count = plugin->tree_item_get_children_count(_item);
+    if (!_children && count > 0) {
+        _children = [[NSMutableArray alloc] initWithCapacity:count];
+        const ddb_medialib_item_t *c = plugin->tree_item_get_children(_item);
+        for (int i = 0; i < count; i++) {
             _children[i] = [[MediaLibraryItem alloc] initWithItem:c];
-            c = c->next;
+            c = plugin->tree_item_get_next(c);
         }
 
         [_children sortUsingComparator:^NSComparisonResult(MediaLibraryItem  * _Nonnull obj1, MediaLibraryItem * _Nonnull obj2) {
@@ -80,21 +88,24 @@ extern DB_functions_t *deadbeef;
         return @"";
     }
     if (!_stringValue) {
-        if (_item->num_children) {
-            _stringValue = [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:_item->text], _item->num_children];
+        DB_mediasource_t *plugin = self.plugin;
+        int count = plugin->tree_item_get_children_count(_item);
+        const char *text = plugin->tree_item_get_text(_item);
+        if (count) {
+            _stringValue = [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:text], count];
         }
         else {
-            _stringValue = [NSString stringWithFormat:@"%@", [NSString stringWithUTF8String:_item->text]];
+            _stringValue = [NSString stringWithFormat:@"%@", [NSString stringWithUTF8String:text]];
         }
     }
     return _stringValue;
 }
 
 - (ddb_playItem_t *)playItem {
-    return _item->track;
+    return self.plugin->tree_item_get_track(_item);
 }
 
-- (ddb_medialib_item_t *)medialibItem {
+- (const ddb_medialib_item_t *)medialibItem {
     return _item;
 }
 
