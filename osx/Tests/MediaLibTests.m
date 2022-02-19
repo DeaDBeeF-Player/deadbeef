@@ -13,7 +13,8 @@
 
 @interface MediaLibTests : XCTestCase
 
-@property (nonatomic) ddb_medialib_plugin_t *plugin;
+@property (nonatomic) DB_mediasource_t *plugin;
+@property (nonatomic) ddb_medialib_plugin_api_t *medialib;
 @property (nonatomic) XCTestExpectation *scanCompletedExpectation;
 @property (nonatomic) int waitCount;
 
@@ -23,7 +24,8 @@
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.
-    self.plugin = (ddb_medialib_plugin_t *)plug_get_for_id("medialib");
+    self.plugin = (DB_mediasource_t *)plug_get_for_id("medialib");
+    self.medialib = (ddb_medialib_plugin_api_t *)self.plugin->get_extended_api();
     self.scanCompletedExpectation = [[XCTestExpectation alloc] initWithDescription:@"Scan completed"];
     self.waitCount = 0;
 }
@@ -52,21 +54,22 @@ _listener(ddb_mediasource_event_type_t event, void *user_data) {
     const char *folders[] = { path };
 
     ddb_mediasource_source_t *source;
-    source = self.plugin->plugin.create_source("IntegrationTest");
-    self.plugin->enable_file_operations(source, 0);
-    self.plugin->plugin.add_listener(source, _listener, (__bridge void *)(self));
-    self.plugin->set_folders(source, folders, 1);
-    self.plugin->plugin.refresh(source);
+    source = self.plugin->create_source("IntegrationTest");
+    self.medialib->enable_file_operations(source, 0);
+    self.plugin->add_listener(source, _listener, (__bridge void *)(self));
+    self.medialib->set_folders(source, folders, 1);
+    self.plugin->refresh(source);
 
     [self waitForExpectations:@[self.scanCompletedExpectation] timeout:5];
 
-    ddb_medialib_item_t *tree = self.plugin->plugin.create_item_tree(source, (ddb_mediasource_source_t)2, NULL); // FIXME: hardcoded selector
+    ddb_medialib_item_t *tree = self.plugin->create_item_tree(source, (ddb_mediasource_source_t)2, NULL); // FIXME: hardcoded selector
 
     int count = 0;
-    for (ddb_medialib_item_t *child = tree->children; child; child = child->next, count += 1);
-    self.plugin->plugin.free_item_tree(source, tree);
+    const ddb_medialib_item_t *children = self.plugin->tree_item_get_children(tree);
+    for (const ddb_medialib_item_t *child = children; child; child = self.plugin->tree_item_get_next(child), count += 1);
+    self.plugin->free_item_tree(source, tree);
 
-    self.plugin->plugin.free_source(source);
+    self.plugin->free_source(source);
 
     XCTAssertEqual(count, 1);
 }
