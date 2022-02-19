@@ -335,14 +335,13 @@ scan_local_path (const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb
                 break;
             }
         }
-        free (filemask);
-
         for (size_t i = 0; i < files_count; i++) {
             free (files[i]);
         }
         free (files);
     }
 
+    free (filemask);
     return err;
 }
 
