@@ -441,7 +441,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                     memcpy (sendback + 1, response.buffer, out_size);
                     sendback[out_size + 1] = 0;
                 }
-                if (ret) {
+                if (ret && sendback) {
                     // TODO have specific error codes sent to client?
                     sendback[0] = '\2';
                 }
