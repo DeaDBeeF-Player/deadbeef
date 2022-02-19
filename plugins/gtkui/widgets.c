@@ -438,92 +438,12 @@ w_get_title (ddb_gtkui_widget_t *w)
 typedef struct {
     ddb_gtkui_widget_t base;
     GtkWidget *drawarea;
-    char *expected_type;
-    char *parms;
-    char *children;
+    char *data; // json string of the whole node
 } w_unknown_t;
-
-const char *
-w_unknown_load (struct ddb_gtkui_widget_s *base, const char *type, const char *s) {
-    w_unknown_t *w = (w_unknown_t *)base;
-    char buffer_parms[4000];
-    char buffer_children[4000];
-
-    const char *p = s;
-    while (*p && *p != '{') {
-        p++;
-    }
-
-    if (!(*p)) {
-        fprintf (stderr, "reached EOL before expected { while trying to load unknown widget %s\n", w->expected_type);
-        return NULL;
-    }
-
-    if (p - s + 1 > sizeof (buffer_parms)) {
-        fprintf (stderr, "buffer to small to load unknown widget %s\n", w->expected_type);
-        return NULL;
-    }
-
-    memcpy (buffer_parms, s, p-s);
-    buffer_parms[p-s] = 0;
-
-    p++;
-    s = p;
-
-    int nb = 1;
-    while (*p) {
-        if (*p == '{') {
-            nb++;
-        }
-        if (*p == '}') {
-            nb--;
-            if (nb == 0) {
-                break;
-            }
-        }
-        p++;
-    }
-    if (!(*p)) {
-        fprintf (stderr, "reached EOL before expected } while trying to load unknown widget %s\n", w->expected_type);
-        return NULL;
-    }
-    if (p - s + 1 > sizeof (buffer_parms)) {
-        fprintf (stderr, "buffer to small to load unknown widget %s\n", w->expected_type);
-        return NULL;
-    }
-    memcpy (buffer_children, s, p-s);
-    buffer_children[p-s] = 0;
-
-    w->parms = strdup (buffer_parms);
-    w->children = strdup (buffer_children);
-
-    // caller expects 's' to point to '}'
-    return p;
-}
-
-static void
-w_unknown_save (struct ddb_gtkui_widget_s *base, char *s, int sz) {
-    w_unknown_t *w = (w_unknown_t *)base;
-    size_t l = strlen (s);
-    s += l;
-    sz -= l;
-    snprintf (s, sz, "%s%s {%s}", w->expected_type, w->parms, w->children);
-}
 
 void w_unknown_destroy (ddb_gtkui_widget_t *_w) {
     w_unknown_t *w = (w_unknown_t *)_w;
-    if (w->expected_type) {
-        free (w->expected_type);
-        w->expected_type = NULL;
-    }
-    if (w->parms) {
-        free (w->parms);
-        w->parms = NULL;
-    }
-    if (w->children) {
-        free (w->children);
-        w->children = NULL;
-    }
+    free (w->data);
 }
 
 static gboolean
@@ -536,7 +456,7 @@ unknown_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     cairo_move_to(cr, 20, 30);
 
     char s[1000];
-    snprintf (s, sizeof (s), _("Widget \"%s\" is not available"), ((w_unknown_t *)w)->expected_type);
+    snprintf (s, sizeof (s), _("Widget \"%s\" is not available"), w->type);
 
     cairo_show_text(cr, s);
     return TRUE;
@@ -553,14 +473,12 @@ unknown_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_da
 #endif
 
 ddb_gtkui_widget_t *
-w_unknown_create (const char *type) {
+w_unknown_create (const char *type, const char *node_str) {
     w_unknown_t *w = malloc (sizeof (w_unknown_t));
     memset (w, 0, sizeof (w_unknown_t));
     w->base.type = "unknown";
-    w->base.load = w_unknown_load;
-    w->base.save = w_unknown_save;
     w->base.destroy = w_unknown_destroy;
-    w->expected_type = strdup (type);
+    w->data = strdup (node_str);
 
     w->base.widget = gtk_event_box_new ();
     w->drawarea = gtk_drawing_area_new ();
@@ -609,58 +527,62 @@ w_create_from_json (json_t *node, ddb_gtkui_widget_t **parent) {
 
     ddb_gtkui_widget_t *w = w_create (type);
     if (!w) {
-        w = w_unknown_create (type);
+        char *node_str = json_dumps(node, JSON_COMPACT);
+        w = w_unknown_create (type, node_str);
+        free (node_str);
     }
-    // nuke all default children
-    while (w->children) {
-        ddb_gtkui_widget_t *c = w->children;
-        w_remove (w, w->children);
-        w_destroy (c);
-    }
+    else {
+        // nuke all default children
+        while (w->children) {
+            ddb_gtkui_widget_t *c = w->children;
+            w_remove (w, w->children);
+            w_destroy (c);
+        }
 
-    uint32_t flags = w_get_type_flags(type);
+        uint32_t flags = w_get_type_flags(type);
 
-    if ((flags & DDB_WF_SUPPORTS_EXTENDED_API) && node_settings != NULL) {
-        ddb_gtkui_widget_extended_api_t *api = (ddb_gtkui_widget_extended_api_t *)(w + 1);
-        if (api->_size >= sizeof (ddb_gtkui_widget_extended_api_t)) {
-            size_t count = json_object_size(node_settings);
-            if (count != 0) {
-                char const ** keyvalues = calloc (count*2+1, sizeof (char *));
+        if ((flags & DDB_WF_SUPPORTS_EXTENDED_API) && node_settings != NULL) {
+            ddb_gtkui_widget_extended_api_t *api = (ddb_gtkui_widget_extended_api_t *)(w + 1);
+            if (api->_size >= sizeof (ddb_gtkui_widget_extended_api_t)) {
+                size_t count = json_object_size(node_settings);
+                if (count != 0) {
+                    char const ** keyvalues = calloc (count*2+1, sizeof (char *));
 
-                const char *key;
-                json_t *value;
-                int index = 0;
-                json_object_foreach(node_settings, key, value) {
-                    keyvalues[index*2+0] = key;
-                    keyvalues[index*2+1] = json_string_value(value);
-                    index += 1;
+                    const char *key;
+                    json_t *value;
+                    int index = 0;
+                    json_object_foreach(node_settings, key, value) {
+                        keyvalues[index*2+0] = key;
+                        keyvalues[index*2+1] = json_string_value(value);
+                        index += 1;
+                    }
+
+                    api->deserialize_from_keyvalues(w, keyvalues);
+
+                    free (keyvalues);
                 }
-
-                api->deserialize_from_keyvalues(w, keyvalues);
-
-                free (keyvalues);
+            }
+            else {
+                trace ("widget %s doesn't has unsupported extended api _size=%lld\n", api->_size);
             }
         }
-        else {
-            trace ("widget %s doesn't has unsupported extended api _size=%lld\n", api->_size);
-        }
-    }
-    else if (w->load != NULL && legacy_params != NULL) {
-        // load from legacy params
-        w->load (w, type, legacy_params);
-    }
-
-    size_t children_count = json_array_size(node_children);
-    for (int i = 0; i < children_count; i++) {
-        json_t *child = json_array_get(node_children, i);
-
-        if (child == NULL || !json_is_object(child)) {
-            goto error;
+        else if (w->load != NULL && legacy_params != NULL) {
+            // load from legacy params
+            w->load (w, type, legacy_params);
         }
 
-        int res = w_create_from_json(child, &w);
-        if (res < 0) {
-            goto error;
+        size_t children_count = json_array_size(node_children);
+        for (int i = 0; i < children_count; i++) {
+            json_t *child = json_array_get(node_children, i);
+
+            if (child == NULL || !json_is_object(child)) {
+                goto error;
+            }
+
+            int res = w_create_from_json(child, &w);
+            if (res < 0) {
+                goto error;
+            }
         }
     }
 
@@ -716,36 +638,43 @@ static char paste_buffer[20000];
 
 static json_t *
 _save_widget_to_json (ddb_gtkui_widget_t *w) {
-    json_t *node = json_object();
+    json_t *node = NULL;
+    if (!strcmp (w->type, "unknown")) {
+        w_unknown_t *unk = (w_unknown_t *)w;
+        node = json_loads(unk->data, 0, NULL);
+    }
+    else {
+        node = json_object();
 
-    json_object_set(node, "type", json_string(w->type));
+        json_object_set(node, "type", json_string(w->type));
 
-    uint32_t flags = w_get_type_flags(w->type);
+        uint32_t flags = w_get_type_flags(w->type);
 
-    if (flags & DDB_WF_SUPPORTS_EXTENDED_API) {
-        ddb_gtkui_widget_extended_api_t *api = (ddb_gtkui_widget_extended_api_t *)(w + 1);
-        if (api->_size >= sizeof (ddb_gtkui_widget_extended_api_t)) {
-            char const **keyvalues = api->serialize_to_keyvalues(w);
+        if (flags & DDB_WF_SUPPORTS_EXTENDED_API) {
+            ddb_gtkui_widget_extended_api_t *api = (ddb_gtkui_widget_extended_api_t *)(w + 1);
+            if (api->_size >= sizeof (ddb_gtkui_widget_extended_api_t)) {
+                char const **keyvalues = api->serialize_to_keyvalues(w);
 
-            if (keyvalues != NULL) {
-                json_t *settings = json_object();
-                for (int i = 0; keyvalues[i]; i += 2) {
-                    json_t *value = json_string(keyvalues[i+1]);
-                    json_object_set(settings, keyvalues[i], value);
-                    json_decref(value);
+                if (keyvalues != NULL) {
+                    json_t *settings = json_object();
+                    for (int i = 0; keyvalues[i]; i += 2) {
+                        json_t *value = json_string(keyvalues[i+1]);
+                        json_object_set(settings, keyvalues[i], value);
+                        json_decref(value);
+                    }
+                    json_object_set(node, "settings", settings);
+                    json_decref(settings);
                 }
-                json_object_set(node, "settings", settings);
-                json_decref(settings);
+            }
+            else {
+                trace ("widget %s doesn't has unsupported extended api _size=%lld\n", api->_size);
             }
         }
-        else {
-            trace ("widget %s doesn't has unsupported extended api _size=%lld\n", api->_size);
+        else if (w->save) {
+            char params[1000] = "";
+            w->save (w, params, sizeof (params));
+            json_object_set(node, "legacy_params", json_string(params));
         }
-    }
-    else if (w->save) {
-        char params[1000] = "";
-        w->save (w, params, sizeof (params));
-        json_object_set(node, "legacy_params", json_string(params));
     }
 
     if (w->children != NULL) {

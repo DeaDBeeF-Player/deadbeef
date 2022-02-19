@@ -50,11 +50,7 @@ int
 make_cache_root_path (char *path, const size_t size) {
     const char *cache_root_path = deadbeef->get_system_dir(DDB_SYS_DIR_CACHE);
     size_t res;
-#ifdef __APPLE__
-    res = snprintf(path, size, "%s/Deadbeef/Covers", cache_root_path);
-#else
-    res = snprintf(path, size, "%s/deadbeef/covers2", cache_root_path);
-#endif
+    res = snprintf(path, size, "%s/covers2", cache_root_path);
     if (res >= size) {
         trace ("artwork: cache root path truncated at %d bytes\n", (int)size);
         return -1;

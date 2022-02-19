@@ -2,7 +2,7 @@
   deadbeef.h -- plugin API of the DeaDBeeF audio player
   http://deadbeef.sourceforge.net
 
-  Copyright (C) 2009-2021 Alexey Yakovenko
+  Copyright (C) 2009-2022 Alexey Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -2211,17 +2211,6 @@ typedef struct DB_playlist_s {
 // The purpose is to provide access to external media sources.
 // It's used for the built-in media library plugin.
 
-typedef struct ddb_medialib_item_s {
-    const char *text; // e.g. the genre
-
-    DB_playItem_t *track; // NULL in non-leaf nodes
-
-    struct ddb_medialib_item_s *next;
-    struct ddb_medialib_item_s *children;
-    int num_children;
-    // FIXME: add padding / size for extensibility -- this structure is inheritable.
-} ddb_medialib_item_t;
-
 /// Numbers from 0 to 1023 are reserved to base interface, as declared in deadbeef.h
 typedef enum {
     DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE = 0,
@@ -2250,11 +2239,25 @@ typedef void *ddb_mediasource_source_t;
 /// Abstract type representing a selector for media source query (e.g. Albums, Artists, Genres)
 /// Use @c get_selectors_list method to get the list of available selectors.
 /// Use the values to specify the selector when calling @c create_item_tree.
-typedef void *ddb_mediasource_list_selector_t;
+typedef struct ddb_mediasource_list_selector_s *ddb_mediasource_list_selector_t;
 
+/// Opaque struct representing the extended API of the underlying plugin. Use @c get_extended_api method to get it.
+typedef struct ddb_mediasource_api_s ddb_mediasource_api_t;
+
+/// Opaque struct representing the item in a tree. Use tree_item_* set of functions to access the values.
+typedef struct ddb_medialib_item_s ddb_medialib_item_t;
+
+/// NOTE: never "subclass" the DB_mediasource_t struct - this is not backwards compatible.
+/// Instead, implement the get_extended_api method to provide access to the plugin API.
 typedef struct {
     DB_plugin_t plugin;
 
+    /// Get access to the underlying plugin API.
+    /// The returned pointer would have to be cast to the plugin's API structure type.
+    ddb_mediasource_api_t *(*get_extended_api) (void);
+
+    /// The name of the source (e.g. "Media Library").
+    /// This could be used by a UI plugin to display in a list of all available sources.
     const char *(*source_name) (void);
 
     /// Create a media source instance. It must be freed after use by calling the @c free_source
@@ -2299,7 +2302,7 @@ typedef struct {
     /// Create a tree of items for the given @c selector.
     /// The tree is immutable, and can be used by the caller in any way it needs.
     /// The caller must free the returned object by calling the @c free_list
-    ddb_medialib_item_t * (*create_item_tree) (ddb_mediasource_source_t source, ddb_mediasource_source_t selector, const char *filter);
+    ddb_medialib_item_t * (*create_item_tree) (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector, const char *filter);
 
     /// Free the tree created by the @c create_list
     void (*free_item_tree) (ddb_mediasource_source_t source, ddb_medialib_item_t *list);
@@ -2311,18 +2314,31 @@ typedef struct {
     // to preserve selected/expanded state across medialib refreshes.
 
     /// Returns 1 if the specified item is selected, 0 otherwise.
-    int (*is_tree_item_selected) (ddb_mediasource_source_t source, ddb_medialib_item_t *item);
+    int (*is_tree_item_selected) (ddb_mediasource_source_t source, const ddb_medialib_item_t *item);
 
     /// Select/delesect the specified item
-    void (*set_tree_item_selected) (ddb_mediasource_source_t source, ddb_medialib_item_t *item, int selected);
+    void (*set_tree_item_selected) (ddb_mediasource_source_t source, const ddb_medialib_item_t *item, int selected);
 
     /// Returns 1 if the specified item is expanded, 0 otherwise
-    int (*is_tree_item_expanded) (ddb_mediasource_source_t source, ddb_medialib_item_t *item);
+    int (*is_tree_item_expanded) (ddb_mediasource_source_t source, const ddb_medialib_item_t *item);
 
     /// Expand/collapse the specified item
-    void (*set_tree_item_expanded) (ddb_mediasource_source_t source, ddb_medialib_item_t *item, int expanded);
+    void (*set_tree_item_expanded) (ddb_mediasource_source_t source, const ddb_medialib_item_t *item, int expanded);
 
-    // FIXME: add padding / size for extensibility -- this structure is inheritable.
+    /// Returns the text associated with the item, e.g. a genre value, or the artist, etc.
+    const char *(*tree_item_get_text) (const ddb_medialib_item_t *item);
+
+    /// Returns the track associated with the item. Can be null - typically for non-leaf nodes.
+    ddb_playItem_t *(*tree_item_get_track) (const ddb_medialib_item_t *item);
+
+    /// Returns the next item in the list.
+    const ddb_medialib_item_t *(*tree_item_get_next) (const ddb_medialib_item_t *item);
+
+    /// Returns the first item in the list of child items.
+    const ddb_medialib_item_t *(*tree_item_get_children) (const ddb_medialib_item_t *item);
+
+    /// Returns the number of children of this item.
+    int (*tree_item_get_children_count) (const ddb_medialib_item_t *item);
 } DB_mediasource_t;
 
 #endif

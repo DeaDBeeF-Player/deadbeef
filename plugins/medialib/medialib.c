@@ -36,9 +36,7 @@
 #include "medialibtree.h"
 
 static DB_functions_t *deadbeef;
-static ddb_medialib_plugin_t plugin;
-
-
+static DB_mediasource_t plugin;
 
 static int
 ml_connect (void) {
@@ -128,13 +126,13 @@ ml_create_item_tree (ddb_mediasource_source_t _source, ddb_mediasource_list_sele
         root = _create_item_tree_from_collection(coll, filter, index, source);
     });
 
-    return &root->item;
+    return (ddb_medialib_item_t *)root;
 }
 
 #pragma mark - Select / Expand
 
 static int
-ml_is_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t *_item) {
+ml_is_tree_item_selected (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
@@ -146,7 +144,7 @@ ml_is_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t 
 }
 
 static void
-ml_set_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t *_item, int selected) {
+ml_set_tree_item_selected (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item, int selected) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
@@ -162,7 +160,7 @@ ml_set_tree_item_selected (ddb_mediasource_source_t _source, ddb_medialib_item_t
 }
 
 static int
-ml_is_tree_item_expanded (ddb_mediasource_source_t _source, ddb_medialib_item_t *_item) {
+ml_is_tree_item_expanded (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
@@ -174,7 +172,7 @@ ml_is_tree_item_expanded (ddb_mediasource_source_t _source, ddb_medialib_item_t 
 }
 
 static void
-ml_set_tree_item_expanded (ddb_mediasource_source_t _source, ddb_medialib_item_t *_item, int expanded) {
+ml_set_tree_item_expanded (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item, int expanded) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     uint64_t row_id = item->row_id;
@@ -399,20 +397,67 @@ ml_append_folder (ddb_mediasource_source_t _source, const char *folder) {
 }
 
 #pragma mark -
+static const char *
+ml_tree_item_get_text (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return item->text;
+}
 
+static ddb_playItem_t *
+ml_tree_item_get_track (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return item->track;
+}
 
+static const ddb_medialib_item_t *
+ml_tree_item_get_next (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return (ddb_medialib_item_t *)item->next;
+}
+
+static const ddb_medialib_item_t *
+ml_tree_item_get_children (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return (ddb_medialib_item_t *)item->children;
+}
+
+static int
+ml_tree_item_get_children_count (const ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return item->num_children;
+}
+
+#pragma mark -
+
+ddb_medialib_plugin_api_t api = {
+    ._size = sizeof(ddb_medialib_plugin_api_t),
+    .enable_file_operations = ml_enable_saving,
+    .folder_count = ml_folder_count,
+    .folder_at_index = ml_folder_at_index,
+    .set_folders = ml_set_folders,
+    .get_folders = ml_get_folders,
+    .free_folders = ml_free_folders,
+    .insert_folder_at_index = ml_insert_folder_at_index,
+    .remove_folder_at_index = ml_remove_folder_at_index,
+    .append_folder = ml_append_folder,
+};
+
+static ddb_mediasource_api_t *
+ml_get_api (void) {
+    return (ddb_mediasource_api_t *)&api;
+}
 
 // define plugin interface
-static ddb_medialib_plugin_t plugin = {
-    .plugin.plugin.api_vmajor = DB_API_VERSION_MAJOR,
-    .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
-    .plugin.plugin.version_major = DDB_MEDIALIB_VERSION_MAJOR,
-    .plugin.plugin.version_minor = DDB_MEDIALIB_VERSION_MINOR,
-    .plugin.plugin.type = DB_PLUGIN_MEDIASOURCE,
-    .plugin.plugin.id = "medialib",
-    .plugin.plugin.name = "Media Library",
-    .plugin.plugin.descr = "Scans disk for music files and manages them as database",
-    .plugin.plugin.copyright = 
+static DB_mediasource_t plugin = {
+    .plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .plugin.api_vminor = DB_API_VERSION_MINOR,
+    .plugin.version_major = DDB_MEDIALIB_VERSION_MAJOR,
+    .plugin.version_minor = DDB_MEDIALIB_VERSION_MINOR,
+    .plugin.type = DB_PLUGIN_MEDIASOURCE,
+    .plugin.id = "medialib",
+    .plugin.name = "Media Library",
+    .plugin.descr = "Scans disk for music files and manages them as database",
+    .plugin.copyright =
         "Media Library plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2020 Alexey Yakovenko\n"
         "\n"
@@ -434,37 +479,34 @@ static ddb_medialib_plugin_t plugin = {
         "\n"
         "3. This notice may not be removed or altered from any source distribution.\n"
     ,
-    .plugin.plugin.website = "http://deadbeef.sf.net",
-    .plugin.plugin.connect = ml_connect,
-    .plugin.plugin.start = ml_start,
-    .plugin.plugin.stop = ml_stop,
-    .plugin.plugin.message = ml_message,
-    .plugin.create_source = ml_create_source,
-    .plugin.free_source = ml_free_source,
-    .plugin.set_source_enabled = ml_set_source_enabled,
-    .plugin.is_source_enabled = ml_is_source_enabled,
-    .plugin.refresh = ml_refresh,
-    .plugin.get_selectors_list = ml_get_selectors,
-    .plugin.free_selectors_list = ml_free_selectors,
-    .plugin.selector_name = ml_get_name_for_selector,
-    .plugin.add_listener = ml_add_listener,
-    .plugin.remove_listener = ml_remove_listener,
-    .plugin.create_item_tree = ml_create_item_tree,
-    .plugin.is_tree_item_selected = ml_is_tree_item_selected,
-    .plugin.set_tree_item_selected = ml_set_tree_item_selected,
-    .plugin.is_tree_item_expanded = ml_is_tree_item_expanded,
-    .plugin.set_tree_item_expanded = ml_set_tree_item_expanded,
-    .plugin.free_item_tree = ml_free_list,
-    .plugin.scanner_state = ml_scanner_state,
-    .enable_file_operations = ml_enable_saving,
-    .folder_count = ml_folder_count,
-    .folder_at_index = ml_folder_at_index,
-    .set_folders = ml_set_folders,
-    .get_folders = ml_get_folders,
-    .free_folders = ml_free_folders,
-    .insert_folder_at_index = ml_insert_folder_at_index,
-    .remove_folder_at_index = ml_remove_folder_at_index,
-    .append_folder = ml_append_folder,
+    .plugin.website = "http://deadbeef.sf.net",
+    .plugin.connect = ml_connect,
+    .plugin.start = ml_start,
+    .plugin.stop = ml_stop,
+    .plugin.message = ml_message,
+    .get_extended_api = ml_get_api,
+    .create_source = ml_create_source,
+    .free_source = ml_free_source,
+    .set_source_enabled = ml_set_source_enabled,
+    .is_source_enabled = ml_is_source_enabled,
+    .refresh = ml_refresh,
+    .get_selectors_list = ml_get_selectors,
+    .free_selectors_list = ml_free_selectors,
+    .selector_name = ml_get_name_for_selector,
+    .add_listener = ml_add_listener,
+    .remove_listener = ml_remove_listener,
+    .create_item_tree = ml_create_item_tree,
+    .is_tree_item_selected = ml_is_tree_item_selected,
+    .set_tree_item_selected = ml_set_tree_item_selected,
+    .is_tree_item_expanded = ml_is_tree_item_expanded,
+    .set_tree_item_expanded = ml_set_tree_item_expanded,
+    .free_item_tree = ml_free_list,
+    .scanner_state = ml_scanner_state,
+    .tree_item_get_text = ml_tree_item_get_text,
+    .tree_item_get_track = ml_tree_item_get_track,
+    .tree_item_get_next = ml_tree_item_get_next,
+    .tree_item_get_children = ml_tree_item_get_children,
+    .tree_item_get_children_count = ml_tree_item_get_children_count,
 };
 
 DB_plugin_t *

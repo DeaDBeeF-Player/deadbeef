@@ -64,7 +64,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) EditColumnWindowController *editColumnWindowController;
 @property (nonatomic) GroupByCustomWindowController *groupByCustomWindowController;
 @property (nonatomic) int sortColumn;
-@property (nonatomic) ddb_medialib_plugin_t *medialibPlugin;
+@property (nonatomic) DB_mediasource_t *medialibPlugin;
 @property (nonatomic,readonly) const char *groupByConfStr;
 @property (nonatomic) NSString *groupStr;
 

@@ -39,7 +39,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) NSOutlineView *outlineView;
 
-@property (atomic) ddb_medialib_plugin_t *medialibPlugin;
+@property (atomic) DB_mediasource_t *medialibPlugin;
 @property (atomic,readonly) ddb_mediasource_source_t medialibSource;
 @property (atomic) ddb_artwork_plugin_t *artworkPlugin;
 
@@ -82,10 +82,10 @@ extern DB_functions_t *deadbeef;
     self.selectorItem = @"Popup";
     self.searchItem = @"Search Field";
 
-    self.medialibPlugin = (ddb_medialib_plugin_t *)deadbeef->plug_get_for_id ("medialib");
-    _selectors = self.medialibPlugin->plugin.get_selectors_list (self.medialibSource);
+    self.medialibPlugin = (DB_mediasource_t *)deadbeef->plug_get_for_id ("medialib");
+    _selectors = self.medialibPlugin->get_selectors_list (self.medialibSource);
     self.artworkPlugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
-    self.listenerId = self.medialibPlugin->plugin.add_listener (self.medialibSource, _medialib_listener, (__bridge void *)self);
+    self.listenerId = self.medialibPlugin->add_listener (self.medialibSource, _medialib_listener, (__bridge void *)self);
 
     self.trackContextMenu = [[TrackContextMenu alloc] initWithView:self.outlineView];
     self.outlineView.menu = self.trackContextMenu;
@@ -113,8 +113,8 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)dealloc {
-    self.medialibPlugin->plugin.remove_listener (self.medialibSource, self.listenerId);
-    self.medialibPlugin->plugin.free_selectors_list (self.medialibSource, _selectors);
+    self.medialibPlugin->remove_listener (self.medialibSource, self.listenerId);
+    self.medialibPlugin->free_selectors_list (self.medialibSource, _selectors);
     _selectors = NULL;
     self.listenerId = -1;
     self.medialibPlugin = NULL;
@@ -137,10 +137,10 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     }
 
     if (self.medialibItemTree) {
-        self.medialibPlugin->plugin.free_item_tree (self.medialibSource, self.medialibItemTree);
+        self.medialibPlugin->free_item_tree (self.medialibSource, self.medialibItemTree);
         self.medialibItemTree = NULL;
     }
-    self.medialibItemTree = self.medialibPlugin->plugin.create_item_tree (self.medialibSource, _selectors[index], self.searchString ? self.searchString.UTF8String : NULL);
+    self.medialibItemTree = self.medialibPlugin->create_item_tree (self.medialibSource, _selectors[index], self.searchString ? self.searchString.UTF8String : NULL);
     self.medialibRootItem = [[MediaLibraryItem alloc] initWithItem:self.medialibItemTree];
 
     self.topLevelItems = @[
@@ -170,7 +170,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)saveSelectionStateWithItem:(MediaLibraryItem *)item {
-    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem == NULL) {
         return;
     }
@@ -179,8 +179,8 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     if (rowIndex != -1) {
         BOOL selected = [self.outlineView isRowSelected:rowIndex];
         BOOL expanded = [self.outlineView isItemExpanded:item];
-        self.medialibPlugin->plugin.set_tree_item_selected (self.medialibSource, medialibItem, selected ? 1 : 0);
-        self.medialibPlugin->plugin.set_tree_item_expanded (self.medialibSource, medialibItem, expanded ? 1 : 0);
+        self.medialibPlugin->set_tree_item_selected (self.medialibSource, medialibItem, selected ? 1 : 0);
+        self.medialibPlugin->set_tree_item_expanded (self.medialibSource, medialibItem, expanded ? 1 : 0);
     }
 
     for (NSUInteger i = 0; i < item.numberOfChildren; i++) {
@@ -189,13 +189,13 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)restoreSelectedExpandedStateForItem:(MediaLibraryItem *)item selectedRows:(NSMutableIndexSet *)selectedRows {
-    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem == NULL) {
         return;
     }
 
-    int selected = self.medialibPlugin->plugin.is_tree_item_selected (self.medialibSource, medialibItem);
-    int expanded = self.medialibPlugin->plugin.is_tree_item_expanded (self.medialibSource, medialibItem);
+    int selected = self.medialibPlugin->is_tree_item_selected (self.medialibSource, medialibItem);
+    int expanded = self.medialibPlugin->is_tree_item_expanded (self.medialibSource, medialibItem);
 
     if (expanded) {
         [self.outlineView expandItem:item expandChildren:NO];
@@ -217,8 +217,8 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)updateMedialibStatusForView:(NSTableCellView *)view {
-    ddb_mediasource_state_t state = self.medialibPlugin->plugin.scanner_state (self.medialibSource);
-    int enabled = self.medialibPlugin->plugin.is_source_enabled (self.medialibSource);
+    ddb_mediasource_state_t state = self.medialibPlugin->scanner_state (self.medialibSource);
+    int enabled = self.medialibPlugin->is_source_enabled (self.medialibSource);
     switch (state) {
     case DDB_MEDIASOURCE_STATE_IDLE:
         view.textField.stringValue = enabled ? @"All Music" : @"Media library is disabled";
@@ -264,7 +264,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     case DDB_MEDIASOURCE_EVENT_SELECTORS_DID_CHANGE:
         break;
     case DDB_MEDIASOURCE_EVENT_OUT_OF_SYNC:
-        self.medialibPlugin->plugin.refresh(self.medialibSource);
+        self.medialibPlugin->refresh(self.medialibSource);
         break;
     }
 }
@@ -573,7 +573,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
         // populate the selector popup
         for (int i = 0; _selectors[i]; i++) {
-            const char *name = self.medialibPlugin->plugin.selector_name (self.medialibSource, _selectors[i]);
+            const char *name = self.medialibPlugin->selector_name (self.medialibSource, _selectors[i]);
             [selectorCellView.popupButton addItemWithTitle:[NSString stringWithUTF8String:name]];
         }
 
@@ -598,9 +598,9 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
     MediaLibraryItem *item = (MediaLibraryItem *)object;
 
-    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem != NULL) {
-        self.medialibPlugin->plugin.set_tree_item_expanded (self.medialibSource, medialibItem, 1);
+        self.medialibPlugin->set_tree_item_expanded (self.medialibSource, medialibItem, 1);
     }
 }
 
@@ -612,9 +612,9 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
     MediaLibraryItem *item = (MediaLibraryItem *)object;
 
-    ddb_medialib_item_t *medialibItem = item.medialibItem;
+    const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem != NULL) {
-        self.medialibPlugin->plugin.set_tree_item_expanded (self.medialibSource, medialibItem, 0);
+        self.medialibPlugin->set_tree_item_expanded (self.medialibSource, medialibItem, 0);
     }
 }
 
@@ -656,19 +656,19 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 }
 
 - (void)trackContextMenuDidReloadMetadata:(TrackContextMenu *)trackContextMenu {
-    self.medialibPlugin->plugin.refresh(self.medialibSource);
+    self.medialibPlugin->refresh(self.medialibSource);
 }
 
 - (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu cancelled:(BOOL)cancelled {
     if (!cancelled) {
-        self.medialibPlugin->plugin.refresh(self.medialibSource);
+        self.medialibPlugin->refresh(self.medialibSource);
     }
 }
 
 #pragma mark - TrackPropertiesWindowControllerDelegate
 
 - (void)trackPropertiesWindowControllerDidUpdateTracks:(TrackPropertiesWindowController *)windowController {
-    self.medialibPlugin->plugin.refresh(self.medialibSource);
+    self.medialibPlugin->refresh(self.medialibSource);
 }
 
 - (MediaLibraryItem *)selectedItem {

@@ -52,7 +52,7 @@ void
 scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf);
 
 void
-ml_scanner_init (ddb_medialib_plugin_t *_plugin, DB_functions_t *_deadbeef);
+ml_scanner_init (DB_mediasource_t *_plugin, DB_functions_t *_deadbeef);
 
 void
 ml_scanner_free (void);

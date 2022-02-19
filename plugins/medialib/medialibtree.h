@@ -37,8 +37,15 @@ typedef enum {
 } medialibSelector_t;
 
 typedef struct ml_tree_item_s {
-    ddb_medialib_item_t item;
     uint64_t row_id; // a unique ID of the associated ml_string_t
+
+    const char *text; // e.g. the genre
+
+    DB_playItem_t *track; // NULL in non-leaf nodes
+
+    struct ml_tree_item_s *next;
+    struct ml_tree_item_s *children;
+    int num_children;
 } ml_tree_item_t;
 
 void

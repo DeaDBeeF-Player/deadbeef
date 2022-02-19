@@ -32,11 +32,8 @@
 		07021F6E1C2736C300FC9AF9 /* libasflib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07021F2E1C2734D700FC9AF9 /* libasflib.a */; };
 		07021F6F1C2736C300FC9AF9 /* libwmalib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07021F191C2734AC00FC9AF9 /* libwmalib.a */; };
 		07021F721C27375800FC9AF9 /* libasflib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 07021F2E1C2734D700FC9AF9 /* libasflib.a */; };
-		07021F731C27403300FC9AF9 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; };
 		07021F741C27406C00FC9AF9 /* asf.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F631C27367B00FC9AF9 /* asf.h */; };
-		07021F751C2740A900FC9AF9 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; };
 		07021F781C27410800FC9AF9 /* wma.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 07021F3A1C2734F100FC9AF9 /* wma.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		07021F851C2745E900FC9AF9 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; };
 		07021F8F1C27464000FC9AF9 /* filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F8B1C27464000FC9AF9 /* filter.h */; };
 		07021F901C27464000FC9AF9 /* ttadec.c in Sources */ = {isa = PBXBuildFile; fileRef = 07021F8C1C27464000FC9AF9 /* ttadec.c */; };
 		07021F911C27464000FC9AF9 /* ttadec.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F8D1C27464000FC9AF9 /* ttadec.h */; };
@@ -84,7 +81,6 @@
 		070220D31C275DAE00FC9AF9 /* tables.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220BF1C275DAE00FC9AF9 /* tables.h */; };
 		070220D41C275DAE00FC9AF9 /* tendra.h in Headers */ = {isa = PBXBuildFile; fileRef = 070220C01C275DAE00FC9AF9 /* tendra.h */; };
 		070220D71C275F2900FC9AF9 /* dca.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 070220AA1C275D3900FC9AF9 /* dca.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		07765D6A1C279B7D00F5F4BC /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; };
 		07765D7D1C279BFC00F5F4BC /* array.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D701C279BFC00F5F4BC /* array.c */; };
 		07765D7E1C279BFC00F5F4BC /* bitshift.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765D711C279BFC00F5F4BC /* bitshift.h */; };
 		07765D7F1C279BFC00F5F4BC /* convert.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D721C279BFC00F5F4BC /* convert.c */; };
@@ -12706,7 +12702,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07021F731C27403300FC9AF9 /* deadbeef.h in Headers */,
 				07021F651C27367B00FC9AF9 /* asf.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12715,7 +12710,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07021F751C2740A900FC9AF9 /* deadbeef.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12724,7 +12718,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				07021F8F1C27464000FC9AF9 /* filter.h in Headers */,
-				07021F851C2745E900FC9AF9 /* deadbeef.h in Headers */,
 				07021F911C27464000FC9AF9 /* ttadec.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12772,7 +12765,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				07765D841C279BFC00F5F4BC /* shn.h in Headers */,
-				07765D6A1C279B7D00F5F4BC /* deadbeef.h in Headers */,
 				07765D861C279BFC00F5F4BC /* shorten.h in Headers */,
 				07765D7E1C279BFC00F5F4BC /* bitshift.h in Headers */,
 			);
@@ -20460,7 +20452,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"DEBUG=1",
-					"DDB_ENABLE_MEDIA_SOURCE_API=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -20488,10 +20479,6 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
-					"DDB_ENABLE_MEDIA_SOURCE_API=1",
-				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
