@@ -4,7 +4,7 @@ DeaDBeeF is a multiple-platform music player for desktop operating systems.
 
 [The Official Website](http://deadbeef.sf.net).
 
-If you wish to chat with developers, join us on [Slack](https://deadbeef-slack.herokuapp.com), or [Discord](https://discord.gg/GTVvgSqZrr).
+If you wish to chat with developers, join us on [Discord](https://discord.gg/GTVvgSqZrr).
 
 ## Download official releases (only GNU/Linux and Windows)
 
