@@ -35,6 +35,7 @@ typedef struct {
     char *title;
     int type; // predefined col type
     char *format;
+    char *sortFormat;
     int size;
     PlaylistColumnAlignment alignment;
     int set_text_color;

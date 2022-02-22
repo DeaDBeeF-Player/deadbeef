@@ -222,7 +222,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     [self.editColumnWindowController initEditColumnSheetWithTitle:[NSString stringWithUTF8String:self.columns[self.menuColumn].title]
                                                              type:self.columns[self.menuColumn].type
-                                                           format:[NSString stringWithUTF8String:self.columns[self.menuColumn].format]
+                                                           format:[NSString stringWithUTF8String:self.columns[self.menuColumn].format ?: ""]
+                                                       sortFormat:[NSString stringWithUTF8String:self.columns[self.menuColumn].sortFormat ?: ""]
                                                         alignment:self.columns[self.menuColumn].alignment
                                                      setTextColor:self.columns[self.menuColumn].set_text_color
                                                         textColor:color];
@@ -324,7 +325,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
                               [NSString stringWithUTF8String:self.columns[i].title], @"title"
                               , [NSString stringWithFormat:@"%d", self.columns[i].type], @"id"
-                              , [NSString stringWithUTF8String:self.columns[i].format], @"format"
+                              , [NSString stringWithUTF8String:self.columns[i].format ?: ""], @"format"
+                              , [NSString stringWithUTF8String:self.columns[i].sortFormat ?: ""], @"sort_format"
                               , [NSString stringWithFormat:@"%d", self.columns[i].size], @"size"
                               , [NSNumber numberWithInteger:self.columns[i].alignment], @"alignment"
                               , [NSNumber numberWithInt:self.columns[i].set_text_color], @"set_text_color"
@@ -388,13 +390,14 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         break;
     }
 
-    [self initColumn:idx
-           withTitle:self.editColumnWindowController.titleTextField.stringValue.UTF8String
-              withId:(int)type
-            withSize:self.columns[idx].size
-          withFormat:self.editColumnWindowController.formatTextField.stringValue.UTF8String
-       withAlignment:(int)self.editColumnWindowController.alignmentPopUpButton.indexOfSelectedItem withSetColor:(self.editColumnWindowController.setColorButton.state == NSControlStateValueOn)
-           withColor:rgba];
+    [self initColumnAtIndex:idx
+                      title:self.editColumnWindowController.titleTextField.stringValue.UTF8String
+                 identifier:(int)type
+                       size:self.columns[idx].size
+                     format:self.editColumnWindowController.formatTextField.stringValue.UTF8String
+                 sortFormat:self.editColumnWindowController.sortFormatTextField.stringValue.UTF8String
+                  alignment:(int)self.editColumnWindowController.alignmentPopUpButton.indexOfSelectedItem shouldSetColor:(self.editColumnWindowController.setColorButton.state == NSControlStateValueOn)
+                      color:rgba];
     [self columnsChanged];
 }
 
@@ -495,15 +498,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
 - (void)freeColumns {
     for (int i = 0; i < self.ncolumns; i++) {
-        if (self.columns[i].title) {
-            free (self.columns[i].title);
-        }
-        if (self.columns[i].format) {
-            free (self.columns[i].format);
-        }
-        if (self.columns[i].bytecode) {
-            deadbeef->tf_free (self.columns[i].bytecode);
-        }
+        [self freeColumnDataAtIndex:i];
     }
     free (self.columns);
     self.columns = NULL;
@@ -526,16 +521,32 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     return idx;
 }
 
-- (void)initColumn:(int)idx withTitle:(const char *)title withId:(int)_id withSize:(int)size withFormat:(const char *)format withAlignment:(PlaylistColumnAlignment)alignment withSetColor:(BOOL)setColor withColor:(uint8_t *)color {
+- (void)freeColumnDataAtIndex:(int)idx {
+    free(self.columns[idx].title);
+    self.columns[idx].title = NULL;
+    free(self.columns[idx].format);
+    self.columns[idx].format = NULL;
+    free(self.columns[idx].sortFormat);
+    self.columns[idx].sortFormat = NULL;
+    if (self.columns[idx].bytecode) {
+        deadbeef->tf_free (self.columns[idx].bytecode);
+        self.columns[idx].bytecode = NULL;
+    }
+}
+
+- (void)initColumnAtIndex:(int)idx title:(const char *)title identifier:(int)_id size:(int)size format:(const char *)format sortFormat:(const char *)sortFormat alignment:(PlaylistColumnAlignment)alignment shouldSetColor:(BOOL)shouldSetColor color:(uint8_t *)color {
+    [self freeColumnDataAtIndex:idx];
+
     self.columns[idx].type = _id;
     self.columns[idx].title = strdup (title);
     self.columns[idx].format = format ? strdup (format) : NULL;
+    self.columns[idx].sortFormat = (sortFormat && sortFormat[0]) ? strdup (sortFormat) : NULL;
     self.columns[idx].size = size;
     self.columns[idx].alignment = alignment;
     if (format) {
         self.columns[idx].bytecode = deadbeef->tf_compile (format);
     }
-    self.columns[idx].set_text_color = setColor;
+    self.columns[idx].set_text_color = shouldSetColor;
     self.columns[idx].text_color[0] = color[0];
     self.columns[idx].text_color[1] = color[1];
     self.columns[idx].text_color[2] = color[2];
@@ -601,6 +612,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         NSString *title_s = [dict objectForKey:@"title"];
         NSString *id_s = [dict objectForKey:@"id"];
         NSString *format_s = [dict objectForKey:@"format"];
+        NSString *sortFormat_s = [dict objectForKey:@"sort_format"];
         NSString *size_s = [dict objectForKey:@"size"];
         NSNumber *alignment_n = [dict objectForKey:@"alignment"];
         NSNumber *setcolor_n = [dict objectForKey:@"set_text_color"];
@@ -618,7 +630,12 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
         const char *fmt = NULL;
         if (format_s) {
-            fmt = [format_s UTF8String];
+            fmt = format_s.UTF8String;
+        }
+
+        const char *sortfmt = NULL;
+        if (sortFormat_s) {
+            sortfmt = sortFormat_s.UTF8String;
         }
 
         int size = 80;
@@ -652,7 +669,15 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
         int colIdx = self.ncolumns;
         [self insertColumn:self.ncolumns];
-        [self initColumn:colIdx withTitle:title withId:colId withSize:size withFormat:fmt withAlignment:alignment withSetColor:setcolor withColor:rgba];
+        [self initColumnAtIndex:colIdx
+                          title:title
+                     identifier:colId
+                           size:size
+                         format:fmt
+                         sortFormat:sortfmt
+                      alignment:alignment
+                 shouldSetColor:setcolor
+                          color:rgba];
     }];
 }
 
@@ -1302,7 +1327,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     self.sortColumn = (int)column;
     self.columns[column].sort_order = 1 - self.columns[column].sort_order;
 
-    deadbeef->plt_sort_v2 (plt, PL_MAIN, c->type, c->format, self.columns[column].sort_order);
+    deadbeef->plt_sort_v2 (plt, PL_MAIN, c->type, (c->sortFormat && c->sortFormat[0]) ? c->sortFormat : c->format, self.columns[column].sort_order);
     deadbeef->plt_unref (plt);
 
     PlaylistView *lv = (PlaylistView *)self.view;

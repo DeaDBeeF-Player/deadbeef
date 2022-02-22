@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak,nonatomic) IBOutlet NSTextField *titleTextField;
 @property (weak,nonatomic) IBOutlet NSPopUpButton *typePopUpButton;
 @property (weak,nonatomic) IBOutlet NSTextField *formatTextField;
+@property (weak) IBOutlet NSTextField *sortFormatTextField;
+
 @property (weak,nonatomic) IBOutlet NSPopUpButton *alignmentPopUpButton;
 @property (weak,nonatomic) IBOutlet NSButton *setColorButton;
 @property (weak,nonatomic) IBOutlet NSColorWell *colorWell;
@@ -25,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)initEditColumnSheetWithTitle:(NSString *)title
                                 type:(int)type
                               format:(NSString *)format
+                              sortFormat:(NSString *)sortFormat
                            alignment:(PlaylistColumnAlignment)alignment
                         setTextColor:(BOOL)setTextColor
                            textColor:(NSColor *)textColor;

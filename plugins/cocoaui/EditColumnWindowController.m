@@ -15,6 +15,7 @@
 @property (nonatomic) NSString *title;
 @property (nonatomic) int type;
 @property (nonatomic) NSString *format;
+@property (nonatomic) NSString *sortFormat;
 @property (nonatomic) PlaylistColumnAlignment alignment;
 @property (nonatomic) BOOL setTextColor;
 @property (nonatomic) NSColor *textColor;
@@ -32,6 +33,7 @@
     [self initEditColumnSheetWithTitle:@""
                                   type:DB_COLUMN_CUSTOM
                                 format:@""
+                                sortFormat:@""
                              alignment:ColumnAlignmentLeft
                           setTextColor:NO
                              textColor:NSColor.blackColor];
@@ -59,6 +61,7 @@
     [self.typePopUpButton selectItemAtIndex: type];
     self.formatTextField.enabled = type == 10;
     self.formatTextField.stringValue = self.format;
+    self.sortFormatTextField.stringValue = self.sortFormat;
     [self.alignmentPopUpButton selectItemAtIndex:self.alignment];
     self.setColorButton.state = self.setTextColor;
     self.colorWell.enabled = self.setTextColor;
@@ -68,6 +71,7 @@
 - (void)initEditColumnSheetWithTitle:(NSString *)title
                                 type:(int)inputType
                               format:(NSString *)format
+                          sortFormat:(NSString *)sortFormat
                            alignment:(PlaylistColumnAlignment)alignment
                         setTextColor:(BOOL)setTextColor
                            textColor:(NSColor *)textColor {
@@ -75,6 +79,7 @@
     self.title = title;
     self.type = inputType;
     self.format = format;
+    self.sortFormat = sortFormat;
     self.alignment = alignment;
     self.setTextColor = setTextColor;
     self.textColor = textColor;
