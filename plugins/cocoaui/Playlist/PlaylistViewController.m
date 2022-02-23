@@ -517,6 +517,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     }
     self.ncolumns++;
     int idx = beforeIdx >= 0 ? beforeIdx : self.ncolumns-1;
+    memset (&self.columns[idx], 0, sizeof(plt_col_info_t));
     self.columns[idx].size = 100;
     return idx;
 }
