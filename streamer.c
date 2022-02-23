@@ -286,6 +286,15 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
             playqueue_pop ();
         }
         if (qnext) {
+            // playlist change?
+            int idx = plt_get_item_idx(streamer_playlist, qnext, PL_MAIN);
+            if (idx == -1) {
+                playlist_t *plt = pl_get_playlist(qnext);
+                if (plt != NULL) {
+                    streamer_set_streamer_playlist (plt);
+                    plt_unref (plt);
+                }
+            }
             pl_item_unref (qnext);
         }
 
