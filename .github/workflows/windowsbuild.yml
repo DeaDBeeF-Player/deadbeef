@@ -1,5 +1,6 @@
 name: Build for Windows
 on: [ push, pull_request ]
+jobs:
   build_windows:
     name: CI for Windows
     runs-on: windows-latest

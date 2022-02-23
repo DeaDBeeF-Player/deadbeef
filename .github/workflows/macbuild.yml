@@ -1,5 +1,6 @@
 name: Build for Mac
 on: [ push, pull_request ]
+jobs:
   build_mac:
     name: CI for macOS
     runs-on: macos-latest
