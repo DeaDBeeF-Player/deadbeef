@@ -203,7 +203,7 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     }
     int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
     plt_set_meta_int (playlist, "autosort_ascending", ascending);
-    if (version != 0) {
+    if (version != 0 && format != NULL) {
         plt_replace_meta (playlist, "autosort_mode", "tf");
         plt_replace_meta (playlist, "autosort_tf", format);
     }
