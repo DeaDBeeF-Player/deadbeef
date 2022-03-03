@@ -1840,15 +1840,22 @@ typedef struct DB_plugin_s {
     // in "started" state
     int (*disconnect) (void);
 
+#if (DDB_API_LEVEL >= 15)
     /// Ask the plugin to execute an arbitrary command line
     ///
-    /// @c exec_cmdline may be called at any moment when user sends commandline to player.
+    /// @c exec_cmdline may be called at any moment when the user sends commandline to player.
+    /// A plugin must have api_vminor>=15 in order to use this API.
     /// The method can be NULL if plugin doesn't support commandline processing.
     /// @param cmdline is 0-separated list of strings, guaranteed to have 0 at the end
     /// @param cmdline_size is number of bytes pointed by cmdline
     /// @param response the interface to create a response for the caller
     /// @return 0 on success or error code on failure
     int (*exec_cmdline) (const char *cmdline, int cmdline_size, ddb_response_t *response);
+#else
+    /// Don't use this API.
+    /// It is kept here to guarantee the API-level backwards compatibility, but this method will never be called.
+    int (*exec_cmdline) (const char *cmdline, int cmdline_size);
+#endif
 
     // @return linked list of actions for the specified track
     // when it is NULL -- the plugin must return list of all actions
