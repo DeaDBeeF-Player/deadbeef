@@ -1430,6 +1430,9 @@ typedef struct {
 
     // sort using title formatting v2
     void (*plt_sort_v2) (ddb_playlist_t *plt, int iter, int id, const char *format, int order);
+    //autosort
+    void (*plt_autosort) (ddb_playlist_t *plt);
+
 
     // playqueue APIs
     int (*playqueue_push) (DB_playItem_t *it);

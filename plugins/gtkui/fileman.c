@@ -262,6 +262,7 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     free (ptr);
 
     deadbeef->plt_add_files_end (plt, 0);
+    deadbeef->plt_autosort(plt);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     g_idle_add (set_dnd_cursor_idle, first);
