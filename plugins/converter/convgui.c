@@ -170,11 +170,7 @@ overwrite_prompt (const char *outpath) {
 }
 
 static void
-converter_worker (void *ctx) {
-    deadbeef->background_job_increment ();
-    converter_ctx_t *conv = ctx;
-
-    char root[2000] = "";
+get_folder_root (converter_ctx_t *conv, char* root) {
     int rootlen = 0;
     // prepare for preserving folder struct
     if (conv->preserve_folder_structure && conv->convert_items_count >= 1) {
@@ -209,8 +205,10 @@ converter_worker (void *ctx) {
             deadbeef->pl_unlock ();
         }
     }
+}
 
-    ddb_converter_settings_t settings = {
+ddb_converter_settings_t get_converter_settings (converter_ctx_t *conv) {
+    return ddb_converter_settings_t settings = {
         .output_bps = conv->output_bps,
         .output_is_float = conv->output_is_float,
         .encoder_preset = conv->encoder_preset,
@@ -218,41 +216,57 @@ converter_worker (void *ctx) {
         .bypass_conversion_on_same_format = conv->bypass_same_format,
         .rewrite_tags_after_copy = conv->retag_after_copy,
     };
+}
+
+static void
+try_convert_item (DB_playItem_t *item, converter_ctx_t *conv, ddb_converter_settings_t *settings, char *root) {
+    update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
+    info->entry = conv->progress_entry;
+    g_object_ref (info->entry);
+    deadbeef->pl_lock ();
+    info->text = strdup (deadbeef->pl_find_meta (item, ":URI"));
+    deadbeef->pl_unlock ();
+    g_idle_add (update_progress_cb, info);
+
+    char outpath[2000];
+    converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
+
+    int skip = 0;
+    char *real_out = realpath(outpath, NULL);
+    if (real_out) {
+        skip = 1;
+        deadbeef->pl_lock();
+        char *real_in = realpath(deadbeef->pl_find_meta(item, ":URI"), NULL);
+        deadbeef->pl_unlock();
+        const int paths_match = real_in && !strcmp(real_in, real_out);
+        free(real_in);
+        free(real_out);
+        if (paths_match) {
+            fprintf (stderr, "converter: destination file is the same as source file, skipping\n");
+        }
+        else if (conv->overwrite_action == 2 || (conv->overwrite_action == 1 && overwrite_prompt(outpath))) {
+            unlink (outpath);
+            skip = 0;
+        }
+    }
+
+    if (!skip) {
+        converter_plugin->convert2 (settings, item, outpath, &conv->cancelled);
+    }
+}
+
+static void
+converter_worker (void *ctx) {
+    deadbeef->background_job_increment ();
+    converter_ctx_t *conv = ctx;
+
+    char root[2000] = "";
+    get_folder_root (conv, root);
+
+    ddb_converter_settings_t settings = get_converter_settings (conv);
 
     for (int n = 0; n < conv->convert_items_count; n++) {
-        update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
-        info->entry = conv->progress_entry;
-        g_object_ref (info->entry);
-        deadbeef->pl_lock ();
-        info->text = strdup (deadbeef->pl_find_meta (conv->convert_items[n], ":URI"));
-        deadbeef->pl_unlock ();
-        g_idle_add (update_progress_cb, info);
-
-        char outpath[2000];
-        converter_plugin->get_output_path2 (conv->convert_items[n], conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
-
-        int skip = 0;
-        char *real_out = realpath(outpath, NULL);
-        if (real_out) {
-            skip = 1;
-            deadbeef->pl_lock();
-            char *real_in = realpath(deadbeef->pl_find_meta(conv->convert_items[n], ":URI"), NULL);
-            deadbeef->pl_unlock();
-            const int paths_match = real_in && !strcmp(real_in, real_out);
-            free(real_in);
-            free(real_out);
-            if (paths_match) {
-                fprintf (stderr, "converter: destination file is the same as source file, skipping\n");
-            }
-            else if (conv->overwrite_action == 2 || (conv->overwrite_action == 1 && overwrite_prompt(outpath))) {
-                unlink (outpath);
-                skip = 0;
-            }
-        }
-
-        if (!skip) {
-            converter_plugin->convert2 (&settings, conv->convert_items[n], outpath, &conv->cancelled);
-        }
+        try_convert_item (conv->convert_items[n], conv, &settings, root)
         if (conv->cancelled) {
             for (; n < conv->convert_items_count; n++) {
                 deadbeef->pl_item_unref (conv->convert_items[n]);
