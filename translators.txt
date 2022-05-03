@@ -103,11 +103,6 @@ Portuguese (Brazil)
 Romanian
  Mișu Moldovan <dumol@xfce.org>
 
-Russian
- Alexey Yakovenko <wakeroid@gmail.com>
- Andrei Stepanov
- Dmitriy Simbiriatin <slpiv@mail.ru>
-
 Sinhala
  amscata <amith@compsoc.lk>
 

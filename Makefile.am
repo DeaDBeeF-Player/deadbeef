@@ -70,8 +70,7 @@ deadbeef_CFLAGS = $(DEPS_CFLAGS) $(DISPATCH_CFLAGS) -std=c99 -DLOCALEDIR=\"@loca
 docsdir = $(docdir)
 
 docs_DATA = README help.txt about.txt translators.txt ChangeLog\
-	COPYING.GPLv2 COPYING.LGPLv2.1\
-	translation/help.ru.txt
+	COPYING.GPLv2 COPYING.LGPLv2.1
 
 desktopdir = $(datadir)/applications
 desktop_DATA = deadbeef.desktop
