@@ -108,7 +108,6 @@ for i in po/*.gmo ; do
     mkdir -p $OUTDIR/locale/$base/LC_MESSAGES
     cp $i $OUTDIR/locale/$base/LC_MESSAGES/deadbeef.mo
 done
-cp translation/help.ru.txt $OUTDIR/doc/
 
 # strip
 if [ $OSTYPE != 'Darwin' ];then
