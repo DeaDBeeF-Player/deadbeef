@@ -28,7 +28,6 @@ for i in po/*.gmo ; do
 	mkdir -pv "$1/locale/$base/LC_MESSAGES"
 	cp -uv "$i" "$1/locale/$base/LC_MESSAGES/deadbeef.mo"
 done
-cp -uv translation/help.ru.txt  "$1/doc/"
 
 # gdk_pixbuf libs
 for i in $MSYSTEM_PREFIX /usr; do
