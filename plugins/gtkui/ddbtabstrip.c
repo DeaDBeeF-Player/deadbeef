@@ -338,6 +338,10 @@ on_tabstrip_drag_leave                 (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
                                         guint            time)
 {
+    DdbTabStrip *ts = DDB_TABSTRIP(widget);
+    if (ts->pick_drag_timer != 0) {
+        g_source_remove(ts->pick_drag_timer);
+    }
 }
 
 void
@@ -1325,6 +1329,21 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
     return FALSE;
 }
 
+static gboolean
+_tabstrip_drag_pick (void *ctx) {
+    GtkWidget *widget = ctx;
+    DdbTabStrip *ts = DDB_TABSTRIP(widget);
+    gint x, y;
+    gtk_widget_get_pointer(widget, &x, &y);
+    int tab = get_tab_under_cursor (DDB_TABSTRIP (widget), x);
+    int prev = deadbeef->plt_get_curr_idx ();
+    if (tab != -1 && tab != prev) {
+        deadbeef->plt_set_curr_idx (tab);
+    }
+    ts->pick_drag_timer = 0;
+    return FALSE;
+}
+
 gboolean
 on_tabstrip_drag_motion_event          (GtkWidget       *widget,
                                         GdkDragContext  *drag_context,
@@ -1332,11 +1351,11 @@ on_tabstrip_drag_motion_event          (GtkWidget       *widget,
                                         gint             y,
                                         guint            time)
 {
-    int tab = get_tab_under_cursor (DDB_TABSTRIP (widget), x);
-    int prev = deadbeef->plt_get_curr_idx ();
-    if (tab != -1 && tab != prev) {
-        deadbeef->plt_set_curr_idx (tab);
+    DdbTabStrip *ts = DDB_TABSTRIP(widget);
+    if (ts->pick_drag_timer != 0) {
+        g_source_remove(ts->pick_drag_timer);
     }
+    ts->pick_drag_timer = g_timeout_add(500, _tabstrip_drag_pick, widget);
 
     GList *targets = gdk_drag_context_list_targets (drag_context);
     int cnt = g_list_length (targets);
@@ -1399,8 +1418,10 @@ gboolean
 on_tabstrip_leave_notify_event (GtkWidget *widget, GdkEventCrossing *event_crossing)
 {
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
+
     ts->add_playlistbtn_hover = 0;
     gtk_widget_queue_draw(widget);
+
     return FALSE;
 }
 
