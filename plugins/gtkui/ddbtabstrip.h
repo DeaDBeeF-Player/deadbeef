@@ -57,6 +57,7 @@ struct _DdbTabStrip {
     int row_height;
     int calculated_arrow_width;
     int add_playlistbtn_hover;
+    gint pick_drag_timer;
 };
 
 struct _DdbTabStripClass {
