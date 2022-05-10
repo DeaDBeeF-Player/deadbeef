@@ -78,6 +78,8 @@ static const int close_btn_left_offs = 8;
 
 @property (nonatomic) TrackPropertiesWindowController *trkProperties;
 
+@property (nonatomic) NSTimer *pickDragTimer;
+
 @end
 
 @implementation DdbTabStrip
@@ -852,7 +854,6 @@ static const int close_btn_left_offs = 8;
         [self updatePointedTab:-1];
         self.needsDisplay = YES;
     }
-
 }
 
 - (BOOL)wantsPeriodicDraggingUpdates {
@@ -861,14 +862,29 @@ static const int close_btn_left_offs = 8;
 }
 
 - (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
+    [self.pickDragTimer invalidate];
 
     NSPoint coord = [sender draggingLocation];
-    int tabUnderCursor = [self tabUnderCursor: coord.x];
-    if (tabUnderCursor != -1) {
-        deadbeef->plt_set_curr_idx (tabUnderCursor);
-    }
+    coord = [self convertPoint:coord fromView:nil];
+    __weak DdbTabStrip *weakSelf = self;
+    self.pickDragTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:NO block:^(NSTimer * _Nonnull timer) {
+        DdbTabStrip *tabStrip = weakSelf;
+        if (tabStrip == nil) {
+            return;
+        }
+        int tabUnderCursor = [tabStrip tabUnderCursor: coord.x];
+        if (tabUnderCursor != -1) {
+            deadbeef->plt_set_curr_idx (tabUnderCursor);
+        }
+        tabStrip.pickDragTimer = nil;
+    }];
 
     return NSDragOperationNone;
+}
+
+- (void)draggingExited:(id<NSDraggingInfo>)sender {
+    [self.pickDragTimer invalidate];
+    self.pickDragTimer = nil;
 }
 
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
