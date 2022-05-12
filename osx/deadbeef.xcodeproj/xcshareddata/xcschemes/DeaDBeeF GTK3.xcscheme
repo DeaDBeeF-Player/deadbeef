@@ -55,29 +55,9 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "LC_ALL"
-            value = "en_US.UTF-8"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "LC_ALL"
-            value = "ru_RU.UTF-8"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "LANG"
-            value = "ru_RU.UTF-8"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
             key = "XDG_CONFIG_HOME"
             value = "/Users/waker/ddbhome"
             isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "LANG"
-            value = "en_US.UTF-8"
-            isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
