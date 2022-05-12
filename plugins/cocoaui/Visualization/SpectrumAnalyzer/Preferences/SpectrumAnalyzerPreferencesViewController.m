@@ -7,8 +7,8 @@
 //
 
 #import "SpectrumAnalyzerPreferencesViewController.h"
-#import "VisualizationSettingsUtil.h"
 #import "SpectrumAnalyzerSettings.h"
+#import "VisualizationSettingsUtil.h"
 
 @interface SpectrumAnalyzerPreferencesViewController ()
 @property (weak) IBOutlet NSButton *useCustomPeakColorButton;
@@ -41,11 +41,20 @@
     if (self.settings.customPeakColor != nil) {
         self.peakColorWell.color = self.settings.customPeakColor;
     }
+    else {
+        self.peakColorWell.color = VisualizationSettingsUtil.shared.defaultBaseColor;
+    }
     if (self.settings.customBarColor != nil) {
         self.barColorWell.color = self.settings.customBarColor;
     }
+    else {
+        self.barColorWell.color = VisualizationSettingsUtil.shared.defaultBaseColor;
+    }
     if (self.settings.customBackgroundColor != nil) {
         self.backgroundColorWell.color = self.settings.customBackgroundColor;
+    }
+    else {
+        self.backgroundColorWell.color = VisualizationSettingsUtil.shared.defaultBackgroundColor;
     }
 
     [self updateUseCustomPeakColor:self.settings.useCustomPeakColor];
