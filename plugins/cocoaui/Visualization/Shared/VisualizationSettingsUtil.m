@@ -68,7 +68,16 @@ extern DB_functions_t *deadbeef;
 
 - (NSColor *)baseColor {
     // fetch accent color as default!
-    NSColor *color = NSColor.alternateSelectedControlColor;
+    NSColor *color;
+#ifdef MAC_OS_X_VERSION_10_14
+    if (@available(macOS 10.14, *)) {
+        color = NSColor.controlAccentColor;
+    }
+    else
+#endif
+    {
+        color = NSColor.alternateSelectedControlColor;
+    }
 
     NSString *key = @"cocoaui.vis.override_base_color";
 
