@@ -71,6 +71,15 @@ typedef struct {
     int cancelled;
 } converter_ctx_t;
 
+typedef struct {
+    int next_index;
+    int threads;
+    pthread_mutex_t mutex;
+    converter_ctx_t *conv;
+    ddb_converter_settings_t settings;
+    char[2000] root;
+} converter_thread_ctx_t;
+
 converter_ctx_t *current_ctx;
 
 enum {
@@ -100,7 +109,7 @@ fill_presets (GtkListStore *mdl, ddb_preset_t *head, int type) {
 void
 on_converter_progress_cancel (GtkDialog *dialog, gint response_id, gpointer user_data) {
     converter_ctx_t *ctx = user_data;
-    ctx->cancelled = 1;
+    ctx->cancelled = 1;//should lock
 }
 
 void
@@ -286,31 +295,101 @@ unref_convert_items (DB_playItem_t **convert_items, int begin, int end) {
     }
 }
 
+static int
+get_number_of_threads()
+{
+    int number_of_threads = deadbeef->conf_get_int("converter.threads", 0);
+    if(number_of_threads <= 0) number_of_threads = 1;//against negative user value
+    return number_of_threads;
+}
+
+static converter_thread_ctx_t
+make_converter_thread_ctx(converter_ctx *conv)
+{
+    converter_thread_ctx_t thread_ctx = {
+        .next_index = 0,
+        .threads = get_number_of_threads(),
+        .conv = conv;
+        .settings = get_converter_settings (conv);
+    };
+    thread_ctx.pids = malloc(thread_ctx.threads * sizeof(pthread_t));
+    pthread_mutex_init(&thread_ctx.mutex, NULL);
+    get_folder_root (conv, root);
+    return thread_ctx;
+}
+
+void
+free_converter_thread_ctx(converter_thread_ctx_t *thread_ctx)
+{
+    free(thread_ctx->pids);
+    pthread_mutex_destroy(&thread_ctx->mutex);
+}
+
+static int
+conversion_may_proceed(converter_ctx_t *conv, int index)
+{
+    return !conv->cancelled && index < conv->convert_items_count; //should lock 'cancelled'
+}
+
+static int
+pop_next_item_id(converter_thread_ctx_t *thread_ctx)
+{
+    return thread_ctx->next_index++;
+}
+
+static int
+pop_next_item_id_lock(converter_thread_ctx_t *thread_ctx)
+{
+    pthread_mutex_lock(&thread_ctx->mutex);
+    int id = pop_next_item_id(thread_ctx);
+    pthread_mutex_unlock(&thread_ctx->mutex);
+    return id;
+}
+
+static void*
+converter_thread_worker (void *ctx) {
+    converter_thread_ctx_t *thread_ctx = ctx;
+    int index = pop_next_item_id_lock (thread_ctx);
+    while (conversion_may_proceed (thread_ctx->conv, index)) {
+        try_convert_item (thread_ctx->conv->convert_items[index], thread_ctx->conv, thread_ctx->settings, thread_ctx->root);
+        deadbeef->pl_item_unref (conv->convert_items[index]);
+        index = pop_next_item_index (thread_ctx);
+    }
+    return NULL;
+}
+
+static void
+create_pool_threads(converter_thread_ctx_t* thread_ctx)
+{
+    for(int k = 0; k < thread_ctx->threads; ++k)
+        pthread_create(&thread_ctx->pids[k], NULL, &converter_thread_worker, (void*)thread_ctx);
+}
+
+static void join_pool_threads(converter_thread_ctx_t* thread_ctx)
+{
+    for(int k = 0; k < thread_ctx->threads; ++k)
+        pthread_join(thread_ctx->pids[k], NULL);
+}
+
 static void
 converter_worker (void *ctx) {
     deadbeef->background_job_increment ();
     converter_ctx_t *conv = ctx;
-
-    char root[2000] = "";
-    get_folder_root (conv, root);
-
-    ddb_converter_settings_t settings = get_converter_settings (conv);
-
-    for (int n = 0; n < conv->convert_items_count; n++) {
-        try_convert_item (conv->convert_items[n], conv, &settings, root)
-        if (conv->cancelled) {
-            unref_convert_items (conv->convert_items, n, conv->convert_items_count);
-            break;
-        }
-        deadbeef->pl_item_unref (conv->convert_items[n]);
+    converter_thread_ctx_t thread_ctx = make_converter_thread_ctx (conv);
+    create_pool_threads (thread_ctx);
+    join_pool_threads (thread_ctx);
+    if (conv->cancelled) {
+        unref_convert_items (conv->convert_items, thread_ctx->next_index, conv->convert_items_count);
     }
     free_conversion_utils (conv);
+    free_converter_thread_ctx (thread_ctx);
     deadbeef->background_job_decrement ();
 }
 
 int
 converter_process (converter_ctx_t *conv)
 {
+    conv->current_index = 0;
     conv->outfolder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder"))));
     const char *outfile = gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")));
     if (outfile[0] == 0) {
