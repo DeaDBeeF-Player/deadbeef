@@ -218,19 +218,8 @@ ddb_converter_settings_t get_converter_settings (converter_ctx_t *conv) {
     };
 }
 
-static void
-try_convert_item (DB_playItem_t *item, converter_ctx_t *conv, ddb_converter_settings_t *settings, char *root) {
-    update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
-    info->entry = conv->progress_entry;
-    g_object_ref (info->entry);
-    deadbeef->pl_lock ();
-    info->text = strdup (deadbeef->pl_find_meta (item, ":URI"));
-    deadbeef->pl_unlock ();
-    g_idle_add (update_progress_cb, info);
-
-    char outpath[2000];
-    converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
-
+static int
+get_skip_conversion (const char* outpath, converter_ctx_t *conv) {
     int skip = 0;
     char *real_out = realpath(outpath, NULL);
     if (real_out) {
@@ -249,32 +238,29 @@ try_convert_item (DB_playItem_t *item, converter_ctx_t *conv, ddb_converter_sett
             skip = 0;
         }
     }
+    return skip;
+}
 
+static void
+try_convert_item (DB_playItem_t *item, converter_ctx_t *conv, ddb_converter_settings_t *settings, char *root) {
+    update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
+    info->entry = conv->progress_entry;
+    g_object_ref (info->entry);
+    deadbeef->pl_lock ();
+    info->text = strdup (deadbeef->pl_find_meta (item, ":URI"));
+    deadbeef->pl_unlock ();
+    g_idle_add (update_progress_cb, info);
+
+    char outpath[2000];
+    converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
+    int skip = get_skip_conversion (outpath, conv);
     if (!skip) {
         converter_plugin->convert2 (settings, item, outpath, &conv->cancelled);
     }
 }
 
 static void
-converter_worker (void *ctx) {
-    deadbeef->background_job_increment ();
-    converter_ctx_t *conv = ctx;
-
-    char root[2000] = "";
-    get_folder_root (conv, root);
-
-    ddb_converter_settings_t settings = get_converter_settings (conv);
-
-    for (int n = 0; n < conv->convert_items_count; n++) {
-        try_convert_item (conv->convert_items[n], conv, &settings, root)
-        if (conv->cancelled) {
-            for (; n < conv->convert_items_count; n++) {
-                deadbeef->pl_item_unref (conv->convert_items[n]);
-            }
-            break;
-        }
-        deadbeef->pl_item_unref (conv->convert_items[n]);
-    }
+free_conversion_utils (converter_ctx_t *conv) {
     g_idle_add (destroy_progress_cb, conv->progress);
     if (conv->convert_items) {
         free (conv->convert_items);
@@ -291,6 +277,34 @@ converter_worker (void *ctx) {
     converter_plugin->encoder_preset_free (conv->encoder_preset);
     converter_plugin->dsp_preset_free (conv->dsp_preset);
     free (conv);
+}
+
+static void
+unref_convert_items (DB_playItem_t **convert_items, int begin, int end) {
+    for (int k = begin; k < end; ++k) {
+        deadbeef->pl_item_unref (convert_items[n]);
+    }
+}
+
+static void
+converter_worker (void *ctx) {
+    deadbeef->background_job_increment ();
+    converter_ctx_t *conv = ctx;
+
+    char root[2000] = "";
+    get_folder_root (conv, root);
+
+    ddb_converter_settings_t settings = get_converter_settings (conv);
+
+    for (int n = 0; n < conv->convert_items_count; n++) {
+        try_convert_item (conv->convert_items[n], conv, &settings, root)
+        if (conv->cancelled) {
+            unref_convert_items (conv->convert_items, n, conv->convert_items_count);
+            break;
+        }
+        deadbeef->pl_item_unref (conv->convert_items[n]);
+    }
+    free_conversion_utils (conv);
     deadbeef->background_job_decrement ();
 }
 
