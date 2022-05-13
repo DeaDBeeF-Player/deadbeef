@@ -62,14 +62,14 @@ prefwin_init_gui_misc_tab (GtkWidget *_prefwin) {
     char titlebar[1024];
     deadbeef->conf_get_str ("gtkui.titlebar_playing_tf", gtkui_default_titlebar_playing, titlebar, sizeof (titlebar));
     if (*titlebar == 0) {
-        strlcpy (titlebar, gtkui_default_titlebar_playing, sizeof (titlebar));
+        strncat (titlebar, gtkui_default_titlebar_playing, sizeof (titlebar)-1);
     }
 
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), titlebar);
 
     deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, titlebar, sizeof (titlebar));
     if (*titlebar == 0) {
-        strlcpy (titlebar, gtkui_default_titlebar_stopped, sizeof (titlebar));
+        strncat (titlebar, gtkui_default_titlebar_stopped, sizeof (titlebar)-1);
     }
 
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), titlebar);
