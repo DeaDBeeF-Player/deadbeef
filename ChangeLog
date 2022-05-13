@@ -13,6 +13,8 @@ version 1.9.0
 	Fixed: sndfile not opening files because of uninitialized memory access bug
 	Fixed: Crash when removing tracks from playlist while they're playing
 	Fixed: Rendering group titles with blank text
+	Fixed: Delay activation of a playlist tab during drag-drop over the tab bar
+	Fixed: ᵣussian and ᵦelarussian languages are no longer supported
 	Added: Long file seeking support for Opus and FFMPEG
 	Added: HTTPS support for vfs_curl in portable builds, via libmbedtls
 	Added: Design mode for CocoaUI
@@ -26,6 +28,7 @@ version 1.9.0
 	Added: Improved DSP preferences GTK UI (Saivert)
 	Added: Improved handling of invalid MP3 files
 	Added: Last.fm scrobbler will use HTTPS by default
+	Glory to Ukraine! 💛💙
 
 version 1.8.8
 	Fixed: A crash and file path issues in PSF plugin (greedysky)
