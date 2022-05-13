@@ -59,8 +59,20 @@ prefwin_init_gui_misc_tab (GtkWidget *_prefwin) {
     prefwin_set_scale("gui_fps", val);
 
     // titlebar text
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), deadbeef->conf_get_str_fast ("gtkui.titlebar_playing_tf", gtkui_default_titlebar_playing));
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), deadbeef->conf_get_str_fast ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped));
+    char titlebar[1024];
+    deadbeef->conf_get_str ("gtkui.titlebar_playing_tf", gtkui_default_titlebar_playing, titlebar, sizeof (titlebar));
+    if (*titlebar == 0) {
+        strlcpy (titlebar, gtkui_default_titlebar_playing, sizeof (titlebar));
+    }
+
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_playing")), titlebar);
+
+    deadbeef->conf_get_str ("gtkui.titlebar_stopped_tf", gtkui_default_titlebar_stopped, titlebar, sizeof (titlebar));
+    if (*titlebar == 0) {
+        strlcpy (titlebar, gtkui_default_titlebar_stopped, sizeof (titlebar));
+    }
+
+    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "titlebar_format_stopped")), titlebar);
 
     // statusbar selection playback time
     prefwin_set_toggle_button ("display_seltime", deadbeef->conf_get_int ("gtkui.statusbar_seltime", 0));
@@ -161,7 +173,11 @@ void
 on_titlebar_format_playing_changed     (GtkEditable     *editable,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_str ("gtkui.titlebar_playing_tf", gtk_entry_get_text (GTK_ENTRY (editable)));
+    const char *text = gtk_entry_get_text (GTK_ENTRY (editable));
+    if (*text == 0) {
+        text = NULL;
+    }
+    deadbeef->conf_set_str ("gtkui.titlebar_playing_tf", text);
     gtkui_titlebar_tf_init ();
     gtkui_set_titlebar (NULL);
 }
@@ -171,7 +187,11 @@ void
 on_titlebar_format_stopped_changed     (GtkEditable     *editable,
                                         gpointer         user_data)
 {
-    deadbeef->conf_set_str ("gtkui.titlebar_stopped_tf", gtk_entry_get_text (GTK_ENTRY (editable)));
+    const char *text = gtk_entry_get_text (GTK_ENTRY (editable));
+    if (*text == 0) {
+        text = NULL;
+    }
+    deadbeef->conf_set_str ("gtkui.titlebar_stopped_tf", text);
     gtkui_titlebar_tf_init ();
     gtkui_set_titlebar (NULL);
 }
