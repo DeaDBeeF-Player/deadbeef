@@ -319,6 +319,18 @@ conf_set_str (const char *key, const char *val) {
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
         int cmp = strcasecmp (key, it->key);
         if (!cmp) {
+            if (val == NULL) {
+                if (prev != NULL) {
+                    prev->next = it->next;
+                }
+                else {
+                    conf_items = it->next;
+                }
+                conf_item_free (it);
+                conf_unlock ();
+                return;
+            }
+
             if (!strcmp (it->value, val)) {
                 conf_unlock ();
                 return;
