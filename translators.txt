@@ -1,6 +1,3 @@
-Belarusian
- Максім Тамковіч <quendimax@tut.by>
-
 Bengali
  Ummey Salma Snigdha <snighda@ankur.org.bd>
  Israt Jahan <israt@ankur.org.bd>
@@ -133,6 +130,7 @@ Uighur
 
 Ukrainian
  Yarema aka Knedlyk <yupadmin@gmail.com>
+ Oleksiy Yakovenko <waker@users.sf.net>
 
 Vietnamese
  Tran Duy Hung <nguyentieuhau@gmail.com>

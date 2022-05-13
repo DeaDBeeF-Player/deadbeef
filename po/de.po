@@ -13,6 +13,7 @@
 # copycat <copycat@onlinehome.de>, 2016
 # toemmesoft <development@toemmesoft.de>, 2014
 # a287ca4390ac1060252ff7344e07cfb3_ddf63c0 <12d9bb92f00a9c2841133eeaac7a25bb_727560>, 2018
+# Jakub Wasylków <kuba_160@protonmail.com>, 2022
 # Zykure <zykure@web.de>, 2013
 # Josua Stingelin <josuast@hotmail.com>, 2016
 # oxyd24foo <oxyd24@yopmail.com>, 2019
@@ -27,9 +28,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-23 21:09+0100\n"
-"PO-Revision-Date: 2022-02-23 20:09+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2022-05-13 15:15+0200\n"
+"PO-Revision-Date: 2013-08-15 06:35+0000\n"
+"Last-Translator: Jakub Wasylków <kuba_160@protonmail.com>, 2022\n"
 "Language-Team: German (http://www.transifex.com/deadbeef-player/deadbeef-player/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -666,11 +667,11 @@ msgstr "DeaDBeeF-Übersetzer"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:387
 msgid "Playing Track"
-msgstr ""
+msgstr "Aktueller Titel"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:391
 msgid "Selected Track"
-msgstr ""
+msgstr "Ausgewählte Titel"
 
 #: ../plugins/gtkui/ctmapping.c:130
 msgid "Content-Type"
@@ -1226,7 +1227,7 @@ msgstr "Wiedergabeliste mit Mittelklick schließen"
 
 #: ../plugins/gtkui/deadbeef.glade.h:130 ../plugins/gtkui/interface.c:2331
 msgid "Hide \"Delete from Disk\" context menu item"
-msgstr ""
+msgstr "Eintrag \"Vom Datenträger entfernen\" im Kontextmenü verstecken"
 
 #: ../plugins/gtkui/deadbeef.glade.h:131 ../plugins/gtkui/interface.c:2335
 msgid ""
@@ -1707,7 +1708,7 @@ msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:246 ../plugins/gtkui/interface.c:5763
 msgid "Field Name:"
-msgstr ""
+msgstr "Feldname:"
 
 #: ../plugins/gtkui/deadbeef.glade.h:247 ../plugins/gtkui/interface.c:5788
 msgid "Single Value"
@@ -1941,38 +1942,38 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Dateien werden in den Papierkorb gelöscht.\n\n(Diese Meldung kann in der GTKUI-Erweiterung abgeschaltet werden)"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:47
 msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Dateien werden von der Festplatte gelöscht.\n\n(Diese Meldung kann in der GTKUI-Erweiterung abgeschaltet werden)"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:52
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Gewählte Datei wirklich löschen? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:54
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Gewählte %d Dateien wirklich löschen? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:59
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Gewählte %d Dateien aus aktueller Abspielliste entfernen? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:62
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Die gerade abspielende Datei wirkilich löschen?%s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:65
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Vom Datenträger löschen"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:900
 #: ../plugins/shellexecui/shellexecui.c:139
@@ -2154,7 +2155,7 @@ msgstr ""
 #: ../plugins/gtkui/plmenu.c:497 ../translation/plugins.c:320
 #, no-c-format
 msgid "Remove from Playback Queue"
-msgstr ""
+msgstr "Aus Warteschlange entfernen"
 
 #: ../plugins/gtkui/plmenu.c:518 ../translation/plugins.c:258
 #, no-c-format
@@ -2163,15 +2164,15 @@ msgstr "Metadaten neu laden"
 
 #: ../plugins/gtkui/plmenu.c:532
 msgid "Cu_t"
-msgstr ""
+msgstr "_Ausschneiden"
 
 #: ../plugins/gtkui/plmenu.c:548
 msgid "_Copy"
-msgstr ""
+msgstr "_Kopieren"
 
 #: ../plugins/gtkui/plmenu.c:565
 msgid "_Paste"
-msgstr ""
+msgstr "_Einfügen"
 
 #: ../plugins/gtkui/plmenu.c:606 ../translation/plugins.c:155
 #, no-c-format
@@ -2456,23 +2457,23 @@ msgstr ""
 
 #: ../plugins/gtkui/widgets.c:2901
 msgid "50 ms"
-msgstr ""
+msgstr "50 ms"
 
 #: ../plugins/gtkui/widgets.c:2903
 msgid "100 ms"
-msgstr ""
+msgstr "100 ms"
 
 #: ../plugins/gtkui/widgets.c:2905
 msgid "200 ms"
-msgstr ""
+msgstr "200 ms"
 
 #: ../plugins/gtkui/widgets.c:2907
 msgid "300 ms"
-msgstr ""
+msgstr "300 ms"
 
 #: ../plugins/gtkui/widgets.c:2909
 msgid "500 ms"
-msgstr ""
+msgstr "500 ms"
 
 #: ../plugins/gtkui/widgets.c:3356
 msgid "Descrete Frequencies"
@@ -3366,12 +3367,12 @@ msgstr ""
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Duplicate Playlist"
-msgstr ""
+msgstr "Wiedergabeliste duplizieren"
 
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "Jump to Currently Playing Track"
-msgstr ""
+msgstr "Zum aktuellen Titel springen"
 
 #: ../translation/plugins.c:262
 #, no-c-format
@@ -3381,42 +3382,42 @@ msgstr "Springen zu"
 #: ../translation/plugins.c:264
 #, no-c-format
 msgid "Previous Genre"
-msgstr ""
+msgstr "Vorheriges Genre"
 
 #: ../translation/plugins.c:266
 #, no-c-format
 msgid "Previous Composer"
-msgstr ""
+msgstr "Vorheriger Komponist"
 
 #: ../translation/plugins.c:268
 #, no-c-format
 msgid "Previous Artist"
-msgstr ""
+msgstr "Vorheriger Künstler"
 
 #: ../translation/plugins.c:270
 #, no-c-format
 msgid "Previous Album"
-msgstr ""
+msgstr "Vorheriges Album"
 
 #: ../translation/plugins.c:272
 #, no-c-format
 msgid "Next Genre"
-msgstr ""
+msgstr "Nächstes Genre"
 
 #: ../translation/plugins.c:274
 #, no-c-format
 msgid "Next Composer"
-msgstr ""
+msgstr "Nächster Komponist"
 
 #: ../translation/plugins.c:276
 #, no-c-format
 msgid "Next Artist"
-msgstr ""
+msgstr "Nächster Künstler"
 
 #: ../translation/plugins.c:278
 #, no-c-format
 msgid "Next Album"
-msgstr ""
+msgstr "Nächstes Album"
 
 #: ../translation/plugins.c:280
 #, no-c-format
@@ -3426,57 +3427,57 @@ msgstr "Nächste Wiedergabeliste"
 #: ../translation/plugins.c:282
 #, no-c-format
 msgid "Previous Playlist"
-msgstr ""
+msgstr "Vorherige Wiedergabeliste"
 
 #: ../translation/plugins.c:284
 #, no-c-format
 msgid "Switch to Playlist 10"
-msgstr ""
+msgstr "Zu Wiedergabeliste 10 wechseln"
 
 #: ../translation/plugins.c:286
 #, no-c-format
 msgid "Switch to Playlist 9"
-msgstr ""
+msgstr "Zu Wiedergabeliste 9 wechseln"
 
 #: ../translation/plugins.c:288
 #, no-c-format
 msgid "Switch to Playlist 8"
-msgstr ""
+msgstr "Zu Wiedergabeliste 8 wechseln"
 
 #: ../translation/plugins.c:290
 #, no-c-format
 msgid "Switch to Playlist 7"
-msgstr ""
+msgstr "Zu Wiedergabeliste 7 wechseln"
 
 #: ../translation/plugins.c:292
 #, no-c-format
 msgid "Switch to Playlist 6"
-msgstr ""
+msgstr "Zu Wiedergabeliste 6 wechseln"
 
 #: ../translation/plugins.c:294
 #, no-c-format
 msgid "Switch to Playlist 5"
-msgstr ""
+msgstr "Zu Wiedergabeliste 5 wechseln"
 
 #: ../translation/plugins.c:296
 #, no-c-format
 msgid "Switch to Playlist 4"
-msgstr ""
+msgstr "Zu Wiedergabeliste 4 wechseln"
 
 #: ../translation/plugins.c:298
 #, no-c-format
 msgid "Switch to Playlist 3"
-msgstr ""
+msgstr "Zu Wiedergabeliste 3 wechseln"
 
 #: ../translation/plugins.c:300
 #, no-c-format
 msgid "Switch to Playlist 2"
-msgstr ""
+msgstr "Zu Wiedergabeliste 2 wechseln"
 
 #: ../translation/plugins.c:302
 #, no-c-format
 msgid "Switch to Playlist 1"
-msgstr ""
+msgstr "Zu Wiedergabeliste 1 wechseln"
 
 #: ../translation/plugins.c:304
 #, no-c-format
@@ -3486,27 +3487,27 @@ msgstr "Zufällig sortieren"
 #: ../translation/plugins.c:306
 #, no-c-format
 msgid "Sort by Date"
-msgstr ""
+msgstr "Nach Datum sortieren"
 
 #: ../translation/plugins.c:308
 #, no-c-format
 msgid "Sort by Artist"
-msgstr ""
+msgstr "Nach Künstler sortieren"
 
 #: ../translation/plugins.c:310
 #, no-c-format
 msgid "Sort by Album"
-msgstr ""
+msgstr "Nach Album sortieren"
 
 #: ../translation/plugins.c:312
 #, no-c-format
 msgid "Sort by Track Number"
-msgstr ""
+msgstr "Nach Titelnummer sortieren"
 
 #: ../translation/plugins.c:314
 #, no-c-format
 msgid "Sort by Title"
-msgstr ""
+msgstr "Nach Titel sortieren"
 
 #: ../translation/plugins.c:316
 #, no-c-format
@@ -3521,7 +3522,7 @@ msgstr "Wiedergabeliste löschen"
 #: ../translation/plugins.c:322
 #, no-c-format
 msgid "Add to Playback Queue"
-msgstr ""
+msgstr "Zur Warteschlange hinzufügen"
 
 #: ../translation/plugins.c:324
 #, no-c-format
@@ -3531,7 +3532,7 @@ msgstr ""
 #: ../translation/plugins.c:326
 #, no-c-format
 msgid "Toggle in Playback Queue"
-msgstr ""
+msgstr "Warteschlange umschalten"
 
 #: ../translation/plugins.c:328
 #, no-c-format
@@ -3627,7 +3628,7 @@ msgstr "Nach aktuellem Album anhalten"
 #: ../translation/plugins.c:375
 #, no-c-format
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Bei Last.fm nachschlagen"
 
 #: ../translation/plugins.c:377
 #, no-c-format

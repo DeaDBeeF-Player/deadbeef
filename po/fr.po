@@ -19,9 +19,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-23 21:09+0100\n"
-"PO-Revision-Date: 2022-02-23 20:09+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2022-05-13 15:15+0200\n"
+"PO-Revision-Date: 2013-08-15 06:35+0000\n"
+"Last-Translator: Charles Monzat <c.monzat@laposte.net>, 2014,2017-2022\n"
 "Language-Team: French (http://www.transifex.com/deadbeef-player/deadbeef-player/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -140,7 +140,7 @@ msgstr "                      NOTE : --nowplaying est obsolète.\n"
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
-msgstr "   --nowplaying-tf FMT  Envoie le nom de la piste formatée dans stdout, utilisant le nouveau formatage de titre\n"
+msgstr "   --nowplaying-tf FMT  Affiche le nom de la piste formatée dans stdout, utilisant le nouveau formatage de titre\n"
 
 #: ../main.c:152
 #, c-format
@@ -185,21 +185,21 @@ msgstr "                      Exemples : --volume 80, --volume +10, --volume -5
 msgid ""
 "   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
 "send commands to deadbeef itself.\n"
-msgstr ""
+msgstr "   --plugin=[PLUG]    Envoie des commandes à un greffon spécifique. Utiliser PLUG=main pour envoyer des commandes à deadbeef.\n"
 
 #: ../main.c:159
 #, c-format
 msgid ""
 "                      To get plugin specific commands use --plugin=[PLUG] "
 "--help\n"
-msgstr ""
+msgstr "                      Pour obtenir des commandes spécifiques au greffon, utiliser --plugin=[PLUG] --help\n"
 
 #: ../main.c:160
 #, c-format
 msgid ""
 "   --plugin-list      List all available plugins including indication for "
 "plugins that support commands.\n"
-msgstr ""
+msgstr "   --plugin-list Répertorie tous les greffons disponibles, y compris ceux qui prennent en charge des commandes.\n"
 
 #: ../playlist.c:515 ../playlist.c:2516
 msgid "Default"
@@ -658,11 +658,11 @@ msgstr "Traducteurs de DeaDBeeF"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:387
 msgid "Playing Track"
-msgstr ""
+msgstr "Piste en cours de lecture"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:391
 msgid "Selected Track"
-msgstr ""
+msgstr "Piste sélectionnée"
 
 #: ../plugins/gtkui/ctmapping.c:130
 msgid "Content-Type"
@@ -1648,7 +1648,7 @@ msgstr "Valeur du champ :"
 #: ../plugins/gtkui/deadbeef.glade.h:234 ../plugins/gtkui/interface.c:5460
 #: ../plugins/gtkui/interface.c:5805
 msgid "Use ; character to separate multiple values."
-msgstr ""
+msgstr "Utiliser le caractère « ; » pour séparer plusieurs valeurs."
 
 #: ../plugins/gtkui/deadbeef.glade.h:235 ../plugins/gtkui/interface.c:5509
 msgid "DeaDBeeF Log"
@@ -1945,26 +1945,26 @@ msgstr ""
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:52
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Voulez-vous vraiment supprimer le fichier sélectionné ? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:54
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Voulez-vous vraiment supprimer les %d fichiers sélectionnés ? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:59
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Voulez-vous vraiment supprimer les %d fichiers de la liste de lecture actuelle ? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:62
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Voulez-vous vraiment supprimer le fichier en cours de lecture ? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:65
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Supprimer les fichiers du disque"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:900
 #: ../plugins/shellexecui/shellexecui.c:139
@@ -2032,11 +2032,11 @@ msgstr ""
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:144
 msgid "Media library is disabled"
-msgstr ""
+msgstr "La médiathèque est désactivée"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:148
 msgid "Loading..."
-msgstr ""
+msgstr "Chargement en cours…"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:151
 msgid "Scanning..."
@@ -2048,7 +2048,7 @@ msgstr ""
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:157
 msgid "Saving..."
-msgstr ""
+msgstr "Enregistrement en cours…"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:729
 msgid "Media Library plugin is unavailable."
@@ -2155,15 +2155,15 @@ msgstr "Recharger les métadonnées"
 
 #: ../plugins/gtkui/plmenu.c:532
 msgid "Cu_t"
-msgstr ""
+msgstr "_Couper"
 
 #: ../plugins/gtkui/plmenu.c:548
 msgid "_Copy"
-msgstr ""
+msgstr "Co_pier"
 
 #: ../plugins/gtkui/plmenu.c:565
 msgid "_Paste"
-msgstr ""
+msgstr "C_oller"
 
 #: ../plugins/gtkui/plmenu.c:606 ../translation/plugins.c:155
 #, no-c-format
@@ -3363,7 +3363,7 @@ msgstr "Dupliquer la liste de lecture"
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "Jump to Currently Playing Track"
-msgstr "Passer à la piste de lecture en cours"
+msgstr "Passer à la piste en cours de lecture"
 
 #: ../translation/plugins.c:262
 #, no-c-format
@@ -3423,52 +3423,52 @@ msgstr "Liste de lecture précédente"
 #: ../translation/plugins.c:284
 #, no-c-format
 msgid "Switch to Playlist 10"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 10"
 
 #: ../translation/plugins.c:286
 #, no-c-format
 msgid "Switch to Playlist 9"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 9"
 
 #: ../translation/plugins.c:288
 #, no-c-format
 msgid "Switch to Playlist 8"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 8"
 
 #: ../translation/plugins.c:290
 #, no-c-format
 msgid "Switch to Playlist 7"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 7"
 
 #: ../translation/plugins.c:292
 #, no-c-format
 msgid "Switch to Playlist 6"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 6"
 
 #: ../translation/plugins.c:294
 #, no-c-format
 msgid "Switch to Playlist 5"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 5"
 
 #: ../translation/plugins.c:296
 #, no-c-format
 msgid "Switch to Playlist 4"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 4"
 
 #: ../translation/plugins.c:298
 #, no-c-format
 msgid "Switch to Playlist 3"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 3"
 
 #: ../translation/plugins.c:300
 #, no-c-format
 msgid "Switch to Playlist 2"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 2"
 
 #: ../translation/plugins.c:302
 #, no-c-format
 msgid "Switch to Playlist 1"
-msgstr ""
+msgstr "Basculer vers la liste de lecture 1"
 
 #: ../translation/plugins.c:304
 #, no-c-format
@@ -3518,7 +3518,7 @@ msgstr "Ajouter à la file d’attente de lecture"
 #: ../translation/plugins.c:324
 #, no-c-format
 msgid "Add to Front of Playback Queue"
-msgstr ""
+msgstr "Ajouter au début de la file d’attente de lecture"
 
 #: ../translation/plugins.c:326
 #, no-c-format
@@ -3887,7 +3887,7 @@ msgstr "Banque de fichier de configuration Timidity++ bank"
 #: ../translation/plugins.c:496
 #, no-c-format
 msgid "File extension"
-msgstr ""
+msgstr "Extension de fichier"
 
 #: ../translation/plugins.c:498
 #, no-c-format
@@ -3902,17 +3902,17 @@ msgstr ""
 #: ../translation/plugins.c:502
 #, no-c-format
 msgid "Pipe (stdin)"
-msgstr ""
+msgstr "Tube (stdin)"
 
 #: ../translation/plugins.c:504
 #, no-c-format
 msgid "Temporary file"
-msgstr ""
+msgstr "Fichier temporaire"
 
 #: ../translation/plugins.c:506
 #, no-c-format
 msgid "Source file"
-msgstr ""
+msgstr "Fichier source"
 
 #: ../translation/plugins.c:510
 #, no-c-format

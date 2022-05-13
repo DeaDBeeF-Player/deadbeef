@@ -3,19 +3,19 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Jung Hee Lee <daemul72@gmail.com>, 2021
-# Jung Hee Lee <daemul72@gmail.com>, 2020
-# Jung Hee Lee <daemul72@gmail.com>, 2019-2020
+# JungHee Lee <daemul72@gmail.com>, 2021
+# JungHee Lee <daemul72@gmail.com>, 2020
+# JungHee Lee <daemul72@gmail.com>, 2019-2020
 # ieukori <ieukori@gmail.com>, 2016
-# Jung Hee Lee <daemul72@gmail.com>, 2020-2022
-# Jung Hee Lee <daemul72@gmail.com>, 2021
+# JungHee Lee <daemul72@gmail.com>, 2020-2022
+# JungHee Lee <daemul72@gmail.com>, 2021-2022
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-23 21:09+0100\n"
-"PO-Revision-Date: 2022-02-23 20:09+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2022-05-13 15:15+0200\n"
+"PO-Revision-Date: 2013-08-15 06:35+0000\n"
+"Last-Translator: JungHee Lee <daemul72@gmail.com>, 2021-2022\n"
 "Language-Team: Korean (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -652,11 +652,11 @@ msgstr "DeaDBeeF 번역자"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:387
 msgid "Playing Track"
-msgstr ""
+msgstr "재생중인 곡"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:391
 msgid "Selected Track"
-msgstr ""
+msgstr "선택된 곡"
 
 #: ../plugins/gtkui/ctmapping.c:130
 msgid "Content-Type"
@@ -1927,38 +1927,38 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "파일이 휴지통으로 이동됩니다.\n\n(이 대화창은 GTKUI 플러그인 설정에서 해제할 수 있습니다)"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:47
 msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "파일이 손실됩니다.\n\n(이 대화창은 GTKUI 플러그인 설정에서 해제할 수 있습니다.)"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:52
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "선택한 파일을 정말로 삭제하시겠습니까?%s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:54
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "정말로 %d개의 선택한 파일을 모두 삭제하시겠습니까?%s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:59
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "현재 재생 목록에서 모든 %d개의 파일을 삭제하시겠습니까?%s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:62
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "현재 재생 중인 파일을 정말로 삭제하시겠습니까?%s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:65
 msgid "Delete files from disk"
-msgstr ""
+msgstr "디스크에서 파일 삭제"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:900
 #: ../plugins/shellexecui/shellexecui.c:139
@@ -2022,31 +2022,31 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:140
 msgid "All Music"
-msgstr ""
+msgstr "모든 음악"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:144
 msgid "Media library is disabled"
-msgstr ""
+msgstr "미디어 라이브러리가 비활성화되었습니다"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:148
 msgid "Loading..."
-msgstr ""
+msgstr "불러오는 중..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:151
 msgid "Scanning..."
-msgstr ""
+msgstr "스캔하는 중..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:154
 msgid "Indexing..."
-msgstr ""
+msgstr "연동하는 중..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:157
 msgid "Saving..."
-msgstr ""
+msgstr "저장하는 중..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:729
 msgid "Media Library plugin is unavailable."
-msgstr ""
+msgstr "미디어 라이브러리 플러그인을 사용할 수 없습니다."
 
 #: ../plugins/gtkui/playlist/mainplaylist.c:233
 #: ../plugins/gtkui/playlist/searchplaylist.c:191
@@ -2131,11 +2131,11 @@ msgstr "아티스트/날짜/앨범"
 
 #: ../plugins/gtkui/plmenu.c:487
 msgid "Play Next"
-msgstr ""
+msgstr "다음 재생"
 
 #: ../plugins/gtkui/plmenu.c:492
 msgid "Play Later"
-msgstr ""
+msgstr "나중에 재생"
 
 #: ../plugins/gtkui/plmenu.c:497 ../translation/plugins.c:320
 #, no-c-format
@@ -2149,15 +2149,15 @@ msgstr "메타정보 새로고침"
 
 #: ../plugins/gtkui/plmenu.c:532
 msgid "Cu_t"
-msgstr ""
+msgstr "잘라내기(_T)"
 
 #: ../plugins/gtkui/plmenu.c:548
 msgid "_Copy"
-msgstr ""
+msgstr "복사하기(_C)"
 
 #: ../plugins/gtkui/plmenu.c:565
 msgid "_Paste"
-msgstr ""
+msgstr "붙여넣기(_P)"
 
 #: ../plugins/gtkui/plmenu.c:606 ../translation/plugins.c:155
 #, no-c-format
@@ -2555,12 +2555,12 @@ msgstr "음성:"
 #: ../plugins/hotkeys/actionhandlers.c:808
 #, c-format
 msgid "Copy of %s"
-msgstr ""
+msgstr "%s 사본"
 
 #: ../plugins/hotkeys/actionhandlers.c:811
 #, c-format
 msgid "Copy of %s (%d)"
-msgstr ""
+msgstr "%s 사본 (%d)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
@@ -2913,12 +2913,12 @@ msgstr "캐시 새로고침 (시간)"
 #: ../translation/plugins.c:49
 #, no-c-format
 msgid "Simplified cache file names"
-msgstr ""
+msgstr "단순화된 캐시 파일 이름"
 
 #: ../translation/plugins.c:51
 #, no-c-format
 msgid "Image size"
-msgstr ""
+msgstr "이미지 크기"
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:54

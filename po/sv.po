@@ -13,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-23 21:09+0100\n"
-"PO-Revision-Date: 2022-02-23 20:09+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2022-05-13 15:15+0200\n"
+"PO-Revision-Date: 2013-08-15 06:35+0000\n"
+"Last-Translator: Jonatan Nyberg <jonatan@autistici.org>, 2021-2022\n"
 "Language-Team: Swedish (http://www.transifex.com/deadbeef-player/deadbeef-player/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -652,11 +652,11 @@ msgstr "DeaDBeeF-översättare"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:387
 msgid "Playing Track"
-msgstr ""
+msgstr "Spelar spår"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:391
 msgid "Selected Track"
-msgstr ""
+msgstr "Markerat spår"
 
 #: ../plugins/gtkui/ctmapping.c:130
 msgid "Content-Type"
@@ -1212,7 +1212,7 @@ msgstr "Stäng spellistor med mitten musknappen"
 
 #: ../plugins/gtkui/deadbeef.glade.h:130 ../plugins/gtkui/interface.c:2331
 msgid "Hide \"Delete from Disk\" context menu item"
-msgstr ""
+msgstr "Dölj \"Ta bort från disk\" i snabbmenyn"
 
 #: ../plugins/gtkui/deadbeef.glade.h:131 ../plugins/gtkui/interface.c:2335
 msgid ""
@@ -1701,7 +1701,7 @@ msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:248 ../plugins/gtkui/interface.c:5801
 msgid "Individual Values"
-msgstr ""
+msgstr "Individuella värden"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
@@ -1927,38 +1927,38 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Filerna kommer att flyttas till papperskorgen.\n\n(Denna dialog kan stängas av i insticksmodulsinställningarna för GTKUI)"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:47
 msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Filerna kommer att gå förlorade.\n\n(Denna dialog kan stängas av i insticksmodulsinställningarna för GTKUI)"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:52
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Vill du verkligen ta bort den valda filen?%s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:54
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Vill du verkligen ta bort alla %d markerade filer?%s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:59
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Vill du verkligen ta bort alla %d filer från den aktuella spellistan?%s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:62
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Vill du verkligen ta bort filen som spelas för närvarande?%s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:65
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Ta bort filer från disken"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:900
 #: ../plugins/shellexecui/shellexecui.c:139
@@ -2022,27 +2022,27 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:140
 msgid "All Music"
-msgstr ""
+msgstr "All musik"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:144
 msgid "Media library is disabled"
-msgstr ""
+msgstr "Mediebiblioteket är inaktiverat"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:148
 msgid "Loading..."
-msgstr ""
+msgstr "Läser in..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:151
 msgid "Scanning..."
-msgstr ""
+msgstr "Skannar..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:154
 msgid "Indexing..."
-msgstr ""
+msgstr "Indexerar..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:157
 msgid "Saving..."
-msgstr ""
+msgstr "Sparar..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:729
 msgid "Media Library plugin is unavailable."
@@ -2131,11 +2131,11 @@ msgstr "Artist/Datum/Album"
 
 #: ../plugins/gtkui/plmenu.c:487
 msgid "Play Next"
-msgstr ""
+msgstr "Spela nästa"
 
 #: ../plugins/gtkui/plmenu.c:492
 msgid "Play Later"
-msgstr ""
+msgstr "Spela senare"
 
 #: ../plugins/gtkui/plmenu.c:497 ../translation/plugins.c:320
 #, no-c-format
@@ -2149,15 +2149,15 @@ msgstr "Läs om metadata"
 
 #: ../plugins/gtkui/plmenu.c:532
 msgid "Cu_t"
-msgstr ""
+msgstr "Kl_ipp ut"
 
 #: ../plugins/gtkui/plmenu.c:548
 msgid "_Copy"
-msgstr ""
+msgstr "_Kopiera"
 
 #: ../plugins/gtkui/plmenu.c:565
 msgid "_Paste"
-msgstr ""
+msgstr "_Klistra in"
 
 #: ../plugins/gtkui/plmenu.c:606 ../translation/plugins.c:155
 #, no-c-format
@@ -2189,7 +2189,7 @@ msgstr "Aktivera automatisk sortering"
 msgid ""
 "Re-apply the last sort you chose every time when adding new files to this "
 "playlist"
-msgstr ""
+msgstr "Använd den senaste sorteringen du valde igen varje gång när du lägger till nya filer till den här spellistan"
 
 #: ../plugins/gtkui/pluginconf.c:47
 msgid "Open file..."
@@ -2403,11 +2403,11 @@ msgstr "Visa kolumnrubriker"
 
 #: ../plugins/gtkui/widgets.c:2860 ../plugins/gtkui/widgets.c:3351
 msgid "Rendering Mode"
-msgstr ""
+msgstr "Renderingsläge"
 
 #: ../plugins/gtkui/widgets.c:2865
 msgid "Multichannel"
-msgstr ""
+msgstr "Multikanal"
 
 #: ../plugins/gtkui/widgets.c:2874
 msgid "Scale"
@@ -2466,11 +2466,11 @@ msgstr "Diskreta frekvenser"
 
 #: ../plugins/gtkui/widgets.c:3359
 msgid "1/12 Octave Bands"
-msgstr ""
+msgstr "1/12 oktavband"
 
 #: ../plugins/gtkui/widgets.c:3362
 msgid "1/24 Octave Bands"
-msgstr ""
+msgstr "1/24 oktavband"
 
 #: ../plugins/gtkui/widgets.c:3369
 msgid "Gap Size"
@@ -2555,12 +2555,12 @@ msgstr "Röster:"
 #: ../plugins/hotkeys/actionhandlers.c:808
 #, c-format
 msgid "Copy of %s"
-msgstr ""
+msgstr "Kopia av %s"
 
 #: ../plugins/hotkeys/actionhandlers.c:811
 #, c-format
 msgid "Copy of %s (%d)"
-msgstr ""
+msgstr "Kopia av %s (%d)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
@@ -2731,7 +2731,7 @@ msgstr "Ogiltiga värden"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi: inställningsfilen för freepats hittades inte. Vänligen installera paketet timidity-freepats eller ange sökväg till freepats.cfg i inställningarna för insticksmodulen."
+msgstr "wildmidi: inställningsfilen för freepats hittades inte. Installera paketet timidity-freepats eller ange sökväg till freepats.cfg i inställningarna för insticksmodulen."
 
 #: ../tf.c:2203
 msgid "mono"
@@ -2913,12 +2913,12 @@ msgstr "Cacheuppdatering (timmar)"
 #: ../translation/plugins.c:49
 #, no-c-format
 msgid "Simplified cache file names"
-msgstr ""
+msgstr "Förenklade cache-filnamn"
 
 #: ../translation/plugins.c:51
 #, no-c-format
 msgid "Image size"
-msgstr ""
+msgstr "Bildstorlek"
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:54
@@ -3326,7 +3326,7 @@ msgstr "Anpassad statusikon"
 #: ../translation/plugins.c:245
 #, no-c-format
 msgid "Misc:"
-msgstr ""
+msgstr "Diverse:"
 
 #: ../translation/plugins.c:247
 #, no-c-format
@@ -3613,7 +3613,7 @@ msgstr "Växla stopp efter aktuellt album"
 #: ../translation/plugins.c:375
 #, no-c-format
 msgid "Lookup on Last.fm"
-msgstr ""
+msgstr "Slå up på Last.fm"
 
 #: ../translation/plugins.c:377
 #, no-c-format
@@ -3886,7 +3886,7 @@ msgstr "Filändelse"
 #: ../translation/plugins.c:498
 #, no-c-format
 msgid "Encoder command line"
-msgstr ""
+msgstr "Kodarens kommandorad"
 
 #: ../translation/plugins.c:500
 #, no-c-format

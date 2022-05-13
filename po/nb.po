@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-23 21:09+0100\n"
-"PO-Revision-Date: 2022-02-23 20:09+0000\n"
-"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>\n"
+"POT-Creation-Date: 2022-05-13 15:15+0200\n"
+"PO-Revision-Date: 2013-08-15 06:35+0000\n"
+"Last-Translator: heskjestad <cato@heskjestad.xyz>, 2021-2022\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -648,11 +648,11 @@ msgstr "DeaDBeeF-oversettere"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:387
 msgid "Playing Track"
-msgstr ""
+msgstr "Spillende spor"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:391
 msgid "Selected Track"
-msgstr ""
+msgstr "Utvalgt spor"
 
 #: ../plugins/gtkui/ctmapping.c:130
 msgid "Content-Type"
@@ -1923,38 +1923,38 @@ msgid ""
 " The files will be moved to trash.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Filene vil flyttes til søppelkurven.\n\n(Dette dialogvinduet kan slås av i innstillingene til GTKUI-tillegget)"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:47
 msgid ""
 " The files will be lost.\n"
 "\n"
 "(This dialog can be turned off in GTKUI plugin settings)"
-msgstr ""
+msgstr "Dette vil faktisk slette filer.\n\n(Dette dialogvinduet kan slås av i innstillingene til GTKUI-tillegget)."
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:52
 #, c-format
 msgid "Do you really want to delete the selected file?%s"
-msgstr ""
+msgstr "Vil du virkelig slette valgt fil? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:54
 #, c-format
 msgid "Do you really want to delete all %d selected files?%s"
-msgstr ""
+msgstr "Vil du virkelig slette alle de %d valgte filene? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:59
 #, c-format
 msgid "Do you really want to delete all %d files from the current playlist?%s"
-msgstr ""
+msgstr "Vil du virkelig slette alle %d filer fra gjeldende spilleliste? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:62
 #, c-format
 msgid "Do you really want to delete the currently playing file?%s"
-msgstr ""
+msgstr "Vil du virkelig slette fila som spiller nå? %s"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:65
 msgid "Delete files from disk"
-msgstr ""
+msgstr "Slette filer fra disk"
 
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:900
 #: ../plugins/shellexecui/shellexecui.c:139
@@ -2018,31 +2018,31 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:140
 msgid "All Music"
-msgstr ""
+msgstr "All musikk"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:144
 msgid "Media library is disabled"
-msgstr ""
+msgstr "Mediebiblioteket er slått av"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:148
 msgid "Loading..."
-msgstr ""
+msgstr "Laster …"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:151
 msgid "Scanning..."
-msgstr ""
+msgstr "Søker …"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:154
 msgid "Indexing..."
-msgstr ""
+msgstr "Indekserer …"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:157
 msgid "Saving..."
-msgstr ""
+msgstr "Lagrer …"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:729
 msgid "Media Library plugin is unavailable."
-msgstr ""
+msgstr "Mediebibliotekets programtillegg er ikke tilgjengelig."
 
 #: ../plugins/gtkui/playlist/mainplaylist.c:233
 #: ../plugins/gtkui/playlist/searchplaylist.c:191
@@ -2127,11 +2127,11 @@ msgstr "Artist/dato/album"
 
 #: ../plugins/gtkui/plmenu.c:487
 msgid "Play Next"
-msgstr ""
+msgstr "Spill etterpå"
 
 #: ../plugins/gtkui/plmenu.c:492
 msgid "Play Later"
-msgstr ""
+msgstr "Spill senere"
 
 #: ../plugins/gtkui/plmenu.c:497 ../translation/plugins.c:320
 #, no-c-format
@@ -2145,15 +2145,15 @@ msgstr "Oppdater metadata"
 
 #: ../plugins/gtkui/plmenu.c:532
 msgid "Cu_t"
-msgstr ""
+msgstr "Klipp _ut"
 
 #: ../plugins/gtkui/plmenu.c:548
 msgid "_Copy"
-msgstr ""
+msgstr "_Kopier"
 
 #: ../plugins/gtkui/plmenu.c:565
 msgid "_Paste"
-msgstr ""
+msgstr "_Lim inn"
 
 #: ../plugins/gtkui/plmenu.c:606 ../translation/plugins.c:155
 #, no-c-format
@@ -2551,12 +2551,12 @@ msgstr "Stemmer: "
 #: ../plugins/hotkeys/actionhandlers.c:808
 #, c-format
 msgid "Copy of %s"
-msgstr ""
+msgstr "Kopi av %s"
 
 #: ../plugins/hotkeys/actionhandlers.c:811
 #, c-format
 msgid "Copy of %s (%d)"
-msgstr ""
+msgstr "Kopi av %s (%d)"
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
@@ -2909,12 +2909,12 @@ msgstr "Oppdateringsintervall for hurtiglager (timer)"
 #: ../translation/plugins.c:49
 #, no-c-format
 msgid "Simplified cache file names"
-msgstr ""
+msgstr "Forenklede filnavn i hurtiglager"
 
 #: ../translation/plugins.c:51
 #, no-c-format
 msgid "Image size"
-msgstr ""
+msgstr "Bildestørrelse"
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:54
