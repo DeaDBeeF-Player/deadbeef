@@ -1071,7 +1071,7 @@ main_cleanup_and_quit (void) {
         plug_cleanup ();
         trace ("logger_free\n");
 
-        trace ("hej-hej!\n");
+        trace ("💛💙\n");
         ddb_logger_free();
 
         char crash_marker[PATH_MAX];
