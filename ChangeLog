@@ -1,3 +1,7 @@
+version 1.9.1
+	Fixed: The release tarball was missing some required files
+	Fixed: Restored Belarussian language support - thanks to @gimrock, @kai3341 and others for changing my mind about people of Belarus. Fuck lukashenko.
+
 version 1.9.0
 	Fixed: WMA regression which caused corrupt playback
 	Fixed: Deadlock in ALSA plugin
