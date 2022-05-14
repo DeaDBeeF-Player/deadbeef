@@ -1376,7 +1376,6 @@
 		2D715C1E26C83A010022A8F0 /* prefwinplugins.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1C26C83A010022A8F0 /* prefwinplugins.h */; };
 		2D715C1F26C83A010022A8F0 /* prefwinplugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1D26C83A010022A8F0 /* prefwinplugins.c */; };
 		2D715C3626C8451A0022A8F0 /* prefwinmedialib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C3426C8451A0022A8F0 /* prefwinmedialib.h */; };
-		2D715C3726C8451A0022A8F0 /* prefwinmedialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C3526C8451A0022A8F0 /* prefwinmedialib.c */; };
 		2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D71C2681DC88E5C00247CEF /* ScriptableTableDataSource.h */; };
 		2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D71C2691DC88E5C00247CEF /* ScriptableTableDataSource.m */; };
 		2D71F1B624AE7A1A00E753D3 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2243,15 +2242,12 @@
 		2DC656AA2744289C00583E14 /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
 		2DC656AB2744289C00583E14 /* prefwin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A42269BB4300AFF9AE /* prefwin.c */; };
 		2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5AF2269BB4300AFF9AE /* ddbseekbar.c */; };
-		2DC656AD2744289C00583E14 /* medialibwidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCCCF7D26C43D080034F4BB /* medialibwidget.c */; };
 		2DC656AE2744289C00583E14 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5B82269BB4300AFF9AE /* support.c */; };
 		2DC656AF2744289C00583E14 /* ddbtabstrip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5812269BB4300AFF9AE /* ddbtabstrip.c */; };
-		2DC656B02744289C00583E14 /* prefwinmedialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C3526C8451A0022A8F0 /* prefwinmedialib.c */; };
 		2DC656B12744289C00583E14 /* clipboard.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B59B2269BB4300AFF9AE /* clipboard.c */; };
 		2DC656B22744289C00583E14 /* prefwinmisc.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1126C836FE0022A8F0 /* prefwinmisc.c */; };
 		2DC656B32744289C00583E14 /* gdkdrawing.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5D72269BB4300AFF9AE /* gdkdrawing.c */; };
 		2DC656B42744289C00583E14 /* prefwinplayback.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C0D26C835E90022A8F0 /* prefwinplayback.c */; };
-		2DC656B52744289C00583E14 /* medialibmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE55ACD26C5A47F008F33FF /* medialibmanager.c */; };
 		2DC656B62744289C00583E14 /* plcommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A12269BB4300AFF9AE /* plcommon.c */; };
 		2DC656B72744289C00583E14 /* actions.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5E52269BB4300AFF9AE /* actions.c */; };
 		2DC656B82744289C00583E14 /* hotkeys.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5F72269BB4300AFF9AE /* hotkeys.c */; };
@@ -2423,7 +2419,6 @@
 		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DCB281D19E86194008E9DF6 /* m3u.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCCCF7C26C43D080034F4BB /* medialibwidget.h */; };
-		2DCCCF8026C43D0E0034F4BB /* medialibwidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCCCF7D26C43D080034F4BB /* medialibwidget.c */; };
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
 		2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DCF73B31A952F8900495740 /* PreferencesWindowController.m */; };
@@ -2607,7 +2602,6 @@
 		2DE5562926075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
 		2DE5562A26075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
 		2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE55ACC26C5A47F008F33FF /* medialibmanager.h */; };
-		2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE55ACD26C5A47F008F33FF /* medialibmanager.c */; };
 		2DE77484275E89DF00890350 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE7747C275E89DD00890350 /* support.h */; };
 		2DE77486275E89DF00890350 /* convgui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747D275E89DD00890350 /* convgui.c */; };
 		2DE77488275E89DF00890350 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7747E275E89DE00890350 /* interface.c */; };
@@ -17402,15 +17396,12 @@
 				2DC656AA2744289C00583E14 /* trkproperties_shared.c in Sources */,
 				2DC656AB2744289C00583E14 /* prefwin.c in Sources */,
 				2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */,
-				2DC656AD2744289C00583E14 /* medialibwidget.c in Sources */,
 				2DC656AE2744289C00583E14 /* support.c in Sources */,
 				2DC656AF2744289C00583E14 /* ddbtabstrip.c in Sources */,
-				2DC656B02744289C00583E14 /* prefwinmedialib.c in Sources */,
 				2DC656B12744289C00583E14 /* clipboard.c in Sources */,
 				2DC656B22744289C00583E14 /* prefwinmisc.c in Sources */,
 				2DC656B32744289C00583E14 /* gdkdrawing.c in Sources */,
 				2DC656B42744289C00583E14 /* prefwinplayback.c in Sources */,
-				2DC656B52744289C00583E14 /* medialibmanager.c in Sources */,
 				2DC656B62744289C00583E14 /* plcommon.c in Sources */,
 				2D9793F3276F6D2F0062585E /* albumartwidget.c in Sources */,
 				2D60EB00277235C800C28A44 /* playlistcontroller.c in Sources */,
@@ -17490,15 +17481,12 @@
 				2DE3B8142269C0A400AFF9AE /* trkproperties_shared.c in Sources */,
 				2DE3B7D72269BF1700AFF9AE /* prefwin.c in Sources */,
 				2DE3B7DC2269BF1700AFF9AE /* ddbseekbar.c in Sources */,
-				2DCCCF8026C43D0E0034F4BB /* medialibwidget.c in Sources */,
 				2DE3B7E12269BF3100AFF9AE /* support.c in Sources */,
 				2DE3B7C62269BF1300AFF9AE /* ddbtabstrip.c in Sources */,
-				2D715C3726C8451A0022A8F0 /* prefwinmedialib.c in Sources */,
 				2DE3B7D22269BF1700AFF9AE /* clipboard.c in Sources */,
 				2D715C1326C836FE0022A8F0 /* prefwinmisc.c in Sources */,
 				2DE3B7F12269BF3100AFF9AE /* gdkdrawing.c in Sources */,
 				2D715C0F26C835E90022A8F0 /* prefwinplayback.c in Sources */,
-				2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */,
 				2DE3B7D52269BF1700AFF9AE /* plcommon.c in Sources */,
 				2D9793F4276F6D2F0062585E /* albumartwidget.c in Sources */,
 				2D60EB01277235C800C28A44 /* playlistcontroller.c in Sources */,
