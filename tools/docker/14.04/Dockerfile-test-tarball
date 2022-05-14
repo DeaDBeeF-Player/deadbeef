@@ -1,5 +1,8 @@
 FROM deadbeef-builder-player-clang-14.04-distro
 
+RUN apt-get -qq update
+RUN apt-get install -y -qq libgtk-3-dev
+
 WORKDIR /usr/src/deadbeef
 COPY . /usr/src/deadbeef
 
