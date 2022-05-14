@@ -37,8 +37,6 @@ GTKUI_SOURCES = \
     namedicons.c namedicons.h\
     pltmenu.c\
     tfimport.c tfimport.h\
-	medialib/medialibwidget.c medialib/medialibwidget.h\
-	medialib/medialibmanager.c medialib/medialibmanager.h\
 	covermanager/covermanager.c covermanager/covermanager.h\
 	covermanager/gobjcache.c covermanager/gobjcache.h\
 	covermanager/albumartwidget.c covermanager/albumartwidget.h\
@@ -51,7 +49,6 @@ GTKUI_SOURCES = \
 	playlist/searchplaylist.c playlist/searchplaylist.h\
 	prefwin/prefwin.c prefwin/prefwin.h\
 	prefwin/prefwinappearance.c prefwin/prefwinappearance.h\
-	prefwin/prefwinmedialib.c prefwin/prefwinmedialib.h\
 	prefwin/prefwinmisc.c prefwin/prefwinmisc.h\
 	prefwin/prefwinnetwork.c prefwin/prefwinnetwork.h\
 	prefwin/prefwinplayback.c prefwin/prefwinplayback.h\
