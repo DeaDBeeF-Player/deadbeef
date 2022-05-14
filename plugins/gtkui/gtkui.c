@@ -118,8 +118,8 @@ int gtkui_disable_seekbar_overlay = 0;
 
 #define TRAY_ICON "deadbeef_tray_icon"
 
-const char *gtkui_default_titlebar_playing = "💛💙 DeaDBeeF - %artist% - %title%";
-const char *gtkui_default_titlebar_stopped = "💛💙 DeaDBeeF";
+const char *gtkui_default_titlebar_playing = "DeaDBeeF - %artist% - %title%";
+const char *gtkui_default_titlebar_stopped = "DeaDBeeF";
 
 static char *titlebar_playing_bc;
 static char *titlebar_stopped_bc;
