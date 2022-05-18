@@ -176,15 +176,23 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
     esc_xml (content, esc_content, sizeof (esc_content));
     DBusMessage *msg = dbus_message_new_method_call (E_NOTIFICATION_BUS_NAME, E_NOTIFICATION_PATH, E_NOTIFICATION_INTERFACE, "Notify");
 
-    deadbeef->pl_lock ();
-    if (last_track) {
-        deadbeef->pl_item_unref (last_track);
-        last_track = 0;
+    if (replaces_id == 0) {
+        time_t new_time = time(NULL);
+        if (last_track == track) {
+            if (new_time - request_timer < 1) {
+                return;
+            }
+        }
+        else {
+            if (last_track) {
+                deadbeef->pl_item_unref (last_track);
+                last_track = 0;
+            }
+            last_track = track;
+            deadbeef->pl_item_ref (last_track);
+        }
+        request_timer = new_time;
     }
-    last_track = track;
-    deadbeef->pl_item_ref (last_track);
-    request_timer = time (NULL);
-    deadbeef->pl_unlock ();
 
     const char *v_appname = "DeaDBeeF";
     dbus_uint32_t v_id = 0;
@@ -254,11 +262,10 @@ static int
 on_songstarted (DB_playItem_t *track) {
     if (track && deadbeef->conf_get_int ("notify.enable", 0)) {
         if (track) {
-            deadbeef->pl_item_ref (track);
             if (terminate) {
-                deadbeef->pl_item_unref (track);
                 return 0;
             }
+            deadbeef->pl_item_ref (track);
             dispatch_async (queue, ^{
                 show_notification (track, NULL, 0);
                 deadbeef->pl_item_unref (track);
@@ -290,6 +297,12 @@ notify_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     {
         ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
         on_songstarted (ev->track);
+    }
+        break;
+    case DB_EV_SONGCHANGED:
+    {
+        ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
+        on_songstarted (ev->to);
     }
         break;
     case DB_EV_CONFIGCHANGED:
