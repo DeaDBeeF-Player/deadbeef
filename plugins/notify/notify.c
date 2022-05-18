@@ -251,9 +251,8 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
 }
 
 static int
-on_songstarted (ddb_event_track_t *ev) {
-    if (ev->track && deadbeef->conf_get_int ("notify.enable", 0)) {
-        DB_playItem_t *track = ev->track;
+on_songstarted (DB_playItem_t *track) {
+    if (track && deadbeef->conf_get_int ("notify.enable", 0)) {
         if (track) {
             deadbeef->pl_item_ref (track);
             if (terminate) {
@@ -288,7 +287,10 @@ static int
 notify_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_SONGSTARTED:
-        on_songstarted ((ddb_event_track_t *)ctx);
+    {
+        ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
+        on_songstarted (ev->track);
+    }
         break;
     case DB_EV_CONFIGCHANGED:
         init_tf ();
