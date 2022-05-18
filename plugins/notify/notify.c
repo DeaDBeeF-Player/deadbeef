@@ -45,7 +45,7 @@ static char *tf_title;
 static char *tf_content;
 
 static void
-show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t replaces_id);
+show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t replaces_id, int force);
 
 static dbus_uint32_t
 notify_send (DBusMessage *msg, dbus_uint32_t replaces_id) {
@@ -159,7 +159,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
 }
 
 static void
-show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t replaces_id) {
+show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t replaces_id, int force) {
     char title[1024];
     char content[1024];
 
@@ -178,7 +178,7 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
 
     if (replaces_id == 0) {
         time_t new_time = time(NULL);
-        if (last_track == track) {
+        if (last_track == track && !force) {
             if (new_time - request_timer < 1) {
                 return;
             }
@@ -207,13 +207,19 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
         query->source_id = 0;
 
         void (^completion_block)(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) = ^(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED) && cover != NULL && cover->image_filename) {
+            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
+                char *image_filename;
+                if (cover != NULL && cover->image_filename != NULL) {
+                    image_filename = strdup (cover->image_filename);
+                }
+                else {
+                    image_filename = strdup("deadbeef");
+                }
                 // redisplay notification with the album art
-                char *image_filename = strdup (cover->image_filename);
                 ddb_playItem_t *track = query->track;
                 deadbeef->pl_item_ref (track);
                 dispatch_async (queue, ^{
-                    show_notification (track, image_filename, new_replaces_id);
+                    show_notification (track, image_filename, new_replaces_id, 1);
                     free (image_filename);
                     deadbeef->pl_item_unref (track);
                 });
@@ -227,7 +233,12 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
 
         query->user_data = (dispatch_block_t)Block_copy(completion_block);
         artwork_plugin->cover_get (query, _cover_loaded_callback);
+
+        if (deadbeef->conf_get_int ("notify.fix_kde_5_23_5", 0)) {
+            return;
+        }
     }
+
     if (!v_iconname) {
         v_iconname = "deadbeef";
     }
@@ -267,7 +278,7 @@ on_songstarted (DB_playItem_t *track) {
             }
             deadbeef->pl_item_ref (track);
             dispatch_async (queue, ^{
-                show_notification (track, NULL, 0);
+                show_notification (track, NULL, 0, 0);
                 deadbeef->pl_item_unref (track);
             });
         }
@@ -375,6 +386,7 @@ static const char settings_dlg[] =
     "property \"Notification content format\" entry notify.format_content_tf \"" NOTIFY_DEFAULT_CONTENT "\";\n"
     "property \"Show album art\" checkbox notify.albumart 1;\n"
     "property \"Album art size (px)\" entry notify.albumart_size 64;\n"
+    "property \"Fix for KDE 5.23.5\" checkbox notify.fix_kde_5_23_5 0;\n"
 ;
 
 static DB_misc_t plugin = {
