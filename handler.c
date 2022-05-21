@@ -89,10 +89,11 @@ handler_push (handler_t *h, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2
     if (!h) {
         return -1;
     }
+    mutex_lock (h->mutex);
     if (!h->mfree) {
+        mutex_unlock (h->mutex);
         return -1;
     }
-    mutex_lock (h->mutex);
     message_t *msg = h->mfree;
     h->mfree = h->mfree->next;
     if (h->mqtail) {
