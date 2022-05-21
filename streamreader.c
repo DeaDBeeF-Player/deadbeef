@@ -115,6 +115,7 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     }
 
     // replaygain settings
+    mutex_lock (mutex);
     if (_rg_settingschanged || _prev_rg_track != track) {
         _prev_rg_track = track;
         _rg_settingschanged = 0;
@@ -123,6 +124,7 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
         replaygain_init_settings (&rg_settings, track);
         replaygain_set_current (&rg_settings);
     }
+    mutex_unlock (mutex);
 
     // NOTE: streamer_set_bitrate may be called during decoder->read, and set immediated bitrate of the block
     curr_block_bitrate = -1;
