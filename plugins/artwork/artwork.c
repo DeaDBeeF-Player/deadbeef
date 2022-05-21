@@ -1439,7 +1439,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         }
 
         /* Process this query, hopefully writing a file into cache */
-        ddb_cover_info_t *cover = sync_cover_info_alloc();
+        __block ddb_cover_info_t *cover = sync_cover_info_alloc();
 
         _init_cover_metadata(cover, query->track);
 
@@ -1456,10 +1456,19 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         }
 
         // check the cache
-        ddb_cover_info_t *cached_cover = cover_cache_find (cover);
-        if (cached_cover) {
-            cached_cover->priv->timestamp = time(NULL);
-            cover = cached_cover;
+        __block int found_in_cache = 0;
+        dispatch_sync(sync_queue, ^{
+            ddb_cover_info_t *cached_cover = cover_cache_find (cover);
+            if (cached_cover) {
+                found_in_cache = 1;
+                cached_cover->priv->timestamp = time(NULL);
+                cover_info_release(cover);
+                cover = cached_cover;
+            }
+        });
+
+
+        if (found_in_cache) {
             _execute_callback (callback, cover, query);
         }
         else {
