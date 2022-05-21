@@ -541,7 +541,11 @@ ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const A
     char *buffer = outOutputData->mBuffers[0].mData;
     sz = outOutputData->mBuffers[0].mDataByteSize;
 
-    if (state == DDB_PLAYBACK_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
+    deadbeef->mutex_lock (mutex);
+    int st = state;
+    deadbeef->mutex_unlock (mutex);
+
+    if (st == DDB_PLAYBACK_STATE_PLAYING && deadbeef->streamer_ok_to_read (-1)) {
         int br = deadbeef->streamer_read (buffer, sz);
         if (br < 0) {
             br = 0;
@@ -564,7 +568,10 @@ ca_unpause (void) {
 
 static ddb_playback_state_t
 ca_state (void) {
-    return state;
+    deadbeef->mutex_lock (mutex);
+    int ret = state;
+    deadbeef->mutex_unlock (mutex);
+    return ret;
 }
 
 static void ca_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata) {
