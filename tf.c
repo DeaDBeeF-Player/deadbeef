@@ -76,6 +76,8 @@
 // check the presence of `dimmed` field in context, based on reported size
 #define HAS_DIMMED(ctx) (ctx->_size > (char *)&ctx->dimmed - (char *)ctx)
 
+#define TF_INTERNAL_FLAG_LOCKED (1<<16)
+
 typedef struct {
     const char *i;
     uint8_t *o;
@@ -2701,8 +2703,17 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 // special cases
                 // most if not all of this stuff is to make tf scripts
                 // compatible with fb2k syntax
-                if (!(ctx->flags&DDB_TF_CONTEXT_NO_MUTEX_LOCK)) {
+
+                // locking: necessary because we use fast non-thread-safe APIs to access track metadata
+                // warning: calling streamer requires unlocking.
+
+                int pl_locked = 0;
+
+                if (!(ctx->flags&DDB_TF_CONTEXT_NO_MUTEX_LOCK)
+                    && !(ctx->flags&TF_INTERNAL_FLAG_LOCKED)) {
                     pl_lock ();
+                    ctx->flags |= TF_INTERNAL_FLAG_LOCKED;
+                    pl_locked = 1;
                 }
                 const char *val = NULL;
                 int needs_free = 0;
@@ -2814,7 +2825,12 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     val = pl_find_meta_raw (it, ":SAMPLERATE");
                 }
                 else if (!strcmp (name, "playback_bitrate")) {
+                    if (ctx->flags & TF_INTERNAL_FLAG_LOCKED) {
+                        pl_unlock();
+                    }
+
                     playItem_t *playing_track = streamer_get_playing_track();
+
                     if (playing_track) {
                         int br = streamer_get_apx_bitrate();
                         if (br >= 0) {
@@ -2824,6 +2840,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             skip_out = 1;
                         }
                         pl_item_unref (playing_track);
+                    }
+                    if (ctx->flags & TF_INTERNAL_FLAG_LOCKED) {
+                        pl_lock ();
                     }
                 }
                 else if (!strcmp (name, "bitrate")) {
@@ -2876,6 +2895,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     val = pl_find_meta_raw (it, ":REPLAYGAIN_TRACKPEAK");
                 }
                 else if ((tmp_a = !strcmp (name, "playback_time")) || (tmp_b = !strcmp (name, "playback_time_seconds")) || (tmp_c = !strcmp (name, "playback_time_remaining")) || (tmp_d = !strcmp (name, "playback_time_remaining_seconds")) || (tmp_e = !strcmp (name, "playback_time_ms"))) {
+                    if (ctx->flags & TF_INTERNAL_FLAG_LOCKED) {
+                        pl_unlock();
+                    }
                     playItem_t *playing = streamer_get_playing_track ();
                     if (it && playing == it && !(ctx->flags & DDB_TF_CONTEXT_NO_DYNAMIC)) {
                         float t = streamer_get_playpos ();
@@ -2921,6 +2943,10 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     if (playing) {
                         pl_item_unref (playing);
                     }
+                    if (ctx->flags & TF_INTERNAL_FLAG_LOCKED) {
+                        pl_lock();
+                    }
+
                 }
                 else if ((tmp_a = !strcmp (name, "length")) || (tmp_b = !strcmp (name, "length_ex"))) {
                     float t = pl_get_item_duration (it);
@@ -2979,7 +3005,15 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     skip_out = 1;
                 }
                 else if (!strcmp (name, "isplaying")) {
+                    if (ctx->flags & TF_INTERNAL_FLAG_LOCKED) {
+                        pl_unlock();
+                    }
+
                     playItem_t *playing = streamer_get_playing_track ();
+                    if (ctx->flags & TF_INTERNAL_FLAG_LOCKED) {
+                        pl_lock();
+                    }
+
                     if (playing != NULL && ctx->it == (ddb_playItem_t *)playing) {
                         *out++ = '1';
                         outlen--;
@@ -2990,7 +3024,14 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                 }
                 else if (!strcmp (name, "ispaused")) {
+                    if (ctx->flags & TF_INTERNAL_FLAG_LOCKED) {
+                        pl_unlock();
+                    }
                     playItem_t *playing = streamer_get_playing_track ();
+                    if (ctx->flags & TF_INTERNAL_FLAG_LOCKED) {
+                        pl_lock();
+                    }
+
                     if (playing != NULL && ctx->it == (ddb_playItem_t *)playing && plug_get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED) {
                         *out++ = '1';
                         outlen--;
@@ -3255,8 +3296,9 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     out += l;
                     outlen -= l;
                 }
-                if (!(ctx->flags&DDB_TF_CONTEXT_NO_MUTEX_LOCK)) {
+                if (pl_locked) {
                     pl_unlock ();
+                    ctx->flags &= ~TF_INTERNAL_FLAG_LOCKED;
                 }
                 if (!skip_out && !val && fail_on_undef) {
                     return -1;
