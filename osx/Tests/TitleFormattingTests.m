@@ -61,6 +61,8 @@ static DB_output_t fake_out = {
     ctx.it = (DB_playItem_t *)it;
     ctx.plt = NULL;
 
+    streamer_init();
+
     streamer_set_playing_track (NULL);
 
     fake_out_state_value = DDB_PLAYBACK_STATE_STOPPED;
@@ -71,6 +73,7 @@ static DB_output_t fake_out = {
     pl_item_unref (it);
     ctx.it = NULL;
     ctx.plt = NULL;
+    streamer_free();
 
     [super tearDown];
 }

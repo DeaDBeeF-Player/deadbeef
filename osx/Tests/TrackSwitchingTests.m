@@ -21,6 +21,7 @@
 @implementation TrackSwitchingTests
 
 - (void)setUp {
+    streamer_init();
     streamer_set_repeat (DDB_REPEAT_OFF);
     streamer_set_shuffle (DDB_SHUFFLE_OFF);
     playlist_t *plt = plt_alloc ("testplt");
@@ -43,6 +44,7 @@
 
 - (void)tearDown {
     plt_set_curr(NULL);
+    streamer_free();
 }
 
 #pragma mark - Get Next Track
