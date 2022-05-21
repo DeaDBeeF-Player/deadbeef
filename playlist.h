@@ -547,4 +547,16 @@ plt_get_head_item(playlist_t *p, int iter);
 playItem_t *
 plt_get_tail_item(playlist_t *p, int iter);
 
+int
+pl_get_played (playItem_t *it);
+
+void
+pl_set_played (playItem_t *it, int played);
+
+int
+pl_get_shufflerating (playItem_t *it);
+
+void
+pl_set_shufflerating (playItem_t *it, int rating);
+
 #endif // __PLAYLIST_H
