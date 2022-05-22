@@ -323,6 +323,10 @@ streamer_get_streaming_track (void) {
 
 playItem_t *
 streamer_get_playing_track (void) {
+    // some plugins may call this from plugin.start, before streamer is initialized
+    if (mutex == 0) {
+        return NULL;
+    }
     streamer_lock();
     playItem_t *it = (buffering_track && !playing_track) ? buffering_track : playing_track;
     if (it) {
