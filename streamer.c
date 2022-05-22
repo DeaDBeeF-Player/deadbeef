@@ -336,6 +336,33 @@ streamer_get_playing_track (void) {
     return it;
 }
 
+void
+streamer_set_playing_track (playItem_t *it) {
+    if (it == playing_track) {
+        return;
+    }
+
+    playItem_t *prev = playing_track;
+
+    streamer_lock();
+    playing_track = it;
+    streamer_unlock();
+
+    if (playing_track) {
+        pl_item_ref (playing_track);
+    }
+
+    send_trackinfochanged(prev);
+
+    if (playing_track) {
+        send_trackinfochanged(playing_track);
+    }
+
+    if (prev) {
+        pl_item_unref (prev);
+    }
+}
+
 playItem_t *
 streamer_get_buffering_track (void) {
     playItem_t *it = buffering_track;
@@ -343,6 +370,32 @@ streamer_get_buffering_track (void) {
         pl_item_ref (it);
     }
     return it;
+}
+
+void
+streamer_set_buffering_track (playItem_t *it) {
+    if (it == buffering_track) {
+        return;
+    }
+
+    playItem_t *prev = buffering_track;
+
+    buffering_track = NULL;
+
+    buffering_track = it;
+    if (buffering_track) {
+        pl_item_ref (buffering_track);
+    }
+
+    send_trackinfochanged(prev);
+
+    if (buffering_track) {
+        send_trackinfochanged(buffering_track);
+    }
+
+    if (prev) {
+        pl_item_unref (prev);
+    }
 }
 
 int
@@ -2695,59 +2748,6 @@ streamer_set_streamer_playlist (playlist_t *plt) {
 struct handler_s *
 streamer_get_handler (void) {
     return handler;
-}
-
-void
-streamer_set_playing_track (playItem_t *it) {
-    if (it == playing_track) {
-        return;
-    }
-
-    playItem_t *prev = playing_track;
-
-    streamer_lock();
-    playing_track = it;
-    streamer_unlock();
-
-    if (playing_track) {
-        pl_item_ref (playing_track);
-    }
-
-    send_trackinfochanged(prev);
-
-    if (playing_track) {
-        send_trackinfochanged(playing_track);
-    }
-
-    if (prev) {
-        pl_item_unref (prev);
-    }
-}
-
-void
-streamer_set_buffering_track (playItem_t *it) {
-    if (it == buffering_track) {
-        return;
-    }
-
-    playItem_t *prev = buffering_track;
-
-    buffering_track = NULL;
-
-    buffering_track = it;
-    if (buffering_track) {
-        pl_item_ref (buffering_track);
-    }
-
-    send_trackinfochanged(prev);
-
-    if (buffering_track) {
-        send_trackinfochanged(buffering_track);
-    }
-
-    if (prev) {
-        pl_item_unref (prev);
-    }
 }
 
 void
