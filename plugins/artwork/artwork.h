@@ -26,7 +26,6 @@
 
 #include <stdint.h>
 #include <time.h>
-#include "../../deadbeef.h"
 
 #define DDB_ARTWORK_MAJOR_VERSION 2
 #define DDB_ARTWORK_MINOR_VERSION 0
