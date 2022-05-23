@@ -34,6 +34,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
+#include "../../../deadbeef.h"
 #include "../../artwork/artwork.h"
 #include "../actionhandlers.h"
 #include "../callbacks.h"
