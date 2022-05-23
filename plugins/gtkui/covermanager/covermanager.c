@@ -279,7 +279,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
     _dispatch_on_main(^{
         // Prevent spurious loading of the same image. The load is already scheduled, so we should just wait for it.
         char *key = _cache_key_for_track(impl, query->track);
-        gboolean should_wait = gobj_cache_get_should_wait(impl->cache, key);
+        gboolean should_wait = gobj_cache_get_should_wait(impl->cache, key) || (gobj_cache_get(impl->cache,key) != NULL);
 
         if (should_wait) {
             // append to the end of loader queue
@@ -403,6 +403,10 @@ covermanager_cover_for_track(covermanager_t *impl, DB_playItem_t *track, int64_t
         // completion_block is not executed if the image is non-nil, to avoid double drawing.
         // The caller must release user data if the returned image is not nil.
         return cover;
+    }
+
+    if (gobj_cache_get_should_wait(impl->cache, key)) {
+        return NULL;
     }
 
     ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
