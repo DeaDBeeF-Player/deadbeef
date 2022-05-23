@@ -188,7 +188,10 @@ gobj_cache_get (gobj_cache_t cache, const char *key) {
 
 void
 gobj_cache_set_should_wait (gobj_cache_t cache, const char *key, gboolean should_wait) {
-    _gobj_cache_set_int(cache, key, NULL, should_wait);
+    gobj_cache_item_t *item = _gobj_cache_get_int (cache,key);
+    if (!item || !should_wait) {
+        _gobj_cache_set_int(cache, key, NULL, should_wait);
+    }
 }
 
 gboolean
