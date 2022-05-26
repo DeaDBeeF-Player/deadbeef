@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -27,7 +27,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="980" height="440"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1127"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="980" height="440"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -171,13 +171,13 @@
             <point key="canvasLocation" x="-587" y="23"/>
         </menu>
         <scrollView autoresizesSubviews="NO" wantsLayer="YES" misplaced="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
-            <rect key="frame" x="0.0" y="0.0" width="285" height="275"/>
+            <rect key="frame" x="0.0" y="0.0" width="285" height="271"/>
             <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="Eiv-XJ-7B1">
-                <rect key="frame" x="0.0" y="0.0" width="285" height="275"/>
+                <rect key="frame" x="0.0" y="0.0" width="285" height="271"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <outlineView wantsLayer="YES" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG" customClass="MediaLibraryOutlineView">
-                        <rect key="frame" x="0.0" y="0.0" width="285" height="275"/>
+                        <rect key="frame" x="0.0" y="0.0" width="285" height="271"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <size key="intercellSpacing" width="3" height="0.0"/>
                         <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -281,18 +281,18 @@
                                         </connections>
                                     </tableCellView>
                                     <tableCellView identifier="ImageTextCell" id="Cph-I1-FGf" userLabel="ImageTextCell">
-                                        <rect key="frame" x="11" y="65" width="262" height="17"/>
+                                        <rect key="frame" x="11" y="65" width="262" height="28"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <imageView wantsLayer="YES" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jxw-E6-UZ5">
-                                                <rect key="frame" x="0.0" y="-4" width="17" height="23"/>
+                                                <rect key="frame" x="0.0" y="-3" width="28" height="34"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="jxw-E6-UZ5" secondAttribute="height" multiplier="1:1" id="uYX-Py-MST"/>
                                                 </constraints>
                                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="pYd-An-Pr7"/>
                                             </imageView>
                                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7jZ-WS-Ehz">
-                                                <rect key="frame" x="25" y="0.0" width="239" height="16"/>
+                                                <rect key="frame" x="36" y="6" width="228" height="16"/>
                                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="PZA-yM-DYX">
                                                     <font key="font" metaFont="system"/>
                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -301,13 +301,12 @@
                                             </textField>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstItem="jxw-E6-UZ5" firstAttribute="top" secondItem="Cph-I1-FGf" secondAttribute="top" constant="1" id="4ik-i5-Xnl"/>
+                                            <constraint firstItem="jxw-E6-UZ5" firstAttribute="top" secondItem="Cph-I1-FGf" secondAttribute="top" id="C7u-WS-dt2"/>
                                             <constraint firstItem="7jZ-WS-Ehz" firstAttribute="leading" secondItem="jxw-E6-UZ5" secondAttribute="trailing" constant="10" id="K6M-4h-i1x"/>
                                             <constraint firstAttribute="trailing" secondItem="7jZ-WS-Ehz" secondAttribute="trailing" id="NqA-8J-jdm"/>
-                                            <constraint firstAttribute="bottom" secondItem="jxw-E6-UZ5" secondAttribute="bottom" constant="-1" id="YDq-MJ-nT4"/>
-                                            <constraint firstItem="7jZ-WS-Ehz" firstAttribute="centerY" secondItem="jxw-E6-UZ5" secondAttribute="centerY" id="gDQ-2N-FHO"/>
+                                            <constraint firstItem="7jZ-WS-Ehz" firstAttribute="centerY" secondItem="Cph-I1-FGf" secondAttribute="centerY" id="Wl1-dA-Aaf"/>
+                                            <constraint firstAttribute="bottom" secondItem="jxw-E6-UZ5" secondAttribute="bottom" id="X4f-1F-Gdp"/>
                                             <constraint firstItem="jxw-E6-UZ5" firstAttribute="leading" secondItem="Cph-I1-FGf" secondAttribute="leading" id="n8b-Cf-UGt"/>
-                                            <constraint firstItem="jxw-E6-UZ5" firstAttribute="centerY" secondItem="Cph-I1-FGf" secondAttribute="centerY" constant="1" id="yTE-P0-XEI"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="imageView" destination="jxw-E6-UZ5" id="2GU-Se-TmT"/>
