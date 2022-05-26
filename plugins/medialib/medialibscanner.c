@@ -445,12 +445,21 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
 
     // Create playlist from tracks
     ddb_playlist_t *new_plt = deadbeef->plt_alloc("Medialib Playlist");
-    ddb_playItem_t *after = NULL;
-    for (int i = 0; i < scanner.track_count; i++) {
-        after = deadbeef->plt_insert_item(new_plt, after, scanner.tracks[i]);
-        deadbeef->pl_item_unref(scanner.tracks[i]);
-        scanner.tracks[i] = NULL;
-    }
+
+    dispatch_sync(source->sync_queue, ^{
+        deadbeef->plt_unref (source->ml_playlist);
+        source->ml_playlist = new_plt;
+        ml_db_free(&source->db);
+        memcpy (&source->db, &scanner.db, sizeof (ml_db_t));
+
+        ddb_playItem_t *after = NULL;
+        for (int i = 0; i < scanner.track_count; i++) {
+            after = deadbeef->plt_insert_item(new_plt, after, scanner.tracks[i]);
+            deadbeef->pl_item_unref(scanner.tracks[i]);
+            scanner.tracks[i] = NULL;
+        }
+    });
+
     free (scanner.tracks);
     scanner.tracks = NULL;
 
@@ -459,13 +468,6 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
         snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
         deadbeef->plt_save (new_plt, NULL, NULL, plpath, NULL, NULL, NULL);
     }
-
-    dispatch_sync(source->sync_queue, ^{
-        deadbeef->plt_unref (source->ml_playlist);
-        source->ml_playlist = new_plt;
-        ml_db_free(&source->db);
-        memcpy (&source->db, &scanner.db, sizeof (ml_db_t));
-    });
 
     ml_free_music_paths (conf.medialib_paths, conf.medialib_paths_count);
 
