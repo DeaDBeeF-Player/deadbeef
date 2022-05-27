@@ -21,9 +21,11 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <Block.h>
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
+#include <dispatch/dispatch.h>
 #include <gtk/gtk.h>
 #include "../gtkui.h"
 #include "../support.h"
@@ -113,29 +115,45 @@ _remove_did_activate (GtkButton* self, gpointer user_data) {
     medialib_plugin->refresh (source);
 }
 
+static gboolean
+_dispatch_on_main_wrapper (void *context) {
+    void (^block)(void) = context;
+    block ();
+    Block_release(block);
+    return FALSE;
+}
+
+static void
+_dispatch_on_main(void (^block)(void)) {
+    dispatch_block_t copy_block = Block_copy(block);
+    g_idle_add(_dispatch_on_main_wrapper, copy_block);
+}
+
 static void
 _listener (ddb_mediasource_event_type_t _event, void *user_data) {
-    ddb_mediasource_source_t *source = gtkui_medialib_get_source();
-    if ((int)_event < 1000) {
-        switch (_event) {
-        case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
-            {
-                GtkWidget *enable_button = lookup_widget(prefwin, "toggle_medialib_on");
-                gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(enable_button), medialib_plugin->is_source_enabled(source));
+    _dispatch_on_main(^{
+        ddb_mediasource_source_t *source = gtkui_medialib_get_source();
+        if ((int)_event < 1000) {
+            switch (_event) {
+            case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
+                {
+                    GtkWidget *enable_button = lookup_widget(prefwin, "toggle_medialib_on");
+                    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(enable_button), medialib_plugin->is_source_enabled(source));
+                }
+                break;
+            default:
+                break;
             }
-            break;
-        default:
+            return;
+        }
+
+        ddb_medialib_mediasource_event_type_t event = (ddb_medialib_mediasource_event_type_t)_event;
+        switch (event) {
+        case DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE:
+            _reload_data();
             break;
         }
-        return;
-    }
-
-    ddb_medialib_mediasource_event_type_t event = (ddb_medialib_mediasource_event_type_t)_event;
-    switch (event) {
-    case DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE:
-        _reload_data();
-        break;
-    }
+    });
 }
 
 void
