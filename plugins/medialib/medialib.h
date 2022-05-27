@@ -30,7 +30,7 @@
 #define DDB_MEDIALIB_VERSION_MINOR 0
 
 typedef enum {
-    DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE = 1000,
+    DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE = DDB_MEDIASOURCE_EVENT_MAX+1,
 } ddb_medialib_mediasource_event_type_t;
 
 typedef struct ddb_medialib_plugin_priv_s ddb_medialib_plugin_priv_t;
