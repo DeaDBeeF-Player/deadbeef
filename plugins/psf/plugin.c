@@ -346,10 +346,12 @@ psfplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
             }
             else {
                 char *colon = strchr (info.title[i], ':');
-                char name[colon-info.title[i]+1];
-                memcpy (name, info.title[i], colon-info.title[i]);
-                name[colon-info.title[i]] = 0;
-                psfplug_add_meta (it, name, info.info[i], info.title[i]);
+                if (colon != NULL) {
+                    char name[colon-info.title[i]+1];
+                    memcpy (name, info.title[i], colon-info.title[i]);
+                    name[colon-info.title[i]] = 0;
+                    psfplug_add_meta (it, name, info.info[i], info.title[i]);
+                }
             }
         }
     }
