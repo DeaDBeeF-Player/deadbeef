@@ -140,6 +140,12 @@ ca_apply_format (void) {
 
         // NOTE: for unsupported formats, this call may cause bogus messages to appear in console / debug output.
         err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &req_format);
+        if (err != noErr && req_format.mChannelsPerFrame == 1) {
+            req_format.mChannelsPerFrame = 2;
+            req_format.mBytesPerFrame *= 2;
+            req_format.mBytesPerPacket *= 2;
+            err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &req_format);
+        }
         if (err != noErr) {
             err = AudioObjectSetPropertyData(device_id, &theAddress, 0, NULL, sz, &default_format);
             // ignore the result of this operation -- it may fail even when attempting to change to the same format that's current right now
