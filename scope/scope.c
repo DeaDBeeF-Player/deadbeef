@@ -65,6 +65,7 @@ ddb_scope_process (ddb_scope_t * restrict scope, int samplerate, int channels, c
         scope->samplerate = samplerate;
         free (scope->samples);
         scope->samples = calloc (scope->sample_count * channels, sizeof (float));
+        scope->mode_did_change = 1;
     }
 
     // append samples
