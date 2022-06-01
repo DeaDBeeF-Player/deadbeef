@@ -200,8 +200,6 @@ conf_save (void) {
         if (buffered_file_writer_write(writer, "\n", 1) < 0)  {
             goto error;
         }
-        if (fprintf (fp, "%s %s\n", it->key, it->value) < 0) {
-        }
     }
     if (buffered_file_writer_flush(writer) < 0) {
         goto error;
