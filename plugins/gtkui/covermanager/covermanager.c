@@ -31,7 +31,7 @@
 #include "gtkui.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
-#define MAX_ALBUM_ART_FILE_SIZE (10*1024*1024)
+#define MAX_ALBUM_ART_FILE_SIZE (10*2048*2048)
 
 extern DB_functions_t *deadbeef;
 
