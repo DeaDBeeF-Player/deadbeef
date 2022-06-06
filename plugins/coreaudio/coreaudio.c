@@ -466,16 +466,19 @@ ca_stop (void) {
     }
 
     deadbeef->mutex_lock (mutex);
-    if (state != DDB_PLAYBACK_STATE_STOPPED) {
+    int curr_state = state;
+    deadbeef->mutex_unlock (mutex);
+
+    if (curr_state != DDB_PLAYBACK_STATE_STOPPED) {
         err = AudioDeviceStop (device_id, ca_buffer_callback);
+        deadbeef->mutex_lock (mutex);
         state = DDB_PLAYBACK_STATE_STOPPED;
+        deadbeef->mutex_unlock (mutex);
         if (err != noErr) {
             trace ("AudioDeviceStop: %x\n", err);
-            deadbeef->mutex_unlock (mutex);
             return -1;
         }
     }
-    deadbeef->mutex_unlock (mutex);
 
     return 0;
 }
