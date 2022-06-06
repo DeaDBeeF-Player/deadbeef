@@ -374,7 +374,9 @@ streamer_get_buffering_track (void) {
 
 void
 streamer_set_buffering_track (playItem_t *it) {
+    streamer_lock();
     if (it == buffering_track) {
+        streamer_unlock();
         return;
     }
 
@@ -386,11 +388,12 @@ streamer_set_buffering_track (playItem_t *it) {
     if (buffering_track) {
         pl_item_ref (buffering_track);
     }
+    streamer_unlock();
 
     send_trackinfochanged(prev);
 
-    if (buffering_track) {
-        send_trackinfochanged(buffering_track);
+    if (it) {
+        send_trackinfochanged(it);
     }
 
     if (prev) {
@@ -895,12 +898,14 @@ fileinfo_free (DB_fileinfo_t *fileinfo) {
 
 static int
 stream_track (playItem_t *it, int startpaused) {
+    streamer_lock();
     if (fileinfo_curr) {
         fileinfo_free (fileinfo_curr);
         fileinfo_curr = NULL;
         fileinfo_file_vfs = NULL;
         fileinfo_file_identifier = 0;
     }
+    streamer_unlock();
     trace ("stream_track %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
     int err = 0;
     playItem_t *from = NULL;
@@ -1239,6 +1244,7 @@ m3u_error:
         }
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
+        streamer_lock();
         new_fileinfo = dec_open (dec, STREAMER_HINTS, it);
         if (new_fileinfo && new_fileinfo->file) {
             new_fileinfo_file_vfs = new_fileinfo->file->vfs;
@@ -1248,20 +1254,26 @@ m3u_error:
             new_fileinfo_file_vfs = NULL;
             new_fileinfo_file_identifier = 0;
         }
-        if (new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
+        int have_new_fileinfo = new_fileinfo != NULL;
+        streamer_unlock();
+        if (have_new_fileinfo && dec->init (new_fileinfo, DB_PLAYITEM (it)) != 0) {
             trace ("\033[0;31mfailed to init decoder\033[37;0m\n");
             pl_delete_meta (it, "!DECODER");
+            streamer_lock();
             dec->free (new_fileinfo);
             new_fileinfo = NULL;
             new_fileinfo_file_vfs = NULL;
             new_fileinfo_file_identifier = 0;
+            have_new_fileinfo = 0;
+            streamer_unlock();
         }
 
-        if (!new_fileinfo) {
+        if (!have_new_fileinfo) {
             trace ("decoder %s failed\n", dec->plugin.id);
             continue;
         }
         else {
+            streamer_lock();
             if (new_fileinfo->file) {
                 new_fileinfo_file_vfs = new_fileinfo->file->vfs;
                 new_fileinfo_file_identifier = vfs_get_identifier (new_fileinfo->file);
@@ -1270,6 +1282,7 @@ m3u_error:
                 new_fileinfo_file_vfs = NULL;
                 new_fileinfo_file_identifier = 0;
             }
+            streamer_unlock();
 
             if (streaming_track) {
                 pl_item_unref (streaming_track);
@@ -1285,12 +1298,14 @@ m3u_error:
     }
 success:
     streamer_play_failed (NULL);
+    streamer_lock();
     if (new_fileinfo) {
         fileinfo_curr = new_fileinfo;
         new_fileinfo = NULL;
         new_fileinfo_file_vfs = NULL;
         new_fileinfo_file_identifier = 0;
     }
+    streamer_unlock();
 
 error:
     if (from) {
@@ -1463,7 +1478,9 @@ handle_track_change (playItem_t *from, playItem_t *track) {
     // next track started
     if (from) {
         send_songfinished (from);
+        streamer_lock();
         playpos = 0;
+        streamer_unlock();
     }
 
     streamer_start_playback (from, track);
@@ -2423,7 +2440,9 @@ _play_track (playItem_t *it, int startpaused) {
     }
 
     if (!stream_track(it, startpaused)) {
+        streamer_lock();
         playpos = 0;
+        streamer_unlock();
         playtime = 0;
         if (startpaused) {
             output->pause ();
