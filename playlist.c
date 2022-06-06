@@ -2654,7 +2654,10 @@ plt_set_item_duration (playlist_t *playlist, playItem_t *it, float duration) {
 
 float
 pl_get_item_duration (playItem_t *it) {
-    return it->_duration;
+    LOCK;
+    float res = it->_duration;
+    UNLOCK;
+    return res;
 }
 
 void
