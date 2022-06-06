@@ -112,6 +112,7 @@ static w_trackdata_t *
 playlist_trackdata (DdbListview *listview, DB_playItem_t *track) {
     w_trackdata_t *td = malloc (sizeof (w_trackdata_t));
     td->listview = listview;
+    g_object_ref(listview);
     td->trk = track;
     deadbeef->pl_item_ref(track);
     return td;
@@ -124,6 +125,7 @@ trackinfochanged_cb (gpointer data) {
     if (idx != -1) {
         ddb_listview_draw_row (d->listview, idx, d->trk);
     }
+    g_object_unref(d->listview);
     deadbeef->pl_item_unref (d->trk);
     free (d);
     return FALSE;
@@ -139,6 +141,7 @@ paused_cb (gpointer data) {
         }
         deadbeef->pl_item_unref (it);
     }
+    g_object_unref(DDB_LISTVIEW(data));
     return FALSE;
 }
 
@@ -155,6 +158,7 @@ songfinished_cb (gpointer data) {
     if (idx != -1) {
         ddb_listview_draw_row (d->listview, idx, d->trk);
     }
+    g_object_unref(d->listview);
     deadbeef->pl_item_unref (d->trk);
     free (data);
     return FALSE;
@@ -177,6 +181,7 @@ songstarted_cb (gpointer data) {
         }
         ddb_listview_draw_row (d->listview, idx, d->trk);
     }
+    g_object_unref(d->listview);
     deadbeef->pl_item_unref (d->trk);
     free (data);
     return FALSE;
@@ -308,6 +313,7 @@ playlist_controller_message (playlist_controller_t *ctl, uint32_t id, uintptr_t 
 
     switch (id) {
     case DB_EV_PAUSED:
+        g_object_ref(ctl->listview);
         g_idle_add (paused_cb, ctl->listview);
         break;
     case DB_EV_SONGFINISHED:

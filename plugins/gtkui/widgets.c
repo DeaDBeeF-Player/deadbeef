@@ -2116,6 +2116,7 @@ static gboolean
 playlist_tabstriprefresh_cb (gpointer p) {
     w_tabbed_playlist_t *tp = p;
     ddb_tabstrip_refresh (tp->tabstrip);
+    g_object_unref (tp->tabstrip);
     return FALSE;
 }
 
@@ -2133,19 +2134,26 @@ w_tabbed_playlist_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
         if (ctx) {
             char *str = (char *)ctx;
             if (gtkui_tabstrip_override_conf(str) || gtkui_tabstrip_colors_conf(str) || gtkui_tabstrip_font_conf(str) || gtkui_tabstrip_font_style_conf(str)) {
+                w_tabbed_playlist_t *p = (w_tabbed_playlist_t *)w;
+                g_object_ref (p->tabstrip);
                 g_idle_add (playlist_tabstriprefresh_cb, w);
             }
         }
         break;
     case DB_EV_TRACKINFOCHANGED:
-    case DB_EV_PLAYLISTSWITCHED:
+    case DB_EV_PLAYLISTSWITCHED: {
+        w_tabbed_playlist_t *p = (w_tabbed_playlist_t *)w;
+        g_object_ref (p->tabstrip);
         g_idle_add (playlist_tabstriprefresh_cb, w);
+    }
         break;
     case DB_EV_PLAYLISTCHANGED:
         if (p1 == DDB_PLAYLIST_CHANGE_TITLE
             || p1 == DDB_PLAYLIST_CHANGE_POSITION
             || p1 == DDB_PLAYLIST_CHANGE_DELETED
             || p1 == DDB_PLAYLIST_CHANGE_CREATED) {
+            w_tabbed_playlist_t *p = (w_tabbed_playlist_t *)w;
+            g_object_ref (p->tabstrip);
             g_idle_add (playlist_tabstriprefresh_cb, w);
         }
         break;
