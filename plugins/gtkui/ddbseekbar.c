@@ -79,9 +79,7 @@ static void ddb_seekbar_get_preferred_height (GtkWidget* widget, gint *minimal_h
 #endif
 
 static void ddb_seekbar_real_size_request (GtkWidget* base, GtkRequisition* requisition) {
-	DdbSeekbar * self;
 	GtkRequisition _vala_requisition = {0};
-	self = (DdbSeekbar*) base;
 	if (requisition) {
 		*requisition = _vala_requisition;
 	}
@@ -144,9 +142,7 @@ static gboolean ddb_seekbar_real_motion_notify_event (GtkWidget* base, GdkEventM
 
 
 static gboolean ddb_seekbar_real_configure_event (GtkWidget* base, GdkEventConfigure* event) {
-	DdbSeekbar * self;
 	gboolean result = FALSE;
-	self = (DdbSeekbar*) base;
 	g_return_val_if_fail (event != NULL, FALSE);
 	gtkui_init_theme_colors ();
 	result = FALSE;
@@ -188,10 +184,8 @@ GtkWidget* ddb_seekbar_new (void) {
 static GObject * ddb_seekbar_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties) {
 	GObject * obj;
 	GObjectClass * parent_class;
-	DdbSeekbar * self;
 	parent_class = G_OBJECT_CLASS (ddb_seekbar_parent_class);
 	obj = parent_class->constructor (type, n_construct_properties, construct_properties);
-	self = DDB_SEEKBAR (obj);
 	return obj;
 }
 

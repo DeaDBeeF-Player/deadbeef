@@ -1288,14 +1288,12 @@ void
 plug_disconnect_all (void) {
     trace ("plug_disconnect_all\n");
     plugin_t *plug;
-    plugin_t *prev = NULL;
     for (plug = plugins; plug;) {
         if (plug->plugin->disconnect) {
             if (plug->plugin->disconnect () < 0) {
                 trace ("plugin %s failed to disconnect\n", plug->plugin->name);
             }
         }
-        prev = plug;
         plug = plug->next;
     }
 }

@@ -397,17 +397,6 @@ static const int close_btn_left_offs = 8;
         return;
     }
 
-    int tab_playing = -1;
-    DB_playItem_t *playing = deadbeef->streamer_get_playing_track ();
-    if (playing) {
-        ddb_playlist_t *plt = deadbeef->pl_get_playlist (playing);
-        if (plt) {
-            tab_playing = deadbeef->plt_get_idx (plt);
-            deadbeef->plt_unref (plt);
-        }
-        deadbeef->pl_item_unref (playing);
-    }
-
     int need_draw_moving = 0;
     int idx;
     int widths[cnt];

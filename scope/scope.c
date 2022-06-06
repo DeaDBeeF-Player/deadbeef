@@ -113,7 +113,6 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
     float channel_height = view_height / output_channels;
     float pixel_amplitude = channel_height / 2;
 
-    float left = 0;
     float left_a = 0;
     float left_b = 0;
     float leftfrac = 0;
@@ -201,7 +200,6 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
             minmax->ymin = ymin * pixel_amplitude + pixel_amplitude + offs;
             minmax->ymax = ymax * pixel_amplitude + pixel_amplitude + offs;
         }
-        left = right;
         left_a = right_a;
         left_b = right_b;
         leftfrac = rightfrac;

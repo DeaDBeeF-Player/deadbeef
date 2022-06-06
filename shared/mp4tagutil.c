@@ -392,9 +392,7 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
 
     // calculate padding size, and find the end of padding (eop)
     mp4p_atom_t *eop = moov->next;
-    size_t padding_size = 0;
     for (mp4p_atom_t *curr = padding; curr && !mp4p_atom_type_compare(curr, "free"); curr = curr->next) {
-        padding_size += curr->size;
         eop = curr->next;
     }
 

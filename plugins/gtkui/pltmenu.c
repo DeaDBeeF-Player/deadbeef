@@ -127,9 +127,6 @@ gtkui_create_pltmenu (ddb_playlist_t *playlist) {
     GtkWidget *autosort = NULL;
     GtkWidget *separator11 = NULL;
 
-    GtkAccelGroup *accel_group = NULL;
-    accel_group = gtk_accel_group_new ();
-
     _set_playlist(playlist);
 
     menu = gtk_menu_new ();

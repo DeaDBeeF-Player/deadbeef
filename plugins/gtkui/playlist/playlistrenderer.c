@@ -303,13 +303,6 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     int art_x = x + ART_PADDING_HORZ;
     min_y += ART_PADDING_VERT;
 
-    double max_y = y + height;
-
-    double ypos = min_y;
-    if (min_y + art_width + ART_PADDING_VERT >= max_y) {
-        ypos = max_y - art_width - ART_PADDING_VERT;
-    }
-
     GtkAllocation size = {0};
     size.width = gdk_pixbuf_get_width(image);
     size.height = gdk_pixbuf_get_height(image);

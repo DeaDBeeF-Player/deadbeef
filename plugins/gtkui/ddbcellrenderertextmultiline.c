@@ -123,8 +123,6 @@ static gboolean ddb_cell_editable_text_view_real_key_press_event (GtkWidget* bas
 }
 
 static void ddb_cell_editable_text_view_real_start_editing (GtkCellEditable* base, GdkEvent* event) {
-    DdbCellEditableTextView * self;
-    self = (DdbCellEditableTextView*) base;
 }
 
 DdbCellEditableTextView* ddb_cell_editable_text_view_construct (GType object_type) {

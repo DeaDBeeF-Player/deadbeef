@@ -1256,10 +1256,9 @@ on_tabstrip_motion_notify_event          (GtkWidget       *widget,
                                         GdkEventMotion  *event)
 {
     DdbTabStrip *ts = DDB_TABSTRIP (widget);
-    int ev_x, ev_y;
+    int ev_x;
     GdkModifierType ev_state;
     ev_x = event->x;
-    ev_y = event->y;
     ev_state = event->state;
 #if GTK_CHECK_VERSION(2,12,0)
     gdk_event_request_motions (event);

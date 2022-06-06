@@ -743,8 +743,6 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
     widget = hotkey_grabber_button;
     GdkModifierType accel_mods = 0;
     guint accel_key;
-    gboolean edited;
-    gboolean cleared;
     GdkModifierType consumed_modifiers;
     GdkDisplay *display;
     GtkTreePath *curpath;
@@ -758,9 +756,6 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
 
     if (event->is_modifier)
         return TRUE;
-
-    edited = FALSE;
-    cleared = FALSE;
 
     accel_mods = event->state & gtk_accelerator_get_default_mod_mask ();
 

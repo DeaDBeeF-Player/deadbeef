@@ -192,7 +192,7 @@
 
             int hmg = 1;
             int fill = 1;
-            int expand = 1;
+            __unused int expand = 1;
             int border = 0;
             int spacing = 0;
             int width = -1;

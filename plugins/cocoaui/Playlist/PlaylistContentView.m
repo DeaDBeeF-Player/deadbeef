@@ -660,10 +660,6 @@ static int grouptitleheight = 22;
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    NSPoint dragLocation;
-    dragLocation=[self convertPoint:[event locationInWindow]
-                           fromView:nil];
-
     [self listMouseDragged:event];
 
     // support automatic scrolling during a drag
@@ -1405,14 +1401,12 @@ static int grouptitleheight = 22;
     NSRect rect = self.enclosingScrollView.documentVisibleRect;
     CGFloat clip_y = rect.origin.y;
 
-    int idx = 0;
     int grp_y = 0;
     NSUInteger groupIndex = 0;
 
     while (groupIndex < self.groups.count && grp_y < clip_y) {
         PlaylistGroup *grp = self.groups[groupIndex];
         grp_y += grp->height;
-        idx += grp->num_items;
         groupIndex++;
     }
 

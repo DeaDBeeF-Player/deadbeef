@@ -106,15 +106,11 @@ static gboolean ddb_equalizer_real_configure_event (GtkWidget* base, GdkEventCon
     const PangoFontDescription* _tmp1_;
     gint _tmp2_ = 0;
     gdouble _tmp3_ = 0.0;
-    GdkScreen* _tmp4_ = NULL;
-    gdouble _tmp5_ = 0.0;
 
     _tmp0_ = gtk_widget_get_style ((GtkWidget*) self);
     _tmp1_ = _tmp0_->font_desc;
     _tmp2_ = pango_font_description_get_size (_tmp1_);
     _tmp3_ = pango_units_to_double (_tmp2_);
-    _tmp4_ = gdk_screen_get_default ();
-    _tmp5_ = gdk_screen_get_resolution (_tmp4_);
     self->priv->eq_margin_bottom = (gint) (_tmp3_ + 4);
     self->priv->eq_margin_left = (gint) (_tmp3_ + 4) * 4;
     result = FALSE;
@@ -423,59 +419,43 @@ static void ddb_equalizer_update_eq_drag (DdbEqualizer* self, gdouble x, gdouble
     _tmp13_ = _tmp10_;
     if (_tmp13_) {
         gdouble* _tmp14_;
-        gint _tmp14__length1;
         gint _tmp15_;
         gdouble _tmp16_;
         GtkAllocation _tmp17_;
         gint _tmp18_;
         gint _tmp19_;
-        gdouble _tmp20_;
         gdouble* _tmp21_;
-        gint _tmp21__length1;
         gint _tmp22_;
         gdouble _tmp23_;
         _tmp14_ = self->priv->values;
-        _tmp14__length1 = self->priv->values_length1;
         _tmp15_ = band;
         _tmp16_ = y;
         gtk_widget_get_allocation ((GtkWidget*) self, &_tmp17_);
         _tmp18_ = _tmp17_.height;
         _tmp19_ = self->priv->eq_margin_bottom;
         _tmp14_[_tmp15_] = _tmp16_ / ((gdouble) (_tmp18_ - _tmp19_));
-        _tmp20_ = _tmp14_[_tmp15_];
         _tmp21_ = self->priv->values;
-        _tmp21__length1 = self->priv->values_length1;
         _tmp22_ = band;
         _tmp23_ = _tmp21_[_tmp22_];
         if (_tmp23_ > ((gdouble) 1)) {
             gdouble* _tmp24_;
-            gint _tmp24__length1;
             gint _tmp25_;
-            gdouble _tmp26_;
             _tmp24_ = self->priv->values;
-            _tmp24__length1 = self->priv->values_length1;
             _tmp25_ = band;
             _tmp24_[_tmp25_] = (gdouble) 1;
-            _tmp26_ = _tmp24_[_tmp25_];
         } else {
             gdouble* _tmp27_;
-            gint _tmp27__length1;
             gint _tmp28_;
             gdouble _tmp29_;
             _tmp27_ = self->priv->values;
-            _tmp27__length1 = self->priv->values_length1;
             _tmp28_ = band;
             _tmp29_ = _tmp27_[_tmp28_];
             if (_tmp29_ < ((gdouble) 0)) {
                 gdouble* _tmp30_;
-                gint _tmp30__length1;
                 gint _tmp31_;
-                gdouble _tmp32_;
                 _tmp30_ = self->priv->values;
-                _tmp30__length1 = self->priv->values_length1;
                 _tmp31_ = band;
                 _tmp30_[_tmp31_] = (gdouble) 0;
-                _tmp32_ = _tmp30_[_tmp31_];
             }
         }
         g_signal_emit_by_name (self, "on-changed");
@@ -709,29 +689,23 @@ static gboolean ddb_equalizer_real_motion_notify_event (GtkWidget* base, GdkEven
 
 void ddb_equalizer_set_band (DdbEqualizer* self, gint band, gdouble v) {
     gdouble* _tmp0_;
-    gint _tmp0__length1;
     gint _tmp1_;
     gdouble _tmp2_;
-    gdouble _tmp3_;
     g_return_if_fail (self != NULL);
     _tmp0_ = self->priv->values;
-    _tmp0__length1 = self->priv->values_length1;
     _tmp1_ = band;
     _tmp2_ = v;
     _tmp0_[_tmp1_] = 1 - ((_tmp2_ + 20.0) / 40.0);
-    _tmp3_ = _tmp0_[_tmp1_];
 }
 
 
 gdouble ddb_equalizer_get_band (DdbEqualizer* self, gint band) {
     gdouble result = 0.0;
     gdouble* _tmp0_;
-    gint _tmp0__length1;
     gint _tmp1_;
     gdouble _tmp2_;
     g_return_val_if_fail (self != NULL, 0.0);
     _tmp0_ = self->priv->values;
-    _tmp0__length1 = self->priv->values_length1;
     _tmp1_ = band;
     _tmp2_ = _tmp0_[_tmp1_];
     result = ((1 - _tmp2_) * 40.0) - 20.0;
@@ -772,10 +746,8 @@ DdbEqualizer* ddb_equalizer_new (void) {
 static GObject * ddb_equalizer_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties) {
     GObject * obj;
     GObjectClass * parent_class;
-    DdbEqualizer * self;
     parent_class = G_OBJECT_CLASS (ddb_equalizer_parent_class);
     obj = parent_class->constructor (type, n_construct_properties, construct_properties);
-    self = DDB_EQUALIZER (obj);
     return obj;
 }
 

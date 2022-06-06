@@ -22312,7 +22312,6 @@
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				WARNING_CFLAGS = "-Wliteral-conversion";
 			};
 			name = Debug;
 		};
@@ -22377,7 +22376,6 @@
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				WARNING_CFLAGS = "-Wliteral-conversion";
 			};
 			name = Release;
 		};
@@ -22930,6 +22928,10 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
+				WARNING_CFLAGS = (
+					"-Wunused-but-set-variable",
+					"-Wliteral-conversion",
+				);
 			};
 			name = Debug;
 		};
@@ -22983,6 +22985,10 @@
 					"@executable_path/../PlugIns",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				WARNING_CFLAGS = (
+					"-Wunused-but-set-variable",
+					"-Wliteral-conversion",
+				);
 			};
 			name = Release;
 		};
