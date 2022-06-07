@@ -169,7 +169,7 @@ conf_save (void) {
     FILE *fp = NULL;
     buffered_file_writer_t *writer = NULL;
 
-    if (!changed || !mutex) {
+    if (!mutex) {
         return 0;
     }
 
@@ -177,6 +177,12 @@ conf_save (void) {
     snprintf (str, sizeof (str), "%s/config", dbconfdir);
 
     conf_lock ();
+
+    if (!changed) {
+        conf_unlock();
+        return 0;
+    }
+
     changed = 0;
     fp = fopen (tempfile, "w+b");
     if (!fp) {
