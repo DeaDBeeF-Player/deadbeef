@@ -46,6 +46,10 @@ void
 decoded_blocks_free (void) {
     while (_decoded_blocks) {
         decoded_block_t *next = _decoded_blocks->next;
+        if (_decoded_blocks->track != NULL) {
+            pl_item_unref(_decoded_blocks->track);
+            _decoded_blocks->track = NULL;
+        }
         free (_decoded_blocks);
         _decoded_blocks = next;
     }
