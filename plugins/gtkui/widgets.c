@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../analyzer/analyzer.h"
+#include "../../fastftoi.h"
 #include "../../scope/scope.h"
 #include "../../strdupa.h"
 #include "../libparser/parser.h"
@@ -2499,12 +2500,47 @@ scope_wavedata_listener (void *ctx, const ddb_audio_data_t *data) {
     deadbeef->mutex_unlock (w->mutex);
 }
 
+static inline uint32_t
+_alpha_blend (uint32_t color, uint32_t background_color, float alpha) {
+    uint32_t sr = color & 0xff;
+    uint32_t sg = (color & 0xff00) >> 8;
+    uint32_t sb = (color & 0xff0000) >> 16;
+
+    uint32_t dr = background_color & 0xff;
+    uint32_t dg = (background_color & 0xff00) >> 8;
+    uint32_t db = (background_color & 0xff0000) >> 16;
+
+    uint32_t r = min(0xff,ftoi(sr * alpha + dr * (1-alpha)));
+    uint32_t g = min(0xff,ftoi(sg * alpha + dg * (1-alpha)));
+    uint32_t b = min(0xff,ftoi(sb * alpha + db * (1-alpha)));
+
+    uint32_t res = r | (g<<8) | (b<<16) | 0xff000000;
+    return res;
+}
+
 static inline void
-_draw_vline (uint8_t * restrict data, int stride, int x0, int y0, int y1, uint32_t color) {
-    uint32_t *ptr = (uint32_t*)&data[y0*stride+x0*4];
-    while (y0 <= y1) {
-        *ptr = color;
-        y0++;
+_draw_vline_aa (uint8_t * restrict data, int stride, int x0, float y0, float y1, uint32_t color, uint32_t background_color) {
+    int floor_y0 = ftoi(floor(y0));
+    int ceil_y1 = ftoi(ceil(y1));
+    uint32_t *ptr = (uint32_t*)&data[floor_y0*stride+x0*4];
+    int y = floor_y0;
+    while (y <= ceil_y1) {
+        float d = y0 - y;
+
+        uint32_t final_color = color;
+
+        if (d > 0 && d < 1) {
+            final_color = _alpha_blend (color, background_color, 1-d);
+        }
+        else {
+            d = y - y1;
+            if (d > 0 && d < 1) {
+                final_color = _alpha_blend (color, background_color, 1-d);
+            }
+        }
+
+        *ptr = final_color;
+        y++;
         ptr += stride/sizeof(uint32_t);
     }
 }
@@ -2600,14 +2636,20 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         int width = w->draw_data.point_count;
         ddb_scope_point_t *minmax = w->draw_data.points;
         int channels = w->draw_data.mode == DDB_SCOPE_MONO ? 1 : w->draw_data.channels;
+
+        fpu_control ctl = 0;
+        fpu_setround (&ctl);
+
         for (int c = 0; c < channels; c++) {
             for (int x = 0; x < width; x++) {
                 float ymin = min(draw_rect.height-1, max(0, minmax->ymin));
                 float ymax = min(draw_rect.height-1, max(0, minmax->ymax));
-                _draw_vline (data, stride, x, ymin, ymax, w->draw_color);
+                _draw_vline_aa (data, stride, x, ymin, ymax, w->draw_color, 0x0);
                 minmax++;
             }
         }
+
+        fpu_restore (ctl);
     }
     cairo_surface_mark_dirty (w->surf);
     cairo_save (cr);
