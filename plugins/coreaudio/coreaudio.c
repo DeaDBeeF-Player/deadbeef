@@ -48,6 +48,12 @@ ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioOb
 static OSStatus
 ca_buffer_callback(AudioDeviceID inDevice, const AudioTimeStamp * inNow, const AudioBufferList * inInputData, const AudioTimeStamp * inInputTime, AudioBufferList * outOutputData, const AudioTimeStamp * inOutputTime, void * inClientData);
 
+static ddb_playback_state_t
+ca_state (void);
+
+static void
+ca_set_state(ddb_playback_state_t st);
+
 static int ca_free (void);
 static int ca_init (void);
 static int ca_play (void);
@@ -438,18 +444,17 @@ ca_play (void) {
         }
     }
 
-    deadbeef->mutex_lock (mutex);
-    if (state != DDB_PLAYBACK_STATE_PLAYING) {
+    ddb_playback_state_t current_state = ca_state();
+
+    if (current_state != DDB_PLAYBACK_STATE_PLAYING) {
         err = AudioDeviceStart (device_id, ca_buffer_callback);
         if (err != noErr) {
             trace ("AudioDeviceStart: %x\n", err);
-            state = DDB_PLAYBACK_STATE_STOPPED;
-            deadbeef->mutex_unlock (mutex);
+            ca_set_state(DDB_PLAYBACK_STATE_STOPPED);
             return -1;
         }
-        state = DDB_PLAYBACK_STATE_PLAYING;
+        ca_set_state(DDB_PLAYBACK_STATE_PLAYING);
     }
-    deadbeef->mutex_unlock (mutex);
 
     ca_prevent_sleep ();
 
@@ -465,15 +470,11 @@ ca_stop (void) {
         return 0;
     }
 
-    deadbeef->mutex_lock (mutex);
-    int curr_state = state;
-    deadbeef->mutex_unlock (mutex);
+    ddb_playback_state_t curr_state = ca_state();
 
     if (curr_state != DDB_PLAYBACK_STATE_STOPPED) {
         err = AudioDeviceStop (device_id, ca_buffer_callback);
-        deadbeef->mutex_lock (mutex);
-        state = DDB_PLAYBACK_STATE_STOPPED;
-        deadbeef->mutex_unlock (mutex);
+        ca_set_state(DDB_PLAYBACK_STATE_STOPPED);
         if (err != noErr) {
             trace ("AudioDeviceStop: %x\n", err);
             return -1;
@@ -492,20 +493,17 @@ ca_pause (void) {
         }
     }
 
-    deadbeef->mutex_lock (mutex);
+    ddb_playback_state_t curr_state = ca_state();
 
-    if (state != DDB_PLAYBACK_STATE_PAUSED) {
-        state = DDB_PLAYBACK_STATE_PAUSED;
+    if (curr_state != DDB_PLAYBACK_STATE_PAUSED) {
+        ca_set_state(DDB_PLAYBACK_STATE_PAUSED);
         err = AudioDeviceStop (device_id, ca_buffer_callback);
         if (err != noErr) {
             trace ("AudioDeviceStop: %x\n", err);
-            state = DDB_PLAYBACK_STATE_STOPPED;
-            deadbeef->mutex_unlock (mutex);
+            ca_set_state(DDB_PLAYBACK_STATE_STOPPED);
             return -1;
         }
     }
-
-    deadbeef->mutex_unlock (mutex);
     return 0;
 }
 
@@ -581,6 +579,13 @@ ca_state (void) {
     int ret = state;
     deadbeef->mutex_unlock (mutex);
     return ret;
+}
+
+static void
+ca_set_state(ddb_playback_state_t st) {
+    deadbeef->mutex_lock (mutex);
+    state = st;
+    deadbeef->mutex_unlock (mutex);
 }
 
 static void ca_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata) {
