@@ -444,6 +444,10 @@ dts_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("dca: probe failed\n");
         return -1;
     }
+
+    info->bufptr = info->buf;
+    info->bufpos = info->buf + HEADER_SIZE;
+
     info->frame_byte_size = len;
 
     int flags = info->flags &~ (DCA_LFE | DCA_ADJUST_LEVEL);
