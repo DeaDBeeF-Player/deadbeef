@@ -261,6 +261,7 @@ send_trackchanged (playItem_t *from, playItem_t *to) {
 
 void
 streamer_set_last_played (playItem_t *track) {
+    streamer_lock();
     if (last_played) {
         pl_item_unref (last_played);
     }
@@ -268,6 +269,7 @@ streamer_set_last_played (playItem_t *track) {
     if (last_played) {
         pl_item_ref (last_played);
     }
+    streamer_unlock();
 }
 
 static void
@@ -311,6 +313,20 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
         pl_item_unref (it);
     }
     trace ("streamer_start_playback %s\n", playing_track ? pl_find_meta (playing_track, ":URI") : "null");
+}
+
+
+static void
+streamer_set_streaming_track(playItem_t *it) {
+    streamer_lock();
+    if (streaming_track) {
+        pl_item_unref (streaming_track);
+    }
+    streaming_track = it;
+    if (streaming_track) {
+        pl_item_ref (streaming_track);
+    }
+    streamer_unlock();
 }
 
 playItem_t *
@@ -381,8 +397,6 @@ streamer_set_buffering_track (playItem_t *it) {
     }
 
     playItem_t *prev = buffering_track;
-
-    buffering_track = NULL;
 
     buffering_track = it;
     if (buffering_track) {
@@ -875,13 +889,7 @@ streamer_play_failed (playItem_t *failed_track) {
         new_fileinfo_file_vfs = NULL;
         new_fileinfo_file_identifier = 0;
 
-        if (streaming_track) {
-            pl_item_unref (streaming_track);
-        }
-        streaming_track = failed_track;
-        if (streaming_track) {
-            pl_item_ref (streaming_track);
-        }
+        streamer_set_streaming_track(failed_track);
     }
     streamer_unlock();
 }
@@ -928,12 +936,7 @@ stream_track (playItem_t *it, int startpaused) {
         pl_item_ref (to);
     }
 
-    streamer_lock ();
-    if (streaming_track) {
-        pl_item_unref (streaming_track);
-        streaming_track = NULL;
-    }
-    streamer_unlock ();
+    streamer_set_streaming_track(NULL);
 
     int paused_stream = 0;
     if (it && startpaused) {
@@ -1282,15 +1285,9 @@ m3u_error:
                 new_fileinfo_file_vfs = NULL;
                 new_fileinfo_file_identifier = 0;
             }
-            streamer_unlock();
 
-            if (streaming_track) {
-                pl_item_unref (streaming_track);
-            }
-            streaming_track = it;
-            if (streaming_track) {
-                pl_item_ref (streaming_track);
-            }
+            streamer_set_streaming_track (it);
+            streamer_unlock();
 
             trace ("bps=%d, channels=%d, samplerate=%d\n", new_fileinfo->fmt.bps, new_fileinfo->fmt.channels, new_fileinfo->fmt.samplerate);
             break;
@@ -1563,13 +1560,7 @@ _streamer_requeue_after_current (ddb_repeat_t repeat, ddb_shuffle_t shuffle) {
         return;
     }
 
-    if (streaming_track) {
-        pl_item_unref (streaming_track);
-    }
-    streaming_track = playing_track;
-    if (streaming_track) {
-        pl_item_ref (streaming_track);
-    }
+    streamer_set_streaming_track(playing_track);
     streamer_unlock ();
     streamer_next (shuffle, repeat, NULL);
 }
@@ -1779,14 +1770,8 @@ streamer_thread (void *unused) {
         fileinfo_file_vfs = NULL;
         fileinfo_file_identifier = 0;
     }
-    if (streaming_track) {
-        pl_item_unref (streaming_track);
-        streaming_track = NULL;
-    }
-    if (playing_track) {
-        pl_item_unref (playing_track);
-        playing_track = NULL;
-    }
+    streamer_set_streaming_track(NULL);
+    streamer_set_playing_track(NULL);
     streamer_unlock ();
 }
 
@@ -1838,22 +1823,10 @@ streamer_free (void) {
         pl_item_unref (first_failed_track);
         first_failed_track = NULL;
     }
-    if (streaming_track) {
-        pl_item_unref (streaming_track);
-        streaming_track = NULL;
-    }
-    if (playing_track) {
-        pl_item_unref (playing_track);
-        playing_track = NULL;
-    }
-    if (buffering_track) {
-        pl_item_unref (buffering_track);
-        buffering_track = NULL;
-    }
-    if (last_played) {
-        pl_item_unref (last_played);
-        last_played = NULL;
-    }
+    streamer_set_streaming_track(NULL);
+    streamer_set_playing_track(NULL);
+    streamer_set_buffering_track(NULL);
+    streamer_set_last_played(NULL);
     streamer_set_streamer_playlist (NULL);
 
     ddb_ctmap_free (streamer_ctmap);
