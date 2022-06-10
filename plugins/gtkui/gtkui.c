@@ -834,13 +834,11 @@ pre_songstarted_cb (gpointer data) {
 
 static gboolean
 pre_trackfocus_cb (gpointer data) {
-    deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
         playlist_set_intended_scroll (it);
         deadbeef->pl_item_unref (it);
     }
-    deadbeef->pl_unlock ();
     return FALSE;
 }
 
@@ -879,18 +877,18 @@ songstarted_cb (gpointer data) {
 
 static gboolean
 trackfocus_cb (gpointer data) {
-    deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
     if (it) {
+        deadbeef->pl_lock ();
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
         if (plt) {
             deadbeef->plt_set_curr (plt);
             playlist_set_cursor (plt, it);
             deadbeef->plt_unref (plt);
         }
+        deadbeef->pl_unlock ();
         deadbeef->pl_item_unref (it);
     }
-    deadbeef->pl_unlock ();
     return FALSE;
 }
 

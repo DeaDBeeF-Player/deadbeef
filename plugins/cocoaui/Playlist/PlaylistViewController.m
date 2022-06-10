@@ -1239,9 +1239,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         case DB_EV_TRACKFOCUSCURRENT: {
             dispatch_async(dispatch_get_main_queue(), ^{
                 PlaylistView *listview = (PlaylistView *)self.view;
-                deadbeef->pl_lock ();
                 DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
                 if (it) {
+                    deadbeef->pl_lock ();
                     ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
 
                     if (!plt) {
@@ -1268,9 +1268,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                     }
                     deadbeef->plt_unref (plt);
                     deadbeef->plt_unref (prev_plt);
+                    deadbeef->pl_unlock ();
                     deadbeef->pl_item_unref (it);
                 }
-                deadbeef->pl_unlock ();
             });
         }
             break;
@@ -1464,9 +1464,10 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     ddb_playlist_t *plt = deadbeef->plt_get_curr();
 
+    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
+
     deadbeef->pl_lock ();
 
-    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
     int current_idx = -1;
 
     NSInteger count = deadbeef->plt_getselcount(plt);

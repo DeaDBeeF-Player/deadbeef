@@ -480,6 +480,11 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int on
     ddb_replaygain_settings_t s;
     s._size = sizeof (ddb_replaygain_settings_t);
 
+    DB_playItem_t *playing_track = NULL;
+    if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+        deadbeef->streamer_get_playing_track ();
+    }
+
     deadbeef->pl_lock ();
 
     if (ctx == DDB_ACTION_CTX_SELECTION) {
@@ -487,6 +492,9 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int on
         if (!tc) {
             deadbeef->pl_unlock ();
             deadbeef->plt_unref (plt);
+            if (playing_track != NULL) {
+                deadbeef->pl_item_unref (playing_track);
+            }
             return NULL;
         }
         tracks = calloc (tc, sizeof (DB_playItem_t *));
@@ -520,6 +528,9 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int on
         if (!tc) {
             deadbeef->pl_unlock ();
             deadbeef->plt_unref (plt);
+            if (playing_track != NULL) {
+                deadbeef->pl_item_unref (playing_track);
+            }
             return NULL;
         }
         tracks = calloc (tc, sizeof (DB_playItem_t *));
@@ -549,13 +560,12 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int on
         deadbeef->pl_save_current ();
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-        if (it) {
-            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+        if (playing_track) {
+            const char *uri = deadbeef->pl_find_meta (playing_track, ":URI");
             if (deadbeef->is_local_file (uri)) {
                 int hasRgTags = 0;
                 if (onlyWithRgInfo) {
-                    deadbeef->replaygain_init_settings (&s, it);
+                    deadbeef->replaygain_init_settings (&s, playing_track);
                     if (s.has_album_gain || s.has_track_gain) {
                         hasRgTags = 1;
                     }
@@ -564,15 +574,17 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int on
                 if (!onlyWithRgInfo || hasRgTags) {
                     count = 1;
                     tracks = calloc (1, sizeof (DB_playItem_t *));
-                    tracks[0] = it;
-                    deadbeef->pl_item_ref (it);
+                    tracks[0] = playing_track;
+                    deadbeef->pl_item_ref (playing_track);
                 }
             }
-            deadbeef->pl_item_unref (it);
         }
     }
     deadbeef->pl_unlock ();
     deadbeef->plt_unref (plt);
+    if (playing_track != NULL) {
+        deadbeef->pl_item_unref (playing_track);
+    }
 
     if (!count) {
         free (tracks);

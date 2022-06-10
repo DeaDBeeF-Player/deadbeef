@@ -359,9 +359,9 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, ddb_action_context
         deadbeef->plt_unref (plt_curr);
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        deadbeef->pl_lock ();
         DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
         if (it) {
+            deadbeef->pl_lock ();
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (plt) {
                 int idx = deadbeef->plt_get_item_idx (plt, it, PL_MAIN);
@@ -372,9 +372,9 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, ddb_action_context
                 }
                 deadbeef->plt_unref (plt);
             }
+            deadbeef->pl_unlock ();
             deadbeef->pl_item_unref (it);
         }
-        deadbeef->pl_unlock ();
     }
     return 0;
 }

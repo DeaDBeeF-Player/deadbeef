@@ -585,6 +585,11 @@ action_toggle_in_playqueue_handler (DB_plugin_action_t *act, ddb_action_context_
 
 int
 action_move_tracks_up_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
+    ddb_playItem_t *playing_track = NULL;
+    if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+        playing_track = deadbeef->streamer_get_playing_track ();
+    }
+
     deadbeef->pl_lock ();
 
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
@@ -616,29 +621,37 @@ action_move_tracks_up_handler (DB_plugin_action_t *act, ddb_action_context_t ctx
         }
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        it = deadbeef->streamer_get_playing_track ();
-        if (it) {
+        if (playing_track) {
             it_count = 1;
             uint32_t indexes[1];
-            indexes[0] = deadbeef->pl_get_idx_of (it);
-            DB_playItem_t *drop_before = deadbeef->pl_get_prev (it,PL_MAIN);
+            indexes[0] = deadbeef->pl_get_idx_of (playing_track);
+            DB_playItem_t *drop_before = deadbeef->pl_get_prev (playing_track,PL_MAIN);
             if (drop_before) {
                 deadbeef->plt_move_items (plt, PL_MAIN, plt, drop_before, indexes, it_count);
                 deadbeef->pl_item_unref (drop_before);
             }
-            deadbeef->pl_item_unref (it);
         }
     }
 
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
+
+    if (playing_track != NULL) {
+        deadbeef->pl_item_unref (playing_track);
+    }
+
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     return 0;
 }
 
 int
 action_move_tracks_down_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
+    ddb_playItem_t *playing_track = NULL;
+    if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+        playing_track = deadbeef->streamer_get_playing_track ();
+    }
+
     deadbeef->pl_lock ();
 
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
@@ -669,22 +682,25 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, ddb_action_context_t c
         }
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        it = deadbeef->streamer_get_playing_track ();
-        if (it) {
+        if (playing_track) {
             it_count = 1;
             uint32_t indexes[1];
-            indexes[0] = deadbeef->pl_get_idx_of (it);
+            indexes[0] = deadbeef->pl_get_idx_of (playing_track);
             DB_playItem_t *drop_before = deadbeef->pl_get_for_idx (indexes[0]+2);
             deadbeef->plt_move_items (plt, PL_MAIN, plt, drop_before, indexes, it_count);
             if (drop_before)
                 deadbeef->pl_item_unref (drop_before);
-            deadbeef->pl_item_unref (it);
         }
     }
 
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
+
+    if (playing_track != NULL) {
+        deadbeef->pl_item_unref (playing_track);
+    }
+
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     return 0;
 }
