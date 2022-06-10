@@ -79,6 +79,8 @@ _capture_selected_track_list (void) {
 
     ddb_playItem_t **tracks = NULL;
 
+    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
+
     deadbeef->pl_lock ();
 
     int count = 0;
@@ -92,10 +94,12 @@ _capture_selected_track_list (void) {
 
     if (count == 0) {
         deadbeef->pl_unlock ();
+        if (current != NULL) {
+            deadbeef->pl_item_unref (current);
+        }
         return;
     }
 
-    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
     int current_idx = -1;
     int all_idx = 0;
     int idx = 0;
