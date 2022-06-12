@@ -720,6 +720,8 @@
 		2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.m */; };
 		2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A6B19237718DA00252E6D /* playmodes.h */; };
 		2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B1A237718DA00252E6D /* playmodes.c */; };
+		2D0AC9162856452500F6D56A /* ActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AC9152856452500F6D56A /* ActionTests.m */; };
+		2D0AC9182856496500F6D56A /* TestData in Resources */ = {isa = PBXBuildFile; fileRef = 2D7492861CCFFE7700D3A59E /* TestData */; };
 		2D0E02EA1E26706300D3D8E6 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D0F90C21CCFF094003FA197 /* TaggingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F90C11CCFF094003FA197 /* TaggingTests.m */; };
 		2D11D3C41B9DC69C00C7C731 /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3BD1B9DC69C00C7C731 /* ay8912.c */; };
@@ -3159,6 +3161,13 @@
 			remoteGlobalIDString = 2D05A8301B4BE5BC004C913D;
 			remoteInfo = sndfilelib;
 		};
+		2D0AC9102856450200F6D56A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D1B3E7918379829003E6066;
+			remoteInfo = DeaDBeeF;
+		};
 		2D0E02E81E26705D00D3D8E6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -5222,6 +5231,8 @@
 		2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackSwitchingTests.m; sourceTree = "<group>"; };
 		2D0A6B19237718DA00252E6D /* playmodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = playmodes.h; sourceTree = "<group>"; };
 		2D0A6B1A237718DA00252E6D /* playmodes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = playmodes.c; sourceTree = "<group>"; };
+		2D0AC90C2856450100F6D56A /* Integration Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Integration Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D0AC9152856452500F6D56A /* ActionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ActionTests.m; sourceTree = "<group>"; };
 		2D0F90C11CCFF094003FA197 /* TaggingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaggingTests.m; sourceTree = "<group>"; };
 		2D11D3B91B9DC67100C7C731 /* vtx.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vtx.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D11D3BD1B9DC69C00C7C731 /* ay8912.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ay8912.c; sourceTree = "<group>"; };
@@ -7461,6 +7472,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D0AC9092856450100F6D56A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D11D3B61B9DC67100C7C731 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -9167,6 +9185,14 @@
 			);
 			name = sndfile;
 			path = plugins/sndfile;
+			sourceTree = "<group>";
+		};
+		2D0AC90D2856450200F6D56A /* Integration Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2D0AC9152856452500F6D56A /* ActionTests.m */,
+			);
+			path = "Integration Tests";
 			sourceTree = "<group>";
 		};
 		2D0B1C8619C5CF4A00CED0B5 /* Supporting files */ = {
@@ -11794,6 +11820,7 @@
 				4D1B514C1837EF7C003E6066 /* plugins */,
 				4D1B3EB31837EC44003E6066 /* deadbeef */,
 				2DAA4C091AAF88DE00519559 /* Tests */,
+				2D0AC90D2856450200F6D56A /* Integration Tests */,
 				4D1B3E7C18379829003E6066 /* Frameworks */,
 				4D1B3E7B18379829003E6066 /* Products */,
 				2D48DC5C2269B732002CACFD /* DeaDBeeF GTK3.plist */,
@@ -11875,6 +11902,7 @@
 				2DC656DA2744289C00583E14 /* ddb_gui_GTK2.dylib */,
 				2DC6578C274428F200583E14 /* DeaDBeeF GTK2.app */,
 				2DE77467275E893400890350 /* converter_gtk3.dylib */,
+				2D0AC90C2856450100F6D56A /* Integration Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -14476,6 +14504,24 @@
 			productReference = 2D05A8311B4BE5BC004C913D /* libsndfilelib.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		2D0AC90B2856450100F6D56A /* Integration Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D0AC9122856450200F6D56A /* Build configuration list for PBXNativeTarget "Integration Tests" */;
+			buildPhases = (
+				2D0AC9082856450100F6D56A /* Sources */,
+				2D0AC9092856450100F6D56A /* Frameworks */,
+				2D0AC90A2856450100F6D56A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2D0AC9112856450200F6D56A /* PBXTargetDependency */,
+			);
+			name = "Integration Tests";
+			productName = "Integration Tests";
+			productReference = 2D0AC90C2856450100F6D56A /* Integration Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		2D11D3B81B9DC67100C7C731 /* vtx */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D11D3BA1B9DC67100C7C731 /* Build configuration list for PBXNativeTarget "vtx" */;
@@ -15609,6 +15655,10 @@
 					2D05A8301B4BE5BC004C913D = {
 						CreatedOnToolsVersion = 6.2;
 					};
+					2D0AC90B2856450100F6D56A = {
+						CreatedOnToolsVersion = 13.4;
+						TestTargetID = 4D1B3E7918379829003E6066;
+					};
 					2D11D3B81B9DC67100C7C731 = {
 						CreatedOnToolsVersion = 6.2;
 					};
@@ -15858,6 +15908,7 @@
 				2DF930431AB816DC0030C0CA /* wildmidi */,
 				07021EAB1C2734AC00FC9AF9 /* wmalib */,
 				07021F2F1C2734F100FC9AF9 /* wma */,
+				2D0AC90B2856450100F6D56A /* Integration Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -15964,6 +16015,14 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		2D0AC90A2856450100F6D56A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D0AC9182856496500F6D56A /* TestData in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D48DBF62269B731002CACFD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -16403,6 +16462,14 @@
 				2DA9AB5025DC31230004593A /* alaw.c in Sources */,
 				2DA9ABB725DC31230004593A /* ogg_opus.c in Sources */,
 				2DA9ABAA25DC31230004593A /* gsm_decode.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D0AC9082856450100F6D56A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D0AC9162856452500F6D56A /* ActionTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18178,6 +18245,11 @@
 			target = 2D05A8301B4BE5BC004C913D /* sndfilelib */;
 			targetProxy = 2D05A8DA1B4BE647004C913D /* PBXContainerItemProxy */;
 		};
+		2D0AC9112856450200F6D56A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D1B3E7918379829003E6066 /* DeaDBeeF */;
+			targetProxy = 2D0AC9102856450200F6D56A /* PBXContainerItemProxy */;
+		};
 		2D0E02E91E26705D00D3D8E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D7C37EB1B2C40520029DE0A /* ogglib */;
@@ -19867,6 +19939,72 @@
 					"-Wno-unused-value",
 					"-Wno-sizeof-array-div",
 				);
+			};
+			name = Release;
+		};
+		2D0AC9132856450200F6D56A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.deadbeef.Integration-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeaDBeeF.app/Contents/MacOS/DeaDBeeF";
+			};
+			name = Debug;
+		};
+		2D0AC9142856450200F6D56A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.deadbeef.Integration-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DeaDBeeF.app/Contents/MacOS/DeaDBeeF";
 			};
 			name = Release;
 		};
@@ -23903,6 +24041,15 @@
 			buildConfigurations = (
 				2D05A8331B4BE5BC004C913D /* Debug */,
 				2D05A8341B4BE5BC004C913D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D0AC9122856450200F6D56A /* Build configuration list for PBXNativeTarget "Integration Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D0AC9132856450200F6D56A /* Debug */,
+				2D0AC9142856450200F6D56A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
