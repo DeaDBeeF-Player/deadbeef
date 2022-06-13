@@ -48,16 +48,6 @@
                ReferencedContainer = "container:../external/mp4p/projects/Xcode/mp4p.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2D0AC90B2856450100F6D56A"
-               BuildableName = "Integration Tests.xctest"
-               BlueprintName = "Integration Tests"
-               ReferencedContainer = "container:deadbeef.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
