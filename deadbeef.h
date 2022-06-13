@@ -1664,6 +1664,9 @@ typedef struct {
         int (*callback)(ddb_insert_file_result_t result, const char *filename, void *user_data),
         void *user_data
     );
+
+    // time of creation
+    time_t (*plt_get_btime) (ddb_playlist_t *plt);
 #endif
 } DB_functions_t;
 

@@ -336,6 +336,11 @@ plt_unref (playlist_t *plt) {
     UNLOCK;
 }
 
+time_t
+plt_get_btime (playlist_t *plt) {
+    return plt->btime;
+}
+
 int
 plt_get_count (void) {
     return _playlists_count;

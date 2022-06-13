@@ -126,6 +126,9 @@ plt_ref (playlist_t *plt);
 void
 plt_unref (playlist_t *plt);
 
+time_t
+plt_get_btime (playlist_t *plt);
+
 playlist_t *
 plt_alloc (const char *title);
 
