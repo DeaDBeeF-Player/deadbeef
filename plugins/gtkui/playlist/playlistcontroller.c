@@ -207,6 +207,7 @@ static gboolean
 cursor_moved_cb (gpointer data) {
     w_trackdata_t *d = data;
     playlist_set_cursor (d->listview, d->trk);
+    g_object_unref(d->listview);
     deadbeef->pl_item_unref (d->trk);
     free (data);
     return FALSE;

@@ -89,10 +89,11 @@ search_process (DdbListview *listview, ddb_playlist_t *plt) {
     char title[1024] = "";
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
-        .plt = deadbeef->plt_get_curr (),
+        .plt = plt,
         .iter = PL_SEARCH
     };
     deadbeef->tf_eval (&ctx, window_title_bytecode, title, sizeof (title));
+
     gtk_window_set_title (GTK_WINDOW (searchwin), title);
 
 }
