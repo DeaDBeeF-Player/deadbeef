@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
@@ -40,6 +41,7 @@ typedef struct {
     GtkTreeViewColumn *col_playing;
     GtkTreeViewColumn *col_items;
     GtkTreeViewColumn *col_duration;
+    GtkTreeViewColumn *col_btime;
     int last_selected;
     gulong cc_id;
     gulong ri_id;
@@ -51,6 +53,7 @@ enum
     COL_NAME,
     COL_ITEMS,
     COL_DURATION,
+    COL_BTIME,
 };
 
 // copied from gtkui.c
@@ -164,6 +167,7 @@ fill_pltbrowser_rows (gpointer user_data)
         char title[1000];
         char title_temp[1000];
         char num_items_str[100];
+        char btime_str[40] = "";
         deadbeef->plt_get_title (plt, title_temp, sizeof (title_temp));
         if (plt_active == i && highlight_curr) {
             if (playback_state == DDB_PLAYBACK_STATE_PAUSED) {
@@ -212,8 +216,21 @@ fill_pltbrowser_rows (gpointer user_data)
             // NOTE: localizable because of the "d" suffix for days
             snprintf (totaltime_str, sizeof (totaltime_str), _("%dd %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
         }
-
-        gtk_list_store_set (store, &iter, COL_PLAYING, playing_pixbuf, COL_NAME, title, COL_ITEMS, num_items_str, COL_DURATION, totaltime_str, -1);
+        time_t btime = deadbeef->plt_get_btime(plt);
+        if (btime != 0) {
+            // a new created playlist that has not been saved does not have a
+            // birth date, since we get it from the file system.
+            struct tm tm_btime;
+            localtime_r(&btime, &tm_btime);
+            strftime(btime_str, sizeof(btime_str), "%d %b %Y", &tm_btime);
+        }
+        gtk_list_store_set (store, &iter,
+                COL_PLAYING, playing_pixbuf,
+                COL_NAME, title,
+                COL_ITEMS, num_items_str,
+                COL_DURATION, totaltime_str,
+                COL_BTIME, btime_str,
+                -1);
         deadbeef->plt_unref (plt);
     }
     deadbeef->pl_unlock ();
@@ -397,6 +414,20 @@ on_popup_header_duration_clicked (GtkCheckMenuItem *checkmenuitem, gpointer user
     }
 }
 
+static void
+on_popup_header_btime_clicked (GtkCheckMenuItem *checkmenuitem, gpointer user_data)
+{
+    w_pltbrowser_t *w = user_data;
+    int active = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
+    deadbeef->conf_set_int ("gtkui.pltbrowser.show_btime_column", active);
+    if (active) {
+        gtk_tree_view_column_set_visible (GTK_TREE_VIEW_COLUMN (w->col_btime), 1);
+    }
+    else if (w->col_duration) {
+        gtk_tree_view_column_set_visible (GTK_TREE_VIEW_COLUMN (w->col_btime), 0);
+    }
+}
+
 static gboolean
 on_pltbrowser_header_popup_menu (GtkWidget *widget, gpointer user_data)
 {
@@ -405,19 +436,24 @@ on_pltbrowser_header_popup_menu (GtkWidget *widget, gpointer user_data)
     GtkWidget *playing = gtk_check_menu_item_new_with_mnemonic (_("Playing"));
     GtkWidget *items = gtk_check_menu_item_new_with_mnemonic (_("Items"));
     GtkWidget *duration = gtk_check_menu_item_new_with_mnemonic (_("Duration"));
+    GtkWidget *btime = gtk_check_menu_item_new_with_mnemonic (_("Created on"));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (playing), deadbeef->conf_get_int ("gtkui.pltbrowser.show_playing_column", 0));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (items), deadbeef->conf_get_int ("gtkui.pltbrowser.show_items_column", 0));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (duration), deadbeef->conf_get_int ("gtkui.pltbrowser.show_duration_column", 0));
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (btime), deadbeef->conf_get_int ("gtkui.pltbrowser.show_btime_column", 0));
     gtk_container_add (GTK_CONTAINER (popup), playing);
     gtk_container_add (GTK_CONTAINER (popup), items);
     gtk_container_add (GTK_CONTAINER (popup), duration);
+    gtk_container_add (GTK_CONTAINER (popup), btime);
     gtk_widget_show (popup);
     gtk_widget_show (playing);
     gtk_widget_show (items);
     gtk_widget_show (duration);
+    gtk_widget_show (btime);
     g_signal_connect_after ((gpointer) playing, "toggled", G_CALLBACK (on_popup_header_playing_clicked), w);
     g_signal_connect_after ((gpointer) items, "toggled", G_CALLBACK (on_popup_header_items_clicked), w);
     g_signal_connect_after ((gpointer) duration, "toggled", G_CALLBACK (on_popup_header_duration_clicked), w);
+    g_signal_connect_after ((gpointer) btime, "toggled", G_CALLBACK (on_popup_header_btime_clicked), w);
     gtk_menu_attach_to_widget (GTK_MENU (popup), GTK_WIDGET (widget), NULL);
     gtk_menu_popup (GTK_MENU (popup), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time ());
     return TRUE;
@@ -458,6 +494,15 @@ cmp_playlist_duration_func (const void *a, const void *b) {
     else {
         return -1;
     }
+}
+
+static int
+cmp_playlist_btime_func (const void *a, const void *b) {
+    ddb_playlist_t *aa = *((ddb_playlist_t **)a);
+    ddb_playlist_t *bb = *((ddb_playlist_t **)b);
+    time_t pl_btime0 = deadbeef->plt_get_btime(aa);
+    time_t pl_btime1 = deadbeef->plt_get_btime(bb);
+    return pl_btime0 - pl_btime1;
 }
 
 static void
@@ -509,6 +554,13 @@ sort_by_duration (int order)
     return;
 }
 
+static void
+sort_by_btime (int order)
+{
+    sort_playlists (order, cmp_playlist_btime_func);
+    return;
+}
+
 static gint
 get_col_number_from_tree_view_column (GtkTreeView *view, GtkTreeViewColumn *col)
 {
@@ -553,6 +605,9 @@ on_pltbrowser_column_clicked (GtkTreeViewColumn     *col,
             break;
         case COL_DURATION:
             sort_by_duration (order);
+            break;
+        case COL_BTIME:
+            sort_by_btime (order);
             break;
         default:
             sort_by_name (order);
@@ -839,7 +894,7 @@ w_pltbrowser_create (void) {
 
     gtk_container_add (GTK_CONTAINER (scroll), w->tree);
 
-    GtkListStore *store = gtk_list_store_new (4, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+    GtkListStore *store = gtk_list_store_new (5, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     w->ri_id = g_signal_connect ((gpointer) store, "row_inserted", G_CALLBACK (on_pltbrowser_row_inserted), w);
@@ -863,6 +918,12 @@ w_pltbrowser_create (void) {
     int show_duration_column = deadbeef->conf_get_int ("gtkui.pltbrowser.show_duration_column", 0);
     if (!show_duration_column) {
         gtk_tree_view_column_set_visible (w->col_duration, 0);
+    }
+
+    w->col_btime = add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_BTIME, 0, 1, _("Created on"), 0);
+    int show_btime_column = deadbeef->conf_get_int ("gtkui.pltbrowser.show_btime_column", 0);
+    if (!show_btime_column) {
+        gtk_tree_view_column_set_visible (w->col_btime, 0);
     }
 
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
