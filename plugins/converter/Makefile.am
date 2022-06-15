@@ -56,4 +56,8 @@ converter_gtk3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS)
 converter_gtk3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS)
 endif
 
+sdkdir = $(pkgincludedir)
+sdk_HEADERS = converter.h
+
+
 endif
