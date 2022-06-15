@@ -358,24 +358,22 @@ streamer_set_playing_track (playItem_t *it) {
         return;
     }
 
-    playItem_t *prev = playing_track;
-
     streamer_lock();
+    playItem_t *prev = playing_track;
     playing_track = it;
     streamer_unlock();
 
-    if (playing_track) {
-        pl_item_ref (playing_track);
-    }
-
-    send_trackinfochanged(prev);
-
-    if (playing_track) {
-        send_trackinfochanged(playing_track);
+    if (it) {
+        pl_item_ref (it);
     }
 
     if (prev) {
+        send_trackinfochanged(prev);
         pl_item_unref (prev);
+    }
+
+    if (it) {
+        send_trackinfochanged(it);
     }
 }
 

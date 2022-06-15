@@ -23,12 +23,13 @@
 
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
+#include "messagepump.h"
 #include "plmeta.h"
+#include "playqueue.h"
+#include "plugins.h"
+#include "streamer.h"
 #include "tf.h"
 #include "tftintutil.h"
-#include "playqueue.h"
-#include "streamer.h"
-#include "plugins.h"
 
 static int fake_out_state_value = DDB_PLAYBACK_STATE_STOPPED;
 
@@ -61,6 +62,8 @@ static DB_output_t fake_out = {
     ctx.it = (DB_playItem_t *)it;
     ctx.plt = NULL;
 
+    messagepump_init();
+    plug_set_output (&fake_out);
     streamer_init();
 
     streamer_set_playing_track (NULL);
@@ -74,6 +77,19 @@ static DB_output_t fake_out = {
     ctx.it = NULL;
     ctx.plt = NULL;
     streamer_free();
+
+    // flush any remaining events
+    uint32_t _id;
+    uintptr_t ctx;
+    uint32_t p1;
+    uint32_t p2;
+    while (messagepump_pop(&_id, &ctx, &p1, &p2) != -1) {
+        if (_id >= DB_EV_FIRST && ctx) {
+            messagepump_event_free ((ddb_event_t *)ctx);
+        }
+    }
+
+    messagepump_free();
 
     [super tearDown];
 }
@@ -1298,7 +1314,6 @@ static DB_output_t fake_out = {
 - (void)test_isPlaying_StatePlayingAndStreamerTrackNotSameAsCtxTrack_ReturnsNone {
     streamer_set_playing_track (it);
     ctx.it = NULL;
-    plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_PLAYING;
     char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
     tf_eval (&ctx, bc, buffer, 1000);
@@ -1308,7 +1323,6 @@ static DB_output_t fake_out = {
 
 - (void)test_isPlaying_StatePlayingAndStreamerTrackSameAsCtxTrack_Returns1 {
     streamer_set_playing_track (it);
-    plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_PLAYING;
     char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
     tf_eval (&ctx, bc, buffer, 1000);
@@ -1317,7 +1331,6 @@ static DB_output_t fake_out = {
 }
 
 - (void)test_IsPlaying_StateStopped_ReturnsNone {
-    plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_STOPPED;
     char *bc = tf_compile("$if(%isplaying%,YES,NO) %isplaying%");
     tf_eval (&ctx, bc, buffer, 1000);
@@ -1328,7 +1341,6 @@ static DB_output_t fake_out = {
 - (void)test_isPaused_StatePlayingAndStreamerTrackNotSameAsCtxTrack_ReturnsNone {
     streamer_set_playing_track (it);
     ctx.it = NULL;
-    plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_PLAYING;
     char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
     tf_eval (&ctx, bc, buffer, 1000);
@@ -1338,7 +1350,6 @@ static DB_output_t fake_out = {
 
 - (void)test_isPaused_StatePlayingAndStreamerTrackSameAsCtxTrack_ReturnsNone {
     streamer_set_playing_track (it);
-    plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_PLAYING;
     char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
     tf_eval (&ctx, bc, buffer, 1000);
@@ -1349,7 +1360,6 @@ static DB_output_t fake_out = {
 - (void)test_isPaused_StatePausedAndStreamerTrackNotSameAsCtxTrack_ReturnsNone {
     streamer_set_playing_track (it);
     ctx.it = NULL;
-    plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_PAUSED;
     char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
     tf_eval (&ctx, bc, buffer, 1000);
@@ -1359,7 +1369,6 @@ static DB_output_t fake_out = {
 
 - (void)test_isPaused_StatePausedAndStreamerTrackSameAsCtxTrack_Returns1 {
     streamer_set_playing_track (it);
-    plug_set_output (&fake_out);
     fake_out_state_value = DDB_PLAYBACK_STATE_PAUSED;
     char *bc = tf_compile("$if(%ispaused%,YES,NO) %ispaused%");
     tf_eval (&ctx, bc, buffer, 1000);
