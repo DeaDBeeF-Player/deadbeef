@@ -56,6 +56,9 @@ void
 trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtracks);
 
 void
+trkproperties_fill_prop (GtkListStore *propstore, DB_playItem_t **tracks, int numtracks);
+
+void
 show_track_properties_dlg_with_track_list (ddb_playItem_t **track_list, int count);
 
 #endif

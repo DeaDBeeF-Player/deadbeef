@@ -311,6 +311,43 @@ trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtra
 }
 
 void
+trkproperties_fill_prop (GtkListStore *propstore, DB_playItem_t **tracks, int numtracks) {
+    gtk_list_store_clear (propstore);
+    if (!tracks) {
+        return;
+    }
+
+    const char **keys = NULL;
+    int nkeys = trkproperties_build_key_list (&keys, 1, tracks, numtracks);
+
+    // add "standard" fields
+    for (int i = 0; trkproperties_hc_props[i]; i += 2) {
+        add_field (propstore, trkproperties_hc_props[i], _(trkproperties_hc_props[i+1]), 1, tracks, numtracks);
+    }
+
+    // add all other fields
+    for (int k = 0; k < nkeys; k++) {
+        int i;
+        for (i = 0; trkproperties_hc_props[i]; i += 2) {
+            if (!strcasecmp (keys[k], trkproperties_hc_props[i])) {
+                break;
+            }
+        }
+        if (trkproperties_hc_props[i]) {
+            continue;
+        }
+
+        size_t l = strlen (keys[k]);
+        char title[l + 3];
+        snprintf (title, sizeof (title), "<%s>", keys[k]);
+        add_field (propstore, keys[k], title, 0, tracks, numtracks);
+    }
+    if (keys) {
+        free (keys);
+    }
+}
+
+void
 trkproperties_fill_metadata (void) {
     if (!trackproperties) {
         return;
