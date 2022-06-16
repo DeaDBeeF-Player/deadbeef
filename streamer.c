@@ -2393,6 +2393,7 @@ static void
 _play_track (playItem_t *it, int startpaused) {
     DB_output_t *output = plug_get_output();
     output->stop ();
+    streamer_lock();
     streamer_reset(1);
     streamer_is_buffering = 1;
 
@@ -2411,9 +2412,7 @@ _play_track (playItem_t *it, int startpaused) {
     }
 
     if (!stream_track(it, startpaused)) {
-        streamer_lock();
         playpos = 0;
-        streamer_unlock();
         playtime = 0;
         if (startpaused) {
             output->pause ();
@@ -2432,6 +2431,7 @@ _play_track (playItem_t *it, int startpaused) {
     else {
         streamer_set_buffering_track (NULL);
     }
+    streamer_unlock();
 }
 
 static void
