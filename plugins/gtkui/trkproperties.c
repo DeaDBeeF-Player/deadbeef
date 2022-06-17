@@ -339,8 +339,8 @@ trkproperties_fill_prop (GtkListStore *propstore, DB_playItem_t **tracks, int nu
 
         size_t l = strlen (keys[k]);
         char title[l + 3];
-        snprintf (title, sizeof (title), "<%s>", keys[k]);
-        add_field (propstore, keys[k], title, 0, tracks, numtracks);
+        snprintf (title, sizeof (title), "<%s>", keys[k]+1);
+        add_field (propstore, keys[k], title, 1, tracks, numtracks);
     }
     if (keys) {
         free (keys);
