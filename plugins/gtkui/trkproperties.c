@@ -274,8 +274,16 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop,
 }
 
 void
+add_field_section(GtkListStore *store, const char *title, const char *value) {
+	GtkTreeIter iter;
+	gtk_list_store_append (store, &iter);
+	gtk_list_store_set(store, &iter, 0, title, 1, value, -1);
+}
+
+void
 trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtracks) {
-    gtk_list_store_clear (store);
+    // no clear here
+    // gtk_list_store_clear (store);
     if (!tracks) {
         return;
     }
@@ -312,7 +320,8 @@ trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtra
 
 void
 trkproperties_fill_prop (GtkListStore *propstore, DB_playItem_t **tracks, int numtracks) {
-    gtk_list_store_clear (propstore);
+    // no clear here
+    // gtk_list_store_clear (propstore);
     if (!tracks) {
         return;
     }
@@ -354,6 +363,7 @@ trkproperties_fill_metadata (void) {
     }
     trkproperties_modified = 0;
 
+    gtk_list_store_clear (store);
     trkproperties_fill_meta (store, tracks, numtracks);
     gtk_list_store_clear (propstore);
 

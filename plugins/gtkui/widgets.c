@@ -2346,6 +2346,7 @@ fill_selproperties_cb (gpointer data) {
         }
     }
     GtkListStore *store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (w->tree)));
+    gtk_list_store_clear (store);
     trkproperties_fill_meta (store, tracks, numtracks);
     if (tracks) {
         for (int i = 0; i < numtracks; i++) {
@@ -2497,6 +2498,7 @@ fill_selmetadata_cb (gpointer data) {
         }
     }
     GtkListStore *propstore = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (w->tree)));
+    gtk_list_store_clear (propstore);
     trkproperties_fill_prop (propstore, tracks, numtracks);
     if (tracks) {
         for (int i = 0; i < numtracks; i++) {
