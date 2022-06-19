@@ -47,8 +47,8 @@
 
 #define CDDA_ALL_TRACKS "all.cda"
 
-#define DEFAULT_SERVER "freedb.org"
-#define DEFAULT_PORT 888
+#define DEFAULT_SERVER "gnudb.gnudb.org"
+#define DEFAULT_PORT 8880
 #define DEFAULT_USE_CDDB 1
 #define DEFAULT_PROTOCOL 1
 #define DEFAULT_PREFER_CDTEXT 1
@@ -718,7 +718,6 @@ insert_disc (ddb_playlist_t *plt, DB_playItem_t *after, const char *path, const 
         p->got_cdtext = got_cdtext;
         p->prefer_cdtext = prefer_cdtext;
         if (enable_cddb) {
-            trace("cdda: querying freedb...\n");
             tid = deadbeef->thread_start(cddb_thread, p);
             if (tid) {
                 deadbeef->thread_detach(tid);
@@ -1109,14 +1108,14 @@ cda_get_actions (DB_playItem_t *it)
 }
 
 static const char settings_dlg[] =
-    "property \"Use CDDB/FreeDB\" checkbox cdda.freedb.enable 1;\n"
+    "property \"Use CDDB/GnuDb\" checkbox cdda.freedb.enable 1;\n"
     "property box hbox[2] height=-1;"
     "property box hbox[0] border=5 height=-1;"
     "property box vbox[4] expand fill height=-1;"
     "property \"Prefer CD-Text over CDDB\" checkbox cdda.prefer_cdtext 1;\n"
-    "property \"CDDB url (e.g. 'freedb.org')\" entry cdda.freedb.host freedb.org;\n"
+    "property \"CDDB url (e.g. 'gnudb.gnudb.org')\" entry cdda.freedb.host gnudb.gnudb.org;\n"
     "property box hbox[1] height=-1;"
-    "property \"CDDB port number (e.g. '888')\" entry cdda.freedb.port 888;\n"
+    "property \"CDDB port number (e.g. '8880')\" entry cdda.freedb.port 8880;\n"
     "property \"Use CDDB protocol\" checkbox cdda.protocol 1;\n"
     "property \"Enable NRG image support\" checkbox cdda.enable_nrg 0;"
     "property box hbox[1] height=-1;"
