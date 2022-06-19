@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include "pango/pango-font.h"
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
@@ -241,7 +242,7 @@ static void
 _set_metadata_row(GtkListStore *store, GtkTreeIter *iter, const char *key, int is_mult, const char *title, char *value) {
     char *clipped_val = clip_multiline_value (value);
     char *display_val = clipped_val ?: value;
-    gtk_list_store_set (store, iter, 0, title, 1, display_val, 2, key, 3, is_mult ? 1 : 0, 4, value, -1);
+    gtk_list_store_set (store, iter, 0, title, 1, display_val, 2, key, 3, is_mult ? 1 : 0, 4, value, 5, PANGO_WEIGHT_NORMAL, -1);
     free (clipped_val);
 }
 
@@ -267,7 +268,7 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop,
         _set_metadata_row(store, &iter, key, n, title, v);
     }
     else {
-        gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, -1);
+        gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, 5, PANGO_WEIGHT_NORMAL, -1);
     }
 
     free (val);
@@ -277,7 +278,7 @@ void
 add_field_section(GtkListStore *store, const char *title, const char *value) {
 	GtkTreeIter iter;
 	gtk_list_store_append (store, &iter);
-	gtk_list_store_set(store, &iter, 0, title, 1, value, -1);
+	gtk_list_store_set(store, &iter, 0, title, 1, value, 5, PANGO_WEIGHT_BOLD, -1);
 }
 
 void
@@ -319,7 +320,7 @@ trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtra
 }
 
 void
-trkproperties_fill_prop (GtkListStore *propstore, DB_playItem_t **tracks, int numtracks) {
+trkproperties_fill_prop (GtkListStore *store, DB_playItem_t **tracks, int numtracks) {
     // no clear here
     // gtk_list_store_clear (propstore);
     if (!tracks) {
@@ -331,7 +332,7 @@ trkproperties_fill_prop (GtkListStore *propstore, DB_playItem_t **tracks, int nu
 
     // add "standard" fields
     for (int i = 0; trkproperties_hc_props[i]; i += 2) {
-        add_field (propstore, trkproperties_hc_props[i], _(trkproperties_hc_props[i+1]), 1, tracks, numtracks);
+        add_field (store, trkproperties_hc_props[i], _(trkproperties_hc_props[i+1]), 1, tracks, numtracks);
     }
 
     // add all other fields
@@ -349,7 +350,7 @@ trkproperties_fill_prop (GtkListStore *propstore, DB_playItem_t **tracks, int nu
         size_t l = strlen (keys[k]);
         char title[l + 3];
         snprintf (title, sizeof (title), "<%s>", keys[k]+1);
-        add_field (propstore, keys[k], title, 1, tracks, numtracks);
+        add_field (store, keys[k], title, 1, tracks, numtracks);
     }
     if (keys) {
         free (keys);

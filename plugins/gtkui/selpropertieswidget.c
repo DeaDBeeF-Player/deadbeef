@@ -22,19 +22,21 @@
 */
 
 #include <assert.h>
+#include <jansson.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "support.h"
 #include "trkproperties.h"
-#include "trackpropertieswidget.h"
+#include "selpropertieswidget.h"
 
 extern DB_functions_t *deadbeef;
 extern int design_mode;
 
 typedef enum {
-	NONE=0,
-    PROP=1,
-    META=2,
-	PROP_META=3,
-} properties_mode_t;
+    SECTION_PROPERTIES = 1 << 0,
+    SECTION_METADATA = 1 << 1,
+} selproperties_section_t;
 
 typedef struct {
     ddb_gtkui_widget_t base;
@@ -42,17 +44,18 @@ typedef struct {
     GtkWidget *tree;
     guint refresh_timeout;
 
-    properties_mode_t mode;
+    selproperties_section_t section;
+	guint show_headers;
 
     gboolean updating_menu; // suppress menu event handlers
     GtkWidget *menu;
-    GtkWidget *menu_prop;
-    GtkWidget *menu_meta;
-} w_properties_t;
+    GtkWidget *menu_properties;
+    GtkWidget *menu_metadata;
+} w_selproperties_t;
 
 gboolean
-fill_properties_cb (gpointer data) {
-    w_properties_t *w = data;
+fill_selproperties_cb (gpointer data) {
+    w_selproperties_t *w = data;
     DB_playItem_t **tracks = NULL;
     if (w->refresh_timeout) {
         g_source_remove (w->refresh_timeout);
@@ -85,23 +88,13 @@ fill_properties_cb (gpointer data) {
     }
     GtkListStore *store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (w->tree)));
 	gtk_list_store_clear (store);
-	switch (w->mode) {
-	case PROP:
-		add_field_section(store, "PROPERTY", "--------------------------------");
+	if (w->section & SECTION_PROPERTIES) {
+		add_field_section(store, "Property", "");
 		trkproperties_fill_prop (store, tracks, numtracks);
-		break;
-	case META:
-		add_field_section(store, "METADATA", "--------------------------------");
+	}
+	if (w->section & SECTION_METADATA) {
+		add_field_section(store, "Metadata", "");
 		trkproperties_fill_meta (store, tracks, numtracks);
-		break;
-	case PROP_META:
-		add_field_section(store, "PROPERTY", "--------------------------------");
-		trkproperties_fill_prop (store, tracks, numtracks);
-		add_field_section(store, "METADATA", "--------------------------------");
-		trkproperties_fill_meta (store, tracks, numtracks);
-		break;
-	case NONE:
-		break;
 	}
 
     if (tracks) {
@@ -118,38 +111,38 @@ fill_properties_cb (gpointer data) {
 
 static void
 _init (struct ddb_gtkui_widget_s *widget) {
-    w_properties_t *w = (w_properties_t *)widget;
+    w_selproperties_t *w = (w_selproperties_t *)widget;
     w->refresh_timeout = 0;
-    fill_properties_cb (widget);
+    fill_selproperties_cb (widget);
+    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), w->show_headers);
 }
 
 static void
 _menu_activate (GtkWidget* self, gpointer user_data) {
-    w_properties_t *s = user_data;
+    w_selproperties_t *s = user_data;
 
     if (s->updating_menu) {
         return;
     }
 
-    if (self == s->menu_prop) {
-        s->mode ^= PROP;
-        fill_properties_cb(s);
+    if (self == s->menu_properties) {
+        s->section ^= SECTION_PROPERTIES;
     }
-    else if (self == s->menu_meta) {
-        s->mode ^= META;
-        fill_properties_cb (s);
+    else if (self == s->menu_metadata) {
+        s->section ^= SECTION_METADATA;
     }
+    fill_selproperties_cb (s);
 }
 
 static void
 selection_changed (gpointer user_data)
 {
-    w_properties_t *prop_w = user_data;
-    if (prop_w->refresh_timeout) {
-        g_source_remove (prop_w->refresh_timeout);
-        prop_w->refresh_timeout = 0;
+    w_selproperties_t *s = user_data;
+    if (s->refresh_timeout) {
+        g_source_remove (s->refresh_timeout);
+        s->refresh_timeout = 0;
     }
-    prop_w->refresh_timeout = g_timeout_add_full(G_PRIORITY_DEFAULT_IDLE, 10, fill_properties_cb, user_data, NULL);
+    s->refresh_timeout = g_timeout_add_full(G_PRIORITY_DEFAULT_IDLE, 10, fill_selproperties_cb, user_data, NULL);
 }
 
 static int
@@ -169,10 +162,10 @@ _message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32
 }
 
 static void
-_menu_update (w_properties_t *s) {
+_menu_update (w_selproperties_t *s) {
     s->updating_menu = TRUE;
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->menu_prop), s->mode & PROP);
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->menu_meta), s->mode & META);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->menu_properties), s->section & SECTION_PROPERTIES);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->menu_metadata), s->section & SECTION_METADATA);
     s->updating_menu = FALSE;
 }
 
@@ -181,7 +174,7 @@ _button_press (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
     if (design_mode) {
         return FALSE;
     }
-    w_properties_t *s = user_data;
+    w_selproperties_t *s = user_data;
 
     if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
         _menu_update(s);
@@ -194,44 +187,61 @@ _button_press (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
 
 static void
 _deserialize_from_keyvalues (ddb_gtkui_widget_t *widget, const char **keyvalues) {
-    w_properties_t *s = (w_properties_t *)widget;
+    w_selproperties_t *s = (w_selproperties_t *)widget;
 
-    s->mode = PROP_META;
+	s->section = 0;
+	s->show_headers = 1;
+	gboolean live = FALSE;
 
     for (int i = 0; keyvalues[i]; i += 2) {
-        if (!strcmp (keyvalues[i], "trackproperties")) {
-            if (!strcmp (keyvalues[i+1], "property")) {
-                s->mode = PROP;
-            } else if (!strcmp (keyvalues[i+1], "metadata")) {
-                s->mode = META;
-            } else if (!strcmp (keyvalues[i+1], "none")) {
-                s->mode = NONE;
-            }
+        if (!strcmp (keyvalues[i], "section")) {
+			live = TRUE;
+			json_t *section= json_loads(keyvalues[i+1], 0, NULL);
+			char *sect = strdup(keyvalues[i+1]);
+			char *token = strtok(sect, ",");
+
+			while (token) {
+				if (!strcmp(token, "properties")) {
+					s->section |= SECTION_PROPERTIES;
+				}
+				else if (!strcmp(token, "metadata")) {
+					s->section |= SECTION_METADATA;
+				}
+				token = strtok(NULL, ",");
+			}
+
+			free(sect);
+
+		} else if (!strcmp (keyvalues[i], "showheaders")) {
+			s->show_headers = atoi(keyvalues[i+1]);
         }
     }
+
+	if (!live) {
+		s->section = SECTION_PROPERTIES + SECTION_METADATA;
+	}
 }
 
 static char const **
 _serialize_to_keyvalues (ddb_gtkui_widget_t *widget) {
-    w_properties_t *s = (w_properties_t *)widget;
+    w_selproperties_t *s = (w_selproperties_t *)widget;
 
-    char const **keyvalues = calloc (3, sizeof (char *));
+    char const **keyvalues = calloc (5, sizeof (char *));
 
-    keyvalues[0] = "trackproperties";
-    switch (s->mode) {
-	case NONE:
-		keyvalues[1] = "none";
-		break;
-    case PROP:
-        keyvalues[1] = "property";
-        break;
-    case META:
-        keyvalues[1] = "metadata";
-        break;
-	case PROP_META:
-        keyvalues[1] = "both";
-        break;
-    }
+    keyvalues[0] = "section";
+
+	if (s->section == SECTION_PROPERTIES + SECTION_METADATA) {
+		keyvalues[1] = "properties,metadata";
+	} else if (s->section == SECTION_PROPERTIES) {
+		keyvalues[1] = "properties";
+	} else if (s->section == SECTION_METADATA) {
+		keyvalues[1] = "metadata";
+	} else {
+		keyvalues[1] = "";
+	}
+
+    keyvalues[2] = "showheaders";
+	keyvalues[3] = s->show_headers ? "1" : "0";
 
     return keyvalues;
 }
@@ -243,18 +253,19 @@ _free_serialized_keyvalues(ddb_gtkui_widget_t *w, char const **keyvalues) {
 
 static void
 on_properties_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data) {
-    w_properties_t *w = user_data;
+    w_selproperties_t *w = user_data;
     int showheaders = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
-    deadbeef->conf_set_int ("gtkui.track_properties.show_headers", showheaders);
+	w->show_headers = showheaders;
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
 }
 
 static void
 _initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
+    w_selproperties_t *s = (w_selproperties_t *)w;
     GtkWidget *item;
     item = gtk_check_menu_item_new_with_mnemonic (_("Show Column Headers"));
     gtk_widget_show (item);
-    int showheaders = deadbeef->conf_get_int ("gtkui.track_properties.show_headers", 1);
+	int showheaders = s->show_headers;
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), showheaders);
     gtk_container_add (GTK_CONTAINER (menu), item);
     g_signal_connect ((gpointer) item, "toggled",
@@ -263,15 +274,15 @@ _initmenu (struct ddb_gtkui_widget_s *w, GtkWidget *menu) {
 }
 
 ddb_gtkui_widget_t *
-w_properties_create (void) {
-    w_properties_t *w = malloc (sizeof (w_properties_t));
-    memset (w, 0, sizeof (w_properties_t));
+w_selproperties_create (void) {
+    w_selproperties_t *w = malloc (sizeof (w_selproperties_t));
+    memset (w, 0, sizeof (w_selproperties_t));
 
     w->base.widget = gtk_event_box_new ();
     w->base.init = _init;
     w->base.message = _message;
     w->base.initmenu = _initmenu;
-	w->mode = PROP_META;
+	w->section = SECTION_METADATA + SECTION_PROPERTIES;
     w->exapi._size = sizeof (ddb_gtkui_widget_extended_api_t);
     w->exapi.deserialize_from_keyvalues = _deserialize_from_keyvalues;
     w->exapi.serialize_to_keyvalues = _serialize_to_keyvalues;
@@ -291,13 +302,13 @@ w_properties_create (void) {
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_container_add (GTK_CONTAINER (scroll), w->tree);
 
-    GtkListStore *store = gtk_list_store_new (5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
+    GtkListStore *store = gtk_list_store_new (6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
 
     GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
     GtkCellRenderer *rend2 = gtk_cell_renderer_text_new ();
-    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend1, "text", 0, NULL);
+    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend1, "text", 0, "weight", 5,  NULL);
     gtk_tree_view_column_set_sizing (col1, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend2, "text", 1, NULL);
     gtk_tree_view_column_set_sizing (col2, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
@@ -305,22 +316,19 @@ w_properties_create (void) {
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), TRUE);
 
-    int showheaders = deadbeef->conf_get_int ("gtkui.track_properties.show_headers", 1);
-    gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), showheaders);
-
     w_override_signals (w->base.widget, w);
     g_signal_connect ((gpointer)w->tree, "button-press-event", G_CALLBACK (_button_press), w);
 
     w->menu = gtk_menu_new();
-    w->menu_prop = gtk_check_menu_item_new_with_mnemonic( _("Properties"));
-    gtk_widget_show(w->menu_prop);
-    w->menu_meta = gtk_check_menu_item_new_with_mnemonic( _("Metadata"));
-    gtk_widget_show(w->menu_meta);
-    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_prop, 0);
-    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_meta, 1);
+    w->menu_properties = gtk_check_menu_item_new_with_mnemonic( _("Properties"));
+    gtk_widget_show(w->menu_properties);
+    w->menu_metadata = gtk_check_menu_item_new_with_mnemonic( _("Metadata"));
+    gtk_widget_show(w->menu_metadata);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_properties, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_metadata, 1);
 
-    g_signal_connect((gpointer)w->menu_prop, "activate", G_CALLBACK(_menu_activate), w);
-    g_signal_connect((gpointer)w->menu_meta, "activate", G_CALLBACK(_menu_activate), w);
+    g_signal_connect((gpointer)w->menu_properties, "activate", G_CALLBACK(_menu_activate), w);
+    g_signal_connect((gpointer)w->menu_metadata, "activate", G_CALLBACK(_menu_activate), w);
 
     return (ddb_gtkui_widget_t *)w;
 }

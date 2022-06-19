@@ -23,12 +23,12 @@
 
 
 
-#ifndef trackpropertieswidget_h
-#define trackpropertieswidget_h
+#ifndef selpropertieswidget_h
+#define selpropertieswidget_h
 
 #include "widgets.h"
 
 ddb_gtkui_widget_t *
-w_properties_create (void);
+w_selproperties_create (void);
 
 #endif /* propertieswidget_h */

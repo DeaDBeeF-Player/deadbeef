@@ -27,7 +27,7 @@ GTKUI_SOURCES = \
 	tagwritersettings.c tagwritersettings.h\
 	trkproperties.c trkproperties.h\
 	widgets.c widgets.h\
-	trackpropertieswidget.c trackpropertieswidget.h\
+	selpropertieswidget.c selpropertieswidget.h\
 	wingeom.c wingeom.h\
     actionhandlers.c actionhandlers.h\
     clipboard.c clipboard.h\
