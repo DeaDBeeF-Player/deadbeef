@@ -2164,6 +2164,9 @@ _streamer_get_bytes (char *bytes, int size) {
         memmove (outbuffer, outbuffer + sz, _outbuffer_remaining - sz);
         _outbuffer_remaining -= sz;
     }
+    else {
+        _outbuffer_remaining = 0;
+    }
     streamer_unlock();
 
     streamer_apply_soft_volume (bytes, sz);
