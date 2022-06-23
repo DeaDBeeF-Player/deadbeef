@@ -162,4 +162,8 @@
     }
 }
 
+- (void)cancel:(id)sender {
+    [self.window close];
+}
+
 @end
