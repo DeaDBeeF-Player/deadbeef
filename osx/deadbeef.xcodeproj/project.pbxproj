@@ -722,6 +722,10 @@
 		2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B1A237718DA00252E6D /* playmodes.c */; };
 		2D0AC9162856452500F6D56A /* ActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AC9152856452500F6D56A /* ActionTests.m */; };
 		2D0AC9182856496500F6D56A /* TestData in Resources */ = {isa = PBXBuildFile; fileRef = 2D7492861CCFFE7700D3A59E /* TestData */; };
+		2D0AC9AA2864E12700F6D56A /* selpropertieswidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AC9992864E12600F6D56A /* selpropertieswidget.c */; };
+		2D0AC9AB2864E12700F6D56A /* selpropertieswidget.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0AC9992864E12600F6D56A /* selpropertieswidget.c */; };
+		2D0AC9AC2864E12700F6D56A /* selpropertieswidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0AC9A92864E12600F6D56A /* selpropertieswidget.h */; };
+		2D0AC9AD2864E12700F6D56A /* selpropertieswidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0AC9A92864E12600F6D56A /* selpropertieswidget.h */; };
 		2D0E02EA1E26706300D3D8E6 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D0F90C21CCFF094003FA197 /* TaggingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F90C11CCFF094003FA197 /* TaggingTests.m */; };
 		2D11D3C41B9DC69C00C7C731 /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3BD1B9DC69C00C7C731 /* ay8912.c */; };
@@ -5233,6 +5237,8 @@
 		2D0A6B1A237718DA00252E6D /* playmodes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = playmodes.c; sourceTree = "<group>"; };
 		2D0AC90C2856450100F6D56A /* Integration Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Integration Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AC9152856452500F6D56A /* ActionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ActionTests.m; sourceTree = "<group>"; };
+		2D0AC9992864E12600F6D56A /* selpropertieswidget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = selpropertieswidget.c; sourceTree = "<group>"; };
+		2D0AC9A92864E12600F6D56A /* selpropertieswidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = selpropertieswidget.h; sourceTree = "<group>"; };
 		2D0F90C11CCFF094003FA197 /* TaggingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaggingTests.m; sourceTree = "<group>"; };
 		2D11D3B91B9DC67100C7C731 /* vtx.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = vtx.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D11D3BD1B9DC69C00C7C731 /* ay8912.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ay8912.c; sourceTree = "<group>"; };
@@ -11641,6 +11647,8 @@
 				2DE3B68E2269BB4300AFF9AE /* wingeom.h */,
 				2DA62BA326F3C8A800ED449A /* gtkui_deletefromdisk.h */,
 				2DA62BA426F3C8A800ED449A /* gtkui_deletefromdisk.c */,
+				2D0AC9992864E12600F6D56A /* selpropertieswidget.c */,
+				2D0AC9A92864E12600F6D56A /* selpropertieswidget.h */,
 			);
 			name = gtkui;
 			path = plugins/gtkui;
@@ -13728,6 +13736,7 @@
 				2DC656832744289C00583E14 /* actions.h in Headers */,
 				2DC656842744289C00583E14 /* trkproperties.h in Headers */,
 				2DC656852744289C00583E14 /* ddb_splitter.h in Headers */,
+				2D0AC9AC2864E12700F6D56A /* selpropertieswidget.h in Headers */,
 				2DC656862744289C00583E14 /* ddb_splitter_size_mode.h in Headers */,
 				2DC656872744289C00583E14 /* prefwinnetwork.h in Headers */,
 				2DC656882744289C00583E14 /* support.h in Headers */,
@@ -13806,6 +13815,7 @@
 				2DE3B7D12269BF1700AFF9AE /* actions.h in Headers */,
 				2DE3B7C52269BF1300AFF9AE /* trkproperties.h in Headers */,
 				2DE3B7ED2269BF3100AFF9AE /* ddb_splitter.h in Headers */,
+				2D0AC9AD2864E12700F6D56A /* selpropertieswidget.h in Headers */,
 				2DE3B7FB2269BF3100AFF9AE /* ddb_splitter_size_mode.h in Headers */,
 				2D715C1A26C839020022A8F0 /* prefwinnetwork.h in Headers */,
 				2DE3B80B2269BF3100AFF9AE /* support.h in Headers */,
@@ -17473,6 +17483,7 @@
 				2DC656B72744289C00583E14 /* actions.c in Sources */,
 				2DC656B82744289C00583E14 /* hotkeys.c in Sources */,
 				2DC656B92744289C00583E14 /* callbacks.c in Sources */,
+				2D0AC9AA2864E12700F6D56A /* selpropertieswidget.c in Sources */,
 				2DC656BA2744289C00583E14 /* pltmenu.c in Sources */,
 				2DC656BB2744289C00583E14 /* ddbcellrenderertextmultiline.c in Sources */,
 				2DC656BC2744289C00583E14 /* wingeom.c in Sources */,
@@ -17558,6 +17569,7 @@
 				2DE3B7F62269BF3100AFF9AE /* actions.c in Sources */,
 				2DE3B8002269BF3100AFF9AE /* hotkeys.c in Sources */,
 				2DE3B8012269BF3100AFF9AE /* callbacks.c in Sources */,
+				2D0AC9AB2864E12700F6D56A /* selpropertieswidget.c in Sources */,
 				2DE3B7C72269BF1300AFF9AE /* pltmenu.c in Sources */,
 				2DE3B7C32269BF1300AFF9AE /* ddbcellrenderertextmultiline.c in Sources */,
 				2DE3B7E32269BF3100AFF9AE /* wingeom.c in Sources */,
