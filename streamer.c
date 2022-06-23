@@ -2009,6 +2009,7 @@ process_output_block (streamblock_t *block, char *bytes, int bytes_available_siz
 
 static float (*streamer_volume_modifier) (float delta_time);
 
+// used in android branch, do not delete
 void
 streamer_set_volume_modifier (float (*modifier) (float delta_time)) {
     streamer_volume_modifier = modifier;
@@ -2119,6 +2120,9 @@ _streamer_get_bytes (char *bytes, int size) {
     int rb = sz;
     char *readptr = outbuffer;
     char *writeptr = bytes;
+
+    // streamer_reset may clear all blocks, therefore need a lock
+    streamer_lock();
     while (rb > 0) {
         decoded_block_t *decoded_block = decoded_blocks_current();
         if (decoded_block == NULL) {
@@ -2146,9 +2150,7 @@ _streamer_get_bytes (char *bytes, int size) {
             }
 
             if (!decoded_block->is_silent_header) {
-                streamer_lock();
                 playpos += decoded_block->playback_time;
-                streamer_unlock();
                 playtime += decoded_block->playback_time;
             }
 
@@ -2158,7 +2160,6 @@ _streamer_get_bytes (char *bytes, int size) {
 
     sz -= rb; // how many bytes we actually got
 
-    streamer_lock();
     if (sz < _outbuffer_remaining) {
         // FIXME: This is the slowest operation on audio thread, can be optimized with a ring buffer
         memmove (outbuffer, outbuffer + sz, _outbuffer_remaining - sz);
