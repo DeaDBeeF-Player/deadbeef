@@ -89,11 +89,11 @@ fill_selproperties_cb (gpointer data) {
     GtkListStore *store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (w->tree)));
     gtk_list_store_clear (store);
     if (w->visible_sections & SECTION_PROPERTIES) {
-        add_field_section(store, "Property", "");
+        add_field_section(store, _("Properties"), "");
         trkproperties_fill_prop (store, tracks, numtracks);
     }
     if (w->visible_sections & SECTION_METADATA) {
-        add_field_section(store, "Metadata", "");
+        add_field_section(store, _("Metadata"), "");
         trkproperties_fill_meta (store, tracks, numtracks);
     }
 
