@@ -68,6 +68,7 @@
 #include "wingeom.h"
 #include "plmenu.h"
 #include "covermanager/albumartwidget.h"
+#include "selpropertieswidget.h"
 
 #define USE_GTK_APPLICATION 1
 
@@ -1422,7 +1423,7 @@ gtkui_mainwin_init(void) {
     w_reg_widget (NULL, 0, w_placeholder_create, "placeholder", NULL);
     w_reg_widget (_("Tabs"), DDB_WF_SUPPORTS_EXTENDED_API, w_tabs_create, "tabs", NULL);
     w_reg_widget (_("Playlist tabs"), 0, w_tabstrip_create, "tabstrip", NULL);
-    w_reg_widget (_("Selection properties"), 0, w_selproperties_create, "selproperties", NULL);
+    w_reg_widget (_("Selection properties"), DDB_WF_SUPPORTS_EXTENDED_API, w_selproperties_create, "selproperties", NULL);
     w_reg_widget (_("Album art display"), DDB_WF_SUPPORTS_EXTENDED_API, w_albumart_create, "coverart", NULL);
     w_reg_widget (_("Oscilloscope"), DDB_WF_SUPPORTS_EXTENDED_API, w_scope_create, "scope", NULL);
     w_reg_widget (_("Spectrum"), DDB_WF_SUPPORTS_EXTENDED_API, w_spectrum_create, "spectrum", NULL);
