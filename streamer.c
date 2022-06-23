@@ -2752,17 +2752,17 @@ streamer_yield (void) {
 
 void
 streamer_set_output (DB_output_t *output) {
-    if (mutex) {
-        streamer_lock ();
-    }
     DB_output_t *prev = plug_get_output ();
     ddb_playback_state_t state = DDB_PLAYBACK_STATE_STOPPED;
-
     ddb_waveformat_t fmt = {0};
     if (prev) {
         state = prev->state ();
         memcpy (&fmt, &prev->fmt, sizeof (ddb_waveformat_t));
         prev->free ();
+    }
+
+    if (mutex) {
+        streamer_lock ();
     }
     plug_set_output (output);
 
