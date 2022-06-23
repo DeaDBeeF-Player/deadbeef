@@ -42,7 +42,7 @@ extern DB_functions_t *deadbeef;
     DB_output_t **o = deadbeef->plug_get_output_list ();
     for (index = 0; o[index]; index++) {
         if (!strcmp (o[index]->plugin.id, curplug)) {
-            self.outputPluginsIndex = index;
+            _outputPluginsIndex = index;
             break;
         }
     }
