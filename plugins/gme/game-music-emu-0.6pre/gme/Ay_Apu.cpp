@@ -145,6 +145,10 @@ void Ay_Apu::write_data_( int addr, int data )
 	{
 		if ( !(data & 8) ) // convert modes 0-7 to proper equivalents
 			data = (data & 4) ? 15 : 9;
+		if (data < 9)
+			data = 9;
+		if (data > 15)
+			data = 15;
 		env_wave = env_modes [data - 7];
 		env_pos = -48;
 		env_delay = 0; // will get set to envelope period in run_until()

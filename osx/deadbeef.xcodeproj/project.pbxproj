@@ -4843,7 +4843,7 @@
 		2D00F7562435354F000FC130 /* Vgm_Core.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vgm_Core.cpp; sourceTree = "<group>"; };
 		2D00F7572435354F000FC130 /* Gym_Emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gym_Emu.cpp; sourceTree = "<group>"; };
 		2D00F7582435354F000FC130 /* Opl_Apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Opl_Apu.h; sourceTree = "<group>"; };
-		2D00F7592435354F000FC130 /* Ay_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ay_Apu.cpp; sourceTree = "<group>"; };
+		2D00F7592435354F000FC130 /* Ay_Apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ay_Apu.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		2D00F75A2435354F000FC130 /* Gbs_Cpu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Gbs_Cpu.cpp; sourceTree = "<group>"; };
 		2D00F75B2435354F000FC130 /* Effects_Buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Effects_Buffer.h; sourceTree = "<group>"; };
 		2D00F75C2435354F000FC130 /* Sgc_Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sgc_Core.h; sourceTree = "<group>"; };
