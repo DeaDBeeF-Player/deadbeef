@@ -35,6 +35,12 @@ Name[zh_CN]=暂停
 Name[zh_TW]=暫停
 Exec=deadbeef --pause
 
+[Desktop Action Toggle Pause]
+Name=Toggle Pause
+Name[zh_CN]=播放/暂停
+Name[zh_TW]=播放/暫停
+Exec=deadbeef --toggle-pause
+
 [Desktop Action Stop]
 Name=Stop
 Name[zh_TW]=停止
