@@ -172,9 +172,7 @@ plt_sort_random (playlist_t *playlist, int iter) {
     playlist->head[iter] = 0;
     for (idx = 0; idx < count; idx++) {
         playItem_t *it = array[idx];
-        if (it->prev[iter]) {
-            it->prev[iter] = prev;
-        }
+        it->prev[iter] = prev;
         it->next[iter] = NULL;
         if (!prev) {
             playlist->head[iter] = it;
