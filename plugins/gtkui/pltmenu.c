@@ -71,29 +71,12 @@ static void
 on_remove_playlist1_activate           (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-
     if (current_playlist == NULL) {
         return;
     }
-    int idx = deadbeef->plt_get_idx(current_playlist);
-    if (idx == -1) {
+    if (gtkui_remove_playlist(current_playlist) == -1) {
         return;
     }
-    char title[500];
-    if (deadbeef->plt_get_first(current_playlist, PL_MAIN) != NULL) {
-        // playlist not empty, confirm first.
-        deadbeef->plt_get_title (current_playlist, title, sizeof (title));
-        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Removing playlist"));
-        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Do you really want to remove the playlist '%s'?"), title);
-        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
-        int response = gtk_dialog_run (GTK_DIALOG (dlg));
-        gtk_widget_destroy (dlg);
-        if (response != GTK_RESPONSE_YES) {
-            return;
-        }
-    }
-
-    deadbeef->plt_remove (idx);
     _set_playlist(NULL);
 }
 

@@ -166,7 +166,7 @@ int
 action_remove_current_playlist_handler (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int idx = deadbeef->plt_get_curr_idx ();
     if (idx != -1) {
-        deadbeef->plt_remove (idx);
+        gtkui_remove_playlist_at_index (idx);
     }
     return 0;
 }
