@@ -135,6 +135,12 @@ int
 gtkui_rename_playlist_at_index(int plt_idx);
 
 int
+gtkui_remove_playlist(ddb_playlist_t *plt);
+
+int
+gtkui_remove_playlist_at_index(int plt_idx);
+
+int
 gtkui_get_curr_playlist_mod (void);
 
 void
