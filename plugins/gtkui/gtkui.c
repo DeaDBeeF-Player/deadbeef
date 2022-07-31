@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2015 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -2272,7 +2272,7 @@ ddb_gtkui_t plugin = {
 #endif
     .gui.plugin.copyright =
         "GTK+ user interface for DeaDBeeF Player.\n"
-        "Copyright (C) 2009-2015 Alexey Yakovenko and other contributors\n"
+        "Copyright (C) 2009-2015 Oleksiy Yakovenko and other contributors\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"

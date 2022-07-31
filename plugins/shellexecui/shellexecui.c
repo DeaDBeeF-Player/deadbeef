@@ -1,7 +1,7 @@
 /*
     ShellExec GUI plugin for DeaDBeeF Player
     Copyright (C) 2012 Azeem Arshad <kr00r4n@gmail.com>
-    Copyright (C) 2013-2014 Alexey Yakovenko
+    Copyright (C) 2013-2014 Oleksiy Yakovenko
     
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -421,7 +421,7 @@ static DB_misc_t plugin = {
     .plugin.copyright = 
         "ShellExec GUI plugin for DeaDBeeF Player\n"
         "Copyright (C) 2012 Azeem Arshad <kr00r4n@gmail.com>\n"
-        "Copyright (C) 2013-2014 Alexey Yakovenko\n"
+        "Copyright (C) 2013-2014 Oleksiy Yakovenko\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

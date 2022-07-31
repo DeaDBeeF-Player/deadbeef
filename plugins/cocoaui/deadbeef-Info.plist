@@ -295,7 +295,7 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2009-2022 Alexey Yakovenko and other contributors. All rights reserved.</string>
+	<string>Copyright © 2009-2022 Oleksiy Yakovenko and other contributors. All rights reserved.</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>

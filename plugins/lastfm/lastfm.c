@@ -1,6 +1,6 @@
 /*
     Last.fm scrobbler plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko 
+    Copyright (C) 2009-2014 Oleksiy Yakovenko 
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -892,7 +892,7 @@ static DB_misc_t plugin = {
     .plugin.descr = "Sends played songs information to your last.fm account, or other service that use AudioScrobbler protocol",
     .plugin.copyright =
         "Last.fm scrobbler plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2014 Oleksiy Yakovenko\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

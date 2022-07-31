@@ -1,6 +1,6 @@
 /*
     ALAC plugin for deadbeef
-    Copyright (C) 2012-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2012-2013 Oleksiy Yakovenko <waker@users.sourceforge.net>
     Uses the reverse engineered ALAC decoder (C) 2005 David Hammerton
     All rights reserved.
 
@@ -457,7 +457,7 @@ static DB_decoder_t alac_plugin = {
     .plugin.descr = "plays alac files from MP4 and M4A files",
     .plugin.copyright = 
         "ALAC plugin for deadbeef\n"
-        "Copyright (C) 2012-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2012-2013 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "Uses the reverse engineered ALAC decoder (C) 2005 David Hammerton\n"
         "All rights reserved.\n"
         "\n"

@@ -2,8 +2,8 @@
 //  MP3ParserTest.m
 //  Tests
 //
-//  Created by Alexey Yakovenko on 6/14/18.
-//  Copyright © 2018 Alexey Yakovenko. All rights reserved.
+//  Created by Oleksiy Yakovenko on 6/14/18.
+//  Copyright © 2018 Oleksiy Yakovenko. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>

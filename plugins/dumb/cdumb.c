@@ -1,6 +1,6 @@
 /*
     DUMB Plugin for DeaDBeeF Player
-    Copyright (C) 2009-2016 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2016 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -466,7 +466,7 @@ static DB_decoder_t plugin = {
     .plugin.descr = "module player based on DUMB library",
     .plugin.copyright = 
         "DUMB Plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2016 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2016 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Uses a fork of DUMB (Dynamic Universal Music Bibliotheque), Version 0.9.3\n"
         "Copyright (C) 2001-2005 Ben Davis, Robert J Ohannessian and Julien Cugniere\n"

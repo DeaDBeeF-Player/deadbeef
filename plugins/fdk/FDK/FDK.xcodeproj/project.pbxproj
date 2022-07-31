@@ -1262,7 +1262,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1240;
-				ORGANIZATIONNAME = "Alexey Yakovenko";
+				ORGANIZATIONNAME = "Oleksiy Yakovenko";
 				TargetAttributes = {
 					2D65D6ED1E0A910B00FD1C8A = {
 						CreatedOnToolsVersion = 8.2.1;

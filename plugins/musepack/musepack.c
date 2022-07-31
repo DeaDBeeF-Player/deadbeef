@@ -1,6 +1,6 @@
 /*
     MusePack decoder plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko
+    Copyright (C) 2009-2014 Oleksiy Yakovenko
     Uses Musepack SV8 libs (r435), (C) 2005-2009, The Musepack Development Team
 
     This software is provided 'as-is', without any express or implied
@@ -498,7 +498,7 @@ static DB_decoder_t plugin = {
     .plugin.descr = "Musepack decoder using libmppdec",
     .plugin.copyright = 
         "MusePack decoder plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2014 Oleksiy Yakovenko\n"
         "Uses Musepack SV8 libs (r435), (C) 2005-2009, The Musepack Development Team\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"

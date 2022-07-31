@@ -1,6 +1,6 @@
 /*
     DeaDBeeF ADPLUG plugin
-    Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -63,7 +63,7 @@ DB_decoder_t adplug_plugin = {
     .plugin.descr = "Adplug player (ADLIB OPL2/OPL3 emulator)",
     .plugin.copyright = 
     "ADPLUG DeaDBeeF Player Plugin\n"
-    "Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+    "Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
     "\n"
     "This software is provided 'as-is', without any express or implied\n"
     "warranty.  In no event will the authors be held liable for any damages\n"
@@ -87,7 +87,7 @@ DB_decoder_t adplug_plugin = {
     "\n"
     "adplug (modified)\n"
     "Copyright (C) 1999 - 2006 Simon Peter, <dn.tlp@gmx.net>, et al.\n"
-    "deadbeef-related modifications (c) 2009-2014 Alexey Yakovenko\n"
+    "deadbeef-related modifications (c) 2009-2014 Oleksiy Yakovenko\n"
     "\n"
     "This library is free software; you can redistribute it and/or\n"
     "modify it under the terms of the GNU Lesser General Public\n"

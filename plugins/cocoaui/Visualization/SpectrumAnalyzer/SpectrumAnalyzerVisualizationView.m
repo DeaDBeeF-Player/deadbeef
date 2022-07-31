@@ -2,8 +2,8 @@
 //  SpectrumAnalyzerbaseco.m
 //  DeaDBeeF
 //
-//  Created by Alexey Yakovenko on 7/25/20.
-//  Copyright © 2020 Alexey Yakovenko. All rights reserved.
+//  Created by Oleksiy Yakovenko on 7/25/20.
+//  Copyright © 2020 Oleksiy Yakovenko. All rights reserved.
 //
 
 #import "SpectrumAnalyzerVisualizationView.h"

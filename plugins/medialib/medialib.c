@@ -1,6 +1,6 @@
 /*
     Media Library plugin for DeaDBeeF Player
-    Copyright (C) 2009-2021 Alexey Yakovenko
+    Copyright (C) 2009-2021 Oleksiy Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -459,7 +459,7 @@ static DB_mediasource_t plugin = {
     .plugin.descr = "Scans disk for music files and manages them as database",
     .plugin.copyright =
         "Media Library plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2020 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2020 Oleksiy Yakovenko\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"

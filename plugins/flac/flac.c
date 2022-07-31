@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - The Ultimate Music Player
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2013 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions
@@ -1314,7 +1314,7 @@ static ddb_decoder2_t plugin = {
     .decoder.plugin.name = "FLAC decoder",
     .decoder.plugin.descr = "FLAC decoder using libFLAC",
     .decoder.plugin.copyright =
-        "Copyright (C) 2009-2013 Alexey Yakovenko et al.\n"
+        "Copyright (C) 2009-2013 Oleksiy Yakovenko et al.\n"
         "Uses libFLAC (C) Copyright (C) 2000,2001,2002,2003,2004,2005,2006,2007  Josh Coalson\n"
         "Uses libogg Copyright (c) 2002, Xiph.org Foundation\n"
         "\n"

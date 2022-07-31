@@ -1,5 +1,5 @@
 SHN (Shorten) plugin for DeaDBeeF Player
-Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
 Based on xmms-shn, http://www.etree.org/shnutils/xmms-shn/
 Copyright (C) 2000-2007  Jason Jordan <shnutils@freeshell.org>
@@ -25,4 +25,4 @@ freely, subject to the following restrictions:
 
 
 For Shorten license, please see LICENCE.shorten
-Modifications for DeaDBeeF (C) 2009-2014 Alexey Yakovenko
+Modifications for DeaDBeeF (C) 2009-2014 Oleksiy Yakovenko

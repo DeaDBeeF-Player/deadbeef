@@ -2,7 +2,7 @@
     Shellexec plugin for DeaDBeeF
     Copyright (C) 2010-2012 Deadbeef team
     Original developer Viktor Semykin <thesame.ml@gmail.com>
-    Maintainance, minor improvements Alexey Yakovenko <waker@users.sf.net>
+    Maintainance, minor improvements Oleksiy Yakovenko <waker@users.sf.net>
     GUI support and bugfixing Azeem Arshad <kr00r4n@gmail.com>
 
     This program is free software: you can redistribute it and/or modify

@@ -1,5 +1,5 @@
 in_sc86 (Atari ST SNDH YM2149) input plugin for deadbeef
-Copyright (C) 2015 Alexey Yakovenko
+Copyright (C) 2015 Oleksiy Yakovenko
 based on sc68 library, see below for more information
 
 This software is provided 'as-is', without any express or implied

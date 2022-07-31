@@ -1,5 +1,5 @@
 WMA plugin for deadbeef
-Copyright (C) 2013 Alexey Yakovenko <waker@users.sourceforge.net>
+Copyright (C) 2013 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any damages
@@ -22,7 +22,7 @@ freely, subject to the following restrictions:
 
 
 WMA and ASF libraries (C) RockBox & FFMPEG developers
-Modifications for DeaDBeeF (C) Alexey Yakovenko
+Modifications for DeaDBeeF (C) Oleksiy Yakovenko
 
             __________               __   ___.
   Open      \______   \ ____   ____ |  | _\_ |__   _______  ___

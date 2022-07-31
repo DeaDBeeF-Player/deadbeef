@@ -262,7 +262,7 @@ v2m_load (DB_functions_t *api) {
     "\"bin\", \"conv2m\", \"in_v2m\", \"libv2\", \"tinyplayer\" and \"tool\")in the public domain.\n"
     "\n\n"
     "V2M plugin for DeaDBeeF Player\n"
-    "Copyright (C) 2017 Alexey Yakovenko\n"
+    "Copyright (C) 2017 Oleksiy Yakovenko\n"
     "\n"
     "This software is provided 'as-is', without any express or implied\n"
     "warranty.  In no event will the authors be held liable for any damages\n"

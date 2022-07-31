@@ -3,7 +3,7 @@
 //  Tests
 //
 //  Created by Oleksiy Yakovenko on 24/10/2018.
-//  Copyright © 2018 Alexey Yakovenko. All rights reserved.
+//  Copyright © 2018 Oleksiy Yakovenko. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>

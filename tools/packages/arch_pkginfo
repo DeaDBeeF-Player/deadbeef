@@ -1,7 +1,7 @@
 pkgname = deadbeef-static
 pkgdesc = An audio player for GNU/Linux based on GTK2.
 url = http://deadbeef.sourceforge.net
-packager = Alexey Yakovenko <waker@users.sf.net>
+packager = Oleksiy Yakovenko <waker@users.sf.net>
 license = GPL2
 depend = gtk2
 depend = hicolor-icon-theme

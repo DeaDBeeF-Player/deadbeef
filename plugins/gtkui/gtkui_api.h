@@ -2,7 +2,7 @@
   gtkui_api.h -- API of the DeaDBeeF GTK UI plugin
   http://deadbeef.sourceforge.net
 
-  Copyright (C) 2009-2021 Alexey Yakovenko
+  Copyright (C) 2009-2021 Oleksiy Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages

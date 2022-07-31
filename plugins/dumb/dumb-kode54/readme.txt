@@ -1,6 +1,6 @@
 NOTICE: this is not the original DUMB-0.9.3,
 it is a modified code based on DUMB-0.9.2 fork from http://kode54.foobar2000.org/
-relevant parts of DUMB-0.9.3 (including new license) had been merged on top of that by Alexey Yakovenko <waker@users.sf.net>
+relevant parts of DUMB-0.9.3 (including new license) had been merged on top of that by Oleksiy Yakovenko <waker@users.sf.net>
 
 /*  _______         ____    __         ___    ___
  * \    _  \       \    /  \  /       \   \  /   /       '   '  '

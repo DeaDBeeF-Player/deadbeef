@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2014 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2014 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -840,7 +840,7 @@ static DB_decoder_t plugin = {
     .plugin.descr = "Ogg Vorbis decoder using standard xiph.org libraries",
     .plugin.copyright =
     "Ogg Vorbis plugin for DeaDBeeF\n"
-    "Copyright (C) 2009-2014 Alexey Yakovenko et al.\n"
+    "Copyright (C) 2009-2014 Oleksiy Yakovenko et al.\n"
     "\n"
     "vcedit.c\n"
     "Ogg Vorbis plugin Ogg edit functions\n"

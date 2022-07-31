@@ -2,8 +2,8 @@
 //  BrowseButton.m
 //  NesEdit
 //
-//  Created by Alexey Yakovenko on 3/19/19.
-//  Copyright © 2019 Alexey Yakovenko. All rights reserved.
+//  Created by Oleksiy Yakovenko on 3/19/19.
+//  Copyright © 2019 Oleksiy Yakovenko. All rights reserved.
 //
 
 #import "BrowseButton.h"

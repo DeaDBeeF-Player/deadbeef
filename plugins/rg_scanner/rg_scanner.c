@@ -1,7 +1,7 @@
 /*
  * ReplayGain Scanner plugin for DeaDBeeF Player
  *
- * Copyright (c) 2016 Alexey Yakovenko
+ * Copyright (c) 2016 Oleksiy Yakovenko
  *
  * Based on ddb_misc_replaygain_scan (c) 2015 Ivan Pilipenko
  *
@@ -538,7 +538,7 @@ static ddb_rg_scanner_t plugin = {
     .misc.plugin.copyright =
         "ReplayGain Scanner plugin for DeaDBeeF Player\n"
         "\n"
-        "Copyright (c) 2016 Alexey Yakovenko\n"
+        "Copyright (c) 2016 Oleksiy Yakovenko\n"
         "\n"
         "Based on ddb_misc_replaygain_scan (c) 2015 Ivan Pilipenko\n"
         "\n"
