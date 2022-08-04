@@ -27,7 +27,7 @@ extern DB_functions_t *deadbeef;
     modeMenuItem.submenu = [NSMenu new];
     gapSizeMenuItem.submenu = [NSMenu new];
 
-    [modeMenuItem.submenu addItemWithTitle:@"Discrete Frequencies" action:@selector(setDescreteFrequenciesMode:) keyEquivalent:@""];
+    [modeMenuItem.submenu addItemWithTitle:@"Discrete Frequencies" action:@selector(setDiscreteFrequenciesMode:) keyEquivalent:@""];
     [modeMenuItem.submenu addItemWithTitle:@"1/12 Octave Bands" action:@selector(set12BarsPerOctaveMode:) keyEquivalent:@""];
     [modeMenuItem.submenu addItemWithTitle:@"1/24 Octave Bands" action:@selector(set24BarsPerOctaveMode:) keyEquivalent:@""];
 
@@ -55,7 +55,7 @@ extern DB_functions_t *deadbeef;
 
 #pragma mark - Actions
 
-- (void)setDescreteFrequenciesMode:(NSMenuItem *)sender {
+- (void)setDiscreteFrequenciesMode:(NSMenuItem *)sender {
     self.settings.mode = DDB_ANALYZER_MODE_FREQUENCIES;
 }
 
@@ -128,7 +128,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
-    if (menuItem.action == @selector(setDescreteFrequenciesMode:) && self.settings.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+    if (menuItem.action == @selector(setDiscreteFrequenciesMode:) && self.settings.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
         menuItem.state = NSControlStateValueOn;
     }
     else if (menuItem.action == @selector(set12BarsPerOctaveMode:) && self.settings.mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS && self.settings.barGranularity == 2) {

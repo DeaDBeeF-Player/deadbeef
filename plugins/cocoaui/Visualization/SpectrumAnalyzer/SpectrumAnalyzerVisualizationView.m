@@ -265,7 +265,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [self drawAnalyzer];
 }
 
-- (void)drawAnalyzerDescreteFrequencies {
+- (void)drawAnalyzerDiscreteFrequencies {
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     ddb_analyzer_draw_bar_t *bar = _draw_data.bars;
     for (int i = 0; i < _draw_data.bar_count; i++, bar++) {
@@ -304,7 +304,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)drawAnalyzer {
     if (_analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
-        [self drawAnalyzerDescreteFrequencies];
+        [self drawAnalyzerDiscreteFrequencies];
     }
     else {
         [self drawAnalyzerOctaveBands];
