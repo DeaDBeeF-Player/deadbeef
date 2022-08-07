@@ -880,8 +880,12 @@ on_custom2_activate                    (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
 
 void
-on_sortfmt_activate                    (GtkEntry        *entry,
-                                        gpointer         user_data);
+on_sortok_clicked                      (GtkButton       *button,
+                                        gpointer        user_data);
+
+void
+on_sortcancel_clicked                  (GtkButton       *button,
+                                        gpointer        user_data);
 
 void
 gtkui_dialog_response_ok               (GtkEntry        *entry,

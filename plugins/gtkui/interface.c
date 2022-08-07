@@ -4302,103 +4302,94 @@ GtkWidget*
 create_sortbydlg (void)
 {
   GtkWidget *sortbydlg;
-  GtkWidget *dialog_vbox8;
-  GtkWidget *vbox28;
-  GtkWidget *hbox76;
-  GtkWidget *label108;
-  GtkWidget *hbox77;
+  GtkWidget *sortframe;
+  GtkWidget *sortvbox;
   GtkWidget *sortfmt;
-  GtkWidget *custom3;
-  GtkWidget *hbox78;
-  GtkWidget *label109;
+  GtkWidget *sortfmtalignment;
+  GtkWidget *sortbtnbox;
+  GtkWidget *sorthelpalignment;
+  GtkWidget *sorthelp;
   GtkWidget *sortorder;
-  GtkWidget *dialog_action_area7;
-  GtkWidget *cancelbutton5;
-  GtkWidget *okbutton5;
+  GtkWidget *sortcancel;
+  GtkWidget *sortok;
+
+  GtkTextBuffer *sortbuffer;
 
   sortbydlg = gtk_dialog_new ();
+  gtk_window_set_default_size (GTK_WINDOW (sortbydlg), 540, 180);
   gtk_window_set_title (GTK_WINDOW (sortbydlg), _("Sort by ..."));
   gtk_window_set_modal (GTK_WINDOW (sortbydlg), TRUE);
   gtk_window_set_type_hint (GTK_WINDOW (sortbydlg), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  dialog_vbox8 = gtk_dialog_get_content_area (GTK_DIALOG (sortbydlg));
-  gtk_widget_show (dialog_vbox8);
+  sortvbox = gtk_dialog_get_content_area( GTK_DIALOG(sortbydlg));
+  gtk_widget_show (sortvbox);
 
-  vbox28 = gtk_vbox_new (FALSE, 8);
-  gtk_widget_show (vbox28);
-  gtk_box_pack_start (GTK_BOX (dialog_vbox8), vbox28, FALSE, FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox28), 12);
+  sortframe = gtk_frame_new( _("Format") );
+  gtk_widget_show (sortframe);
+  gtk_frame_set_shadow_type( GTK_FRAME(sortframe), GTK_SHADOW_IN);
+  gtk_frame_set_label_align( GTK_FRAME(sortframe), 0.02, 0.5);
+  gtk_box_pack_start (GTK_BOX(sortvbox), sortframe, TRUE, TRUE, 0);
 
-  hbox76 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox76);
-  gtk_box_pack_start (GTK_BOX (vbox28), hbox76, FALSE, TRUE, 0);
+  sortfmtalignment = gtk_alignment_new(0.5, 0.5, 1, 1);
+  gtk_alignment_set_padding( GTK_ALIGNMENT(sortfmtalignment), 8, 8, 8, 12);
+  gtk_widget_show (sortfmtalignment);
 
-  label108 = gtk_label_new (_("Format"));
-  gtk_widget_show (label108);
-  gtk_box_pack_start (GTK_BOX (hbox76), label108, FALSE, FALSE, 0);
+  gtk_container_add( GTK_CONTAINER(sortframe), sortfmtalignment);
 
-  hbox77 = gtk_hbox_new (FALSE, 0);
-  gtk_widget_show (hbox77);
-  gtk_box_pack_start (GTK_BOX (hbox76), hbox77, TRUE, TRUE, 0);
-
-  sortfmt = gtk_entry_new ();
+  sortbuffer = gtk_text_buffer_new( NULL );
+  sortfmt = gtk_text_view_new_with_buffer(sortbuffer);
+  gtk_text_view_set_wrap_mode( GTK_TEXT_VIEW(sortfmt), GTK_WRAP_WORD);
   gtk_widget_show (sortfmt);
-  gtk_box_pack_start (GTK_BOX (hbox77), sortfmt, TRUE, TRUE, 0);
-  gtk_entry_set_invisible_char (GTK_ENTRY (sortfmt), 9679);
+  gtk_container_add( GTK_CONTAINER(sortfmtalignment), sortfmt);
 
-  custom3 = title_formatting_help_link_create ("custom3", "", "", 0, 0);
-  gtk_widget_show (custom3);
-  gtk_box_pack_start (GTK_BOX (hbox77), custom3, TRUE, TRUE, 0);
-  gtk_widget_set_can_focus(custom3, FALSE);
-  gtk_widget_set_can_default(custom3, FALSE);
+  sortbtnbox = gtk_hbox_new(FALSE, 8);
+  gtk_widget_show(sortbtnbox);
+  gtk_box_pack_start( GTK_BOX(sortvbox), sortbtnbox, FALSE, FALSE, 0);
 
-  hbox78 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox78);
-  gtk_box_pack_start (GTK_BOX (vbox28), hbox78, TRUE, TRUE, 0);
+  sorthelpalignment = gtk_alignment_new(0, 0.5, 0, 1);
+  gtk_widget_show(sorthelpalignment);
+  gtk_box_pack_start ( GTK_BOX(sortbtnbox), sorthelpalignment, TRUE, TRUE, 0);
 
-  label109 = gtk_label_new (_("Order"));
-  gtk_widget_show (label109);
-  gtk_box_pack_start (GTK_BOX (hbox78), label109, FALSE, FALSE, 0);
+  sorthelp = gtk_link_button_new_with_label ("http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0", _("Help"));
+  gtk_widget_show (sorthelp);
+  gtk_widget_set_can_focus(sorthelp, FALSE);
+  gtk_widget_set_can_default(sorthelp, FALSE);
+  gtk_container_add( GTK_CONTAINER(sorthelpalignment), sorthelp);
 
   sortorder = gtk_combo_box_text_new ();
   gtk_widget_show (sortorder);
-  gtk_box_pack_start (GTK_BOX (hbox78), sortorder, TRUE, TRUE, 0);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sortorder), _("Ascending"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sortorder), _("Descending"));
+  gtk_box_pack_start ( GTK_BOX(sortbtnbox), sortorder, FALSE, FALSE, 0);
 
-  dialog_action_area7 = gtk_dialog_get_action_area (GTK_DIALOG (sortbydlg));
-  gtk_widget_show (dialog_action_area7);
-  gtk_button_box_set_layout (GTK_BUTTON_BOX (dialog_action_area7), GTK_BUTTONBOX_END);
+  sortcancel = gtk_button_new_from_stock ("gtk-cancel");
+  gtk_widget_show (sortcancel);
+  gtk_widget_set_can_default(sortcancel, TRUE);
+  g_signal_connect ((gpointer) sortcancel, "clicked",
+                    G_CALLBACK (on_sortcancel_clicked),
+                    sortbydlg);
+  gtk_box_pack_start ( GTK_BOX(sortbtnbox), sortcancel, FALSE, FALSE, 0);
 
-  cancelbutton5 = gtk_button_new_from_stock ("gtk-cancel");
-  gtk_widget_show (cancelbutton5);
-  gtk_dialog_add_action_widget (GTK_DIALOG (sortbydlg), cancelbutton5, GTK_RESPONSE_CANCEL);
-  gtk_widget_set_can_default(cancelbutton5, TRUE);
-
-  okbutton5 = gtk_button_new_from_stock ("gtk-ok");
-  gtk_widget_show (okbutton5);
-  gtk_dialog_add_action_widget (GTK_DIALOG (sortbydlg), okbutton5, GTK_RESPONSE_OK);
-  gtk_widget_set_can_default(okbutton5, TRUE);
-
-  g_signal_connect ((gpointer) sortfmt, "activate",
-                    G_CALLBACK (on_sortfmt_activate),
-                    NULL);
+  sortok = gtk_button_new_from_stock ("gtk-ok");
+  gtk_widget_show (sortok);
+  gtk_widget_set_can_default(sortcancel, TRUE);
+  g_signal_connect ((gpointer) sortok, "clicked",
+                    G_CALLBACK (on_sortok_clicked),
+                    sortbydlg);
+  gtk_box_pack_start ( GTK_BOX(sortbtnbox), sortok, FALSE, FALSE, 0);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (sortbydlg, sortbydlg, "sortbydlg");
-  GLADE_HOOKUP_OBJECT_NO_REF (sortbydlg, dialog_vbox8, "dialog_vbox8");
-  GLADE_HOOKUP_OBJECT (sortbydlg, vbox28, "vbox28");
-  GLADE_HOOKUP_OBJECT (sortbydlg, hbox76, "hbox76");
-  GLADE_HOOKUP_OBJECT (sortbydlg, label108, "label108");
-  GLADE_HOOKUP_OBJECT (sortbydlg, hbox77, "hbox77");
+  GLADE_HOOKUP_OBJECT_NO_REF (sortbydlg, sortbuffer, "sortbuffer");
+  GLADE_HOOKUP_OBJECT (sortbydlg, sortframe, "sortframe");
+  GLADE_HOOKUP_OBJECT (sortbydlg, sortfmtalignment, "sortfmtalignment");
   GLADE_HOOKUP_OBJECT (sortbydlg, sortfmt, "sortfmt");
-  GLADE_HOOKUP_OBJECT (sortbydlg, custom3, "custom3");
-  GLADE_HOOKUP_OBJECT (sortbydlg, hbox78, "hbox78");
-  GLADE_HOOKUP_OBJECT (sortbydlg, label109, "label109");
+  GLADE_HOOKUP_OBJECT (sortbydlg, sorthelpalignment, "sorthelpalignment");
+  GLADE_HOOKUP_OBJECT (sortbydlg, sortbtnbox, "sortbtnbox");
+  GLADE_HOOKUP_OBJECT (sortbydlg, sorthelp, "sorthelp");
   GLADE_HOOKUP_OBJECT (sortbydlg, sortorder, "sortorder");
-  GLADE_HOOKUP_OBJECT_NO_REF (sortbydlg, dialog_action_area7, "dialog_action_area7");
-  GLADE_HOOKUP_OBJECT (sortbydlg, cancelbutton5, "cancelbutton5");
-  GLADE_HOOKUP_OBJECT (sortbydlg, okbutton5, "okbutton5");
+  GLADE_HOOKUP_OBJECT (sortbydlg, sortcancel, "sortcancel");
+  GLADE_HOOKUP_OBJECT (sortbydlg, sortok, "sortok");
 
   return sortbydlg;
 }

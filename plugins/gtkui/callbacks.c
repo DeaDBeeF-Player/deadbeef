@@ -648,15 +648,18 @@ title_formatting_help_link_create (gchar *widget_name, gchar *string1, gchar *st
 }
 
 
-
 void
-on_sortfmt_activate                    (GtkEntry        *entry,
-                                        gpointer         user_data)
-{
-    GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (entry));
-    gtk_dialog_response (GTK_DIALOG (toplevel), GTK_RESPONSE_OK);
+on_sortok_clicked ( GtkButton* button, gpointer user_data) {
+    printf("ok activated");
+    gtk_dialog_response (GTK_DIALOG (user_data), GTK_RESPONSE_OK);
 }
 
+
+void
+on_sortcancel_clicked ( GtkButton* button, gpointer user_data) {
+    printf("cancel activated");
+    gtk_dialog_response (GTK_DIALOG (user_data), GTK_RESPONSE_CANCEL);
+}
 
 
 GtkWidget*
