@@ -833,3 +833,35 @@ on_copy_plugin_report_menuitem_activate
 }
 
 
+
+void
+on_sortcancel_clicked                  (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel( GTK_WIDGET (button));
+    gtk_dialog_response (GTK_DIALOG (toplevel), GTK_RESPONSE_CANCEL);
+
+}
+
+
+void
+on_sortok_clicked                      (GtkButton       *button,
+                                        gpointer         user_data)
+{
+    GtkWidget *toplevel = gtk_widget_get_toplevel( GTK_WIDGET (button));
+    gtk_dialog_response (GTK_DIALOG (toplevel), GTK_RESPONSE_OK);
+
+}
+
+
+void
+on_sortfmt_show                        (GtkWidget       *widget,
+                                        gpointer         user_data)
+{
+    GtkTextBuffer *sortbuffer;
+    sortbuffer = gtk_text_buffer_new( NULL );
+    gtk_text_view_set_buffer ( GTK_TEXT_VIEW(widget) , sortbuffer );
+    g_object_unref( G_OBJECT(sortbuffer) );
+
+}
+

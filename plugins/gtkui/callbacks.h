@@ -1485,3 +1485,15 @@ on_dsp_remove_toolbtn_clicked          (GtkToolButton   *toolbutton,
 void
 on_dsp_add_toolbtn_toggled             (GtkToggleToolButton *toggletoolbutton,
                                         gpointer         user_data);
+
+void
+on_sortcancel_clicked                  (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_sortok_clicked                      (GtkButton       *button,
+                                        gpointer         user_data);
+
+void
+on_sortfmt_show                        (GtkWidget       *widget,
+                                        gpointer         user_data);
