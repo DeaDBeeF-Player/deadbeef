@@ -858,10 +858,15 @@ void
 on_sortfmt_show                        (GtkWidget       *widget,
                                         gpointer         user_data)
 {
+    // libglade format does not allow assigning a GtkTextBuffer to a GtkTextView
+    // the buffer is unref'd by the TextView when it's destroyed
     GtkTextBuffer *sortbuffer;
-    sortbuffer = gtk_text_buffer_new( NULL );
-    gtk_text_view_set_buffer ( GTK_TEXT_VIEW(widget) , sortbuffer );
-    g_object_unref( G_OBJECT(sortbuffer) );
+    sortbuffer = gtk_text_view_get_buffer ( GTK_TEXT_VIEW(widget) );
+    if (sortbuffer == NULL ) {
+        sortbuffer = gtk_text_buffer_new( NULL );
+        gtk_text_view_set_buffer ( GTK_TEXT_VIEW(widget) , sortbuffer );
+        g_object_unref( G_OBJECT(sortbuffer) );
+    }
 
 }
 
