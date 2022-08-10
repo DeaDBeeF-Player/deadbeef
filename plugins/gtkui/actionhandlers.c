@@ -654,7 +654,7 @@ action_sort_custom_handler_cb (void *data) {
         deadbeef->plt_save_config (plt);
         deadbeef->plt_unref (plt);
 
-        free( (void*) fmt);
+        free( fmt);
 
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     }
