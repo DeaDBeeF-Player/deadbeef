@@ -624,28 +624,37 @@ action_sort_custom_handler_cb (void *data) {
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
 
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (dlg, "sortorder"));
-    GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "sortfmt"));
+    GtkTextView *sortfmt = GTK_TEXT_VIEW (lookup_widget (dlg, "sortfmt"));
+    GtkTextBuffer *sortbuffer = gtk_text_view_get_buffer(sortfmt);
 
     gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("gtkui.sortby_order", 0));
     deadbeef->conf_lock ();
-    gtk_entry_set_text (entry, deadbeef->conf_get_str_fast ("gtkui.sortby_fmt_v2", ""));
+    const char* fmt = deadbeef->conf_get_str_fast ("gtkui.sortby_fmt_v2", "");
+    gtk_text_buffer_set_text (sortbuffer, fmt, strlen(fmt));
     deadbeef->conf_unlock ();
 
     int r = gtk_dialog_run (GTK_DIALOG (dlg));
 
     if (r == GTK_RESPONSE_OK) {
         GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (dlg, "sortorder"));
-        GtkEntry *entry = GTK_ENTRY (lookup_widget (dlg, "sortfmt"));
+        GtkTextView *sortfmt = GTK_TEXT_VIEW (lookup_widget (dlg, "sortfmt"));
+        GtkTextBuffer *sortbuffer = gtk_text_view_get_buffer(sortfmt);
         int order = gtk_combo_box_get_active (combo);
-        const char *fmt = gtk_entry_get_text (entry);
+        GtkTextIter start, end;
+        gtk_text_buffer_get_start_iter(sortbuffer, &start);
+        gtk_text_buffer_get_end_iter(sortbuffer, &end);
+        char *fmt = gtk_text_buffer_get_text (sortbuffer, &start, &end, FALSE);
 
         deadbeef->conf_set_int ("gtkui.sortby_order", order);
         deadbeef->conf_set_str ("gtkui.sortby_fmt_v2", fmt);
+
 
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         deadbeef->plt_sort_v2 (plt, PL_MAIN, -1, fmt, order == 0 ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
         deadbeef->plt_save_config (plt);
         deadbeef->plt_unref (plt);
+
+        free( fmt);
 
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
     }
