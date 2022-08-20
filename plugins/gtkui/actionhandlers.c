@@ -630,7 +630,7 @@ action_sort_custom_handler_cb (void *data) {
     gtk_combo_box_set_active (combo, deadbeef->conf_get_int ("gtkui.sortby_order", 0));
     deadbeef->conf_lock ();
     const char* fmt = deadbeef->conf_get_str_fast ("gtkui.sortby_fmt_v2", "");
-    gtk_text_buffer_set_text (sortbuffer, fmt, strlen(fmt));
+    gtk_text_buffer_set_text (sortbuffer, fmt, (gint)strlen(fmt));
     deadbeef->conf_unlock ();
 
     int r = gtk_dialog_run (GTK_DIALOG (dlg));
