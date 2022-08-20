@@ -40,8 +40,8 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include <errno.h>
-#include "converter.h"
 #include "../../deadbeef.h"
+#include "converter.h"
 #include "../../strdupa.h"
 #include "../../shared/mp4tagutil.h"
 

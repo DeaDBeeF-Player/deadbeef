@@ -24,7 +24,6 @@
 #define __CONVERTER_H
 
 #include <stdint.h>
-#include "../../deadbeef.h"
 
 // changes in 1.5:
 //   added mp4 tagging support

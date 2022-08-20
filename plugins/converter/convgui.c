@@ -33,6 +33,7 @@
 #include <assert.h>
 #include <dirent.h>
 #include <unistd.h>
+#include "../../deadbeef.h"
 #include "converter.h"
 #include "support.h"
 #include "interface.h"
