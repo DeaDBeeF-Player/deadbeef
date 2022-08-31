@@ -107,7 +107,7 @@ typedef struct ddb_analyzer_s {
     ddb_analyzer_bar_t *bars;
     int bar_count;
     int bar_count_max;
-    int samplerate;
+    int fft_samplerate;
     int channels;
     int fft_size;
     float *fft_data;
