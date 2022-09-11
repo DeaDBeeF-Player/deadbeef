@@ -1,7 +1,7 @@
 /*
  * ReplayGain Scanner plugin for DeaDBeeF Player
  *
- * Copyright (c) 2016 Alexey Yakovenko
+ * Copyright (c) 2016 Oleksiy Yakovenko
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

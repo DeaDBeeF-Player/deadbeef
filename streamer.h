@@ -4,7 +4,7 @@
 
   streamer implementation
 
-  Copyright (C) 2009-2017 Alexey Yakovenko
+  Copyright (C) 2009-2017 Oleksiy Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,7 +22,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  Alexey Yakovenko waker@users.sourceforge.net
+  Oleksiy Yakovenko waker@users.sourceforge.net
 */
 #ifndef __STREAMER_H
 #define __STREAMER_H

@@ -1,6 +1,6 @@
 /*
     GameMusicEmu plugin for DeaDBeeF
-    Copyright (C) 2009-2015 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2015 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -565,7 +565,7 @@ static DB_decoder_t plugin = {
     .plugin.descr = "chiptune/game music player based on GME library",
     .plugin.copyright = 
         "Game_Music_Emu plugin for DeaDBeeF\n"
-        "Copyright (C) 2009-2015 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2015 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"
@@ -590,7 +590,7 @@ static DB_decoder_t plugin = {
         "Game_Music_Emu (modified)\n"
         "Copyright (C) 2003-2009 Shay Green.\n"
         "Foobar2000-related modifications (C) Chris Moeller\n"
-        "DeaDBeeF-related modifications (C) Alexey Yakovenko.\n"
+        "DeaDBeeF-related modifications (C) Oleksiy Yakovenko.\n"
         "\n"
         "This library is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU Lesser General Public\n"

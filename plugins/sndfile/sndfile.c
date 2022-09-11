@@ -1,6 +1,6 @@
 /*
     libsndfile plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -444,8 +444,38 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     // sndfile subformats
+    int subformat_ids[] = {
+        SF_FORMAT_PCM_S8,
+        SF_FORMAT_PCM_16,
+        SF_FORMAT_PCM_24,
+        SF_FORMAT_PCM_32,
+        SF_FORMAT_PCM_U8,
+        SF_FORMAT_FLOAT,
+        SF_FORMAT_DOUBLE,
+        SF_FORMAT_ULAW,
+        SF_FORMAT_ALAW,
+        SF_FORMAT_IMA_ADPCM,
+        SF_FORMAT_MS_ADPCM,
+        SF_FORMAT_GSM610,
+        SF_FORMAT_VOX_ADPCM,
+        SF_FORMAT_G721_32,
+        SF_FORMAT_G723_24,
+        SF_FORMAT_G723_40,
+        SF_FORMAT_DWVW_12,
+        SF_FORMAT_DWVW_16,
+        SF_FORMAT_DWVW_24,
+        SF_FORMAT_DWVW_N,
+        SF_FORMAT_DPCM_8,
+        SF_FORMAT_DPCM_16,
+        SF_FORMAT_VORBIS,
+        SF_FORMAT_ALAC_16,
+        SF_FORMAT_ALAC_20,
+        SF_FORMAT_ALAC_24,
+        SF_FORMAT_ALAC_32,
+        -1
+    };
+
     const char *subformats[] = {
-        "",
         "PCM_S8",
         "PCM_16",
         "PCM_24",
@@ -453,64 +483,33 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         "PCM_U8",
         "FLOAT",
         "DOUBLE",
-        "",
-        "",
         "ULAW",
         "ALAW",
         "IMA_ADPCM",
         "MS_ADPCM",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
         "GSM610",
         "VOX_ADPCM",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
         "G721_32",
         "G723_24",
         "G723_40",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
         "DWVW_12",
         "DWVW_16",
         "DWVW_24",
         "DWVW_N",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
         "DPCM_8",
         "DPCM_16",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
         "VORBIS",
+        "ALAC_16",
+        "ALAC_20",
+        "ALAC_24",
+        "ALAC_32",
     };
 
-    if ((inf.format&SF_FORMAT_SUBMASK) <= SF_FORMAT_VORBIS) {
-        deadbeef->pl_add_meta (it, ":SF_FORMAT", subformats[inf.format&SF_FORMAT_SUBMASK]);
+    for (int i = 0; subformat_ids[i] != -1; i++) {
+        if ((inf.format&SF_FORMAT_SUBMASK) == subformat_ids[i]) {
+            deadbeef->pl_add_meta (it, ":SF_FORMAT", subformats[i]);
+            break;
+        }
     }
 
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it, totalsamples, samplerate);
@@ -679,7 +678,7 @@ static DB_decoder_t plugin = {
     .plugin.descr = "wav/aiff player using libsndfile",
     .plugin.copyright = 
         "libsndfile plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"
         "modify it under the terms of the GNU General Public License\n"

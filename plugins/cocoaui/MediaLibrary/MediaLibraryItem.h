@@ -2,8 +2,8 @@
 //  MediaLibraryItem.h
 //  deadbeef
 //
-//  Created by Alexey Yakovenko on 2/5/17.
-//  Copyright © 2017 Alexey Yakovenko. All rights reserved.
+//  Created by Oleksiy Yakovenko on 2/5/17.
+//  Copyright © 2017 Oleksiy Yakovenko. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

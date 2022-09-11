@@ -1,6 +1,6 @@
 /*
     DeaDBeeF - The Ultimate Music Player
-    Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2013 Oleksiy Yakovenko <waker@users.sourceforge.net>
     based on apedec from FFMpeg Copyright (c) 2007 Benjamin Zores <ben@geexbox.org>
     based upon libdemac from Dave Chapman.
 
@@ -1877,7 +1877,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "Monkey's Audio (APE) decoder",
     .plugin.descr = "APE player based on code from libavc and rockbox",
     .plugin.copyright = 
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2013 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "based on apedec from FFMpeg Copyright (c) 2007 Benjamin Zores <ben@geexbox.org>\n"
         "based upon libdemac from Dave Chapman.\n"

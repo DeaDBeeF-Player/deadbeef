@@ -1,7 +1,7 @@
 /*
     PulseAudio output plugin for DeaDBeeF Player
     Copyright (C) 2011 Jan D. Behrens <zykure@web.de>
-    Copyright (C) 2010-2012 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2010-2012 Oleksiy Yakovenko <waker@users.sourceforge.net>
     Copyright (C) 2010 Anton Novikov <tonn.post@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -417,7 +417,7 @@ static DB_output_t plugin =
     .plugin.copyright =
         "PulseAudio output plugin for DeaDBeeF Player\n"
         "Copyright (C) 2011 Jan D. Behrens <zykure@web.de>\n"
-        "Copyright (C) 2010-2012 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2010-2012 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2010 Anton Novikov <tonn.post@gmail.com>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

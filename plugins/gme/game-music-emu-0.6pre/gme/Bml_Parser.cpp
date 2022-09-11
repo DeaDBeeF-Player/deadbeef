@@ -1,5 +1,5 @@
 // BML parser/serializer/accessor which doesn't use STL
-// Developed for DeaDBeeF Player by Alexey Yakovenko
+// Developed for DeaDBeeF Player by Oleksiy Yakovenko
 // Permission is granted to use this source code under the same license, as the Game Music Emu
 
 #include <string.h>

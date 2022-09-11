@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2016 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2016 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -1137,7 +1137,7 @@ static DB_decoder_t plugin = {
     .plugin.descr = "plays aac files, supports raw aac files, as well as mp4 container",
     .plugin.copyright = 
         "AAC DeaDBeeF Player Plugin\n"
-        "Copyright (c) 2009-2020 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (c) 2009-2020 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"

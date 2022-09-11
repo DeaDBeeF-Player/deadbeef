@@ -2,8 +2,8 @@
 //  TrackContextMenu.m
 //  DeaDBeeF
 //
-//  Created by Alexey Yakovenko on 7/27/20.
-//  Copyright © 2020 Alexey Yakovenko. All rights reserved.
+//  Created by Oleksiy Yakovenko on 7/27/20.
+//  Copyright © 2020 Oleksiy Yakovenko. All rights reserved.
 //
 
 #include <sys/stat.h>

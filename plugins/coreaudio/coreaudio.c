@@ -1,6 +1,6 @@
 /*
     DeaDBeeF CoreAudio output plugin
-    Copyright (C) 2009-2017 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2017 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -687,7 +687,7 @@ static DB_output_t plugin = {
     .plugin.descr = "CoreAudio output plugin",
     .plugin.copyright =
         "DeaDBeeF CoreAudio output plugin\n"
-        "Copyright (C) 2009-2017 Alexey Yakovenko and other contributors\n"
+        "Copyright (C) 2009-2017 Oleksiy Yakovenko and other contributors\n"
         "Copyright (C) 2016 Christopher Snowhill\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"

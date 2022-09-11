@@ -4,7 +4,7 @@
 
   application launcher, compatible with GNU/Linux and most other POSIX systems
 
-  Copyright (C) 2009-2017 Alexey Yakovenko
+  Copyright (C) 2009-2017 Oleksiy Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,7 +22,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  Alexey Yakovenko waker@users.sourceforge.net
+  Oleksiy Yakovenko waker@users.sourceforge.net
 */
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
@@ -1350,7 +1350,7 @@ main (int argc, char *argv[]) {
             }
         }
         else if (!strcmp (argv[i], "--version")) {
-            printf ("DeaDBeeF " VERSION " Copyright © 2009-2021 Alexey Yakovenko\n");
+            printf ("DeaDBeeF " VERSION " Copyright © 2009-2021 Oleksiy Yakovenko\n");
             return 0;
         }
         else if (!strcmp (argv[i], "--gui")) {

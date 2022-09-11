@@ -4,7 +4,7 @@
 
   standard file vfs implementation
 
-  Copyright (C) 2009-2015 Alexey Yakovenko
+  Copyright (C) 2009-2015 Oleksiy Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,7 +22,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  Alexey Yakovenko waker@users.sourceforge.net
+  Oleksiy Yakovenko waker@users.sourceforge.net
 */
 #include "deadbeef.h"
 #include <stdio.h>
@@ -248,7 +248,7 @@ static DB_vfs_t plugin = {
     .plugin.copyright = 
         "standard file vfs implementation\n"
         "\n"
-        "Copyright (C) 2009-2015 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2015 Oleksiy Yakovenko\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"
@@ -266,7 +266,7 @@ static DB_vfs_t plugin = {
         " misrepresented as being the original software.\n"
         "3. This notice may not be removed or altered from any source distribution.\n"
         "\n"
-        "Alexey Yakovenko waker@users.sourceforge.net\n"
+        "Oleksiy Yakovenko waker@users.sourceforge.net\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
     .open = stdio_open,

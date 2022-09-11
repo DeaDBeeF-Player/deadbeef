@@ -1,6 +1,6 @@
 /*
     SuperEQ DSP plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>
     Original SuperEQ code (C) Naoki Shibata <shibatch@users.sf.net>
 
     This program is free software; you can redistribute it and/or

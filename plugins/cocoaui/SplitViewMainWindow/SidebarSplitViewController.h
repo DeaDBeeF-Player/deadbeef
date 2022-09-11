@@ -2,7 +2,7 @@
 //  SidebarSplitViewController.h
 //  SplitViewApp
 //
-//  Created by Alexey Yakovenko on 7/6/20.
+//  Created by Oleksiy Yakovenko on 7/6/20.
 //
 
 #import <Cocoa/Cocoa.h>

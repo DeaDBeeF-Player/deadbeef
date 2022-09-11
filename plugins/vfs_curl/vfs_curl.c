@@ -1,6 +1,6 @@
 /*
     CURL VFS plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko
+    Copyright (C) 2009-2014 Oleksiy Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -1140,7 +1140,7 @@ static DB_vfs_t plugin = {
     .plugin.descr = "http and ftp streaming module using libcurl, with ICY protocol support",
     .plugin.copyright = 
         "CURL VFS plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2014 Oleksiy Yakovenko\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"

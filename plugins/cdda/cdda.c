@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* screwed/maintained by Alexey Yakovenko <waker@users.sourceforge.net> */
+/* screwed/maintained by Oleksiy Yakovenko <waker@users.sourceforge.net> */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1135,7 +1135,7 @@ static DB_decoder_t plugin = {
     .plugin.name = "Audio CD player",
     .plugin.descr = "Audio CD plugin using libcdio and libcddb",
     .plugin.copyright =
-        "Copyright (C) 2009-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2013 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

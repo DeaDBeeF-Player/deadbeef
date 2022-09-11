@@ -1,6 +1,6 @@
 /*
     TTA plugin for DeaDBeeF
-    Copyright (C) 2009-2014 Alexey Yakovenko
+    Copyright (C) 2009-2014 Oleksiy Yakovenko
 
     Based on TTAv1 decoder library for HW players
     Copyright (c) 2004 True Audio Software. All rights reserved.
@@ -322,7 +322,7 @@ static DB_decoder_t plugin = {
     .plugin.descr = "tta decoder based on TTA Hardware Players Library Version 1.2",
     .plugin.copyright = 
         "TTA plugin for DeaDBeeF\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2014 Oleksiy Yakovenko\n"
         "\n"
         "Based on TTAv1 decoder library for HW players\n"
         "Copyright (c) 2004 True Audio Software. All rights reserved.\n"

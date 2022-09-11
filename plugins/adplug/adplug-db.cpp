@@ -1,6 +1,6 @@
 /*
     DeaDBeeF ADPLUG plugin
-    Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages

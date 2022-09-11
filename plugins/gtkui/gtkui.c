@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2015 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -595,6 +595,39 @@ gtkui_rename_playlist (ddb_playlist_t *plt) {
     }
     gtk_widget_destroy (dlg);
     return 0;
+}
+
+int gtkui_remove_playlist (ddb_playlist_t *plt) {
+    int plt_idx = deadbeef->plt_get_idx(plt);
+    if (plt_idx == -1) {
+        return -1;
+    }
+
+    char title[500];
+    if (deadbeef->plt_get_first(plt, PL_MAIN) != NULL) {
+        // playlist not empty, confirm first.
+        deadbeef->plt_get_title (plt, title, sizeof (title));
+        GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("Removing playlist"));
+        gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), _("Do you really want to remove the playlist '%s'?"), title);
+        gtk_window_set_title (GTK_WINDOW (dlg), _("Warning"));
+        int response = gtk_dialog_run (GTK_DIALOG (dlg));
+        gtk_widget_destroy (dlg);
+        if (response != GTK_RESPONSE_YES) {
+            return -1;
+        }
+    }
+
+    deadbeef->plt_remove (plt_idx);
+    return 0;
+}
+
+int gtkui_remove_playlist_at_index (int plt_idx) {
+    int res = -1;
+    ddb_playlist_t *p = deadbeef->plt_get_for_idx (plt_idx);
+    if (p != NULL) {
+        res = gtkui_remove_playlist (p);
+    }
+    return res;
 }
 
 int
@@ -2239,7 +2272,7 @@ ddb_gtkui_t plugin = {
 #endif
     .gui.plugin.copyright =
         "GTK+ user interface for DeaDBeeF Player.\n"
-        "Copyright (C) 2009-2015 Alexey Yakovenko and other contributors\n"
+        "Copyright (C) 2009-2015 Oleksiy Yakovenko and other contributors\n"
         "\n"
         "This software is provided 'as-is', without any express or implied\n"
         "warranty.  In no event will the authors be held liable for any damages\n"

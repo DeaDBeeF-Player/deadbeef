@@ -1,6 +1,6 @@
 /*
     SuperEQ DSP plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -274,7 +274,7 @@ static DB_dsp_t plugin = {
     .plugin.descr = "equalizer plugin using SuperEQ library",
     .plugin.copyright = 
         "SuperEQ DSP plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Uses supereq library by Naoki Shibata, http://shibatch.sourceforge.net\n"
         "Uses FFT library by Takuya Ooura, http://www.kurims.kyoto-u.ac.jp/~ooura/\n"

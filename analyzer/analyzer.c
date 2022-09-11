@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2021 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -103,10 +103,10 @@ ddb_analyzer_process (ddb_analyzer_t *analyzer, int samplerate, int channels, co
         channels = 1;
     }
 
-    if (analyzer->mode_did_change || channels != analyzer->channels || fft_size != analyzer->fft_size || samplerate != analyzer->samplerate) {
+    if (analyzer->mode_did_change || channels != analyzer->channels || fft_size != analyzer->fft_size || samplerate/2 != analyzer->fft_samplerate) {
         analyzer->channels = channels;
         analyzer->fft_size = fft_size;
-        analyzer->samplerate = samplerate;
+        analyzer->fft_samplerate = samplerate/2;
         free (analyzer->fft_data);
         analyzer->fft_data = malloc (fft_size * channels * sizeof (float));
         need_regenerate = 1;
@@ -382,18 +382,18 @@ _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
 
 static float _bin_for_freq_floor (ddb_analyzer_t *analyzer, float freq) {
     float max = analyzer->fft_size - 1;
-    float bin = floor (freq * analyzer->fft_size / analyzer->samplerate);
+    float bin = floor (freq * analyzer->fft_size / analyzer->fft_samplerate);
     return bin < max ? bin : max;
 }
 
 static float _bin_for_freq_round (ddb_analyzer_t *analyzer, float freq) {
     float max = analyzer->fft_size - 1;
-    float bin = round (freq * analyzer->fft_size / analyzer->samplerate);
+    float bin = round (freq * analyzer->fft_size / analyzer->fft_samplerate);
     return bin < max ? bin : max;
 }
 
 static float _freq_for_bin (ddb_analyzer_t *analyzer, int bin) {
-    return (int64_t)bin * analyzer->samplerate / analyzer->fft_size;
+    return (int64_t)bin * analyzer->fft_samplerate / analyzer->fft_size;
 }
 
 // Precalculate data for tempered scale

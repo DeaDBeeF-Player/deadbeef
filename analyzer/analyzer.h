@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2021 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2021 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -107,7 +107,7 @@ typedef struct ddb_analyzer_s {
     ddb_analyzer_bar_t *bars;
     int bar_count;
     int bar_count_max;
-    int samplerate;
+    int fft_samplerate;
     int channels;
     int fft_size;
     float *fft_data;

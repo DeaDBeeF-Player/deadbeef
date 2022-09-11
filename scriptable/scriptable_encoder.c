@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "scriptable_encoder.h"
 #include "../deadbeef.h"
+#include "scriptable_encoder.h"
 #include "strdupa.h"
 
 extern DB_functions_t *deadbeef;

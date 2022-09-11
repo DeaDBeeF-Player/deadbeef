@@ -1,6 +1,6 @@
 /*
     VTX plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko
+    Copyright (C) 2009-2014 Oleksiy Yakovenko
 
     Based on libayemu (C) 2005-2008 Alexander Sashnov
 
@@ -322,7 +322,7 @@ static DB_decoder_t plugin = {
     .plugin.descr = "AY8910/12 chip emulator and vtx file player",
     .plugin.copyright = 
         "VTX plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2014 Oleksiy Yakovenko\n"
         "\n"
         "Based on libayemu (C) 2005-2008 Alexander Sashnov\n"
         "\n"

@@ -4,7 +4,7 @@
 
   basic ring buffer implementation
 
-  Copyright (C) 2009-2013 Alexey Yakovenko
+  Copyright (C) 2009-2013 Oleksiy Yakovenko
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,7 +22,7 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 
-  Alexey Yakovenko waker@users.sourceforge.net
+  Oleksiy Yakovenko waker@users.sourceforge.net
 */
 
 #include <string.h>

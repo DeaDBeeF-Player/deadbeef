@@ -1,6 +1,6 @@
 /*
     DUMB Plugin for DeaDBeeF Player
-    Copyright (C) 2009-2016 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2016 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages

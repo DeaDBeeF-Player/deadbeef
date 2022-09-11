@@ -1,7 +1,7 @@
 /*
     Hotkeys plugin for DeaDBeeF
     Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>
-    Copyright (C) 2012-2013 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2012-2013 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -1315,7 +1315,7 @@ static DB_hotkeys_plugin_t plugin = {
         "    * added local hotkeys support\n"
     ,
     .misc.plugin.copyright = 
-        "Copyright (C) 2012-2013 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2012-2013 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2009-2011 Viktor Semykin <thesame.ml@gmail.com>\n"
         "\n"
         "This program is free software; you can redistribute it and/or\n"

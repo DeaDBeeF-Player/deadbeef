@@ -1,7 +1,7 @@
 💛💙
 
 DeaDBeeF - The Music Player
-Copyright © 2009-2022  Alexey Yakovenko and contributors
+Copyright © 2009-2022  Oleksiy Yakovenko and contributors
 https://deadbeef.sourceforge.io
 
 Some of the most significant contributors in alphabetical order:
@@ -28,7 +28,7 @@ Some of the most significant contributors in alphabetical order:
     Veniamin Gvozdikov <g.veniamin@googlemail.com>
     Viktor Semykin <thesame.ml@gmail.com>
 
-If you think your name is missing here, or needs to be removed, please send an email to Alexey Yakovenko <waker@users.sf.net>
+If you think your name is missing here, or needs to be removed, please send an email to Oleksiy Yakovenko <waker@users.sf.net>
 
 Special Thanks To:
 

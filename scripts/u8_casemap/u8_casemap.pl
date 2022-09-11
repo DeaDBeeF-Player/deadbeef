@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # DeaDBeeF - The Ultimate Music Player
-# Copyright (C) 2009-2011 Alexey Yakovenko <waker@users.sourceforge.net>
+# Copyright (C) 2009-2011 Oleksiy Yakovenko <waker@users.sourceforge.net>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License

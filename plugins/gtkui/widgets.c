@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Alexey Yakovenko and other contributors
+    Copyright (C) 2009-2015 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -214,7 +214,7 @@ typedef struct {
 
     gboolean updating_menu; // suppress menu event handlers
     GtkWidget *menu;
-    GtkWidget *mode_descrete_item;
+    GtkWidget *mode_discrete_item;
     GtkWidget *mode_12_item;
     GtkWidget *mode_24_item;
 
@@ -3071,7 +3071,7 @@ w_spectrum_init (ddb_gtkui_widget_t *w) {
 static void
 _spectrum_menu_update (w_spectrum_t *s) {
     s->updating_menu = TRUE;
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_descrete_item), s->analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES);
+    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_discrete_item), s->analyzer.mode == DDB_ANALYZER_MODE_FREQUENCIES);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_12_item), s->analyzer.mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS && s->analyzer.octave_bars_step == 2);
     gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_24_item), s->analyzer.mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS && s->analyzer.octave_bars_step == 1);
 
@@ -3110,7 +3110,7 @@ _spectrum_menu_activate (GtkWidget* self, gpointer user_data) {
         return;
     }
 
-    if (self == s->mode_descrete_item) {
+    if (self == s->mode_discrete_item) {
         s->analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
         s->analyzer.mode_did_change = 1;
     }
@@ -3246,8 +3246,8 @@ w_spectrum_create (void) {
     GtkWidget *rendering_mode_menu = gtk_menu_new();
     gtk_menu_item_set_submenu(GTK_MENU_ITEM(rendering_mode_item), rendering_mode_menu);
 
-    w->mode_descrete_item = gtk_check_menu_item_new_with_mnemonic( _("Descrete Frequencies"));
-    gtk_widget_show(w->mode_descrete_item);
+    w->mode_discrete_item = gtk_check_menu_item_new_with_mnemonic( _("Discrete Frequencies"));
+    gtk_widget_show(w->mode_discrete_item);
 
     w->mode_12_item = gtk_check_menu_item_new_with_mnemonic( _("1/12 Octave Bands"));
     gtk_widget_show(w->mode_12_item);
@@ -3255,7 +3255,7 @@ w_spectrum_create (void) {
     w->mode_24_item = gtk_check_menu_item_new_with_mnemonic( _("1/24 Octave Bands"));
     gtk_widget_show(w->mode_24_item);
 
-    gtk_menu_shell_insert (GTK_MENU_SHELL(rendering_mode_menu), w->mode_descrete_item, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(rendering_mode_menu), w->mode_discrete_item, 0);
     gtk_menu_shell_insert (GTK_MENU_SHELL(rendering_mode_menu), w->mode_12_item, 1);
     gtk_menu_shell_insert (GTK_MENU_SHELL(rendering_mode_menu), w->mode_24_item, 1);
 
@@ -3316,7 +3316,7 @@ w_spectrum_create (void) {
     //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), separator_item, 2);
     //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), preferences_item, 3);
 
-    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_descrete_item), TRUE);
+    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_discrete_item), TRUE);
     gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_12_item), TRUE);
     gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_24_item), TRUE);
     gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_none_item), TRUE);
@@ -3330,7 +3330,7 @@ w_spectrum_create (void) {
     gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_9_item), TRUE);
     gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->gap_10_item), TRUE);
 
-    g_signal_connect((gpointer)w->mode_descrete_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
+    g_signal_connect((gpointer)w->mode_discrete_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
     g_signal_connect((gpointer)w->mode_12_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
     g_signal_connect((gpointer)w->mode_24_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);
     g_signal_connect((gpointer)w->gap_none_item, "activate", G_CALLBACK(_spectrum_menu_activate), w);

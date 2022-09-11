@@ -1,6 +1,6 @@
 /*
     SHN (Shorten) plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     Based on xmms-shn, http://www.etree.org/shnutils/xmms-shn/
     Copyright (C) 2000-2007  Jason Jordan <shnutils@freeshell.org>
@@ -1817,7 +1817,7 @@ static DB_decoder_t plugin = {
     .plugin.descr = "decodes shn files",
     .plugin.copyright = 
         "SHN (Shorten) plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko <waker@users.sourceforge.net>\n"
+        "Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "Based on xmms-shn, http://www.etree.org/shnutils/xmms-shn/\n"
         "Copyright (C) 2000-2007  Jason Jordan <shnutils@freeshell.org>\n"

@@ -1,6 +1,6 @@
 /*
     MMS transport VFS plugin for DeaDBeeF Player
-    Copyright (C) 2009-2014 Alexey Yakovenko
+    Copyright (C) 2009-2014 Oleksiy Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -178,7 +178,7 @@ static DB_vfs_t plugin = {
     .plugin.descr = "MMS streaming plugin based on libmms",
     .plugin.copyright = 
         "MMS transport VFS plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Alexey Yakovenko\n"
+        "Copyright (C) 2009-2014 Oleksiy Yakovenko\n"
         "\n"
         "Uses modified libmms-0.6.1\n"
         "\n"
@@ -205,7 +205,7 @@ static DB_vfs_t plugin = {
         "libmms - MMS over TCP protocol\n"
         "Copyright (C) 2002-2003 the xine project\n"
         "Copyright (C) 2004-2012 the libmms project\n"
-        "Modifications for DeaDBeeF (C) 2009-2016 Alexey Yakovenko\n"
+        "Modifications for DeaDBeeF (C) 2009-2016 Oleksiy Yakovenko\n"
         "\n"
         "Libmms is free software; you can redistribute it and/or modify it\n"
         "under the terms of the GNU Library General Public License as\n"
