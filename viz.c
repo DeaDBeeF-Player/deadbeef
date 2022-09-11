@@ -161,11 +161,7 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
             return;
         }
 
-        char * bytes = _bytes;
-        int bytes_size = _bytes_size;
-
-        int in_frame_size = (output->fmt.bps >> 3) * output->fmt.channels;
-        int in_frames = in_frame_size != 0 ? bytes_size / in_frame_size : 0;
+        char *bytes = _bytes;
 
         // convert to float
         ddb_waveformat_t *out_fmt = calloc (1, sizeof (ddb_waveformat_t));
@@ -176,17 +172,21 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         out_fmt->is_float = 1;
         out_fmt->is_bigendian = 0;
 
-        int process_samples = in_frames;
-        // if the input is smaller than the buffer, pad with zeroes
-        if (process_samples != fft_size * 2) {
-            process_samples = fft_size * 2;
-            bytes_size = process_samples * output->fmt.channels * output->fmt.bps/8;
-        }
-        size_t data_size = process_samples * out_fmt->channels * sizeof (float);
-        __block float *data = calloc(1, data_size);
+        const int fft_nframes = fft_size * 2;
+        const int fft_buffer_size = fft_nframes * output->fmt.channels * output->fmt.bps/8;
+
+        const int wave_data_size = wave_size * out_fmt->channels * sizeof (float);
+
+        // calculate the size which can fit either the FFT input, or the wave data.
+        const int final_buffer_size = fft_buffer_size > wave_data_size ? fft_buffer_size : wave_data_size;
+        __block float *data = calloc(1, final_buffer_size);
 
         if (bytes != NULL) {
-            pcm_convert (&output->fmt, bytes, out_fmt, (char *)data, bytes_size);
+            // take only as much bytes as we have available.
+            const int convert_size = _bytes_size < final_buffer_size ? _bytes_size : final_buffer_size;
+
+            // After this runs, we'll have a buffer with enough samples for FFT, padded with 0s if needed.
+            pcm_convert (&output->fmt, bytes, out_fmt, (char *)data, convert_size);
         }
 
         ddb_audio_data_t *waveform_data = calloc(1, sizeof(ddb_audio_data_t));
@@ -211,15 +211,11 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
 
                 if (spectrum_listeners) {
                     // convert samples in planar layout
-                    assert (process_samples == _fft_size * 2);
+                    assert (fft_nframes == _fft_size * 2);
                     for (int c = 0; c < audio_data_channels; c++) {
                         float *channel = &_audio_data[_fft_size * 2 * c];
-                        for (int s = 0; s < process_samples; s++) {
+                        for (int s = 0; s < fft_nframes; s++) {
                             channel[s] = data[s * audio_data_channels + c];
-                        }
-                        // pad zeroes
-                        for (int s = process_samples; s < _fft_size * 2; s++) {
-                            channel[s] = 0;
                         }
                     }
 
