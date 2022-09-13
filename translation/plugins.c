@@ -59,13 +59,13 @@ _("File");
 // xgettext:no-c-format
 _("Add Audio CD");
 // xgettext:no-c-format
-_("Use CDDB/FreeDB");
+_("Use CDDB/GnuDb");
 // xgettext:no-c-format
 _("Prefer CD-Text over CDDB");
 // xgettext:no-c-format
-_("CDDB url (e.g. 'freedb.org')");
+_("CDDB url (e.g. 'gnudb.gnudb.org')");
 // xgettext:no-c-format
-_("CDDB port number (e.g. '888')");
+_("CDDB port number (e.g. '8880')");
 // xgettext:no-c-format
 _("Use CDDB protocol");
 // xgettext:no-c-format
@@ -410,6 +410,8 @@ _("Notification content format");
 _("Show album art");
 // xgettext:no-c-format
 _("Album art size (px)");
+// xgettext:no-c-format
+_("Fix for KDE 5.23.5");
 // plugins/oss/oss.c
 // xgettext:no-c-format
 _("Device file");
