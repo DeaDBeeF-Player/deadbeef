@@ -397,6 +397,10 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
     }
 
     dspfmt.channels = dspfmt_ch;
+    dspfmt.channelmask = 0;
+    for (int i = 0; i < dspfmt_ch; i++) {
+        dspfmt.channelmask |= (1<<i);
+    }
 
     int can_bypass = 0;
     if (_dsp_on) {
