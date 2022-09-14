@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-13 15:15+0200\n"
+"POT-Creation-Date: 2022-09-14 18:59+0200\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Slovenian (http://www.transifex.com/deadbeef-player/deadbeef-player/language/sl/)\n"
@@ -189,23 +189,23 @@ msgid ""
 "plugins that support commands.\n"
 msgstr ""
 
-#: ../playlist.c:515 ../playlist.c:2516
+#: ../playlist.c:515 ../playlist.c:2515
 msgid "Default"
 msgstr "Privzeto"
 
-#: ../playlist.c:3201 ../plugins/gtkui/widgets.c:2868
+#: ../playlist.c:3203 ../plugins/gtkui/widgets.c:2761
 msgid "Mono"
 msgstr "Mono"
 
-#: ../playlist.c:3201
+#: ../playlist.c:3203
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../playlist.c:3719
+#: ../playlist.c:3726
 msgid "Yes"
 msgstr "Da"
 
-#: ../playlist.c:3719
+#: ../playlist.c:3726
 msgid "No"
 msgstr "Ne"
 
@@ -296,8 +296,8 @@ msgstr "Uredi predlogo nastavitev kodirnika"
 
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/converter/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:72
-#: ../plugins/gtkui/gtkui.c:583 ../plugins/gtkui/interface.c:1335
-#: ../plugins/gtkui/interface.c:3960 ../plugins/gtkui/widgets.c:1674
+#: ../plugins/gtkui/gtkui.c:586 ../plugins/gtkui/interface.c:1335
+#: ../plugins/gtkui/interface.c:3960 ../plugins/gtkui/widgets.c:1669
 #: ../plugins/shellexecui/interface.c:163
 #: ../plugins/shellexecui/shellexec.glade.h:7
 msgid "Title:"
@@ -392,7 +392,7 @@ msgid "DSP Preset Editor"
 msgstr "Urejevalnik predlog nastavitev DSP"
 
 #: ../plugins/converter/converter.glade.h:48
-#: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
+#: ../plugins/converter/convgui.c:1185 ../plugins/converter/convgui.c:1753
 #: ../plugins/converter/interface.c:653 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/gtkui/interface.c:259
 #: ../plugins/gtkui/playlist/mainplaylist.c:235
@@ -416,28 +416,27 @@ msgstr "Dodaj"
 
 #: ../plugins/converter/converter.glade.h:51
 #: ../plugins/converter/interface.c:676 ../plugins/gtkui/deadbeef.glade.h:16
-#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:5364
-#: ../plugins/gtkui/plmenu.c:593 ../plugins/shellexecui/interface.c:66
+#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:5376
+#: ../plugins/gtkui/plmenu.c:597 ../plugins/shellexecui/interface.c:66
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
 msgstr "Odstrani"
 
 #: ../plugins/converter/converter.glade.h:52
 #: ../plugins/converter/interface.c:680
-#: ../plugins/gtkui/medialib/medialibwidget.c:751
 msgid "Configure"
 msgstr "Nastavitve"
 
 #: ../plugins/converter/converter.glade.h:53
-#: ../plugins/converter/interface.c:781 ../plugins/gtkui/deadbeef.glade.h:204
-#: ../plugins/gtkui/interface.c:4420
+#: ../plugins/converter/interface.c:781 ../plugins/gtkui/deadbeef.glade.h:203
+#: ../plugins/gtkui/interface.c:4432
 msgid "Select DSP Plugin"
 msgstr "Izberite vstavek DSP"
 
 #: ../plugins/converter/converter.glade.h:54
-#: ../plugins/converter/convgui.c:1488 ../plugins/converter/interface.c:797
-#: ../plugins/gtkui/deadbeef.glade.h:205 ../plugins/gtkui/dspconfig.c:293
-#: ../plugins/gtkui/interface.c:4436
+#: ../plugins/converter/convgui.c:1489 ../plugins/converter/interface.c:797
+#: ../plugins/gtkui/deadbeef.glade.h:204 ../plugins/gtkui/dspconfig.c:293
+#: ../plugins/gtkui/interface.c:4448
 msgid "Plugin"
 msgstr "Vstavek"
 
@@ -446,103 +445,103 @@ msgstr "Vstavek"
 msgid "Presets"
 msgstr "Predloge nastavitev"
 
-#: ../plugins/converter/convgui.c:91
+#: ../plugins/converter/convgui.c:92
 #, c-format
 msgid "[Built-in] %s"
 msgstr ""
 
-#: ../plugins/converter/convgui.c:145
+#: ../plugins/converter/convgui.c:146
 msgid "The file already exists. Overwrite?"
 msgstr "Datoteka že obstaja. Ali jo želite prepisati?"
 
-#: ../plugins/converter/convgui.c:147
+#: ../plugins/converter/convgui.c:148
 msgid "Converter warning"
 msgstr "Opozorilo pretvornika"
 
-#: ../plugins/converter/convgui.c:321
+#: ../plugins/converter/convgui.c:322
 msgid "Please select encoder"
 msgstr "Prosimo, izberite kodirnik"
 
-#: ../plugins/converter/convgui.c:323
+#: ../plugins/converter/convgui.c:324
 msgid "Converter error"
 msgstr "Napaka pretvornika"
 
-#: ../plugins/converter/convgui.c:347
+#: ../plugins/converter/convgui.c:348
 msgid "Converting..."
 msgstr "Pretvarjanje ..."
 
-#: ../plugins/converter/convgui.c:692
+#: ../plugins/converter/convgui.c:693
 msgid "Select folder..."
 msgstr "Izberite mapo ..."
 
-#: ../plugins/converter/convgui.c:958
+#: ../plugins/converter/convgui.c:959
 msgid "Failed to save encoder preset"
 msgstr "Predloge nastavitev kodirnika ni mogoče shraniti"
 
-#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
+#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr "Preverite dovoljenja mape predloge nastavitev, izberite drugo ime ali sprostite nekaj prostora na disku."
 
-#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
+#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "Predloga nastavitev s tem imenom že obstaja."
 
-#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
+#: ../plugins/converter/convgui.c:962 ../plugins/converter/convgui.c:1533
 #: ../plugins/gtkui/ctmapping.c:203 ../plugins/gtkui/ctmapping.c:231
 #: ../plugins/gtkui/ctmapping.c:263
 msgid "Error"
 msgstr "Napaka"
 
-#: ../plugins/converter/convgui.c:1015 ../plugins/converter/convgui.c:1159
+#: ../plugins/converter/convgui.c:1016 ../plugins/converter/convgui.c:1160
 msgid "Add new encoder"
 msgstr "Dodaj nov kodirnik"
 
-#: ../plugins/converter/convgui.c:1045
+#: ../plugins/converter/convgui.c:1046
 msgid "Edit encoder"
 msgstr "Uredi kodirnik"
 
-#: ../plugins/converter/convgui.c:1077 ../plugins/converter/convgui.c:1673
+#: ../plugins/converter/convgui.c:1078 ../plugins/converter/convgui.c:1674
 msgid "Remove preset"
 msgstr "Odstrani predlogo nastavitev"
 
-#: ../plugins/converter/convgui.c:1079 ../plugins/converter/convgui.c:1675
+#: ../plugins/converter/convgui.c:1080 ../plugins/converter/convgui.c:1676
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Ali ste prepričani, da želite izbrisati izbrano predlogo nastavitev?"
 
-#: ../plugins/converter/convgui.c:1080 ../plugins/converter/convgui.c:1676
-#: ../plugins/gtkui/gtkui.c:1675 ../plugins/gtkui/gtkui_deletefromdisk.c:71
-#: ../plugins/gtkui/pltmenu.c:88 ../plugins/gtkui/prefwin/prefwin.c:140
-#: ../plugins/gtkui/trkproperties.c:117
+#: ../plugins/converter/convgui.c:1081 ../plugins/converter/convgui.c:1677
+#: ../plugins/gtkui/gtkui.c:612 ../plugins/gtkui/gtkui.c:1709
+#: ../plugins/gtkui/gtkui_deletefromdisk.c:71
+#: ../plugins/gtkui/prefwin/prefwin.c:142 ../plugins/gtkui/trkproperties.c:118
 msgid "Warning"
 msgstr "Opozorilo"
 
-#: ../plugins/converter/convgui.c:1174
+#: ../plugins/converter/convgui.c:1175
 msgid "Encoders"
 msgstr "Kodirniki"
 
-#: ../plugins/converter/convgui.c:1249
+#: ../plugins/converter/convgui.c:1250
 msgid "Add plugin to DSP chain"
 msgstr "Dodaj vstavek v verigo DSP"
 
-#: ../plugins/converter/convgui.c:1530
+#: ../plugins/converter/convgui.c:1531
 msgid "Failed to save DSP preset"
 msgstr "Predloge nastavitev DSP ni mogoče shraniti."
 
-#: ../plugins/converter/convgui.c:1594 ../plugins/converter/convgui.c:1639
+#: ../plugins/converter/convgui.c:1595 ../plugins/converter/convgui.c:1640
 msgid "New DSP Preset"
 msgstr "Nova predloga nastavitev DSP"
 
-#: ../plugins/converter/convgui.c:1723
+#: ../plugins/converter/convgui.c:1724
 msgid "Edit DSP Preset"
 msgstr "Uredi predlogo nastavitev DSP"
 
-#: ../plugins/converter/convgui.c:1743
+#: ../plugins/converter/convgui.c:1744
 msgid "DSP Presets"
 msgstr "Predloge nastavitev DSP"
 
-#: ../plugins/converter/convgui.c:1781 ../plugins/converter/convgui.c:1789
+#: ../plugins/converter/convgui.c:1782 ../plugins/converter/convgui.c:1790
 #: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:646
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/gtkui/interface.c:976
 #: ../translation/plugins.c:167
@@ -741,7 +740,7 @@ msgid "Selection"
 msgstr "Izbor"
 
 #: ../plugins/gtkui/deadbeef.glade.h:17 ../plugins/gtkui/interface.c:244
-#: ../plugins/gtkui/interface.c:5368
+#: ../plugins/gtkui/interface.c:5380
 msgid "Crop"
 msgstr "Obreži"
 
@@ -894,7 +893,6 @@ msgid "_Translators"
 msgstr "_Prevajalci"
 
 #: ../plugins/gtkui/deadbeef.glade.h:53 ../plugins/gtkui/interface.c:722
-#: ../plugins/gtkui/medialib/medialibwidget.c:761
 msgid "Search"
 msgstr "Iskanje"
 
@@ -943,7 +941,7 @@ msgid "Quit"
 msgstr "Končaj"
 
 #: ../plugins/gtkui/deadbeef.glade.h:63 ../plugins/gtkui/interface.c:1049
-#: ../plugins/gtkui/plmenu.c:640 ../translation/plugins.c:165
+#: ../plugins/gtkui/plmenu.c:644 ../translation/plugins.c:165
 #, no-c-format
 msgid "Track Properties"
 msgstr "Lastnosti skladbe"
@@ -1018,7 +1016,7 @@ msgid ""
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:82 ../plugins/gtkui/interface.c:1422
-#: ../plugins/gtkui/interface.c:5111
+#: ../plugins/gtkui/interface.c:5123
 msgid "Text color:"
 msgstr ""
 
@@ -1199,7 +1197,7 @@ msgstr ""
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/deadbeef.glade.h:129 ../plugins/gtkui/interface.c:2327
-#: ../translation/plugins.c:418
+#: ../translation/plugins.c:420
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr ""
@@ -1229,7 +1227,7 @@ msgstr ""
 msgid "pixels"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:136 ../plugins/gtkui/gtkui.c:1417
+#: ../plugins/gtkui/deadbeef.glade.h:136 ../plugins/gtkui/gtkui.c:1451
 #: ../plugins/gtkui/interface.c:2365 ../plugins/gtkui/interface.c:2810
 msgid "Playlist"
 msgstr ""
@@ -1402,7 +1400,7 @@ msgid "HTTP User Agent:"
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:177 ../plugins/gtkui/interface.c:2994
-#: ../plugins/gtkui/interface.c:4987
+#: ../plugins/gtkui/interface.c:4999
 msgid "Edit Content-Type Mapping"
 msgstr ""
 
@@ -1415,12 +1413,12 @@ msgid "Assigned Hotkeys:"
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:180 ../plugins/gtkui/interface.c:3046
-#: ../plugins/gtkui/interface.c:5148
+#: ../plugins/gtkui/interface.c:5160
 msgid "Action:"
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:181 ../plugins/gtkui/interface.c:3051
-#: ../plugins/gtkui/interface.c:3064 ../plugins/gtkui/interface.c:5152
+#: ../plugins/gtkui/interface.c:3064 ../plugins/gtkui/interface.c:5164
 msgid "<Not set>"
 msgstr ""
 
@@ -1464,7 +1462,7 @@ msgid "License"
 msgstr ""
 
 #: ../plugins/gtkui/deadbeef.glade.h:193 ../plugins/gtkui/interface.c:3213
-#: ../plugins/gtkui/interface.c:4908
+#: ../plugins/gtkui/interface.c:4920
 msgid "Reset to defaults"
 msgstr ""
 
@@ -1477,8 +1475,8 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/deadbeef.glade.h:197 ../plugins/gtkui/interface.c:4092
-#: ../plugins/gtkui/interface.c:5278 ../plugins/gtkui/interface.c:5306
-#: ../plugins/gtkui/plmenu.c:627
+#: ../plugins/gtkui/interface.c:5290 ../plugins/gtkui/interface.c:5318
+#: ../plugins/gtkui/plmenu.c:631
 msgid "Set Custom Title"
 msgstr ""
 
@@ -1490,78 +1488,74 @@ msgstr ""
 msgid "Sort by ..."
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:200 ../plugins/gtkui/interface.c:4336
-msgid "Format"
-msgstr "Oblika"
+#: ../plugins/gtkui/deadbeef.glade.h:200 ../plugins/gtkui/interface.c:4350
+msgid "<b>Format</b>"
+msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:201 ../plugins/gtkui/interface.c:4359
-msgid "Order"
-msgstr "Vrstni red"
-
-#: ../plugins/gtkui/deadbeef.glade.h:202
+#: ../plugins/gtkui/deadbeef.glade.h:201
 msgid ""
 "Ascending\n"
 "Descending"
 msgstr "Naraščajoče\nPadajoče"
 
-#: ../plugins/gtkui/deadbeef.glade.h:206 ../plugins/gtkui/interface.c:4521
+#: ../plugins/gtkui/deadbeef.glade.h:205 ../plugins/gtkui/interface.c:4533
 msgid "Tag Writer Settings"
 msgstr "Nastavitve zapisovalnika oznak"
 
-#: ../plugins/gtkui/deadbeef.glade.h:207 ../plugins/gtkui/interface.c:4552
+#: ../plugins/gtkui/deadbeef.glade.h:206 ../plugins/gtkui/interface.c:4564
 msgid "Write ID3v2"
 msgstr "Zapiši ID3v2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:208 ../plugins/gtkui/interface.c:4556
-#: ../plugins/gtkui/interface.c:4683
+#: ../plugins/gtkui/deadbeef.glade.h:207 ../plugins/gtkui/interface.c:4568
+#: ../plugins/gtkui/interface.c:4695
 msgid "Write ID3v1"
 msgstr "Zapiši ID3v1"
 
-#: ../plugins/gtkui/deadbeef.glade.h:209 ../plugins/gtkui/interface.c:4560
-#: ../plugins/gtkui/interface.c:4639 ../plugins/gtkui/interface.c:4679
+#: ../plugins/gtkui/deadbeef.glade.h:208 ../plugins/gtkui/interface.c:4572
+#: ../plugins/gtkui/interface.c:4651 ../plugins/gtkui/interface.c:4691
 msgid "Write APEv2"
 msgstr "Zapiši APEv2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:210 ../plugins/gtkui/interface.c:4568
-#: ../plugins/gtkui/interface.c:4647
+#: ../plugins/gtkui/deadbeef.glade.h:209 ../plugins/gtkui/interface.c:4580
+#: ../plugins/gtkui/interface.c:4659
 msgid "Strip ID3v2"
 msgstr "Odstrani ID3v2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:211 ../plugins/gtkui/interface.c:4572
-#: ../plugins/gtkui/interface.c:4695
+#: ../plugins/gtkui/deadbeef.glade.h:210 ../plugins/gtkui/interface.c:4584
+#: ../plugins/gtkui/interface.c:4707
 msgid "Strip ID3v1"
 msgstr "Odstrani ID3v1"
 
-#: ../plugins/gtkui/deadbeef.glade.h:212 ../plugins/gtkui/interface.c:4576
-#: ../plugins/gtkui/interface.c:4651 ../plugins/gtkui/interface.c:4691
+#: ../plugins/gtkui/deadbeef.glade.h:211 ../plugins/gtkui/interface.c:4588
+#: ../plugins/gtkui/interface.c:4663 ../plugins/gtkui/interface.c:4703
 msgid "Strip APEv2"
 msgstr "Odstrani APEv2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:213 ../plugins/gtkui/interface.c:4584
-#: ../translation/plugins.c:508
+#: ../plugins/gtkui/deadbeef.glade.h:212 ../plugins/gtkui/interface.c:4596
+#: ../translation/plugins.c:510
 #, no-c-format
 msgid "ID3v2 version"
 msgstr "Različica ID3v2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:214
+#: ../plugins/gtkui/deadbeef.glade.h:213
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr "2.3 (priporočeno)\n2.4"
 
-#: ../plugins/gtkui/deadbeef.glade.h:216 ../plugins/gtkui/interface.c:4598
+#: ../plugins/gtkui/deadbeef.glade.h:215 ../plugins/gtkui/interface.c:4610
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "Kodiranje znakov ID3v1 (privzeto je iso8859-1)"
 
-#: ../plugins/gtkui/deadbeef.glade.h:217 ../plugins/gtkui/interface.c:4635
+#: ../plugins/gtkui/deadbeef.glade.h:216 ../plugins/gtkui/interface.c:4647
 msgid "Write ID3v2.4"
 msgstr "Zapiši ID3v2.4"
 
-#: ../plugins/gtkui/deadbeef.glade.h:218 ../plugins/gtkui/interface.c:4837
+#: ../plugins/gtkui/deadbeef.glade.h:217 ../plugins/gtkui/interface.c:4849
 msgid "Content-Type Mapping"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:219 ../plugins/gtkui/interface.c:4860
+#: ../plugins/gtkui/deadbeef.glade.h:218 ../plugins/gtkui/interface.c:4872
 msgid ""
 "This table defines the binding between network stream content types and "
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
@@ -1569,35 +1563,35 @@ msgid ""
 "plugin, or \"ffmpeg\" plugin."
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:5003
+#: ../plugins/gtkui/deadbeef.glade.h:219 ../plugins/gtkui/interface.c:5015
 msgid "Content-Type:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:221 ../plugins/gtkui/interface.c:5016
+#: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:5028
 msgid "Plugins:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:222 ../plugins/gtkui/interface.c:5084
+#: ../plugins/gtkui/deadbeef.glade.h:221 ../plugins/gtkui/interface.c:5096
 msgid "Button properties"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:223 ../plugins/gtkui/interface.c:5099
+#: ../plugins/gtkui/deadbeef.glade.h:222 ../plugins/gtkui/interface.c:5111
 msgid "Color:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:224 ../plugins/gtkui/interface.c:5123
+#: ../plugins/gtkui/deadbeef.glade.h:223 ../plugins/gtkui/interface.c:5135
 msgid "Icon:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:225 ../plugins/gtkui/interface.c:5135
+#: ../plugins/gtkui/deadbeef.glade.h:224 ../plugins/gtkui/interface.c:5147
 msgid "Label:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:226 ../plugins/gtkui/interface.c:5216
+#: ../plugins/gtkui/deadbeef.glade.h:225 ../plugins/gtkui/interface.c:5228
 msgid "Select action"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:227 ../plugins/gtkui/interface.c:5300
+#: ../plugins/gtkui/deadbeef.glade.h:226 ../plugins/gtkui/interface.c:5312
 msgid ""
 "This dialog allows setting custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the"
@@ -1606,94 +1600,94 @@ msgid ""
 "the Artist field is present, or just \"custom\" otherwise."
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:228 ../plugins/gtkui/interface.c:5356
+#: ../plugins/gtkui/deadbeef.glade.h:227 ../plugins/gtkui/interface.c:5368
 #: ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5 ../translation/plugins.c:147
 #, no-c-format
 msgid "Edit"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:229 ../plugins/gtkui/interface.c:5360
+#: ../plugins/gtkui/deadbeef.glade.h:228 ../plugins/gtkui/interface.c:5372
 msgid "Edit (in place)"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:230 ../plugins/gtkui/interface.c:5372
+#: ../plugins/gtkui/deadbeef.glade.h:229 ../plugins/gtkui/interface.c:5384
 msgid "Add new field..."
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:231 ../plugins/gtkui/interface.c:5421
+#: ../plugins/gtkui/deadbeef.glade.h:230 ../plugins/gtkui/interface.c:5433
 msgid "Edit Value"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:232 ../plugins/gtkui/interface.c:5434
+#: ../plugins/gtkui/deadbeef.glade.h:231 ../plugins/gtkui/interface.c:5446
 msgid "Field name:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:233 ../plugins/gtkui/interface.c:5446
+#: ../plugins/gtkui/deadbeef.glade.h:232 ../plugins/gtkui/interface.c:5458
 msgid "Field value:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:234 ../plugins/gtkui/interface.c:5460
-#: ../plugins/gtkui/interface.c:5805
+#: ../plugins/gtkui/deadbeef.glade.h:233 ../plugins/gtkui/interface.c:5472
+#: ../plugins/gtkui/interface.c:5817
 msgid "Use ; character to separate multiple values."
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:235 ../plugins/gtkui/interface.c:5509
+#: ../plugins/gtkui/deadbeef.glade.h:234 ../plugins/gtkui/interface.c:5521
 msgid "DeaDBeeF Log"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:236 ../plugins/gtkui/interface.c:5538
+#: ../plugins/gtkui/deadbeef.glade.h:235 ../plugins/gtkui/interface.c:5550
 msgid "Clear"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:237 ../plugins/gtkui/interface.c:5575
+#: ../plugins/gtkui/deadbeef.glade.h:236 ../plugins/gtkui/interface.c:5587
 msgid "ReplayGain Scan Progress"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:238 ../plugins/gtkui/interface.c:5586
+#: ../plugins/gtkui/deadbeef.glade.h:237 ../plugins/gtkui/interface.c:5598
 msgid "Current File:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:239 ../plugins/gtkui/interface.c:5604
-#: ../plugins/gtkui/interface.c:5664 ../plugins/gtkui/rg.c:310
+#: ../plugins/gtkui/deadbeef.glade.h:238 ../plugins/gtkui/interface.c:5616
+#: ../plugins/gtkui/interface.c:5676 ../plugins/gtkui/rg.c:310
 msgid "Status"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:240
+#: ../plugins/gtkui/deadbeef.glade.h:239
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:67
-#: ../plugins/gtkui/interface.c:5611 ../plugins/gtkui/interface.c:5675
+#: ../plugins/gtkui/interface.c:5623 ../plugins/gtkui/interface.c:5687
 msgid "Cancel"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:241 ../plugins/gtkui/interface.c:5643
+#: ../plugins/gtkui/deadbeef.glade.h:240 ../plugins/gtkui/interface.c:5655
 msgid "ReplayGain Scan Results"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:242 ../plugins/gtkui/interface.c:5671
+#: ../plugins/gtkui/deadbeef.glade.h:241 ../plugins/gtkui/interface.c:5683
 msgid "Update File Tags"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5702
+#: ../plugins/gtkui/deadbeef.glade.h:242 ../plugins/gtkui/interface.c:5714
 msgid "Copy report"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5710
+#: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5722
 msgid "Only show plugins with configuration"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:245 ../plugins/gtkui/interface.c:5751
+#: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5763
 msgid "Edit Multiple Tracks"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:246 ../plugins/gtkui/interface.c:5763
+#: ../plugins/gtkui/deadbeef.glade.h:245 ../plugins/gtkui/interface.c:5775
 msgid "Field Name:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:247 ../plugins/gtkui/interface.c:5788
+#: ../plugins/gtkui/deadbeef.glade.h:246 ../plugins/gtkui/interface.c:5800
 msgid "Single Value"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:248 ../plugins/gtkui/interface.c:5801
+#: ../plugins/gtkui/deadbeef.glade.h:247 ../plugins/gtkui/interface.c:5813
 msgid "Individual Values"
 msgstr ""
 
@@ -1751,7 +1745,7 @@ msgstr "Ponastavi predojačevalnik"
 msgid "Zero Bands"
 msgstr "Ponastavi pasove"
 
-#: ../plugins/gtkui/fileman.c:64 ../plugins/gtkui/gtkui.c:723
+#: ../plugins/gtkui/fileman.c:64 ../plugins/gtkui/gtkui.c:759
 #: ../plugins/pltbrowser/pltbrowser.c:65 ../translation/plugins.c:217
 #, no-c-format
 msgid "New Playlist"
@@ -1785,134 +1779,143 @@ msgstr ""
 msgid "Follow symlinks"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:151 ../tf.c:2614
+#: ../plugins/gtkui/gtkui.c:154 ../tf.c:2616
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 dan %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:154 ../tf.c:2617
+#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2619
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d dni %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:200
+#: ../plugins/gtkui/gtkui.c:203
 msgid "total playtime"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:417
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "Paused"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:417
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "bit"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:414
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:417
 msgid "selection playtime"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
+#: ../plugins/gtkui/gtkui.c:417 ../plugins/gtkui/gtkui.c:421
 msgid "Stopped"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:580 ../plugins/gtkui/pltmenu.c:153
+#: ../plugins/gtkui/gtkui.c:583 ../plugins/gtkui/pltmenu.c:133
 msgid "Rename Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:726 ../plugins/pltbrowser/pltbrowser.c:68
+#: ../plugins/gtkui/gtkui.c:610
+msgid "Removing playlist"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:611
+#, c-format
+msgid "Do you really want to remove the playlist '%s'?"
+msgstr ""
+
+#: ../plugins/gtkui/gtkui.c:762 ../plugins/pltbrowser/pltbrowser.c:68
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Nov seznam predvajanja (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1416
+#: ../plugins/gtkui/gtkui.c:1450
 msgid "Playlist with tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1420
+#: ../plugins/gtkui/gtkui.c:1454
 msgid "Splitter (top and bottom)"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1421
+#: ../plugins/gtkui/gtkui.c:1455
 msgid "Splitter (left and right)"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1423
+#: ../plugins/gtkui/gtkui.c:1457
 msgid "Tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1424
+#: ../plugins/gtkui/gtkui.c:1458
 msgid "Playlist tabs"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1425
+#: ../plugins/gtkui/gtkui.c:1459
 msgid "Selection properties"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1426
+#: ../plugins/gtkui/gtkui.c:1460
 msgid "Album art display"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1427
+#: ../plugins/gtkui/gtkui.c:1461
 msgid "Oscilloscope"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1428
+#: ../plugins/gtkui/gtkui.c:1462
 msgid "Spectrum"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1429
+#: ../plugins/gtkui/gtkui.c:1463
 msgid "HBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1430
+#: ../plugins/gtkui/gtkui.c:1464
 msgid "VBox"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1431 ../plugins/gtkui/widgets.c:3948
-#: ../plugins/gtkui/widgets.c:4035
+#: ../plugins/gtkui/gtkui.c:1465 ../plugins/gtkui/widgets.c:3841
+#: ../plugins/gtkui/widgets.c:3928
 msgid "Button"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1432
+#: ../plugins/gtkui/gtkui.c:1466
 msgid "Seekbar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1433
+#: ../plugins/gtkui/gtkui.c:1467
 msgid "Playback controls"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1434
+#: ../plugins/gtkui/gtkui.c:1468
 msgid "Volume bar"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1435
+#: ../plugins/gtkui/gtkui.c:1469
 msgid "Chiptune voices"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1436
+#: ../plugins/gtkui/gtkui.c:1470
 msgid "Log viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1438
+#: ../plugins/gtkui/gtkui.c:1472
 msgid "Media library viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1649
+#: ../plugins/gtkui/gtkui.c:1683
 msgid "Failed while reading help file"
 msgstr "Med branjem datoteke pomoči je prišlo do napake"
 
-#: ../plugins/gtkui/gtkui.c:1659
+#: ../plugins/gtkui/gtkui.c:1693
 msgid "Failed to load help file"
 msgstr "Datoteke pomoči ni mogoče naložiti"
 
-#: ../plugins/gtkui/gtkui.c:1672
+#: ../plugins/gtkui/gtkui.c:1706
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1674
+#: ../plugins/gtkui/gtkui.c:1708
 msgid "Do you still want to quit?"
 msgstr ""
 
@@ -1954,7 +1957,7 @@ msgstr ""
 msgid "Delete files from disk"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:900
+#: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:895
 #: ../plugins/shellexecui/shellexecui.c:139
 msgid "Delete"
 msgstr ""
@@ -1980,7 +1983,7 @@ msgid "Track"
 msgstr "Skladba"
 
 #: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/playlist/plcommon.c:896
-#: ../plugins/gtkui/widgets.c:3374 ../plugins/gtkui/widgets.c:4045
+#: ../plugins/gtkui/widgets.c:3267 ../plugins/gtkui/widgets.c:3938
 #: ../translation/plugins.c:107
 #, no-c-format
 msgid "None"
@@ -1998,49 +2001,21 @@ msgstr ""
 msgid "Only prevent clipping"
 msgstr ""
 
-#: ../plugins/gtkui/interface.c:4366
+#: ../plugins/gtkui/interface.c:4372
 msgid "Ascending"
 msgstr "Naraščajoče"
 
-#: ../plugins/gtkui/interface.c:4367
+#: ../plugins/gtkui/interface.c:4373
 msgid "Descending"
 msgstr "Padajoče"
 
-#: ../plugins/gtkui/interface.c:4591
+#: ../plugins/gtkui/interface.c:4603
 msgid "2.3 (Recommended)"
 msgstr "2.3 (priporočeno)"
 
-#: ../plugins/gtkui/interface.c:4592
+#: ../plugins/gtkui/interface.c:4604
 msgid "2.4"
 msgstr "2.4"
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:140
-msgid "All Music"
-msgstr ""
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:144
-msgid "Media library is disabled"
-msgstr ""
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:148
-msgid "Loading..."
-msgstr ""
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:151
-msgid "Scanning..."
-msgstr ""
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:154
-msgid "Indexing..."
-msgstr ""
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:157
-msgid "Saving..."
-msgstr ""
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:729
-msgid "Media Library plugin is unavailable."
-msgstr ""
 
 #: ../plugins/gtkui/playlist/mainplaylist.c:233
 #: ../plugins/gtkui/playlist/searchplaylist.c:191
@@ -2123,63 +2098,54 @@ msgstr "Združi po"
 msgid "Artist/Date/Album"
 msgstr "Izvajalec/Datum/Album"
 
-#: ../plugins/gtkui/plmenu.c:487
+#: ../plugins/gtkui/plmenu.c:491
 msgid "Play Next"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:492
+#: ../plugins/gtkui/plmenu.c:496
 msgid "Play Later"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:497 ../translation/plugins.c:320
+#: ../plugins/gtkui/plmenu.c:501 ../translation/plugins.c:320
 #, no-c-format
 msgid "Remove from Playback Queue"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:518 ../translation/plugins.c:258
+#: ../plugins/gtkui/plmenu.c:522 ../translation/plugins.c:258
 #, no-c-format
 msgid "Reload Metadata"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:532
+#: ../plugins/gtkui/plmenu.c:536
 msgid "Cu_t"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:548
+#: ../plugins/gtkui/plmenu.c:552
 msgid "_Copy"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:565
+#: ../plugins/gtkui/plmenu.c:569
 msgid "_Paste"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:606 ../translation/plugins.c:155
+#: ../plugins/gtkui/plmenu.c:610 ../translation/plugins.c:155
 #, no-c-format
 msgid "Delete from Disk"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:86
-msgid "Removing playlist"
-msgstr ""
-
-#: ../plugins/gtkui/pltmenu.c:87
-#, c-format
-msgid "Do you really want to remove the playlist '%s'?"
-msgstr ""
-
-#: ../plugins/gtkui/pltmenu.c:160
+#: ../plugins/gtkui/pltmenu.c:140
 msgid "Remove Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:168
+#: ../plugins/gtkui/pltmenu.c:148
 msgid "Add New Playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:177
+#: ../plugins/gtkui/pltmenu.c:157
 msgid "Enable Autosort"
 msgstr ""
 
-#: ../plugins/gtkui/pltmenu.c:178
+#: ../plugins/gtkui/pltmenu.c:158
 msgid ""
 "Re-apply the last sort you chose every time when adding new files to this "
 "playlist"
@@ -2194,16 +2160,12 @@ msgstr "Odpri datoteko ..."
 msgid "Configure %s"
 msgstr "%s"
 
-#: ../plugins/gtkui/prefwin/prefwin.c:137
+#: ../plugins/gtkui/prefwin/prefwin.c:139
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr ""
 
-#: ../plugins/gtkui/prefwin/prefwin.c:139
+#: ../plugins/gtkui/prefwin/prefwin.c:141
 msgid "Are you sure you want to continue without saving?"
-msgstr ""
-
-#: ../plugins/gtkui/prefwin/prefwinmedialib.c:68
-msgid "Select music folders to add"
 msgstr ""
 
 #: ../plugins/gtkui/prefwin/prefwinsound.c:69
@@ -2222,7 +2184,7 @@ msgstr "Začenjanje ..."
 msgid "Updating File Tags Progress"
 msgstr ""
 
-#: ../plugins/gtkui/rg.c:309 ../plugins/gtkui/trkproperties.c:369
+#: ../plugins/gtkui/rg.c:309 ../plugins/gtkui/trkproperties.c:417
 #: ../plugins/pltbrowser/pltbrowser.c:848
 msgid "Name"
 msgstr ""
@@ -2255,303 +2217,301 @@ msgstr ""
 msgid "Invalid file"
 msgstr ""
 
-#: ../plugins/gtkui/search.c:468
+#: ../plugins/gtkui/search.c:469
 msgid "Search [(%list_total% results)]"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:114
+#: ../plugins/gtkui/trkproperties.c:115
 msgid "You've modified data for this track."
 msgstr "Spremenili ste podatke te skladbe."
 
-#: ../plugins/gtkui/trkproperties.c:116
+#: ../plugins/gtkui/trkproperties.c:117
 msgid "Really close the window?"
 msgstr "Ali res želite zapreti to okno?"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:254 ../plugins/gtkui/trkproperties.c:994
+#: ../plugins/gtkui/trkproperties.c:255 ../plugins/gtkui/trkproperties.c:1042
 msgid "[Multiple values] "
 msgstr "[Več vrednosti] "
 
-#: ../plugins/gtkui/trkproperties.c:370 ../plugins/gtkui/trkproperties.c:383
-#: ../plugins/gtkui/widgets.c:2441
+#: ../plugins/gtkui/trkproperties.c:418 ../plugins/gtkui/trkproperties.c:431
 msgid "Value"
 msgstr "Vrednost"
 
-#: ../plugins/gtkui/trkproperties.c:382 ../plugins/gtkui/widgets.c:2439
+#: ../plugins/gtkui/trkproperties.c:430
 msgid "Key"
 msgstr "Ključ"
 
-#: ../plugins/gtkui/trkproperties.c:400
+#: ../plugins/gtkui/trkproperties.c:448
 msgid "[Multiple values]"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:589
+#: ../plugins/gtkui/trkproperties.c:637
 msgid "Writing tags..."
 msgstr "Zapisovanje oznak ..."
 
-#: ../plugins/gtkui/trkproperties.c:922
+#: ../plugins/gtkui/trkproperties.c:970
 msgid "Item"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:923
+#: ../plugins/gtkui/trkproperties.c:971
 msgid "Field"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:1138
+#: ../plugins/gtkui/trkproperties.c:1186
 msgid "Field name"
 msgstr ""
 
-#: ../plugins/gtkui/trkproperties.c:1141
+#: ../plugins/gtkui/trkproperties.c:1189
 msgid "Name:"
 msgstr "Ime:"
 
-#: ../plugins/gtkui/trkproperties.c:1154
+#: ../plugins/gtkui/trkproperties.c:1202
 msgid "Field names must not start with : or _"
 msgstr "Imena polj se ne smejo začeti z »:« ali »_«"
 
-#: ../plugins/gtkui/trkproperties.c:1155 ../plugins/gtkui/trkproperties.c:1196
+#: ../plugins/gtkui/trkproperties.c:1203 ../plugins/gtkui/trkproperties.c:1244
 msgid "Cannot add field"
 msgstr "Polja ni mogoče dodati"
 
-#: ../plugins/gtkui/trkproperties.c:1195
+#: ../plugins/gtkui/trkproperties.c:1243
 msgid "Field with such name already exists, please try different name."
 msgstr "Polje s tem imenom že obstaja."
 
-#: ../plugins/gtkui/widgets.c:459
+#: ../plugins/gtkui/widgets.c:454
 #, c-format
 msgid "Widget \"%s\" is not available"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:874
+#: ../plugins/gtkui/widgets.c:869
 msgid "Replace with..."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:879
+#: ../plugins/gtkui/widgets.c:874
 msgid "Insert..."
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:907
+#: ../plugins/gtkui/widgets.c:902
 msgid "Cut"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:914
+#: ../plugins/gtkui/widgets.c:909
 msgid "Copy"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:922
+#: ../plugins/gtkui/widgets.c:917
 msgid "Paste"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:971
+#: ../plugins/gtkui/widgets.c:966
 msgid "Parent"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1089
+#: ../plugins/gtkui/widgets.c:1084
 msgid "Multiple widgets of this type are not supported"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1374
+#: ../plugins/gtkui/widgets.c:1369
 msgid "Proportional Sizing"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1386
+#: ../plugins/gtkui/widgets.c:1381
 msgid "Lock Top Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1389
+#: ../plugins/gtkui/widgets.c:1384
 msgid "Lock Left Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1402
+#: ../plugins/gtkui/widgets.c:1397
 msgid "Lock Bottom Pane Height"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1405
+#: ../plugins/gtkui/widgets.c:1400
 msgid "Lock Right Pane Width"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1671 ../plugins/gtkui/widgets.c:1786
+#: ../plugins/gtkui/widgets.c:1666 ../plugins/gtkui/widgets.c:1781
 msgid "Rename Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1793
+#: ../plugins/gtkui/widgets.c:1788
 msgid "Remove Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1800 ../plugins/gtkui/widgets.c:1979
+#: ../plugins/gtkui/widgets.c:1795 ../plugins/gtkui/widgets.c:1974
 msgid "Add New Tab"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1809
+#: ../plugins/gtkui/widgets.c:1804
 msgid "Move Tab Left"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:1816
+#: ../plugins/gtkui/widgets.c:1811
 msgid "Move Tab Right"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2214 ../plugins/gtkui/widgets.c:2398
-#: ../plugins/pltbrowser/pltbrowser.c:804
+#: ../plugins/gtkui/widgets.c:2217 ../plugins/pltbrowser/pltbrowser.c:804
 msgid "Show Column Headers"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2860 ../plugins/gtkui/widgets.c:3351
+#: ../plugins/gtkui/widgets.c:2753 ../plugins/gtkui/widgets.c:3244
 msgid "Rendering Mode"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2865
+#: ../plugins/gtkui/widgets.c:2758
 msgid "Multichannel"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2874
+#: ../plugins/gtkui/widgets.c:2767
 msgid "Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2879
+#: ../plugins/gtkui/widgets.c:2772
 msgid "Auto"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2881 ../translation/plugins.c:76
+#: ../plugins/gtkui/widgets.c:2774 ../translation/plugins.c:76
 #, no-c-format
 msgid "1x"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2883 ../translation/plugins.c:78
+#: ../plugins/gtkui/widgets.c:2776 ../translation/plugins.c:78
 #, no-c-format
 msgid "2x"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2885
+#: ../plugins/gtkui/widgets.c:2778
 msgid "3x"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2887 ../translation/plugins.c:80
+#: ../plugins/gtkui/widgets.c:2780 ../translation/plugins.c:80
 #, no-c-format
 msgid "4x"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2896
+#: ../plugins/gtkui/widgets.c:2789
 msgid "Fragment Duration"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2901
+#: ../plugins/gtkui/widgets.c:2794
 msgid "50 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2903
+#: ../plugins/gtkui/widgets.c:2796
 msgid "100 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2905
+#: ../plugins/gtkui/widgets.c:2798
 msgid "200 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2907
+#: ../plugins/gtkui/widgets.c:2800
 msgid "300 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2909
+#: ../plugins/gtkui/widgets.c:2802
 msgid "500 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3356
-msgid "Descrete Frequencies"
+#: ../plugins/gtkui/widgets.c:3249
+msgid "Discrete Frequencies"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3359
+#: ../plugins/gtkui/widgets.c:3252
 msgid "1/12 Octave Bands"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3362
+#: ../plugins/gtkui/widgets.c:3255
 msgid "1/24 Octave Bands"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3369
+#: ../plugins/gtkui/widgets.c:3262
 msgid "Gap Size"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3377
+#: ../plugins/gtkui/widgets.c:3270
 msgid "1/2 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3380
+#: ../plugins/gtkui/widgets.c:3273
 msgid "1/3 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3383
+#: ../plugins/gtkui/widgets.c:3276
 msgid "1/4 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3386
+#: ../plugins/gtkui/widgets.c:3279
 msgid "1/5 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3389
+#: ../plugins/gtkui/widgets.c:3282
 msgid "1/6 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3392
+#: ../plugins/gtkui/widgets.c:3285
 msgid "1/7 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3395
+#: ../plugins/gtkui/widgets.c:3288
 msgid "1/8 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3398
+#: ../plugins/gtkui/widgets.c:3291
 msgid "1/9 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3401
+#: ../plugins/gtkui/widgets.c:3294
 msgid "1/10 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3665
+#: ../plugins/gtkui/widgets.c:3558
 msgid "Expand Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3670
+#: ../plugins/gtkui/widgets.c:3563
 msgid "Shrink Box by 1 Item"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3675
+#: ../plugins/gtkui/widgets.c:3568
 msgid "Homogeneous"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3715
+#: ../plugins/gtkui/widgets.c:3608
 msgid "Expand"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3723
+#: ../plugins/gtkui/widgets.c:3616
 msgid "Fill"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4125
+#: ../plugins/gtkui/widgets.c:4018
 msgid "Configure Button"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4398
+#: ../plugins/gtkui/widgets.c:4291
 msgid "_dB Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4409
+#: ../plugins/gtkui/widgets.c:4302
 msgid "_Linear Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4420
+#: ../plugins/gtkui/widgets.c:4313
 msgid "_Cubic Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4546
+#: ../plugins/gtkui/widgets.c:4439
 msgid "Voices:"
 msgstr ""
 
-#: ../plugins/hotkeys/actionhandlers.c:808
+#: ../plugins/hotkeys/actionhandlers.c:824
 #, c-format
 msgid "Copy of %s"
 msgstr ""
 
-#: ../plugins/hotkeys/actionhandlers.c:811
+#: ../plugins/hotkeys/actionhandlers.c:827
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr ""
@@ -2727,11 +2687,11 @@ msgid ""
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr "wildmidi: Nastavitvene datoteke freepats ni mogoče najti. Prosimo, namestite paket timidity-freepats ali navedite pot to datoteke »freepats.cfg« v nastavitvah vstavkov."
 
-#: ../tf.c:2203
+#: ../tf.c:2205
 msgid "mono"
 msgstr ""
 
-#: ../tf.c:2206 ../tf.c:2210
+#: ../tf.c:2208 ../tf.c:2212
 msgid "stereo"
 msgstr ""
 
@@ -2937,8 +2897,8 @@ msgstr ""
 
 #: ../translation/plugins.c:62
 #, no-c-format
-msgid "Use CDDB/FreeDB"
-msgstr "Uporabi CDDB/FreeDB"
+msgid "Use CDDB/GnuDb"
+msgstr ""
 
 #: ../translation/plugins.c:64
 #, no-c-format
@@ -2947,13 +2907,13 @@ msgstr "Uporabi CD-Text namesto CDDB"
 
 #: ../translation/plugins.c:66
 #, no-c-format
-msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "Naslov CDDB (npr. »freedb.org«)"
+msgid "CDDB url (e.g. 'gnudb.gnudb.org')"
+msgstr ""
 
 #: ../translation/plugins.c:68
 #, no-c-format
-msgid "CDDB port number (e.g. '888')"
-msgstr "Številka vrat CDDB (npr. »888«)"
+msgid "CDDB port number (e.g. '8880')"
+msgstr ""
 
 #: ../translation/plugins.c:70
 #, no-c-format
@@ -3691,243 +3651,248 @@ msgstr "Pokaži naslovnico albuma"
 msgid "Album art size (px)"
 msgstr "Velikost naslovnice albuma (v slik. točkah)"
 
+#: ../translation/plugins.c:414
+#, no-c-format
+msgid "Fix for KDE 5.23.5"
+msgstr ""
+
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:415
+#: ../translation/plugins.c:417
 #, no-c-format
 msgid "Device file"
 msgstr "Datoteka naprave"
 
-#: ../translation/plugins.c:420
+#: ../translation/plugins.c:422
 #, no-c-format
 msgid "Highlight current playlist"
 msgstr ""
 
-#: ../translation/plugins.c:422
+#: ../translation/plugins.c:424
 #, no-c-format
 msgid "Play on double-click"
 msgstr ""
 
 #. plugins/portaudio/portaudio.c
-#: ../translation/plugins.c:425
+#: ../translation/plugins.c:427
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
 msgstr ""
 
-#: ../translation/plugins.c:427
+#: ../translation/plugins.c:429
 #, no-c-format
 msgid "Device name encoding"
 msgstr ""
 
-#: ../translation/plugins.c:429
+#: ../translation/plugins.c:431
 #, no-c-format
 msgid "ASCII / UTF-8"
 msgstr ""
 
-#: ../translation/plugins.c:431
+#: ../translation/plugins.c:433
 #, no-c-format
 msgid "cp1250"
 msgstr ""
 
-#: ../translation/plugins.c:433
+#: ../translation/plugins.c:435
 #, no-c-format
 msgid "Defined below"
 msgstr ""
 
-#: ../translation/plugins.c:435
+#: ../translation/plugins.c:437
 #, no-c-format
 msgid "Custom device name encoding"
 msgstr ""
 
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:438
+#: ../translation/plugins.c:440
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr ""
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:441
+#: ../translation/plugins.c:443
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr ""
 
-#: ../translation/plugins.c:443
+#: ../translation/plugins.c:445
 #, no-c-format
 msgid "Samplerate"
 msgstr "Hitrost vzorčenja"
 
-#: ../translation/plugins.c:445
+#: ../translation/plugins.c:447
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr ""
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:448
+#: ../translation/plugins.c:450
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr ""
 
 #. plugins/shn/shn.c
-#: ../translation/plugins.c:451
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "Relativna pot do razpredelnice iskalnih vrednosti"
 
-#: ../translation/plugins.c:453
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "Absolutna pot do razpredelnice iskalnih vrednosti"
 
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:457
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Zamenjaj zvočne bajte (izberite, če slišite statiko)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:458
+#: ../translation/plugins.c:460
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "Omogoči podatkovno zbirko dolžin pesmi HVSC"
 
-#: ../translation/plugins.c:460
+#: ../translation/plugins.c:462
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr ""
 
-#: ../translation/plugins.c:462
+#: ../translation/plugins.c:464
 #, no-c-format
 msgid "Bits per sample"
 msgstr ""
 
-#: ../translation/plugins.c:464
+#: ../translation/plugins.c:466
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "Privzeta dolžina skladbe (v sekundah)"
 
-#: ../translation/plugins.c:466
+#: ../translation/plugins.c:468
 #, no-c-format
 msgid "Mono synth"
 msgstr ""
 
 #. plugins/sndfile/sndfile.c
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:471
 #, no-c-format
 msgid "Enable logging"
 msgstr ""
 
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:472
+#: ../translation/plugins.c:474
 #, no-c-format
 msgid "Preamp"
 msgstr ""
 
-#: ../translation/plugins.c:474
+#: ../translation/plugins.c:476
 #, no-c-format
 msgid "1.2K"
 msgstr ""
 
-#: ../translation/plugins.c:476
+#: ../translation/plugins.c:478
 #, no-c-format
 msgid "1.8K"
 msgstr ""
 
-#: ../translation/plugins.c:478
+#: ../translation/plugins.c:480
 #, no-c-format
 msgid "2.5K"
 msgstr ""
 
-#: ../translation/plugins.c:480
+#: ../translation/plugins.c:482
 #, no-c-format
 msgid "3.5K"
 msgstr ""
 
-#: ../translation/plugins.c:482
+#: ../translation/plugins.c:484
 #, no-c-format
 msgid "5K"
 msgstr ""
 
-#: ../translation/plugins.c:484
+#: ../translation/plugins.c:486
 #, no-c-format
 msgid "7K"
 msgstr ""
 
-#: ../translation/plugins.c:486
+#: ../translation/plugins.c:488
 #, no-c-format
 msgid "10K"
 msgstr ""
 
-#: ../translation/plugins.c:488
+#: ../translation/plugins.c:490
 #, no-c-format
 msgid "14K"
 msgstr ""
 
-#: ../translation/plugins.c:490
+#: ../translation/plugins.c:492
 #, no-c-format
 msgid "20K"
 msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:493
+#: ../translation/plugins.c:495
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Nastavitvena datoteka za Timidity++"
 
 #. scriptable/scriptable_encoder.c
-#: ../translation/plugins.c:496
+#: ../translation/plugins.c:498
 #, no-c-format
 msgid "File extension"
 msgstr ""
 
-#: ../translation/plugins.c:498
+#: ../translation/plugins.c:500
 #, no-c-format
 msgid "Encoder command line"
 msgstr ""
 
-#: ../translation/plugins.c:500
+#: ../translation/plugins.c:502
 #, no-c-format
 msgid "Data transfer method"
 msgstr ""
 
-#: ../translation/plugins.c:502
+#: ../translation/plugins.c:504
 #, no-c-format
 msgid "Pipe (stdin)"
 msgstr ""
 
-#: ../translation/plugins.c:504
+#: ../translation/plugins.c:506
 #, no-c-format
 msgid "Temporary file"
 msgstr ""
 
-#: ../translation/plugins.c:506
+#: ../translation/plugins.c:508
 #, no-c-format
 msgid "Source file"
 msgstr ""
 
-#: ../translation/plugins.c:510
+#: ../translation/plugins.c:512
 #, no-c-format
 msgid "Write ID3v2 tag"
 msgstr ""
 
-#: ../translation/plugins.c:512
+#: ../translation/plugins.c:514
 #, no-c-format
 msgid "Write ID3v1 tag"
 msgstr ""
 
-#: ../translation/plugins.c:514
+#: ../translation/plugins.c:516
 #, no-c-format
 msgid "Write APEv2 tag"
 msgstr ""
 
-#: ../translation/plugins.c:516
+#: ../translation/plugins.c:518
 #, no-c-format
 msgid "Write FLAC tag"
 msgstr ""
 
-#: ../translation/plugins.c:518
+#: ../translation/plugins.c:520
 #, no-c-format
 msgid "Write OggVorbis tag"
 msgstr ""
 
-#: ../translation/plugins.c:520
+#: ../translation/plugins.c:522
 #, no-c-format
 msgid "Write MP4 tag"
 msgstr ""
