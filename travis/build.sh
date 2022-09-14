@@ -56,6 +56,7 @@ case "$TRAVIS_OS_NAME" in
         echo "Building for x86_64"
         $mingw64 ./premake5 --standard gmake2
         $mingw64 make config=release_windows CC=clang CXX=clang++
+        $mingw64 ./premake5 --standard --debug-console gmake2
         $mingw64 make config=debug_windows CC=clang CXX=clang++
         cp -r deadbeef-windows-deps/Windows-10 bin/debug/share/themes/Windows-10
         cp -r deadbeef-windows-deps/Windows-10 bin/release/share/themes/Windows-10
