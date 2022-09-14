@@ -173,17 +173,17 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         out_fmt->is_bigendian = 0;
 
         const int fft_nframes = fft_size * 2;
-        const int fft_buffer_size = fft_nframes * output->fmt.channels * output->fmt.bps/8;
-
-        const int wave_data_size = wave_size * out_fmt->channels * sizeof (float);
 
         // calculate the size which can fit either the FFT input, or the wave data.
-        const int final_buffer_size = fft_buffer_size > wave_data_size ? fft_buffer_size : wave_data_size;
-        __block float *data = calloc(1, final_buffer_size);
+        const int output_nframes = fft_nframes > wave_size ? fft_nframes : wave_size;
+
+        const int final_output_size = output_nframes * out_fmt->channels * sizeof (float);
+        const int final_input_size = output_nframes * output->fmt.channels * (output->fmt.bps/8);
+        float *data = calloc(1, final_output_size);
 
         if (bytes != NULL) {
             // take only as much bytes as we have available.
-            const int convert_size = _bytes_size < final_buffer_size ? _bytes_size : final_buffer_size;
+            const int convert_size = _bytes_size < final_input_size ? _bytes_size : final_input_size;
 
             // After this runs, we'll have a buffer with enough samples for FFT, padded with 0s if needed.
             pcm_convert (&output->fmt, bytes, out_fmt, (char *)data, convert_size);
