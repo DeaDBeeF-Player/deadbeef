@@ -1490,7 +1490,6 @@
 		2D7C381C1B2C40640029DE0A /* smallft.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA401B2AF8610072FD43 /* smallft.c */; };
 		2D7C381D1B2C40640029DE0A /* smallft.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D88EA411B2AF8610072FD43 /* smallft.h */; };
 		2D7C381E1B2C40640029DE0A /* synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA421B2AF8610072FD43 /* synthesis.c */; };
-		2D7C381F1B2C40640029DE0A /* tone.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA431B2AF8610072FD43 /* tone.c */; };
 		2D7C38201B2C40640029DE0A /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA451B2AF8610072FD43 /* vorbisfile.c */; };
 		2D7C38211B2C40640029DE0A /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA461B2AF8610072FD43 /* window.c */; };
 		2D7C38221B2C40640029DE0A /* window.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D88EA471B2AF8610072FD43 /* window.h */; };
@@ -17034,7 +17033,6 @@
 				2D7C38191B2C40640029DE0A /* res0.c in Sources */,
 				2D7C381B1B2C40640029DE0A /* sharedbook.c in Sources */,
 				2D7C380D1B2C40640029DE0A /* lsp.c in Sources */,
-				2D7C381F1B2C40640029DE0A /* tone.c in Sources */,
 				2D7C38051B2C40640029DE0A /* floor1.c in Sources */,
 				2D7C38021B2C40640029DE0A /* envelope.c in Sources */,
 				2D7C37FE1B2C40640029DE0A /* block.c in Sources */,
