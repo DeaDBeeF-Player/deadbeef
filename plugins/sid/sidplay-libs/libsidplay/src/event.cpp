@@ -47,7 +47,7 @@ EventScheduler::EventScheduler (const char * const name)
  m_pendingEventCount(0),
  m_timeWarp(this)
 {
-    memset (&m_pendingEvents, 0, sizeof (Event));
+    m_pendingEvents.reset();
     m_pendingEvents.m_next = &m_pendingEvents;
     m_pendingEvents.m_prev = &m_pendingEvents;
     reset  ();
