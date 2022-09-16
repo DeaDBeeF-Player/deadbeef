@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <time.h>
+#include <utime.h>
 #include <locale.h>
 #include <sys/time.h>
 #ifdef __linux__
@@ -1005,11 +1006,7 @@ _touch(const char *path) {
         }
     }
     else {
-#ifdef _WIN32
-        (void)_utime(path, NULL);
-#else
-        (void)utimes(path, NULL);
-#endif
+        (void)utime(path, NULL);
     }
 }
 #endif

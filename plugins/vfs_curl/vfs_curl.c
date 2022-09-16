@@ -28,7 +28,7 @@
 #include <errno.h>
 #include <assert.h>
 #include <curl/curlver.h>
-#include <time.h>
+#include <sys/time.h>
 #include "vfs_curl.h"
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }

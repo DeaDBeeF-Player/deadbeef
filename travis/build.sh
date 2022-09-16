@@ -42,20 +42,23 @@ case "$TRAVIS_OS_NAME" in
         cd ../../..
     ;;
     windows)
-        STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-xdispatch-win-latest.zip/download"
+        DISPATCH_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-xdispatch-win-latest.zip/download"
+        PREMAKE_URL="https://github.com/premake/premake-core/releases/download/v5.0.0-beta2/premake-5.0.0-beta2-windows.zip"
+        DEPS_URL="https://github.com/kuba160/deadbeef-windows-deps.git"
         echo "Downloading xdispatch_ddb..."
-        wget -q "$STATICDEPS_URL" -O ddb-xdispatch-win-latest.zip
+        wget -q "$DISPATCH_URL" -O ddb-xdispatch-win-latest.zip
         echo "Unpacking xdispatch_ddb..."
         $mingw64 unzip ddb-xdispatch-win-latest.zip
         echo "Downloading windows deps..."
-        git clone https://github.com/kuba160/deadbeef-windows-deps.git
-        wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha15/premake-5.0.0-alpha15-windows.zip && unzip premake-5.0.0-alpha15-windows.zip
+        git clone "$DEPS_URL"
+        wget "$PREMAKE_URL" -O premake.zip && unzip premake.zip
         echo "Downgrading openssh"
         wget http://repo.msys2.org/msys/x86_64/openssh-8.7p1-1-x86_64.pkg.tar.zst
         pacman --noconfirm -U openssh-8.7p1-1-x86_64.pkg.tar.zst
         echo "Building for x86_64"
         $mingw64 ./premake5 --standard gmake2
         $mingw64 make config=release_windows CC=clang CXX=clang++
+        $mingw64 ./premake5 --standard --debug-console gmake2
         $mingw64 make config=debug_windows CC=clang CXX=clang++
         cp -r deadbeef-windows-deps/Windows-10 bin/debug/share/themes/Windows-10
         cp -r deadbeef-windows-deps/Windows-10 bin/release/share/themes/Windows-10
