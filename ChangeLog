@@ -11,6 +11,7 @@ version 1.9.2
 	Fixed: Crash in the sndfile plugin
 	Fixed: Spectrum analyzer samplerate bug
 	Fixed: Visualization buffer out-of-bounds access
+	Fixed: Multichannel down-mixing bug
 	Added: Notification displaying compatibility with KDE 5.23.5
 	Added: GTKUI oscilloscope rendering with anti-aliasing
 	Added: Selection Properties widget configurable to display metadata, properties, or both (elementdavv)
