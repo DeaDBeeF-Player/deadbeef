@@ -86,7 +86,7 @@ filter "platforms:Windows"
   }
   includedirs {
     "shared/windows/include",
-    "/mingw64/include/opus",
+    os.getenv("MSYSTEM_PREFIX") .. "/include/opus",
     "xdispatch_ddb/include"
   }
   libdirs {
@@ -113,7 +113,7 @@ filter 'files:**.rc'
 filter 'files:**.asm'
   buildmessage 'YASM Assembling : %{file.relpath}'
   buildcommands {'mkdir -p obj/%{cfg.buildcfg}/ffap/'}
-  buildcommands {'yasm -f elf -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'}
+  buildcommands {'yasm -f win64 -D ARCH_X86_64 -m amd64 -DPIC -DPREFIX -o "obj/%{cfg.buildcfg}/ffap/%{file.basename}.o" "%{file.relpath}"'}
   buildoutputs {"obj/%{cfg.buildcfg}/ffap/%{file.basename}.o"}
 
 -- Libraries
@@ -239,8 +239,8 @@ end
 if _OPTIONS["plugin-aac"] == "auto" or _OPTIONS["plugin-aac"] == nil then
   -- hard-coded :(
   -- todo: linuxify
-  if os.outputof("ls /mingw64/include/neaacdec.h") == nil  then
-    print ("\27[93m" .. "neaacdec.h not found in \"/mingw64/include/\", run premake5 with \"--plugin-aac=enabled\" to force enable aac plugin" ..  "\27[39m")
+  if os.outputof("ls " .. os.getenv("MSYSTEM_PREFIX") .. "/include/neaacdec.h") == nil  then
+    print ("\27[93m" .. "neaacdec.h not found in \"" .. os.getenv("MSYSTEM_PREFIX") .. "/include/\", run premake5 with \"--plugin-aac=enabled\" to force enable aac plugin" ..  "\27[39m")
     _OPTIONS["plugin-aac"] = "disabled"
   else
     _OPTIONS["plugin-aac"] = "enabled"
@@ -1106,7 +1106,7 @@ project "musepack_plugin"
   links {"m"}
 end
 
-if option ("plugin-artwork", "libjpeg libpng zlib flac ogg") and not is_enabled("plugin-artwork-legacy") then
+if option ("plugin-artwork", "libjpeg libpng zlib flac ogg") then
 project "artwork_plugin"
   targetname "artwork"
   files {

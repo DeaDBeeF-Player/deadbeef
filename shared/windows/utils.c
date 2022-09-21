@@ -235,3 +235,7 @@ char *realpath (const char *path, char *resolved_path) {
     }
     return out_p;
 }
+
+int fnmatch(const char *pattern, const char *string, int flags) {
+    return !PathMatchSpec(string,pattern);
+}

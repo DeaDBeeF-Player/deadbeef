@@ -47,7 +47,7 @@ awk 'NF == 4 {print $3}; NF == 2 {print $1}' \
 									 | sort -u > .libraries.tmp
 
 if [ ! -e "$1/"libssl*.dll ]; then
-	pacman -Ql mingw-w64-x86_64-openssl | grep ".dll" | grep /bin | awk '{print $2}' >> .libraries.tmp
+	pacman -Ql $MINGW_PACKAGE_PREFIX-openssl | grep ".dll" | grep /bin | awk '{print $2}' >> .libraries.tmp
 fi
 
 cp -uv `cat .libraries.tmp` "$1/"
@@ -62,7 +62,7 @@ rm -fv "$1"/*.lib | true
 # gtk2 theme
 mkdir -pv "$1/lib/gtk-2.0/2.10.0/engines"
 
-for i in /mingw32 /mingw64 /usr; do
+for i in $MSYSTEM_PREFIX /usr; do
 	cp -ru $i/share/themes/MS-Windows "$1/share/themes/" 2>>/dev/null | true
 	cp -ru $i/lib/gtk-2.0/2.10.0/engines/libwimp.dll "$1/lib/gtk-2.0/2.10.0/engines" 2>>/dev/null | true
 done
@@ -76,19 +76,19 @@ mkdir -pv "$1/etc/gtk-3.0"
 touch "$1/etc/gtk-3.0/settings.ini"
 echo -e "[Settings]\r\ngtk-theme-name = Windows-10\r\ngtk-icon-theme-name = Windows-10-Icons" > "$1/etc/gtk-3.0/settings.ini"
 
-for i in /mingw32 /mingw64 /usr; do
+for i in $MSYSTEM_PREFIX /usr; do
 	cp -ru $i/share/icons/hicolor "$1/share/icons/" 2>>/dev/null | true
 	cp -ru $i/share/glib-2.0 "$1/share/" 2>>/dev/null | true
 done
 
 # Windows-10 theme and icons can be obtained from https://github.com/B00merang-Project/Windows-10 and https://github.com/B00merang-Project/Windows-10-Icons)
-for i in /mingw32 /mingw64 /usr; do
+for i in $MSYSTEM_PREFIX /usr; do
 	cp -ru $i/share/icons/Windows-10-Icons "$1/share/icons/" 2>>/dev/null | true
 	cp -ru $i/share/themes/Windows-10 "$1/share/themes/" 2>>/dev/null | true
 done
 
 # Adwaita is not necessary anymore
-# for i in /mingw32 /mingw64 /usr; do
+# for i in $MSYSTEM_PREFIX /usr; do
 # 	 cp -ru $i/share/icons/Adwaita "$1/share/icons/" 2>>/dev/null
 # done
 
@@ -98,4 +98,4 @@ echo "gui_plugin GTK3" >> "$1/config/config"
 # ca-certs
 
 mkdir -p "$1/share/ssl"
-cp -ru "/mingw64/ssl/certs" "$1/share/ssl/"
+cp -ru "$MSYSTEM_PREFIX/ssl/certs" "$1/share/ssl/"
