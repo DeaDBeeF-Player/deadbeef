@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-14 18:59+0200\n"
+"POT-Creation-Date: 2022-09-21 19:43+0200\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: heskjestad <cato@heskjestad.xyz>, 2021-2022\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
@@ -1492,7 +1492,7 @@ msgstr "Sortere etter ..."
 
 #: ../plugins/gtkui/deadbeef.glade.h:200 ../plugins/gtkui/interface.c:4350
 msgid "<b>Format</b>"
-msgstr ""
+msgstr "<b>Format</b>"
 
 #: ../plugins/gtkui/deadbeef.glade.h:201
 msgid ""
