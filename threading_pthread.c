@@ -97,7 +97,7 @@ thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
         pthread_cancel (tid);
         return 0;
     }
-    return tid;
+    return (intptr_t)tid;
 #else
     return thread_start (fn, ctx);
 #endif
