@@ -387,6 +387,21 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
     dspfmt.bps = 32;
     dspfmt.is_float = 1;
 
+    // number of channels needs to be at least as much as the channelmask says
+
+    uint32_t mask = input_fmt->channelmask;
+    int dspfmt_ch = 0;
+    while (mask != 0) {
+        mask >>= 1;
+        dspfmt_ch += 1;
+    }
+
+    dspfmt.channels = dspfmt_ch;
+    dspfmt.channelmask = 0;
+    for (int i = 0; i < dspfmt_ch; i++) {
+        dspfmt.channelmask |= (1<<i);
+    }
+
     int can_bypass = 0;
     if (_dsp_on) {
         // check if DSP can be passed through
@@ -416,7 +431,7 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
     int inputsamplesize = input_fmt->channels * input_fmt->bps / 8;
 
     // convert to float, pass through streamer DSP chain
-    int dspsamplesize = input_fmt->channels * sizeof (float);
+    int dspsamplesize = dspfmt_ch * sizeof (float);
 
     // make *MAX_DSP_RATIO sized buffer for float data
     int tempbuf_size = inputsize/inputsamplesize * dspsamplesize * MAX_DSP_RATIO;

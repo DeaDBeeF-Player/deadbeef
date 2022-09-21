@@ -73,6 +73,11 @@ private:
         void event (void) {;}
     public:
         EventDummy () : Event("Bad Event: Dummy") {;}
+        void reset() {
+            m_clk = 0;
+            m_pending = false;
+            m_next = m_prev = NULL;
+        }
     } m_pendingEvents;
 
     class SID_EXTERN EventTimeWarp: public Event
