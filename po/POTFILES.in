@@ -36,6 +36,7 @@ plugins/gtkui/prefwin/prefwinsound.c
 plugins/gtkui/progress.c
 plugins/gtkui/rg.c
 plugins/gtkui/search.c
+plugins/gtkui/selpropertieswidget.c
 plugins/gtkui/trkproperties.c
 plugins/gtkui/widgets.c
 plugins/hotkeys/actionhandlers.c
