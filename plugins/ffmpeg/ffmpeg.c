@@ -802,7 +802,12 @@ ffmpeg_init_exts (void) {
          * encoding purpose, because ffmpeg will guess the output format from
          * the file name specified by users.
          */
+#if LIBAVFORMAT_VERSION_MAJOR >= 59
+        void *iter = NULL;
+        while ((ifmt = av_demuxer_iterate(&iter))) {
+#else
         while ((ifmt = av_iformat_next(ifmt))) {
+#endif
 #ifdef AV_IS_INPUT_DEVICE
             if (ifmt->priv_class && AV_IS_INPUT_DEVICE(ifmt->priv_class->category))
                 continue; // Skip all input devices
@@ -849,7 +854,9 @@ ffmpeg_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 static int
 ffmpeg_start (void) {
     ffmpeg_init_exts ();
+#if LIBAVFORMAT_VERSION_MAJOR < 58
     av_register_all ();
+#endif
     return 0;
 }
 
