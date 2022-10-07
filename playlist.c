@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
+#include <fcntl.h>
 #include <fnmatch.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -333,6 +334,11 @@ plt_unref (playlist_t *plt) {
         plt_free (plt);
     }
     UNLOCK;
+}
+
+time_t
+plt_get_btime (playlist_t *plt) {
+    return plt->btime;
 }
 
 int
@@ -2218,10 +2224,17 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
             }
         }
     }
+
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
 //        trace ("plt_load: failed to open %s\n", fname);
         return NULL;
+    }
+
+    // XXX: This is probably POSIX-only and should perhaps be relocated.
+    struct statx statbuf;
+    if (statx(AT_FDCWD, fname, AT_STATX_SYNC_AS_STAT|AT_SYMLINK_NOFOLLOW, STATX_ALL, &statbuf) == 0) {
+        plt->btime = statbuf.stx_btime.tv_sec;
     }
 
     uint8_t majorver;

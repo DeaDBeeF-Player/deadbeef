@@ -88,6 +88,8 @@ typedef struct playlist_s {
     unsigned loading_cue : 1;
     unsigned ignore_archives : 1;
     unsigned follow_symlinks : 1;
+
+    time_t btime; // birthtime
 } playlist_t;
 
 // global playlist control functions
@@ -123,6 +125,9 @@ plt_ref (playlist_t *plt);
 
 void
 plt_unref (playlist_t *plt);
+
+time_t
+plt_get_btime (playlist_t *plt);
 
 playlist_t *
 plt_alloc (const char *title);
