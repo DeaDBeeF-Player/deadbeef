@@ -76,13 +76,96 @@ converter_ctx_t *current_ctx;
 typedef struct {
     int next_index;
     int threads;
-    pthread_mutex_t mutex;
+    pthread_mutex_t item_mutex;
+    pthread_mutex_t cancel_mutex;
     converter_ctx_t *conv;
     ddb_converter_settings_t settings;
     char[2000] root;
 } converter_thread_ctx_t;
 
-converter_ctx_t *current_ctx;
+static int
+get_number_of_threads()
+{
+    int number_of_threads = deadbeef->conf_get_int("converter.threads", 0);
+    if(number_of_threads <= 0) number_of_threads = 1;//against negative user value
+    return number_of_threads;
+}
+
+static converter_thread_ctx_t
+make_converter_thread_ctx(converter_ctx *conv)
+{
+    converter_thread_ctx_t thread_ctx = {
+        .next_index = 0,
+        .threads = get_number_of_threads(),
+        .conv = conv;
+        .settings = get_converter_settings (conv);
+    };
+    thread_ctx.pids = malloc(thread_ctx.threads * sizeof(pthread_t));
+    pthread_mutex_init(&thread_ctx.item_mutex, NULL);
+    pthread_mutex_init(&thread_ctx.cancel_mutex, NULL);
+    get_folder_root (conv, root);
+    return thread_ctx;
+}
+
+void
+free_converter_thread_ctx (converter_thread_ctx_t *thread_ctx) {
+    free(thread_ctx->pids);
+    pthread_mutex_destroy(&thread_ctx->item_mutex);
+    pthread_mutex_destroy(&thread_ctx->cancel_mutex);
+}
+
+void
+free_converter_thread_utils (converter_thread_ctx_t *thread_ctx) {
+    free_conversion_utils (thread_ctx->conv);
+    free_converter_thread_ctx (thread_ctx);
+}
+
+static int
+get_converter_thread_cancel (converter_thread_ctx_t *thread_ctx) {
+    return thread_ctx->conv->cancelled;
+}
+
+static int
+get_converter_thread_cancel_lock (converter_thread_ctx_t *thread_ctx) {
+    pthread_mutex_lock(&thread_ctx->cancel_mutex);
+    int cancelled = get_converter_thread_cancel(thread_ctx);
+    pthread_mutex_unlock(&thread_ctx->cancel_mutex);
+    return cancelled;
+}
+
+static int
+set_converter_thread_cancel_lock (converter_thread_ctx_t *thread_ctx, int cancel) {
+    pthread_mutex_lock(&thread_ctx->cancel_mutex);
+    thread_ctx->conv->cancelled = cancel;
+    pthread_mutex_unlock(&thread_ctx->cancel_mutex);
+    return cancelled;
+}
+
+static int
+pop_next_item_id (converter_thread_ctx_t *thread_ctx)
+{
+    return thread_ctx->next_index++;
+}
+
+static int
+pop_next_item_id_lock (converter_thread_ctx_t *thread_ctx)
+{
+    pthread_mutex_lock(&thread_ctx->item_mutex);
+    int id = pop_next_item_id(thread_ctx);
+    pthread_mutex_unlock(&thread_ctx->item_mutex);
+    return id;
+}
+
+static int
+is_valid_converter_item (converter_thread_ctx_t *thread_ctx, int item_index) {
+    return item_index < thread_ctx->conv->convert_items_count;
+}
+
+static int
+conversion_may_proceed (converter_thread_ctx_t *thread_ctx, int index)
+{
+    return !get_converter_thread_cancel_lock (thread_ctx) && is_valid_converter_item(thread_ctx, index);
+}
 
 enum {
     PRESET_TYPE_ENCODER,
@@ -263,10 +346,11 @@ try_convert_item (DB_playItem_t *item, converter_ctx_t *conv, ddb_converter_sett
     g_idle_add (update_progress_cb, info);
 
     char outpath[2000];
-    converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, root, conv->write_to_source_folder, outpath, sizeof (outpath));
+    converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, thread_ctx->root, conv->write_to_source_folder, outpath, sizeof (outpath));
     int skip = get_skip_conversion (outpath, conv);
     if (!skip) {
-        converter_plugin->convert2 (settings, item, outpath, &conv->cancelled);
+        int cancelled = get_converter_thread_cancel_lock (thread_ctx);
+        converter_plugin->convert2 (thread_ctx->settings, item, outpath, &cancelled);
     }
 }
 
@@ -297,63 +381,12 @@ unref_convert_items (DB_playItem_t **convert_items, int begin, int end) {
     }
 }
 
-static int
-get_number_of_threads()
-{
-    int number_of_threads = deadbeef->conf_get_int("converter.threads", 0);
-    if(number_of_threads <= 0) number_of_threads = 1;//against negative user value
-    return number_of_threads;
-}
-
-static converter_thread_ctx_t
-make_converter_thread_ctx(converter_ctx *conv)
-{
-    converter_thread_ctx_t thread_ctx = {
-        .next_index = 0,
-        .threads = get_number_of_threads(),
-        .conv = conv;
-        .settings = get_converter_settings (conv);
-    };
-    thread_ctx.pids = malloc(thread_ctx.threads * sizeof(pthread_t));
-    pthread_mutex_init(&thread_ctx.mutex, NULL);
-    get_folder_root (conv, root);
-    return thread_ctx;
-}
-
-void
-free_converter_thread_ctx(converter_thread_ctx_t *thread_ctx)
-{
-    free(thread_ctx->pids);
-    pthread_mutex_destroy(&thread_ctx->mutex);
-}
-
-static int
-conversion_may_proceed(converter_ctx_t *conv, int index)
-{
-    return !conv->cancelled && index < conv->convert_items_count; //should lock 'cancelled'
-}
-
-static int
-pop_next_item_id(converter_thread_ctx_t *thread_ctx)
-{
-    return thread_ctx->next_index++;
-}
-
-static int
-pop_next_item_id_lock(converter_thread_ctx_t *thread_ctx)
-{
-    pthread_mutex_lock(&thread_ctx->mutex);
-    int id = pop_next_item_id(thread_ctx);
-    pthread_mutex_unlock(&thread_ctx->mutex);
-    return id;
-}
-
 static void*
 converter_thread_worker (void *ctx) {
     converter_thread_ctx_t *thread_ctx = ctx;
     int index = pop_next_item_id_lock (thread_ctx);
-    while (conversion_may_proceed (thread_ctx->conv, index)) {
-        try_convert_item (thread_ctx->conv->convert_items[index], thread_ctx->conv, thread_ctx->settings, thread_ctx->root);
+    while (conversion_may_proceed (thread_ctx, index)) {
+        try_convert_item (thread_ctx->conv->convert_items[index], thread_ctx);
         deadbeef->pl_item_unref (conv->convert_items[index]);
         index = pop_next_item_index (thread_ctx);
     }
