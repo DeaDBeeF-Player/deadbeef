@@ -73,14 +73,91 @@ typedef struct {
 
 converter_ctx_t *current_ctx;
 
+ddb_converter_settings_t get_converter_settings (converter_ctx_t *conv) {
+    ddb_converter_settings_t settings = {
+        .output_bps = conv->output_bps,
+        .output_is_float = conv->output_is_float,
+        .encoder_preset = conv->encoder_preset,
+        .dsp_preset = conv->dsp_preset,
+        .bypass_conversion_on_same_format = conv->bypass_same_format,
+        .rewrite_tags_after_copy = conv->retag_after_copy,
+    };
+    return settings;
+}
+
+static void
+get_folder_root (converter_ctx_t *conv, char* root) {
+    int rootlen = 0;
+    // prepare for preserving folder struct
+    if (conv->preserve_folder_structure && conv->convert_items_count >= 1) {
+        // start with the 1st track path
+        deadbeef->pl_get_meta (conv->convert_items[0], ":URI", root, sizeof (root));
+        char *sep = strrchr (root, '/');
+        if (sep) {
+            *sep = 0;
+        }
+        // reduce
+        rootlen = strlen (root);
+        for (int n = 1; n < conv->convert_items_count; n++) {
+            deadbeef->pl_lock ();
+            const char *path = deadbeef->pl_find_meta (conv->convert_items[n], ":URI");
+            if (strncmp (path, root, rootlen)) {
+                // find where path splits
+                char *r = root;
+                while (*path && *r) {
+                    if (*path != *r) {
+                        // find new separator
+                        while (r > root && *r != '/') {
+                            r--;
+                        }
+                        *r = 0;
+                        rootlen = r-root;
+                        break;
+                    }
+                    path++;
+                    r++;
+                }
+            }
+            deadbeef->pl_unlock ();
+        }
+    }
+}
+
+static gboolean
+destroy_progress_cb (gpointer ctx) {
+    gtk_widget_destroy (ctx);
+    return FALSE;
+}
+
+static void
+free_conversion_utils (converter_ctx_t *conv) {
+    g_idle_add (destroy_progress_cb, conv->progress);
+    if (conv->convert_items) {
+        free (conv->convert_items);
+    }
+    if (conv->convert_playlist) {
+        deadbeef->plt_unref (conv->convert_playlist);
+    }
+    if (conv->outfolder) {
+        free (conv->outfolder);
+    }
+    if (conv->outfile) {
+        free (conv->outfile);
+    }
+    converter_plugin->encoder_preset_free (conv->encoder_preset);
+    converter_plugin->dsp_preset_free (conv->dsp_preset);
+    free (conv);
+}
+
 typedef struct {
     int next_index;
     int threads;
+    pthread_t *pids;
     pthread_mutex_t item_mutex;
     pthread_mutex_t cancel_mutex;
     converter_ctx_t *conv;
     ddb_converter_settings_t settings;
-    char[2000] root;
+    char root[2000];
 } converter_thread_ctx_t;
 
 static int
@@ -92,18 +169,18 @@ get_number_of_threads()
 }
 
 static converter_thread_ctx_t
-make_converter_thread_ctx(converter_ctx *conv)
+make_converter_thread_ctx(converter_ctx_t *conv)
 {
     converter_thread_ctx_t thread_ctx = {
         .next_index = 0,
         .threads = get_number_of_threads(),
-        .conv = conv;
-        .settings = get_converter_settings (conv);
+        .conv = conv,
+        .settings = get_converter_settings (conv)
     };
     thread_ctx.pids = malloc(thread_ctx.threads * sizeof(pthread_t));
     pthread_mutex_init(&thread_ctx.item_mutex, NULL);
     pthread_mutex_init(&thread_ctx.cancel_mutex, NULL);
-    get_folder_root (conv, root);
+    get_folder_root (conv, thread_ctx.root);
     return thread_ctx;
 }
 
@@ -133,12 +210,11 @@ get_converter_thread_cancel_lock (converter_thread_ctx_t *thread_ctx) {
     return cancelled;
 }
 
-static int
+static void
 set_converter_thread_cancel_lock (converter_thread_ctx_t *thread_ctx, int cancel) {
     pthread_mutex_lock(&thread_ctx->cancel_mutex);
     thread_ctx->conv->cancelled = cancel;
     pthread_mutex_unlock(&thread_ctx->cancel_mutex);
-    return cancelled;
 }
 
 static int
@@ -193,8 +269,8 @@ fill_presets (GtkListStore *mdl, ddb_preset_t *head, int type) {
 
 void
 on_converter_progress_cancel (GtkDialog *dialog, gint response_id, gpointer user_data) {
-    converter_ctx_t *ctx = user_data;
-    ctx->cancelled = 1;//should lock
+    converter_thread_ctx_t *thread_ctx = user_data;
+    set_converter_thread_cancel_lock(thread_ctx, 1);
 }
 
 void
@@ -217,12 +293,6 @@ update_progress_cb (gpointer ctx) {
     free (info->text);
     g_object_unref (info->entry);
     free (info);
-    return FALSE;
-}
-
-static gboolean
-destroy_progress_cb (gpointer ctx) {
-    gtk_widget_destroy (ctx);
     return FALSE;
 }
 
@@ -263,57 +333,8 @@ overwrite_prompt (const char *outpath) {
     return ctl.result;
 }
 
-static void
-get_folder_root (converter_ctx_t *conv, char* root) {
-    int rootlen = 0;
-    // prepare for preserving folder struct
-    if (conv->preserve_folder_structure && conv->convert_items_count >= 1) {
-        // start with the 1st track path
-        deadbeef->pl_get_meta (conv->convert_items[0], ":URI", root, sizeof (root));
-        char *sep = strrchr (root, '/');
-        if (sep) {
-            *sep = 0;
-        }
-        // reduce
-        rootlen = strlen (root);
-        for (int n = 1; n < conv->convert_items_count; n++) {
-            deadbeef->pl_lock ();
-            const char *path = deadbeef->pl_find_meta (conv->convert_items[n], ":URI");
-            if (strncmp (path, root, rootlen)) {
-                // find where path splits
-                char *r = root;
-                while (*path && *r) {
-                    if (*path != *r) {
-                        // find new separator
-                        while (r > root && *r != '/') {
-                            r--;
-                        }
-                        *r = 0;
-                        rootlen = r-root;
-                        break;
-                    }
-                    path++;
-                    r++;
-                }
-            }
-            deadbeef->pl_unlock ();
-        }
-    }
-}
-
-ddb_converter_settings_t get_converter_settings (converter_ctx_t *conv) {
-    return ddb_converter_settings_t settings = {
-        .output_bps = conv->output_bps,
-        .output_is_float = conv->output_is_float,
-        .encoder_preset = conv->encoder_preset,
-        .dsp_preset = conv->dsp_preset,
-        .bypass_conversion_on_same_format = conv->bypass_same_format,
-        .rewrite_tags_after_copy = conv->retag_after_copy,
-    };
-}
-
 static int
-get_skip_conversion (const char* outpath, converter_ctx_t *conv) {
+get_skip_conversion (DB_playItem_t *item, const char* outpath, converter_ctx_t *conv) {
     int skip = 0;
     char *real_out = realpath(outpath, NULL);
     if (real_out) {
@@ -336,8 +357,9 @@ get_skip_conversion (const char* outpath, converter_ctx_t *conv) {
 }
 
 static void
-try_convert_item (DB_playItem_t *item, converter_ctx_t *conv, ddb_converter_settings_t *settings, char *root) {
+try_convert_item (DB_playItem_t *item, converter_thread_ctx_t *thread_ctx) {
     update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
+    converter_ctx_t *conv = thread_ctx->conv;
     info->entry = conv->progress_entry;
     g_object_ref (info->entry);
     deadbeef->pl_lock ();
@@ -347,37 +369,17 @@ try_convert_item (DB_playItem_t *item, converter_ctx_t *conv, ddb_converter_sett
 
     char outpath[2000];
     converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, thread_ctx->root, conv->write_to_source_folder, outpath, sizeof (outpath));
-    int skip = get_skip_conversion (outpath, conv);
+    int skip = get_skip_conversion (item, outpath, conv);
     if (!skip) {
         int cancelled = get_converter_thread_cancel_lock (thread_ctx);
-        converter_plugin->convert2 (thread_ctx->settings, item, outpath, &cancelled);
+        converter_plugin->convert2 (&thread_ctx->settings, item, outpath, &cancelled);
     }
-}
-
-static void
-free_conversion_utils (converter_ctx_t *conv) {
-    g_idle_add (destroy_progress_cb, conv->progress);
-    if (conv->convert_items) {
-        free (conv->convert_items);
-    }
-    if (conv->convert_playlist) {
-        deadbeef->plt_unref (conv->convert_playlist);
-    }
-    if (conv->outfolder) {
-        free (conv->outfolder);
-    }
-    if (conv->outfile) {
-        free (conv->outfile);
-    }
-    converter_plugin->encoder_preset_free (conv->encoder_preset);
-    converter_plugin->dsp_preset_free (conv->dsp_preset);
-    free (conv);
 }
 
 static void
 unref_convert_items (DB_playItem_t **convert_items, int begin, int end) {
     for (int k = begin; k < end; ++k) {
-        deadbeef->pl_item_unref (convert_items[n]);
+        deadbeef->pl_item_unref (convert_items[k]);
     }
 }
 
@@ -387,8 +389,8 @@ converter_thread_worker (void *ctx) {
     int index = pop_next_item_id_lock (thread_ctx);
     while (conversion_may_proceed (thread_ctx, index)) {
         try_convert_item (thread_ctx->conv->convert_items[index], thread_ctx);
-        deadbeef->pl_item_unref (conv->convert_items[index]);
-        index = pop_next_item_index (thread_ctx);
+        deadbeef->pl_item_unref (thread_ctx->conv->convert_items[index]);
+        index = pop_next_item_id_lock (thread_ctx);
     }
     return NULL;
 }
@@ -409,14 +411,13 @@ static void join_pool_threads(converter_thread_ctx_t* thread_ctx)
 static void
 converter_worker (void *ctx) {
     deadbeef->background_job_increment ();
-    converter_ctx_t *conv = ctx;
-    converter_thread_ctx_t thread_ctx = make_converter_thread_ctx (conv);
+    converter_thread_ctx_t* thread_ctx = ctx;
     create_pool_threads (thread_ctx);
     join_pool_threads (thread_ctx);
-    if (conv->cancelled) {
+    if (get_converter_thread_cancel (thread_ctx)) {
+        converter_ctx_t* conv = thread_ctx->conv;
         unref_convert_items (conv->convert_items, thread_ctx->next_index, conv->convert_items_count);
     }
-    free_conversion_utils (conv);
     free_converter_thread_ctx (thread_ctx);
     deadbeef->background_job_decrement ();
 }
@@ -424,7 +425,6 @@ converter_worker (void *ctx) {
 int
 converter_process (converter_ctx_t *conv)
 {
-    conv->current_index = 0;
     conv->outfolder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder"))));
     const char *outfile = gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")));
     if (outfile[0] == 0) {
@@ -495,13 +495,14 @@ converter_process (converter_ctx_t *conv)
     gtk_widget_show (entry);
     gtk_box_pack_start (GTK_BOX (vbox), entry, TRUE, TRUE, 12);
 
-    g_signal_connect ((gpointer)progress, "response", G_CALLBACK (on_converter_progress_cancel), conv);
+    converter_thread_ctx_t thread_ctx = make_converter_thread_ctx (conv);
+    g_signal_connect ((gpointer)progress, "response", G_CALLBACK (on_converter_progress_cancel), &thread_ctx);
 
     gtk_widget_show (progress);
 
     conv->progress = progress;
     conv->progress_entry = entry;
-    intptr_t tid = deadbeef->thread_start (converter_worker, conv);
+    intptr_t tid = deadbeef->thread_start (converter_worker, &thread_ctx);
     deadbeef->thread_detach (tid);
     return 0;
 }
