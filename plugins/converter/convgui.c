@@ -71,6 +71,8 @@ typedef struct {
     int cancelled;
 } converter_ctx_t;
 
+converter_ctx_t *current_ctx;
+
 typedef struct {
     int next_index;
     int threads;
