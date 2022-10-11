@@ -168,79 +168,84 @@ get_number_of_threads()
     return number_of_threads;
 }
 
-static converter_thread_ctx_t
-make_converter_thread_ctx(converter_ctx_t *conv)
+static void
+init_converter_thread_ctx(converter_thread_ctx_t *thread_ctx, converter_ctx_t *conv, int threads)
 {
-    converter_thread_ctx_t thread_ctx = {
-        .next_index = 0,
-        .threads = get_number_of_threads(),
-        .conv = conv,
-        .settings = get_converter_settings (conv)
-    };
-    thread_ctx.pids = malloc(thread_ctx.threads * sizeof(pthread_t));
-    pthread_mutex_init(&thread_ctx.item_mutex, NULL);
-    pthread_mutex_init(&thread_ctx.cancel_mutex, NULL);
-    get_folder_root (conv, thread_ctx.root);
+    thread_ctx->next_index = 0;
+    thread_ctx->threads = threads;
+    thread_ctx->pids = malloc(thread_ctx->threads * sizeof(pthread_t));
+    pthread_mutex_init(&thread_ctx->item_mutex, NULL);
+    pthread_mutex_init(&thread_ctx->cancel_mutex, NULL);
+    thread_ctx->conv = conv;
+    thread_ctx->settings = get_converter_settings (conv);
+    get_folder_root (conv, thread_ctx->root);
+}
+
+static converter_thread_ctx_t*
+make_converter_thread_ctx(converter_ctx_t *conv, int threads)
+{
+    converter_thread_ctx_t *thread_ctx = malloc(sizeof(*thread_ctx));
+    if (thread_ctx) init_converter_thread_ctx (thread_ctx, conv, threads);
     return thread_ctx;
 }
 
 void
-free_converter_thread_ctx (converter_thread_ctx_t *thread_ctx) {
-    free(thread_ctx->pids);
-    pthread_mutex_destroy(&thread_ctx->item_mutex);
-    pthread_mutex_destroy(&thread_ctx->cancel_mutex);
+free_converter_thread_ctx (converter_thread_ctx_t *self) {
+    free(self->pids);
+    pthread_mutex_destroy(&self->item_mutex);
+    pthread_mutex_destroy(&self->cancel_mutex);
 }
 
 void
-free_converter_thread_utils (converter_thread_ctx_t *thread_ctx) {
-    free_conversion_utils (thread_ctx->conv);
-    free_converter_thread_ctx (thread_ctx);
+free_converter_thread_utils (converter_thread_ctx_t *self) {
+    free_conversion_utils (self->conv);
+    free_converter_thread_ctx (self);
 }
 
 static int
-get_converter_thread_cancel (converter_thread_ctx_t *thread_ctx) {
-    return thread_ctx->conv->cancelled;
+get_converter_thread_cancel (converter_thread_ctx_t *self) {
+    return self->conv->cancelled;
 }
 
 static int
-get_converter_thread_cancel_lock (converter_thread_ctx_t *thread_ctx) {
-    pthread_mutex_lock(&thread_ctx->cancel_mutex);
-    int cancelled = get_converter_thread_cancel(thread_ctx);
-    pthread_mutex_unlock(&thread_ctx->cancel_mutex);
+get_converter_thread_cancel_lock (converter_thread_ctx_t *self) {
+    pthread_mutex_lock(&self->cancel_mutex);
+    int cancelled = get_converter_thread_cancel(self);
+    pthread_mutex_unlock(&self->cancel_mutex);
     return cancelled;
 }
 
 static void
-set_converter_thread_cancel_lock (converter_thread_ctx_t *thread_ctx, int cancel) {
-    pthread_mutex_lock(&thread_ctx->cancel_mutex);
-    thread_ctx->conv->cancelled = cancel;
-    pthread_mutex_unlock(&thread_ctx->cancel_mutex);
+set_converter_thread_cancel_lock (converter_thread_ctx_t *self, int cancel) {
+    pthread_mutex_lock(&self->cancel_mutex);
+    self->conv->cancelled = cancel;
+    pthread_mutex_unlock(&self->cancel_mutex);
 }
 
 static int
-pop_next_item_id (converter_thread_ctx_t *thread_ctx)
+pop_next_item_id (converter_thread_ctx_t *self)
 {
-    return thread_ctx->next_index++;
+    return self->next_index++;
 }
 
 static int
-pop_next_item_id_lock (converter_thread_ctx_t *thread_ctx)
+pop_next_item_id_lock (converter_thread_ctx_t *self)
 {
-    pthread_mutex_lock(&thread_ctx->item_mutex);
-    int id = pop_next_item_id(thread_ctx);
-    pthread_mutex_unlock(&thread_ctx->item_mutex);
+    pthread_mutex_lock(&self->item_mutex);
+    int id = pop_next_item_id(self);
+    pthread_mutex_unlock(&self->item_mutex);
     return id;
 }
 
 static int
-is_valid_converter_item (converter_thread_ctx_t *thread_ctx, int item_index) {
-    return item_index < thread_ctx->conv->convert_items_count;
+is_valid_converter_item (converter_thread_ctx_t *self, int item_index) {
+    return item_index < self->conv->convert_items_count;
 }
 
 static int
-conversion_may_proceed (converter_thread_ctx_t *thread_ctx, int index)
+conversion_may_proceed (converter_thread_ctx_t *self, int index)
 {
-    return !get_converter_thread_cancel_lock (thread_ctx) && is_valid_converter_item(thread_ctx, index);
+    return !get_converter_thread_cancel_lock (self) && is_valid_converter_item(self, index);
 }
 
 enum {
@@ -357,9 +362,9 @@ get_skip_conversion (DB_playItem_t *item, const char* outpath, converter_ctx_t *
 }
 
 static void
-try_convert_item (DB_playItem_t *item, converter_thread_ctx_t *thread_ctx) {
+try_convert_item (converter_thread_ctx_t *self, DB_playItem_t *item) {
     update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
-    converter_ctx_t *conv = thread_ctx->conv;
+    converter_ctx_t *conv = self->conv;
     info->entry = conv->progress_entry;
     g_object_ref (info->entry);
     deadbeef->pl_lock ();
@@ -368,11 +373,11 @@ try_convert_item (DB_playItem_t *item, converter_thread_ctx_t *thread_ctx) {
     g_idle_add (update_progress_cb, info);
 
     char outpath[2000];
-    converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, thread_ctx->root, conv->write_to_source_folder, outpath, sizeof (outpath));
+    converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, self->root, conv->write_to_source_folder, outpath, sizeof (outpath));
     int skip = get_skip_conversion (item, outpath, conv);
     if (!skip) {
-        int cancelled = get_converter_thread_cancel_lock (thread_ctx);
-        converter_plugin->convert2 (&thread_ctx->settings, item, outpath, &cancelled);
+        int cancelled = get_converter_thread_cancel_lock (self);
+        converter_plugin->convert2 (&self->settings, item, outpath, &cancelled);
     }
 }
 
@@ -388,7 +393,7 @@ converter_thread_worker (void *ctx) {
     converter_thread_ctx_t *thread_ctx = ctx;
     int index = pop_next_item_id_lock (thread_ctx);
     while (conversion_may_proceed (thread_ctx, index)) {
-        try_convert_item (thread_ctx->conv->convert_items[index], thread_ctx);
+        try_convert_item (thread_ctx, thread_ctx->conv->convert_items[index]);
         deadbeef->pl_item_unref (thread_ctx->conv->convert_items[index]);
         index = pop_next_item_id_lock (thread_ctx);
     }
@@ -396,22 +401,22 @@ converter_thread_worker (void *ctx) {
 }
 
 static void
-create_pool_threads(converter_thread_ctx_t* thread_ctx)
+create_pool_threads(converter_thread_ctx_t* self)
 {
-    for(int k = 0; k < thread_ctx->threads; ++k)
-        pthread_create(&thread_ctx->pids[k], NULL, &converter_thread_worker, (void*)thread_ctx);
+    for(int k = 0; k < self->threads; ++k)
+        pthread_create(&self->pids[k], NULL, &converter_thread_worker, (void*)self);
 }
 
-static void join_pool_threads(converter_thread_ctx_t* thread_ctx)
+static void join_pool_threads(converter_thread_ctx_t* self)
 {
-    for(int k = 0; k < thread_ctx->threads; ++k)
-        pthread_join(thread_ctx->pids[k], NULL);
+    for(int k = 0; k < self->threads; ++k)
+        pthread_join(self->pids[k], NULL);
 }
 
 static void
 converter_worker (void *ctx) {
     deadbeef->background_job_increment ();
-    converter_thread_ctx_t* thread_ctx = ctx;
+    converter_thread_ctx_t *thread_ctx = ctx;
     create_pool_threads (thread_ctx);
     join_pool_threads (thread_ctx);
     if (get_converter_thread_cancel (thread_ctx)) {
@@ -419,6 +424,7 @@ converter_worker (void *ctx) {
         unref_convert_items (conv->convert_items, thread_ctx->next_index, conv->convert_items_count);
     }
     free_converter_thread_ctx (thread_ctx);
+    free (thread_ctx);
     deadbeef->background_job_decrement ();
 }
 
@@ -495,14 +501,14 @@ converter_process (converter_ctx_t *conv)
     gtk_widget_show (entry);
     gtk_box_pack_start (GTK_BOX (vbox), entry, TRUE, TRUE, 12);
 
-    converter_thread_ctx_t thread_ctx = make_converter_thread_ctx (conv);
-    g_signal_connect ((gpointer)progress, "response", G_CALLBACK (on_converter_progress_cancel), &thread_ctx);
+    converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_number_of_threads());
+    g_signal_connect ((gpointer)progress, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
 
     gtk_widget_show (progress);
 
     conv->progress = progress;
     conv->progress_entry = entry;
-    intptr_t tid = deadbeef->thread_start (converter_worker, &thread_ctx);
+    intptr_t tid = deadbeef->thread_start (converter_worker, thread_ctx);
     deadbeef->thread_detach (tid);
     return 0;
 }
