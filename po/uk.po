@@ -3,8 +3,8 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Oleksiy Yakovenko <wakeroid@gmail.com>, 2016,2022
-# Andrij Mizyk <andmizyk@gmail.com>, 2021
+# Alexey Yakovenko <wakeroid@gmail.com>, 2016,2022
+# f977cb811fcf66493f48eac227fd7473_b98aa5d <2419f1d8d12d92441152e78ae3e3bde0_722180>, 2021
 # Gilah <superdj243@gmail.com>, 2021
 # Evolve32 <evolve32@yandex.ru>, 2014
 # Evolve32 <evolve32@yandex.ru>, 2014
@@ -16,9 +16,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-13 15:15+0200\n"
+"POT-Creation-Date: 2022-09-14 18:59+0200\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Oleksiy Yakovenko <wakeroid@gmail.com>, 2016,2022\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>, 2016,2022\n"
 "Language-Team: Ukrainian (http://www.transifex.com/deadbeef-player/deadbeef-player/language/uk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -198,23 +198,23 @@ msgid ""
 "plugins that support commands.\n"
 msgstr "   --plugin-list      Відобразити усі доступні плагіни, включаючи індикацію якщо плагін підтримує команди.\n"
 
-#: ../playlist.c:515 ../playlist.c:2516
+#: ../playlist.c:515 ../playlist.c:2515
 msgid "Default"
 msgstr "Типово"
 
-#: ../playlist.c:3201 ../plugins/gtkui/widgets.c:2868
+#: ../playlist.c:3203 ../plugins/gtkui/widgets.c:2761
 msgid "Mono"
 msgstr "Моно"
 
-#: ../playlist.c:3201
+#: ../playlist.c:3203
 msgid "Stereo"
 msgstr "Стерео"
 
-#: ../playlist.c:3719
+#: ../playlist.c:3726
 msgid "Yes"
 msgstr "Так"
 
-#: ../playlist.c:3719
+#: ../playlist.c:3726
 msgid "No"
 msgstr "Ні"
 
@@ -305,8 +305,8 @@ msgstr "Редагувати типові значення енкодера"
 
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/converter/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:72
-#: ../plugins/gtkui/gtkui.c:583 ../plugins/gtkui/interface.c:1335
-#: ../plugins/gtkui/interface.c:3960 ../plugins/gtkui/widgets.c:1674
+#: ../plugins/gtkui/gtkui.c:586 ../plugins/gtkui/interface.c:1335
+#: ../plugins/gtkui/interface.c:3960 ../plugins/gtkui/widgets.c:1669
 #: ../plugins/shellexecui/interface.c:163
 #: ../plugins/shellexecui/shellexec.glade.h:7
 msgid "Title:"
@@ -401,7 +401,7 @@ msgid "DSP Preset Editor"
 msgstr "Редактор типових значень DSP"
 
 #: ../plugins/converter/converter.glade.h:48
-#: ../plugins/converter/convgui.c:1184 ../plugins/converter/convgui.c:1752
+#: ../plugins/converter/convgui.c:1185 ../plugins/converter/convgui.c:1753
 #: ../plugins/converter/interface.c:653 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/gtkui/interface.c:259
 #: ../plugins/gtkui/playlist/mainplaylist.c:235
@@ -425,28 +425,27 @@ msgstr "Додати"
 
 #: ../plugins/converter/converter.glade.h:51
 #: ../plugins/converter/interface.c:676 ../plugins/gtkui/deadbeef.glade.h:16
-#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:5364
-#: ../plugins/gtkui/plmenu.c:593 ../plugins/shellexecui/interface.c:66
+#: ../plugins/gtkui/interface.c:236 ../plugins/gtkui/interface.c:5376
+#: ../plugins/gtkui/plmenu.c:597 ../plugins/shellexecui/interface.c:66
 #: ../plugins/shellexecui/shellexec.glade.h:4
 msgid "Remove"
 msgstr "Вилучити"
 
 #: ../plugins/converter/converter.glade.h:52
 #: ../plugins/converter/interface.c:680
-#: ../plugins/gtkui/medialib/medialibwidget.c:751
 msgid "Configure"
 msgstr "Налаштувати"
 
 #: ../plugins/converter/converter.glade.h:53
-#: ../plugins/converter/interface.c:781 ../plugins/gtkui/deadbeef.glade.h:204
-#: ../plugins/gtkui/interface.c:4420
+#: ../plugins/converter/interface.c:781 ../plugins/gtkui/deadbeef.glade.h:203
+#: ../plugins/gtkui/interface.c:4432
 msgid "Select DSP Plugin"
 msgstr "Вибрати втулку DSP"
 
 #: ../plugins/converter/converter.glade.h:54
-#: ../plugins/converter/convgui.c:1488 ../plugins/converter/interface.c:797
-#: ../plugins/gtkui/deadbeef.glade.h:205 ../plugins/gtkui/dspconfig.c:293
-#: ../plugins/gtkui/interface.c:4436
+#: ../plugins/converter/convgui.c:1489 ../plugins/converter/interface.c:797
+#: ../plugins/gtkui/deadbeef.glade.h:204 ../plugins/gtkui/dspconfig.c:293
+#: ../plugins/gtkui/interface.c:4448
 msgid "Plugin"
 msgstr "Втулка"
 
@@ -455,103 +454,103 @@ msgstr "Втулка"
 msgid "Presets"
 msgstr "Типові значення"
 
-#: ../plugins/converter/convgui.c:91
+#: ../plugins/converter/convgui.c:92
 #, c-format
 msgid "[Built-in] %s"
 msgstr "[Вбудовано] %s"
 
-#: ../plugins/converter/convgui.c:145
+#: ../plugins/converter/convgui.c:146
 msgid "The file already exists. Overwrite?"
 msgstr "Файл вже існує. Перезаписати?"
 
-#: ../plugins/converter/convgui.c:147
+#: ../plugins/converter/convgui.c:148
 msgid "Converter warning"
 msgstr "Попередження конвертора"
 
-#: ../plugins/converter/convgui.c:321
+#: ../plugins/converter/convgui.c:322
 msgid "Please select encoder"
 msgstr "Будь ласка, виберіть інший енкодер"
 
-#: ../plugins/converter/convgui.c:323
+#: ../plugins/converter/convgui.c:324
 msgid "Converter error"
 msgstr "Помилка конвертора"
 
-#: ../plugins/converter/convgui.c:347
+#: ../plugins/converter/convgui.c:348
 msgid "Converting..."
 msgstr "Конвертування..."
 
-#: ../plugins/converter/convgui.c:692
+#: ../plugins/converter/convgui.c:693
 msgid "Select folder..."
 msgstr "Вибрати теку..."
 
-#: ../plugins/converter/convgui.c:958
+#: ../plugins/converter/convgui.c:959
 msgid "Failed to save encoder preset"
 msgstr "Не можна зберегти типові параметри енкодера"
 
-#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
+#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr "Перевірте типові права доступу теки, спробуйте вибрати іншу назву, або звільніть трохи дискового простору"
 
-#: ../plugins/converter/convgui.c:960 ../plugins/converter/convgui.c:1531
+#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "Типові параметри з тою самою назвою вже існують. Спробуйте вибрати іншу назву."
 
-#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
+#: ../plugins/converter/convgui.c:962 ../plugins/converter/convgui.c:1533
 #: ../plugins/gtkui/ctmapping.c:203 ../plugins/gtkui/ctmapping.c:231
 #: ../plugins/gtkui/ctmapping.c:263
 msgid "Error"
 msgstr "Помилка"
 
-#: ../plugins/converter/convgui.c:1015 ../plugins/converter/convgui.c:1159
+#: ../plugins/converter/convgui.c:1016 ../plugins/converter/convgui.c:1160
 msgid "Add new encoder"
 msgstr "Додати новий енкодер"
 
-#: ../plugins/converter/convgui.c:1045
+#: ../plugins/converter/convgui.c:1046
 msgid "Edit encoder"
 msgstr "Редагувати енкодер"
 
-#: ../plugins/converter/convgui.c:1077 ../plugins/converter/convgui.c:1673
+#: ../plugins/converter/convgui.c:1078 ../plugins/converter/convgui.c:1674
 msgid "Remove preset"
 msgstr "Вилучити типові значення"
 
-#: ../plugins/converter/convgui.c:1079 ../plugins/converter/convgui.c:1675
+#: ../plugins/converter/convgui.c:1080 ../plugins/converter/convgui.c:1676
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Ця дія вилучить вибрані типові значення. Ви впевнені?"
 
-#: ../plugins/converter/convgui.c:1080 ../plugins/converter/convgui.c:1676
-#: ../plugins/gtkui/gtkui.c:1675 ../plugins/gtkui/gtkui_deletefromdisk.c:71
-#: ../plugins/gtkui/pltmenu.c:88 ../plugins/gtkui/prefwin/prefwin.c:140
-#: ../plugins/gtkui/trkproperties.c:117
+#: ../plugins/converter/convgui.c:1081 ../plugins/converter/convgui.c:1677
+#: ../plugins/gtkui/gtkui.c:612 ../plugins/gtkui/gtkui.c:1709
+#: ../plugins/gtkui/gtkui_deletefromdisk.c:71
+#: ../plugins/gtkui/prefwin/prefwin.c:142 ../plugins/gtkui/trkproperties.c:118
 msgid "Warning"
 msgstr "Попередження"
 
-#: ../plugins/converter/convgui.c:1174
+#: ../plugins/converter/convgui.c:1175
 msgid "Encoders"
 msgstr "Енкодери"
 
-#: ../plugins/converter/convgui.c:1249
+#: ../plugins/converter/convgui.c:1250
 msgid "Add plugin to DSP chain"
 msgstr "Додати додаток до ланцюжка DSP"
 
-#: ../plugins/converter/convgui.c:1530
+#: ../plugins/converter/convgui.c:1531
 msgid "Failed to save DSP preset"
 msgstr "Не можу зберегти типові значення DSP"
 
-#: ../plugins/converter/convgui.c:1594 ../plugins/converter/convgui.c:1639
+#: ../plugins/converter/convgui.c:1595 ../plugins/converter/convgui.c:1640
 msgid "New DSP Preset"
 msgstr "Нові типові значення DSP"
 
-#: ../plugins/converter/convgui.c:1723
+#: ../plugins/converter/convgui.c:1724
 msgid "Edit DSP Preset"
 msgstr "Редагувати типові значення DSP"
 
-#: ../plugins/converter/convgui.c:1743
+#: ../plugins/converter/convgui.c:1744
 msgid "DSP Presets"
 msgstr "Типові значення DSP"
 
-#: ../plugins/converter/convgui.c:1781 ../plugins/converter/convgui.c:1789
+#: ../plugins/converter/convgui.c:1782 ../plugins/converter/convgui.c:1790
 #: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:646
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/gtkui/interface.c:976
 #: ../translation/plugins.c:167
@@ -750,7 +749,7 @@ msgid "Selection"
 msgstr "Вибір"
 
 #: ../plugins/gtkui/deadbeef.glade.h:17 ../plugins/gtkui/interface.c:244
-#: ../plugins/gtkui/interface.c:5368
+#: ../plugins/gtkui/interface.c:5380
 msgid "Crop"
 msgstr "Вилучити невиділене"
 
@@ -903,7 +902,6 @@ msgid "_Translators"
 msgstr "_Перекладачі"
 
 #: ../plugins/gtkui/deadbeef.glade.h:53 ../plugins/gtkui/interface.c:722
-#: ../plugins/gtkui/medialib/medialibwidget.c:761
 msgid "Search"
 msgstr "Пошук"
 
@@ -952,7 +950,7 @@ msgid "Quit"
 msgstr "Вийти"
 
 #: ../plugins/gtkui/deadbeef.glade.h:63 ../plugins/gtkui/interface.c:1049
-#: ../plugins/gtkui/plmenu.c:640 ../translation/plugins.c:165
+#: ../plugins/gtkui/plmenu.c:644 ../translation/plugins.c:165
 #, no-c-format
 msgid "Track Properties"
 msgstr "Властивості треків"
@@ -1027,7 +1025,7 @@ msgid ""
 msgstr "Зліва\nСправа\nПо центру"
 
 #: ../plugins/gtkui/deadbeef.glade.h:82 ../plugins/gtkui/interface.c:1422
-#: ../plugins/gtkui/interface.c:5111
+#: ../plugins/gtkui/interface.c:5123
 msgid "Text color:"
 msgstr "Колір тексту:"
 
@@ -1208,7 +1206,7 @@ msgstr "Програвач"
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/deadbeef.glade.h:129 ../plugins/gtkui/interface.c:2327
-#: ../translation/plugins.c:418
+#: ../translation/plugins.c:420
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "Закривати список відтворення середньою клавішею миші"
@@ -1238,7 +1236,7 @@ msgstr "Проміжок між групами:"
 msgid "pixels"
 msgstr "пікселі"
 
-#: ../plugins/gtkui/deadbeef.glade.h:136 ../plugins/gtkui/gtkui.c:1417
+#: ../plugins/gtkui/deadbeef.glade.h:136 ../plugins/gtkui/gtkui.c:1451
 #: ../plugins/gtkui/interface.c:2365 ../plugins/gtkui/interface.c:2810
 msgid "Playlist"
 msgstr "Список програвання"
@@ -1411,7 +1409,7 @@ msgid "HTTP User Agent:"
 msgstr "HTTP User Agent:"
 
 #: ../plugins/gtkui/deadbeef.glade.h:177 ../plugins/gtkui/interface.c:2994
-#: ../plugins/gtkui/interface.c:4987
+#: ../plugins/gtkui/interface.c:4999
 msgid "Edit Content-Type Mapping"
 msgstr "Редагувати відповідність типу вмісту"
 
@@ -1424,12 +1422,12 @@ msgid "Assigned Hotkeys:"
 msgstr "Задані комбінації клавіш:"
 
 #: ../plugins/gtkui/deadbeef.glade.h:180 ../plugins/gtkui/interface.c:3046
-#: ../plugins/gtkui/interface.c:5148
+#: ../plugins/gtkui/interface.c:5160
 msgid "Action:"
 msgstr "Дія:"
 
 #: ../plugins/gtkui/deadbeef.glade.h:181 ../plugins/gtkui/interface.c:3051
-#: ../plugins/gtkui/interface.c:3064 ../plugins/gtkui/interface.c:5152
+#: ../plugins/gtkui/interface.c:3064 ../plugins/gtkui/interface.c:5164
 msgid "<Not set>"
 msgstr "<Не встановлено>"
 
@@ -1473,7 +1471,7 @@ msgid "License"
 msgstr "Ліцензія"
 
 #: ../plugins/gtkui/deadbeef.glade.h:193 ../plugins/gtkui/interface.c:3213
-#: ../plugins/gtkui/interface.c:4908
+#: ../plugins/gtkui/interface.c:4920
 msgid "Reset to defaults"
 msgstr "Скинути до типових"
 
@@ -1486,8 +1484,8 @@ msgid "URL:"
 msgstr "URL:"
 
 #: ../plugins/gtkui/deadbeef.glade.h:197 ../plugins/gtkui/interface.c:4092
-#: ../plugins/gtkui/interface.c:5278 ../plugins/gtkui/interface.c:5306
-#: ../plugins/gtkui/plmenu.c:627
+#: ../plugins/gtkui/interface.c:5290 ../plugins/gtkui/interface.c:5318
+#: ../plugins/gtkui/plmenu.c:631
 msgid "Set Custom Title"
 msgstr "Встановити свій заголовок"
 
@@ -1499,78 +1497,74 @@ msgstr "Групувати за ..."
 msgid "Sort by ..."
 msgstr "Сортувати за..."
 
-#: ../plugins/gtkui/deadbeef.glade.h:200 ../plugins/gtkui/interface.c:4336
-msgid "Format"
-msgstr "Формат"
+#: ../plugins/gtkui/deadbeef.glade.h:200 ../plugins/gtkui/interface.c:4350
+msgid "<b>Format</b>"
+msgstr "<b>Формат</b>"
 
-#: ../plugins/gtkui/deadbeef.glade.h:201 ../plugins/gtkui/interface.c:4359
-msgid "Order"
-msgstr "Порядок"
-
-#: ../plugins/gtkui/deadbeef.glade.h:202
+#: ../plugins/gtkui/deadbeef.glade.h:201
 msgid ""
 "Ascending\n"
 "Descending"
 msgstr "В порядку зростання\nВ порядку спадання"
 
-#: ../plugins/gtkui/deadbeef.glade.h:206 ../plugins/gtkui/interface.c:4521
+#: ../plugins/gtkui/deadbeef.glade.h:205 ../plugins/gtkui/interface.c:4533
 msgid "Tag Writer Settings"
 msgstr "Налаштування записувача мітки"
 
-#: ../plugins/gtkui/deadbeef.glade.h:207 ../plugins/gtkui/interface.c:4552
+#: ../plugins/gtkui/deadbeef.glade.h:206 ../plugins/gtkui/interface.c:4564
 msgid "Write ID3v2"
 msgstr "Вписати ID3v2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:208 ../plugins/gtkui/interface.c:4556
-#: ../plugins/gtkui/interface.c:4683
+#: ../plugins/gtkui/deadbeef.glade.h:207 ../plugins/gtkui/interface.c:4568
+#: ../plugins/gtkui/interface.c:4695
 msgid "Write ID3v1"
 msgstr "Вписати ID3v1"
 
-#: ../plugins/gtkui/deadbeef.glade.h:209 ../plugins/gtkui/interface.c:4560
-#: ../plugins/gtkui/interface.c:4639 ../plugins/gtkui/interface.c:4679
+#: ../plugins/gtkui/deadbeef.glade.h:208 ../plugins/gtkui/interface.c:4572
+#: ../plugins/gtkui/interface.c:4651 ../plugins/gtkui/interface.c:4691
 msgid "Write APEv2"
 msgstr "Вписати APEv2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:210 ../plugins/gtkui/interface.c:4568
-#: ../plugins/gtkui/interface.c:4647
+#: ../plugins/gtkui/deadbeef.glade.h:209 ../plugins/gtkui/interface.c:4580
+#: ../plugins/gtkui/interface.c:4659
 msgid "Strip ID3v2"
 msgstr "Вирізати ID3v2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:211 ../plugins/gtkui/interface.c:4572
-#: ../plugins/gtkui/interface.c:4695
+#: ../plugins/gtkui/deadbeef.glade.h:210 ../plugins/gtkui/interface.c:4584
+#: ../plugins/gtkui/interface.c:4707
 msgid "Strip ID3v1"
 msgstr "Вирізати  ID3v1"
 
-#: ../plugins/gtkui/deadbeef.glade.h:212 ../plugins/gtkui/interface.c:4576
-#: ../plugins/gtkui/interface.c:4651 ../plugins/gtkui/interface.c:4691
+#: ../plugins/gtkui/deadbeef.glade.h:211 ../plugins/gtkui/interface.c:4588
+#: ../plugins/gtkui/interface.c:4663 ../plugins/gtkui/interface.c:4703
 msgid "Strip APEv2"
 msgstr "Вирізати APEv2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:213 ../plugins/gtkui/interface.c:4584
-#: ../translation/plugins.c:508
+#: ../plugins/gtkui/deadbeef.glade.h:212 ../plugins/gtkui/interface.c:4596
+#: ../translation/plugins.c:510
 #, no-c-format
 msgid "ID3v2 version"
 msgstr "Версія ID3v2"
 
-#: ../plugins/gtkui/deadbeef.glade.h:214
+#: ../plugins/gtkui/deadbeef.glade.h:213
 msgid ""
 "2.3 (Recommended)\n"
 "2.4"
 msgstr "2.3 (Рекомендовано)\n2.4"
 
-#: ../plugins/gtkui/deadbeef.glade.h:216 ../plugins/gtkui/interface.c:4598
+#: ../plugins/gtkui/deadbeef.glade.h:215 ../plugins/gtkui/interface.c:4610
 msgid "ID3v1 character encoding (default is iso8859-1)"
 msgstr "Кодування символів у ID3v1 (типово є iso8859-1)"
 
-#: ../plugins/gtkui/deadbeef.glade.h:217 ../plugins/gtkui/interface.c:4635
+#: ../plugins/gtkui/deadbeef.glade.h:216 ../plugins/gtkui/interface.c:4647
 msgid "Write ID3v2.4"
 msgstr "Вписати ID3v2.4"
 
-#: ../plugins/gtkui/deadbeef.glade.h:218 ../plugins/gtkui/interface.c:4837
+#: ../plugins/gtkui/deadbeef.glade.h:217 ../plugins/gtkui/interface.c:4849
 msgid "Content-Type Mapping"
 msgstr "Відповідність типу вмісту"
 
-#: ../plugins/gtkui/deadbeef.glade.h:219 ../plugins/gtkui/interface.c:4860
+#: ../plugins/gtkui/deadbeef.glade.h:218 ../plugins/gtkui/interface.c:4872
 msgid ""
 "This table defines the binding between network stream content types and "
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
@@ -1578,35 +1572,35 @@ msgid ""
 "plugin, or \"ffmpeg\" plugin."
 msgstr "Ця таблиця встановлює відповідність між потоковими типами вмісту та втулками декодувальника DeaDBeeF. Наприклад, mp3 файли можуть бути типу \"audio/x-mpeg\" і при цьому бути декодованими DeaDBeeF'овим власним \"stdmpg\" плагіном або ж плагіном \"ffmpeg\"."
 
-#: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:5003
+#: ../plugins/gtkui/deadbeef.glade.h:219 ../plugins/gtkui/interface.c:5015
 msgid "Content-Type:"
 msgstr "Тип вмісту:"
 
-#: ../plugins/gtkui/deadbeef.glade.h:221 ../plugins/gtkui/interface.c:5016
+#: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:5028
 msgid "Plugins:"
 msgstr "Втулки:"
 
-#: ../plugins/gtkui/deadbeef.glade.h:222 ../plugins/gtkui/interface.c:5084
+#: ../plugins/gtkui/deadbeef.glade.h:221 ../plugins/gtkui/interface.c:5096
 msgid "Button properties"
 msgstr "Параметри кнопки"
 
-#: ../plugins/gtkui/deadbeef.glade.h:223 ../plugins/gtkui/interface.c:5099
+#: ../plugins/gtkui/deadbeef.glade.h:222 ../plugins/gtkui/interface.c:5111
 msgid "Color:"
 msgstr "Колір:"
 
-#: ../plugins/gtkui/deadbeef.glade.h:224 ../plugins/gtkui/interface.c:5123
+#: ../plugins/gtkui/deadbeef.glade.h:223 ../plugins/gtkui/interface.c:5135
 msgid "Icon:"
 msgstr "Значок:"
 
-#: ../plugins/gtkui/deadbeef.glade.h:225 ../plugins/gtkui/interface.c:5135
+#: ../plugins/gtkui/deadbeef.glade.h:224 ../plugins/gtkui/interface.c:5147
 msgid "Label:"
 msgstr "Мітка:"
 
-#: ../plugins/gtkui/deadbeef.glade.h:226 ../plugins/gtkui/interface.c:5216
+#: ../plugins/gtkui/deadbeef.glade.h:225 ../plugins/gtkui/interface.c:5228
 msgid "Select action"
 msgstr "Оберіть дію"
 
-#: ../plugins/gtkui/deadbeef.glade.h:227 ../plugins/gtkui/interface.c:5300
+#: ../plugins/gtkui/deadbeef.glade.h:226 ../plugins/gtkui/interface.c:5312
 msgid ""
 "This dialog allows setting custom title for any track. This is most useful "
 "for radio stations. An option to set the custom title is also present in the"
@@ -1615,94 +1609,94 @@ msgid ""
 "the Artist field is present, or just \"custom\" otherwise."
 msgstr "Цей діалог дозволяє встановити свій заголовок для будь-якого треку. Ця опція найбільш корисна для радіо станцій. Опція для встановлення власного заголовку також присутня в діалозі \"Додати URL-посилання\". Сам заголовок буде відображений в колонці \"Виконавець\". Він має виглядати накшталт \"[користувацьке] виконавець\", якщо поле Виконавець присутнє або просто \"користувацьке\", якщо ні."
 
-#: ../plugins/gtkui/deadbeef.glade.h:228 ../plugins/gtkui/interface.c:5356
+#: ../plugins/gtkui/deadbeef.glade.h:227 ../plugins/gtkui/interface.c:5368
 #: ../plugins/shellexecui/interface.c:70
 #: ../plugins/shellexecui/shellexec.glade.h:5 ../translation/plugins.c:147
 #, no-c-format
 msgid "Edit"
 msgstr "Редагувати"
 
-#: ../plugins/gtkui/deadbeef.glade.h:229 ../plugins/gtkui/interface.c:5360
+#: ../plugins/gtkui/deadbeef.glade.h:228 ../plugins/gtkui/interface.c:5372
 msgid "Edit (in place)"
 msgstr "Редагувати (на місці)"
 
-#: ../plugins/gtkui/deadbeef.glade.h:230 ../plugins/gtkui/interface.c:5372
+#: ../plugins/gtkui/deadbeef.glade.h:229 ../plugins/gtkui/interface.c:5384
 msgid "Add new field..."
 msgstr "Додати нове поле..."
 
-#: ../plugins/gtkui/deadbeef.glade.h:231 ../plugins/gtkui/interface.c:5421
+#: ../plugins/gtkui/deadbeef.glade.h:230 ../plugins/gtkui/interface.c:5433
 msgid "Edit Value"
 msgstr "Редагувати значення"
 
-#: ../plugins/gtkui/deadbeef.glade.h:232 ../plugins/gtkui/interface.c:5434
+#: ../plugins/gtkui/deadbeef.glade.h:231 ../plugins/gtkui/interface.c:5446
 msgid "Field name:"
 msgstr "Назва поля:"
 
-#: ../plugins/gtkui/deadbeef.glade.h:233 ../plugins/gtkui/interface.c:5446
+#: ../plugins/gtkui/deadbeef.glade.h:232 ../plugins/gtkui/interface.c:5458
 msgid "Field value:"
 msgstr "Значення поля:"
 
-#: ../plugins/gtkui/deadbeef.glade.h:234 ../plugins/gtkui/interface.c:5460
-#: ../plugins/gtkui/interface.c:5805
+#: ../plugins/gtkui/deadbeef.glade.h:233 ../plugins/gtkui/interface.c:5472
+#: ../plugins/gtkui/interface.c:5817
 msgid "Use ; character to separate multiple values."
 msgstr "Використовуйте символ ; щоб розділяти кілька значень"
 
-#: ../plugins/gtkui/deadbeef.glade.h:235 ../plugins/gtkui/interface.c:5509
+#: ../plugins/gtkui/deadbeef.glade.h:234 ../plugins/gtkui/interface.c:5521
 msgid "DeaDBeeF Log"
 msgstr "Журнал DeaDBeeF"
 
-#: ../plugins/gtkui/deadbeef.glade.h:236 ../plugins/gtkui/interface.c:5538
+#: ../plugins/gtkui/deadbeef.glade.h:235 ../plugins/gtkui/interface.c:5550
 msgid "Clear"
 msgstr "Очистити"
 
-#: ../plugins/gtkui/deadbeef.glade.h:237 ../plugins/gtkui/interface.c:5575
+#: ../plugins/gtkui/deadbeef.glade.h:236 ../plugins/gtkui/interface.c:5587
 msgid "ReplayGain Scan Progress"
 msgstr "Прогрес сканування ReplayGain"
 
-#: ../plugins/gtkui/deadbeef.glade.h:238 ../plugins/gtkui/interface.c:5586
+#: ../plugins/gtkui/deadbeef.glade.h:237 ../plugins/gtkui/interface.c:5598
 msgid "Current File:"
 msgstr "Поточний файл:"
 
-#: ../plugins/gtkui/deadbeef.glade.h:239 ../plugins/gtkui/interface.c:5604
-#: ../plugins/gtkui/interface.c:5664 ../plugins/gtkui/rg.c:310
+#: ../plugins/gtkui/deadbeef.glade.h:238 ../plugins/gtkui/interface.c:5616
+#: ../plugins/gtkui/interface.c:5676 ../plugins/gtkui/rg.c:310
 msgid "Status"
 msgstr "Статус"
 
-#: ../plugins/gtkui/deadbeef.glade.h:240
+#: ../plugins/gtkui/deadbeef.glade.h:239
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:67
-#: ../plugins/gtkui/interface.c:5611 ../plugins/gtkui/interface.c:5675
+#: ../plugins/gtkui/interface.c:5623 ../plugins/gtkui/interface.c:5687
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: ../plugins/gtkui/deadbeef.glade.h:241 ../plugins/gtkui/interface.c:5643
+#: ../plugins/gtkui/deadbeef.glade.h:240 ../plugins/gtkui/interface.c:5655
 msgid "ReplayGain Scan Results"
 msgstr "Результати сканування ReplayGain"
 
-#: ../plugins/gtkui/deadbeef.glade.h:242 ../plugins/gtkui/interface.c:5671
+#: ../plugins/gtkui/deadbeef.glade.h:241 ../plugins/gtkui/interface.c:5683
 msgid "Update File Tags"
 msgstr "Оновити теги файлів"
 
-#: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5702
+#: ../plugins/gtkui/deadbeef.glade.h:242 ../plugins/gtkui/interface.c:5714
 msgid "Copy report"
 msgstr "Зкопіювати звіт"
 
-#: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5710
+#: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5722
 msgid "Only show plugins with configuration"
 msgstr "Відображати тільки плагіни з конфігурацією"
 
-#: ../plugins/gtkui/deadbeef.glade.h:245 ../plugins/gtkui/interface.c:5751
+#: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5763
 msgid "Edit Multiple Tracks"
 msgstr "Редагувати декілька треків"
 
-#: ../plugins/gtkui/deadbeef.glade.h:246 ../plugins/gtkui/interface.c:5763
+#: ../plugins/gtkui/deadbeef.glade.h:245 ../plugins/gtkui/interface.c:5775
 msgid "Field Name:"
 msgstr "Ім'я значення:"
 
-#: ../plugins/gtkui/deadbeef.glade.h:247 ../plugins/gtkui/interface.c:5788
+#: ../plugins/gtkui/deadbeef.glade.h:246 ../plugins/gtkui/interface.c:5800
 msgid "Single Value"
 msgstr "Єдине значення"
 
-#: ../plugins/gtkui/deadbeef.glade.h:248 ../plugins/gtkui/interface.c:5801
+#: ../plugins/gtkui/deadbeef.glade.h:247 ../plugins/gtkui/interface.c:5813
 msgid "Individual Values"
 msgstr "Індивідуальні значення"
 
@@ -1760,7 +1754,7 @@ msgstr "Обнулити підсилення"
 msgid "Zero Bands"
 msgstr "Обнулити частоти"
 
-#: ../plugins/gtkui/fileman.c:64 ../plugins/gtkui/gtkui.c:723
+#: ../plugins/gtkui/fileman.c:64 ../plugins/gtkui/gtkui.c:759
 #: ../plugins/pltbrowser/pltbrowser.c:65 ../translation/plugins.c:217
 #, no-c-format
 msgid "New Playlist"
@@ -1794,134 +1788,143 @@ msgstr "Файли списків DeaDBeeF (*.dbpl)"
 msgid "Follow symlinks"
 msgstr "Переходити по символічним посиланням"
 
-#: ../plugins/gtkui/gtkui.c:151 ../tf.c:2614
+#: ../plugins/gtkui/gtkui.c:154 ../tf.c:2616
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 день %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:154 ../tf.c:2617
+#: ../plugins/gtkui/gtkui.c:157 ../tf.c:2619
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d дні %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:200
+#: ../plugins/gtkui/gtkui.c:203
 msgid "total playtime"
 msgstr "увесь час відтворення"
 
-#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:417
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "Paused"
 msgstr "Призупинено"
 
-#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:417
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:420
 msgid "bit"
 msgstr "біти"
 
-#: ../plugins/gtkui/gtkui.c:413 ../plugins/gtkui/gtkui.c:414
+#: ../plugins/gtkui/gtkui.c:416 ../plugins/gtkui/gtkui.c:417
 msgid "selection playtime"
 msgstr "час програвання виділення"
 
-#: ../plugins/gtkui/gtkui.c:414 ../plugins/gtkui/gtkui.c:418
+#: ../plugins/gtkui/gtkui.c:417 ../plugins/gtkui/gtkui.c:421
 msgid "Stopped"
 msgstr "Зупинено"
 
-#: ../plugins/gtkui/gtkui.c:580 ../plugins/gtkui/pltmenu.c:153
+#: ../plugins/gtkui/gtkui.c:583 ../plugins/gtkui/pltmenu.c:133
 msgid "Rename Playlist"
 msgstr "Перейменувати список"
 
-#: ../plugins/gtkui/gtkui.c:726 ../plugins/pltbrowser/pltbrowser.c:68
+#: ../plugins/gtkui/gtkui.c:610
+msgid "Removing playlist"
+msgstr "Вилучення списку відтворення"
+
+#: ../plugins/gtkui/gtkui.c:611
+#, c-format
+msgid "Do you really want to remove the playlist '%s'?"
+msgstr "Ви справді хочете вилучити список '%s'?"
+
+#: ../plugins/gtkui/gtkui.c:762 ../plugins/pltbrowser/pltbrowser.c:68
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Новий список відтворення (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1416
+#: ../plugins/gtkui/gtkui.c:1450
 msgid "Playlist with tabs"
 msgstr "Список програвання з вкладками"
 
-#: ../plugins/gtkui/gtkui.c:1420
+#: ../plugins/gtkui/gtkui.c:1454
 msgid "Splitter (top and bottom)"
 msgstr "Роздільник (зверху і знизу)"
 
-#: ../plugins/gtkui/gtkui.c:1421
+#: ../plugins/gtkui/gtkui.c:1455
 msgid "Splitter (left and right)"
 msgstr "Роздільник (зліва і справа)"
 
-#: ../plugins/gtkui/gtkui.c:1423
+#: ../plugins/gtkui/gtkui.c:1457
 msgid "Tabs"
 msgstr "Вкладки"
 
-#: ../plugins/gtkui/gtkui.c:1424
+#: ../plugins/gtkui/gtkui.c:1458
 msgid "Playlist tabs"
 msgstr "Вкладки списку відтворення"
 
-#: ../plugins/gtkui/gtkui.c:1425
+#: ../plugins/gtkui/gtkui.c:1459
 msgid "Selection properties"
 msgstr "Властивості вибору"
 
-#: ../plugins/gtkui/gtkui.c:1426
+#: ../plugins/gtkui/gtkui.c:1460
 msgid "Album art display"
 msgstr "Показ обкладинки альбому"
 
-#: ../plugins/gtkui/gtkui.c:1427
+#: ../plugins/gtkui/gtkui.c:1461
 msgid "Oscilloscope"
 msgstr "Осцилограф"
 
-#: ../plugins/gtkui/gtkui.c:1428
+#: ../plugins/gtkui/gtkui.c:1462
 msgid "Spectrum"
 msgstr "Спектр"
 
-#: ../plugins/gtkui/gtkui.c:1429
+#: ../plugins/gtkui/gtkui.c:1463
 msgid "HBox"
 msgstr "Горизонтальний контейнер"
 
-#: ../plugins/gtkui/gtkui.c:1430
+#: ../plugins/gtkui/gtkui.c:1464
 msgid "VBox"
 msgstr "Вертикальний контейнер"
 
-#: ../plugins/gtkui/gtkui.c:1431 ../plugins/gtkui/widgets.c:3948
-#: ../plugins/gtkui/widgets.c:4035
+#: ../plugins/gtkui/gtkui.c:1465 ../plugins/gtkui/widgets.c:3841
+#: ../plugins/gtkui/widgets.c:3928
 msgid "Button"
 msgstr "Кнопка"
 
-#: ../plugins/gtkui/gtkui.c:1432
+#: ../plugins/gtkui/gtkui.c:1466
 msgid "Seekbar"
 msgstr "Смужка пошуку"
 
-#: ../plugins/gtkui/gtkui.c:1433
+#: ../plugins/gtkui/gtkui.c:1467
 msgid "Playback controls"
 msgstr "Елементи управління програванням"
 
-#: ../plugins/gtkui/gtkui.c:1434
+#: ../plugins/gtkui/gtkui.c:1468
 msgid "Volume bar"
 msgstr "Панель гучності"
 
-#: ../plugins/gtkui/gtkui.c:1435
+#: ../plugins/gtkui/gtkui.c:1469
 msgid "Chiptune voices"
 msgstr "Голоси чіптюн"
 
-#: ../plugins/gtkui/gtkui.c:1436
+#: ../plugins/gtkui/gtkui.c:1470
 msgid "Log viewer"
 msgstr "Перегляд журналу"
 
-#: ../plugins/gtkui/gtkui.c:1438
+#: ../plugins/gtkui/gtkui.c:1472
 msgid "Media library viewer"
 msgstr "Відображення медіа бібліотеки"
 
-#: ../plugins/gtkui/gtkui.c:1649
+#: ../plugins/gtkui/gtkui.c:1683
 msgid "Failed while reading help file"
 msgstr "Невдача при читанні файлу допомоги"
 
-#: ../plugins/gtkui/gtkui.c:1659
+#: ../plugins/gtkui/gtkui.c:1693
 msgid "Failed to load help file"
 msgstr "Не можу прочитати файл допомоги"
 
-#: ../plugins/gtkui/gtkui.c:1672
+#: ../plugins/gtkui/gtkui.c:1706
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "Програвач на даний момент виконує фонові завдання. Якщо вийти зараз, то завдання будуть перервані, що може потягнути за собою втрату даних."
 
-#: ../plugins/gtkui/gtkui.c:1674
+#: ../plugins/gtkui/gtkui.c:1708
 msgid "Do you still want to quit?"
 msgstr "Все ще хочете вийти?"
 
@@ -1963,7 +1966,7 @@ msgstr "Ви дійсно бажаєте видалити поточний гр�
 msgid "Delete files from disk"
 msgstr "Видалити файли з диску"
 
-#: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:900
+#: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:895
 #: ../plugins/shellexecui/shellexecui.c:139
 msgid "Delete"
 msgstr "Вилучити"
@@ -1989,7 +1992,7 @@ msgid "Track"
 msgstr "Трек"
 
 #: ../plugins/gtkui/interface.c:2022 ../plugins/gtkui/playlist/plcommon.c:896
-#: ../plugins/gtkui/widgets.c:3374 ../plugins/gtkui/widgets.c:4045
+#: ../plugins/gtkui/widgets.c:3267 ../plugins/gtkui/widgets.c:3938
 #: ../translation/plugins.c:107
 #, no-c-format
 msgid "None"
@@ -2007,49 +2010,21 @@ msgstr "Підсилити та запобігати кліппінгу відп
 msgid "Only prevent clipping"
 msgstr "Лише запобігати кліппінгу"
 
-#: ../plugins/gtkui/interface.c:4366
+#: ../plugins/gtkui/interface.c:4372
 msgid "Ascending"
 msgstr "У порядку зростання"
 
-#: ../plugins/gtkui/interface.c:4367
+#: ../plugins/gtkui/interface.c:4373
 msgid "Descending"
 msgstr "У порядку спадання"
 
-#: ../plugins/gtkui/interface.c:4591
+#: ../plugins/gtkui/interface.c:4603
 msgid "2.3 (Recommended)"
 msgstr "2.3 (Рекомендовано)"
 
-#: ../plugins/gtkui/interface.c:4592
+#: ../plugins/gtkui/interface.c:4604
 msgid "2.4"
 msgstr "2.4"
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:140
-msgid "All Music"
-msgstr "Уся музика"
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:144
-msgid "Media library is disabled"
-msgstr "Медіа бібліотека вимкнена"
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:148
-msgid "Loading..."
-msgstr "Завантаження..."
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:151
-msgid "Scanning..."
-msgstr "Сканування..."
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:154
-msgid "Indexing..."
-msgstr "Индексація..."
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:157
-msgid "Saving..."
-msgstr "Збереження..."
-
-#: ../plugins/gtkui/medialib/medialibwidget.c:729
-msgid "Media Library plugin is unavailable."
-msgstr "Плагін медіа бібліотеки недоступний."
 
 #: ../plugins/gtkui/playlist/mainplaylist.c:233
 #: ../plugins/gtkui/playlist/searchplaylist.c:191
@@ -2132,63 +2107,54 @@ msgstr "Групувати по"
 msgid "Artist/Date/Album"
 msgstr "Виконавець/Дата/Альбом"
 
-#: ../plugins/gtkui/plmenu.c:487
+#: ../plugins/gtkui/plmenu.c:491
 msgid "Play Next"
 msgstr "Грати наступним"
 
-#: ../plugins/gtkui/plmenu.c:492
+#: ../plugins/gtkui/plmenu.c:496
 msgid "Play Later"
 msgstr "Грати пізніше"
 
-#: ../plugins/gtkui/plmenu.c:497 ../translation/plugins.c:320
+#: ../plugins/gtkui/plmenu.c:501 ../translation/plugins.c:320
 #, no-c-format
 msgid "Remove from Playback Queue"
 msgstr "Видалити з черги відтворення"
 
-#: ../plugins/gtkui/plmenu.c:518 ../translation/plugins.c:258
+#: ../plugins/gtkui/plmenu.c:522 ../translation/plugins.c:258
 #, no-c-format
 msgid "Reload Metadata"
 msgstr "Перезавантажити метадані"
 
-#: ../plugins/gtkui/plmenu.c:532
+#: ../plugins/gtkui/plmenu.c:536
 msgid "Cu_t"
 msgstr "Вирізати"
 
-#: ../plugins/gtkui/plmenu.c:548
+#: ../plugins/gtkui/plmenu.c:552
 msgid "_Copy"
 msgstr "Зкопіювати"
 
-#: ../plugins/gtkui/plmenu.c:565
+#: ../plugins/gtkui/plmenu.c:569
 msgid "_Paste"
 msgstr "Вставити"
 
-#: ../plugins/gtkui/plmenu.c:606 ../translation/plugins.c:155
+#: ../plugins/gtkui/plmenu.c:610 ../translation/plugins.c:155
 #, no-c-format
 msgid "Delete from Disk"
 msgstr "Видалити з диску"
 
-#: ../plugins/gtkui/pltmenu.c:86
-msgid "Removing playlist"
-msgstr "Вилучення списку відтворення"
-
-#: ../plugins/gtkui/pltmenu.c:87
-#, c-format
-msgid "Do you really want to remove the playlist '%s'?"
-msgstr "Ви справді хочете вилучити список '%s'?"
-
-#: ../plugins/gtkui/pltmenu.c:160
+#: ../plugins/gtkui/pltmenu.c:140
 msgid "Remove Playlist"
 msgstr "Вилучити список"
 
-#: ../plugins/gtkui/pltmenu.c:168
+#: ../plugins/gtkui/pltmenu.c:148
 msgid "Add New Playlist"
 msgstr "Додати новий список"
 
-#: ../plugins/gtkui/pltmenu.c:177
+#: ../plugins/gtkui/pltmenu.c:157
 msgid "Enable Autosort"
 msgstr "Дозволити автосортування"
 
-#: ../plugins/gtkui/pltmenu.c:178
+#: ../plugins/gtkui/pltmenu.c:158
 msgid ""
 "Re-apply the last sort you chose every time when adding new files to this "
 "playlist"
@@ -2203,17 +2169,13 @@ msgstr "Відкрити файл..."
 msgid "Configure %s"
 msgstr "Налаштувати %s"
 
-#: ../plugins/gtkui/prefwin/prefwin.c:137
+#: ../plugins/gtkui/prefwin/prefwin.c:139
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr "Ви змінили комбінації клавіш, проте не зберегли внесені зміни."
 
-#: ../plugins/gtkui/prefwin/prefwin.c:139
+#: ../plugins/gtkui/prefwin/prefwin.c:141
 msgid "Are you sure you want to continue without saving?"
 msgstr "Ви дійсно впевнені що хочете продовжити без збереження?"
-
-#: ../plugins/gtkui/prefwin/prefwinmedialib.c:68
-msgid "Select music folders to add"
-msgstr "Обрати папки з музикою для додавання"
 
 #: ../plugins/gtkui/prefwin/prefwinsound.c:69
 msgid "Default Audio Device"
@@ -2231,7 +2193,7 @@ msgstr "Ініціалізація..."
 msgid "Updating File Tags Progress"
 msgstr "Прогрес оновлення тегів файлів"
 
-#: ../plugins/gtkui/rg.c:309 ../plugins/gtkui/trkproperties.c:369
+#: ../plugins/gtkui/rg.c:309 ../plugins/gtkui/trkproperties.c:417
 #: ../plugins/pltbrowser/pltbrowser.c:848
 msgid "Name"
 msgstr "Назва"
@@ -2264,303 +2226,301 @@ msgstr "Файл не знайдено"
 msgid "Invalid file"
 msgstr "Файл не підтримується"
 
-#: ../plugins/gtkui/search.c:468
+#: ../plugins/gtkui/search.c:469
 msgid "Search [(%list_total% results)]"
 msgstr "Пошук [(%list_total% результатів)]"
 
-#: ../plugins/gtkui/trkproperties.c:114
+#: ../plugins/gtkui/trkproperties.c:115
 msgid "You've modified data for this track."
 msgstr "Ви змінили дані для цього трека."
 
-#: ../plugins/gtkui/trkproperties.c:116
+#: ../plugins/gtkui/trkproperties.c:117
 msgid "Really close the window?"
 msgstr "Дійсно закрити вікно?"
 
 #. get value to edit
-#: ../plugins/gtkui/trkproperties.c:254 ../plugins/gtkui/trkproperties.c:994
+#: ../plugins/gtkui/trkproperties.c:255 ../plugins/gtkui/trkproperties.c:1042
 msgid "[Multiple values] "
 msgstr "[Різні значення] "
 
-#: ../plugins/gtkui/trkproperties.c:370 ../plugins/gtkui/trkproperties.c:383
-#: ../plugins/gtkui/widgets.c:2441
+#: ../plugins/gtkui/trkproperties.c:418 ../plugins/gtkui/trkproperties.c:431
 msgid "Value"
 msgstr "Значення"
 
-#: ../plugins/gtkui/trkproperties.c:382 ../plugins/gtkui/widgets.c:2439
+#: ../plugins/gtkui/trkproperties.c:430
 msgid "Key"
 msgstr "Клавіша"
 
-#: ../plugins/gtkui/trkproperties.c:400
+#: ../plugins/gtkui/trkproperties.c:448
 msgid "[Multiple values]"
 msgstr "[Декілька значень] "
 
-#: ../plugins/gtkui/trkproperties.c:589
+#: ../plugins/gtkui/trkproperties.c:637
 msgid "Writing tags..."
 msgstr "Записую мітки..."
 
-#: ../plugins/gtkui/trkproperties.c:922
+#: ../plugins/gtkui/trkproperties.c:970
 msgid "Item"
 msgstr "Пункт"
 
-#: ../plugins/gtkui/trkproperties.c:923
+#: ../plugins/gtkui/trkproperties.c:971
 msgid "Field"
 msgstr "Поле"
 
-#: ../plugins/gtkui/trkproperties.c:1138
+#: ../plugins/gtkui/trkproperties.c:1186
 msgid "Field name"
 msgstr "Поле назви"
 
-#: ../plugins/gtkui/trkproperties.c:1141
+#: ../plugins/gtkui/trkproperties.c:1189
 msgid "Name:"
 msgstr "Назва:"
 
-#: ../plugins/gtkui/trkproperties.c:1154
+#: ../plugins/gtkui/trkproperties.c:1202
 msgid "Field names must not start with : or _"
 msgstr "Назви полів не повинні починатися з : або _"
 
-#: ../plugins/gtkui/trkproperties.c:1155 ../plugins/gtkui/trkproperties.c:1196
+#: ../plugins/gtkui/trkproperties.c:1203 ../plugins/gtkui/trkproperties.c:1244
 msgid "Cannot add field"
 msgstr "Неможливо додати поле"
 
-#: ../plugins/gtkui/trkproperties.c:1195
+#: ../plugins/gtkui/trkproperties.c:1243
 msgid "Field with such name already exists, please try different name."
 msgstr "Поле з такою назвою вже існує, введіть іншу назву."
 
-#: ../plugins/gtkui/widgets.c:459
+#: ../plugins/gtkui/widgets.c:454
 #, c-format
 msgid "Widget \"%s\" is not available"
 msgstr "Віджет \"%s\" не доступний"
 
-#: ../plugins/gtkui/widgets.c:874
+#: ../plugins/gtkui/widgets.c:869
 msgid "Replace with..."
 msgstr "Замінити на..."
 
-#: ../plugins/gtkui/widgets.c:879
+#: ../plugins/gtkui/widgets.c:874
 msgid "Insert..."
 msgstr "Вставити..."
 
-#: ../plugins/gtkui/widgets.c:907
+#: ../plugins/gtkui/widgets.c:902
 msgid "Cut"
 msgstr "Вирізати"
 
-#: ../plugins/gtkui/widgets.c:914
+#: ../plugins/gtkui/widgets.c:909
 msgid "Copy"
 msgstr "Копіювати"
 
-#: ../plugins/gtkui/widgets.c:922
+#: ../plugins/gtkui/widgets.c:917
 msgid "Paste"
 msgstr "Вставити"
 
-#: ../plugins/gtkui/widgets.c:971
+#: ../plugins/gtkui/widgets.c:966
 msgid "Parent"
 msgstr "Батько"
 
-#: ../plugins/gtkui/widgets.c:1089
+#: ../plugins/gtkui/widgets.c:1084
 msgid "Multiple widgets of this type are not supported"
 msgstr "Декілька віджетів цього типу не підтримуються"
 
-#: ../plugins/gtkui/widgets.c:1374
+#: ../plugins/gtkui/widgets.c:1369
 msgid "Proportional Sizing"
 msgstr "Пропорційний розмір"
 
-#: ../plugins/gtkui/widgets.c:1386
+#: ../plugins/gtkui/widgets.c:1381
 msgid "Lock Top Pane Height"
 msgstr "Зафіксувати висоту верхньої панелі"
 
-#: ../plugins/gtkui/widgets.c:1389
+#: ../plugins/gtkui/widgets.c:1384
 msgid "Lock Left Pane Width"
 msgstr "Зафіксувати ширину лівої панелі"
 
-#: ../plugins/gtkui/widgets.c:1402
+#: ../plugins/gtkui/widgets.c:1397
 msgid "Lock Bottom Pane Height"
 msgstr "Зафіксувати висоту нижньої панелі"
 
-#: ../plugins/gtkui/widgets.c:1405
+#: ../plugins/gtkui/widgets.c:1400
 msgid "Lock Right Pane Width"
 msgstr "Зафіксувати ширину правої панелі"
 
-#: ../plugins/gtkui/widgets.c:1671 ../plugins/gtkui/widgets.c:1786
+#: ../plugins/gtkui/widgets.c:1666 ../plugins/gtkui/widgets.c:1781
 msgid "Rename Tab"
 msgstr "Перейменувати вкладку"
 
-#: ../plugins/gtkui/widgets.c:1793
+#: ../plugins/gtkui/widgets.c:1788
 msgid "Remove Tab"
 msgstr "Видалити вкладку"
 
-#: ../plugins/gtkui/widgets.c:1800 ../plugins/gtkui/widgets.c:1979
+#: ../plugins/gtkui/widgets.c:1795 ../plugins/gtkui/widgets.c:1974
 msgid "Add New Tab"
 msgstr "Додати нову вкладку"
 
-#: ../plugins/gtkui/widgets.c:1809
+#: ../plugins/gtkui/widgets.c:1804
 msgid "Move Tab Left"
 msgstr "Перемістити вкладку вліво"
 
-#: ../plugins/gtkui/widgets.c:1816
+#: ../plugins/gtkui/widgets.c:1811
 msgid "Move Tab Right"
 msgstr "Перемістити вкладку вправо"
 
-#: ../plugins/gtkui/widgets.c:2214 ../plugins/gtkui/widgets.c:2398
-#: ../plugins/pltbrowser/pltbrowser.c:804
+#: ../plugins/gtkui/widgets.c:2217 ../plugins/pltbrowser/pltbrowser.c:804
 msgid "Show Column Headers"
 msgstr "Показати заголовки колонок"
 
-#: ../plugins/gtkui/widgets.c:2860 ../plugins/gtkui/widgets.c:3351
+#: ../plugins/gtkui/widgets.c:2753 ../plugins/gtkui/widgets.c:3244
 msgid "Rendering Mode"
 msgstr "Режим відображення"
 
-#: ../plugins/gtkui/widgets.c:2865
+#: ../plugins/gtkui/widgets.c:2758
 msgid "Multichannel"
 msgstr "Багатоканальний"
 
-#: ../plugins/gtkui/widgets.c:2874
+#: ../plugins/gtkui/widgets.c:2767
 msgid "Scale"
 msgstr "Шкала"
 
-#: ../plugins/gtkui/widgets.c:2879
+#: ../plugins/gtkui/widgets.c:2772
 msgid "Auto"
 msgstr "Авто"
 
-#: ../plugins/gtkui/widgets.c:2881 ../translation/plugins.c:76
+#: ../plugins/gtkui/widgets.c:2774 ../translation/plugins.c:76
 #, no-c-format
 msgid "1x"
 msgstr "1x"
 
-#: ../plugins/gtkui/widgets.c:2883 ../translation/plugins.c:78
+#: ../plugins/gtkui/widgets.c:2776 ../translation/plugins.c:78
 #, no-c-format
 msgid "2x"
 msgstr "2x"
 
-#: ../plugins/gtkui/widgets.c:2885
+#: ../plugins/gtkui/widgets.c:2778
 msgid "3x"
 msgstr "3x"
 
-#: ../plugins/gtkui/widgets.c:2887 ../translation/plugins.c:80
+#: ../plugins/gtkui/widgets.c:2780 ../translation/plugins.c:80
 #, no-c-format
 msgid "4x"
 msgstr "4x"
 
-#: ../plugins/gtkui/widgets.c:2896
+#: ../plugins/gtkui/widgets.c:2789
 msgid "Fragment Duration"
 msgstr "Тривалість фрагменту"
 
-#: ../plugins/gtkui/widgets.c:2901
+#: ../plugins/gtkui/widgets.c:2794
 msgid "50 ms"
 msgstr "50 мс"
 
-#: ../plugins/gtkui/widgets.c:2903
+#: ../plugins/gtkui/widgets.c:2796
 msgid "100 ms"
 msgstr "100 мс"
 
-#: ../plugins/gtkui/widgets.c:2905
+#: ../plugins/gtkui/widgets.c:2798
 msgid "200 ms"
 msgstr "200 мс"
 
-#: ../plugins/gtkui/widgets.c:2907
+#: ../plugins/gtkui/widgets.c:2800
 msgid "300 ms"
 msgstr "300 мс"
 
-#: ../plugins/gtkui/widgets.c:2909
+#: ../plugins/gtkui/widgets.c:2802
 msgid "500 ms"
 msgstr "500 мс"
 
-#: ../plugins/gtkui/widgets.c:3356
-msgid "Descrete Frequencies"
+#: ../plugins/gtkui/widgets.c:3249
+msgid "Discrete Frequencies"
 msgstr "Дискретні частоти"
 
-#: ../plugins/gtkui/widgets.c:3359
+#: ../plugins/gtkui/widgets.c:3252
 msgid "1/12 Octave Bands"
 msgstr "Полоси 1/12 октави"
 
-#: ../plugins/gtkui/widgets.c:3362
+#: ../plugins/gtkui/widgets.c:3255
 msgid "1/24 Octave Bands"
 msgstr "Полосы 1/24 октави"
 
-#: ../plugins/gtkui/widgets.c:3369
+#: ../plugins/gtkui/widgets.c:3262
 msgid "Gap Size"
 msgstr "Розмір зазору"
 
-#: ../plugins/gtkui/widgets.c:3377
+#: ../plugins/gtkui/widgets.c:3270
 msgid "1/2 Bar"
 msgstr "1/2 плитки"
 
-#: ../plugins/gtkui/widgets.c:3380
+#: ../plugins/gtkui/widgets.c:3273
 msgid "1/3 Bar"
 msgstr "1/3 плитки"
 
-#: ../plugins/gtkui/widgets.c:3383
+#: ../plugins/gtkui/widgets.c:3276
 msgid "1/4 Bar"
 msgstr "1/4 плитки"
 
-#: ../plugins/gtkui/widgets.c:3386
+#: ../plugins/gtkui/widgets.c:3279
 msgid "1/5 Bar"
 msgstr "1/5 плитки"
 
-#: ../plugins/gtkui/widgets.c:3389
+#: ../plugins/gtkui/widgets.c:3282
 msgid "1/6 Bar"
 msgstr "1/6 плитки"
 
-#: ../plugins/gtkui/widgets.c:3392
+#: ../plugins/gtkui/widgets.c:3285
 msgid "1/7 Bar"
 msgstr "1/7 плитки"
 
-#: ../plugins/gtkui/widgets.c:3395
+#: ../plugins/gtkui/widgets.c:3288
 msgid "1/8 Bar"
 msgstr "1/8 плитки"
 
-#: ../plugins/gtkui/widgets.c:3398
+#: ../plugins/gtkui/widgets.c:3291
 msgid "1/9 Bar"
 msgstr "1/9 плитки"
 
-#: ../plugins/gtkui/widgets.c:3401
+#: ../plugins/gtkui/widgets.c:3294
 msgid "1/10 Bar"
 msgstr "1/10 плитки"
 
-#: ../plugins/gtkui/widgets.c:3665
+#: ../plugins/gtkui/widgets.c:3558
 msgid "Expand Box by 1 Item"
 msgstr "Розширити контейнер на 1 елемент"
 
-#: ../plugins/gtkui/widgets.c:3670
+#: ../plugins/gtkui/widgets.c:3563
 msgid "Shrink Box by 1 Item"
 msgstr "Звузити контейнер на 1 елемент"
 
-#: ../plugins/gtkui/widgets.c:3675
+#: ../plugins/gtkui/widgets.c:3568
 msgid "Homogeneous"
 msgstr "Гомогенний"
 
-#: ../plugins/gtkui/widgets.c:3715
+#: ../plugins/gtkui/widgets.c:3608
 msgid "Expand"
 msgstr "Розгорнути"
 
-#: ../plugins/gtkui/widgets.c:3723
+#: ../plugins/gtkui/widgets.c:3616
 msgid "Fill"
 msgstr "Заповнити"
 
-#: ../plugins/gtkui/widgets.c:4125
+#: ../plugins/gtkui/widgets.c:4018
 msgid "Configure Button"
 msgstr "Налаштувати кнопку"
 
-#: ../plugins/gtkui/widgets.c:4398
+#: ../plugins/gtkui/widgets.c:4291
 msgid "_dB Scale"
 msgstr "Шкала дБ"
 
-#: ../plugins/gtkui/widgets.c:4409
+#: ../plugins/gtkui/widgets.c:4302
 msgid "_Linear Scale"
 msgstr "Лінійна шкала"
 
-#: ../plugins/gtkui/widgets.c:4420
+#: ../plugins/gtkui/widgets.c:4313
 msgid "_Cubic Scale"
 msgstr "Кубічна шкала"
 
-#: ../plugins/gtkui/widgets.c:4546
+#: ../plugins/gtkui/widgets.c:4439
 msgid "Voices:"
 msgstr "Голоси:"
 
-#: ../plugins/hotkeys/actionhandlers.c:808
+#: ../plugins/hotkeys/actionhandlers.c:824
 #, c-format
 msgid "Copy of %s"
 msgstr "Копія %s"
 
-#: ../plugins/hotkeys/actionhandlers.c:811
+#: ../plugins/hotkeys/actionhandlers.c:827
 #, c-format
 msgid "Copy of %s (%d)"
 msgstr "Копія %s (%d)"
@@ -2736,11 +2696,11 @@ msgid ""
 "package, or specify path to freepats.cfg in the plugin settings."
 msgstr "wildmidi: не знайдено файлу конфігурації freepats. Встановіть пакунок timidity-freepats, або вкажіть шлях до файлу freepats.cfg в настройках додатку."
 
-#: ../tf.c:2203
+#: ../tf.c:2205
 msgid "mono"
 msgstr "моно"
 
-#: ../tf.c:2206 ../tf.c:2210
+#: ../tf.c:2208 ../tf.c:2212
 msgid "stereo"
 msgstr "стерео"
 
@@ -2946,7 +2906,7 @@ msgstr "Додати диск з аудіо-файлами"
 
 #: ../translation/plugins.c:62
 #, no-c-format
-msgid "Use CDDB/FreeDB"
+msgid "Use CDDB/GnuDb"
 msgstr "Використовувати CDDB/FreeDB"
 
 #: ../translation/plugins.c:64
@@ -2956,13 +2916,13 @@ msgstr "Використовувати CD-Text замість CDDB"
 
 #: ../translation/plugins.c:66
 #, no-c-format
-msgid "CDDB url (e.g. 'freedb.org')"
-msgstr "CDDB лінк (наприклад 'freedb.org')"
+msgid "CDDB url (e.g. 'gnudb.gnudb.org')"
+msgstr "Лінк CDDB (наприклад 'gnudb.gnudb.org')"
 
 #: ../translation/plugins.c:68
 #, no-c-format
-msgid "CDDB port number (e.g. '888')"
-msgstr "Порт для CDDB (наприклад '888')"
+msgid "CDDB port number (e.g. '8880')"
+msgstr "Порт для CDDB (наприклад '8880')"
 
 #: ../translation/plugins.c:70
 #, no-c-format
@@ -3700,243 +3660,248 @@ msgstr "Показати обкладинку альбому"
 msgid "Album art size (px)"
 msgstr "Розмір обкладинки (пікселі)"
 
+#: ../translation/plugins.c:414
+#, no-c-format
+msgid "Fix for KDE 5.23.5"
+msgstr "Виправлення для KDE 5.23.5"
+
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:415
+#: ../translation/plugins.c:417
 #, no-c-format
 msgid "Device file"
 msgstr "Файл пристрою"
 
-#: ../translation/plugins.c:420
+#: ../translation/plugins.c:422
 #, no-c-format
 msgid "Highlight current playlist"
 msgstr "Підсвічувати поточний плейліст"
 
-#: ../translation/plugins.c:422
+#: ../translation/plugins.c:424
 #, no-c-format
 msgid "Play on double-click"
 msgstr "Грати подвійним клацанням"
 
 #. plugins/portaudio/portaudio.c
-#: ../translation/plugins.c:425
+#: ../translation/plugins.c:427
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
 msgstr "Розмір буфера (-1 для оптимального значення обраного portaudio)"
 
-#: ../translation/plugins.c:427
+#: ../translation/plugins.c:429
 #, no-c-format
 msgid "Device name encoding"
 msgstr "Кодування назви пристрою"
 
-#: ../translation/plugins.c:429
+#: ../translation/plugins.c:431
 #, no-c-format
 msgid "ASCII / UTF-8"
 msgstr "ASCII / UTF-8"
 
-#: ../translation/plugins.c:431
+#: ../translation/plugins.c:433
 #, no-c-format
 msgid "cp1250"
 msgstr "cp1250"
 
-#: ../translation/plugins.c:433
+#: ../translation/plugins.c:435
 #, no-c-format
 msgid "Defined below"
 msgstr "Визначене нижче"
 
-#: ../translation/plugins.c:435
+#: ../translation/plugins.c:437
 #, no-c-format
 msgid "Custom device name encoding"
 msgstr "Власне кодування назви пристрою"
 
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:438
+#: ../translation/plugins.c:440
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr "Сервер PulseAudio (залиште порожнім для дефолтного значення)"
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:441
+#: ../translation/plugins.c:443
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr "Типова довжина пісні (в хвилинах)"
 
-#: ../translation/plugins.c:443
+#: ../translation/plugins.c:445
 #, no-c-format
 msgid "Samplerate"
 msgstr "Частота дискретизації"
 
-#: ../translation/plugins.c:445
+#: ../translation/plugins.c:447
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr "Пропустити, якщо коротше ніж (сек)"
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:448
+#: ../translation/plugins.c:450
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "Налаштувати власні команди оболонки"
 
 #. plugins/shn/shn.c
-#: ../translation/plugins.c:451
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "Відносний шлях таблиці пошуку"
 
-#: ../translation/plugins.c:453
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "Абсолютний шлях таблиці пошуку"
 
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:457
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Переставити місцями аудіо байти"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:458
+#: ../translation/plugins.c:460
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "Включити HVSC Songlength DB"
 
-#: ../translation/plugins.c:460
+#: ../translation/plugins.c:462
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr "Повний шлях до Songlengths.md5/.txt"
 
-#: ../translation/plugins.c:462
+#: ../translation/plugins.c:464
 #, no-c-format
 msgid "Bits per sample"
 msgstr "Біт на семпл"
 
-#: ../translation/plugins.c:464
+#: ../translation/plugins.c:466
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "Типова довжина пісні (сек)"
 
-#: ../translation/plugins.c:466
+#: ../translation/plugins.c:468
 #, no-c-format
 msgid "Mono synth"
 msgstr "Моно синтез"
 
 #. plugins/sndfile/sndfile.c
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:471
 #, no-c-format
 msgid "Enable logging"
 msgstr "Дозволити запис в журнал"
 
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:472
+#: ../translation/plugins.c:474
 #, no-c-format
 msgid "Preamp"
 msgstr "Преамп"
 
-#: ../translation/plugins.c:474
+#: ../translation/plugins.c:476
 #, no-c-format
 msgid "1.2K"
 msgstr "1.2K"
 
-#: ../translation/plugins.c:476
+#: ../translation/plugins.c:478
 #, no-c-format
 msgid "1.8K"
 msgstr "1.8K"
 
-#: ../translation/plugins.c:478
+#: ../translation/plugins.c:480
 #, no-c-format
 msgid "2.5K"
 msgstr "2.5K"
 
-#: ../translation/plugins.c:480
+#: ../translation/plugins.c:482
 #, no-c-format
 msgid "3.5K"
 msgstr "3.5K"
 
-#: ../translation/plugins.c:482
+#: ../translation/plugins.c:484
 #, no-c-format
 msgid "5K"
 msgstr "5K"
 
-#: ../translation/plugins.c:484
+#: ../translation/plugins.c:486
 #, no-c-format
 msgid "7K"
 msgstr "7K"
 
-#: ../translation/plugins.c:486
+#: ../translation/plugins.c:488
 #, no-c-format
 msgid "10K"
 msgstr "10K"
 
-#: ../translation/plugins.c:488
+#: ../translation/plugins.c:490
 #, no-c-format
 msgid "14K"
 msgstr "14K"
 
-#: ../translation/plugins.c:490
+#: ../translation/plugins.c:492
 #, no-c-format
 msgid "20K"
 msgstr "20K"
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:493
+#: ../translation/plugins.c:495
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Файл налаштувань для банку Timidity++"
 
 #. scriptable/scriptable_encoder.c
-#: ../translation/plugins.c:496
+#: ../translation/plugins.c:498
 #, no-c-format
 msgid "File extension"
 msgstr "Розширення файлу"
 
-#: ../translation/plugins.c:498
+#: ../translation/plugins.c:500
 #, no-c-format
 msgid "Encoder command line"
 msgstr "Командний рядок енкодера"
 
-#: ../translation/plugins.c:500
+#: ../translation/plugins.c:502
 #, no-c-format
 msgid "Data transfer method"
 msgstr "Метод передачі даних"
 
-#: ../translation/plugins.c:502
+#: ../translation/plugins.c:504
 #, no-c-format
 msgid "Pipe (stdin)"
 msgstr "Pipe (stdin)"
 
-#: ../translation/plugins.c:504
+#: ../translation/plugins.c:506
 #, no-c-format
 msgid "Temporary file"
 msgstr "Тимчасовий файл"
 
-#: ../translation/plugins.c:506
+#: ../translation/plugins.c:508
 #, no-c-format
 msgid "Source file"
 msgstr "Вхідний файл"
 
-#: ../translation/plugins.c:510
+#: ../translation/plugins.c:512
 #, no-c-format
 msgid "Write ID3v2 tag"
 msgstr "Писати тег ID3v2"
 
-#: ../translation/plugins.c:512
+#: ../translation/plugins.c:514
 #, no-c-format
 msgid "Write ID3v1 tag"
 msgstr "Писати тег ID3v1"
 
-#: ../translation/plugins.c:514
+#: ../translation/plugins.c:516
 #, no-c-format
 msgid "Write APEv2 tag"
 msgstr "Писати тег APEv2"
 
-#: ../translation/plugins.c:516
+#: ../translation/plugins.c:518
 #, no-c-format
 msgid "Write FLAC tag"
 msgstr "Писати тег FLAC"
 
-#: ../translation/plugins.c:518
+#: ../translation/plugins.c:520
 #, no-c-format
 msgid "Write OggVorbis tag"
 msgstr "Писати тег OggVorbis"
 
-#: ../translation/plugins.c:520
+#: ../translation/plugins.c:522
 #, no-c-format
 msgid "Write MP4 tag"
 msgstr "Писати тег MP4"

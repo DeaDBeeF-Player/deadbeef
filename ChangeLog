@@ -1,3 +1,24 @@
+version 1.9.2
+	Fixed: Many race conditions, deadlocks and crashes
+	Fixed: Crash when reading metadata of some .SPU files
+	Fixed: Config file content was repeated twice
+	Fixed: Default album art max file size increased to 40MB (Dakeryas)
+	Fixed: Reading some DTS files which require a larger buffer when probing
+	Fixed: Noise was played in the beginning of DTS files
+	Fixed: Default cddb server changed to gnudb.gnudb.org:8880
+	Fixed: Crash when playing certain .AY files
+	Fixed: Playlist corruption when sorting by random
+	Fixed: Crash in the sndfile plugin
+	Fixed: Spectrum analyzer samplerate bug
+	Fixed: Visualization buffer out-of-bounds access
+	Fixed: Multichannel down-mixing bug
+	Added: Notification displaying compatibility with KDE 5.23.5
+	Added: GTKUI oscilloscope rendering with anti-aliasing
+	Added: Selection Properties widget configurable to display metadata, properties, or both (elementdavv)
+	Added: Toggle Pause action in the Deadbeef.desktop file
+	Added: Confirmation dialog when removing a playlist using hotkey (Johannes Wikner)
+	Added: Improved Sort By -> Custom dialog (Robin Seth Ekman)
+
 version 1.9.1
 	Fixed: The release tarball was missing some required files
 	Fixed: Restored Belarussian language support - thanks to @gimrock, @kai3341 and others for changing my mind about people of Belarus. Fuck lukashenko.
