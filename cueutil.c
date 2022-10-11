@@ -882,6 +882,12 @@ plt_load_cuesheet_from_buffer (playlist_t *plt, playItem_t *after, const char *f
             float sec = cue.cuefields[CUE_FIELD_INDEX01][0] ? pl_cue_parse_time (cue.cuefields[CUE_FIELD_INDEX01]) : 0;
             // that's the startsample of the current track, and endsample-1 of the next one.
             // relative to the beginning of previous file
+
+            if (cue.origin == NULL) {
+                trace_err ("CUE: ignoring malformed cuesheet in file %s", fname);
+                goto error;
+            }
+
             int64_t val = pl_item_get_startsample (cue.origin) + (int64_t)(sec * cue.samplerate);
             if (val > cue.currsample) {
                 cue.currsample = val;
