@@ -202,7 +202,7 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
         FILE *fp = fopen (path, "rb");
         if (fp) {
             fclose (fp);
-            return -2; 
+            return -2;
         }
     }
 
@@ -408,7 +408,7 @@ dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
         FILE *fp = fopen (path, "rb");
         if (fp) {
             fclose (fp);
-            return -2; 
+            return -2;
         }
     }
 
@@ -1585,6 +1585,10 @@ converter_stop (void) {
     return 0;
 }
 
+static const char settings_dialog[] =
+    "property \"Number of threads\" entry converter.threads 4;\n"
+;
+
 // define plugin interface
 static ddb_converter_t plugin = {
     .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
@@ -1597,7 +1601,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.id = "converter",
     .misc.plugin.descr = "Converts any supported formats to other formats.\n"
         "Requires separate GUI plugin, e.g. Converter GTK UI\n",
-    .misc.plugin.copyright = 
+    .misc.plugin.copyright =
         "Converter for DeaDBeeF Player\n"
         "Copyright (C) 2009-2015 Oleksiy Yakovenko and other contributors\n"
         "\n"
@@ -1623,6 +1627,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.start = converter_start,
     .misc.plugin.stop = converter_stop,
     .misc.plugin.command = converter_cmd,
+    .misc.plugin.configdialog = settings_dialog,
     .encoder_preset_alloc = encoder_preset_alloc,
     .encoder_preset_free = encoder_preset_free,
     .encoder_preset_load = encoder_preset_load,

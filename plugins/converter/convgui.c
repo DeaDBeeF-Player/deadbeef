@@ -191,9 +191,11 @@ make_converter_thread_ctx(converter_ctx_t *conv, int threads)
 
 void
 free_converter_thread_ctx (converter_thread_ctx_t *self) {
-    free(self->pids);
-    pthread_mutex_destroy(&self->item_mutex);
-    pthread_mutex_destroy(&self->cancel_mutex);
+    if(self) {
+        free(self->pids);
+        pthread_mutex_destroy(&self->item_mutex);
+        pthread_mutex_destroy(&self->cancel_mutex);
+    }
 }
 
 void
@@ -423,7 +425,7 @@ converter_worker (void *ctx) {
         converter_ctx_t* conv = thread_ctx->conv;
         unref_convert_items (conv->convert_items, thread_ctx->next_index, conv->convert_items_count);
     }
-    free_converter_thread_ctx (thread_ctx);
+    free_converter_thread_utils (thread_ctx);
     free (thread_ctx);
     deadbeef->background_job_decrement ();
 }
