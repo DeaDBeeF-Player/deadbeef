@@ -177,7 +177,7 @@ get_converter_thread_item(converter_thread_ctx_t *self, int index)
 static int
 get_converter_thread_relative_item_id(converter_thread_ctx_t *self, int item_index)
 {
-    return item_index % self->threads;
+    return item_index % self->threads + 1;
 }
 
 static void
@@ -317,7 +317,7 @@ update_progress_cb (gpointer ctx) {
 static int
 print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int relative_item_id) {
     deadbeef->pl_lock ();
-    int bytes = snprintf (buffer, buffer_size, "Thread %02d: %s (from: %s)", relative_item_id, deadbeef->pl_find_meta_raw(item, "title"), deadbeef->pl_find_meta (item, ":URI"));
+    int bytes = snprintf (buffer, buffer_size, "Th %02d: '%s' (from: %s)\n", relative_item_id, deadbeef->pl_find_meta_raw(item, "title"), deadbeef->pl_find_meta (item, ":URI"));
     deadbeef->pl_unlock ();
     return bytes;
 }
