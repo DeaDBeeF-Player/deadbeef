@@ -66,8 +66,8 @@ typedef struct {
     int overwrite_action;
     ddb_encoder_preset_t *encoder_preset;
     ddb_dsp_preset_t *dsp_preset;
-    GtkWidget *progress;
-    GtkWidget *progress_entry;
+    GtkWidget *progress_dialog;
+    GtkTextView *text_view;
     int cancelled;
 } converter_ctx_t;
 
@@ -131,7 +131,7 @@ destroy_progress_cb (gpointer ctx) {
 
 static void
 free_conversion_utils (converter_ctx_t *conv) {
-    g_idle_add (destroy_progress_cb, conv->progress);
+    g_idle_add (destroy_progress_cb, conv->progress_dialog);
     if (conv->convert_items) {
         free (conv->convert_items);
     }
@@ -301,17 +301,36 @@ on_converter_realize                 (GtkWidget        *widget,
                                         gpointer         user_data);
 
 typedef struct {
-    GtkWidget *entry;
-    char text[2048];
+    GtkTextView *text_view;
+    char text[8*1024];
 } update_progress_info_t;
 
 static gboolean
 update_progress_cb (gpointer ctx) {
     update_progress_info_t *info = ctx;
-    gtk_entry_set_text (GTK_ENTRY (info->entry), info->text);
-    g_object_unref (info->entry);
+    gtk_text_buffer_set_text(gtk_text_view_get_buffer(info->text_view), info->text, -1);
+    g_object_unref (info->text_view);
     free (info);
     return FALSE;
+}
+
+static int
+print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int relative_item_id) {
+    deadbeef->pl_lock ();
+    int bytes = snprintf (buffer, buffer_size, "Thread %02d: %s (from: %s)", relative_item_id, deadbeef->pl_find_meta_raw(item, "title"), deadbeef->pl_find_meta (item, ":URI"));
+    deadbeef->pl_unlock ();
+    return bytes;
+}
+
+static update_progress_info_t*
+make_progress_info(converter_thread_ctx_t *self, int item_id) {
+    update_progress_info_t *info = malloc (sizeof (*info));
+    info->text_view = self->conv->text_view;
+    g_object_ref (info->text_view);
+    DB_playItem_t *item = get_converter_thread_item(self, item_id);
+    int relative_id = get_converter_thread_relative_item_id(self, item_id);
+    print_progress_msg (info->text, sizeof(info->text), item, relative_id);
+    return info;
 }
 
 struct overwrite_prompt_ctx {
@@ -375,17 +394,13 @@ get_skip_conversion (DB_playItem_t *item, const char* outpath, converter_ctx_t *
 }
 
 static void
-try_convert_item (converter_thread_ctx_t *self, DB_playItem_t *item) {
-    update_progress_info_t *info = malloc (sizeof (update_progress_info_t));
-    converter_ctx_t *conv = self->conv;
-    info->entry = conv->progress_entry;
-    g_object_ref (info->entry);
-    deadbeef->pl_lock ();
-    snprintf (info->text, sizeof(info->text), "%s (from: %s)", deadbeef->pl_find_meta_raw(item, "title"), deadbeef->pl_find_meta (item, ":URI"));
-    deadbeef->pl_unlock ();
+update_gui_convert (converter_thread_ctx_t *self, int item_id) {
+    update_progress_info_t *info = make_progress_info (self, item_id);
     g_idle_add (update_progress_cb, info);
 
     char outpath[2000];
+    converter_ctx_t *conv = self->conv;
+    DB_playItem_t *item = get_converter_thread_item(self, item_id);
     converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, self->root, conv->write_to_source_folder, outpath, sizeof (outpath));
     int skip = get_skip_conversion (item, outpath, conv);
     if (!skip) {
@@ -506,21 +521,22 @@ converter_process (converter_ctx_t *conv)
         converter_plugin->dsp_preset_copy (conv->dsp_preset, dsp_preset);
     }
 
-    GtkWidget *progress = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
-    GtkWidget *vbox = gtk_dialog_get_content_area (GTK_DIALOG (progress));
-    GtkWidget *entry = gtk_entry_new ();
-    gtk_widget_set_size_request (entry, 600, -1);
-    gtk_editable_set_editable (GTK_EDITABLE (entry), FALSE);
-    gtk_widget_show (entry);
-    gtk_box_pack_start (GTK_BOX (vbox), entry, TRUE, TRUE, 12);
+    GtkWidget *progress_dialog = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+    GtkScrolledWindow* scrolled_window = GTK_SCROLLED_WINDOW(gtk_scrolled_window_new(NULL, NULL));
+    GtkTextView* text_view = GTK_TEXT_VIEW(gtk_text_view_new());
+    gtk_text_view_set_left_margin(text_view, 5);
+    gtk_text_view_set_right_margin(text_view, 5);
+    gtk_text_view_set_editable(text_view, FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(text_view));
+    gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(progress_dialog))), GTK_WIDGET(scrolled_window), TRUE, TRUE, 0);
 
     converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_number_of_threads());
-    g_signal_connect ((gpointer)progress, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
+    g_signal_connect ((gpointer)progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
+    gtk_window_set_default_size(GTK_WINDOW(progress_dialog), 600, 10 * thread_ctx->threads);
+    gtk_widget_show_all(progress_dialog);
 
-    gtk_widget_show (progress);
-
-    conv->progress = progress;
-    conv->progress_entry = entry;
+    conv->progress_dialog = progress_dialog;
+    conv->text_view = text_view;
     intptr_t tid = deadbeef->thread_start (converter_worker, thread_ctx);
     deadbeef->thread_detach (tid);
     return 0;
