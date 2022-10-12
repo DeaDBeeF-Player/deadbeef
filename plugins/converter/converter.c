@@ -815,9 +815,9 @@ check_dir (const char *dir, mode_t mode)
         slash = strstr (slash+1, "/");
         if (slash)
             *slash = 0;
-        if (-1 == stat (tmp, &stat_buf))
+        if (0 != mkdir (tmp, mode))
         {
-            if (0 != mkdir (tmp, mode))
+            if (errno == EEXIST && (-1 == stat (tmp, &stat_buf)) || errno != EEXIST)
             {
                 trace ("Failed to create %s\n", tmp);
                 free (tmp);
