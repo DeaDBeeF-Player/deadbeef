@@ -168,6 +168,18 @@ get_number_of_threads()
     return number_of_threads;
 }
 
+static DB_playItem_t*
+get_converter_thread_item(converter_thread_ctx_t *self, int index)
+{
+    return self->conv->convert_items[index];
+}
+
+static int
+get_converter_thread_relative_item_id(converter_thread_ctx_t *self, int item_index)
+{
+    return item_index % self->threads;
+}
+
 static void
 init_converter_thread_ctx(converter_thread_ctx_t *thread_ctx, converter_ctx_t *conv, int threads)
 {
@@ -392,11 +404,11 @@ unref_convert_items (DB_playItem_t **convert_items, int begin, int end) {
 static void*
 converter_thread_worker (void *ctx) {
     converter_thread_ctx_t *thread_ctx = ctx;
-    int index = pop_next_item_id_lock (thread_ctx);
-    while (conversion_may_proceed (thread_ctx, index)) {
-        try_convert_item (thread_ctx, thread_ctx->conv->convert_items[index]);
-        deadbeef->pl_item_unref (thread_ctx->conv->convert_items[index]);
-        index = pop_next_item_id_lock (thread_ctx);
+    int item_id = pop_next_item_id_lock (thread_ctx);
+    while (conversion_may_proceed (thread_ctx, item_id)) {
+        update_gui_convert (thread_ctx, item_id);
+        deadbeef->pl_item_unref (thread_ctx->conv->convert_items[item_id]);
+        item_id = pop_next_item_id_lock (thread_ctx);
     }
     return NULL;
 }
