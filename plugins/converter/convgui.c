@@ -302,7 +302,7 @@ on_converter_realize                 (GtkWidget        *widget,
 
 typedef struct {
     GtkTextView *text_view;
-    char text[8*1024];
+    char text[64*1024];
 } update_progress_info_t;
 
 static gboolean
