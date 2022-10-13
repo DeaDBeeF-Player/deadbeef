@@ -119,7 +119,7 @@ void
 trkproperties_build_track_list_for_ctx (ddb_playlist_t *plt, int ctx, DB_playItem_t ***_tracks, int *_numtracks) {
     DB_playItem_t *playing_track = NULL;
     if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        playing_track = deadbeef->streamer_get_playing_track ();
+        playing_track = deadbeef->streamer_get_playing_track_safe ();
     }
 
     deadbeef->pl_lock ();

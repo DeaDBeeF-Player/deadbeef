@@ -482,7 +482,7 @@ _get_action_track_list (DB_plugin_action_t *action, int ctx, int *pcount, int on
 
     DB_playItem_t *playing_track = NULL;
     if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        deadbeef->streamer_get_playing_track ();
+        deadbeef->streamer_get_playing_track_safe ();
     }
 
     deadbeef->pl_lock ();

@@ -153,7 +153,7 @@ shx_callback (Shx_action_t *action, int ctx)
         break;
     case DDB_ACTION_CTX_NOWPLAYING:
         {
-            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+            DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
             if (it) {
                 res = shx_exec_track_cmd (action, it);
                 deadbeef->pl_item_unref (it);

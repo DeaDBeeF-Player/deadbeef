@@ -478,6 +478,11 @@ converter_show_cb (void *data) {
     current_ctx = conv;
     memset (conv, 0, sizeof (converter_ctx_t));
 
+    ddb_playItem_t *playing_track = NULL;
+    if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
+        playing_track = deadbeef->streamer_get_playing_track_safe ();
+    }
+
     deadbeef->pl_lock ();
     switch (ctx) {
     case DDB_ACTION_CTX_MAIN:
@@ -531,19 +536,24 @@ converter_show_cb (void *data) {
         }
     case DDB_ACTION_CTX_NOWPLAYING:
         {
-            DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
-            if (it) {
-                conv->convert_playlist = deadbeef->pl_get_playlist (it);
+            if (playing_track) {
+                conv->convert_playlist = deadbeef->pl_get_playlist (playing_track);
                 conv->convert_items_count = 1;
                 conv->convert_items = malloc (sizeof (DB_playItem_t *) * conv->convert_items_count);
                 if (conv->convert_items) {
-                    conv->convert_items[0] = it;
+                    conv->convert_items[0] = playing_track;
+                    deadbeef->pl_item_ref(playing_track);
                 }
             }
         }
         break;
     }
     deadbeef->pl_unlock ();
+
+    if (playing_track != NULL) {
+        deadbeef->pl_item_unref (playing_track);
+        playing_track = NULL;
+    }
 
     conv->converter = create_converterdlg ();
     GtkWidget *mainwin = gtkui_plugin->get_mainwin ();

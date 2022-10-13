@@ -301,7 +301,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     int aw = a.width;
     int ah = a.height;
 
-    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track_safe ();
     // filler, only while playing a finite stream
     if (trk && deadbeef->pl_get_item_duration (trk) > 0) {
         float pos = 0;
@@ -447,7 +447,7 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
     DdbSeekbar *self = DDB_SEEKBAR (widget);
     self->seekbar_moving = 0;
     self->seekbar_moved = 1.0;
-    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track_safe ();
     if (trk) {
         if (deadbeef->pl_get_item_duration (trk) >= 0) {
             GtkAllocation a;

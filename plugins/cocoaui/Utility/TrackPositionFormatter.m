@@ -15,7 +15,7 @@ extern DB_functions_t *deadbeef;
 
 - (NSString *)stringForObjectValue:(NSControl *)obj {
 
-    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track_safe ();
     if (!track) {
         return @"--:--:--";
     }

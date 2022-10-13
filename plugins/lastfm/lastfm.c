@@ -789,7 +789,7 @@ lfm_action_lookup (DB_plugin_action_t *action, ddb_action_context_t ctx) {
         plt = deadbeef->action_get_playlist();
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        it = deadbeef->streamer_get_playing_track ();
+        it = deadbeef->streamer_get_playing_track_safe ();
     }
 
     if (plt) {

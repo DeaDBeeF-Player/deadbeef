@@ -180,7 +180,7 @@ static char sb_text[512];
         snprintf (totaltime_str, sizeof (totaltime_str), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
     }
     
-    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track_safe ();
     
     if (!output || (output->state () == DDB_PLAYBACK_STATE_STOPPED || !track)) {
         snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
@@ -248,7 +248,7 @@ static char sb_text[512];
         return;
     }
 
-    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track_safe ();
 
     [self advanceSeekBar:trk];
 
@@ -260,7 +260,7 @@ static char sb_text[512];
 }
 
 - (IBAction)seekBarAction:(DdbSeekBar *)sender {
-    DB_playItem_t *trk = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *trk = deadbeef->streamer_get_playing_track_safe ();
     if (trk) {
         float dur = deadbeef->pl_get_item_duration (trk);
         if (dur >= 0) {
@@ -440,7 +440,7 @@ static char sb_text[512];
 
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
-        .it = deadbeef->streamer_get_playing_track (),
+        .it = deadbeef->streamer_get_playing_track_safe (),
         .iter = PL_MAIN,
     };
 

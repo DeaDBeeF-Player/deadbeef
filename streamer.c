@@ -338,19 +338,26 @@ streamer_get_streaming_track (void) {
 }
 
 playItem_t *
+streamer_get_playing_track_unsafe (void) {
+    playItem_t *it = (buffering_track && !playing_track) ? buffering_track : playing_track;
+    if (it) {
+        pl_item_ref (it);
+    }
+    return it;
+}
+
+playItem_t *
 streamer_get_playing_track (void) {
     // some plugins may call this from plugin.start, before streamer is initialized
     if (mutex == 0) {
         return NULL;
     }
     streamer_lock();
-    playItem_t *it = (buffering_track && !playing_track) ? buffering_track : playing_track;
-    if (it) {
-        pl_item_ref (it);
-    }
+    playItem_t *it = streamer_get_playing_track_unsafe();
     streamer_unlock();
     return it;
 }
+
 
 void
 streamer_set_playing_track (playItem_t *it) {

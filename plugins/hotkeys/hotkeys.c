@@ -596,7 +596,7 @@ action_play_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
         int cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
         if (cur != -1) {
             ddb_playItem_t *it = deadbeef->plt_get_item_for_idx (plt, cur, PL_MAIN);
-            ddb_playItem_t *it_playing = deadbeef->streamer_get_playing_track ();
+            ddb_playItem_t *it_playing = deadbeef->streamer_get_playing_track_safe ();
             if (it) {
                 deadbeef->pl_item_unref (it);
             }
@@ -674,7 +674,7 @@ action_play_random_cb (struct DB_plugin_action_s *action, ddb_action_context_t c
 
 int
 action_seek_5p_forward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         deadbeef->pl_lock ();
         float dur = deadbeef->pl_get_item_duration (it);
@@ -694,7 +694,7 @@ action_seek_5p_forward_cb (struct DB_plugin_action_s *action, ddb_action_context
 
 int
 action_seek_5p_backward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         deadbeef->pl_lock ();
         float dur = deadbeef->pl_get_item_duration (it);
@@ -714,7 +714,7 @@ action_seek_5p_backward_cb (struct DB_plugin_action_s *action, ddb_action_contex
 
 int
 action_seek_1p_forward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         deadbeef->pl_lock ();
         float dur = deadbeef->pl_get_item_duration (it);
@@ -734,7 +734,7 @@ action_seek_1p_forward_cb (struct DB_plugin_action_s *action, ddb_action_context
 
 int
 action_seek_1p_backward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         deadbeef->pl_lock ();
         float dur = deadbeef->pl_get_item_duration (it);
@@ -754,7 +754,7 @@ action_seek_1p_backward_cb (struct DB_plugin_action_s *action, ddb_action_contex
 
 static int
 seek_sec (float sec) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         deadbeef->pl_lock ();
         float dur = deadbeef->pl_get_item_duration (it);

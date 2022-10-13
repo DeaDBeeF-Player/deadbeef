@@ -154,7 +154,7 @@ next_playitem (DB_playItem_t *it) {
 
 static gboolean
 paused_cb (gpointer p) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe();
     if (it) {
         int idx = deadbeef->pl_get_idx_of_iter(it, PL_SEARCH);
         if (idx != -1) {
@@ -262,7 +262,7 @@ static gboolean
 trackfocus_cb (gpointer p) {
     DdbListview *listview = playlist_visible();
     if (listview) {
-        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+        DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
         if (it) {
             deadbeef->pl_lock ();
             int idx = deadbeef->pl_get_idx_of_iter (it, PL_SEARCH);

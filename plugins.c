@@ -154,7 +154,7 @@ static DB_functions_t deadbeef_api = {
     .playback_get_pos = plug_playback_get_pos,
     .playback_set_pos = plug_playback_set_pos,
     // streamer access
-    .streamer_get_playing_track = (DB_playItem_t *(*) (void))streamer_get_playing_track,
+    .streamer_get_playing_track = (DB_playItem_t *(*) (void))streamer_get_playing_track_unsafe,
     .streamer_get_streaming_track = (DB_playItem_t *(*) (void))streamer_get_streaming_track,
     .streamer_get_playpos = streamer_get_playpos,
     .streamer_ok_to_read = streamer_ok_to_read,
@@ -531,6 +531,8 @@ static DB_functions_t deadbeef_api = {
 
     .plug_get_path_for_plugin_ptr = (const char* (*) (DB_plugin_t *plugin_ptr))plug_get_path_for_plugin_ptr,
     .plt_insert_dir3 = (ddb_playItem_t *(*) (int visibility, uint32_t flags, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort, int (*callback)(ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data))plt_insert_dir3,
+
+    .streamer_get_playing_track_safe = (DB_playItem_t *(*) (void))streamer_get_playing_track,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

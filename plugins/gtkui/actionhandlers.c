@@ -359,7 +359,7 @@ action_remove_from_playlist_handler (DB_plugin_action_t *act, ddb_action_context
         deadbeef->plt_unref (plt_curr);
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+        DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
         if (it) {
             deadbeef->pl_lock ();
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();

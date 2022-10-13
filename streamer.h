@@ -92,6 +92,9 @@ playItem_t *
 streamer_get_streaming_track (void);
 
 playItem_t *
+streamer_get_playing_track_unsafe (void);
+
+playItem_t *
 streamer_get_playing_track (void);
 
 playItem_t *

@@ -173,7 +173,7 @@ update_songinfo (gpointer unused) {
     char totaltime_str[512] = "";
     format_timestr(totaltime_str, sizeof (totaltime_str), pl_totaltime);
 
-    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track_safe ();
 
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
@@ -434,7 +434,7 @@ set_title_cb (gpointer data) {
 void
 gtkui_set_titlebar (DB_playItem_t *it) {
     if (!it) {
-        it = deadbeef->streamer_get_playing_track ();
+        it = deadbeef->streamer_get_playing_track_safe ();
     }
     else {
         deadbeef->pl_item_ref (it);
@@ -465,7 +465,7 @@ gtkui_set_titlebar (DB_playItem_t *it) {
 static gboolean
 trackinfochanged_cb (gpointer data) {
     DB_playItem_t *track = data;
-    DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *curr = deadbeef->streamer_get_playing_track_safe ();
     if (track == curr) {
         gtkui_set_titlebar (track);
     }
@@ -868,7 +868,7 @@ pre_songstarted_cb (gpointer data) {
 
 static gboolean
 pre_trackfocus_cb (gpointer data) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         playlist_set_intended_scroll (it);
         deadbeef->pl_item_unref (it);
@@ -911,7 +911,7 @@ songstarted_cb (gpointer data) {
 
 static gboolean
 trackfocus_cb (gpointer data) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         deadbeef->pl_lock ();
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);

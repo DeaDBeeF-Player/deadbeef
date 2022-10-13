@@ -4052,7 +4052,7 @@ static gboolean
 seekbar_frameupdate (gpointer data) {
     w_seekbar_t *w = data;
     DB_output_t *output = deadbeef->get_output ();
-    DB_playItem_t *track = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track_safe ();
     float songpos = w->last_songpos;
     float duration = track ? deadbeef->pl_get_item_duration (track) : -1;
     if (!output || (output->state () == DDB_PLAYBACK_STATE_STOPPED || !track)) {

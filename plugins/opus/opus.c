@@ -411,7 +411,7 @@ new_streaming_link(opusdec_info_t *info, const int new_link)
 static bool
 is_playing_track(const DB_playItem_t *it)
 {
-    DB_playItem_t *track = deadbeef->streamer_get_playing_track();
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track_safe();
     if (track)
         deadbeef->pl_item_unref(track);
     return track == it;

@@ -38,7 +38,7 @@ action_jump_to_current_handler (DB_plugin_action_t *act, ddb_action_context_t ct
 
 static DB_playItem_t*
 skip_to_get_track_helper () {
-    DB_playItem_t *current = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *current = deadbeef->streamer_get_playing_track_safe ();
     if (!current) {
         return NULL;
     }
@@ -587,7 +587,7 @@ int
 action_move_tracks_up_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playItem_t *playing_track = NULL;
     if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        playing_track = deadbeef->streamer_get_playing_track ();
+        playing_track = deadbeef->streamer_get_playing_track_safe ();
     }
 
     deadbeef->pl_lock ();
@@ -649,7 +649,7 @@ int
 action_move_tracks_down_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
     ddb_playItem_t *playing_track = NULL;
     if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        playing_track = deadbeef->streamer_get_playing_track ();
+        playing_track = deadbeef->streamer_get_playing_track_safe ();
     }
 
     deadbeef->pl_lock ();
@@ -769,7 +769,7 @@ action_toggle_mute_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
 
 int
 action_prev_or_restart_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         float dur = deadbeef->pl_get_item_duration (it);
         deadbeef->pl_item_unref (it);

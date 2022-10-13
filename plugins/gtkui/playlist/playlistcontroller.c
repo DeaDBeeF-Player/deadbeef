@@ -133,7 +133,7 @@ trackinfochanged_cb (gpointer data) {
 
 static gboolean
 paused_cb (gpointer data) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         int idx = deadbeef->pl_get_idx_of (it);
         if (idx != -1) {
@@ -235,7 +235,7 @@ focus_selection_cb (gpointer data) {
 // Otherwise gtkui.c will handle it and send a PLAYLISTSWITCHED message
 static gboolean
 trackfocus_cb (gpointer data) {
-    DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         deadbeef->pl_lock ();
         int cursor = deadbeef->pl_get_idx_of (it);

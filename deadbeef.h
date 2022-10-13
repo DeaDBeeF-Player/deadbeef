@@ -99,7 +99,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 15
+#define DB_API_VERSION_MINOR 16
 
 #if defined(__clang__)
 
@@ -134,6 +134,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 16)
+#define DEPRECATED_116 DDB_DEPRECATED("since deadbeef API 1.16")
+#else
+#define DEPRECATED_116
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 15)
@@ -813,7 +819,8 @@ typedef struct {
     void (*playback_set_pos) (float pos); // [0..100]
 
     // streamer access
-    DB_playItem_t *(*streamer_get_playing_track) (void);
+    /// This function is unsafe, and has been deprecated in favor of @c streamer_get_playing_track_safe
+    DB_playItem_t *(*streamer_get_playing_track) (void) DEPRECATED_16;
     DB_playItem_t *(*streamer_get_streaming_track) (void);
     float (*streamer_get_playpos) (void);
     int (*streamer_ok_to_read) (int len);
@@ -1664,6 +1671,13 @@ typedef struct {
         int (*callback)(ddb_insert_file_result_t result, const char *filename, void *user_data),
         void *user_data
     );
+#endif
+
+#if (DDB_API_LEVEL >= 16)
+    /// @return The currently playing track
+    /// Please ensure that this function is not called from within @c pl_lock,
+    /// since this function internally uses streamer_lock, which may cause a deadlock against pl_lock.
+    ddb_playItem_t * (*streamer_get_playing_track_safe) (void);
 #endif
 } DB_functions_t;
 

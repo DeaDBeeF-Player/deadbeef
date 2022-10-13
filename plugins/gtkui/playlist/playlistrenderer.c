@@ -46,7 +46,7 @@ void
 pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int iter, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even) {
     col_info_t *info = user_data;
 
-    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track_safe ();
 
     if (!gtkui_unicode_playstate && it && it == playing_track && info->id == DB_COLUMN_PLAYING) {
         int paused = deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_PAUSED;

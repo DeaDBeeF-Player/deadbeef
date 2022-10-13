@@ -704,7 +704,7 @@ tabstrip_render (DdbTabStrip *ts, cairo_t *cr) {
     }
 
     int tab_playing = -1;
-    DB_playItem_t *playing = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *playing = deadbeef->streamer_get_playing_track_safe ();
     if (playing) {
         ddb_playlist_t *plt = deadbeef->pl_get_playlist (playing);
         if (plt) {

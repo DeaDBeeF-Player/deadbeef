@@ -69,7 +69,7 @@ extern DB_functions_t *deadbeef;
         NSMutableDictionary *info = [NSMutableDictionary new];
         info[MPNowPlayingInfoPropertyPlaybackRate] = @1.0;
 
-        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+        DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
 
         if (it) {
             float duration = deadbeef->pl_get_item_duration (it);

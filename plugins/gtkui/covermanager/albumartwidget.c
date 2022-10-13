@@ -105,7 +105,7 @@ _update (w_albumart_t *w) {
         }
     } break;
     case MODE_PLAYING: {
-        it = deadbeef->streamer_get_playing_track();
+        it = deadbeef->streamer_get_playing_track_safe();
     } break;
     }
 
@@ -147,6 +147,7 @@ _update (w_albumart_t *w) {
         }
         gtk_widget_queue_draw(w->drawing_area);
     });
+
     deadbeef->pl_item_unref (it);
     it = NULL;
 

@@ -45,7 +45,7 @@ ddbUtilTrackListInitWithPlaylist (ddbUtilTrackList_t trackList, ddb_playlist_t *
     deadbeef->plt_ref (plt);
     data->plt = plt;
 
-    data->it_current_song = deadbeef->streamer_get_playing_track ();
+    data->it_current_song = deadbeef->streamer_get_playing_track_safe ();
     data->idx_current_song = -1;
 
     if (ctx == DDB_ACTION_CTX_SELECTION) {
@@ -88,7 +88,7 @@ ddbUtilTrackListInitWithPlaylist (ddbUtilTrackList_t trackList, ddb_playlist_t *
         }
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
-        DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+        DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
         if (it) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             if (deadbeef->is_local_file (uri)) {

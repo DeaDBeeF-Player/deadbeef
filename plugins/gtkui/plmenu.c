@@ -79,7 +79,7 @@ _capture_selected_track_list (void) {
 
     ddb_playItem_t **tracks = NULL;
 
-    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
+    ddb_playItem_t *current = deadbeef->streamer_get_playing_track_safe ();
 
     deadbeef->pl_lock ();
 

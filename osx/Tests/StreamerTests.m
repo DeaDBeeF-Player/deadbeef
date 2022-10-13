@@ -214,7 +214,7 @@ static DB_playItem_t *switchtest_tracks[2];
 static int switchtest_counts[2];
 static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     if (deadbeef->streamer_ok_to_read (-1)) {
-        DB_playItem_t *playing = deadbeef->streamer_get_playing_track ();
+        DB_playItem_t *playing = deadbeef->streamer_get_playing_track_safe ();
         if (ev->track == switchtest_tracks[0] && playing == ev->track) {
             switchtest_counts[0]++;
         }

@@ -814,7 +814,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         return;
     }
 
-    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track ();
+    DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track_safe ();
 
     if (self.columns[col].type == DB_COLUMN_PLAYING && playing_track && (DB_playItem_t *)row == playing_track) {
         NSImage *img = NULL;
@@ -1195,7 +1195,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         case DB_EV_PAUSED: {
             dispatch_async(dispatch_get_main_queue(), ^{
                 PlaylistView *listview = (PlaylistView *)self.view;
-                DB_playItem_t *curr = deadbeef->streamer_get_playing_track ();
+                DB_playItem_t *curr = deadbeef->streamer_get_playing_track_safe ();
                 if (curr) {
                     int idx = deadbeef->pl_get_idx_of (curr);
                     [listview.contentView drawRow:idx];
@@ -1239,7 +1239,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         case DB_EV_TRACKFOCUSCURRENT: {
             dispatch_async(dispatch_get_main_queue(), ^{
                 PlaylistView *listview = (PlaylistView *)self.view;
-                DB_playItem_t *it = deadbeef->streamer_get_playing_track ();
+                DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
                 if (it) {
                     deadbeef->pl_lock ();
                     ddb_playlist_t *plt = deadbeef->pl_get_playlist (it);
@@ -1464,7 +1464,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     ddb_playlist_t *plt = deadbeef->plt_get_curr();
 
-    ddb_playItem_t *current = deadbeef->streamer_get_playing_track ();
+    ddb_playItem_t *current = deadbeef->streamer_get_playing_track_safe ();
 
     deadbeef->pl_lock ();
 
