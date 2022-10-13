@@ -222,9 +222,9 @@ static int pulse_free(void)
     trace("pulse_free\n");
 
     state = DDB_PLAYBACK_STATE_STOPPED;
-
     deadbeef->mutex_lock(mutex);
-    if (!pulse_tid) {
+
+    if (!pulse_tid || pulse_terminate == 1) {
         deadbeef->mutex_unlock(mutex);
         return 0;
     }
@@ -239,6 +239,7 @@ static int pulse_free(void)
     deadbeef->mutex_unlock(mutex);
 
     deadbeef->thread_join(pulse_tid);
+    pulse_terminate = 0;
 
     return 0;
 }
