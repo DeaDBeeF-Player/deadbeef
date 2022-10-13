@@ -456,8 +456,21 @@ converter_worker (void *ctx) {
     deadbeef->background_job_decrement ();
 }
 
-int
-converter_process (converter_ctx_t *conv)
+static GtkTextView*
+add_scrolled_text(GtkWidget* dialog)
+{
+    GtkScrolledWindow* scrolled_window = GTK_SCROLLED_WINDOW(gtk_scrolled_window_new(NULL, NULL));
+    GtkTextView* text_view = GTK_TEXT_VIEW(gtk_text_view_new());
+    gtk_text_view_set_left_margin(text_view, 5);
+    gtk_text_view_set_right_margin(text_view, 5);
+    gtk_text_view_set_editable(text_view, FALSE);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(text_view));
+    gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), GTK_WIDGET(scrolled_window), TRUE, TRUE, 0);
+    return text_view;
+}
+
+static void
+converter_setup_file_settings_from_gui (converter_ctx_t *conv)
 {
     conv->outfolder = strdup (gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_folder"))));
     const char *outfile = gtk_entry_get_text (GTK_ENTRY (lookup_widget (conv->converter, "output_file")));
@@ -470,7 +483,11 @@ converter_process (converter_ctx_t *conv)
     conv->bypass_same_format = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "bypass_same_format")));
     conv->retag_after_copy = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lookup_widget (conv->converter, "retag_after_copy")));
     conv->overwrite_action = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")));
+}
 
+static void
+converter_setup_format_settings_from_gui (converter_ctx_t *conv)
+{
     GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "output_format"));
     int selected_format = gtk_combo_box_get_active (combo);
     switch (selected_format) {
@@ -486,8 +503,12 @@ converter_process (converter_ctx_t *conv)
         conv->output_bps = -1; // same as input, or encoder default
         break;
     }
+}
 
-    combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "encoder"));
+static int
+converter_setup_encoder_settings_from_gui (converter_ctx_t *conv) {
+
+    GtkComboBox *combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "encoder"));
     int enc_preset = gtk_combo_box_get_active (combo);
     ddb_encoder_preset_t *encoder_preset = NULL;
 
@@ -520,23 +541,31 @@ converter_process (converter_ctx_t *conv)
         conv->dsp_preset = converter_plugin->dsp_preset_alloc ();
         converter_plugin->dsp_preset_copy (conv->dsp_preset, dsp_preset);
     }
+    return 0;
+}
+
+static int
+converter_setup_from_gui (converter_ctx_t *conv) {
+    converter_setup_file_settings_from_gui (conv);
+    converter_setup_format_settings_from_gui (conv);
+    return converter_setup_encoder_settings_from_gui (conv);
+}
+
+int
+converter_process (converter_ctx_t *conv)
+{
+    int error = converter_setup_from_gui (conv);
+    if (error) return error;
 
     GtkWidget *progress_dialog = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
-    GtkScrolledWindow* scrolled_window = GTK_SCROLLED_WINDOW(gtk_scrolled_window_new(NULL, NULL));
-    GtkTextView* text_view = GTK_TEXT_VIEW(gtk_text_view_new());
-    gtk_text_view_set_left_margin(text_view, 5);
-    gtk_text_view_set_right_margin(text_view, 5);
-    gtk_text_view_set_editable(text_view, FALSE);
-    gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(text_view));
-    gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(progress_dialog))), GTK_WIDGET(scrolled_window), TRUE, TRUE, 0);
+    conv->progress_dialog = progress_dialog;
+    conv->text_view = add_scrolled_text(progress_dialog);
 
     converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_number_of_threads());
     g_signal_connect ((gpointer)progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
     gtk_window_set_default_size(GTK_WINDOW(progress_dialog), 600, 30 * thread_ctx->threads);
     gtk_widget_show_all(progress_dialog);
 
-    conv->progress_dialog = progress_dialog;
-    conv->text_view = text_view;
     intptr_t tid = deadbeef->thread_start (converter_worker, thread_ctx);
     deadbeef->thread_detach (tid);
     return 0;
