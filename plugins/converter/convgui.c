@@ -532,7 +532,7 @@ converter_process (converter_ctx_t *conv)
 
     converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_number_of_threads());
     g_signal_connect ((gpointer)progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
-    gtk_window_set_default_size(GTK_WINDOW(progress_dialog), 600, 10 * thread_ctx->threads);
+    gtk_window_set_default_size(GTK_WINDOW(progress_dialog), 600, 30 * thread_ctx->threads);
     gtk_widget_show_all(progress_dialog);
 
     conv->progress_dialog = progress_dialog;
