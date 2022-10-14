@@ -350,10 +350,12 @@ print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int r
 static update_progress_info_t*
 make_progress_info (converter_thread_ctx_t *self, int item_id) {
     update_progress_info_t *info = malloc (sizeof (*info));
-    info->text_view = self->conv->text_view;
-    g_object_ref (info->text_view);
-    info->relative_item_id = get_converter_thread_relative_item_id(self, item_id);
-    info->item_msg = self->conv_msgs[info->relative_item_id];
+    if (info) {
+        info->text_view = self->conv->text_view;
+        g_object_ref (info->text_view);
+        info->relative_item_id = get_converter_thread_relative_item_id(self, item_id);
+        info->item_msg = self->conv_msgs[info->relative_item_id];
+    }
     return info;
 }
 
