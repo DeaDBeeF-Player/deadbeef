@@ -67,7 +67,7 @@ typedef struct {
     ddb_encoder_preset_t *encoder_preset;
     ddb_dsp_preset_t *dsp_preset;
     GtkWidget *progress_dialog;
-    GtkTextView *text_view;
+    GtkTextBuffer *text;
     int cancelled;
 } converter_ctx_t;
 
@@ -322,19 +322,17 @@ on_converter_realize                 (GtkWidget        *widget,
                                         gpointer         user_data);
 
 typedef struct {
-    GtkTextView *text_view;
+    GtkTextBuffer *buffer;
     int relative_item_id;
-    char* item_msg;
+    char *item_msg;
 } update_progress_info_t;
 
 static gboolean
 update_progress_cb (gpointer ctx) {
     update_progress_info_t *info = ctx;
     GtkTextIter iter;
-    GtkTextBuffer* buffer = gtk_text_view_get_buffer(info->text_view);
-    gtk_text_buffer_get_iter_at_line (buffer, &iter, info->relative_item_id);
-    gtk_text_buffer_insert (buffer, &iter, info->item_msg, -1);
-    g_object_unref (info->text_view);
+    gtk_text_buffer_get_iter_at_line (info->buffer, &iter, info->relative_item_id);
+    gtk_text_buffer_insert (info->buffer, &iter, info->item_msg, -1);
     free (info);
     return FALSE;
 }
@@ -351,8 +349,7 @@ static update_progress_info_t*
 make_progress_info (converter_thread_ctx_t *self, int item_id) {
     update_progress_info_t *info = malloc (sizeof (*info));
     if (info) {
-        info->text_view = self->conv->text_view;
-        g_object_ref (info->text_view);
+        info->buffer = self->conv->text;
         info->relative_item_id = get_converter_thread_relative_item_id(self, item_id);
         info->item_msg = self->conv_msgs[info->relative_item_id];
     }
@@ -504,7 +501,7 @@ converter_worker (void *ctx) {
     deadbeef->background_job_decrement ();
 }
 
-static GtkTextView*
+static GtkTextBuffer*
 add_scrolled_text(GtkWidget* dialog)
 {
     GtkScrolledWindow* scrolled_window = GTK_SCROLLED_WINDOW(gtk_scrolled_window_new(NULL, NULL));
@@ -514,7 +511,7 @@ add_scrolled_text(GtkWidget* dialog)
     gtk_text_view_set_editable(text_view, FALSE);
     gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(text_view));
     gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), GTK_WIDGET(scrolled_window), TRUE, TRUE, 0);
-    return text_view;
+    return gtk_text_view_get_buffer(text_view);
 }
 
 static void
@@ -607,7 +604,7 @@ converter_process (converter_ctx_t *conv)
 
     GtkWidget *progress_dialog = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
     conv->progress_dialog = progress_dialog;
-    conv->text_view = add_scrolled_text(progress_dialog);
+    conv->text = add_scrolled_text(progress_dialog);
 
     converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_number_of_threads(), 1024);
     g_signal_connect ((gpointer)progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
