@@ -131,21 +131,17 @@ destroy_progress_cb (gpointer ctx) {
 
 static void
 free_conversion_utils (converter_ctx_t *conv) {
-    g_idle_add (destroy_progress_cb, conv->progress_dialog);
-    if (conv->convert_items) {
+    if(conv) {
+        g_idle_add (destroy_progress_cb, conv->progress_dialog);
         free (conv->convert_items);
-    }
-    if (conv->convert_playlist) {
-        deadbeef->plt_unref (conv->convert_playlist);
-    }
-    if (conv->outfolder) {
+        if (conv->convert_playlist) {
+            deadbeef->plt_unref (conv->convert_playlist);
+        }
         free (conv->outfolder);
-    }
-    if (conv->outfile) {
         free (conv->outfile);
+        converter_plugin->encoder_preset_free (conv->encoder_preset);
+        converter_plugin->dsp_preset_free (conv->dsp_preset);
     }
-    converter_plugin->encoder_preset_free (conv->encoder_preset);
-    converter_plugin->dsp_preset_free (conv->dsp_preset);
     free (conv);
 }
 
