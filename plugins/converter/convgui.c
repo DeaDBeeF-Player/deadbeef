@@ -342,7 +342,7 @@ update_progress_cb (gpointer ctx) {
 static int
 print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int relative_item_id) {
     deadbeef->pl_lock ();
-    int bytes = snprintf (buffer, buffer_size, "Th %02d: '%s' (from: %s)\n", relative_item_id + 1, deadbeef->pl_find_meta_raw(item, "title"), deadbeef->pl_find_meta (item, ":URI"));
+    int bytes = snprintf (buffer, buffer_size, "[#%02d] '%s' (%s)\n", relative_item_id + 1, deadbeef->pl_find_meta_raw(item, "title"), deadbeef->pl_find_meta (item, ":URI"));
     deadbeef->pl_unlock ();
     return bytes;
 }
@@ -368,7 +368,7 @@ make_start_progress_info(converter_thread_ctx_t *self, int item_id) {
 static update_progress_info_t*
 make_end_progress_info(converter_thread_ctx_t *self, int item_id) {
     update_progress_info_t *info = make_progress_info (self, item_id);
-    snprintf (info->item_msg, self->msg_size, "Th %02d: done\n", info->relative_item_id + 1);
+    snprintf (info->item_msg, self->msg_size, "[#%02d] done\n", info->relative_item_id + 1);
     return info;
 }
 
