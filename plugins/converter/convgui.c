@@ -157,6 +157,8 @@ typedef struct {
     pthread_mutex_t cancel_mutex;
     converter_ctx_t *conv;
     ddb_converter_settings_t settings;
+    char** conv_msgs;
+    size_t msg_size;
     char root[2000];
 } converter_thread_ctx_t;
 
@@ -181,7 +183,18 @@ get_converter_thread_relative_item_id(converter_thread_ctx_t *self, int item_ind
 }
 
 static void
-init_converter_thread_ctx(converter_thread_ctx_t *thread_ctx, converter_ctx_t *conv, int threads)
+init_converter_thread_msgs(converter_thread_ctx_t *self, size_t msg_size)
+{
+    self->conv_msgs = malloc(self->threads * sizeof(*self->conv_msgs));
+    self->msg_size = msg_size;
+    if(self->conv_msgs) {
+        for(int k = 0; k < self->threads; ++k)
+            self->conv_msgs[k] = malloc(self->msg_size);
+    }
+}
+
+static void
+init_converter_thread_ctx(converter_thread_ctx_t *thread_ctx, converter_ctx_t *conv, int threads, size_t msg_size)
 {
     thread_ctx->next_index = 0;
     thread_ctx->threads = threads;
@@ -190,15 +203,26 @@ init_converter_thread_ctx(converter_thread_ctx_t *thread_ctx, converter_ctx_t *c
     pthread_mutex_init(&thread_ctx->cancel_mutex, NULL);
     thread_ctx->conv = conv;
     thread_ctx->settings = get_converter_settings (conv);
+    init_converter_thread_msgs(thread_ctx, msg_size);
     get_folder_root (conv, thread_ctx->root);
 }
 
 static converter_thread_ctx_t*
-make_converter_thread_ctx(converter_ctx_t *conv, int threads)
+make_converter_thread_ctx(converter_ctx_t *conv, int threads, size_t msg_size)
 {
     converter_thread_ctx_t *thread_ctx = malloc(sizeof(*thread_ctx));
-    if (thread_ctx) init_converter_thread_ctx (thread_ctx, conv, threads);
+    if (thread_ctx) init_converter_thread_ctx (thread_ctx, conv, threads, msg_size);
     return thread_ctx;
+}
+
+static void
+free_converter_thread_msgs(converter_thread_ctx_t *self)
+{
+    if(self->conv_msgs) {
+        for(int k = 0; k < self->threads; ++k)
+            free(self->conv_msgs[k]);
+    }
+    free(self->conv_msgs);
 }
 
 void
@@ -207,6 +231,7 @@ free_converter_thread_ctx (converter_thread_ctx_t *self) {
         free(self->pids);
         pthread_mutex_destroy(&self->item_mutex);
         pthread_mutex_destroy(&self->cancel_mutex);
+        free_converter_thread_msgs(self);
     }
 }
 
@@ -302,13 +327,17 @@ on_converter_realize                 (GtkWidget        *widget,
 
 typedef struct {
     GtkTextView *text_view;
-    char text[64*1024];
+    int relative_item_id;
+    char* item_msg;
 } update_progress_info_t;
 
 static gboolean
 update_progress_cb (gpointer ctx) {
     update_progress_info_t *info = ctx;
-    gtk_text_buffer_set_text(gtk_text_view_get_buffer(info->text_view), info->text, -1);
+    GtkTextIter iter;
+    GtkTextBuffer* buffer = gtk_text_view_get_buffer(info->text_view);
+    gtk_text_buffer_get_iter_at_line (buffer, &iter, info->relative_item_id);
+    gtk_text_buffer_insert (buffer, &iter, info->item_msg, -1);
     g_object_unref (info->text_view);
     free (info);
     return FALSE;
@@ -327,9 +356,10 @@ make_progress_info(converter_thread_ctx_t *self, int item_id) {
     update_progress_info_t *info = malloc (sizeof (*info));
     info->text_view = self->conv->text_view;
     g_object_ref (info->text_view);
+    info->relative_item_id = get_converter_thread_relative_item_id(self, item_id);
+    info->item_msg = self->conv_msgs[info->relative_item_id];
     DB_playItem_t *item = get_converter_thread_item(self, item_id);
-    int relative_id = get_converter_thread_relative_item_id(self, item_id);
-    print_progress_msg (info->text, sizeof(info->text), item, relative_id);
+    print_progress_msg (info->item_msg, self->msg_size, item, info->relative_item_id);
     return info;
 }
 
@@ -561,7 +591,7 @@ converter_process (converter_ctx_t *conv)
     conv->progress_dialog = progress_dialog;
     conv->text_view = add_scrolled_text(progress_dialog);
 
-    converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_number_of_threads());
+    converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_number_of_threads(), 1024);
     g_signal_connect ((gpointer)progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
     gtk_window_set_default_size(GTK_WINDOW(progress_dialog), 600, 30 * thread_ctx->threads);
     gtk_widget_show_all(progress_dialog);
