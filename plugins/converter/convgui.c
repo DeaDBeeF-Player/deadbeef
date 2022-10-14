@@ -330,9 +330,11 @@ typedef struct {
 static gboolean
 update_progress_cb (gpointer ctx) {
     update_progress_info_t *info = ctx;
-    GtkTextIter iter;
-    gtk_text_buffer_get_iter_at_line (info->buffer, &iter, info->relative_item_id);
-    gtk_text_buffer_insert (info->buffer, &iter, info->item_msg, -1);
+    GtkTextIter start, end;
+    gtk_text_buffer_get_iter_at_line (info->buffer, &start, info->relative_item_id);
+    gtk_text_buffer_get_iter_at_line (info->buffer, &end, info->relative_item_id + 1);
+    gtk_text_buffer_delete (info->buffer, &start, &end);
+    gtk_text_buffer_insert (info->buffer, &start, info->item_msg, -1);
     free (info);
     return FALSE;
 }
