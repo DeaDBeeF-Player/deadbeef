@@ -369,7 +369,7 @@ make_start_progress_info(converter_thread_ctx_t *self, int item_id) {
 static update_progress_info_t*
 make_end_progress_info(converter_thread_ctx_t *self, int item_id) {
     update_progress_info_t *info = make_progress_info (self, item_id);
-    snprintf (info->item_msg, self->msg_size, "[#%02d] done\n", info->relative_item_id + 1);
+    snprintf (info->item_msg, self->msg_size, "[#%02d] idle\n", info->relative_item_id + 1);
     return info;
 }
 
