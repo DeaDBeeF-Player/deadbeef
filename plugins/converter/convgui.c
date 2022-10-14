@@ -329,11 +329,11 @@ typedef struct {
     GtkTextView *text_view;
     int relative_item_id;
     char* item_msg;
-} start_progress_info_t;
+} update_progress_info_t;
 
 static gboolean
-start_progress_cb (gpointer ctx) {
-    start_progress_info_t *info = ctx;
+update_progress_cb (gpointer ctx) {
+    update_progress_info_t *info = ctx;
     GtkTextIter iter;
     GtkTextBuffer* buffer = gtk_text_view_get_buffer(info->text_view);
     gtk_text_buffer_get_iter_at_line (buffer, &iter, info->relative_item_id);
@@ -351,15 +351,28 @@ print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int r
     return bytes;
 }
 
-static start_progress_info_t*
-make_start_progress_info(converter_thread_ctx_t *self, int item_id) {
-    start_progress_info_t *info = malloc (sizeof (*info));
+static update_progress_info_t*
+make_progress_info (converter_thread_ctx_t *self, int item_id) {
+    update_progress_info_t *info = malloc (sizeof (*info));
     info->text_view = self->conv->text_view;
     g_object_ref (info->text_view);
     info->relative_item_id = get_converter_thread_relative_item_id(self, item_id);
     info->item_msg = self->conv_msgs[info->relative_item_id];
+    return info;
+}
+
+static update_progress_info_t*
+make_start_progress_info(converter_thread_ctx_t *self, int item_id) {
+    update_progress_info_t *info = make_progress_info (self, item_id);
     DB_playItem_t *item = get_converter_thread_item(self, item_id);
     print_progress_msg (info->item_msg, self->msg_size, item, info->relative_item_id);
+    return info;
+}
+
+static update_progress_info_t*
+make_end_progress_info(converter_thread_ctx_t *self, int item_id) {
+    update_progress_info_t *info = make_progress_info (self, item_id);
+    snprintf (info->item_msg, self->msg_size, "Th %02d: done\n", info->relative_item_id + 1);
     return info;
 }
 
@@ -439,9 +452,11 @@ try_convert (converter_thread_ctx_t *self, int item_id) {
 
 static void
 update_gui_convert (converter_thread_ctx_t *self, int item_id) {
-    start_progress_info_t *info = make_start_progress_info(self, item_id);
-    g_idle_add (start_progress_cb, info);
+    update_progress_info_t *start_info = make_start_progress_info(self, item_id);
+    g_idle_add (update_progress_cb, start_info);
     try_convert (self, item_id);
+    update_progress_info_t *end_info = make_end_progress_info(self, item_id);
+    g_idle_add (update_progress_cb, end_info);
 }
 
 static void
