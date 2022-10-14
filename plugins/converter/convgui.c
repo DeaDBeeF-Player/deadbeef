@@ -85,22 +85,29 @@ ddb_converter_settings_t get_converter_settings (converter_ctx_t *conv) {
     return settings;
 }
 
+static int
+get_useful_number_of_threads(const converter_ctx_t *self, int req_threads) {
+    return req_threads < self->convert_items_count ? req_threads : self->convert_items_count;
+}
+
+
+
 static void
-get_folder_root (converter_ctx_t *conv, char* root) {
+get_folder_root (converter_ctx_t *self, char* root) {
     int rootlen = 0;
     // prepare for preserving folder struct
-    if (conv->preserve_folder_structure && conv->convert_items_count >= 1) {
+    if (self->preserve_folder_structure && self->convert_items_count >= 1) {
         // start with the 1st track path
-        deadbeef->pl_get_meta (conv->convert_items[0], ":URI", root, sizeof (root));
+        deadbeef->pl_get_meta (self->convert_items[0], ":URI", root, sizeof (root));
         char *sep = strrchr (root, '/');
         if (sep) {
             *sep = 0;
         }
         // reduce
         rootlen = strlen (root);
-        for (int n = 1; n < conv->convert_items_count; n++) {
+        for (int n = 1; n < self->convert_items_count; n++) {
             deadbeef->pl_lock ();
-            const char *path = deadbeef->pl_find_meta (conv->convert_items[n], ":URI");
+            const char *path = deadbeef->pl_find_meta (self->convert_items[n], ":URI");
             if (strncmp (path, root, rootlen)) {
                 // find where path splits
                 char *r = root;
@@ -159,7 +166,7 @@ typedef struct {
 } converter_thread_ctx_t;
 
 static int
-get_number_of_threads()
+get_config_number_of_threads()
 {
     int number_of_threads = deadbeef->conf_get_int("converter.threads", 0);
     if(number_of_threads <= 0) number_of_threads = 1;//against negative user value
@@ -193,7 +200,7 @@ static void
 init_converter_thread_ctx(converter_thread_ctx_t *thread_ctx, converter_ctx_t *conv, int threads, size_t msg_size)
 {
     thread_ctx->next_index = 0;
-    thread_ctx->threads = threads;
+    thread_ctx->threads = get_useful_number_of_threads(conv, threads);
     thread_ctx->pids = malloc(thread_ctx->threads * sizeof(pthread_t));
     pthread_mutex_init(&thread_ctx->item_mutex, NULL);
     pthread_mutex_init(&thread_ctx->cancel_mutex, NULL);
@@ -608,7 +615,7 @@ converter_process (converter_ctx_t *conv)
     conv->progress_dialog = progress_dialog;
     conv->text = add_scrolled_text(progress_dialog);
 
-    converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_number_of_threads(), 1024);
+    converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_config_number_of_threads(), 1024);
     g_signal_connect ((gpointer)progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
     gtk_window_set_default_size(GTK_WINDOW(progress_dialog), 600, 30 * thread_ctx->threads);
     gtk_widget_show_all(progress_dialog);
