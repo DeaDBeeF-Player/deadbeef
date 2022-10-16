@@ -142,12 +142,8 @@ extern int errno;
 # if !defined HAVE_GETCWD
 char *getwd ();
 #  define getcwd(buf, max) getwd (buf)
-# else
-#  if VMS
-#   define getcwd(buf, max) (getcwd) (buf, max, 0)
-#  else
-char *getcwd ();
-#  endif
+# elif VMS
+#  define getcwd(buf, max) (getcwd) (buf, max, 0)
 # endif
 # ifndef HAVE_STPCPY
 static char *stpcpy (char *dest, const char *src);
