@@ -1174,8 +1174,8 @@ void fwrite_type(slong **data,int ftype,int nchan,int nitem,shn_file *this_shn)
 /* bitshifts */
 /*************/
 
-void fix_bitshift(buffer, nitem, bitshift, ftype) slong *buffer; int nitem,
-       bitshift, ftype; {
+void fix_bitshift(slong *buffer, int nitem, int bitshift, int ftype)
+{
   int i;
 
   if(ftype == TYPE_AU1)
