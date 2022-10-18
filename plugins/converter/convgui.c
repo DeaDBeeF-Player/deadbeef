@@ -155,7 +155,7 @@ typedef struct {
     int threads;
     pthread_t *pids;
     pthread_mutex_t item_mutex;
-    pthread_mutex_t cancel_mutex;
+    pthread_rwlock_t cancel_lock;
     converter_ctx_t *conv;
     ddb_converter_settings_t settings;
     char** conv_msgs;
@@ -201,7 +201,7 @@ init_converter_thread_ctx(converter_thread_ctx_t *thread_ctx, converter_ctx_t *c
     thread_ctx->threads = get_useful_number_of_threads(conv, threads);
     thread_ctx->pids = malloc(thread_ctx->threads * sizeof(pthread_t));
     pthread_mutex_init(&thread_ctx->item_mutex, NULL);
-    pthread_mutex_init(&thread_ctx->cancel_mutex, NULL);
+    pthread_rwlock_init(&thread_ctx->cancel_lock, NULL);
     thread_ctx->conv = conv;
     thread_ctx->settings = get_converter_settings (conv);
     init_converter_thread_msgs(thread_ctx, msg_size);
@@ -231,7 +231,7 @@ free_converter_thread_ctx (converter_thread_ctx_t *self) {
     if(self) {
         free(self->pids);
         pthread_mutex_destroy(&self->item_mutex);
-        pthread_mutex_destroy(&self->cancel_mutex);
+        pthread_rwlock_destroy(&self->cancel_lock);
         free_converter_thread_msgs(self);
     }
 }
@@ -249,17 +249,17 @@ get_converter_thread_cancel (converter_thread_ctx_t *self) {
 
 static int
 get_converter_thread_cancel_lock (converter_thread_ctx_t *self) {
-    pthread_mutex_lock(&self->cancel_mutex);
+    pthread_rwlock_rdlock(&self->cancel_lock);
     int cancelled = get_converter_thread_cancel(self);
-    pthread_mutex_unlock(&self->cancel_mutex);
+    pthread_rwlock_unlock(&self->cancel_lock);
     return cancelled;
 }
 
 static void
 set_converter_thread_cancel_lock (converter_thread_ctx_t *self, int cancel) {
-    pthread_mutex_lock(&self->cancel_mutex);
+    pthread_rwlock_wrlock(&self->cancel_lock);
     self->conv->cancelled = cancel;
-    pthread_mutex_unlock(&self->cancel_mutex);
+    pthread_rwlock_unlock(&self->cancel_lock);
 }
 
 static int
