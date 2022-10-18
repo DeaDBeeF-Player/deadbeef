@@ -166,7 +166,7 @@ typedef struct {
 static int
 get_config_number_of_threads()
 {
-    int number_of_threads = deadbeef->conf_get_int("converter.threads", 0);
+    int number_of_threads = deadbeef->conf_get_int("converter.threads", 1);
     if(number_of_threads <= 0) number_of_threads = 1;//against negative user value
     return number_of_threads;
 }
