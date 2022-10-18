@@ -1585,10 +1585,6 @@ converter_stop (void) {
     return 0;
 }
 
-static const char settings_dialog[] =
-    "property \"Number of threads\" entry converter.threads 4;\n"
-;
-
 // define plugin interface
 static ddb_converter_t plugin = {
     .misc.plugin.api_vmajor = DB_API_VERSION_MAJOR,
@@ -1627,7 +1623,6 @@ static ddb_converter_t plugin = {
     .misc.plugin.start = converter_start,
     .misc.plugin.stop = converter_stop,
     .misc.plugin.command = converter_cmd,
-    .misc.plugin.configdialog = settings_dialog,
     .encoder_preset_alloc = encoder_preset_alloc,
     .encoder_preset_free = encoder_preset_free,
     .encoder_preset_load = encoder_preset_load,
