@@ -206,6 +206,7 @@ create_converterdlg (void)
   gtk_container_add (GTK_CONTAINER (edit_dsp_presets), image470);
 
   hbox88 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox88);
   gtk_box_pack_start (GTK_BOX (vbox26), hbox88, FALSE, TRUE, 0);
 
   label116 = gtk_label_new (_("Number of threads:"));
