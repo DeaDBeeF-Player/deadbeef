@@ -1030,17 +1030,17 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     NSSize size = image.size;
     NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:size availableSize:availableSize];
-
+    CGSize drawSize = [self.view convertSizeFromBacking:desiredSize];
+    
     if (size.width < size.height) {
         plt_col_info_t *c = &self.columns[(int)col];
         if (c->alignment == ColumnAlignmentCenter) {
-            art_x += art_width/2 - desiredSize.width/2;
+            art_x += art_width/2 - drawSize.width/2;
         }
         else if (c->alignment == ColumnAlignmentRight) {
-            art_x += art_width-desiredSize.width;
+            art_x += art_width-drawSize.width;
         }
     }
-    CGSize drawSize = [self.view convertSizeFromBacking:desiredSize];
     drawRect = NSMakeRect(art_x, ypos, drawSize.width, drawSize.height);
 
     if (!grp->cachedImage) {
