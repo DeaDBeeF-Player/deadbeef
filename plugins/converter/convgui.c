@@ -90,8 +90,6 @@ get_useful_number_of_threads(const converter_ctx_t *self, int req_threads) {
     return req_threads < self->convert_items_count ? req_threads : self->convert_items_count;
 }
 
-
-
 static void
 get_folder_root (converter_ctx_t *self, char* root) {
     int rootlen = 0;
@@ -452,7 +450,6 @@ try_convert (converter_thread_ctx_t *self, int item_id) {
         converter_plugin->convert2 (&self->settings, item, outpath, &cancelled);
     }
 }
-
 
 static void
 update_gui_convert (converter_thread_ctx_t *self, int item_id) {
