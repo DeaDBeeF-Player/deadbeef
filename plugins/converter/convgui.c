@@ -87,6 +87,7 @@ ddb_converter_settings_t get_converter_settings (converter_ctx_t *conv) {
 
 static int
 get_useful_number_of_threads(const converter_ctx_t *self, int req_threads) {
+    if (req_threads <= 0) req_threads = 1;
     return req_threads < self->convert_items_count ? req_threads : self->convert_items_count;
 }
 
