@@ -1034,10 +1034,10 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     if (size.width < size.height) {
         plt_col_info_t *c = &self.columns[(int)col];
         if (c->alignment == ColumnAlignmentCenter) {
-            art_x += availableSize.width/2 - desiredSize.width/2;
+            art_x += art_width/2 - desiredSize.width/2;
         }
         else if (c->alignment == ColumnAlignmentRight) {
-            art_x += availableSize.width-desiredSize.width;
+            art_x += art_width-desiredSize.width;
         }
     }
     CGSize drawSize = [self.view convertSizeFromBacking:desiredSize];
