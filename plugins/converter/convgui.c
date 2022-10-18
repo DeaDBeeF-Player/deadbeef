@@ -862,6 +862,9 @@ converter_show_cb (void *data) {
     gtk_combo_box_set_active (GTK_COMBO_BOX (lookup_widget (conv->converter, "overwrite_action")), deadbeef->conf_get_int ("converter.overwrite_action", 0));
     deadbeef->conf_unlock ();
 
+    GtkWidget *numthreads = lookup_widget (conv->converter, "numthreads");
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (numthreads), get_config_number_of_threads());
+
     GtkComboBox *combo;
     // fill encoder presets
     combo = GTK_COMBO_BOX (lookup_widget (conv->converter, "encoder"));
