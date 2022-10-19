@@ -164,14 +164,6 @@ typedef struct {
     char root[2000];
 } converter_thread_ctx_t;
 
-static int
-get_config_number_of_threads()
-{
-    int number_of_threads = deadbeef->conf_get_int("converter.threads", 1);
-    if(number_of_threads <= 0) number_of_threads = 1;//against negative user value
-    return number_of_threads;
-}
-
 static DB_playItem_t*
 get_converter_thread_item(converter_thread_ctx_t *self, int index)
 {
@@ -603,6 +595,12 @@ converter_setup_from_gui (converter_ctx_t *conv) {
     return converter_setup_encoder_settings_from_gui (conv);
 }
 
+static int
+get_gui_num_threads (converter_ctx_t *conv) {
+    GtkWidget *numthreads = lookup_widget (conv->converter, "numthreads");
+    return gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (numthreads));
+}
+
 int
 converter_process (converter_ctx_t *conv)
 {
@@ -613,7 +611,8 @@ converter_process (converter_ctx_t *conv)
     conv->progress_dialog = progress_dialog;
     conv->text = add_scrolled_text(progress_dialog);
 
-    converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_config_number_of_threads(), 1024);
+
+    converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_gui_num_threads (conv), PATH_MAX);
     g_signal_connect ((gpointer)progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
     gtk_window_set_default_size(GTK_WINDOW(progress_dialog), 720, 28 * thread_ctx->threads);
     gtk_widget_show_all(progress_dialog);
@@ -863,7 +862,7 @@ converter_show_cb (void *data) {
     deadbeef->conf_unlock ();
 
     GtkWidget *numthreads = lookup_widget (conv->converter, "numthreads");
-    gtk_spin_button_set_value (GTK_SPIN_BUTTON (numthreads), get_config_number_of_threads());
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (numthreads), deadbeef->conf_get_int("converter.threads", 1));
 
     GtkComboBox *combo;
     // fill encoder presets
