@@ -86,7 +86,7 @@ ddb_converter_settings_t get_converter_settings (converter_ctx_t *conv) {
 }
 
 static int
-get_useful_number_of_threads(const converter_ctx_t *self, int req_threads) {
+get_useful_num_threads(const converter_ctx_t *self, int req_threads) {
     if (req_threads <= 0) req_threads = 1;
     return req_threads < self->convert_items_count ? req_threads : self->convert_items_count;
 }
@@ -199,7 +199,7 @@ static void
 init_converter_thread_ctx(converter_thread_ctx_t *thread_ctx, converter_ctx_t *conv, int threads, size_t msg_size)
 {
     thread_ctx->next_index = 0;
-    thread_ctx->threads = get_useful_number_of_threads(conv, threads);
+    thread_ctx->threads = get_useful_num_threads (conv, threads);
     thread_ctx->pids = malloc(thread_ctx->threads * sizeof(pthread_t));
     pthread_mutex_init(&thread_ctx->item_mutex, NULL);
     pthread_rwlock_init(&thread_ctx->cancel_lock, NULL);
