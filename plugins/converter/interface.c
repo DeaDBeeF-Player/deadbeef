@@ -303,7 +303,7 @@ create_converterdlg (void)
   g_signal_connect ((gpointer) edit_dsp_presets, "clicked",
                     G_CALLBACK (on_edit_dsp_presets_clicked),
                     NULL);
-  g_signal_connect ((gpointer) numthreads, "changed",
+  g_signal_connect ((gpointer) numthreads, "output",
                     G_CALLBACK (on_numthreads_changed),
                     NULL);
   g_signal_connect ((gpointer) output_format, "changed",
