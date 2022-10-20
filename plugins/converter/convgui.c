@@ -147,8 +147,8 @@ free_conversion_utils (converter_ctx_t *conv) {
         free (conv->outfile);
         converter_plugin->encoder_preset_free (conv->encoder_preset);
         converter_plugin->dsp_preset_free (conv->dsp_preset);
+        free (conv);
     }
-    free (conv);
 }
 
 typedef struct {
@@ -215,8 +215,8 @@ free_converter_thread_msgs(converter_thread_ctx_t *self)
     if(self->conv_msgs) {
         for(int k = 0; k < self->threads; ++k)
             free(self->conv_msgs[k]);
+        free(self->conv_msgs);
     }
-    free(self->conv_msgs);
 }
 
 void
