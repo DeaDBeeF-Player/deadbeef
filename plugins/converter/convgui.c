@@ -321,7 +321,7 @@ on_converter_realize                 (GtkWidget        *widget,
 
 typedef struct {
     GtkTextBuffer *buffer;
-    int relative_item_id;
+    int thread_id;
     char *item_msg;
 } update_progress_info_t;
 
@@ -329,8 +329,8 @@ static gboolean
 update_progress_cb (gpointer ctx) {
     update_progress_info_t *info = ctx;
     GtkTextIter start, end;
-    gtk_text_buffer_get_iter_at_line (info->buffer, &start, info->relative_item_id);
-    gtk_text_buffer_get_iter_at_line (info->buffer, &end, info->relative_item_id + 1);
+    gtk_text_buffer_get_iter_at_line (info->buffer, &start, info->thread_id);
+    gtk_text_buffer_get_iter_at_line (info->buffer, &end, info->thread_id + 1);
     gtk_text_buffer_delete (info->buffer, &start, &end);
     gtk_text_buffer_insert (info->buffer, &start, info->item_msg, -1);
     free (info);
@@ -338,9 +338,9 @@ update_progress_cb (gpointer ctx) {
 }
 
 static int
-print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int relative_item_id) {
+print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int thread_id) {
     deadbeef->pl_lock ();
-    int bytes = snprintf (buffer, buffer_size, "[#%02d] '%s' (%s)\n", relative_item_id + 1, deadbeef->pl_find_meta_raw(item, "title"), deadbeef->pl_find_meta (item, ":URI"));
+    int bytes = snprintf (buffer, buffer_size, "[#%02d] '%s' (%s)\n", thread_id + 1, deadbeef->pl_find_meta_raw(item, "title"), deadbeef->pl_find_meta (item, ":URI"));
     deadbeef->pl_unlock ();
     return bytes;
 }
@@ -350,8 +350,8 @@ make_progress_info (converter_thread_ctx_t *self, int item_id) {
     update_progress_info_t *info = malloc (sizeof (*info));
     if (info) {
         info->buffer = self->conv->text;
-        info->relative_item_id = get_converter_thread_relative_item_id(self, item_id);
-        info->item_msg = self->conv_msgs[info->relative_item_id];
+        info->thread_id = get_converter_thread_relative_item_id(self, item_id);
+        info->item_msg = self->conv_msgs[info->thread_id];
     }
     return info;
 }
@@ -360,14 +360,14 @@ static update_progress_info_t*
 make_start_progress_info(converter_thread_ctx_t *self, int item_id) {
     update_progress_info_t *info = make_progress_info (self, item_id);
     DB_playItem_t *item = get_converter_thread_item(self, item_id);
-    print_progress_msg (info->item_msg, self->msg_size, item, info->relative_item_id);
+    print_progress_msg (info->item_msg, self->msg_size, item, info->thread_id);
     return info;
 }
 
 static update_progress_info_t*
 make_end_progress_info(converter_thread_ctx_t *self, int item_id) {
     update_progress_info_t *info = make_progress_info (self, item_id);
-    snprintf (info->item_msg, self->msg_size, "[#%02d] idle\n", info->relative_item_id + 1);
+    snprintf (info->item_msg, self->msg_size, "[#%02d] idle\n", info->thread_id + 1);
     return info;
 }
 
