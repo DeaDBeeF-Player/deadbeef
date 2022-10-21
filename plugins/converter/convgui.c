@@ -130,8 +130,9 @@ get_folder_root (converter_ctx_t *self, char* root) {
 }
 
 static gboolean
-destroy_progress_cb (gpointer ctx) {
-    gtk_widget_destroy (ctx);
+destroy_progress_cb (gpointer progress_dialog) {
+    gtk_widget_destroy (progress_dialog);
+    g_object_unref (progress_dialog);
     return FALSE;
 }
 
@@ -612,6 +613,7 @@ converter_process (converter_ctx_t *conv)
 
     GtkWidget *progress_dialog = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
     conv->progress_dialog = progress_dialog;
+    g_object_ref (progress_dialog);
     conv->text = add_scrolled_text(progress_dialog);
 
 
