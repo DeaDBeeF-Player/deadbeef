@@ -159,7 +159,6 @@ typedef struct {
     pthread_rwlock_t cancel_lock;
     converter_ctx_t *conv;
     ddb_converter_settings_t settings;
-    char** conv_msgs;
     size_t msg_size;
     char root[2000];
 } converter_thread_ctx_t;
@@ -177,28 +176,17 @@ get_converter_thread_relative_item_id(converter_thread_ctx_t *self, int item_ind
 }
 
 static void
-init_converter_thread_msgs(converter_thread_ctx_t *self, size_t msg_size)
+init_converter_thread_ctx(converter_thread_ctx_t *self, converter_ctx_t *conv, int threads, size_t msg_size)
 {
-    self->conv_msgs = malloc(self->threads * sizeof(*self->conv_msgs));
+    self->next_index = 0;
+    self->threads = get_useful_num_threads (conv, threads);
+    self->pids = malloc(self->threads * sizeof(pthread_t));
+    pthread_mutex_init(&self->item_mutex, NULL);
+    pthread_rwlock_init(&self->cancel_lock, NULL);
+    self->conv = conv;
+    self->settings = get_converter_settings (conv);
     self->msg_size = msg_size;
-    if(self->conv_msgs) {
-        for(int k = 0; k < self->threads; ++k)
-            self->conv_msgs[k] = malloc(self->msg_size);
-    }
-}
-
-static void
-init_converter_thread_ctx(converter_thread_ctx_t *thread_ctx, converter_ctx_t *conv, int threads, size_t msg_size)
-{
-    thread_ctx->next_index = 0;
-    thread_ctx->threads = get_useful_num_threads (conv, threads);
-    thread_ctx->pids = malloc(thread_ctx->threads * sizeof(pthread_t));
-    pthread_mutex_init(&thread_ctx->item_mutex, NULL);
-    pthread_rwlock_init(&thread_ctx->cancel_lock, NULL);
-    thread_ctx->conv = conv;
-    thread_ctx->settings = get_converter_settings (conv);
-    init_converter_thread_msgs(thread_ctx, msg_size);
-    get_folder_root (conv, thread_ctx->root);
+    get_folder_root (conv, self->root);
 }
 
 static converter_thread_ctx_t*
@@ -209,23 +197,12 @@ make_converter_thread_ctx(converter_ctx_t *conv, int threads, size_t msg_size)
     return thread_ctx;
 }
 
-static void
-free_converter_thread_msgs(converter_thread_ctx_t *self)
-{
-    if(self->conv_msgs) {
-        for(int k = 0; k < self->threads; ++k)
-            free(self->conv_msgs[k]);
-        free(self->conv_msgs);
-    }
-}
-
 void
 free_converter_thread_ctx (converter_thread_ctx_t *self) {
     if(self) {
         free(self->pids);
         pthread_mutex_destroy(&self->item_mutex);
         pthread_rwlock_destroy(&self->cancel_lock);
-        free_converter_thread_msgs(self);
     }
 }
 
@@ -323,18 +300,17 @@ typedef struct {
     GtkTextBuffer *buffer;
     int thread_id;
     char *item_msg;
-} update_progress_info_t;
+} progress_info_t;
 
-static gboolean
-update_progress_cb (gpointer ctx) {
-    update_progress_info_t *info = ctx;
-    GtkTextIter start, end;
-    gtk_text_buffer_get_iter_at_line (info->buffer, &start, info->thread_id);
-    gtk_text_buffer_get_iter_at_line (info->buffer, &end, info->thread_id + 1);
-    gtk_text_buffer_delete (info->buffer, &start, &end);
-    gtk_text_buffer_insert (info->buffer, &start, info->item_msg, -1);
-    free (info);
-    return FALSE;
+static progress_info_t*
+make_progress_info (converter_thread_ctx_t *self, int item_id) {
+    progress_info_t *info = malloc (sizeof (*info));
+    if (info) {
+        info->buffer = self->conv->text;
+        info->thread_id = get_converter_thread_relative_item_id(self, item_id);
+        info->item_msg = malloc (self->msg_size);
+    }
+    return info;
 }
 
 static int
@@ -345,30 +321,39 @@ print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int t
     return bytes;
 }
 
-static update_progress_info_t*
-make_progress_info (converter_thread_ctx_t *self, int item_id) {
-    update_progress_info_t *info = malloc (sizeof (*info));
-    if (info) {
-        info->buffer = self->conv->text;
-        info->thread_id = get_converter_thread_relative_item_id(self, item_id);
-        info->item_msg = self->conv_msgs[info->thread_id];
-    }
-    return info;
-}
-
-static update_progress_info_t*
+static progress_info_t*
 make_start_progress_info(converter_thread_ctx_t *self, int item_id) {
-    update_progress_info_t *info = make_progress_info (self, item_id);
+    progress_info_t *info = make_progress_info (self, item_id);
     DB_playItem_t *item = get_converter_thread_item(self, item_id);
     print_progress_msg (info->item_msg, self->msg_size, item, info->thread_id);
     return info;
 }
 
-static update_progress_info_t*
+static progress_info_t*
 make_end_progress_info(converter_thread_ctx_t *self, int item_id) {
-    update_progress_info_t *info = make_progress_info (self, item_id);
+    progress_info_t *info = make_progress_info (self, item_id);
     snprintf (info->item_msg, self->msg_size, "[#%02d] idle\n", info->thread_id + 1);
     return info;
+}
+
+static void
+free_progress_info (progress_info_t* self) {
+    if (self) {
+        free(self->item_msg);
+    }
+}
+
+static gboolean
+update_progress_cb (gpointer ctx) {
+    progress_info_t *info = ctx;
+    GtkTextIter start, end;
+    gtk_text_buffer_get_iter_at_line (info->buffer, &start, info->thread_id);
+    gtk_text_buffer_get_iter_at_line (info->buffer, &end, info->thread_id + 1);
+    gtk_text_buffer_delete (info->buffer, &start, &end);
+    gtk_text_buffer_insert (info->buffer, &start, info->item_msg, -1);
+    free_progress_info (info);
+    free (info);
+    return FALSE;
 }
 
 struct overwrite_prompt_ctx {
@@ -446,10 +431,10 @@ try_convert (converter_thread_ctx_t *self, int item_id) {
 
 static void
 update_gui_convert (converter_thread_ctx_t *self, int item_id) {
-    update_progress_info_t *start_info = make_start_progress_info(self, item_id);
+    progress_info_t *start_info = make_start_progress_info(self, item_id);
     g_idle_add (update_progress_cb, start_info);
     try_convert (self, item_id);
-    update_progress_info_t *end_info = make_end_progress_info(self, item_id);
+    progress_info_t *end_info = make_end_progress_info(self, item_id);
     g_idle_add (update_progress_cb, end_info);
 }
 
