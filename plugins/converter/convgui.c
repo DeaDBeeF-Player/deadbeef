@@ -485,17 +485,38 @@ converter_worker (void *ctx) {
     deadbeef->background_job_decrement ();
 }
 
-static GtkTextBuffer*
-add_scrolled_text(GtkWidget* dialog)
+static void set_monospace(GtkTextView* text_view)
 {
-    GtkScrolledWindow* scrolled_window = GTK_SCROLLED_WINDOW(gtk_scrolled_window_new(NULL, NULL));
+#if GTK_CHECK_VERSION(3,0,0)
+    GtkStyleContext *context = gtk_widget_get_style_context(GTK_WIDGET(text_view));
+    GtkCssProvider *provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_data(provider, "textview {font-family: \"monospace\";}", -1, NULL);
+    gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+#else
+    PangoFontDescription *descr = pango_font_description_from_string("monospace");
+    gtk_widget_modify_font(GTK_WIDGET(text_view), descr);
+    pango_font_description_free(descr);
+#endif
+}
+
+GtkTextView* create_mono_text()
+{
     GtkTextView* text_view = GTK_TEXT_VIEW(gtk_text_view_new());
     gtk_text_view_set_left_margin(text_view, 5);
     gtk_text_view_set_right_margin(text_view, 5);
+    set_monospace(text_view);
     gtk_text_view_set_editable(text_view, FALSE);
+    return text_view;
+}
+
+static GtkWidget*
+add_scrolled_window(GtkWidget* dialog)
+{
+    GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
+    GtkTextView *text_view = create_mono_text();
     gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(text_view));
-    gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), GTK_WIDGET(scrolled_window), TRUE, TRUE, 0);
-    return gtk_text_view_get_buffer(text_view);
+    gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), scrolled_window, TRUE, TRUE, 0);
+    return scrolled_window;
 }
 
 static void
