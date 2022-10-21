@@ -210,6 +210,7 @@ void
 free_converter_thread_utils (converter_thread_ctx_t *self) {
     free_conversion_utils (self->conv);
     free_converter_thread_ctx (self);
+    free (self);
 }
 
 static int
@@ -458,14 +459,12 @@ converter_thread_worker (void *ctx) {
 }
 
 static void
-create_pool_threads(converter_thread_ctx_t* self)
-{
+create_pool_threads(converter_thread_ctx_t* self) {
     for(int k = 0; k < self->threads; ++k)
         pthread_create(&self->pids[k], NULL, &converter_thread_worker, (void*)self);
 }
 
-static void join_pool_threads(converter_thread_ctx_t* self)
-{
+static void join_pool_threads(converter_thread_ctx_t* self) {
     for(int k = 0; k < self->threads; ++k)
         pthread_join(self->pids[k], NULL);
 }
@@ -481,12 +480,10 @@ converter_worker (void *ctx) {
         unref_convert_items (conv->convert_items, thread_ctx->next_index, conv->convert_items_count);
     }
     free_converter_thread_utils (thread_ctx);
-    free (thread_ctx);
     deadbeef->background_job_decrement ();
 }
 
-static void set_monospace(GtkTextView* text_view)
-{
+static void set_monospace(GtkTextView *text_view) {
 #if GTK_CHECK_VERSION(3,0,0)
     GtkStyleContext *context = gtk_widget_get_style_context(GTK_WIDGET(text_view));
     GtkCssProvider *provider = gtk_css_provider_new();
@@ -509,14 +506,14 @@ GtkTextView* create_mono_text()
     return text_view;
 }
 
-static GtkWidget*
-add_scrolled_window(GtkWidget* dialog)
+static GtkTextBuffer*
+add_scrolled_text(GtkWidget *dialog)
 {
     GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
     GtkTextView *text_view = create_mono_text();
     gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(text_view));
     gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), scrolled_window, TRUE, TRUE, 0);
-    return scrolled_window;
+    return gtk_text_view_get_buffer (text_view);
 }
 
 static void
