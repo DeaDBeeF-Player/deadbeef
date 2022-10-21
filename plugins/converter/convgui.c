@@ -617,7 +617,7 @@ converter_process (converter_ctx_t *conv)
     conv->progress_dialog = progress_dialog;
     g_object_ref (conv->progress_dialog);
     conv->text_buffer = add_scrolled_text(progress_dialog);
-
+    g_object_ref (conv->text_buffer);
 
     converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_gui_num_threads (conv), PATH_MAX);
     g_signal_connect (progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
