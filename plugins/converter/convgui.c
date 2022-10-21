@@ -308,6 +308,7 @@ static progress_info_t*
 make_progress_info (converter_thread_ctx_t *self, int item_id) {
     progress_info_t *info = malloc (sizeof (*info));
     if (info) {
+        g_object_ref (self->conv->text_buffer);
         info->buffer = self->conv->text_buffer;
         info->thread_id = get_converter_thread_relative_item_id(self, item_id);
         info->item_msg = malloc (self->msg_size);
@@ -341,6 +342,7 @@ make_end_progress_info(converter_thread_ctx_t *self, int item_id) {
 static void
 free_progress_info (progress_info_t* self) {
     if (self) {
+        g_object_unref (self->buffer);
         free(self->item_msg);
     }
 }
@@ -613,7 +615,7 @@ converter_process (converter_ctx_t *conv)
 
     GtkWidget *progress_dialog = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
     conv->progress_dialog = progress_dialog;
-    g_object_ref (progress_dialog);
+    g_object_ref (conv->progress_dialog);
     conv->text_buffer = add_scrolled_text(progress_dialog);
 
 
