@@ -67,7 +67,7 @@ typedef struct {
     ddb_encoder_preset_t *encoder_preset;
     ddb_dsp_preset_t *dsp_preset;
     GtkWidget *progress_dialog;
-    GtkTextBuffer *text;
+    GtkTextBuffer *text_buffer;
     int cancelled;
 } converter_ctx_t;
 
@@ -308,7 +308,7 @@ static progress_info_t*
 make_progress_info (converter_thread_ctx_t *self, int item_id) {
     progress_info_t *info = malloc (sizeof (*info));
     if (info) {
-        info->buffer = self->conv->text;
+        info->buffer = self->conv->text_buffer;
         info->thread_id = get_converter_thread_relative_item_id(self, item_id);
         info->item_msg = malloc (self->msg_size);
     }
@@ -614,7 +614,7 @@ converter_process (converter_ctx_t *conv)
     GtkWidget *progress_dialog = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
     conv->progress_dialog = progress_dialog;
     g_object_ref (progress_dialog);
-    conv->text = add_scrolled_text(progress_dialog);
+    conv->text_buffer = add_scrolled_text(progress_dialog);
 
 
     converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_gui_num_threads (conv), PATH_MAX);
