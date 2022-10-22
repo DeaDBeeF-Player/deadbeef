@@ -615,7 +615,7 @@ converter_process (converter_ctx_t *conv)
 
     GtkWidget *progress_dialog = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
     conv->progress_dialog = progress_dialog;
-    g_object_ref (conv->progress_dialog);
+    g_object_ref_sink (conv->progress_dialog);
     conv->text_buffer = add_scrolled_text(progress_dialog);
     g_object_ref (conv->text_buffer);
 
