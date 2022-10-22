@@ -333,6 +333,7 @@ print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int t
 static progress_info_t*
 make_start_progress_info(converter_thread_ctx_t *self, int item_id) {
     progress_info_t *info = make_progress_info (self, item_id);
+    g_object_ref (info->buffer); //increment further in start because buffer may be GUI-destroyed after the first free_progress_info
     DB_playItem_t *item = get_converter_thread_item(self, item_id);
     print_progress_msg (info->item_msg, self->msg_size, item, info->thread_id);
     return info;
@@ -341,6 +342,7 @@ make_start_progress_info(converter_thread_ctx_t *self, int item_id) {
 static progress_info_t*
 make_end_progress_info(converter_thread_ctx_t *self, int item_id) {
     progress_info_t *info = make_progress_info (self, item_id);
+    g_object_unref (info->buffer); //make_end_progress_info is executed even after GUI destruction, we cancel the start increment
     snprintf (info->item_msg, self->msg_size, "[#%02d] idle\n", info->thread_id + 1);
     return info;
 }
@@ -620,10 +622,9 @@ converter_process (converter_ctx_t *conv)
     if (error) return error;
 
     GtkWidget *progress_dialog = gtk_dialog_new_with_buttons (_("Converting..."), GTK_WINDOW (gtkui_plugin->get_mainwin ()), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+    g_object_ref (progress_dialog); // free_gui_conversion_utils could otherwise destroy again the clicked-destroyed dialog
     conv->progress_dialog = progress_dialog;
-    g_object_ref_sink (conv->progress_dialog);
     conv->text_buffer = add_scrolled_text(progress_dialog);
-    g_object_ref (conv->text_buffer);
 
     converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_gui_num_threads (conv), PATH_MAX);
     g_signal_connect (progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
