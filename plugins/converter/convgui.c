@@ -621,8 +621,8 @@ converter_process (converter_ctx_t *conv)
 
     converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_gui_num_threads (conv), PATH_MAX);
     g_signal_connect (progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
-    gtk_window_set_default_size(GTK_WINDOW(progress_dialog), 720, 28 * thread_ctx->threads);
-    gtk_widget_show_all(progress_dialog);
+    gtk_window_set_default_size (GTK_WINDOW(progress_dialog), 720, 28 * thread_ctx->threads);
+    gtk_widget_show_all (progress_dialog);
 
     intptr_t tid = deadbeef->thread_start (converter_worker, thread_ctx);
     deadbeef->thread_detach (tid);
