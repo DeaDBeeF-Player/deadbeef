@@ -129,17 +129,9 @@ get_folder_root (converter_ctx_t *self, char* root) {
     }
 }
 
-static gboolean
-destroy_progress_cb (gpointer progress_dialog) {
-    gtk_widget_destroy (progress_dialog);
-    g_object_unref (progress_dialog);
-    return FALSE;
-}
-
 static void
 free_conversion_utils (converter_ctx_t *conv) {
     if(conv) {
-        g_idle_add (destroy_progress_cb, conv->progress_dialog);
         free (conv->convert_items);
         if (conv->convert_playlist) {
             deadbeef->plt_unref (conv->convert_playlist);
@@ -150,6 +142,20 @@ free_conversion_utils (converter_ctx_t *conv) {
         converter_plugin->dsp_preset_free (conv->dsp_preset);
         free (conv);
     }
+}
+
+static void
+free_gui_conversion_utils (converter_ctx_t *conv) {
+    gtk_widget_destroy (conv->progress_dialog);
+    g_object_unref (conv->progress_dialog);
+    free_conversion_utils (conv);
+}
+
+static gboolean
+free_gui_conversion_utils_cb (gpointer user_data) {
+    converter_ctx_t *conv = user_data;
+    free_gui_conversion_utils (conv);
+    return FALSE;
 }
 
 typedef struct {
@@ -209,7 +215,7 @@ free_converter_thread_ctx (converter_thread_ctx_t *self) {
 
 void
 free_converter_thread_utils (converter_thread_ctx_t *self) {
-    free_conversion_utils (self->conv);
+    g_idle_add (free_gui_conversion_utils_cb, self->conv);
     free_converter_thread_ctx (self);
     free (self);
 }
