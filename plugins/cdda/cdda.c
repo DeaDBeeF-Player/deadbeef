@@ -846,7 +846,7 @@ get_param (const char *key, char *value, int len, const char *def)
 "property \"CD drive to load\" select[%u] cdda.drive_device 0"
 
 static int
-cda_action_add_cd (DB_plugin_action_t *act, int ctx)
+cda_action_add_cd (DB_plugin_action_t *act, ddb_action_context_t ctx)
 {
     /* Get all devices containg CD audio media */
     cdio_close_tray(NULL, NULL);
@@ -982,7 +982,7 @@ load_cddb_data (ddb_playlist_t *plt, cddb_disc_t *disc, const size_t disc_num)
 }
 
 static int
-action_disc_n (DB_plugin_action_t *act, int ctx)
+action_disc_n (DB_plugin_action_t *act, ddb_action_context_t ctx)
 {
     const int disc_num = atoi(act->name+11);
     int res = -1;
