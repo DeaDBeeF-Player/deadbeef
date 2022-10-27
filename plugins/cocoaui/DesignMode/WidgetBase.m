@@ -59,9 +59,17 @@
 - (BOOL)deserializeFromSettingsDictionary:(NSDictionary *)dictionary {
     return YES;
 }
+
+- (void)configure {
+    for (id<WidgetProtocol> widget in self.childWidgets) {
+        [widget configure];
+    }
+}
+
 - (NSDictionary *)serializedSettingsDictionary {
     return nil;
 }
+
 - (BOOL)isPlaceholder {
     return NO;
 }

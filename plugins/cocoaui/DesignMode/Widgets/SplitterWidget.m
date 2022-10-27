@@ -82,9 +82,6 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     [_splitView.topAnchor constraintEqualToAnchor:self.topLevelView.topAnchor].active = YES;
     [_splitView.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(splitViewBoundsDidChange:) name:NSViewBoundsDidChangeNotification object:nil];
-    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(splitViewBoundsDidChange:) name:NSViewFrameDidChangeNotification object:nil];
-
     _splitView.delegate = self;
 
     return self;
@@ -256,17 +253,16 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     return YES;
 }
 
-- (void)splitViewBoundsDidChange:(NSNotification *)notification {
-    if (NSEqualSizes(self.splitView.bounds.size, NSZeroSize)
-        || self.layoutFinalized) {
-        return;
-    }
+- (void)configure {
     self.splitView.delegate = nil;
 
-    self.layoutFinalized = YES;
     [self updateDividerPositionFromNormalized: self.normalizedDividerPosition];
 
+    self.layoutFinalized = YES;
+
     self.splitView.delegate = self;
+
+    [super configure];
 }
 
 - (NSArray<NSMenuItem *> *)menuItems {

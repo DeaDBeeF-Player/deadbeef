@@ -82,7 +82,7 @@ AppDelegate *g_appDelegate;
     }
 
     // initialize design mode, to avoid random background thread calls
-    __unused id<DesignModeStateProtocol> state = DesignModeState.sharedInstance;
+    id<DesignModeStateProtocol> state = DesignModeState.sharedInstance;
     [state load];
 
     return self;
@@ -320,6 +320,12 @@ main_cleanup_and_quit (void);
 #endif
 
     [self updateDockNowPlaying];
+
+    [NSNotificationCenter.defaultCenter postNotificationName:@"applyWidgetGeometry" object:nil];
+
+    id<DesignModeStateProtocol> state = DesignModeState.sharedInstance;
+    [state.rootWidget configure];
+
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{

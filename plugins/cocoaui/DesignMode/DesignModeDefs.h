@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSDictionary *)serializedSettingsDictionary;
 - (BOOL)deserializeFromSettingsDictionary:(nullable NSDictionary *)dictionary;
+- (void)configure;
 - (NSView *)view;
 - (void)appendChild:(id<WidgetProtocol>)child;
 - (void)removeChild:(id<WidgetProtocol>)child;

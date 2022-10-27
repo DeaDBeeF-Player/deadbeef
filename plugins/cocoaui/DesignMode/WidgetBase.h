@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithDeps:(id<DesignModeDepsProtocol>)deps NS_DESIGNATED_INITIALIZER;
 
+- (void)configure;
+
 @property (nullable,nonatomic,weak) id<WidgetProtocol> parentWidget;
 @property (nonatomic,readonly) NSView *topLevelView;
 @property (nonatomic,readonly) NSView *view;
