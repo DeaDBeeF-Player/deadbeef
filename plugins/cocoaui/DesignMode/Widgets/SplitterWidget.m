@@ -27,7 +27,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 @property (nonatomic) HoldingMode holdingMode;
 @property (nonatomic) BOOL isLocked;
 
-@property (nonatomic) BOOL layoutFinalized; // must be set to true when the splitview gets its final bounds
+@property (nonatomic) BOOL isPositionTrackingEnabled; // must be set to true when the splitview gets its final bounds
 
 //@property (nonatomic,readonly) CGFloat viewDividerPosition;
 @property (nonatomic,readonly) CGFloat splitViewSize;
@@ -93,7 +93,6 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 }
 
 - (void)removeChild:(id<WidgetProtocol>)child {
-    CGFloat normalizedDividerPosition = self.normalizedDividerPosition;
     [super removeChild:child];
     id<WidgetProtocol> pane = [self.deps.factory createWidgetWithType:PlaceholderWidget.widgetType];
     if (self.splitView.arrangedSubviews[0] == child.view) {
@@ -106,10 +105,11 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
         [_splitView insertArrangedSubview:pane.view atIndex:1];
         [super insertChild:pane atIndex:1];
     }
-    [self updateDividerPositionFromNormalized:normalizedDividerPosition];
 }
 
 - (void)updateDividerPositionFromNormalized:(CGFloat)dividerPosition {
+    BOOL isPositionTrackingEnabled = self.isPositionTrackingEnabled;
+    self.isPositionTrackingEnabled = NO;
     CGFloat splitViewSize = self.splitViewSize;
 
     switch (self.holdingMode) {
@@ -123,6 +123,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
         [self.splitView setPosition:(splitViewSize - dividerPosition) ofDividerAtIndex:0];
         break;
     }
+    self.isPositionTrackingEnabled = isPositionTrackingEnabled;
 }
 
 - (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild {
@@ -159,7 +160,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 }
 
 - (void)updateNormalizedDividerPosition {
-    if (!self.layoutFinalized) {
+    if (!self.isPositionTrackingEnabled) {
         return;
     }
     CGFloat splitViewSize = self.splitViewSize;
@@ -258,7 +259,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 
     [self updateDividerPositionFromNormalized: self.normalizedDividerPosition];
 
-    self.layoutFinalized = YES;
+    self.isPositionTrackingEnabled = YES;
 
     self.splitView.delegate = self;
 
@@ -329,7 +330,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 // Update should not occur, if the split view is not fully configured (doesn't have both panes, or the initial position was not applied yet)
 - (void)splitViewDidResizeSubviews:(NSNotification *)notification {
     CGFloat splitViewSize = self.splitViewSize;
-    if (splitViewSize == 0 || !self.layoutFinalized) {
+    if (splitViewSize == 0 || !self.isPositionTrackingEnabled) {
         return;
     }
 

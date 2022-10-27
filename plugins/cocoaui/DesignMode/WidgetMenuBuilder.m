@@ -195,6 +195,7 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
     MenuItemData *data = sender.representedObject;
     id<WidgetProtocol> widget = [self.deps.factory createWidgetWithType:data.createType];
     [self replaceWidget:data.targetWidget withNewWidget:widget];
+    [widget.parentWidget configure];
 }
 
 - (void)deleteWidget:(NSMenuItem *)sender {
@@ -241,6 +242,7 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
 
         MenuItemData *menuItemdata = sender.representedObject;
         [self replaceWidget:menuItemdata.targetWidget withNewWidget:widget];
+        [widget.parentWidget configure];
     }
 }
 
