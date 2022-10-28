@@ -1,3 +1,9 @@
+version 1.9.3
+	Fixed: OpenBSD compatibility / warnings (Brad Smith)
+	Fixed: Crash when loading certain malformed cuesheets
+	Fixed: API behavior change regression causing certain plugins to malfunction
+	Added: Support for building with FFMPEG 5.0 (xuzhen)
+
 version 1.9.2
 	Fixed: Many race conditions, deadlocks and crashes
 	Fixed: Crash when reading metadata of some .SPU files
