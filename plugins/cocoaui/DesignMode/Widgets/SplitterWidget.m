@@ -88,7 +88,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 }
 
 - (void)appendChild:(id<WidgetProtocol>)child {
-    // should not ever be called, since "isPlaceholder" is NO
+    // This is called when new splitter is created
     [super appendChild:child];
 }
 
@@ -255,6 +255,9 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 }
 
 - (void)configure {
+    if (NSWidth(self.view.frame) == 0 || NSHeight(self.view.frame) == 0) {
+        return;
+    }
     self.splitView.delegate = nil;
 
     [self updateDividerPositionFromNormalized: self.normalizedDividerPosition];

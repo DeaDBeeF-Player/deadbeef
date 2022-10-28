@@ -77,6 +77,7 @@
 }
 
 - (void)segmentedTabViewAction:(SegmentedTabView *)sender {
+    [self configure];
     [self.deps.state layoutDidChange];
 }
 
@@ -303,6 +304,8 @@
     child.parentWidget = nil;
     newChild.parentWidget = self;
     [item.view layoutSubtreeIfNeeded];
+
+    [newChild configure];
 }
 
 - (void)insertChild:(id<WidgetProtocol>)child atIndex:(NSInteger)index {

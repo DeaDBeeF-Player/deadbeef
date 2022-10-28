@@ -85,6 +85,7 @@ const NSInteger GRIDSIZE = 16;
     [child.view.trailingAnchor constraintEqualToAnchor:self.placeholderView.trailingAnchor].active = YES;
     [child.view.topAnchor constraintEqualToAnchor:self.placeholderView.topAnchor].active = YES;
     [child.view.bottomAnchor constraintEqualToAnchor:self.placeholderView.bottomAnchor].active = YES;
+    [self.view layoutSubtreeIfNeeded];
     [super appendChild:child];
 }
 
