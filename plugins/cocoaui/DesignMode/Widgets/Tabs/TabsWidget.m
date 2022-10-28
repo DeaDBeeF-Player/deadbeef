@@ -302,6 +302,7 @@
 
     child.parentWidget = nil;
     newChild.parentWidget = self;
+    [item.view layoutSubtreeIfNeeded];
 }
 
 - (void)insertChild:(id<WidgetProtocol>)child atIndex:(NSInteger)index {
