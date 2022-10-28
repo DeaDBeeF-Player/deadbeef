@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-14 18:59+0200\n"
+"POT-Creation-Date: 2022-10-28 17:18+0200\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Todor Grigoriadis <todor@gmx.co.in>, 2018\n"
 "Language-Team: Serbian (http://www.transifex.com/deadbeef-player/deadbeef-player/language/sr/)\n"
@@ -21,88 +21,88 @@ msgstr ""
 "Language: sr\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: ../main.c:129
+#: ../main.c:130
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "Употреба: deadbeef [опције] [--] [датотека(е)] \n"
 
-#: ../main.c:130
+#: ../main.c:131
 #, c-format
 msgid "Options:\n"
 msgstr "Опције:\n"
 
-#: ../main.c:131
+#: ../main.c:132
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --help  или  -h     Прикажи ову помоћ и изађи\n"
 
-#: ../main.c:132
+#: ../main.c:133
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             Напусти плејер\n"
 
-#: ../main.c:133
+#: ../main.c:134
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --version          Прикажи инфо о верзији и изађи\n"
 
-#: ../main.c:134
+#: ../main.c:135
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play             Репродукуј\n"
 
-#: ../main.c:135
+#: ../main.c:136
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop             Заустави репродукцију\n"
 
-#: ../main.c:136
+#: ../main.c:137
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --pause            Паузирај репродукцију\n"
 
-#: ../main.c:137
+#: ../main.c:138
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr "   --toggle-pause     Паузирај\n"
 
-#: ../main.c:138
+#: ../main.c:139
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr "   --play-pause       Започни репродукцију ако је заустављена, и обратно\n"
 
-#: ../main.c:139
+#: ../main.c:140
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --next             Наредна песма из листе\n"
 
-#: ../main.c:140
+#: ../main.c:141
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --prev             Претходна песма из листе\n"
 
-#: ../main.c:141
+#: ../main.c:142
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --random           Насумично песма из листе\n"
 
-#: ../main.c:142
+#: ../main.c:143
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "   --queue            Додај датотеку(е) у постојећу листу\n"
 
-#: ../main.c:143
+#: ../main.c:144
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr "   --gui ДОДАТАК       Додатак граф. сучеља — подразумеван је „ГТК2“\n"
 
-#: ../main.c:144
+#: ../main.c:145
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "   --nowplaying FMT   Испиши уређени назив песме на стд. излаз\n"
 
-#: ../main.c:145
+#: ../main.c:146
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -110,83 +110,83 @@ msgid ""
 "                      copy[r]ight, [e]lapsed\n"
 msgstr "                      FMT %%-syntax: [a]-извођач, [t]-наслов, [b]-албум,\n                      [l]-трајање, [n]-бр.песме, [y]-година, [c]-примедба,\n                      [r]-ауторска права, [e]преостало време\n"
 
-#: ../main.c:148
+#: ../main.c:149
 #, c-format
 msgid ""
 "                      example: --nowplaying \"%%a - %%t\" should print "
 "\"artist - title\"\n"
 msgstr "                      пример: --nowplaying \"%%a - %%t\" ће исписати „Извођач - Наслов“\n"
 
-#: ../main.c:149
+#: ../main.c:150
 #, c-format
 msgid "                      for more info, see %s\n"
 msgstr "                      за више информација, видите %s\n"
 
-#: ../main.c:150
+#: ../main.c:151
 #, c-format
 msgid "                      NOTE: --nowplaying is deprecated.\n"
 msgstr "                      ПАЖЊА: --nowplaying је застарело\n.\n"
 
-#: ../main.c:151
+#: ../main.c:152
 #, c-format
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
 msgstr "   --nowplaying-tf FMT  Штампај форматирано име песме на stdout, користећи нови начин форматирања\n"
 
-#: ../main.c:152
+#: ../main.c:153
 #, c-format
 msgid ""
 "                      FMT syntax: http://github.com/DeaDBeeF-"
 "Player/deadbeef/wiki/Title-formatting-2.0\n"
 msgstr "                      FMT синтакса: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
 
-#: ../main.c:153
+#: ../main.c:154
 #, c-format
 msgid ""
 "                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
 "should print \"artist - title\"\n"
 msgstr "                      пример: --nowplaying-tf \"%%artist%% - %%title%%\" треба да штампа \"извођач - име песма\"\n"
 
-#: ../main.c:154
+#: ../main.c:155
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
 msgstr "   --volume [NUM]     Штампај или постави deadbeef ниво јачине звука.\n"
 
-#: ../main.c:155
+#: ../main.c:156
 #, c-format
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
 msgstr ""
 
-#: ../main.c:156
+#: ../main.c:157
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
 msgstr ""
 
-#: ../main.c:157
+#: ../main.c:158
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
 msgstr ""
 
-#: ../main.c:158
+#: ../main.c:159
 #, c-format
 msgid ""
 "   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
 "send commands to deadbeef itself.\n"
 msgstr ""
 
-#: ../main.c:159
+#: ../main.c:160
 #, c-format
 msgid ""
 "                      To get plugin specific commands use --plugin=[PLUG] "
 "--help\n"
 msgstr ""
 
-#: ../main.c:160
+#: ../main.c:161
 #, c-format
 msgid ""
 "   --plugin-list      List all available plugins including indication for "
@@ -396,7 +396,7 @@ msgid "DSP Preset Editor"
 msgstr "Уређивач поставки за диг. обраду звука"
 
 #: ../plugins/converter/converter.glade.h:48
-#: ../plugins/converter/convgui.c:1185 ../plugins/converter/convgui.c:1753
+#: ../plugins/converter/convgui.c:1195 ../plugins/converter/convgui.c:1763
 #: ../plugins/converter/interface.c:653 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/gtkui/interface.c:259
 #: ../plugins/gtkui/playlist/mainplaylist.c:235
@@ -438,7 +438,7 @@ msgid "Select DSP Plugin"
 msgstr "Одабир додатка за диг. обраду звука"
 
 #: ../plugins/converter/converter.glade.h:54
-#: ../plugins/converter/convgui.c:1489 ../plugins/converter/interface.c:797
+#: ../plugins/converter/convgui.c:1499 ../plugins/converter/interface.c:797
 #: ../plugins/gtkui/deadbeef.glade.h:204 ../plugins/gtkui/dspconfig.c:293
 #: ../plugins/gtkui/interface.c:4448
 msgid "Plugin"
@@ -474,78 +474,78 @@ msgstr "Грешка прекодера"
 msgid "Converting..."
 msgstr "Прекодирам..."
 
-#: ../plugins/converter/convgui.c:693
+#: ../plugins/converter/convgui.c:703
 msgid "Select folder..."
 msgstr "Одаберите директоријум..."
 
-#: ../plugins/converter/convgui.c:959
+#: ../plugins/converter/convgui.c:969
 msgid "Failed to save encoder preset"
 msgstr "Није успело чување поставки кодера"
 
-#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
+#: ../plugins/converter/convgui.c:971 ../plugins/converter/convgui.c:1542
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr "Проверите дозволе директоријума за чување поставки, дајте поставки други назив или ослободите мало простора на диску"
 
-#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
+#: ../plugins/converter/convgui.c:971 ../plugins/converter/convgui.c:1542
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "Поставка са истим називом већ постоји. Покушајте са другачијим називом."
 
-#: ../plugins/converter/convgui.c:962 ../plugins/converter/convgui.c:1533
+#: ../plugins/converter/convgui.c:972 ../plugins/converter/convgui.c:1543
 #: ../plugins/gtkui/ctmapping.c:203 ../plugins/gtkui/ctmapping.c:231
 #: ../plugins/gtkui/ctmapping.c:263
 msgid "Error"
 msgstr "Грешка"
 
-#: ../plugins/converter/convgui.c:1016 ../plugins/converter/convgui.c:1160
+#: ../plugins/converter/convgui.c:1026 ../plugins/converter/convgui.c:1170
 msgid "Add new encoder"
 msgstr "Додај нови кодер"
 
-#: ../plugins/converter/convgui.c:1046
+#: ../plugins/converter/convgui.c:1056
 msgid "Edit encoder"
 msgstr "Уреди кодер"
 
-#: ../plugins/converter/convgui.c:1078 ../plugins/converter/convgui.c:1674
+#: ../plugins/converter/convgui.c:1088 ../plugins/converter/convgui.c:1684
 msgid "Remove preset"
 msgstr "Уклони поставку"
 
-#: ../plugins/converter/convgui.c:1080 ../plugins/converter/convgui.c:1676
+#: ../plugins/converter/convgui.c:1090 ../plugins/converter/convgui.c:1686
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Овом радњом ћете обрисати одабрану поставку. Да ли то заиста желите?"
 
-#: ../plugins/converter/convgui.c:1081 ../plugins/converter/convgui.c:1677
+#: ../plugins/converter/convgui.c:1091 ../plugins/converter/convgui.c:1687
 #: ../plugins/gtkui/gtkui.c:612 ../plugins/gtkui/gtkui.c:1709
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:71
 #: ../plugins/gtkui/prefwin/prefwin.c:142 ../plugins/gtkui/trkproperties.c:118
 msgid "Warning"
 msgstr "Упозорење"
 
-#: ../plugins/converter/convgui.c:1175
+#: ../plugins/converter/convgui.c:1185
 msgid "Encoders"
 msgstr "Кодери"
 
-#: ../plugins/converter/convgui.c:1250
+#: ../plugins/converter/convgui.c:1260
 msgid "Add plugin to DSP chain"
 msgstr "Додајте додатак у оквир за диг. обраду звука"
 
-#: ../plugins/converter/convgui.c:1531
+#: ../plugins/converter/convgui.c:1541
 msgid "Failed to save DSP preset"
 msgstr "Неуспело чување поставки за диг. обраду звука"
 
-#: ../plugins/converter/convgui.c:1595 ../plugins/converter/convgui.c:1640
+#: ../plugins/converter/convgui.c:1605 ../plugins/converter/convgui.c:1650
 msgid "New DSP Preset"
 msgstr "Нова поставка за диг. обраду звука"
 
-#: ../plugins/converter/convgui.c:1724
+#: ../plugins/converter/convgui.c:1734
 msgid "Edit DSP Preset"
 msgstr "Уреди поставку за диг. обраду звука"
 
-#: ../plugins/converter/convgui.c:1744
+#: ../plugins/converter/convgui.c:1754
 msgid "DSP Presets"
 msgstr "Поставке за диг. обраду звука"
 
-#: ../plugins/converter/convgui.c:1782 ../plugins/converter/convgui.c:1790
+#: ../plugins/converter/convgui.c:1792 ../plugins/converter/convgui.c:1800
 #: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:646
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/gtkui/interface.c:976
 #: ../translation/plugins.c:167
@@ -647,11 +647,11 @@ msgstr "Дедбиф %s — Дневник измена"
 msgid "DeaDBeeF Translators"
 msgstr "Дедбиф преводиоци"
 
-#: ../plugins/gtkui/covermanager/albumartwidget.c:387
+#: ../plugins/gtkui/covermanager/albumartwidget.c:388
 msgid "Playing Track"
 msgstr ""
 
-#: ../plugins/gtkui/covermanager/albumartwidget.c:391
+#: ../plugins/gtkui/covermanager/albumartwidget.c:392
 msgid "Selected Track"
 msgstr ""
 
@@ -968,10 +968,14 @@ msgid "_Close"
 msgstr "_Затвори"
 
 #: ../plugins/gtkui/deadbeef.glade.h:68 ../plugins/gtkui/interface.c:1159
+#: ../plugins/gtkui/selpropertieswidget.c:96
+#: ../plugins/gtkui/selpropertieswidget.c:324
 msgid "Metadata"
 msgstr "Подаци о песми"
 
 #: ../plugins/gtkui/deadbeef.glade.h:69 ../plugins/gtkui/interface.c:1205
+#: ../plugins/gtkui/selpropertieswidget.c:92
+#: ../plugins/gtkui/selpropertieswidget.c:322
 msgid "Properties"
 msgstr "Особине"
 
@@ -2188,8 +2192,8 @@ msgstr "Иницијализација..."
 msgid "Updating File Tags Progress"
 msgstr " Процес ажурирања тагова датотека"
 
-#: ../plugins/gtkui/rg.c:309 ../plugins/gtkui/trkproperties.c:417
-#: ../plugins/pltbrowser/pltbrowser.c:848
+#: ../plugins/gtkui/rg.c:309 ../plugins/gtkui/selpropertieswidget.c:310
+#: ../plugins/gtkui/trkproperties.c:417 ../plugins/pltbrowser/pltbrowser.c:848
 msgid "Name"
 msgstr "Назив"
 
@@ -2225,6 +2229,16 @@ msgstr "Покварена датотека"
 msgid "Search [(%list_total% results)]"
 msgstr "Претражи [(%list_total% results)]"
 
+#: ../plugins/gtkui/selpropertieswidget.c:265 ../plugins/gtkui/widgets.c:2217
+#: ../plugins/pltbrowser/pltbrowser.c:804
+msgid "Show Column Headers"
+msgstr "Прикажи заглавља колона"
+
+#: ../plugins/gtkui/selpropertieswidget.c:312
+#: ../plugins/gtkui/trkproperties.c:418 ../plugins/gtkui/trkproperties.c:431
+msgid "Value"
+msgstr "Вредност"
+
 #: ../plugins/gtkui/trkproperties.c:115
 msgid "You've modified data for this track."
 msgstr "Изменили сте податке за ову песму."
@@ -2237,10 +2251,6 @@ msgstr "Желите ли заиста да затворите овај проз
 #: ../plugins/gtkui/trkproperties.c:255 ../plugins/gtkui/trkproperties.c:1042
 msgid "[Multiple values] "
 msgstr "[Вишеструке вредности] "
-
-#: ../plugins/gtkui/trkproperties.c:418 ../plugins/gtkui/trkproperties.c:431
-msgid "Value"
-msgstr "Вредност"
 
 #: ../plugins/gtkui/trkproperties.c:430
 msgid "Key"
@@ -2354,10 +2364,6 @@ msgstr "Помери Таб Лево"
 #: ../plugins/gtkui/widgets.c:1811
 msgid "Move Tab Right"
 msgstr "Помери Таб Десно"
-
-#: ../plugins/gtkui/widgets.c:2217 ../plugins/pltbrowser/pltbrowser.c:804
-msgid "Show Column Headers"
-msgstr "Прикажи заглавља колона"
 
 #: ../plugins/gtkui/widgets.c:2753 ../plugins/gtkui/widgets.c:3244
 msgid "Rendering Mode"
