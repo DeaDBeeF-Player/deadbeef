@@ -55,7 +55,7 @@ const NSInteger GRIDSIZE = 16;
 
     [checker unlockFocus];
 
-    _placeholderView = [[NSView alloc] initWithFrame:NSZeroRect];
+    _placeholderView = [NSView new];
     _backgroundLayer = [CALayer new];
     _backgroundLayer.backgroundColor = [NSColor colorWithPatternImage:checker].CGColor;
     _placeholderView.layer = _backgroundLayer;

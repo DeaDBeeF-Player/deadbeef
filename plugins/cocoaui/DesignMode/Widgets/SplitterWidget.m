@@ -127,8 +127,6 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 }
 
 - (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild {
-    CGFloat dividerPosition = self.normalizedDividerPosition;
-
     if (self.splitView.arrangedSubviews[0] == child.view) {
         [self.splitView removeArrangedSubview:child.view];
         [_splitView insertArrangedSubview:newChild.view atIndex:0];
@@ -144,7 +142,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     child.parentWidget = nil;
     newChild.parentWidget = self;
 
-    [self updateDividerPositionFromNormalized:dividerPosition];
+    [self configure];
 }
 
 - (CGFloat)splitViewSize {
@@ -235,9 +233,6 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     if ([positionObject isKindOfClass:NSNumber.class]) {
         NSNumber *positionNumber = positionObject;
         self.normalizedDividerPosition = positionNumber.doubleValue;
-
-        // Update the splitview if it's ready
-        [self updateDividerPositionFromNormalized:self.normalizedDividerPosition];
     }
 
     id isLockedObject = dictionary[@"isLocked"];
@@ -255,7 +250,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 }
 
 - (void)configure {
-    if (NSWidth(self.view.frame) == 0 || NSHeight(self.view.frame) == 0) {
+    if (self.view.window == nil || NSWidth(self.view.frame) == 0 || NSHeight(self.view.frame) == 0) {
         return;
     }
     self.splitView.delegate = nil;
