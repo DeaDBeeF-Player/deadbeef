@@ -179,13 +179,37 @@ on_closebtn_clicked                    (GtkButton       *button,
     trkproperties_destroy ();
 }
 
+static void _apply_field_to_track(ddb_playItem_t *track, const char *key, const char *new_text) {
+    deadbeef->pl_delete_meta(track, key);
+
+    static const char *special_fields[] = {
+        "comment",
+        "lyrics",
+        NULL
+    };
+
+    int should_split = 1;
+    for (int n = 0; special_fields[n] != NULL; n++) {
+        if (!strcasecmp(key, special_fields[n])) {
+            should_split = 0;
+            break;
+        }
+    }
+
+    if (!should_split) {
+        deadbeef->pl_append_meta(track, key, new_text);
+        return;
+    }
+
+    _iterate_semicolon_separated_substrings(new_text, ^(const char *item) {
+        deadbeef->pl_append_meta(track, key, item);
+    });
+}
+
 static void
 _apply_field_to_all_tracks (const char *key, const char *new_text) {
     for (int i = 0; i < numtracks; i++) {
-        deadbeef->pl_delete_meta(tracks[i], key);
-        _iterate_semicolon_separated_substrings(new_text, ^(const char *item) {
-            deadbeef->pl_append_meta(tracks[i], key, item);
-        });
+        _apply_field_to_track(tracks[i], key, new_text);
     }
 }
 
@@ -701,11 +725,7 @@ static void _update_single_value(GtkTextBuffer *buffer, GtkTreeIter *iter, const
     char *new_text = gtk_text_buffer_get_text (buffer, &begin, &end, TRUE);
 
     for (int i = 0; i < numtracks; i++) {
-        deadbeef->pl_delete_meta(tracks[i], skey);
-
-        _iterate_semicolon_separated_substrings(new_text, ^(const char *item){
-            deadbeef->pl_append_meta(tracks[i], skey, item);
-        });
+        _apply_field_to_track(tracks[i], skey, new_text);
     }
     free (new_text);
 
@@ -1023,11 +1043,7 @@ _edit_field_multiple_tracks (void) {
                 gtk_tree_model_get_value(GTK_TREE_MODEL(list_store), &curr_item_iter, 2, &value);
                 const char *svalue = g_value_get_string (&value);
 
-                deadbeef->pl_delete_meta(tracks[i], skey);
-
-                _iterate_semicolon_separated_substrings(svalue, ^(const char *item){
-                    deadbeef->pl_append_meta(tracks[i], skey, item);
-                });
+                _apply_field_to_track(tracks[i], skey, svalue);
 
                 g_value_unset (&value);
 
