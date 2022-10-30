@@ -443,13 +443,35 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
 }
 
+- (NSSet<NSString *> *)specialFields {
+    static NSSet<NSString *> *specialFields;
+
+    if (specialFields == nil) {
+        specialFields = [[NSSet alloc] initWithArray:@[
+            @"comment",
+            @"lyrics",
+        ]];
+    }
+
+    return specialFields;
+}
+
 - (void)setMetadataForSelectedTracks:(NSDictionary *)dict {
-    const char *skey = ((NSString *)dict[@"key"]).UTF8String;
+    NSString *key = dict[@"key"];
+    const char *skey = key.UTF8String;
     NSMutableArray<NSString *> *values = dict[@"values"];
 
     for (int i = 0; i < self.numtracks; i++) {
         NSString *value = values[i];
-        NSArray *components = [value componentsSeparatedByString:@";"];
+        NSArray *components;
+
+        // Don't split up special fields, which are not supposed to be multi-value
+        if (![[self specialFields] containsObject:key.lowercaseString]) {
+            components = [value componentsSeparatedByString:@";"];
+        }
+        else {
+            components = @[value];
+        }
 
         NSMutableArray *transformedValues = [NSMutableArray new];
         for (NSString *val in components) {
