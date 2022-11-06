@@ -45,6 +45,7 @@
 #include <sys/time.h>
 #ifdef _WIN32
 #include <sys/utime.h>
+#include <windows.h>
 #endif
 #include <unistd.h>
 
@@ -345,28 +346,21 @@ scan_local_path (const char *local_path, const char *uri, DB_vfs_t *vfsplug, ddb
     return err;
 }
 
-// FIXME: this returns only one path that matches subfolder. Usually that's enough, but can be improved.
 static char *
-get_case_insensitive_path (const char *local_path, const char *subfolder, DB_vfs_t *vfsplug) {
-    struct dirent **files = NULL;
-    int (* custom_scandir)(const char *, struct dirent ***, int (*)(const struct dirent *), int (*)(const struct dirent **, const struct dirent **));
-    custom_scandir = vfsplug ? vfsplug->scandir : scandir;
-    int files_count = custom_scandir (local_path, &files, NULL, NULL);
-    char *ret = NULL;
-    if (files != NULL) {
-        for (int i = 0; i < files_count; i++) {
-            if (!strcasecmp (subfolder, files[i]->d_name)) {
-                size_t l = strlen (local_path) + strlen (files[i]->d_name) + 2;
-                ret = malloc (l);
-                snprintf (ret, l, "%s/%s", local_path, files[i]->d_name);
-                break;
-            }
-        }
-        for (size_t i = 0; i < files_count; i++) {
-            free (files[i]);
-        }
-        free (files);
-    }
+get_absolute_path (const char *local_path, const char *subfolder) {
+    int local_path_len = strlen(local_path);
+    int subfolder_len = strlen(subfolder);
+    char *full_path = malloc(local_path_len + subfolder_len + 2);
+    memcpy(full_path, local_path, local_path_len);
+    memcpy(full_path + local_path_len, "/", 1);
+    memcpy(full_path + local_path_len + 1, subfolder, subfolder_len + 1);
+#ifdef _WIN32
+    char *ret[MAX_PATH];
+    GetFullPathName(full_path, MAX_PATH, ret, NULL);
+#else
+    char *ret = realpath(full_path, NULL);
+#endif
+    free(full_path);
     return ret;
 }
 
@@ -393,7 +387,7 @@ local_image_file (const char *local_path, const char *uri, DB_vfs_t *vfsplug, dd
             path = strdup (local_path);
         }
         else {
-            path = get_case_insensitive_path (local_path, folder, vfsplug);
+            path = get_absolute_path (local_path, folder);
             folder += strlen (folder)+1;
         }
         trace ("scanning %s for artwork\n", path);
