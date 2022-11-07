@@ -2733,6 +2733,33 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
     return 0;
 }
 
+static void
+_make_tdrc_string(char *tdrc, size_t tdrc_size, int year, int month, int day, int hour, int minute) {
+    char *p = tdrc;
+    if (year <= 0) {
+        return;
+    }
+    int n = snprintf (p, tdrc_size, "%04d", year);
+    p += n;
+    tdrc_size -= n;
+    if (month <= 0) {
+        return;
+    }
+    n = snprintf (p, tdrc_size, "-%02d", month);
+    p += n;
+    tdrc_size -= n;
+    if (day <= 0) {
+        return;
+    }
+    n = snprintf (p, tdrc_size, "-%02d", day);
+    p += n;
+    tdrc_size -= n;
+    if (hour <= 0 && minute <= 0) {
+        return;
+    }
+    n = snprintf (p, tdrc_size, "-T%02d:%02d", hour, minute);
+}
+
 int
 junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
     DB_id3v2_frame_t *f22;
@@ -2900,22 +2927,10 @@ junk_id3v2_convert_22_to_24 (DB_id3v2_tag_t *tag22, DB_id3v2_tag_t *tag24) {
     }
 
     char tdrc[100];
-    char *p = tdrc;
-    if (year > 0) {
-        int n = sprintf (p, "%04d", year);
-        p += n;
-        if (month) {
-            n = sprintf (p, "-%02d", month);
-            p += n;
-            if (day) {
-                n = sprintf (p, "-%02d", day);
-                p += n;
-                if (hour && minute) {
-                    n = sprintf (p, "-T%02d:%02d", hour, minute);
-                    p += n;
-                }
-            }
-        }
+    tdrc[0] = 0;
+    _make_tdrc_string(tdrc, sizeof (tdrc), year, month, day, hour, minute);
+
+    if (tdrc[0]) {
         DB_id3v2_frame_t *f24 = junk_id3v2_add_text_frame (tag24, "TDRC", tdrc);
         if (f24) {
             tail = f24;
