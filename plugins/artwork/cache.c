@@ -21,11 +21,6 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifdef HAVE_CONFIG_H
-    #include "../../config.h"
-#endif
-#include "../../deadbeef.h"
-#include "artwork_internal.h"
 #include <dirent.h>
 #include <dispatch/dispatch.h>
 #include <libgen.h>
@@ -35,9 +30,18 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
+#ifdef HAVE_CONFIG_H
+#include "../../config.h"
+#endif
+#include "../../deadbeef.h"
+#include "artwork.h"
+#include "artwork_internal.h"
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(...)
+extern DB_functions_t *deadbeef;
+extern ddb_artwork_plugin_t plugin;
+
+#define trace(...) { deadbeef->log_detailed (&plugin.plugin.plugin, 0, __VA_ARGS__); }
+#define trace_err(...) { deadbeef->log_detailed (&plugin.plugin.plugin, DDB_LOG_LAYER_DEFAULT, __VA_ARGS__); }
 
 extern DB_functions_t *deadbeef;
 
@@ -93,10 +97,15 @@ cache_cleaner_worker (void) {
         return;
     }
     struct dirent *entry;
+    char entry_path[PATH_MAX];
+
     while (!should_terminate() && (entry = readdir (covers_dir))) {
-        char entry_path[PATH_MAX];
-        sprintf (entry_path, "%s/%s", covers_path, entry->d_name);
         if (path_ok (entry->d_name)) {
+            if (sizeof (entry_path) < snprintf (entry_path, sizeof(entry_path), "%s/%s", covers_path, entry->d_name)) {
+                trace("artwork: cache cleaner entry_path buffer too small for path:\n%s/%s\n", covers_path, entry->d_name);
+                continue; // buffer too small
+            }
+
             // Test against the cache expiry time
             struct stat stat_buf;
             if (!stat (entry_path, &stat_buf)) {

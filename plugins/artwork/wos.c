@@ -33,6 +33,8 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(...)
 
+static const char WOS_URL[] = "http://worldofspectrum.org//scr2gif?file=pub/sinclair/screens/load/%c/scr/%s.scr";
+
 void
 strcopy_escape (char *dst, int d_len, const char *src, size_t n) {
     char *e = dst + d_len - 1;
@@ -46,7 +48,6 @@ strcopy_escape (char *dst, int d_len, const char *src, size_t n) {
     *dst = 0;
 }
 
-#define WOS_URL "http://worldofspectrum.org//scr2gif?file=pub/sinclair/screens/load/%c/scr/%s.scr"
 int fetch_from_wos (const char *title, const char *dest) {
     // extract game title from title
     char t[100];
@@ -59,9 +60,19 @@ int fetch_from_wos (const char *title, const char *dest) {
     }
 
     char *title_url = uri_escape(t, 0);
-    char url[sizeof(WOS_URL) + strlen(title_url)];
-    sprintf(url, WOS_URL, tolower(title_url[0]), title_url);
+    size_t url_size = strlen(WOS_URL) + strlen(title_url) + 1;
+
+    char *url = malloc (url_size);
+    snprintf(url, url_size, WOS_URL, tolower(title_url[0]), title_url);
+
     free(title_url);
+    title_url = NULL;
+
     trace("WOS request: %s\n", url);
-    return copy_file(url, dest);
+    int res = copy_file(url, dest);
+
+    free (url);
+    url = NULL;
+
+    return res;
 }
