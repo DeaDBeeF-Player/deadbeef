@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-14 18:59+0200\n"
+"POT-Creation-Date: 2022-10-28 17:18+0200\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>, 2010,2014\n"
 "Language-Team: Galician (http://www.transifex.com/deadbeef-player/deadbeef-player/language/gl/)\n"
@@ -20,88 +20,88 @@ msgstr ""
 "Language: gl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../main.c:129
+#: ../main.c:130
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "Uso: deadbeef [opcións] [--] [ficheiro(s)]\n\n"
 
-#: ../main.c:130
+#: ../main.c:131
 #, c-format
 msgid "Options:\n"
 msgstr "Opcións:\n"
 
-#: ../main.c:131
+#: ../main.c:132
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --help  ou  -h     Amosar a axuda (esta mensaxe) e saír\n"
 
-#: ../main.c:132
+#: ../main.c:133
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             Pechar o reprodutor\n"
 
-#: ../main.c:133
+#: ../main.c:134
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --version          Amosar a versión e saír\n"
 
-#: ../main.c:134
+#: ../main.c:135
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play             Iniciar a reprodución\n"
 
-#: ../main.c:135
+#: ../main.c:136
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop             Deter a reprodución\n"
 
-#: ../main.c:136
+#: ../main.c:137
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --pause            Pausar a reprodución\n"
 
-#: ../main.c:137
+#: ../main.c:138
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr "   --toggle-pause     Inverter a pausa\n"
 
-#: ../main.c:138
+#: ../main.c:139
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr "   --play-pause       Iniciar a reprodución se se detén, ou pola contra inverter a pausa\n"
 
-#: ../main.c:139
+#: ../main.c:140
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --next             Seguinte canción da lista de reprodución\n"
 
-#: ../main.c:140
+#: ../main.c:141
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --prev             Canción anterior da lista de reprodución\n"
 
-#: ../main.c:141
+#: ../main.c:142
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --random           Canción ao chou da lista de reprodución\n"
 
-#: ../main.c:142
+#: ../main.c:143
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "   --queue            Engadir ficheiro(s) á lista de reprodución existente\n"
 
-#: ../main.c:143
+#: ../main.c:144
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr "   --gui PLUGIN  indica que engadido  de interface de usuario usar, o predeterminado é «GTK2»\n\n"
 
-#: ../main.c:144
+#: ../main.c:145
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "   --nowplaying FMT   Amosar o nome da pista formatado por stdout\n"
 
-#: ../main.c:145
+#: ../main.c:146
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -109,83 +109,83 @@ msgid ""
 "                      copy[r]ight, [e]lapsed\n"
 msgstr "                      FMT %%-sintaxe: a: Artista, t: Título, b: Álbum,\n                      l: Duración, n: Pista, y: Ano, c: Comentario,\n                      r: Copyright, e: Tempo restante\n"
 
-#: ../main.c:148
+#: ../main.c:149
 #, c-format
 msgid ""
 "                      example: --nowplaying \"%%a - %%t\" should print "
 "\"artist - title\"\n"
 msgstr "                      exemplo: --nowplaying \"%%a - %%t\" imprimiría \"artista - título\"\n"
 
-#: ../main.c:149
+#: ../main.c:150
 #, c-format
 msgid "                      for more info, see %s\n"
 msgstr "para obter máis información, vexa %s\n"
 
-#: ../main.c:150
+#: ../main.c:151
 #, c-format
 msgid "                      NOTE: --nowplaying is deprecated.\n"
 msgstr "                      NOTA: --nowplaying está obsoleto.\n"
 
-#: ../main.c:151
+#: ../main.c:152
 #, c-format
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
 msgstr "   --nowplaying-tf FMT imprime o nome formatado da pista no stdout, usando o farmatado do novo título\n"
 
-#: ../main.c:152
+#: ../main.c:153
 #, c-format
 msgid ""
 "                      FMT syntax: http://github.com/DeaDBeeF-"
 "Player/deadbeef/wiki/Title-formatting-2.0\n"
 msgstr ""
 
-#: ../main.c:153
+#: ../main.c:154
 #, c-format
 msgid ""
 "                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
 "should print \"artist - title\"\n"
 msgstr "                      exemplo: --nowplaying-tf \"%%artist%% - %%title%%\" imprimiría \"artista - título\"\n"
 
-#: ../main.c:154
+#: ../main.c:155
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
 msgstr ""
 
-#: ../main.c:155
+#: ../main.c:156
 #, c-format
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
 msgstr ""
 
-#: ../main.c:156
+#: ../main.c:157
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
 msgstr ""
 
-#: ../main.c:157
+#: ../main.c:158
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
 msgstr ""
 
-#: ../main.c:158
+#: ../main.c:159
 #, c-format
 msgid ""
 "   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
 "send commands to deadbeef itself.\n"
 msgstr ""
 
-#: ../main.c:159
+#: ../main.c:160
 #, c-format
 msgid ""
 "                      To get plugin specific commands use --plugin=[PLUG] "
 "--help\n"
 msgstr ""
 
-#: ../main.c:160
+#: ../main.c:161
 #, c-format
 msgid ""
 "   --plugin-list      List all available plugins including indication for "
@@ -395,7 +395,7 @@ msgid "DSP Preset Editor"
 msgstr "Editor de axustes DSP"
 
 #: ../plugins/converter/converter.glade.h:48
-#: ../plugins/converter/convgui.c:1185 ../plugins/converter/convgui.c:1753
+#: ../plugins/converter/convgui.c:1195 ../plugins/converter/convgui.c:1763
 #: ../plugins/converter/interface.c:653 ../plugins/gtkui/deadbeef.glade.h:20
 #: ../plugins/gtkui/interface.c:259
 #: ../plugins/gtkui/playlist/mainplaylist.c:235
@@ -437,7 +437,7 @@ msgid "Select DSP Plugin"
 msgstr "Escolla o engadido DSP"
 
 #: ../plugins/converter/converter.glade.h:54
-#: ../plugins/converter/convgui.c:1489 ../plugins/converter/interface.c:797
+#: ../plugins/converter/convgui.c:1499 ../plugins/converter/interface.c:797
 #: ../plugins/gtkui/deadbeef.glade.h:204 ../plugins/gtkui/dspconfig.c:293
 #: ../plugins/gtkui/interface.c:4448
 msgid "Plugin"
@@ -473,78 +473,78 @@ msgstr "Produciuse un erro no convertedor"
 msgid "Converting..."
 msgstr "Convertendo"
 
-#: ../plugins/converter/convgui.c:693
+#: ../plugins/converter/convgui.c:703
 msgid "Select folder..."
 msgstr "Seleccionar cartafol"
 
-#: ../plugins/converter/convgui.c:959
+#: ../plugins/converter/convgui.c:969
 msgid "Failed to save encoder preset"
 msgstr "Produciuse un fallo ao gardar os axustes do codificador"
 
-#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
+#: ../plugins/converter/convgui.c:971 ../plugins/converter/convgui.c:1542
 msgid ""
 "Check preset folder permissions, try to pick different title, or free up "
 "some disk space"
 msgstr "Comprobe os permisos predeterminados do cartafol, tente escoller outro título, ou liberar algo de espazo no disco"
 
-#: ../plugins/converter/convgui.c:961 ../plugins/converter/convgui.c:1532
+#: ../plugins/converter/convgui.c:971 ../plugins/converter/convgui.c:1542
 msgid "Preset with the same name already exists. Try to pick another title."
 msgstr "Xa existe un axuste con este título. Tente escoller outro título."
 
-#: ../plugins/converter/convgui.c:962 ../plugins/converter/convgui.c:1533
+#: ../plugins/converter/convgui.c:972 ../plugins/converter/convgui.c:1543
 #: ../plugins/gtkui/ctmapping.c:203 ../plugins/gtkui/ctmapping.c:231
 #: ../plugins/gtkui/ctmapping.c:263
 msgid "Error"
 msgstr "Erro"
 
-#: ../plugins/converter/convgui.c:1016 ../plugins/converter/convgui.c:1160
+#: ../plugins/converter/convgui.c:1026 ../plugins/converter/convgui.c:1170
 msgid "Add new encoder"
 msgstr "Engadir un novo codificador"
 
-#: ../plugins/converter/convgui.c:1046
+#: ../plugins/converter/convgui.c:1056
 msgid "Edit encoder"
 msgstr "Editar o codificador"
 
-#: ../plugins/converter/convgui.c:1078 ../plugins/converter/convgui.c:1674
+#: ../plugins/converter/convgui.c:1088 ../plugins/converter/convgui.c:1684
 msgid "Remove preset"
 msgstr "Retirar o axuste"
 
-#: ../plugins/converter/convgui.c:1080 ../plugins/converter/convgui.c:1676
+#: ../plugins/converter/convgui.c:1090 ../plugins/converter/convgui.c:1686
 msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Esta acción elimina o axuste seleccionado. Está vostede seguro?"
 
-#: ../plugins/converter/convgui.c:1081 ../plugins/converter/convgui.c:1677
+#: ../plugins/converter/convgui.c:1091 ../plugins/converter/convgui.c:1687
 #: ../plugins/gtkui/gtkui.c:612 ../plugins/gtkui/gtkui.c:1709
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:71
 #: ../plugins/gtkui/prefwin/prefwin.c:142 ../plugins/gtkui/trkproperties.c:118
 msgid "Warning"
 msgstr "Aviso"
 
-#: ../plugins/converter/convgui.c:1175
+#: ../plugins/converter/convgui.c:1185
 msgid "Encoders"
 msgstr "Codificadores"
 
-#: ../plugins/converter/convgui.c:1250
+#: ../plugins/converter/convgui.c:1260
 msgid "Add plugin to DSP chain"
 msgstr "Engadir un «engadido» á cadea DSP"
 
-#: ../plugins/converter/convgui.c:1531
+#: ../plugins/converter/convgui.c:1541
 msgid "Failed to save DSP preset"
 msgstr "Non foi posíbel gardar o axuste DSP"
 
-#: ../plugins/converter/convgui.c:1595 ../plugins/converter/convgui.c:1640
+#: ../plugins/converter/convgui.c:1605 ../plugins/converter/convgui.c:1650
 msgid "New DSP Preset"
 msgstr "Novo axuste DSP"
 
-#: ../plugins/converter/convgui.c:1724
+#: ../plugins/converter/convgui.c:1734
 msgid "Edit DSP Preset"
 msgstr "Editar o axuste DSP"
 
-#: ../plugins/converter/convgui.c:1744
+#: ../plugins/converter/convgui.c:1754
 msgid "DSP Presets"
 msgstr "Axustes DSP"
 
-#: ../plugins/converter/convgui.c:1782 ../plugins/converter/convgui.c:1790
+#: ../plugins/converter/convgui.c:1792 ../plugins/converter/convgui.c:1800
 #: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:646
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/gtkui/interface.c:976
 #: ../translation/plugins.c:167
@@ -646,11 +646,11 @@ msgstr "Cambios en DeaDBeeF %s"
 msgid "DeaDBeeF Translators"
 msgstr "Tradutores de DeaDBeeF"
 
-#: ../plugins/gtkui/covermanager/albumartwidget.c:387
+#: ../plugins/gtkui/covermanager/albumartwidget.c:388
 msgid "Playing Track"
 msgstr ""
 
-#: ../plugins/gtkui/covermanager/albumartwidget.c:391
+#: ../plugins/gtkui/covermanager/albumartwidget.c:392
 msgid "Selected Track"
 msgstr ""
 
@@ -967,10 +967,14 @@ msgid "_Close"
 msgstr "_Pechar"
 
 #: ../plugins/gtkui/deadbeef.glade.h:68 ../plugins/gtkui/interface.c:1159
+#: ../plugins/gtkui/selpropertieswidget.c:96
+#: ../plugins/gtkui/selpropertieswidget.c:324
 msgid "Metadata"
 msgstr "Metadatos"
 
 #: ../plugins/gtkui/deadbeef.glade.h:69 ../plugins/gtkui/interface.c:1205
+#: ../plugins/gtkui/selpropertieswidget.c:92
+#: ../plugins/gtkui/selpropertieswidget.c:322
 msgid "Properties"
 msgstr "Propiedades"
 
@@ -2187,8 +2191,8 @@ msgstr "Iniciando..."
 msgid "Updating File Tags Progress"
 msgstr ""
 
-#: ../plugins/gtkui/rg.c:309 ../plugins/gtkui/trkproperties.c:417
-#: ../plugins/pltbrowser/pltbrowser.c:848
+#: ../plugins/gtkui/rg.c:309 ../plugins/gtkui/selpropertieswidget.c:310
+#: ../plugins/gtkui/trkproperties.c:417 ../plugins/pltbrowser/pltbrowser.c:848
 msgid "Name"
 msgstr "Nome"
 
@@ -2224,6 +2228,16 @@ msgstr ""
 msgid "Search [(%list_total% results)]"
 msgstr "Buscar [(%list_total% resultados)]"
 
+#: ../plugins/gtkui/selpropertieswidget.c:265 ../plugins/gtkui/widgets.c:2217
+#: ../plugins/pltbrowser/pltbrowser.c:804
+msgid "Show Column Headers"
+msgstr "Amosar as cabeceiras das columnas"
+
+#: ../plugins/gtkui/selpropertieswidget.c:312
+#: ../plugins/gtkui/trkproperties.c:418 ../plugins/gtkui/trkproperties.c:431
+msgid "Value"
+msgstr "Valor"
+
 #: ../plugins/gtkui/trkproperties.c:115
 msgid "You've modified data for this track."
 msgstr "Vostede modificou os datos desta pista."
@@ -2236,10 +2250,6 @@ msgstr "Ten certeza de que quere pechas esta xanela?"
 #: ../plugins/gtkui/trkproperties.c:255 ../plugins/gtkui/trkproperties.c:1042
 msgid "[Multiple values] "
 msgstr "[Valores múltiples] "
-
-#: ../plugins/gtkui/trkproperties.c:418 ../plugins/gtkui/trkproperties.c:431
-msgid "Value"
-msgstr "Valor"
 
 #: ../plugins/gtkui/trkproperties.c:430
 msgid "Key"
@@ -2353,10 +2363,6 @@ msgstr ""
 #: ../plugins/gtkui/widgets.c:1811
 msgid "Move Tab Right"
 msgstr ""
-
-#: ../plugins/gtkui/widgets.c:2217 ../plugins/pltbrowser/pltbrowser.c:804
-msgid "Show Column Headers"
-msgstr "Amosar as cabeceiras das columnas"
 
 #: ../plugins/gtkui/widgets.c:2753 ../plugins/gtkui/widgets.c:3244
 msgid "Rendering Mode"
