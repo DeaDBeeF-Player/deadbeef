@@ -145,4 +145,7 @@ junk_stars_from_popm_rating (uint8_t rating);
 uint8_t
 junk_popm_rating_from_stars (unsigned stars);
 
+void
+junk_make_tdrc_string(char *tdrc, size_t tdrc_size, int year, int month, int day, int hour, int minute);
+
 #endif // __JUNKLIB_H

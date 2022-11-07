@@ -236,4 +236,74 @@ _split_multivalue (char *text, size_t text_size);
     XCTAssertEqual(rating, 254);
 }
 
+- (void)test_junkMakeTdrcString_fullInput_validOutput {
+    char buffer[100];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, 55);
+
+    XCTAssertTrue(!strcmp(buffer, "2022-11-07-T16:55"));
+}
+
+- (void)test_junkMakeTdrcString_invalidHours_noTimeInOutput {
+    char buffer[100];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, -1, 55);
+
+    XCTAssertTrue(!strcmp(buffer, "2022-11-07"));
+}
+
+- (void)test_junkMakeTdrcString_invalidMinutes_noTimeInOutput {
+    char buffer[100];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, -1);
+
+    XCTAssertTrue(!strcmp(buffer, "2022-11-07"));
+}
+
+- (void)test_junkMakeTdrcString_zeroMinutes_validOutputWithTime {
+    char buffer[100];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, 00);
+
+    XCTAssertTrue(!strcmp(buffer, "2022-11-07-T16:00"));
+}
+
+- (void)test_junkMakeTdrcString_zeroHours_validOutputWithTime {
+    char buffer[100];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 00, 55);
+
+    XCTAssertTrue(!strcmp(buffer, "2022-11-07-T00:55"));
+}
+
+- (void)test_junkMakeTdrcString_invalidDay_emptyOutput {
+    char buffer[100];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, -1, 16, 55);
+
+    XCTAssertTrue(!strcmp(buffer, ""));
+}
+
+- (void)test_junkMakeTdrcString_invalidMonth_emptyOutput {
+    char buffer[100];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 0, 7, 16, 55);
+
+    XCTAssertTrue(!strcmp(buffer, ""));
+}
+
+- (void)test_junkMakeTdrcString_invalidYear_emptyOutput {
+    char buffer[100];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 0, 11, 7, 16, 55);
+
+    XCTAssertTrue(!strcmp(buffer, ""));
+}
+
+- (void)test_junkMakeTdrcString_bufferTooSmallForTime_outputClippedAtDateBoundary {
+    char buffer[12];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, 55);
+
+    XCTAssertTrue(!strcmp(buffer, "2022-11-07"));
+}
+
+- (void)test_junkMakeTdrcString_bufferTooSmallForDate_outputEmpty {
+    char buffer[5];
+    junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, 55);
+
+    XCTAssertTrue(!strcmp(buffer, ""));
+}
+
 @end
