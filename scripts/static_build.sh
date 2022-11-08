@@ -61,6 +61,8 @@ export OBJC=$AP/apgcc
     # store failed config.log in portable dir, which is mapped to
     # docker-artifacts when using docker.
     cp config.log ./portable/
+    cp config.h ./portable/
+    cp config.h.in ./portable/
     exit 1
 }
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
