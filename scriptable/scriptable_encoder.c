@@ -1,8 +1,10 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include "../deadbeef.h"
+#include "../common.h"
 #include "scriptable_encoder.h"
 #include "strdupa.h"
 
@@ -147,11 +149,51 @@ error:
 }
 
 static int
-scriptableEncoderPresetSaveAtPath(scriptableItem_t *item, char *path) {
+check_dir (const char *dir, mode_t mode)
+{
+    char *tmp = strdup (dir);
+    char *slash = tmp;
+    struct stat stat_buf;
+    do
+    {
+        slash = strstr (slash+1, "/");
+        if (slash)
+            *slash = 0;
+        if (-1 == stat (tmp, &stat_buf))
+        {
+            if (0 != mkdir (tmp, mode))
+            {
+                trace ("Failed to create %s\n", tmp);
+                free (tmp);
+                return 0;
+            }
+        }
+        if (slash)
+            *slash = '/';
+    } while (slash);
+    free (tmp);
+    return 1;
+}
+
+static int
+scriptableEncoderPresetSaveAtPath(scriptableItem_t *item, const char *path) {
     char temp_path[PATH_MAX];
     if (snprintf (temp_path, sizeof (temp_path), "%s.tmp", path) >= sizeof (temp_path)) {
         return -1;
     }
+
+    char *dir_path = strdup (path);
+    char *slash = strrchr (dir_path, '/');
+    if (slash) {
+        while (slash >= dir_path && *slash == '/') {
+            *slash-- = 0;
+        }
+
+        if (slash > dir_path) {
+            check_dir(dir_path, 0755);
+        }
+    }
+    free (dir_path);
 
     FILE *fp = fopen (temp_path, "w+b");
     if (!fp) {
