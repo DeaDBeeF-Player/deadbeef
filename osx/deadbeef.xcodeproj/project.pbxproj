@@ -1353,6 +1353,7 @@
 		2D69653C1D74338A00EB99D8 /* mp4tagutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6965381D74338A00EB99D8 /* mp4tagutil.h */; };
 		2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */; };
 		2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */; };
+		2D6DCB3E291B105D00D6ECE6 /* fastftoi.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6DCB3D291B105D00D6ECE6 /* fastftoi.h */; };
 		2D6E2CFA26AC157A008FCD4B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6E2CF926AC157A008FCD4B /* Accelerate.framework */; };
 		2D6E2CFC26AC1617008FCD4B /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6E2CF926AC157A008FCD4B /* Accelerate.framework */; };
 		2D6EC2AF1A42120100DD1C72 /* mp3.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6EC2A71A42076B00DD1C72 /* mp3.h */; };
@@ -5840,6 +5841,7 @@
 		2D6965381D74338A00EB99D8 /* mp4tagutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4tagutil.h; sourceTree = "<group>"; };
 		2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTableViewRightClickActivate.h; sourceTree = "<group>"; };
 		2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbTableViewRightClickActivate.m; sourceTree = "<group>"; };
+		2D6DCB3D291B105D00D6ECE6 /* fastftoi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastftoi.h; sourceTree = "<group>"; };
 		2D6E2CE726AC13DF008FCD4B /* fft_accelerate.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fft_accelerate.c; sourceTree = "<group>"; };
 		2D6E2CF926AC157A008FCD4B /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		2D6EC2A31A42068F00DD1C72 /* mp3_mad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3_mad.c; sourceTree = "<group>"; };
@@ -11998,6 +12000,7 @@
 				4D1B3EE31837EC44003E6066 /* dsppreset.h */,
 				2DA6F89B19A5332D002151EB /* escape.c */,
 				2DA6F89F19A53334002151EB /* escape.h */,
+				2D6DCB3D291B105D00D6ECE6 /* fastftoi.h */,
 				4D1B3EE71837EC44003E6066 /* fft.c */,
 				4D1B3EE81837EC44003E6066 /* fft.h */,
 				4D1B3EEA1837EC44003E6066 /* handler.c */,
@@ -14207,6 +14210,7 @@
 				2D9C0C25238DC2C100CE8C10 /* GroupByCustomWindowController.h in Headers */,
 				2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */,
 				2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */,
+				2D6DCB3E291B105D00D6ECE6 /* fastftoi.h in Headers */,
 				2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */,
 				2DB951CB26B1E05300602876 /* SpectrumAnalyzerSettings.h in Headers */,
 				2DAB1A3026A5FB9C00EA8B8F /* PreferencesPluginEntry.h in Headers */,
