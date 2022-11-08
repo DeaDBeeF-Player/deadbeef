@@ -363,6 +363,7 @@ pcm_write_samples_32_to_float (const ddb_waveformat_t * restrict inputfmt, const
 static inline void
 pcm_write_samples_float_to_8 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     fpu_control ctl = 0;
+    (void)ctl;
     fpu_setround (&ctl);
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < outputfmt->channels; c++) {
@@ -389,6 +390,7 @@ pcm_write_samples_float_to_8 (const ddb_waveformat_t * restrict inputfmt, const 
 static inline void
 pcm_write_samples_float_to_16 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     fpu_control ctl = 0;
+    (void)ctl;
     fpu_setround (&ctl);
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < outputfmt->channels; c++) {
@@ -415,6 +417,7 @@ pcm_write_samples_float_to_16 (const ddb_waveformat_t * restrict inputfmt, const
 static inline void
 pcm_write_samples_float_to_24 (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int nsamples, int * restrict channelmap, int outputsamplesize) {
     fpu_control ctl = 0;
+    (void)ctl;
     fpu_setround (&ctl);
     for (int s = 0; s < nsamples; s++) {
         for (int c = 0; c < outputfmt->channels; c++) {
