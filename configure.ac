@@ -163,6 +163,18 @@ AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
 dnl check for log2
 AC_CHECK_LIB([m], [log2], AC_DEFINE([HAVE_LOG2], [], [Define to 1 if the system has log2 in libm]))
 
+dnl check for mkstemps
+dnl AC_DEFINE_UNQUOTED([HAVE_MKSTEMPS], [0], [Define if mkstemps is available])
+AC_CACHE_CHECK([for mkstemps],
+xpdf_cv_func_mkstemps,
+[AC_TRY_LINK([#include <stdlib.h>
+#include <unistd.h>],
+[mkstemps("foo", 0);],
+xpdf_cv_func_mkstemps=yes, xpdf_cv_func_mkstemps=no)])
+if test "$xpdf_cv_func_mkstemps" = yes; then
+  AC_DEFINE(HAVE_MKSTEMPS, 1, [Define to 1 if you have the `mkstemps' function.])
+fi
+
 dnl check for libdl
 AC_CHECK_LIB([dl], [main], [HAVE_DL=yes;DL_LIBS="-ldl";AC_SUBST(DL_LIBS)])
 

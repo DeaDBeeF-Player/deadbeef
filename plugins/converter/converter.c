@@ -1323,6 +1323,26 @@ _converter_write_tags (ddb_encoder_preset_t *encoder_preset, DB_playItem_t *it, 
 }
 
 static int
+ddb_mktemp(char *template, size_t template_size, char *suffix) {
+#if PORTABLE || defined(_WIN32) || !HAVE_MKSTEMPS
+    // This codepath should only be used when building with older LIBC
+    // which doesn't support mkstemps,
+    // such as glibc < 2.19 or MSVCRT.
+    (void)mktemp (template);
+    strncat(template, suffix, template_size);
+    return open(template,
+                O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC | _O_BINARY,
+                S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+#else
+    // Here, we would like to use mkstemp for better compatibility,
+    // but we want to have the file extension,
+    // to avoid confusing external command line encoders.
+    strncat(template, suffix, template_size);
+    return mkstemps(template, (int)strlen (suffix));
+#endif
+}
+
+static int
 convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out, int *pabort) {
     int output_bps = settings->output_bps;
     int output_is_float = settings->output_is_float;
@@ -1408,8 +1428,11 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
                             tmp = "/tmp";
                         }
                         snprintf (input_file_name, sizeof (input_file_name), "%s/ddbconvXXXXXX", tmp);
-                        (void)mktemp (input_file_name);
-                        strcat (input_file_name, ".wav");
+                        temp_file = ddb_mktemp(input_file_name, sizeof(input_file_name), ".wav");
+                        if (temp_file == -1) {
+                            trace ("Failed to open temp file %s\n", input_file_name);
+                            goto error;
+                        }
                     }
                         break;
                     case DDB_ENCODER_METHOD_PIPE:
@@ -1435,7 +1458,10 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
                     }
                 }
                 else if (encoder_preset->method == DDB_ENCODER_METHOD_FILE) {
-                    temp_file = open (input_file_name, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC | _O_BINARY, wrmode);
+                    // File should have been opened already
+                    if (temp_file == -1) {
+                        temp_file = open (input_file_name, O_LARGEFILE | O_WRONLY | O_CREAT | O_TRUNC | _O_BINARY, wrmode);
+                    }
                     if (temp_file == -1) {
                         trace ("Failed to open temp file %s\n", input_file_name);
                         goto error;
