@@ -229,16 +229,14 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
     int nalb = 0;
     int nart = 0;
     int ngnr = 0;
-    int nfld = 0;
     ml_string_t *s;
     for (s = scanner->db.albums.head; s; s = s->next, nalb++);
     for (s = scanner->db.artists.head; s; s = s->next, nart++);
     for (s = scanner->db.genres.head; s; s = s->next, ngnr++);
-    //    for (s = db.folders.head; s; s = s->next, nfld++);
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
-    fprintf (stderr, "index build time: %f seconds (%d albums, %d artists, %d genres, %d folders)\n", ms / 1000.f, nalb, nart, ngnr, nfld);
+    fprintf (stderr, "index build time: %f seconds (%d albums, %d artists, %d genres)\n", ms / 1000.f, nalb, nart, ngnr);
 }
 
 static int

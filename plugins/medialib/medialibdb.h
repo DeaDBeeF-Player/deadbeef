@@ -99,7 +99,6 @@ typedef struct {
     ml_collection_t albums;
     ml_collection_t artists;
     ml_collection_t genres;
-    //collection_t folders;
 
     // for the folders, a tree structure is used
     ml_tree_node_t *folders_tree;
