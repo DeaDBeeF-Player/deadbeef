@@ -55,7 +55,6 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ml_tree_ite
 
     default_field_value = deadbeef->metacache_add_string (default_field_value);
 
-    ml_string_t *album = source->db.albums.head;
     char text[1024];
 
     char *tf = NULL;
@@ -65,7 +64,7 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ml_tree_ite
 
     ml_tree_item_t *root_tail = NULL;
 
-    for (int i = 0; i < source->db.albums.count; i++, album = album->next) {
+    for (ml_string_t *album = source->db.albums.head; album != NULL; album = album->next) {
         if (!album->items_count) {
             continue;
         }

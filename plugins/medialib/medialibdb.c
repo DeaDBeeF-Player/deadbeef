@@ -145,7 +145,6 @@ ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb
         else {
             coll->tail = coll->head = s;
         }
-        coll->count++;
     }
     if (need_unref) {
         deadbeef->metacache_remove_string (c);

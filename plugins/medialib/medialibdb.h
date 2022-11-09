@@ -67,7 +67,6 @@ typedef struct {
 
     ml_string_t *head; // a list of all names
     ml_string_t *tail;
-    int count;
 } ml_collection_t;
 
 typedef struct ml_entry_s {
