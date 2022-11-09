@@ -35,19 +35,40 @@ typedef struct ml_collection_item_s {
     struct ml_collection_item_s *next; // next item in the same collection (albums, artists, ...)
 } ml_collection_item_t;
 
+// A string with associated "collection_items", stored as a hash and as a list.
+// Basically, this is the "tree node".
 typedef struct ml_string_s {
     uint64_t row_id; // a unique ID of the item, which is valid only during single session (will be different after deadbeef restarts)
 
     const char *text;
-    ml_collection_item_t *items;
-    int items_count;
-    ml_collection_item_t *items_tail;
-    struct ml_string_s *bucket_next;
-    struct ml_string_s *next;
 
-    struct ml_tree_item_s *coll_item; // The item associated with collection string, used while building a list
-    struct ml_tree_item_s *coll_item_tail; // Tail of the children list of coll_item, used while building a list
+    ml_collection_item_t *items; // list of all leaf items (tracks) in this node (e.g. all tracks in an album)
+    ml_collection_item_t *items_tail; // tail, for fast append
+    int items_count; // count of items
+
+    struct ml_string_s *bucket_next; // next node in a hash bucket
+    struct ml_string_s *next; // next node in a list
+
+    // to support tree hierarchy
+    struct ml_string_s *children;
+    struct ml_string_s *children_tail;
+
+    // Note: this is "temporary state" stuff, used when processing a tree query
+    struct ml_tree_item_s *coll_item; // The item associated with collection string
+    struct ml_tree_item_s *coll_item_tail; // Tail of the children list of coll_item
 } ml_string_t;
+
+#define ML_HASH_SIZE 4096
+
+// This is the collection "container" -- that is, a list of ml_strings + a hash table.
+// FIXME: it should be enough to have only root ml_string here
+typedef struct {
+    ml_string_t *hash[ML_HASH_SIZE]; // hash table, for quick lookup by name (pointer-based hash)
+
+    ml_string_t *head; // a list of all names
+    ml_string_t *tail;
+    int count;
+} ml_collection_t;
 
 typedef struct ml_entry_s {
     const char *file;
@@ -67,24 +88,6 @@ typedef struct ml_cached_string_s {
     struct ml_cached_string_s *next;
 } ml_cached_string_t;
 
-#define ML_HASH_SIZE 4096
-
-// a list of unique names in collection, as a list, and as a hash, with each item associated with list of tracks
-typedef struct {
-    ml_string_t *hash[ML_HASH_SIZE];
-    ml_string_t *head;
-    ml_string_t *tail;
-    int count;
-} ml_collection_t;
-
-typedef struct ml_tree_node_s {
-    uint64_t row_id;
-    const char *text;
-    ml_collection_item_t *items;
-    struct ml_tree_node_s *next;
-    struct ml_tree_node_s *children;
-} ml_tree_node_t;
-
 typedef struct {
     // Plain list of all tracks in the entire collection
     // The purpose is to hold references to all metadata strings, used by the DB
@@ -101,7 +104,7 @@ typedef struct {
     ml_collection_t genres;
 
     // for the folders, a tree structure is used
-    ml_tree_node_t *folders_tree;
+    ml_collection_t folders_tree;
 
     // This hash is formed from track_uri ([%:TRACKNUM%#]%:URI%), and supposed to have all tracks from the `tracks` list
     // Main purpose is to find a library instance of a track for given track pointer
@@ -131,17 +134,11 @@ ml_free_col (ml_db_t *db, ml_collection_t *coll);
 ml_string_t *
 ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id);
 
-ml_tree_node_t *
-_tree_node_alloc (ml_db_t *db, uint64_t use_this_row_id);
-
-void
-_tree_node_free (ml_db_t *db, ml_tree_node_t *node);
-
 void
 _reuse_row_ids (ml_collection_t *coll, const char *coll_name, ddb_playItem_t *item, ml_collection_state_t *state, ml_collection_state_t *saved_state, uint64_t *coll_rowid, uint64_t *item_rowid);
 
 void
-ml_reg_item_in_folder (ml_db_t *db, ml_tree_node_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id);
+ml_reg_item_in_folder (ml_db_t *db, ml_string_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id);
 
 void
 ml_db_free (ml_db_t *db);

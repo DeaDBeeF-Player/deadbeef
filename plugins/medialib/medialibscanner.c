@@ -52,8 +52,8 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
 
     char folder[PATH_MAX];
 
-    scanner->db.folders_tree = _tree_node_alloc(&scanner->db, UINT64_MAX); // FIXME
-    scanner->db.folders_tree->text = deadbeef->metacache_add_string ("");
+    // dummy root folder
+    ml_reg_col(&scanner->db, &scanner->db.folders_tree, "", NULL, UINT64_MAX, UINT64_MAX);
 
     int has_unknown_artist = 0;
     int has_unknown_album = 0;
@@ -163,7 +163,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         const char *s = deadbeef->metacache_add_string (folder);
 
         // add to tree
-        ml_reg_item_in_folder (&scanner->db, scanner->db.folders_tree, s, it, UINT64_MAX); // FIXME
+        ml_reg_item_in_folder (&scanner->db, scanner->db.folders_tree.head, s, it, UINT64_MAX); // FIXME
 
         deadbeef->metacache_remove_string (s);
 

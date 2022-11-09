@@ -260,14 +260,14 @@ get_list_of_tracks_for_album (ml_tree_item_t *libitem, ml_string_t *album, int s
 }
 
 static void
-get_subfolders_for_folder (ml_tree_item_t *folderitem, ml_tree_node_t *folder, int selected) {
+get_subfolders_for_folder (ml_tree_item_t *folderitem, ml_string_t *folder, int selected) {
     if (!folderitem->text) {
         folderitem->text = deadbeef->metacache_add_string (folder->text);
     }
 
     ml_tree_item_t *tail = NULL;
     if (folder->children) {
-        for (ml_tree_node_t *c = folder->children; c; c = c->next) {
+        for (ml_string_t *c = folder->children; c; c = c->next) {
             ml_tree_item_t *subfolder = _tree_item_alloc(folder->row_id);
             get_subfolders_for_folder (subfolder, c, selected);
             if (subfolder->num_children > 0) {
@@ -341,7 +341,7 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
     }
 
     if (index == SEL_FOLDERS) {
-        get_subfolders_for_folder(root, source->db.folders_tree, selected);
+        get_subfolders_for_folder(root, source->db.folders_tree.head, selected);
     }
     else if (index == SEL_ARTISTS) {
         // list of albums for artist

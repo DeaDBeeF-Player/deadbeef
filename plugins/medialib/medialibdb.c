@@ -84,27 +84,14 @@ _ml_string_alloc (ml_db_t *db, uint64_t use_this_rowid) {
 
 static void
 _ml_string_free (ml_db_t *db, ml_string_t *s) {
+    ml_string_t *c = s->children;
+    while (c != NULL) {
+        ml_string_t *next = c->next;
+        _ml_string_free(db, c);
+        c = next;
+    }
     ml_item_state_remove (&db->state, s->row_id);
     free (s);
-}
-
-
-ml_tree_node_t *
-_tree_node_alloc (ml_db_t *db, uint64_t use_this_row_id) {
-    ml_tree_node_t *node = calloc (1, sizeof(ml_tree_node_t));
-    if (use_this_row_id != UINT64_MAX) {
-        node->row_id = use_this_row_id;
-    }
-    else {
-        node->row_id = ++db->row_id;
-    }
-    return node;
-}
-
-void
-_tree_node_free (ml_db_t *db, ml_tree_node_t *node) {
-    ml_item_state_remove (&db->state, node->row_id);
-    free (node);
 }
 
 #pragma mark -
@@ -194,7 +181,7 @@ ml_free_col (ml_db_t *db, ml_collection_t *coll) {
 
 // path is relative to root
 void
-ml_reg_item_in_folder (ml_db_t *db, ml_tree_node_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id) {
+ml_reg_item_in_folder (ml_db_t *db, ml_string_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id) {
     if (*path == 0) {
         // leaf -- add to the node
         ml_collection_item_t *item = _collection_item_alloc (db, use_this_row_id);
@@ -224,7 +211,7 @@ ml_reg_item_in_folder (ml_db_t *db, ml_tree_node_t *node, const char *path, ddb_
     }
 
     // node -- find existing child node with this name
-    for (ml_tree_node_t *c = node->children; c; c = c->next) {
+    for (ml_string_t *c = node->children; c; c = c->next) {
         if (!strncmp (c->text, path, len)) {
             // found, recurse
             path += len + 1;
@@ -234,14 +221,15 @@ ml_reg_item_in_folder (ml_db_t *db, ml_tree_node_t *node, const char *path, ddb_
     }
 
     // not found, start new branch
-    ml_tree_node_t *n =  _tree_node_alloc (db, UINT64_MAX); // FIXME
-    ml_tree_node_t *tail = NULL;
-    for (tail = node->children; tail && tail->next; tail = tail->next);
+    ml_string_t *n = _ml_string_alloc(db, UINT64_MAX); // FIXME: rowid
+    ml_string_t *tail = node->children_tail;
     if (tail) {
         tail->next = n;
+        node->children_tail = n;
     }
     else {
         node->children = n;
+        node->children_tail = n;
     }
 
     char temp[len+1];
@@ -253,28 +241,6 @@ ml_reg_item_in_folder (ml_db_t *db, ml_tree_node_t *node, const char *path, ddb_
     ml_reg_item_in_folder (db, n, path, it, use_this_row_id);
 }
 
-static void
-ml_free_tree (ml_db_t *db, ml_tree_node_t *node) {
-    while (node->children) {
-        ml_tree_node_t *next = node->children->next;
-        ml_free_tree (db, node->children);
-        node->children = next;
-    }
-
-    while (node->items) {
-        ml_collection_item_t *next = node->items->next;
-        deadbeef->pl_item_unref (node->items->it);
-        _collection_item_free (db, node->items);
-        node->items = next;
-    }
-
-    if (node->text) {
-        deadbeef->metacache_remove_string (node->text);
-    }
-
-    _tree_node_free (db, node);
-}
-
 void
 ml_db_free (ml_db_t *db) {
     fprintf (stderr, "clearing index...\n");
@@ -284,12 +250,7 @@ ml_db_free (ml_db_t *db) {
     ml_free_col(db, &db->artists);
     ml_free_col(db, &db->genres);
     ml_free_col(db, &db->track_uris);
-
-    while (db->folders_tree) {
-        ml_tree_node_t *next = db->folders_tree->next;
-        ml_free_tree (db, db->folders_tree);
-        db->folders_tree = next;
-    }
+    ml_free_col(db, &db->folders_tree);
 
     while (db->tracks) {
         ml_entry_t *next = db->tracks->next;
