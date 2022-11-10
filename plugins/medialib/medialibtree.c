@@ -64,7 +64,7 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ml_tree_ite
 
     ml_tree_item_t *root_tail = NULL;
 
-    for (ml_string_t *album = source->db.albums.head; album != NULL; album = album->next) {
+    for (ml_string_t *album = source->db.albums.root.children; album != NULL; album = album->next) {
         if (!album->items_count) {
             continue;
         }
@@ -97,7 +97,7 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ml_tree_ite
         // Find the bucket of this album - e.g. a genre or an artist
         // NOTE: multiple albums may belong to the same bucket
         ml_string_t *s = NULL;
-        for (s = coll->head; s; s = s->next) {
+        for (s = coll->root.children; s; s = s->next) {
             if (track_field == s->text) {
                 break;
             }
@@ -333,14 +333,14 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
 
     // make sure no dangling pointers from the previous run
     if (coll) {
-        for (ml_string_t *s = coll->head; s; s = s->next) {
+        for (ml_string_t *s = coll->root.children; s; s = s->next) {
             s->coll_item = NULL;
             s->coll_item_tail = NULL;
         }
     }
 
     if (index == SEL_FOLDERS) {
-        get_subfolders_for_folder(root, source->db.folders_tree.head, selected);
+        get_subfolders_for_folder(root, &source->db.folders_tree.root, selected);
     }
     else if (index == SEL_ARTISTS) {
         // list of albums for artist
@@ -354,7 +354,7 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
         // list of tracks for album
         ml_tree_item_t *tail = NULL;
         ml_tree_item_t *parent = root;
-        for (ml_string_t *s = coll->head; s; s = s->next) {
+        for (ml_string_t *s = coll->root.children; s; s = s->next) {
             ml_tree_item_t *item = _tree_item_alloc (s->row_id);
 
             get_list_of_tracks_for_album (item, s, selected);
@@ -378,7 +378,7 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
 
     // cleanup
     if (coll) {
-        for (ml_string_t *s = coll->head; s; s = s->next) {
+        for (ml_string_t *s = coll->root.children; s; s = s->next) {
             s->coll_item = NULL;
             s->coll_item_tail = NULL;
         }

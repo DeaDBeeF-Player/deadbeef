@@ -83,14 +83,33 @@ _ml_string_alloc (ml_db_t *db, uint64_t use_this_rowid) {
 }
 
 static void
-_ml_string_free (ml_db_t *db, ml_string_t *s) {
+_ml_string_free (ml_db_t *db, ml_string_t *s);
+
+static void
+_ml_string_deinit(ml_db_t *db, ml_string_t *s) {
     ml_string_t *c = s->children;
     while (c != NULL) {
         ml_string_t *next = c->next;
         _ml_string_free(db, c);
         c = next;
     }
+    while (s->items) {
+        ml_collection_item_t *next = s->items->next;
+        deadbeef->pl_item_unref (s->items->it);
+        _collection_item_free (db, s->items);
+        s->items = next;
+    }
+
+    if (s->text) {
+        deadbeef->metacache_remove_string (s->text);
+    }
     ml_item_state_remove (&db->state, s->row_id);
+    memset (s, 0, sizeof (ml_string_t));
+}
+
+static void
+_ml_string_free (ml_db_t *db, ml_string_t *s) {
+    _ml_string_deinit(db, s);
     free (s);
 }
 
@@ -137,13 +156,14 @@ ml_string_t *
 ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id) {
     int need_unref = 0;
     ml_string_t *s = hash_add (db, coll->hash, c, it, coll_row_id, item_row_id);
+
     if (s) {
-        if (coll->tail) {
-            coll->tail->next = s;
-            coll->tail = s;
+        if (coll->root.children_tail) {
+            coll->root.children_tail->next = s;
+            coll->root.children_tail = s;
         }
         else {
-            coll->tail = coll->head = s;
+            coll->root.children_tail = coll->root.children = s;
         }
     }
     if (need_unref) {
@@ -154,28 +174,8 @@ ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb
 
 void
 ml_free_col (ml_db_t *db, ml_collection_t *coll) {
-    ml_string_t *s = coll->head;
-    while (s) {
-        ml_string_t *next = s->next;
-
-        while (s->items) {
-            ml_collection_item_t *next = s->items->next;
-            deadbeef->pl_item_unref (s->items->it);
-            _collection_item_free (db, s->items);
-            s->items = next;
-        }
-
-        if (s->text) {
-            deadbeef->metacache_remove_string (s->text);
-        }
-
-
-        _ml_string_free (db, s);
-        s = next;
-    }
+    _ml_string_deinit(db, &coll->root);
     memset (coll->hash, 0, sizeof (coll->hash));
-    coll->head = NULL;
-    coll->tail = NULL;
 }
 
 // path is relative to root

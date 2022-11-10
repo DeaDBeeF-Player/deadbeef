@@ -52,9 +52,6 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
 
     char folder[PATH_MAX];
 
-    // dummy root folder
-    ml_reg_col(&scanner->db, &scanner->db.folders_tree, "", NULL, UINT64_MAX, UINT64_MAX);
-
     int has_unknown_artist = 0;
     int has_unknown_album = 0;
     int has_unknown_genre = 0;
@@ -163,7 +160,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         const char *s = deadbeef->metacache_add_string (folder);
 
         // add to tree
-        ml_reg_item_in_folder (&scanner->db, scanner->db.folders_tree.head, s, it, UINT64_MAX); // FIXME
+        ml_reg_item_in_folder (&scanner->db, &scanner->db.folders_tree.root, s, it, UINT64_MAX); // FIXME
 
         deadbeef->metacache_remove_string (s);
 
@@ -230,9 +227,9 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
     int nart = 0;
     int ngnr = 0;
     ml_string_t *s;
-    for (s = scanner->db.albums.head; s; s = s->next, nalb++);
-    for (s = scanner->db.artists.head; s; s = s->next, nart++);
-    for (s = scanner->db.genres.head; s; s = s->next, ngnr++);
+    for (s = scanner->db.albums.root.children; s; s = s->next, nalb++);
+    for (s = scanner->db.artists.root.children; s; s = s->next, nart++);
+    for (s = scanner->db.genres.root.children; s; s = s->next, ngnr++);
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 

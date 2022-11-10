@@ -60,13 +60,10 @@ typedef struct ml_string_s {
 
 #define ML_HASH_SIZE 4096
 
-// This is the collection "container" -- that is, a list of ml_strings + a hash table.
-// FIXME: it should be enough to have only root ml_string here
+// This is the collection "container" -- that is, item tree with a hash table.
 typedef struct {
     ml_string_t *hash[ML_HASH_SIZE]; // hash table, for quick lookup by name (pointer-based hash)
-
-    ml_string_t *head; // a list of all names
-    ml_string_t *tail;
+    ml_string_t root;
 } ml_collection_t;
 
 typedef struct ml_entry_s {
