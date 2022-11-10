@@ -263,13 +263,6 @@ ml_db_free (ml_db_t *db) {
         db->tracks = next;
     }
 
-    while (db->cached_strings) {
-        ml_cached_string_t *next = db->cached_strings->next;
-        deadbeef->metacache_remove_string (db->cached_strings->s);
-        free (db->cached_strings);
-        db->cached_strings = next;
-    }
-
     memset (db, 0, sizeof (ml_db_t));
 }
 

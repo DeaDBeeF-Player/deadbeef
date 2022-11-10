@@ -80,11 +80,6 @@ typedef struct ml_entry_s {
     struct ml_entry_s *bucket_next;
 } ml_entry_t;
 
-typedef struct ml_cached_string_s {
-    const char *s;
-    struct ml_cached_string_s *next;
-} ml_cached_string_t;
-
 typedef struct {
     // Plain list of all tracks in the entire collection
     // The purpose is to hold references to all metadata strings, used by the DB
@@ -104,9 +99,6 @@ typedef struct {
     // This hash is formed from track_uri ([%:TRACKNUM%#]%:URI%), and supposed to have all tracks from the `tracks` list
     // Main purpose is to find a library instance of a track for given track pointer
     ml_collection_t track_uris;
-
-    // list of all strings which are not referenced by tracks
-    ml_cached_string_t *cached_strings;
 
     /// Selected / expanded state
     ml_collection_state_t state;
