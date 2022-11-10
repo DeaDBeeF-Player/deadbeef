@@ -72,13 +72,6 @@ typedef struct {
 
 typedef struct ml_entry_s {
     const char *file;
-    const char *title;
-    int subtrack;
-    ml_string_t *artist;
-    ml_string_t *album;
-    ml_string_t *genre;
-    ml_string_t *folder;
-    ml_string_t *track_uri;
     struct ml_entry_s *bucket_next;
 } ml_entry_t;
 

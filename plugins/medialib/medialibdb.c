@@ -255,9 +255,6 @@ ml_db_free (ml_db_t *db) {
         ml_entry_t *en = db->filename_hash[i];
         while (en) {
             ml_entry_t *next = en->bucket_next;
-            if (en->title) {
-                deadbeef->metacache_remove_string (en->title);
-            }
             if (en->file) {
                 deadbeef->metacache_remove_string (en->file);
             }

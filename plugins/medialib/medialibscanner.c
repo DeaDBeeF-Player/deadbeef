@@ -126,27 +126,26 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
 
         uint64_t coll_row_id, item_row_id;
         _reuse_row_ids(&scanner->source->db.albums, album, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_string_t *alb = ml_reg_col (&scanner->db, &scanner->db.albums, album, it, coll_row_id, item_row_id);
+        ml_reg_col (&scanner->db, &scanner->db.albums, album, it, coll_row_id, item_row_id);
 
         deadbeef->metacache_remove_string (album);
         album = NULL;
 
         _reuse_row_ids(&scanner->source->db.artists, artist, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_string_t *art = ml_reg_col (&scanner->db, &scanner->db.artists, artist, it, coll_row_id, item_row_id);
+        ml_reg_col (&scanner->db, &scanner->db.artists, artist, it, coll_row_id, item_row_id);
 
         _reuse_row_ids(&scanner->source->db.genres, genre, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_string_t *gnr = ml_reg_col (&scanner->db, &scanner->db.genres, genre, it, coll_row_id, item_row_id);
+        ml_reg_col (&scanner->db, &scanner->db.genres, genre, it, coll_row_id, item_row_id);
 
         const char *cached_string = deadbeef->metacache_add_string (uri);
 
         _reuse_row_ids(&scanner->source->db.track_uris, cached_string, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_string_t *trkuri = ml_reg_col (&scanner->db, &scanner->db.track_uris, cached_string, it, coll_row_id, item_row_id);
+        ml_reg_col (&scanner->db, &scanner->db.track_uris, cached_string, it, coll_row_id, item_row_id);
 
         deadbeef->metacache_remove_string (cached_string);
         cached_string = NULL;
 
         char *fn = strrchr (reluri, '/');
-        ml_string_t *fld = NULL;
         if (fn) {
             memcpy (folder, reluri, fn-reluri);
             folder[fn-reluri] = 0;
@@ -166,18 +165,6 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         if (title) {
             deadbeef->metacache_add_string (title);
         }
-        if (deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK) {
-            en->subtrack = deadbeef->pl_find_meta_int (it, ":TRACKNUM", -1);
-        }
-        else {
-            en->subtrack = -1;
-        }
-        en->title = title;
-        en->artist = art;
-        en->album = alb;
-        en->genre = gnr;
-        en->folder = fld;
-        en->track_uri = trkuri;
 
         // add to the hash table
         // at this point, we only have unique pointers, and don't need a duplicate check
