@@ -142,6 +142,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         ml_cached_string_t *cs = calloc (1, sizeof (ml_cached_string_t));
         cs->s = deadbeef->metacache_add_string (uri);
         cs->next = scanner->db.cached_strings;
+//        scanner->db.cached_strings = cs;
 
         _reuse_row_ids(&scanner->source->db.track_uris, cs->s, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
         ml_string_t *trkuri = ml_reg_col (&scanner->db, &scanner->db.track_uris, cs->s, it, coll_row_id, item_row_id);
@@ -160,7 +161,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         const char *s = deadbeef->metacache_add_string (folder);
 
         // add to tree
-        ml_reg_item_in_folder (&scanner->db, &scanner->db.folders_tree.root, s, it, UINT64_MAX); // FIXME
+        ml_reg_item_in_folder (&scanner->db, &scanner->db.folders.root, s, it, UINT64_MAX); // FIXME: assign row_id
 
         deadbeef->metacache_remove_string (s);
 

@@ -181,6 +181,7 @@ ml_free_source (ddb_mediasource_source_t _source) {
     if (source->ml_playlist) {
         printf ("free medialib database\n");
         deadbeef->plt_free (source->ml_playlist);
+        ml_db_free(&source->db);
     }
 
     if (source->musicpaths_json) {

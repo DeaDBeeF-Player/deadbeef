@@ -61,6 +61,7 @@ typedef struct ml_string_s {
 #define ML_HASH_SIZE 4096
 
 // This is the collection "container" -- that is, item tree with a hash table.
+// It's used to store a tree of items, based on certain arbitrary criteria -- e.g. by Albums, or by Folders.
 typedef struct {
     ml_string_t *hash[ML_HASH_SIZE]; // hash table, for quick lookup by name (pointer-based hash)
     ml_string_t root;
@@ -98,9 +99,7 @@ typedef struct {
     ml_collection_t albums;
     ml_collection_t artists;
     ml_collection_t genres;
-
-    // for the folders, a tree structure is used
-    ml_collection_t folders_tree;
+    ml_collection_t folders;
 
     // This hash is formed from track_uri ([%:TRACKNUM%#]%:URI%), and supposed to have all tracks from the `tracks` list
     // Main purpose is to find a library instance of a track for given track pointer

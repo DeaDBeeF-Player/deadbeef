@@ -249,7 +249,7 @@ ml_db_free (ml_db_t *db) {
     ml_free_col(db, &db->artists);
     ml_free_col(db, &db->genres);
     ml_free_col(db, &db->track_uris);
-    ml_free_col(db, &db->folders_tree);
+    ml_free_col(db, &db->folders);
 
     while (db->tracks) {
         ml_entry_t *next = db->tracks->next;

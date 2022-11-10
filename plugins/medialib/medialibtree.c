@@ -340,7 +340,7 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
     }
 
     if (index == SEL_FOLDERS) {
-        get_subfolders_for_folder(root, &source->db.folders_tree.root, selected);
+        get_subfolders_for_folder(root, &source->db.folders.root, selected);
     }
     else if (index == SEL_ARTISTS) {
         // list of albums for artist
