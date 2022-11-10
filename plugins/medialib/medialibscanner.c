@@ -62,11 +62,9 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
 
     for (int i = 0; i < scanner->track_count && (!can_terminate || !scanner->source->scanner_terminate); i++) {
         ddb_playItem_t *it = scanner->tracks[i];
-        ml_filename_hash_item_t *en = calloc (1, sizeof (ml_filename_hash_item_t));
 
         const char *uri = deadbeef->pl_find_meta (it, ":URI");
 
-        const char *title = deadbeef->pl_find_meta (it, "title");
         const char *artist = deadbeef->pl_find_meta (it, "artist");
 
         if (!artist) {
@@ -95,7 +93,6 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         }
         if (!reluri) {
             // uri doesn't match musicdir, skip
-            free (en);
             continue;
         }
         // Get a combined cached artist/album string
@@ -158,13 +155,11 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         // add to tree
         ml_reg_item_in_folder (&scanner->db, &scanner->db.folders.root, s, it, UINT64_MAX); // FIXME: assign row_id
 
-        // uri and title are not indexed, only a part of track list,
+        // uri is not indexed, but referenced by the filename hash
         // that's why they have an extra ref for each entry
         deadbeef->metacache_add_string (uri);
+        ml_filename_hash_item_t *en = calloc (1, sizeof (ml_filename_hash_item_t));
         en->file = uri;
-        if (title) {
-            deadbeef->metacache_add_string (title);
-        }
 
         // add to the hash table
         // at this point, we only have unique pointers, and don't need a duplicate check
