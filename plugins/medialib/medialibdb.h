@@ -76,8 +76,9 @@ typedef struct ml_entry_s {
 } ml_entry_t;
 
 typedef struct {
-    // hash formed by filename pointer
-    // this hash purpose is to quickly check whether the filename is in the library already
+    // A hash formed by filename pointer.
+    // This hash purpose is to quickly check whether the filename is in the library already.
+    // Doesn't contain subtracks.
     ml_entry_t *filename_hash[ML_HASH_SIZE];
 
     // plain lists for each index
@@ -86,8 +87,8 @@ typedef struct {
     ml_collection_t genres;
     ml_collection_t folders;
 
-    // This hash is formed from track_uri ([%:TRACKNUM%#]%:URI%), and supposed to have all tracks from the `tracks` list
-    // Main purpose is to find a library instance of a track for given track pointer
+    // This hash is formed from track_uri ([%:TRACKNUM%#]%:URI%), and supposed to have all tracks which exist in the library (including subtracks).
+    // Main purpose is to find a library instance of a track for given track pointer.
     ml_collection_t track_uris;
 
     /// Selected / expanded state
