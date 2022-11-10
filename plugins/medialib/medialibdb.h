@@ -31,55 +31,55 @@
 // This struct represents a leaf node (track) in the tree of a collection.
 // It's an optimization to reduce memory footprint -- these nodes are expected
 // to represent the bulk of all nodes.
-typedef struct ml_collection_item_s {
+typedef struct ml_collection_track_ref_s {
     uint64_t row_id;
 
     ddb_playItem_t *it;
-    struct ml_collection_item_s *next; // next item in the same collection (albums, artists, ...)
-} ml_collection_item_t;
+    struct ml_collection_track_ref_s *next; // next track in the same node
+} ml_collection_track_ref_t;
 
 // A string with associated "collection_items", stored as a hash and as a list.
 // Basically, this is the "tree node".
-typedef struct ml_string_s {
+typedef struct ml_collection_tree_node_s {
     uint64_t row_id; // a unique ID of the item, which is valid only during single session (will be different after deadbeef restarts)
 
     const char *text;
 
-    ml_collection_item_t *items; // list of all leaf items (tracks) in this node (e.g. all tracks in an album)
-    ml_collection_item_t *items_tail; // tail, for fast append
+    ml_collection_track_ref_t *items; // list of all leaf items (tracks) in this node (e.g. all tracks in an album)
+    ml_collection_track_ref_t *items_tail; // tail, for fast append
     int items_count; // count of items
 
-    struct ml_string_s *bucket_next; // next node in a hash bucket
-    struct ml_string_s *next; // next node in a list
+    struct ml_collection_tree_node_s *bucket_next; // next node in a hash bucket
+    struct ml_collection_tree_node_s *next; // next node in the same parent node
 
     // to support tree hierarchy
-    struct ml_string_s *children;
-    struct ml_string_s *children_tail;
+    struct ml_collection_tree_node_s *children;
+    struct ml_collection_tree_node_s *children_tail;
 
     // Note: this is "temporary state" stuff, used when processing a tree query
     struct ml_tree_item_s *coll_item; // The item associated with collection string
     struct ml_tree_item_s *coll_item_tail; // Tail of the children list of coll_item
-} ml_string_t;
+} ml_collection_tree_node_t;
 
 #define ML_HASH_SIZE 4096
 
 // This is the collection "container" -- that is, item tree with a hash table.
 // It's used to store a tree of items, based on certain arbitrary criteria -- e.g. by Albums, or by Folders.
 typedef struct {
-    ml_string_t *hash[ML_HASH_SIZE]; // hash table, for quick lookup by name (pointer-based hash)
-    ml_string_t root;
+    ml_collection_tree_node_t *hash[ML_HASH_SIZE]; // hash table, for quick lookup by name (pointer-based hash)
+    ml_collection_tree_node_t root;
 } ml_collection_t;
 
 typedef struct ml_entry_s {
     const char *file;
     struct ml_entry_s *bucket_next;
-} ml_entry_t;
+} ml_filename_hash_item_t;
 
 typedef struct {
     // A hash formed by filename pointer.
     // This hash purpose is to quickly check whether the filename is in the library already.
     // Doesn't contain subtracks.
-    ml_entry_t *filename_hash[ML_HASH_SIZE];
+    ml_filename_hash_item_t *filename_hash[ML_HASH_SIZE];
 
     // plain lists for each index
     ml_collection_t albums;
@@ -89,34 +89,35 @@ typedef struct {
 
     // This hash is formed from track_uri ([%:TRACKNUM%#]%:URI%), and supposed to have all tracks which exist in the library (including subtracks).
     // Main purpose is to find a library instance of a track for given track pointer.
+    // FIXME: the hashing doesn't seem to be using "tracknum+uri" -- needs to be verified / fixed.
     ml_collection_t track_uris;
 
     /// Selected / expanded state
     ml_collection_state_t state;
 
-    uint64_t row_id; // increment for each new ml_collection_item_t
+    uint64_t row_id; // increment for each new tree node
 } ml_db_t;
 
 uint32_t
 hash_for_ptr (void *ptr);
 
-ml_string_t *
-hash_find_for_hashkey (ml_string_t **hash, const char *val, uint32_t h);
+ml_collection_tree_node_t *
+hash_find_for_hashkey (ml_collection_tree_node_t **hash, const char *val, uint32_t h);
 
-ml_string_t *
-hash_find (ml_string_t **hash, const char *val);
+ml_collection_tree_node_t *
+hash_find (ml_collection_tree_node_t **hash, const char *val);
 
 void
 ml_free_col (ml_db_t *db, ml_collection_t *coll);
 
-ml_string_t *
+ml_collection_tree_node_t *
 ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id);
 
 void
 _reuse_row_ids (ml_collection_t *coll, const char *coll_name, ddb_playItem_t *item, ml_collection_state_t *state, ml_collection_state_t *saved_state, uint64_t *coll_rowid, uint64_t *item_rowid);
 
 void
-ml_reg_item_in_folder (ml_db_t *db, ml_string_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id);
+ml_reg_item_in_folder (ml_db_t *db, ml_collection_tree_node_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id);
 
 void
 ml_db_free (ml_db_t *db);

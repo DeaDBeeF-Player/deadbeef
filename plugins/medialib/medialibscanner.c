@@ -62,7 +62,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
 
     for (int i = 0; i < scanner->track_count && (!can_terminate || !scanner->source->scanner_terminate); i++) {
         ddb_playItem_t *it = scanner->tracks[i];
-        ml_entry_t *en = calloc (1, sizeof (ml_entry_t));
+        ml_filename_hash_item_t *en = calloc (1, sizeof (ml_filename_hash_item_t));
 
         const char *uri = deadbeef->pl_find_meta (it, ":URI");
 
@@ -200,7 +200,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
     int nalb = 0;
     int nart = 0;
     int ngnr = 0;
-    ml_string_t *s;
+    ml_collection_tree_node_t *s;
     for (s = scanner->db.albums.root.children; s; s = s->next, nalb++);
     for (s = scanner->db.artists.root.children; s; s = s->next, nart++);
     for (s = scanner->db.genres.root.children; s; s = s->next, ngnr++);
@@ -233,15 +233,15 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
         return 0;
     }
 
-    ml_entry_t *en = state->source->db.filename_hash[hash];
+    ml_filename_hash_item_t *en = state->source->db.filename_hash[hash];
     while (en) {
         if (en->file == s) {
             res = -1;
 
             // Copy from medialib playlist into scanner state
-            ml_string_t *str = hash_find (state->source->db.track_uris.hash, s);
+            ml_collection_tree_node_t *str = hash_find (state->source->db.track_uris.hash, s);
             if (str) {
-                for (ml_collection_item_t *item = str->items; item; item = item->next) {
+                for (ml_collection_track_ref_t *item = str->items; item; item = item->next) {
                     const char *stimestamp = deadbeef->pl_find_meta (item->it, ":MEDIALIB_SCAN_TIME");
                     if (!stimestamp) {
                         // no scan time
@@ -257,7 +257,7 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
                     }
                 }
 
-                for (ml_collection_item_t *item = str->items; item; item = item->next) {
+                for (ml_collection_track_ref_t *item = str->items; item; item = item->next) {
                     // Because of cuesheets, the same track may get added multiple times,
                     // since all items reference the same filename.
                     // Check if this track is still in ml_playlist
