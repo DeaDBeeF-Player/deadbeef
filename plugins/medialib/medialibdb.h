@@ -28,6 +28,9 @@
 #include "../../deadbeef.h"
 #include "medialibstate.h"
 
+// This struct represents a leaf node (track) in the tree of a collection.
+// It's an optimization to reduce memory footprint -- these nodes are expected
+// to represent the bulk of all nodes.
 typedef struct ml_collection_item_s {
     uint64_t row_id;
 
@@ -76,18 +79,12 @@ typedef struct ml_entry_s {
     ml_string_t *genre;
     ml_string_t *folder;
     ml_string_t *track_uri;
-    struct ml_entry_s *next;
     struct ml_entry_s *bucket_next;
 } ml_entry_t;
 
 typedef struct {
-    // Plain list of all tracks in the entire collection
-    // The purpose is to hold references to all metadata strings, used by the DB
-    ml_entry_t *tracks;
-
     // hash formed by filename pointer
     // this hash purpose is to quickly check whether the filename is in the library already
-    // NOTE: this hash doesn't contain all of the tracks from the `tracks` list, because of subtracks
     ml_entry_t *filename_hash[ML_HASH_SIZE];
 
     // plain lists for each index

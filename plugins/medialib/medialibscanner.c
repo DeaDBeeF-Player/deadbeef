@@ -48,8 +48,6 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
     struct timeval tm1, tm2;
     gettimeofday (&tm1, NULL);
 
-    ml_entry_t *tail = NULL;
-
     char folder[PATH_MAX];
 
     int has_unknown_artist = 0;
@@ -180,14 +178,6 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         en->genre = gnr;
         en->folder = fld;
         en->track_uri = trkuri;
-
-        if (tail) {
-            tail->next = en;
-            tail = en;
-        }
-        else {
-            tail = scanner->db.tracks = en;
-        }
 
         // add to the hash table
         // at this point, we only have unique pointers, and don't need a duplicate check

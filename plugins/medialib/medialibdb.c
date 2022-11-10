@@ -251,16 +251,20 @@ ml_db_free (ml_db_t *db) {
     ml_free_col(db, &db->track_uris);
     ml_free_col(db, &db->folders);
 
-    while (db->tracks) {
-        ml_entry_t *next = db->tracks->next;
-        if (db->tracks->title) {
-            deadbeef->metacache_remove_string (db->tracks->title);
+    for (int i = 0; i < ML_HASH_SIZE; i++) {
+        ml_entry_t *en = db->filename_hash[i];
+        while (en) {
+            ml_entry_t *next = en->bucket_next;
+            if (en->title) {
+                deadbeef->metacache_remove_string (en->title);
+            }
+            if (en->file) {
+                deadbeef->metacache_remove_string (en->file);
+            }
+            free (en);
+            en = next;
         }
-        if (db->tracks->file) {
-            deadbeef->metacache_remove_string (db->tracks->file);
-        }
-        free (db->tracks);
-        db->tracks = next;
+        db->filename_hash[i] = NULL;
     }
 
     memset (db, 0, sizeof (ml_db_t));
