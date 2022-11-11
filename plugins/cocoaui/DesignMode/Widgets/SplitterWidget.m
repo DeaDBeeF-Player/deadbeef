@@ -56,7 +56,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     _deps = deps;
 
     _splitView = [[NSSplitView alloc] initWithFrame:NSZeroRect];
-    _splitView.arrangesAllSubviews = YES;
+    _splitView.arrangesAllSubviews = NO;
     _splitView.vertical = !self.isVertical; // The NSSplitView.vertical means the divider line orientation
 
     // Default settings
@@ -97,12 +97,12 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     [super removeChild:child];
     id<WidgetProtocol> pane = [self.deps.factory createWidgetWithType:PlaceholderWidget.widgetType];
     if (self.splitView.arrangedSubviews[0] == child.view) {
-        [self.splitView removeArrangedSubview:child.view];
+        [child.view removeFromSuperview];
         [_splitView insertArrangedSubview:pane.view atIndex:0];
         [super insertChild:pane atIndex:0];
     }
     else {
-        [self.splitView removeArrangedSubview:child.view];
+        [child.view removeFromSuperview];
         [_splitView insertArrangedSubview:pane.view atIndex:1];
         [super insertChild:pane atIndex:1];
     }
@@ -111,28 +111,35 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 - (void)updateDividerPositionFromNormalized:(CGFloat)dividerPosition {
     CGFloat splitViewSize = self.splitViewSize;
 
+    CGFloat position = 0;
+
     switch (self.holdingMode) {
     case HoldingModeProportional:
-        [self.splitView setPosition:(dividerPosition * splitViewSize) ofDividerAtIndex:0];
+        position = dividerPosition * splitViewSize;
         break;
     case HoldingModeFirst:
-        [self.splitView setPosition:dividerPosition ofDividerAtIndex:0];
+        position = dividerPosition;
         break;
     case HoldingModeSecond:
-        [self.splitView setPosition:(splitViewSize - dividerPosition) ofDividerAtIndex:0];
+        position = splitViewSize - dividerPosition;
         break;
     }
+
+    [self.splitView setPosition:position ofDividerAtIndex:0];
+    // HACK: sometimes setPosition will not apply the change, and needs to be called twice.
+    // This seems to be a framework bug.
+    [self.splitView setPosition:position ofDividerAtIndex:0];
 }
 
 - (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild {
     if (self.splitView.arrangedSubviews[0] == child.view) {
-        [self.splitView removeArrangedSubview:child.view];
+        [child.view removeFromSuperview];
         [_splitView insertArrangedSubview:newChild.view atIndex:0];
         [self.childWidgets removeObject:child];
         [self.childWidgets insertObject:newChild atIndex:0];
     }
     else {
-        [self.splitView removeArrangedSubview:child.view];
+        [child.view removeFromSuperview];
         [_splitView insertArrangedSubview:newChild.view atIndex:1];
         [self.childWidgets removeObject:child];
         [self.childWidgets insertObject:newChild atIndex:1];
