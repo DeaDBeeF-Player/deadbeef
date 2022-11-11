@@ -445,8 +445,6 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 // NOTE: this is running on background thread
 - (NSImage *)getImage:(ddb_cover_query_t *)query coverInfo:(ddb_cover_info_t *)cover error:(int)error {
     if (error) {
-        deadbeef->pl_item_unref (query->track);
-        free (query);
         return nil;
     }
 
@@ -476,8 +474,6 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
             [image drawAtPoint:NSZeroPoint fromRect:CGRectMake(0, 0, size.width, size.height) operation:NSCompositingOperationCopy fraction:1.0];
             [smallImage unlockFocus];
             image = smallImage;
-            NSString *key = [self albumArtCacheKeyForTrack:query->track];
-            self.albumArtCache[key] = image;
         }
         else {
             image = nil;
@@ -497,6 +493,12 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     void (^completionBlock)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) = ^(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) {
         NSImage *image = [self getImage:query coverInfo:cover error:error];
         dispatch_async(dispatch_get_main_queue(), ^{
+            if (image != nil) {
+                NSString *key = [self albumArtCacheKeyForTrack:query->track];
+                self.albumArtCache[key] = image;
+            }
+            deadbeef->pl_item_unref (query->track);
+            free (query);
             NSInteger row = [self.outlineView rowForItem:item];
             if (row == -1) {
                 return;
