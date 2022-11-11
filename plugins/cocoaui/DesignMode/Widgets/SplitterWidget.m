@@ -56,6 +56,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     _deps = deps;
 
     _splitView = [[NSSplitView alloc] initWithFrame:NSZeroRect];
+    _splitView.arrangesAllSubviews = YES;
     _splitView.vertical = !self.isVertical; // The NSSplitView.vertical means the divider line orientation
 
     // Default settings
@@ -108,8 +109,6 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 }
 
 - (void)updateDividerPositionFromNormalized:(CGFloat)dividerPosition {
-    BOOL isPositionTrackingEnabled = self.isPositionTrackingEnabled;
-    self.isPositionTrackingEnabled = NO;
     CGFloat splitViewSize = self.splitViewSize;
 
     switch (self.holdingMode) {
@@ -123,7 +122,6 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
         [self.splitView setPosition:(splitViewSize - dividerPosition) ofDividerAtIndex:0];
         break;
     }
-    self.isPositionTrackingEnabled = isPositionTrackingEnabled;
 }
 
 - (void)replaceChild:(id<WidgetProtocol>)child withChild:(id<WidgetProtocol>)newChild {
@@ -254,6 +252,8 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
         return;
     }
     self.splitView.delegate = nil;
+
+    self.isPositionTrackingEnabled = NO;
 
     [self updateDividerPositionFromNormalized: self.normalizedDividerPosition];
 
