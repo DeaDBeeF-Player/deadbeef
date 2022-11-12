@@ -82,7 +82,8 @@ typedef struct {
     // Doesn't contain subtracks.
     ml_filename_hash_item_t *filename_hash[ML_HASH_SIZE];
 
-    // plain lists for each index
+    /// Collections (trees) for all supported hierarchies.
+    /// Every time the library is updated, the following trees are updated as well.
     ml_collection_t albums;
     ml_collection_t artists;
     ml_collection_t genres;
@@ -93,32 +94,50 @@ typedef struct {
     // FIXME: the hashing doesn't seem to be using "tracknum+uri" -- needs to be verified / fixed.
     ml_collection_t track_uris;
 
-    /// Selected / expanded state
+    /// Selected / expanded state.
+    /// State is associated with IDs, therefore it survives updates/scans, as long as IDs are reused correctly.
     ml_collection_state_t state;
 
-    uint64_t row_id; // increment for each new tree node
+    /// Current row ID used by the above collections.
+    /// Incremented for each new node.
+    uint64_t row_id;
 } ml_db_t;
 
 uint32_t
-hash_for_ptr (void *ptr);
+ml_collection_hash_for_ptr (void *ptr);
 
 ml_collection_tree_node_t *
-hash_find_for_hashkey (ml_collection_tree_node_t **hash, const char *val, uint32_t h);
+ml_collection_hash_find_for_hashkey (ml_collection_tree_node_t **hash, const char *val, uint32_t h);
 
 ml_collection_tree_node_t *
-hash_find (ml_collection_tree_node_t **hash, const char *val);
+ml_collection_hash_find (ml_collection_tree_node_t **hash, const char *val);
 
 void
-ml_free_col (ml_db_t *db, ml_collection_t *coll);
+ml_collection_reuse_row_ids (ml_collection_t *coll, const char *coll_name, ddb_playItem_t *item, ml_collection_state_t *state, ml_collection_state_t *saved_state, uint64_t *coll_rowid, uint64_t *item_rowid);
 
+void
+ml_collection_free (ml_db_t *db, ml_collection_t *coll);
+
+/// Add an item to a node.
+/// The parent node will be created if it doesn't exist.
+/// Technically, this function implements a subset of the @c ml_collection_add_folder_tree,
+/// which only supports hierarchy if depth=1
 ml_collection_tree_node_t *
-ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id);
+ml_collection_add_item (
+                        ml_db_t *db,
+                        ml_collection_t *coll,
+                        const char /* nonnull */ *parent_node_text,
+                        ddb_playItem_t *it,
+                        uint64_t coll_row_id,
+                        uint64_t item_row_id
+                        );
 
-void
-_reuse_row_ids (ml_collection_t *coll, const char *coll_name, ddb_playItem_t *item, ml_collection_state_t *state, ml_collection_state_t *saved_state, uint64_t *coll_rowid, uint64_t *item_rowid);
 
+/// Insert an item to node hierarchy.
+/// The node hierarchy will be created if it doesn't exist.
+/// This functions supports tree hieararchies of arbitrary depth.
 void
-ml_reg_item_in_folder (
+ml_collection_add_tree_item (
                        ml_db_t *db,
                        ml_db_t *source_db,
                        ml_collection_tree_node_t *node,

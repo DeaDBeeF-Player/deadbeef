@@ -28,14 +28,14 @@
 static DB_functions_t *deadbeef;
 
 uint32_t
-hash_for_ptr (void *ptr) {
+ml_collection_hash_for_ptr (void *ptr) {
     // scrambling multiplier from http://vigna.di.unimi.it/ftp/papers/xorshift.pdf
     uint64_t scrambled = 1181783497276652981ULL * (uintptr_t)ptr;
     return (uint32_t)(scrambled & (ML_HASH_SIZE-1));
 }
 
 ml_collection_tree_node_t *
-hash_find_for_hashkey (ml_collection_tree_node_t **hash, const char *val, uint32_t h) {
+ml_collection_hash_find_for_hashkey (ml_collection_tree_node_t **hash, const char *val, uint32_t h) {
     ml_collection_tree_node_t *bucket = hash[h];
     while (bucket) {
         if (bucket->path != NULL) {
@@ -52,9 +52,9 @@ hash_find_for_hashkey (ml_collection_tree_node_t **hash, const char *val, uint32
 }
 
 ml_collection_tree_node_t *
-hash_find (ml_collection_tree_node_t **hash, const char *val) {
-    uint32_t h = hash_for_ptr ((void *)val);
-    return hash_find_for_hashkey(hash, val, h);
+ml_collection_hash_find (ml_collection_tree_node_t **hash, const char *val) {
+    uint32_t h = ml_collection_hash_for_ptr ((void *)val);
+    return ml_collection_hash_find_for_hashkey(hash, val, h);
 }
 
 static ml_collection_track_ref_t *
@@ -126,8 +126,8 @@ _ml_string_free (ml_db_t *db, ml_collection_tree_node_t *s) {
 /// When it is null, it's expected that the bucket will be added, without any associated tracks
 static ml_collection_tree_node_t *
 hash_add (ml_db_t *db, ml_collection_tree_node_t **hash, const char *val, ddb_playItem_t /* nullable */ *it, uint64_t coll_row_id, uint64_t item_row_id) {
-    uint32_t h = hash_for_ptr ((void *)val);
-    ml_collection_tree_node_t *s = hash_find_for_hashkey(hash, val, h);
+    uint32_t h = ml_collection_hash_for_ptr ((void *)val);
+    ml_collection_tree_node_t *s = ml_collection_hash_find_for_hashkey(hash, val, h);
     ml_collection_tree_node_t *retval = NULL;
     if (!s) {
         deadbeef->metacache_add_string (val);
@@ -161,7 +161,7 @@ hash_add (ml_db_t *db, ml_collection_tree_node_t **hash, const char *val, ddb_pl
 }
 
 ml_collection_tree_node_t *
-ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id) {
+ml_collection_add_item (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb_playItem_t *it, uint64_t coll_row_id, uint64_t item_row_id) {
     int need_unref = 0;
     ml_collection_tree_node_t *s = hash_add (db, coll->hash, c, it, coll_row_id, item_row_id);
 
@@ -181,7 +181,7 @@ ml_reg_col (ml_db_t *db, ml_collection_t *coll, const char /* nonnull */ *c, ddb
 }
 
 void
-ml_free_col (ml_db_t *db, ml_collection_t *coll) {
+ml_collection_free (ml_db_t *db, ml_collection_t *coll) {
     _ml_string_deinit(db, &coll->root);
     memset (coll->hash, 0, sizeof (coll->hash));
 }
@@ -213,7 +213,7 @@ _get_path_component(const char *path, int index, const char **endptr) {
 
 // path is relative to root
 void
-ml_reg_item_in_folder (
+ml_collection_add_tree_item (
                        ml_db_t *db,
                        ml_db_t *source_db,
                        ml_collection_tree_node_t *node,
@@ -229,7 +229,7 @@ ml_reg_item_in_folder (
 
     if (*ptr == 0) { // EOL: create leaf
         uint64_t coll_row_id, item_row_id;
-        _reuse_row_ids(&source_db->folders, node->path, it, state, saved_state, &coll_row_id, &item_row_id);
+        ml_collection_reuse_row_ids(&source_db->folders, node->path, it, state, saved_state, &coll_row_id, &item_row_id);
 
         ml_collection_track_ref_t *item = _collection_item_alloc (db, item_row_id);
         item->it = it;
@@ -255,11 +255,11 @@ ml_reg_item_in_folder (
     node_path = NULL;
 
     // check if the node exists
-    uint32_t h = hash_for_ptr ((void *)cached_node_path);
-    ml_collection_tree_node_t *c = hash_find_for_hashkey(db->folders.hash, cached_node_path, h);
+    uint32_t h = ml_collection_hash_for_ptr ((void *)cached_node_path);
+    ml_collection_tree_node_t *c = ml_collection_hash_find_for_hashkey(db->folders.hash, cached_node_path, h);
     if (c != NULL) {
         // found, recurse
-        ml_reg_item_in_folder (db, source_db, c, path, depth + 1, it, state, saved_state);
+        ml_collection_add_tree_item (db, source_db, c, path, depth + 1, it, state, saved_state);
         deadbeef->metacache_remove_string(cached_node_path);
         return;
     }
@@ -275,7 +275,7 @@ ml_reg_item_in_folder (
     // not found, start new branch
 
     uint64_t coll_row_id, item_row_id;
-    _reuse_row_ids(&source_db->folders, cached_node_path, NULL, state, saved_state, &coll_row_id, &item_row_id);
+    ml_collection_reuse_row_ids(&source_db->folders, cached_node_path, NULL, state, saved_state, &coll_row_id, &item_row_id);
 
     ml_collection_tree_node_t *n = _ml_string_alloc(db, coll_row_id);
     ml_collection_tree_node_t *tail = node->children_tail;
@@ -295,7 +295,7 @@ ml_reg_item_in_folder (
     db->folders.hash[h] = n;
 
     // recurse
-    ml_reg_item_in_folder (db, source_db, n, path, depth + 1, it, state, saved_state);
+    ml_collection_add_tree_item (db, source_db, n, path, depth + 1, it, state, saved_state);
 }
 
 void
@@ -303,11 +303,11 @@ ml_db_free (ml_db_t *db) {
     fprintf (stderr, "clearing index...\n");
 
     // NOTE: Currently this is called from ml_index, which is executed on sync_queue
-    ml_free_col(db, &db->albums);
-    ml_free_col(db, &db->artists);
-    ml_free_col(db, &db->genres);
-    ml_free_col(db, &db->track_uris);
-    ml_free_col(db, &db->folders);
+    ml_collection_free(db, &db->albums);
+    ml_collection_free(db, &db->artists);
+    ml_collection_free(db, &db->genres);
+    ml_collection_free(db, &db->track_uris);
+    ml_collection_free(db, &db->folders);
 
     for (int i = 0; i < ML_HASH_SIZE; i++) {
         ml_filename_hash_item_t *en = db->filename_hash[i];
@@ -369,9 +369,9 @@ _find_coll_item (ml_collection_tree_node_t *s, ddb_playItem_t *it) {
 }
 
 void
-_reuse_row_ids (ml_collection_t *coll, const char *coll_name, ddb_playItem_t *item, ml_collection_state_t *state, ml_collection_state_t *saved_state, uint64_t *coll_rowid, uint64_t *item_rowid) {
-    uint32_t h = hash_for_ptr ((void *)coll_name);
-    ml_collection_tree_node_t *saved = hash_find_for_hashkey(coll->hash, coll_name, h);
+ml_collection_reuse_row_ids (ml_collection_t *coll, const char *coll_name, ddb_playItem_t *item, ml_collection_state_t *state, ml_collection_state_t *saved_state, uint64_t *coll_rowid, uint64_t *item_rowid) {
+    uint32_t h = ml_collection_hash_for_ptr ((void *)coll_name);
+    ml_collection_tree_node_t *saved = ml_collection_hash_find_for_hashkey(coll->hash, coll_name, h);
     _copy_state_coll (state, saved_state, saved);
 
     *coll_rowid = saved ? saved->row_id : UINT64_MAX;

@@ -122,22 +122,22 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         }
 
         uint64_t coll_row_id, item_row_id;
-        _reuse_row_ids(&scanner->source->db.albums, album, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_reg_col (&scanner->db, &scanner->db.albums, album, it, coll_row_id, item_row_id);
+        ml_collection_reuse_row_ids(&scanner->source->db.albums, album, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
+        ml_collection_add_item (&scanner->db, &scanner->db.albums, album, it, coll_row_id, item_row_id);
 
         deadbeef->metacache_remove_string (album);
         album = NULL;
 
-        _reuse_row_ids(&scanner->source->db.artists, artist, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_reg_col (&scanner->db, &scanner->db.artists, artist, it, coll_row_id, item_row_id);
+        ml_collection_reuse_row_ids(&scanner->source->db.artists, artist, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
+        ml_collection_add_item (&scanner->db, &scanner->db.artists, artist, it, coll_row_id, item_row_id);
 
-        _reuse_row_ids(&scanner->source->db.genres, genre, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_reg_col (&scanner->db, &scanner->db.genres, genre, it, coll_row_id, item_row_id);
+        ml_collection_reuse_row_ids(&scanner->source->db.genres, genre, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
+        ml_collection_add_item (&scanner->db, &scanner->db.genres, genre, it, coll_row_id, item_row_id);
 
         const char *cached_string = deadbeef->metacache_add_string (uri);
 
-        _reuse_row_ids(&scanner->source->db.track_uris, cached_string, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_reg_col (&scanner->db, &scanner->db.track_uris, cached_string, it, coll_row_id, item_row_id);
+        ml_collection_reuse_row_ids(&scanner->source->db.track_uris, cached_string, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
+        ml_collection_add_item (&scanner->db, &scanner->db.track_uris, cached_string, it, coll_row_id, item_row_id);
 
         deadbeef->metacache_remove_string (cached_string);
         cached_string = NULL;
@@ -153,7 +153,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         const char *s = deadbeef->metacache_add_string (folder);
 
         // Add to folder tree
-        ml_reg_item_in_folder (&scanner->db, &scanner->source->db, &scanner->db.folders.root, s, 0, it, &scanner->db.state, &scanner->source->db.state);
+        ml_collection_add_tree_item (&scanner->db, &scanner->source->db, &scanner->db.folders.root, s, 0, it, &scanner->db.state, &scanner->source->db.state);
         // uri is not indexed, but referenced by the filename hash
         // that's why they have an extra ref for each entry
         deadbeef->metacache_add_string (uri);
@@ -162,7 +162,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
 
         // add to the hash table
         // at this point, we only have unique pointers, and don't need a duplicate check
-        uint32_t hash = hash_for_ptr ((void *)en->file);
+        uint32_t hash = ml_collection_hash_for_ptr ((void *)en->file);
         en->bucket_next = scanner->db.filename_hash[hash];
         scanner->db.filename_hash[hash] = en;
 
@@ -173,18 +173,18 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
     // Add unknown artist / album / genre, if necessary
     if (!has_unknown_artist) {
         uint64_t coll_row_id, item_row_id;
-        _reuse_row_ids(&scanner->source->db.artists, unknown_artist, NULL, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_reg_col (&scanner->db, &scanner->db.artists, unknown_artist, NULL, coll_row_id, item_row_id);
+        ml_collection_reuse_row_ids(&scanner->source->db.artists, unknown_artist, NULL, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
+        ml_collection_add_item (&scanner->db, &scanner->db.artists, unknown_artist, NULL, coll_row_id, item_row_id);
     }
     if (!has_unknown_album) {
         uint64_t coll_row_id, item_row_id;
-        _reuse_row_ids(&scanner->source->db.albums, unknown_album, NULL, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_reg_col (&scanner->db, &scanner->db.albums, unknown_album, NULL, coll_row_id, item_row_id);
+        ml_collection_reuse_row_ids(&scanner->source->db.albums, unknown_album, NULL, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
+        ml_collection_add_item (&scanner->db, &scanner->db.albums, unknown_album, NULL, coll_row_id, item_row_id);
     }
     if (!has_unknown_genre) {
         uint64_t coll_row_id, item_row_id;
-        _reuse_row_ids(&scanner->source->db.genres, unknown_genre, NULL, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_reg_col (&scanner->db, &scanner->db.genres, unknown_genre, NULL, coll_row_id, item_row_id);
+        ml_collection_reuse_row_ids(&scanner->source->db.genres, unknown_genre, NULL, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
+        ml_collection_add_item (&scanner->db, &scanner->db.genres, unknown_genre, NULL, coll_row_id, item_row_id);
     }
 
     deadbeef->metacache_remove_string (unknown_artist);
@@ -220,7 +220,7 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
         return 0;
     }
 
-    uint32_t hash = hash_for_ptr((void *)s);
+    uint32_t hash = ml_collection_hash_for_ptr((void *)s);
 
     if (!state->source->db.filename_hash[hash]) {
         deadbeef->metacache_remove_string (s);
@@ -233,7 +233,7 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
             res = -1;
 
             // Copy from medialib playlist into scanner state
-            ml_collection_tree_node_t *str = hash_find (state->source->db.track_uris.hash, s);
+            ml_collection_tree_node_t *str = ml_collection_hash_find (state->source->db.track_uris.hash, s);
             if (str) {
                 for (ml_collection_track_ref_t *item = str->items; item; item = item->next) {
                     const char *stimestamp = deadbeef->pl_find_meta (item->it, ":MEDIALIB_SCAN_TIME");
