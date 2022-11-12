@@ -178,15 +178,53 @@ ml_free_col (ml_db_t *db, ml_collection_t *coll) {
     memset (coll->hash, 0, sizeof (coll->hash));
 }
 
+static const char *
+_get_path_component(const char *path, int index, const char **endptr) {
+    const char *slash = NULL;
+    const char *ptr = path;
+
+    index += 1;
+    int curr = 0;
+
+    for (;;) {
+        slash = strchr (ptr, '/');
+        if (slash == NULL) {
+            slash = ptr + strlen(ptr);
+        }
+
+        curr += 1;
+        if (curr == index || *ptr == 0) {
+            break;
+        }
+        ptr = slash + 1;
+    }
+
+    *endptr = slash;
+    return ptr;
+}
+
 // path is relative to root
 void
-ml_reg_item_in_folder (ml_db_t *db, ml_collection_tree_node_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id) {
-    if (*path == 0) {
-        // leaf -- add to the node
-        ml_collection_track_ref_t *item = _collection_item_alloc (db, use_this_row_id);
+ml_reg_item_in_folder (
+                       ml_db_t *db,
+                       ml_collection_tree_node_t *node,
+                       const char *path,
+                       int depth,
+                       ddb_playItem_t *it,
+                       ml_collection_state_t *state,
+                       ml_collection_state_t *saved_state
+                       ) {
+
+    const char *end;
+    const char *ptr = _get_path_component(path, depth, &end);
+
+    if (*ptr == 0) { // EOL: create leaf
+//        uint64_t coll_row_id, item_row_id;
+//        _reuse_row_ids(&db->folders, path, it, state, saved_state, &coll_row_id, &item_row_id);
+
+        ml_collection_track_ref_t *item = _collection_item_alloc (db, UINT64_MAX);
         item->it = it;
         deadbeef->pl_item_ref (it);
-
 
         ml_collection_track_ref_t *tail = NULL;
         for (tail = node->items; tail && tail->next; tail = tail->next);
@@ -199,28 +237,34 @@ ml_reg_item_in_folder (ml_db_t *db, ml_collection_tree_node_t *node, const char 
         return;
     }
 
-    const char *slash = strchr (path, '/');
-    if (!slash) {
-        slash = path + strlen(path);
-    }
+    // create node path
+//    char *node_path = malloc (end - path + 1);
+//    memcpy (node_path, path, end - path);
+//    node_path[end - path] = 0;
 
-    int len = (int)(slash - path);
-    if (len == 0 && !strcmp (path, "/")) {
-        len = 1;
-    }
+    // create node title (last component in node path)
+    char *node_title = malloc (end - ptr + 1);
+    memcpy (node_title, ptr, end - ptr);
+    node_title[end - ptr] = 0;
+
+    // create metacache pointer
+    const char *cached_node_title = deadbeef->metacache_add_string(node_title);
+    free (node_title);
+    node_title = NULL;
 
     // node -- find existing child node with this name
     for (ml_collection_tree_node_t *c = node->children; c; c = c->next) {
-        if (!strncmp (c->text, path, len)) {
+        if (c->text == cached_node_title) {
             // found, recurse
-            path += len + 1;
-            ml_reg_item_in_folder (db, c, path, it, use_this_row_id);
+            ml_reg_item_in_folder (db, c, path, depth + 1, it, state, saved_state);
+            deadbeef->metacache_remove_string(cached_node_title);
             return;
         }
     }
 
     // not found, start new branch
-    ml_collection_tree_node_t *n = _ml_string_alloc(db, UINT64_MAX); // FIXME: rowid
+    // FIXME: reuse row id
+    ml_collection_tree_node_t *n = _ml_string_alloc(db, UINT64_MAX);
     ml_collection_tree_node_t *tail = node->children_tail;
     if (tail) {
         tail->next = n;
@@ -231,13 +275,10 @@ ml_reg_item_in_folder (ml_db_t *db, ml_collection_tree_node_t *node, const char 
         node->children_tail = n;
     }
 
-    char temp[len+1];
-    memcpy (temp, path, len);
-    temp[len] = 0;
-    path += len + 1;
+    n->text = cached_node_title;
 
-    n->text = deadbeef->metacache_add_string (temp);
-    ml_reg_item_in_folder (db, n, path, it, use_this_row_id);
+    // recurse
+    ml_reg_item_in_folder (db, n, path, depth + 1, it, state, saved_state);
 }
 
 void

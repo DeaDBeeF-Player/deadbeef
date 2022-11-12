@@ -117,7 +117,15 @@ void
 _reuse_row_ids (ml_collection_t *coll, const char *coll_name, ddb_playItem_t *item, ml_collection_state_t *state, ml_collection_state_t *saved_state, uint64_t *coll_rowid, uint64_t *item_rowid);
 
 void
-ml_reg_item_in_folder (ml_db_t *db, ml_collection_tree_node_t *node, const char *path, ddb_playItem_t *it, uint64_t use_this_row_id);
+ml_reg_item_in_folder (
+                       ml_db_t *db,
+                       ml_collection_tree_node_t *node,
+                       const char *path,
+                       int depth,
+                       ddb_playItem_t *it,
+                       ml_collection_state_t *state,
+                       ml_collection_state_t *saved_state
+                       );
 
 void
 ml_db_free (ml_db_t *db);
