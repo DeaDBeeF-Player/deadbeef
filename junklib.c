@@ -3976,7 +3976,7 @@ junk_id3v2_load_txx (const char *sb_charset, int version_major, playItem_t *it, 
 }
 
 int
-junk_id3v2_add_genre (playItem_t *it, char *genre) {
+junk_id3v2_add_genre (playItem_t *it, char *genre, int text_size, int version_major) {
     int numeric = 0;
     if (genre[0] == '(') {
         // find matching parenthesis
@@ -4030,7 +4030,10 @@ junk_id3v2_add_genre (playItem_t *it, char *genre) {
         pl_add_meta (it, "genre", "Remix");
     }
     else {
-        pl_add_meta (it, "genre", genre);
+        if (version_major == 3) {
+            _split_multivalue (genre, text_size+1);
+        }
+        pl_append_meta_full (it, "genre", genre, text_size+1);
     }
 
     return 0;
@@ -4078,7 +4081,7 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                             junk_add_disc_meta (it, text);
                         }
                         else if (!strcmp (frameid, "TCON")) {
-                            junk_id3v2_add_genre (it, text);
+                            junk_id3v2_add_genre (it, text, text_size, version_major);
                         }
                         else {
                             if (version_major == 3 && _is_multivalue_field (frame_mapping[f+MAP_DDB])) {
@@ -4173,7 +4176,7 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                             junk_add_disc_meta (it, text);
                         }
                         else if (!strcmp (frameid, "TCO")) {
-                            junk_id3v2_add_genre (it, text);
+                            junk_id3v2_add_genre (it, text, text_size, version_major);
                         }
                         else {
                             if (_is_multivalue_field (frame_mapping[f+MAP_DDB])) {
