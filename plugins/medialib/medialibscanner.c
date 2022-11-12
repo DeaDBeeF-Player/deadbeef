@@ -86,8 +86,22 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
             if (!strncmp (musicdir, uri, strlen (musicdir))) {
                 reluri = uri + strlen (musicdir);
                 if (*reluri == '/') {
-                    reluri++;
+                    reluri += 1;
                 }
+
+                // ensure at least one parent folder
+                if (!strchr (reluri, '/')) {
+                    if (reluri > uri+1) {
+                        reluri -= 2;
+                    }
+                    while (reluri > uri && *reluri != '/') {
+                        reluri -= 1;
+                    }
+                    if (*reluri == '/') {
+                        reluri += 1;
+                    }
+                }
+
                 break;
             }
         }
