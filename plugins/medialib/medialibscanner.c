@@ -71,6 +71,9 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
             artist = unknown_artist;
         }
 
+        // This is necessary to reference a single value from multivalue fields
+        artist = deadbeef->metacache_add_string(artist);
+
         if (artist == unknown_artist) {
             has_unknown_artist = 1;
         }
@@ -131,6 +134,9 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
             genre = unknown_genre;
         }
 
+        // This is necessary to reference a single value from multivalue fields
+        genre = deadbeef->metacache_add_string(genre);
+
         if (genre == unknown_genre) {
             has_unknown_genre = 1;
         }
@@ -145,8 +151,14 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         ml_collection_reuse_row_ids(&scanner->source->db.artists, artist, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
         ml_collection_add_item (&scanner->db, &scanner->db.artists, artist, it, coll_row_id, item_row_id);
 
+        deadbeef->metacache_remove_string (artist);
+        artist = NULL;
+
         ml_collection_reuse_row_ids(&scanner->source->db.genres, genre, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
         ml_collection_add_item (&scanner->db, &scanner->db.genres, genre, it, coll_row_id, item_row_id);
+
+        deadbeef->metacache_remove_string (genre);
+        genre = NULL;
 
         const char *cached_string = deadbeef->metacache_add_string (uri);
 
