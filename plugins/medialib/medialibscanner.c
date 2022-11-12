@@ -255,9 +255,9 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
             res = -1;
 
             // Copy from medialib playlist into scanner state
-            ml_collection_tree_node_t *str = ml_collection_hash_find (state->source->db.track_uris.hash, s);
-            if (str) {
-                for (ml_collection_track_ref_t *item = str->items; item; item = item->next) {
+            ml_collection_tree_node_t *node = ml_collection_hash_find (state->source->db.track_uris.hash, s);
+            if (node) {
+                for (ml_collection_track_ref_t *item = node->items; item; item = item->next) {
                     const char *stimestamp = deadbeef->pl_find_meta (item->it, ":MEDIALIB_SCAN_TIME");
                     if (!stimestamp) {
                         // no scan time
@@ -273,7 +273,7 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
                     }
                 }
 
-                for (ml_collection_track_ref_t *item = str->items; item; item = item->next) {
+                for (ml_collection_track_ref_t *item = node->items; item; item = item->next) {
                     // Because of cuesheets, the same track may get added multiple times,
                     // since all items reference the same filename.
                     // Check if this track is still in ml_playlist

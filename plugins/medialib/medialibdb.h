@@ -89,9 +89,9 @@ typedef struct {
     ml_collection_t genres;
     ml_collection_t folders;
 
-    // This hash is formed from track_uri ([%:TRACKNUM%#]%:URI%), and supposed to have all tracks which exist in the library (including subtracks).
-    // Main purpose is to find a library instance of a track for given track pointer.
-    // FIXME: the hashing doesn't seem to be using "tracknum+uri" -- needs to be verified / fixed.
+    // This hash is formed from track_uri (filename),
+    // and each node contains all tracks for the given filename.
+    // It is used to update the already scanned tracks during rescans.
     ml_collection_t track_uris;
 
     /// Selected / expanded state.
