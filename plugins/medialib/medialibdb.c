@@ -38,7 +38,12 @@ ml_collection_tree_node_t *
 hash_find_for_hashkey (ml_collection_tree_node_t **hash, const char *val, uint32_t h) {
     ml_collection_tree_node_t *bucket = hash[h];
     while (bucket) {
-        if (bucket->text == val) {
+        if (bucket->path != NULL) {
+            if (bucket->path == val) {
+                return bucket;
+            }
+        }
+        else if (bucket->text == val) {
             return bucket;
         }
         bucket = bucket->bucket_next;
@@ -102,6 +107,9 @@ _ml_string_deinit(ml_db_t *db, ml_collection_tree_node_t *s) {
 
     if (s->text) {
         deadbeef->metacache_remove_string (s->text);
+    }
+    if (s->path) {
+        deadbeef->metacache_remove_string (s->path);
     }
     ml_item_state_remove (&db->state, s->row_id);
     memset (s, 0, sizeof (ml_collection_tree_node_t));
@@ -238,29 +246,30 @@ ml_reg_item_in_folder (
     }
 
     // create node path
-//    char *node_path = malloc (end - path + 1);
-//    memcpy (node_path, path, end - path);
-//    node_path[end - path] = 0;
+    char *node_path = malloc (end - path + 1);
+    memcpy (node_path, path, end - path);
+    node_path[end - path] = 0;
+    const char *cached_node_path = deadbeef->metacache_add_string(node_path);
+    free (node_path);
+    node_path = NULL;
+
+    // check if the node exists
+    uint32_t h = hash_for_ptr ((void *)cached_node_path);
+    ml_collection_tree_node_t *c = hash_find_for_hashkey(db->folders.hash, cached_node_path, h);
+    if (c != NULL) {
+        // found, recurse
+        ml_reg_item_in_folder (db, c, path, depth + 1, it, state, saved_state);
+        deadbeef->metacache_remove_string(cached_node_path);
+        return;
+    }
 
     // create node title (last component in node path)
     char *node_title = malloc (end - ptr + 1);
     memcpy (node_title, ptr, end - ptr);
     node_title[end - ptr] = 0;
-
-    // create metacache pointer
     const char *cached_node_title = deadbeef->metacache_add_string(node_title);
     free (node_title);
     node_title = NULL;
-
-    // node -- find existing child node with this name
-    for (ml_collection_tree_node_t *c = node->children; c; c = c->next) {
-        if (c->text == cached_node_title) {
-            // found, recurse
-            ml_reg_item_in_folder (db, c, path, depth + 1, it, state, saved_state);
-            deadbeef->metacache_remove_string(cached_node_title);
-            return;
-        }
-    }
 
     // not found, start new branch
     // FIXME: reuse row id
@@ -276,6 +285,10 @@ ml_reg_item_in_folder (
     }
 
     n->text = cached_node_title;
+    n->path = cached_node_path;
+
+    n->bucket_next = db->folders.hash[h];
+    db->folders.hash[h] = n;
 
     // recurse
     ml_reg_item_in_folder (db, n, path, depth + 1, it, state, saved_state);

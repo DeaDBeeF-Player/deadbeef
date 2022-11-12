@@ -44,6 +44,7 @@ typedef struct ml_collection_tree_node_s {
     uint64_t row_id; // a unique ID of the item, which is valid only during single session (will be different after deadbeef restarts)
 
     const char *text;
+    const char *path;
 
     ml_collection_track_ref_t *items; // list of all leaf items (tracks) in this node (e.g. all tracks in an album)
     ml_collection_track_ref_t *items_tail; // tail, for fast append
