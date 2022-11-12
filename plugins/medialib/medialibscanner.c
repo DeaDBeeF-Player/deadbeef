@@ -153,19 +153,6 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         const char *s = deadbeef->metacache_add_string (folder);
 
         // Add to folder tree
-
-        // TODO: Reusing IDs for the items organized in folders.
-        // Unlike albums/artist/genres, where each item has unique text,
-        // folder names are not unique, and have to be referred to by directory path.
-        // Another problem is that _reuse_row_ids only finds tracks in the root node.
-        //
-        // Solution to this is something like that:
-        //   Create "unique folder path"
-        //   Find a node corresponding to that path -> get coll_row_id
-        //   Find a track item in that node -> get item_row_id
-        //   Repeat as recursing.
-        //
-        // Until this is implemented, doesn't make sense to reuse any row ids.
         ml_reg_item_in_folder (&scanner->db, &scanner->source->db, &scanner->db.folders.root, s, 0, it, &scanner->db.state, &scanner->source->db.state);
         // uri is not indexed, but referenced by the filename hash
         // that's why they have an extra ref for each entry
