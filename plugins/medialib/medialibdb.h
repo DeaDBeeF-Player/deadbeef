@@ -120,6 +120,7 @@ _reuse_row_ids (ml_collection_t *coll, const char *coll_name, ddb_playItem_t *it
 void
 ml_reg_item_in_folder (
                        ml_db_t *db,
+                       ml_db_t *source_db,
                        ml_collection_tree_node_t *node,
                        const char *path,
                        int depth,

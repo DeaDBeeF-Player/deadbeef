@@ -267,7 +267,7 @@ get_subfolders_for_folder (ml_tree_item_t *folderitem, ml_collection_tree_node_t
     ml_tree_item_t *tail = NULL;
     if (folder->children) {
         for (ml_collection_tree_node_t *c = folder->children; c; c = c->next) {
-            ml_tree_item_t *subfolder = _tree_item_alloc(folder->row_id);
+            ml_tree_item_t *subfolder = _tree_item_alloc(c->row_id);
             get_subfolders_for_folder (subfolder, c, selected);
             if (subfolder->num_children > 0) {
                 if (tail) {

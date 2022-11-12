@@ -215,6 +215,7 @@ _get_path_component(const char *path, int index, const char **endptr) {
 void
 ml_reg_item_in_folder (
                        ml_db_t *db,
+                       ml_db_t *source_db,
                        ml_collection_tree_node_t *node,
                        const char *path,
                        int depth,
@@ -227,10 +228,10 @@ ml_reg_item_in_folder (
     const char *ptr = _get_path_component(path, depth, &end);
 
     if (*ptr == 0) { // EOL: create leaf
-//        uint64_t coll_row_id, item_row_id;
-//        _reuse_row_ids(&db->folders, path, it, state, saved_state, &coll_row_id, &item_row_id);
+        uint64_t coll_row_id, item_row_id;
+        _reuse_row_ids(&source_db->folders, node->path, it, state, saved_state, &coll_row_id, &item_row_id);
 
-        ml_collection_track_ref_t *item = _collection_item_alloc (db, UINT64_MAX);
+        ml_collection_track_ref_t *item = _collection_item_alloc (db, item_row_id);
         item->it = it;
         deadbeef->pl_item_ref (it);
 
@@ -258,7 +259,7 @@ ml_reg_item_in_folder (
     ml_collection_tree_node_t *c = hash_find_for_hashkey(db->folders.hash, cached_node_path, h);
     if (c != NULL) {
         // found, recurse
-        ml_reg_item_in_folder (db, c, path, depth + 1, it, state, saved_state);
+        ml_reg_item_in_folder (db, source_db, c, path, depth + 1, it, state, saved_state);
         deadbeef->metacache_remove_string(cached_node_path);
         return;
     }
@@ -272,8 +273,11 @@ ml_reg_item_in_folder (
     node_title = NULL;
 
     // not found, start new branch
-    // FIXME: reuse row id
-    ml_collection_tree_node_t *n = _ml_string_alloc(db, UINT64_MAX);
+
+    uint64_t coll_row_id, item_row_id;
+    _reuse_row_ids(&source_db->folders, cached_node_path, NULL, state, saved_state, &coll_row_id, &item_row_id);
+
+    ml_collection_tree_node_t *n = _ml_string_alloc(db, coll_row_id);
     ml_collection_tree_node_t *tail = node->children_tail;
     if (tail) {
         tail->next = n;
@@ -291,7 +295,7 @@ ml_reg_item_in_folder (
     db->folders.hash[h] = n;
 
     // recurse
-    ml_reg_item_in_folder (db, n, path, depth + 1, it, state, saved_state);
+    ml_reg_item_in_folder (db, source_db, n, path, depth + 1, it, state, saved_state);
 }
 
 void

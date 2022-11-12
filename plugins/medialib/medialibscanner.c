@@ -166,7 +166,7 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
         //   Repeat as recursing.
         //
         // Until this is implemented, doesn't make sense to reuse any row ids.
-        ml_reg_item_in_folder (&scanner->db, &scanner->db.folders.root, s, 0, it, &scanner->db.state, &scanner->source->db.state);
+        ml_reg_item_in_folder (&scanner->db, &scanner->source->db, &scanner->db.folders.root, s, 0, it, &scanner->db.state, &scanner->source->db.state);
         // uri is not indexed, but referenced by the filename hash
         // that's why they have an extra ref for each entry
         deadbeef->metacache_add_string (uri);
