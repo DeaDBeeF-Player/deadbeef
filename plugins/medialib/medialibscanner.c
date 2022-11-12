@@ -42,7 +42,7 @@ static char *artist_album_id_bc;
 // This should be called only on pre-existing ml playlist.
 // Subsequent indexing should be done on the fly, using fileadd listener.
 void
-ml_index (scanner_state_t *scanner, int can_terminate) {
+ml_index (scanner_state_t *scanner, const ml_scanner_configuration_t *conf, int can_terminate) {
     fprintf (stderr, "building index...\n");
 
     struct timeval tm1, tm2;
@@ -80,12 +80,8 @@ ml_index (scanner_state_t *scanner, int can_terminate) {
 
         // find relative uri, or discard from library
         const char *reluri = NULL;
-        for (int i = 0; i < json_array_size(scanner->source->musicpaths_json); i++) { // FIXME: these paths should be cached in the scanner state
-            json_t *data = json_array_get (scanner->source->musicpaths_json, i);
-            if (!json_is_string (data)) {
-                break;
-            }
-            const char *musicdir = json_string_value (data);
+        for (int i = 0; i < conf->medialib_paths_count; i++) {
+            const char *musicdir = conf->medialib_paths[i];
             if (!strncmp (musicdir, uri, strlen (musicdir))) {
                 reluri = uri + strlen (musicdir);
                 if (*reluri == '/') {
@@ -424,7 +420,7 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
     source->_ml_state = DDB_MEDIASOURCE_STATE_INDEXING;
     ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE);
 
-    ml_index(&scanner, 1);
+    ml_index(&scanner, &conf, 1);
     if (source->scanner_terminate) {
         goto error;
     }

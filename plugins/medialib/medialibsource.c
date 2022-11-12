@@ -32,6 +32,9 @@
 
 static DB_functions_t *deadbeef;
 
+static char **
+_ml_source_get_music_paths (medialib_source_t *source, size_t *medialib_paths_count);
+
 json_t *
 _ml_get_music_paths (medialib_source_t *source) {
     char conf_name[200];
@@ -78,9 +81,14 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
         it = deadbeef->pl_get_next (it, PL_MAIN);
     }
 
+    ml_scanner_configuration_t conf;
+    conf.medialib_paths = _ml_source_get_music_paths (source, &conf.medialib_paths_count);
+
     dispatch_sync(source->sync_queue, ^{
-        ml_index (&scanner, 0);
+        ml_index (&scanner, &conf, 0);
     });
+
+    ml_free_music_paths (conf.medialib_paths, conf.medialib_paths_count);
 
     // re-add all items (indexing may have removed some!)
     deadbeef->plt_clear(plt);

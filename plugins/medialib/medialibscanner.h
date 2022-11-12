@@ -35,7 +35,6 @@ typedef struct {
     size_t medialib_paths_count;
 }  ml_scanner_configuration_t;
 
-
 typedef struct {
     medialib_source_t *source;
     ddb_playlist_t *plt; // The playlist which gets populated with new tracks during scan
@@ -46,7 +45,7 @@ typedef struct {
 } scanner_state_t;
 
 void
-ml_index (scanner_state_t *scanner, int can_terminate);
+ml_index (scanner_state_t *scanner, const ml_scanner_configuration_t *conf, int can_terminate);
 
 void
 scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf);
