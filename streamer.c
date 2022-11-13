@@ -2406,6 +2406,7 @@ _play_track (playItem_t *it, int startpaused) {
     streamer_lock();
     streamer_reset(1);
     streamer_is_buffering = 1;
+    streamer_unlock();
 
     playItem_t *prev = playing_track;
     if (prev) {
@@ -2441,7 +2442,6 @@ _play_track (playItem_t *it, int startpaused) {
     else {
         streamer_set_buffering_track (NULL);
     }
-    streamer_unlock();
 }
 
 static void
