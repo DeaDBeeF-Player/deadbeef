@@ -1804,8 +1804,6 @@
 		2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30E772403292D001BAB8A /* PlaybackPreferencesViewController.h */; };
 		2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */; };
 		2DA320F526557874002DD229 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
-		2DA32B1524D6D83C00D96C84 /* MediaLibrarySelectorCellView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA32B1324D6D83C00D96C84 /* MediaLibrarySelectorCellView.h */; };
-		2DA32B1624D6D83C00D96C84 /* MediaLibrarySelectorCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */; };
 		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
 		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
 		2DA59D9125D00A8E00947C19 /* M3UTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA59D9025D00A8E00947C19 /* M3UTests.m */; };
@@ -2493,8 +2491,6 @@
 		2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD7AB925E1830F00FA6FE5 /* PlaylistDataModel.h */; };
 		2DDD7ABD25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */; };
 		2DDD7ABE25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */; };
-		2DDE529324F81A870096EF80 /* MediaLibrarySearchCellView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE529124F81A870096EF80 /* MediaLibrarySearchCellView.h */; };
-		2DDE529424F81A870096EF80 /* MediaLibrarySearchCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDE529224F81A870096EF80 /* MediaLibrarySearchCellView.m */; };
 		2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE52A424F821630096EF80 /* MediaLibraryOutlineView.h */; };
 		2DDE52A724F821630096EF80 /* MediaLibraryOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDE52A524F821630096EF80 /* MediaLibraryOutlineView.m */; };
 		2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */; };
@@ -6308,8 +6304,6 @@
 		2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkPreferencesViewController.m; sourceTree = "<group>"; };
 		2DA30E772403292D001BAB8A /* PlaybackPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaybackPreferencesViewController.h; sourceTree = "<group>"; };
 		2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaybackPreferencesViewController.m; sourceTree = "<group>"; };
-		2DA32B1324D6D83C00D96C84 /* MediaLibrarySelectorCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibrarySelectorCellView.h; sourceTree = "<group>"; };
-		2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaLibrarySelectorCellView.m; sourceTree = "<group>"; };
 		2DA372192370B854005E64A3 /* NowPlayable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NowPlayable.h; sourceTree = "<group>"; };
 		2DA3721A2370B854005E64A3 /* NowPlayable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NowPlayable.m; sourceTree = "<group>"; };
 		2DA59D9025D00A8E00947C19 /* M3UTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = M3UTests.m; sourceTree = "<group>"; };
@@ -6803,8 +6797,6 @@
 		2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistWidget.m; sourceTree = "<group>"; };
 		2DDD7AB925E1830F00FA6FE5 /* PlaylistDataModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistDataModel.h; sourceTree = "<group>"; };
 		2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistDataModel.m; sourceTree = "<group>"; };
-		2DDE529124F81A870096EF80 /* MediaLibrarySearchCellView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibrarySearchCellView.h; sourceTree = "<group>"; };
-		2DDE529224F81A870096EF80 /* MediaLibrarySearchCellView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibrarySearchCellView.m; sourceTree = "<group>"; };
 		2DDE52A424F821630096EF80 /* MediaLibraryOutlineView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryOutlineView.h; sourceTree = "<group>"; };
 		2DDE52A524F821630096EF80 /* MediaLibraryOutlineView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryOutlineView.m; sourceTree = "<group>"; };
 		2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginActionMenuItem.h; sourceTree = "<group>"; };
@@ -10199,10 +10191,6 @@
 				2DDE52A524F821630096EF80 /* MediaLibraryOutlineView.m */,
 				2D8EE27224D03601005C5B4B /* MediaLibraryOutlineViewController.h */,
 				2D8EE27324D03601005C5B4B /* MediaLibraryOutlineViewController.m */,
-				2DDE529124F81A870096EF80 /* MediaLibrarySearchCellView.h */,
-				2DDE529224F81A870096EF80 /* MediaLibrarySearchCellView.m */,
-				2DA32B1324D6D83C00D96C84 /* MediaLibrarySelectorCellView.h */,
-				2DA32B1424D6D83C00D96C84 /* MediaLibrarySelectorCellView.m */,
 			);
 			path = MediaLibrary;
 			sourceTree = "<group>";
@@ -14206,7 +14194,6 @@
 				2DC657F8274A7C4600583E14 /* RenamePlaylistViewController.h in Headers */,
 				2DD3776027414BF6007AD315 /* ScopePreferencesViewController.h in Headers */,
 				2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */,
-				2DDE529324F81A870096EF80 /* MediaLibrarySearchCellView.h in Headers */,
 				2D9C0C25238DC2C100CE8C10 /* GroupByCustomWindowController.h in Headers */,
 				2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */,
 				2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */,
@@ -14225,7 +14212,6 @@
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
-				2DA32B1524D6D83C00D96C84 /* MediaLibrarySelectorCellView.h in Headers */,
 				2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
 				2D98B685272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */,
@@ -17749,7 +17735,6 @@
 				2DC65809274A876300583E14 /* DeletePlaylistConfirmationController.m in Sources */,
 				0D56856D272197B30026F700 /* scope.c in Sources */,
 				2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */,
-				2DDE529424F81A870096EF80 /* MediaLibrarySearchCellView.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */,
 				2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */,
@@ -17757,7 +17742,6 @@
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2DBF3D4427086AA900023138 /* MainContentViewController.m in Sources */,
 				2D9EBB7325E45BAA00255592 /* DesignModeDeps.m in Sources */,
-				2DA32B1624D6D83C00D96C84 /* MediaLibrarySelectorCellView.m in Sources */,
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
 				2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,

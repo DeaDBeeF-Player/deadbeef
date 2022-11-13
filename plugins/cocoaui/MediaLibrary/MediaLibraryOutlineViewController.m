@@ -12,8 +12,6 @@
 #import "artwork.h"
 #import "AppDelegate.h"
 #import "MediaLibraryOutlineView.h"
-#import "MediaLibrarySelectorCellView.h"
-#import "MediaLibrarySearchCellView.h"
 #import "MediaLibraryItem.h"
 #import "MediaLibraryOutlineViewController.h"
 #import "MedialibItemDragDropHolder.h"
@@ -22,12 +20,10 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface MediaLibraryOutlineViewController() <NSOutlineViewDataSource,MediaLibraryOutlineViewDelegate,TrackContextMenuDelegate,MediaLibraryFilterSelectorCellViewDelegate,MediaLibrarySearchCellViewDelegate,TrackPropertiesWindowControllerDelegate> {
+@interface MediaLibraryOutlineViewController() <NSOutlineViewDataSource,MediaLibraryOutlineViewDelegate,TrackContextMenuDelegate,TrackPropertiesWindowControllerDelegate> {
     ddb_mediasource_list_selector_t *_selectors;
 }
 
-@property (nonatomic) NSString *selectorItem;
-@property (nonatomic) NSString *searchItem;
 @property (nonatomic) MediaLibraryItem *medialibRootItem;
 
 @property (nullable, nonatomic) NSString *searchString;
@@ -38,6 +34,8 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) int listenerId;
 
 @property (nonatomic) NSOutlineView *outlineView;
+@property (nonatomic) NSSearchField *searchField;
+@property (nonatomic) NSPopUpButton *selectorPopup;
 
 @property (atomic) DB_mediasource_t *medialibPlugin;
 @property (atomic,readonly) ddb_mediasource_source_t medialibSource;
@@ -63,10 +61,10 @@ extern DB_functions_t *deadbeef;
 }
 
 - (instancetype)init {
-    return [self initWithOutlineView:[NSOutlineView new]];
+    return [self initWithOutlineView:[NSOutlineView new] searchField:[NSSearchField new] selectorPopup:[NSPopUpButton new]];
 }
 
-- (instancetype)initWithOutlineView:(NSOutlineView *)outlineView {
+- (instancetype)initWithOutlineView:(NSOutlineView *)outlineView searchField:(NSSearchField *)searchField selectorPopup:(NSPopUpButton *)selectorPopup {
     self = [super init];
     if (!self) {
         return nil;
@@ -79,8 +77,13 @@ extern DB_functions_t *deadbeef;
     self.outlineView.delegate = self;
     [self.outlineView registerForDraggedTypes:@[ddbMedialibItemUTIType]];
 
-    self.selectorItem = @"Popup";
-    self.searchItem = @"Search Field";
+    self.searchField = searchField;
+    self.searchField.target = self;
+    self.searchField.action = @selector(searchFieldAction:);
+
+    self.selectorPopup = selectorPopup;
+    self.selectorPopup.action = @selector(filterSelectorChanged:);
+    self.selectorPopup.target = self;
 
     self.medialibPlugin = (DB_mediasource_t *)deadbeef->plug_get_for_id ("medialib");
     _selectors = self.medialibPlugin->get_selectors_list (self.medialibSource);
@@ -91,7 +94,18 @@ extern DB_functions_t *deadbeef;
     self.outlineView.menu = self.trackContextMenu;
     self.outlineView.menu.delegate = self;
 
+    [self.selectorPopup removeAllItems];
+
+    // populate the selector popup
+    for (int i = 0; _selectors[i]; i++) {
+        const char *name = self.medialibPlugin->selector_name (self.medialibSource, _selectors[i]);
+        [self.selectorPopup addItemWithTitle:[NSString stringWithUTF8String:name]];
+    }
+
+    [self.selectorPopup selectItemAtIndex:self.lastSelectedIndex];
+
     [self initializeTreeView:0];
+
     [self.outlineView expandItem:self.medialibRootItem];
 
     [self updateMedialibStatus];
@@ -144,8 +158,6 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     self.medialibRootItem = [[MediaLibraryItem alloc] initWithItem:self.medialibItemTree];
 
     self.topLevelItems = @[
-        self.selectorItem,
-        self.searchItem,
         self.medialibRootItem,
     ];
 
@@ -566,29 +578,6 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
             }
         }
     }
-    else if (item == self.selectorItem) {
-        view = [outlineView makeViewWithIdentifier:@"FilterSelectorCell" owner:self];
-        MediaLibrarySelectorCellView *selectorCellView = (MediaLibrarySelectorCellView *)view;
-        selectorCellView.delegate = self;
-
-        [selectorCellView.popupButton removeAllItems];
-
-        // populate the selector popup
-        for (int i = 0; _selectors[i]; i++) {
-            const char *name = self.medialibPlugin->selector_name (self.medialibSource, _selectors[i]);
-            [selectorCellView.popupButton addItemWithTitle:[NSString stringWithUTF8String:name]];
-        }
-
-        [selectorCellView.popupButton selectItemAtIndex:self.lastSelectedIndex];
-        if (view.textField) {
-            view.textField.stringValue = item;
-        }
-    }
-    else if (item == self.searchItem) {
-        view = [outlineView makeViewWithIdentifier:@"SearchCell" owner:self];
-        MediaLibrarySearchCellView *searchCellView = (MediaLibrarySearchCellView *)view;
-        searchCellView.delegate = self;
-    }
     return view;
 }
 
@@ -757,25 +746,27 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     // prevent selecting filter items
     [proposedSelectionIndexes enumerateIndexesUsingBlock:^(NSUInteger row, BOOL * _Nonnull stop) {
         id item = [self.outlineView itemAtRow:row];
-        if (item != self.selectorItem
-            && item != self.medialibRootItem
-            && item != self.searchItem) {
+        if (item != self.medialibRootItem) {
             [selectionIndexes addIndex:row];
         }
     }];
     return selectionIndexes;
 }
 
-#pragma mark - MediaLibraryFilterSelectorCellViewDelegate
+#pragma mark - NSPopUpButton
 
-- (void)filterSelectorChanged:(MediaLibrarySelectorCellView *)cellView {
-    self.lastSelectedIndex = cellView.popupButton.indexOfSelectedItem;
+- (void)filterSelectorChanged:(NSPopUpButton *)sender {
+    self.lastSelectedIndex = self.selectorPopup.indexOfSelectedItem;
     [self filterChanged];
 }
 
-#pragma mark - MediaLibrarySearchCellViewDelegate
+#pragma mark - NSSearchField
 
 - (void)mediaLibrarySearchCellViewTextChanged:(nonnull NSString *)text {
+}
+
+- (IBAction)searchFieldAction:(NSSearchField *)sender {
+    NSString *text = self.searchField.stringValue;
     if ([text isEqualToString:@""]) {
         self.searchString = nil;
     }
@@ -784,6 +775,5 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     }
     [self filterChanged];
 }
-
 
 @end

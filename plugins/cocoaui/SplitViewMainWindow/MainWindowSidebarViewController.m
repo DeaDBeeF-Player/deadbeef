@@ -11,6 +11,9 @@
 @interface MainWindowSidebarViewController ()
 
 @property (weak) IBOutlet NSOutlineView *outlineView;
+@property (weak) IBOutlet NSSearchField *searchField;
+@property (weak) IBOutlet NSPopUpButton *selectorPopup;
+
 
 @end
 
@@ -20,7 +23,7 @@
     [super viewDidLoad];
 
 #if ENABLE_MEDIALIB
-    self.mediaLibraryOutlineViewController = [[MediaLibraryOutlineViewController alloc] initWithOutlineView:self.outlineView];
+    self.mediaLibraryOutlineViewController = [[MediaLibraryOutlineViewController alloc] initWithOutlineView:self.outlineView searchField:self.searchField selectorPopup:self.selectorPopup];
 #endif
 }
 
