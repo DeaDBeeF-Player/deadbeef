@@ -80,7 +80,9 @@ get_albums_for_collection_group_by_field (medialib_source_t *source, ml_tree_ite
             track_field = deadbeef->pl_find_meta (album->items->it, field);
 
             // This is necessary to reference a single value from multivalue fields
-            track_field = mc_str_for_track_field = deadbeef->metacache_add_string (track_field);
+            if (track_field != NULL) {
+                track_field = mc_str_for_track_field = deadbeef->metacache_add_string (track_field);
+            }
         }
         else {
             ddb_tf_context_t ctx = {
