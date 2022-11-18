@@ -597,7 +597,7 @@ AS_IF([test "${enable_oss}" != "no"], [
         for i in `cat /etc/oss.conf`; do
             t=`echo $i | sed -e 's/OSSLIBDIR=//'`
             AS_IF([test "${i}" != "${t}"], [
-                AS_IF([test -f "${t}/include/sys/soundcard.h" -o -f "${i}/include/soundcard.h"], [
+                AS_IF([test -f "${t}/include/sys/soundcard.h"], [
                     OSS_CFLAGS="-I$t/include/sys"
                     AC_MSG_RESULT([$OSS_CFLAGS])
                     have_oss=yes

@@ -25,11 +25,7 @@
 #endif
 #include <stdio.h>
 #include <string.h>
-#if HAVE_SYS_SOUNDCARD_H
 #include <sys/soundcard.h>
-#else
-#include <soundcard.h>
-#endif
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <stdlib.h>
