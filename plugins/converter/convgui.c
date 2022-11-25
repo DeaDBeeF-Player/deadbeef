@@ -318,7 +318,7 @@ typedef struct {
 } thread_converter_ctx_t;
 
 static progress_info_t*
-make_progress_info (thread_converter_ctx_t *self, int item_id) {
+make_progress_info (thread_converter_ctx_t *self) {
     progress_info_t *info = malloc (sizeof (*info));
     if (info) {
         shared_converter_ctx_t *shared_ctx = self->shared_ctx;
@@ -345,7 +345,7 @@ print_idle_progress_msg (char *buffer, size_t buffer_size, int thread_id) {
 
 static progress_info_t*
 make_start_progress_info(thread_converter_ctx_t *self, int item_id) {
-    progress_info_t *info = make_progress_info (self, item_id);
+    progress_info_t *info = make_progress_info (self);
     g_object_ref (info->buffer); //increment further in start because buffer may be GUI-destroyed after the first free_progress_info
     DB_playItem_t *item = get_shared_converter_item (self->shared_ctx, item_id);
     print_active_progress_msg (info->item_msg, self->shared_ctx->msg_size, item, info->thread_id);
@@ -353,8 +353,8 @@ make_start_progress_info(thread_converter_ctx_t *self, int item_id) {
 }
 
 static progress_info_t*
-make_end_progress_info(thread_converter_ctx_t *self, int item_id) {
-    progress_info_t *info = make_progress_info (self, item_id);
+make_end_progress_info(thread_converter_ctx_t *self) {
+    progress_info_t *info = make_progress_info (self);
     g_object_unref (info->buffer); //make_end_progress_info is executed even after GUI destruction, we cancel the start increment
     print_idle_progress_msg (info->item_msg, self->shared_ctx->msg_size, info->thread_id);
     return info;
@@ -451,7 +451,7 @@ update_gui_convert (thread_converter_ctx_t *self, int item_id) {
     progress_info_t *start_info = make_start_progress_info(self, item_id);
     g_idle_add (update_progress_cb, start_info);
     try_convert (self->shared_ctx, item_id);
-    progress_info_t *end_info = make_end_progress_info(self, item_id);
+    progress_info_t *end_info = make_end_progress_info(self);
     g_idle_add (update_progress_cb, end_info);
 }
 
