@@ -331,11 +331,16 @@ make_progress_info (thread_converter_ctx_t *self, int item_id) {
 }
 
 static int
-print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int thread_id) {
+print_active_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int thread_id) {
     deadbeef->pl_lock ();
     int bytes = snprintf (buffer, buffer_size, "[#%02d] '%s' (%s)\n", thread_id + 1, deadbeef->pl_find_meta_raw(item, "title"), deadbeef->pl_find_meta (item, ":URI"));
     deadbeef->pl_unlock ();
     return bytes;
+}
+
+static int
+print_idle_progress_msg (char *buffer, size_t buffer_size, int thread_id) {
+    return snprintf (buffer, buffer_size, "[#%02d] idle\n", thread_id + 1);
 }
 
 static progress_info_t*
@@ -343,7 +348,7 @@ make_start_progress_info(thread_converter_ctx_t *self, int item_id) {
     progress_info_t *info = make_progress_info (self, item_id);
     g_object_ref (info->buffer); //increment further in start because buffer may be GUI-destroyed after the first free_progress_info
     DB_playItem_t *item = get_shared_converter_item (self->shared_ctx, item_id);
-    print_progress_msg (info->item_msg, self->shared_ctx->msg_size, item, info->thread_id);
+    print_active_progress_msg (info->item_msg, self->shared_ctx->msg_size, item, info->thread_id);
     return info;
 }
 
@@ -351,7 +356,7 @@ static progress_info_t*
 make_end_progress_info(thread_converter_ctx_t *self, int item_id) {
     progress_info_t *info = make_progress_info (self, item_id);
     g_object_unref (info->buffer); //make_end_progress_info is executed even after GUI destruction, we cancel the start increment
-    snprintf (info->item_msg, self->shared_ctx->msg_size, "[#%02d] idle\n", info->thread_id + 1);
+    print_idle_progress_msg (info->item_msg, self->shared_ctx->msg_size, info->thread_id);
     return info;
 }
 
