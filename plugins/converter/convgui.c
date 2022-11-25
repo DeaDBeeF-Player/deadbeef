@@ -168,44 +168,38 @@ typedef struct {
     ddb_converter_settings_t settings;
     size_t msg_size;
     char root[2000];
-} converter_thread_ctx_t;
+} shared_converter_ctx_t;
 
 static DB_playItem_t*
-get_converter_thread_item(converter_thread_ctx_t *self, int index)
+get_shared_converter_item (shared_converter_ctx_t *self, int index)
 {
     return self->conv->convert_items[index];
 }
 
-static int
-get_converter_thread_relative_item_id(converter_thread_ctx_t *self, int item_index)
-{
-    return item_index % self->threads;
-}
-
 static void
-init_converter_thread_ctx(converter_thread_ctx_t *self, converter_ctx_t *conv, int threads, size_t msg_size)
+init_shared_converter_ctx (shared_converter_ctx_t *self, converter_ctx_t *conv, int threads, size_t msg_size)
 {
     self->next_index = 0;
     self->threads = get_useful_num_threads (conv, threads);
-    self->pids = malloc(self->threads * sizeof(pthread_t));
-    pthread_mutex_init(&self->item_mutex, NULL);
-    pthread_rwlock_init(&self->cancel_lock, NULL);
+    self->pids = malloc (self->threads * sizeof (pthread_t));
+    pthread_mutex_init (&self->item_mutex, NULL);
+    pthread_rwlock_init (&self->cancel_lock, NULL);
     self->conv = conv;
     self->settings = get_converter_settings (conv);
     self->msg_size = msg_size;
     get_folder_root (conv, self->root);
 }
 
-static converter_thread_ctx_t*
-make_converter_thread_ctx(converter_ctx_t *conv, int threads, size_t msg_size)
+static shared_converter_ctx_t*
+make_shared_converter_ctx (converter_ctx_t *conv, int threads, size_t msg_size)
 {
-    converter_thread_ctx_t *thread_ctx = malloc(sizeof(*thread_ctx));
-    if (thread_ctx) init_converter_thread_ctx (thread_ctx, conv, threads, msg_size);
-    return thread_ctx;
+    shared_converter_ctx_t *shared_ctx = malloc (sizeof (*shared_ctx));
+    if (shared_ctx) init_shared_converter_ctx (shared_ctx, conv, threads, msg_size);
+    return shared_ctx;
 }
 
 void
-free_converter_thread_ctx (converter_thread_ctx_t *self) {
+free_shared_converter_ctx (shared_converter_ctx_t *self) {
     if(self) {
         free(self->pids);
         pthread_mutex_destroy(&self->item_mutex);
@@ -214,40 +208,40 @@ free_converter_thread_ctx (converter_thread_ctx_t *self) {
 }
 
 void
-free_converter_thread_utils (converter_thread_ctx_t *self) {
+free_shared_converter_utils (shared_converter_ctx_t *self) {
     g_idle_add (free_gui_conversion_utils_cb, self->conv);
-    free_converter_thread_ctx (self);
+    free_shared_converter_ctx (self);
     free (self);
 }
 
 static int
-get_converter_thread_cancel (converter_thread_ctx_t *self) {
+get_shared_converter_cancel (shared_converter_ctx_t *self) {
     return self->conv->cancelled;
 }
 
 static int
-get_converter_thread_cancel_lock (converter_thread_ctx_t *self) {
+get_shared_converter_cancel_lock (shared_converter_ctx_t *self) {
     pthread_rwlock_rdlock(&self->cancel_lock);
-    int cancelled = get_converter_thread_cancel(self);
+    int cancelled = get_shared_converter_cancel(self);
     pthread_rwlock_unlock(&self->cancel_lock);
     return cancelled;
 }
 
 static void
-set_converter_thread_cancel_lock (converter_thread_ctx_t *self, int cancel) {
+set_shared_converter_cancel_lock (shared_converter_ctx_t *self, int cancel) {
     pthread_rwlock_wrlock(&self->cancel_lock);
     self->conv->cancelled = cancel;
     pthread_rwlock_unlock(&self->cancel_lock);
 }
 
 static int
-pop_next_item_id (converter_thread_ctx_t *self)
+pop_next_item_id (shared_converter_ctx_t *self)
 {
     return self->next_index++;
 }
 
 static int
-pop_next_item_id_lock (converter_thread_ctx_t *self)
+pop_next_item_id_lock (shared_converter_ctx_t *self)
 {
     pthread_mutex_lock(&self->item_mutex);
     int id = pop_next_item_id(self);
@@ -256,14 +250,14 @@ pop_next_item_id_lock (converter_thread_ctx_t *self)
 }
 
 static int
-is_valid_converter_item (converter_thread_ctx_t *self, int item_index) {
+is_valid_converter_item (shared_converter_ctx_t *self, int item_index) {
     return item_index < self->conv->convert_items_count;
 }
 
 static int
-conversion_may_proceed (converter_thread_ctx_t *self, int index)
+conversion_may_proceed (shared_converter_ctx_t *self, int index)
 {
-    return !get_converter_thread_cancel_lock (self) && is_valid_converter_item(self, index);
+    return !get_shared_converter_cancel_lock (self) && is_valid_converter_item(self, index);
 }
 
 enum {
@@ -292,8 +286,8 @@ fill_presets (GtkListStore *mdl, ddb_preset_t *head, int type) {
 
 void
 on_converter_progress_cancel (GtkDialog *dialog, gint response_id, gpointer user_data) {
-    converter_thread_ctx_t *thread_ctx = user_data;
-    set_converter_thread_cancel_lock(thread_ctx, 1);
+    shared_converter_ctx_t *shared_ctx = user_data;
+    set_shared_converter_cancel_lock(shared_ctx, 1);
 }
 
 void
@@ -310,14 +304,28 @@ typedef struct {
     char *item_msg;
 } progress_info_t;
 
+static void
+free_progress_info (progress_info_t* self) {
+    if (self) {
+        g_object_unref (self->buffer);
+        free(self->item_msg);
+    }
+}
+
+typedef struct {
+    unsigned thread_id;
+    shared_converter_ctx_t *shared_ctx;
+} thread_converter_ctx_t;
+
 static progress_info_t*
-make_progress_info (converter_thread_ctx_t *self, int item_id) {
+make_progress_info (thread_converter_ctx_t *self, int item_id) {
     progress_info_t *info = malloc (sizeof (*info));
     if (info) {
-        g_object_ref (self->conv->text_buffer);
-        info->buffer = self->conv->text_buffer;
-        info->thread_id = get_converter_thread_relative_item_id(self, item_id);
-        info->item_msg = malloc (self->msg_size);
+        shared_converter_ctx_t *shared_ctx = self->shared_ctx;
+        g_object_ref (shared_ctx->conv->text_buffer);
+        info->buffer = shared_ctx->conv->text_buffer;
+        info->thread_id = self->thread_id;
+        info->item_msg = malloc (shared_ctx->msg_size);
     }
     return info;
 }
@@ -331,28 +339,20 @@ print_progress_msg (char *buffer, size_t buffer_size, DB_playItem_t *item, int t
 }
 
 static progress_info_t*
-make_start_progress_info(converter_thread_ctx_t *self, int item_id) {
+make_start_progress_info(thread_converter_ctx_t *self, int item_id) {
     progress_info_t *info = make_progress_info (self, item_id);
     g_object_ref (info->buffer); //increment further in start because buffer may be GUI-destroyed after the first free_progress_info
-    DB_playItem_t *item = get_converter_thread_item(self, item_id);
-    print_progress_msg (info->item_msg, self->msg_size, item, info->thread_id);
+    DB_playItem_t *item = get_shared_converter_item (self->shared_ctx, item_id);
+    print_progress_msg (info->item_msg, self->shared_ctx->msg_size, item, info->thread_id);
     return info;
 }
 
 static progress_info_t*
-make_end_progress_info(converter_thread_ctx_t *self, int item_id) {
+make_end_progress_info(thread_converter_ctx_t *self, int item_id) {
     progress_info_t *info = make_progress_info (self, item_id);
     g_object_unref (info->buffer); //make_end_progress_info is executed even after GUI destruction, we cancel the start increment
-    snprintf (info->item_msg, self->msg_size, "[#%02d] idle\n", info->thread_id + 1);
+    snprintf (info->item_msg, self->shared_ctx->msg_size, "[#%02d] idle\n", info->thread_id + 1);
     return info;
-}
-
-static void
-free_progress_info (progress_info_t* self) {
-    if (self) {
-        g_object_unref (self->buffer);
-        free(self->item_msg);
-    }
 }
 
 static gboolean
@@ -429,23 +429,23 @@ get_skip_conversion (DB_playItem_t *item, const char* outpath, converter_ctx_t *
 }
 
 static void
-try_convert (converter_thread_ctx_t *self, int item_id) {
+try_convert (shared_converter_ctx_t *self, int item_id) {
     char outpath[2000];
     converter_ctx_t *conv = self->conv;
-    DB_playItem_t *item = get_converter_thread_item(self, item_id);
+    DB_playItem_t *item = get_shared_converter_item(self, item_id);
     converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, self->root, conv->write_to_source_folder, outpath, sizeof (outpath));
     int skip = get_skip_conversion (item, outpath, conv);
     if (!skip) {
-        int cancelled = get_converter_thread_cancel_lock (self);
+        int cancelled = get_shared_converter_cancel_lock (self);
         converter_plugin->convert2 (&self->settings, item, outpath, &cancelled);
     }
 }
 
 static void
-update_gui_convert (converter_thread_ctx_t *self, int item_id) {
+update_gui_convert (thread_converter_ctx_t *self, int item_id) {
     progress_info_t *start_info = make_start_progress_info(self, item_id);
     g_idle_add (update_progress_cb, start_info);
-    try_convert (self, item_id);
+    try_convert (self->shared_ctx, item_id);
     progress_info_t *end_info = make_end_progress_info(self, item_id);
     g_idle_add (update_progress_cb, end_info);
 }
@@ -458,39 +458,45 @@ unref_convert_items (DB_playItem_t **convert_items, int begin, int end) {
 }
 
 static void*
-converter_thread_worker (void *ctx) {
-    converter_thread_ctx_t *thread_ctx = ctx;
-    int item_id = pop_next_item_id_lock (thread_ctx);
-    while (conversion_may_proceed (thread_ctx, item_id)) {
+thread_converter_worker (void *ctx) {
+    thread_converter_ctx_t *thread_ctx = ctx;
+    shared_converter_ctx_t *shared_ctx = thread_ctx->shared_ctx;
+    int item_id = pop_next_item_id_lock (shared_ctx);
+    while (conversion_may_proceed (shared_ctx, item_id)) {
         update_gui_convert (thread_ctx, item_id);
-        deadbeef->pl_item_unref (thread_ctx->conv->convert_items[item_id]);
-        item_id = pop_next_item_id_lock (thread_ctx);
+        deadbeef->pl_item_unref (shared_ctx->conv->convert_items[item_id]);
+        item_id = pop_next_item_id_lock (shared_ctx);
     }
+    free (thread_ctx);
     return NULL;
 }
 
 static void
-create_pool_threads(converter_thread_ctx_t* self) {
-    for(int k = 0; k < self->threads; ++k)
-        pthread_create(&self->pids[k], NULL, &converter_thread_worker, (void*)self);
+create_pool_threads (shared_converter_ctx_t* self) {
+    for(int k = 0; k < self->threads; ++k) {
+        thread_converter_ctx_t *thread_ctx = malloc (sizeof (*thread_ctx));
+        thread_ctx->thread_id = k;
+        thread_ctx->shared_ctx = self;
+        pthread_create (&self->pids[k], NULL, &thread_converter_worker, thread_ctx);
+    }
 }
 
-static void join_pool_threads(converter_thread_ctx_t* self) {
+static void join_pool_threads (shared_converter_ctx_t* self) {
     for(int k = 0; k < self->threads; ++k)
-        pthread_join(self->pids[k], NULL);
+        pthread_join (self->pids[k], NULL);
 }
 
 static void
 converter_worker (void *ctx) {
     deadbeef->background_job_increment ();
-    converter_thread_ctx_t *thread_ctx = ctx;
-    create_pool_threads (thread_ctx);
-    join_pool_threads (thread_ctx);
-    if (get_converter_thread_cancel (thread_ctx)) {
-        converter_ctx_t* conv = thread_ctx->conv;
-        unref_convert_items (conv->convert_items, thread_ctx->next_index, conv->convert_items_count);
+    shared_converter_ctx_t *shared_ctx = ctx;
+    create_pool_threads (shared_ctx);
+    join_pool_threads (shared_ctx);
+    if (get_shared_converter_cancel (shared_ctx)) {
+        converter_ctx_t* conv = shared_ctx->conv;
+        unref_convert_items (conv->convert_items, shared_ctx->next_index, conv->convert_items_count);
     }
-    free_converter_thread_utils (thread_ctx);
+    free_shared_converter_utils (shared_ctx);
     deadbeef->background_job_decrement ();
 }
 
@@ -626,12 +632,12 @@ converter_process (converter_ctx_t *conv)
     conv->progress_dialog = progress_dialog;
     conv->text_buffer = add_scrolled_text(progress_dialog);
 
-    converter_thread_ctx_t* thread_ctx = make_converter_thread_ctx (conv, get_gui_num_threads (conv), PATH_MAX);
-    g_signal_connect (progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), thread_ctx);
-    gtk_window_set_default_size (GTK_WINDOW(progress_dialog), 720, 28 * thread_ctx->threads);
+    shared_converter_ctx_t* shared_ctx = make_shared_converter_ctx (conv, get_gui_num_threads (conv), PATH_MAX);
+    g_signal_connect (progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), shared_ctx);
+    gtk_window_set_default_size (GTK_WINDOW(progress_dialog), 720, 28 * shared_ctx->threads);
     gtk_widget_show_all (progress_dialog);
 
-    intptr_t tid = deadbeef->thread_start (converter_worker, thread_ctx);
+    intptr_t tid = deadbeef->thread_start (converter_worker, shared_ctx);
     deadbeef->thread_detach (tid);
     return 0;
 }
