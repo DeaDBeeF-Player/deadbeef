@@ -626,6 +626,13 @@ get_gui_num_threads (converter_ctx_t *conv) {
     return gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (numthreads));
 }
 
+static void
+init_conv_buffer_text (converter_ctx_t *conv, int threads) {
+    char text[threads];
+    memset (text, '\n', threads);
+    gtk_text_buffer_set_text (conv->text_buffer, text, threads);
+}
+
 int
 converter_process (converter_ctx_t *conv)
 {
@@ -640,6 +647,7 @@ converter_process (converter_ctx_t *conv)
     shared_converter_ctx_t* shared_ctx = make_shared_converter_ctx (conv, get_gui_num_threads (conv), PATH_MAX);
     g_signal_connect (progress_dialog, "response", G_CALLBACK (on_converter_progress_cancel), shared_ctx);
     gtk_window_set_default_size (GTK_WINDOW(progress_dialog), 720, 28 * shared_ctx->threads);
+    init_conv_buffer_text (conv, shared_ctx->threads);
     gtk_widget_show_all (progress_dialog);
 
     intptr_t tid = deadbeef->thread_start (converter_worker, shared_ctx);
