@@ -78,6 +78,12 @@ static ddb_playback_state_t
 palsa_get_state (void);
 
 static int
+palsa_resume_playback (void);
+
+static int
+palsa_open (void);
+
+static int
 palsa_play (void);
 
 static int
@@ -337,7 +343,7 @@ error:
 }
 
 static int
-palsa_init (void) {
+palsa_open (void) {
     int err;
 
     // get and cache conf variables
@@ -346,7 +352,6 @@ palsa_init (void) {
     trace ("alsa_soundcard: %s\n", conf_alsa_soundcard);
 
     snd_pcm_sw_params_t *sw_params = NULL;
-    state = DDB_PLAYBACK_STATE_STOPPED;
     if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
         fprintf (stderr, "could not open audio device (%s)\n",
                 snd_strerror (err));
@@ -403,9 +408,6 @@ palsa_init (void) {
         goto open_error;
     }
 
-    alsa_terminate = 0;
-    alsa_tid = deadbeef->thread_start (palsa_thread, NULL);
-
     return 0;
 
 open_error:
@@ -413,10 +415,24 @@ open_error:
         snd_pcm_sw_params_free (sw_params);
     }
     if (audio != NULL) {
-        palsa_free ();
+        snd_pcm_drop (audio);
+        snd_pcm_close (audio);
+        audio = NULL;
     }
 
     return -1;
+}
+
+static int
+palsa_init (void) {
+    if (palsa_open () != 0) {
+        return -1;
+    }
+
+    alsa_terminate = 0;
+    alsa_tid = deadbeef->thread_start (palsa_thread, NULL);
+
+    return 0;
 }
 
 static int
@@ -442,6 +458,22 @@ _setformat_apply (void) {
         , requested_fmt.channelmask, plugin.fmt.channelmask
         );
     }
+
+    if (audio != NULL) {
+        trace ("alsa: new format: draining...\n");
+        snd_pcm_nonblock(audio, 0);
+        snd_pcm_drain (audio);
+        snd_pcm_nonblock(audio, 1);
+        trace ("alsa: new format: reinitializing\n");
+        snd_pcm_drop (audio);
+        snd_pcm_close (audio);
+        audio = NULL;
+        if (palsa_open() < 0) {
+            return -1;
+        }
+    }
+
+
     int ret = palsa_set_hw_params (&requested_fmt);
     if (ret < 0) {
         trace ("palsa_setformat: impossible to set requested format\n");
@@ -450,6 +482,15 @@ _setformat_apply (void) {
         return -1;
     }
     trace ("new format %dbit %s %dch %dHz channelmask=%X\n", plugin.fmt.bps, plugin.fmt.is_float ? "float" : "int", plugin.fmt.channels, plugin.fmt.samplerate, plugin.fmt.channelmask);
+
+    switch (state) {
+    case DDB_PLAYBACK_STATE_STOPPED:
+    case DDB_PLAYBACK_STATE_PAUSED:
+        return 0;
+    case DDB_PLAYBACK_STATE_PLAYING:
+        return palsa_resume_playback();
+    }
+
     return 0;
 }
 
@@ -495,6 +536,17 @@ palsa_hw_pause (int pause) {
 }
 
 static int
+palsa_resume_playback (void) {
+    int err = snd_pcm_prepare (audio);
+    if (err < 0) {
+        fprintf (stderr, "snd_pcm_prepare: %s\n", snd_strerror (err));
+        return err;
+    }
+    snd_pcm_start (audio);
+    return 0;
+}
+
+static int
 palsa_play (void) {
     int err = 0;
     LOCK;
@@ -512,13 +564,11 @@ palsa_play (void) {
         fprintf (stderr, "snd_pcm_drop: %s\n", snd_strerror (err));
         return err;
     }
-    err = snd_pcm_prepare (audio);
-    if (err < 0) {
+    err = palsa_resume_playback ();
+    if (err != 0) {
         UNLOCK;
-        fprintf (stderr, "snd_pcm_prepare: %s\n", snd_strerror (err));
-        return err;
+        return -1;
     }
-    snd_pcm_start (audio);
     state = DDB_PLAYBACK_STATE_PLAYING;
     UNLOCK;
     return 0;
