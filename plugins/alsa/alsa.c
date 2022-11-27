@@ -347,7 +347,6 @@ palsa_init (void) {
 
     snd_pcm_sw_params_t *sw_params = NULL;
     state = DDB_PLAYBACK_STATE_STOPPED;
-    //const char *conf_alsa_soundcard = conf_get_str ("alsa_soundcard", "default");
     if ((err = snd_pcm_open (&audio, conf_alsa_soundcard, SND_PCM_STREAM_PLAYBACK, 0))) {
         fprintf (stderr, "could not open audio device (%s)\n",
                 snd_strerror (err));
@@ -390,12 +389,6 @@ palsa_init (void) {
     trace ("alsa avail_min: %d frames\n", (int)av);
 
 
-//    if ((err = snd_pcm_sw_params_set_start_threshold (audio, sw_params, 0U)) < 0) {
-//        trace ("cannot set start mode (%s)\n",
-//                snd_strerror (err));
-//        goto open_error;
-//    }
-
     if ((err = snd_pcm_sw_params (audio, sw_params)) < 0) {
         fprintf (stderr, "cannot set software parameters (%s)\n",
                 snd_strerror (err));
@@ -403,10 +396,6 @@ palsa_init (void) {
     }
     snd_pcm_sw_params_free (sw_params);
     sw_params = NULL;
-
-    /* the interface will interrupt the kernel every N frames, and ALSA
-       will wake up this program very soon after that.
-       */
 
     if ((err = snd_pcm_prepare (audio)) < 0) {
         fprintf (stderr, "cannot prepare audio interface for use (%s)\n",
