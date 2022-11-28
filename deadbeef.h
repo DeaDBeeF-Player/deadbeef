@@ -1712,8 +1712,9 @@ enum {
     DB_ACTION_DISABLED = 1 << 4,
 
 #if (DDB_API_LEVEL >= 2)
-    // Ignored in callback2
-    // Action for the playlist (tab)
+    // Action is compatible with action context is DDB_ACTION_CTX_PLAYLIST,
+    // I.e. it should show up in the playlist tab context menu.
+    // Example "Duplicate playlist".
     DB_ACTION_PLAYLIST = (1 << 5),
 #endif
 
