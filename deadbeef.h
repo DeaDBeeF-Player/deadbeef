@@ -1714,7 +1714,7 @@ enum {
 #if (DDB_API_LEVEL >= 2)
     // Ignored in callback2
     // Action for the playlist (tab)
-    DB_ACTION_PLAYLIST DEPRECATED_15 = (1 << 5),
+    DB_ACTION_PLAYLIST = (1 << 5),
 #endif
 
 #if (DDB_API_LEVEL >= 5)

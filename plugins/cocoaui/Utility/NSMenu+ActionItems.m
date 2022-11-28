@@ -39,6 +39,10 @@ extern DB_functions_t *deadbeef;
         int count = 0;
         for (action = actions; action; action = action->next)
         {
+            if (!strstr(action->title, "Duplicate")) {
+                __unused int n = 0;
+            }
+
             if (action->name && !strcmp (action->name, "delete_from_disk") && hide_remove_from_disk) {
                 continue;
             }
@@ -180,9 +184,13 @@ extern DB_functions_t *deadbeef;
             else {
                 [self addItem:actionitem];
             }
-            if ((selectedCount > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
-                (action->flags & DB_ACTION_DISABLED)) {
-                actionitem.enabled = NO;
+            int isPlaylistAction = (action->flags & DB_ACTION_PLAYLIST) && actionContext == DDB_ACTION_CTX_PLAYLIST;
+
+            if (!isPlaylistAction) {
+                if ((selectedCount > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
+                    (action->flags & DB_ACTION_DISABLED)) {
+                    actionitem.enabled = NO;
+                }
             }
         }
         if (count > 0 && deadbeef->conf_get_int ("cocoaui.action_separators", 0)) { // FIXME: UI

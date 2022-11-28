@@ -836,7 +836,7 @@ static DB_plugin_action_t action_prev_or_restart = {
 static DB_plugin_action_t action_duplicate_playlist = {
     .title = "Duplicate Playlist",
     .name = "duplicate_playlist",
-    .flags = DB_ACTION_MULTIPLE_TRACKS,
+    .flags = DB_ACTION_PLAYLIST | DB_ACTION_ADD_MENU,
     .callback2 = action_duplicate_playlist_cb,
     .next = &action_prev_or_restart
 };

@@ -250,9 +250,14 @@ menu_add_action_items(GtkWidget *menu, int selected_count, ddb_playItem_t *selec
             g_signal_connect ((gpointer) actionitem, "activate",
                               G_CALLBACK (activate_callback),
                               action);
-            if ((selected_count > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
-                (action->flags & DB_ACTION_DISABLED)) {
-                gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
+
+            int is_playlist_action = (action->flags & DB_ACTION_PLAYLIST) && action_context == DDB_ACTION_CTX_PLAYLIST;
+
+            if (!is_playlist_action) {
+                if ((selected_count > 1 && !(action->flags & DB_ACTION_MULTIPLE_TRACKS)) ||
+                    (action->flags & DB_ACTION_DISABLED)) {
+                    gtk_widget_set_sensitive (GTK_WIDGET (actionitem), FALSE);
+                }
             }
         }
         if (count > 0 && deadbeef->conf_get_int ("gtkui.action_separators", 0))
