@@ -1716,10 +1716,11 @@ create_prefwin (void)
   GtkWidget *listview_playing_text_italic;
   GtkWidget *listview_selected_text_italic;
   GtkWidget *label75;
-  GtkWidget *vbox57;
-  GtkWidget *hbox151;
+  GtkWidget *table5;
   GtkWidget *use_visualization_base_color;
   GtkWidget *visualization_custom_color_button;
+  GtkWidget *use_visualization_background_color;
+  GtkWidget *visualization_custom_background_color_button;
   GtkWidget *label175;
   GtkWidget *label100;
   GtkWidget *vbox55;
@@ -2811,22 +2812,36 @@ create_prefwin (void)
   gtk_widget_show (label75);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook4), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook4), 2), label75);
 
-  vbox57 = gtk_vbox_new (FALSE, 0);
-  gtk_widget_show (vbox57);
-  gtk_container_add (GTK_CONTAINER (notebook4), vbox57);
-
-  hbox151 = gtk_hbox_new (FALSE, 8);
-  gtk_widget_show (hbox151);
-  gtk_box_pack_start (GTK_BOX (vbox57), hbox151, FALSE, TRUE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox151), 12);
+  table5 = gtk_table_new (2, 2, FALSE);
+  gtk_widget_show (table5);
+  gtk_container_add (GTK_CONTAINER (notebook4), table5);
+  gtk_container_set_border_width (GTK_CONTAINER (table5), 12);
+  gtk_table_set_row_spacings (GTK_TABLE (table5), 8);
+  gtk_table_set_col_spacings (GTK_TABLE (table5), 8);
 
   use_visualization_base_color = gtk_check_button_new_with_mnemonic (_("Custom visualization base color"));
   gtk_widget_show (use_visualization_base_color);
-  gtk_box_pack_start (GTK_BOX (hbox151), use_visualization_base_color, FALSE, FALSE, 0);
+  gtk_table_attach (GTK_TABLE (table5), use_visualization_base_color, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
 
   visualization_custom_color_button = gtk_color_button_new ();
   gtk_widget_show (visualization_custom_color_button);
-  gtk_box_pack_start (GTK_BOX (hbox151), visualization_custom_color_button, FALSE, FALSE, 0);
+  gtk_table_attach (GTK_TABLE (table5), visualization_custom_color_button, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  use_visualization_background_color = gtk_check_button_new_with_mnemonic (_("Custom visualization background color"));
+  gtk_widget_show (use_visualization_background_color);
+  gtk_table_attach (GTK_TABLE (table5), use_visualization_background_color, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  visualization_custom_background_color_button = gtk_color_button_new ();
+  gtk_widget_show (visualization_custom_background_color_button);
+  gtk_table_attach (GTK_TABLE (table5), visualization_custom_background_color_button, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
 
   label175 = gtk_label_new (_("Visualizations"));
   gtk_widget_show (label175);
@@ -3542,6 +3557,12 @@ create_prefwin (void)
   g_signal_connect ((gpointer) visualization_custom_color_button, "color_set",
                     G_CALLBACK (on_visualization_custom_color_button_color_set),
                     NULL);
+  g_signal_connect ((gpointer) use_visualization_background_color, "toggled",
+                    G_CALLBACK (on_use_visualization_background_color_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) visualization_custom_background_color_button, "color_set",
+                    G_CALLBACK (on_visualization_custom_background_color_button_color_set),
+                    NULL);
   g_signal_connect ((gpointer) pref_network_enableproxy, "clicked",
                     G_CALLBACK (on_pref_network_enableproxy_clicked),
                     NULL);
@@ -3812,10 +3833,11 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, listview_playing_text_italic, "listview_playing_text_italic");
   GLADE_HOOKUP_OBJECT (prefwin, listview_selected_text_italic, "listview_selected_text_italic");
   GLADE_HOOKUP_OBJECT (prefwin, label75, "label75");
-  GLADE_HOOKUP_OBJECT (prefwin, vbox57, "vbox57");
-  GLADE_HOOKUP_OBJECT (prefwin, hbox151, "hbox151");
+  GLADE_HOOKUP_OBJECT (prefwin, table5, "table5");
   GLADE_HOOKUP_OBJECT (prefwin, use_visualization_base_color, "use_visualization_base_color");
   GLADE_HOOKUP_OBJECT (prefwin, visualization_custom_color_button, "visualization_custom_color_button");
+  GLADE_HOOKUP_OBJECT (prefwin, use_visualization_background_color, "use_visualization_background_color");
+  GLADE_HOOKUP_OBJECT (prefwin, visualization_custom_background_color_button, "visualization_custom_background_color_button");
   GLADE_HOOKUP_OBJECT (prefwin, label175, "label175");
   GLADE_HOOKUP_OBJECT (prefwin, label100, "label100");
   GLADE_HOOKUP_OBJECT (prefwin, vbox55, "vbox55");

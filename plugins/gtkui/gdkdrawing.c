@@ -302,11 +302,13 @@ static GdkColor gtkui_listview_column_text_color;
 static GdkColor gtkui_listview_cursor_color;
 
 static GdkColor gtkui_visualization_base_color;
+static GdkColor gtkui_visualization_background_color;
 
 static int override_listview_colors = 0;
 static int override_bar_colors = 0;
 static int override_tabstrip_colors = 0;
 static int use_custom_visualization_color = 0;
+static int use_custom_visualization_background_color = 0;
 
 int
 gtkui_listview_override_conf (const char *conf_str) {
@@ -419,6 +421,7 @@ gtkui_init_theme_colors (void) {
     override_bar_colors = deadbeef->conf_get_int ("gtkui.override_bar_colors", 0);
     override_tabstrip_colors = deadbeef->conf_get_int ("gtkui.override_tabstrip_colors", 0);
     use_custom_visualization_color = deadbeef->conf_get_int ("gtkui.vis.use_custom_base_color", 0);
+    use_custom_visualization_background_color = deadbeef->conf_get_int ("gtkui.vis.use_custom_background_color", 0);
 
     extern GtkWidget *mainwin;
     GtkStyle *style = gtk_widget_get_style (mainwin);
@@ -444,6 +447,13 @@ gtkui_init_theme_colors (void) {
 
     if (use_custom_visualization_color) {
         _init_color_for_name(&gtkui_visualization_base_color, "gtkui.vis.custom_base_color", &gtkui_visualization_base_color);
+    }
+
+    if (use_custom_visualization_background_color) {
+        _init_color_for_name(&gtkui_visualization_background_color, "gtkui.vis.custom_background_color", &gtkui_visualization_background_color);
+    }
+    else {
+        memcpy (&gtkui_visualization_background_color, &style->black, sizeof (GdkColor));
     }
 
     if (!override_bar_colors) {
@@ -522,6 +532,11 @@ gtkui_init_theme_colors (void) {
 void
 gtkui_get_vis_custom_base_color (GdkColor *clr) {
     memcpy (clr, &gtkui_visualization_base_color, sizeof (GdkColor));
+}
+
+void
+gtkui_get_vis_custom_background_color (GdkColor *clr) {
+    memcpy (clr, &gtkui_visualization_background_color, sizeof (GdkColor));
 }
 
 void

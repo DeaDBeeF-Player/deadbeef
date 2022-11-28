@@ -1497,3 +1497,13 @@ on_sortok_clicked                      (GtkButton       *button,
 void
 on_sortfmt_show                        (GtkWidget       *widget,
                                         gpointer         user_data);
+
+void
+on_use_visualization_background_color_toggled
+                                        (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_visualization_custom_background_color_button_color_set
+                                        (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);

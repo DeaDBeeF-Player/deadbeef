@@ -170,6 +170,7 @@ typedef struct {
     ddb_scope_draw_data_t draw_data;
 
     uint32_t draw_color;
+    uint32_t background_color;
 
     cairo_surface_t *surf;
 
@@ -209,6 +210,7 @@ typedef struct {
     float grid_color[3];
     float peak_color[3];
     float bar_color[3];
+    float background_color[3];
 
     cairo_surface_t *surf;
 
@@ -2388,16 +2390,24 @@ _draw_vline_aa (uint8_t * restrict data, int stride, int x0, float y0, float y1,
     }
 }
 
+static uint32_t _gdk_color_convert_to_uint32(const GdkColor *base_color) {
+    uint8_t red = (base_color->red & 0xff00) >> 8;
+    uint8_t green = (base_color->green & 0xff00) >> 8;
+    uint8_t blue = (base_color->blue & 0xff00) >> 8;
+
+    uint32_t color = (0xff<<24) | (red<<16) | (green<<8) | blue;
+    return color;
+}
+
 static void
 _scope_update_preferences (w_scope_t *scope) {
-    GdkColor color;
-    gtkui_get_vis_custom_base_color(&color);
+    GdkColor base_color;
+    gtkui_get_vis_custom_base_color(&base_color);
+    scope->draw_color = _gdk_color_convert_to_uint32(&base_color);
 
-    uint8_t red = (color.red & 0xff00) >> 8;
-    uint8_t green = (color.green & 0xff00) >> 8;
-    uint8_t blue = (color.blue & 0xff00) >> 8;
-
-    scope->draw_color = (0xff<<24) | (red<<16) | (green<<8) | blue;
+    GdkColor background_color;
+    gtkui_get_vis_custom_background_color(&background_color);
+    scope->background_color = _gdk_color_convert_to_uint32(&background_color);
 }
 
 static void
@@ -2473,7 +2483,20 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         return FALSE;
     }
     int stride = cairo_image_surface_get_stride (w->surf);
-    memset (data, 0, draw_rect.height * stride);
+
+//    memset (data, 0, draw_rect.height * stride);
+
+    // fill with background color
+    uint8_t *color_data = data;
+    for (int y = 0; y < draw_rect.height; y++) {
+        uint32_t *row_data = (uint32_t *)color_data;
+        for (int x = 0; x < draw_rect.width; x++) {
+            *row_data = w->background_color;
+            row_data++;
+        }
+        color_data += stride;
+    }
+
     if (w->draw_data.point_count != 0 && draw_rect.height > 2) {
 
         int width = w->draw_data.point_count;
@@ -2921,7 +2944,6 @@ _spectrum_update_preferences (w_spectrum_t *spectrum) {
     GdkColor color;
     gtkui_get_vis_custom_base_color(&color);
 
-
     spectrum->grid_color[0] = 0.5f;
     spectrum->grid_color[1] = 0.5f;
     spectrum->grid_color[2] = 0.5f;
@@ -2938,6 +2960,11 @@ _spectrum_update_preferences (w_spectrum_t *spectrum) {
     spectrum->bar_color[0] = color.red / 65535.f;
     spectrum->bar_color[1] = color.green / 65535.f;
     spectrum->bar_color[2] = color.blue / 65535.f;
+
+    gtkui_get_vis_custom_background_color(&color);
+    spectrum->background_color[0] = color.red / 65535.f;
+    spectrum->background_color[1] = color.green / 65535.f;
+    spectrum->background_color[2] = color.blue / 65535.f;
 }
 
 static void
@@ -2996,7 +3023,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
 
     _spectrum_update_listening (w);
 
-    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_set_source_rgb (cr, w->background_color[0], w->background_color[1], w->background_color[2]);
     cairo_paint (cr);
 
     if (w->input_data.nframes == 0) {

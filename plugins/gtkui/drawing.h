@@ -139,6 +139,9 @@ void
 gtkui_get_vis_custom_base_color (GdkColor *clr);
 
 void
+gtkui_get_vis_custom_background_color (GdkColor *clr);
+
+void
 gtkui_get_bar_foreground_color (GdkColor *clr);
 
 void

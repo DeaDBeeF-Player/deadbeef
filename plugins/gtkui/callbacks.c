@@ -869,4 +869,3 @@ on_sortfmt_show                        (GtkWidget       *widget,
     }
 
 }
-

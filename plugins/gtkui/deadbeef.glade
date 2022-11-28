@@ -5957,57 +5957,94 @@ Only prevent clipping</property>
 	      </child>
 
 	      <child>
-		<widget class="GtkVBox" id="vbox57">
+		<widget class="GtkTable" id="table5">
+		  <property name="border_width">12</property>
 		  <property name="visible">True</property>
+		  <property name="n_rows">2</property>
+		  <property name="n_columns">2</property>
 		  <property name="homogeneous">False</property>
-		  <property name="spacing">0</property>
+		  <property name="row_spacing">8</property>
+		  <property name="column_spacing">8</property>
 
 		  <child>
-		    <widget class="GtkHBox" id="hbox151">
-		      <property name="border_width">12</property>
+		    <widget class="GtkCheckButton" id="use_visualization_base_color">
 		      <property name="visible">True</property>
-		      <property name="homogeneous">False</property>
-		      <property name="spacing">8</property>
-
-		      <child>
-			<widget class="GtkCheckButton" id="use_visualization_base_color">
-			  <property name="visible">True</property>
-			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Custom visualization base color</property>
-			  <property name="use_underline">True</property>
-			  <property name="relief">GTK_RELIEF_NORMAL</property>
-			  <property name="focus_on_click">True</property>
-			  <property name="active">False</property>
-			  <property name="inconsistent">False</property>
-			  <property name="draw_indicator">True</property>
-			  <signal name="toggled" handler="on_use_visualization_base_color_toggled" last_modification_time="Tue, 16 Nov 2021 17:55:01 GMT"/>
-			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">False</property>
-			  <property name="fill">False</property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkColorButton" id="visualization_custom_color_button">
-			  <property name="visible">True</property>
-			  <property name="can_focus">True</property>
-			  <property name="use_alpha">False</property>
-			  <property name="focus_on_click">True</property>
-			  <signal name="color_set" handler="on_visualization_custom_color_button_color_set" last_modification_time="Tue, 16 Nov 2021 17:55:41 GMT"/>
-			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">False</property>
-			  <property name="fill">False</property>
-			</packing>
-		      </child>
+		      <property name="can_focus">True</property>
+		      <property name="label" translatable="yes">Custom visualization base color</property>
+		      <property name="use_underline">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		      <property name="active">False</property>
+		      <property name="inconsistent">False</property>
+		      <property name="draw_indicator">True</property>
+		      <signal name="toggled" handler="on_use_visualization_base_color_toggled" last_modification_time="Tue, 16 Nov 2021 17:55:01 GMT"/>
 		    </widget>
 		    <packing>
-		      <property name="padding">0</property>
-		      <property name="expand">False</property>
-		      <property name="fill">True</property>
+		      <property name="left_attach">0</property>
+		      <property name="right_attach">1</property>
+		      <property name="top_attach">0</property>
+		      <property name="bottom_attach">1</property>
+		      <property name="x_options">fill</property>
+		      <property name="y_options"></property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkColorButton" id="visualization_custom_color_button">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="use_alpha">False</property>
+		      <property name="focus_on_click">True</property>
+		      <signal name="color_set" handler="on_visualization_custom_color_button_color_set" last_modification_time="Tue, 16 Nov 2021 17:55:41 GMT"/>
+		    </widget>
+		    <packing>
+		      <property name="left_attach">1</property>
+		      <property name="right_attach">2</property>
+		      <property name="top_attach">0</property>
+		      <property name="bottom_attach">1</property>
+		      <property name="x_options">fill</property>
+		      <property name="y_options"></property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkCheckButton" id="use_visualization_background_color">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="label" translatable="yes">Custom visualization background color</property>
+		      <property name="use_underline">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		      <property name="active">False</property>
+		      <property name="inconsistent">False</property>
+		      <property name="draw_indicator">True</property>
+		      <signal name="toggled" handler="on_use_visualization_background_color_toggled" last_modification_time="Mon, 28 Nov 2022 18:43:27 GMT"/>
+		    </widget>
+		    <packing>
+		      <property name="left_attach">0</property>
+		      <property name="right_attach">1</property>
+		      <property name="top_attach">1</property>
+		      <property name="bottom_attach">2</property>
+		      <property name="x_options">fill</property>
+		      <property name="y_options"></property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkColorButton" id="visualization_custom_background_color_button">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="use_alpha">False</property>
+		      <property name="focus_on_click">True</property>
+		      <signal name="color_set" handler="on_visualization_custom_background_color_button_color_set" last_modification_time="Mon, 28 Nov 2022 19:02:38 GMT"/>
+		    </widget>
+		    <packing>
+		      <property name="left_attach">1</property>
+		      <property name="right_attach">2</property>
+		      <property name="top_attach">1</property>
+		      <property name="bottom_attach">2</property>
+		      <property name="x_options">fill</property>
+		      <property name="y_options"></property>
 		    </packing>
 		  </child>
 		</widget>

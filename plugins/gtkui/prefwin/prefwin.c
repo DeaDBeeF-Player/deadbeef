@@ -86,6 +86,7 @@ prefwin_init_theme_colors (void) {
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_column_text")), ((void)(gtkui_get_listview_column_text_color (&clr)), &clr));
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "listview_cursor")), ((void)(gtkui_get_listview_cursor_color (&clr)), &clr));
     gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "visualization_custom_color_button")), ((void)(gtkui_get_vis_custom_base_color (&clr)), &clr));
+    gtk_color_button_set_color (GTK_COLOR_BUTTON (lookup_widget (prefwin, "visualization_custom_background_color_button")), ((void)(gtkui_get_vis_custom_background_color (&clr)), &clr));
 }
 
 void

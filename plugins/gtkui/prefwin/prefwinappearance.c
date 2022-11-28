@@ -74,6 +74,10 @@ prefwin_init_appearance_tab(GtkWidget *_prefwin) {
     prefwin_set_toggle_button("use_visualization_base_color", override);
     gtk_widget_set_sensitive (lookup_widget (w, "visualization_custom_color_button"), override);
 
+    override = deadbeef->conf_get_int ("gtkui.vis.use_custom_background_color", 0);
+    prefwin_set_toggle_button("use_visualization_background_color", override);
+    gtk_widget_set_sensitive (lookup_widget (w, "visualization_custom_background_color_button"), override);
+
     // colors
     prefwin_init_theme_colors ();
 }
@@ -375,5 +379,22 @@ on_visualization_custom_color_button_color_set
  gpointer         user_data)
 {
     color_set_helper (colorbutton, "gtkui.vis.custom_base_color");
+}
+
+
+void
+on_use_visualization_background_color_toggled
+(GtkToggleButton *togglebutton,
+ gpointer         user_data)
+{
+    override_set_helper (togglebutton, "gtkui.vis.use_custom_background_color", "visualization_custom_background_color_button");
+}
+
+void
+on_visualization_custom_background_color_button_color_set
+(GtkColorButton  *colorbutton,
+ gpointer         user_data)
+{
+    color_set_helper (colorbutton, "gtkui.vis.custom_background_color");
 }
 
