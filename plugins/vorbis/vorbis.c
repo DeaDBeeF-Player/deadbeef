@@ -69,7 +69,7 @@ static const char *ddb_internal_rg_keys[] = {
     NULL
 };
 
-static DB_decoder_t plugin;
+static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;
 
 typedef struct {
@@ -175,7 +175,7 @@ set_meta_ll(DB_playItem_t *it, const char *key, const int64_t value)
 }
 
 static int
-cvorbis_seek_sample (DB_fileinfo_t *_info, int sample) {
+cvorbis_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
     ogg_info_t *info = (ogg_info_t *)_info;
     if (sample < 0) {
         trace ("vorbis: negative seek sample - ignored, but it is a bug!\n");
@@ -206,16 +206,21 @@ cvorbis_seek_sample (DB_fileinfo_t *_info, int sample) {
         trace ("vorbis: failed to do sample-accurate seek (%d->%d)\n", sample, tell);
     }
     trace ("vorbis: seek successful\n")
-    _info->readpos = (float)(sample - startsample)/_info->fmt.samplerate;
+    _info->readpos = (int64_t)((double)(sample - startsample)/_info->fmt.samplerate);
     info->next_update = -2;
     return 0;
+}
+
+static int
+cvorbis_seek_sample (DB_fileinfo_t *_info, int sample) {
+    return cvorbis_seek_sample64(_info, sample);
 }
 
 static ogg_info_t *
 cvorbis_open_int (uint32_t hints) {
     ogg_info_t *info = calloc(1, sizeof(ogg_info_t));
     if (info) {
-        info->info.plugin = &plugin;
+        info->info.plugin = &plugin.decoder;
 #if FIXED_POINT
         info->info.fmt.bps = 16;
 #else
@@ -548,7 +553,7 @@ cvorbis_read (DB_fileinfo_t *_info, char *buffer, int bytes_to_read) {
 static int
 cvorbis_seek (DB_fileinfo_t *_info, float time) {
     ogg_info_t *info = (ogg_info_t *)_info;
-    return cvorbis_seek_sample (_info, time * info->info.fmt.samplerate);
+    return cvorbis_seek_sample64 (_info, (int64_t)((double)time * (int64_t)info->info.fmt.samplerate));
 }
 
 static off_t sample_offset(OggVorbis_File *vorbis_file, const ogg_int64_t sample)
@@ -573,7 +578,7 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
     int64_t fsize = deadbeef->fgetlength (fp);
     if (fp->vfs->is_streaming ()) {
-        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
         deadbeef->plt_set_item_duration (plt, it, -1);
         deadbeef->pl_add_meta (it, "title", NULL);
         after = deadbeef->plt_insert_item (plt, after, it);
@@ -611,7 +616,7 @@ cvorbis_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 #endif
         int64_t totalsamples = ov_pcm_total (&vorbis_file, stream);
 
-        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+        DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
         deadbeef->pl_set_meta_int (it, ":TRACKNUM", stream);
         deadbeef->plt_set_item_duration (plt, it, duration);
         if (nstreams > 1) {
@@ -830,15 +835,16 @@ cvorbis_write_metadata (DB_playItem_t *it) {
 static const char * exts[] = { "ogg", "ogx", "oga", NULL };
 
 // define plugin interface
-static DB_decoder_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.id = "stdogg",
-    .plugin.name = "Ogg Vorbis decoder",
-    .plugin.descr = "Ogg Vorbis decoder using standard xiph.org libraries",
-    .plugin.copyright =
+static ddb_decoder2_t plugin = {
+    .decoder.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .decoder.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .decoder.plugin.version_major = 1,
+    .decoder.plugin.version_minor = 0,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.id = "stdogg",
+    .decoder.plugin.name = "Ogg Vorbis decoder",
+    .decoder.plugin.descr = "Ogg Vorbis decoder using standard xiph.org libraries",
+    .decoder.plugin.copyright =
     "Ogg Vorbis plugin for DeaDBeeF\n"
     "Copyright (C) 2009-2014 Oleksiy Yakovenko et al.\n"
     "\n"
@@ -895,22 +901,21 @@ static DB_decoder_t plugin = {
     "NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
     "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = vorbis_start,
-    .plugin.stop = vorbis_stop,
-    .open = cvorbis_open,
-    .open2 = cvorbis_open2,
-    .init = cvorbis_init,
-    .free = cvorbis_free,
-    .read = cvorbis_read,
-    // vorbisfile can't output float32
-//    .read_float32 = cvorbis_read_float32,
-    .seek = cvorbis_seek,
-    .seek_sample = cvorbis_seek_sample,
-    .insert = cvorbis_insert,
-    .read_metadata = cvorbis_read_metadata,
-    .write_metadata = cvorbis_write_metadata,
-    .exts = exts
+    .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.plugin.start = vorbis_start,
+    .decoder.plugin.stop = vorbis_stop,
+    .decoder.open = cvorbis_open,
+    .decoder.open2 = cvorbis_open2,
+    .decoder.init = cvorbis_init,
+    .decoder.free = cvorbis_free,
+    .decoder.read = cvorbis_read,
+    .decoder.seek = cvorbis_seek,
+    .decoder.seek_sample = cvorbis_seek_sample,
+    .decoder.insert = cvorbis_insert,
+    .decoder.read_metadata = cvorbis_read_metadata,
+    .decoder.write_metadata = cvorbis_write_metadata,
+    .decoder.exts = exts,
+    .seek_sample64 = cvorbis_seek_sample64,
 };
 
 DB_plugin_t *
