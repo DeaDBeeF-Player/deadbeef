@@ -41,7 +41,7 @@
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-static DB_decoder_t plugin;
+static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;
 
 typedef struct {
@@ -58,6 +58,9 @@ typedef struct {
     MPC_SAMPLE_FORMAT buffer[MPC_DECODER_BUFFER_LENGTH];
     int remaining;
 } musepack_info_t;
+
+static int
+musepack_seek_sample64 (DB_fileinfo_t *_info, int64_t sample);
 
 mpc_int32_t musepack_vfs_read (mpc_reader *r, void *ptr, mpc_int32_t size) {
     return (mpc_int32_t)deadbeef->fread(ptr, 1, (size_t)size, (DB_FILE *)r->data);
@@ -136,13 +139,13 @@ musepack_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.channelmask |= 1 << i;
     }
     _info->readpos = 0;
-    _info->plugin = &plugin;
+    _info->plugin = &plugin.decoder;
 
     int64_t endsample = deadbeef->pl_item_get_endsample (it);
     if (endsample > 0) {
         info->startsample = deadbeef->pl_item_get_startsample (it);
         info->endsample = endsample;
-        plugin.seek_sample (_info, 0);
+        musepack_seek_sample64(_info, 0);
     }
     else {
         info->startsample = 0;
@@ -282,7 +285,7 @@ musepack_read (DB_fileinfo_t *_info, char *bytes, int size) {
 }
 
 static int
-musepack_seek_sample (DB_fileinfo_t *_info, int sample) {
+musepack_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
     musepack_info_t *info = (musepack_info_t *)_info;
     mpc_status err = mpc_demux_seek_sample (info->demux, sample + info->startsample);
     if (err != 0) {
@@ -296,8 +299,13 @@ musepack_seek_sample (DB_fileinfo_t *_info, int sample) {
 }
 
 static int
+musepack_seek_sample (DB_fileinfo_t *_info, int sample) {
+    return musepack_seek_sample64(_info, sample);
+}
+
+static int
 musepack_seek (DB_fileinfo_t *_info, float time) {
-    return musepack_seek_sample (_info, time * _info->fmt.samplerate);
+    return musepack_seek_sample64 (_info, time * _info->fmt.samplerate);
 }
 
 void
@@ -370,7 +378,7 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         int i;
         for (i = 0; i < nchapters; i++) {
             const mpc_chap_info *ch = mpc_demux_chap (demux, i);
-            DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+            DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
             deadbeef->pl_add_meta (it, ":FILETYPE", "MusePack");
             deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
             deadbeef->pl_item_set_startsample (it, ch->sample);
@@ -416,7 +424,7 @@ musepack_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         return after;
     }
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "MusePack");
     deadbeef->plt_set_item_duration (plt, it, dur);
 
@@ -488,15 +496,16 @@ musepack_stop (void) {
 static const char * exts[] = { "mpc", "mpp", "mp+", NULL };
 
 // define plugin interface
-static DB_decoder_t plugin = {
-    DDB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.id = "musepack",
-    .plugin.name = "MusePack decoder",
-    .plugin.descr = "Musepack decoder using libmppdec",
-    .plugin.copyright = 
+static ddb_decoder2_t plugin = {
+    .decoder.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .decoder.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .decoder.plugin.version_major = 1,
+    .decoder.plugin.version_minor = 0,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.id = "musepack",
+    .decoder.plugin.name = "MusePack decoder",
+    .decoder.plugin.descr = "Musepack decoder using libmppdec",
+    .decoder.plugin.copyright =
         "MusePack decoder plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Oleksiy Yakovenko\n"
         "Uses Musepack SV8 libs (r435), (C) 2005-2009, The Musepack Development Team\n"
@@ -519,19 +528,20 @@ static DB_decoder_t plugin = {
         "\n"
         "3. This notice may not be removed or altered from any source distribution.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .plugin.start = musepack_start,
-    .plugin.stop = musepack_stop,
-    .open = musepack_open,
-    .init = musepack_init,
-    .free = musepack_free,
-    .read = musepack_read,
-    .seek = musepack_seek,
-    .seek_sample = musepack_seek_sample,
-    .insert = musepack_insert,
-    .read_metadata = musepack_read_metadata,
-    .write_metadata = musepack_write_metadata,
-    .exts = exts,
+    .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.plugin.start = musepack_start,
+    .decoder.plugin.stop = musepack_stop,
+    .decoder.open = musepack_open,
+    .decoder.init = musepack_init,
+    .decoder.free = musepack_free,
+    .decoder.read = musepack_read,
+    .decoder.seek = musepack_seek,
+    .decoder.seek_sample = musepack_seek_sample,
+    .decoder.insert = musepack_insert,
+    .decoder.read_metadata = musepack_read_metadata,
+    .decoder.write_metadata = musepack_write_metadata,
+    .decoder.exts = exts,
+    .seek_sample64 = musepack_seek_sample64,
 };
 
 DB_plugin_t *
