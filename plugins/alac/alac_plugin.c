@@ -319,7 +319,7 @@ alacplug_seek_sample(DB_fileinfo_t *_info, int sample) {
 
 static int
 alacplug_seek (DB_fileinfo_t *_info, float t) {
-    return alacplug_seek_sample64 (_info, t * _info->fmt.samplerate);
+    return alacplug_seek_sample64 (_info, (int64_t)((double)t * (int64_t)_info->fmt.samplerate));
 }
 
 DB_playItem_t *
