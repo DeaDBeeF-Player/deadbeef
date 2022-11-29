@@ -39,9 +39,9 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin.decoder.plugin, 0, __VA_ARGS__); }
 
-static DB_decoder_t plugin;
+static ddb_decoder2_t plugin;
 DB_functions_t *deadbeef;
 
 #define AAC_MAX_PACKET_SIZE 768*8 // setting max input packet size, to have some headroom
@@ -109,6 +109,9 @@ typedef struct {
     int eof;
     int junk;
 } aac_info_t;
+
+static int
+aac_seek_sample (DB_fileinfo_t *_info, int sample);
 
 // allocate codec control structure
 static DB_fileinfo_t *
@@ -365,14 +368,14 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     }
 
     _info->fmt.bps = 16;
-    _info->plugin = &plugin;
+    _info->plugin = &plugin.decoder;
 
     if (!info->file->vfs->is_streaming ()) {
         int64_t endsample = deadbeef->pl_item_get_endsample(it);
         if (endsample > 0) {
             info->startsample = deadbeef->pl_item_get_startsample(it);
             info->endsample = endsample;
-            plugin.seek_sample (_info, 0);
+            aac_seek_sample (_info, 0);
         }
         else {
             info->startsample = 0;
@@ -646,8 +649,8 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
 }
 
 // returns -1 on error, skipsamples on success
-int
-seek_raw_aac (aac_info_t *info, int sample) {
+int64_t
+seek_raw_aac (aac_info_t *info, int64_t sample) {
     uint8_t buf[ADTS_HEADER_SIZE*8];
 
     int bufsize = 0;
@@ -692,7 +695,7 @@ seek_raw_aac (aac_info_t *info, int sample) {
 }
 
 static int
-aac_seek_sample (DB_fileinfo_t *_info, int sample) {
+aac_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
     aac_info_t *info = (aac_info_t *)_info;
 
     sample += info->startsample;
@@ -700,7 +703,7 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
     if (info->mp4file) {
         mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
 
-        uint64_t seeksample = (int)((int64_t)sample * info->aac_samplerate / _info->fmt.samplerate);
+        uint64_t seeksample = (int)(sample * info->aac_samplerate / _info->fmt.samplerate);
 
         uint64_t startsample = 0;
         info->mp4sample = mp4p_stts_mp4sample_containing_sample(stts_atom, seeksample, &startsample);
@@ -732,8 +735,13 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
 }
 
 static int
+aac_seek_sample (DB_fileinfo_t *_info, int sample) {
+    return aac_seek_sample64(_info, sample);
+}
+
+static int
 aac_seek (DB_fileinfo_t *_info, float t) {
-    return aac_seek_sample (_info, t * _info->fmt.samplerate);
+    return aac_seek_sample64 (_info, t * _info->fmt.samplerate);
 }
 
 typedef struct {
@@ -947,7 +955,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     totalsamples = total_sample_duration * samplerate / info.aac_samplerate;
     duration = total_sample_duration / (float)info.aac_samplerate;
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
     ftype = "MP4 AAC";
     deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
     deadbeef->plt_set_item_duration (plt, it, duration);
@@ -1067,7 +1075,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->fclose (fp);
         return NULL;
     }
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
     deadbeef->plt_set_item_duration (plt, it, duration);
 
@@ -1125,17 +1133,17 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 static const char * exts[] = { "aac", "mp4", "m4a", "m4b", NULL };
 
 // define plugin interface
-static DB_decoder_t plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
-    .plugin.version_major = 2,
-    .plugin.version_minor = 0,
-//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.id = "aac",
-    .plugin.name = "AAC player",
-    .plugin.descr = "plays aac files, supports raw aac files, as well as mp4 container",
-    .plugin.copyright = 
+static ddb_decoder2_t plugin = {
+    .decoder.plugin.api_vmajor = 1,
+    .decoder.plugin.api_vminor = 0,
+    .decoder.plugin.version_major = 2,
+    .decoder.plugin.version_minor = 0,
+//    .decoder.plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.id = "aac",
+    .decoder.plugin.name = "AAC player",
+    .decoder.plugin.descr = "plays aac files, supports raw aac files, as well as mp4 container",
+    .decoder.plugin.copyright =
         "AAC DeaDBeeF Player Plugin\n"
         "Copyright (c) 2009-2020 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
@@ -1174,17 +1182,18 @@ static DB_decoder_t plugin = {
         "along with this program; if not, write to the Free Software\n"
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .open = aac_open,
-    .init = aac_init,
-    .free = aac_free,
-    .read = aac_read,
-    .seek = aac_seek,
-    .seek_sample = aac_seek_sample,
-    .insert = aac_insert,
-    .read_metadata = mp4_read_metadata,
-    .write_metadata = mp4_write_metadata,
-    .exts = exts,
+    .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.open = aac_open,
+    .decoder.init = aac_init,
+    .decoder.free = aac_free,
+    .decoder.read = aac_read,
+    .decoder.seek = aac_seek,
+    .decoder.seek_sample = aac_seek_sample,
+    .decoder.insert = aac_insert,
+    .decoder.read_metadata = mp4_read_metadata,
+    .decoder.write_metadata = mp4_write_metadata,
+    .decoder.exts = exts,
+    .seek_sample64 = aac_seek_sample64,
 };
 
 DB_plugin_t *
