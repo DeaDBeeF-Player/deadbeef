@@ -32,9 +32,9 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
-#define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
+#define trace(...) { deadbeef->log_detailed (&plugin.decoder.plugin, 0, __VA_ARGS__); }
 
-static DB_decoder_t plugin;
+static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;
 
 typedef struct {
@@ -49,6 +49,9 @@ typedef struct {
     int read_as_short;
     int sf_need_endswap;
 } sndfile_info_t;
+
+static int
+sndfile_seek_sample64 (DB_fileinfo_t *_info, int64_t sample);
 
 // vfs wrapper for sf
 static sf_count_t
@@ -181,7 +184,7 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->file = NULL;
         return -1;
     }
-    _info->plugin = &plugin;
+    _info->plugin = &plugin.decoder;
     info->sf_format = inf.format&SF_FORMAT_SUBMASK;
     info->sf_need_endswap = sf_command (info->ctx, SFC_RAW_DATA_NEEDS_ENDSWAP, NULL, 0);
 
@@ -233,7 +236,7 @@ sndfile_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (endsample > 0) {
         info->startsample = deadbeef->pl_item_get_startsample (it);
         info->endsample = endsample;
-        if (plugin.seek_sample (_info, 0) < 0) {
+        if (sndfile_seek_sample64 (_info, 0) < 0) {
             return -1;
         }
     }
@@ -338,7 +341,7 @@ sndfile_read (DB_fileinfo_t *_info, char *bytes, int size) {
 }
 
 static int
-sndfile_seek_sample (DB_fileinfo_t *_info, int sample) {
+sndfile_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
     sndfile_info_t *info = (sndfile_info_t*)_info;
     int64_t ret = sf_seek (info->ctx, sample + info->startsample, SEEK_SET);
     if (ret < 0) {
@@ -350,8 +353,13 @@ sndfile_seek_sample (DB_fileinfo_t *_info, int sample) {
 }
 
 static int
+sndfile_seek_sample (DB_fileinfo_t *_info, int sample) {
+    return sndfile_seek_sample64(_info, sample);
+}
+
+static int
 sndfile_seek (DB_fileinfo_t *_info, float sec) {
-    return sndfile_seek_sample (_info, sec * _info->fmt.samplerate);
+    return sndfile_seek_sample64 (_info, sec * _info->fmt.samplerate);
 }
 
 static int
@@ -392,7 +400,7 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int samplerate = inf.samplerate;
 
     float duration = (float)totalsamples / samplerate;
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "wav");
     deadbeef->plt_set_item_duration (plt, it, duration);
 
@@ -637,10 +645,10 @@ sndfile_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_CONFIGCHANGED:
         sndfile_init_exts ();
         if (deadbeef->conf_get_int ("sndfile.trace", 0)) {
-            plugin.plugin.flags |= DDB_PLUGIN_FLAG_LOGGING;
+            plugin.decoder.plugin.flags |= DDB_PLUGIN_FLAG_LOGGING;
         }
         else {
-            plugin.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
+            plugin.decoder.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
         }
         break;
     }
@@ -668,15 +676,16 @@ static const char settings_dlg[] =
 ;
 
 // define plugin interface
-static DB_decoder_t plugin = {
-    DDB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.id = "sndfile",
-    .plugin.name = "WAV/PCM player",
-    .plugin.descr = "wav/aiff player using libsndfile",
-    .plugin.copyright = 
+static ddb_decoder2_t plugin = {
+    .decoder.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .decoder.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .decoder.plugin.version_major = 1,
+    .decoder.plugin.version_minor = 0,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.id = "sndfile",
+    .decoder.plugin.name = "WAV/PCM player",
+    .decoder.plugin.descr = "wav/aiff player using libsndfile",
+    .decoder.plugin.copyright =
         "libsndfile plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
@@ -694,20 +703,21 @@ static DB_decoder_t plugin = {
         "along with this program; if not, write to the Free Software\n"
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .open = sndfile_open,
-    .init = sndfile_init,
-    .free = sndfile_free,
-    .read = sndfile_read,
-    .seek = sndfile_seek,
-    .seek_sample = sndfile_seek_sample,
-    .insert = sndfile_insert,
-    .read_metadata = sndfile_read_metadata,
-    .exts = (const char **)exts,
-    .plugin.start = sndfile_start,
-    .plugin.stop = sndfile_stop,
-    .plugin.configdialog = settings_dlg,
-    .plugin.message = sndfile_message,
+    .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.open = sndfile_open,
+    .decoder.init = sndfile_init,
+    .decoder.free = sndfile_free,
+    .decoder.read = sndfile_read,
+    .decoder.seek = sndfile_seek,
+    .decoder.seek_sample = sndfile_seek_sample,
+    .decoder.insert = sndfile_insert,
+    .decoder.read_metadata = sndfile_read_metadata,
+    .decoder.exts = (const char **)exts,
+    .decoder.plugin.start = sndfile_start,
+    .decoder.plugin.stop = sndfile_stop,
+    .decoder.plugin.configdialog = settings_dlg,
+    .decoder.plugin.message = sndfile_message,
+    .seek_sample64 = sndfile_seek_sample64,
 };
 
 DB_plugin_t *
