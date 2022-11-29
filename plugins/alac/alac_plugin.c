@@ -54,7 +54,8 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-static DB_decoder_t alac_plugin;
+static ddb_decoder2_t alac_plugin;
+static ddb_decoder2_t alac_plugin;
 DB_functions_t *deadbeef;
 
 #ifdef WORDS_BIGENDIAN
@@ -84,6 +85,9 @@ typedef struct {
     int64_t startsample;
     int64_t endsample;
 } alacplug_info_t;
+
+static int
+alacplug_seek (DB_fileinfo_t *_info, float t);
 
 // allocate codec control structure
 DB_fileinfo_t *
@@ -170,7 +174,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (endsample > 0) {
             info->startsample = deadbeef->pl_item_get_startsample(it);
             info->endsample = endsample;
-            alac_plugin.seek_sample (_info, 0);
+            alacplug_seek (_info, 0);
         }
         else {
             info->startsample = 0;
@@ -178,7 +182,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
     }
 
-    _info->plugin = &alac_plugin;
+    _info->plugin = &alac_plugin.decoder;
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
@@ -286,14 +290,14 @@ alacplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
 }
 
 static int
-alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
+alacplug_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
     alacplug_info_t *info = (alacplug_info_t *)_info;
 
     sample += info->startsample;
 
     mp4p_atom_t *stts_atom = mp4p_atom_find(info->trak, "trak/mdia/minf/stbl/stts");
 
-    uint64_t seeksample = (int)((int64_t)sample * info->alac_samplerate / _info->fmt.samplerate);
+    uint64_t seeksample = (int)(sample * info->alac_samplerate / _info->fmt.samplerate);
 
     uint64_t startsample = 0;
     info->mp4sample = mp4p_stts_mp4sample_containing_sample(stts_atom, seeksample, &startsample);
@@ -308,9 +312,14 @@ alacplug_seek_sample (DB_fileinfo_t *_info, int sample) {
     return 0;
 }
 
-int
+static int
+alacplug_seek_sample(DB_fileinfo_t *_info, int sample) {
+    return alacplug_seek_sample64(_info, sample);
+}
+
+static int
 alacplug_seek (DB_fileinfo_t *_info, float t) {
-    return alacplug_seek_sample (_info, t * _info->fmt.samplerate);
+    return alacplug_seek_sample64 (_info, t * _info->fmt.samplerate);
 }
 
 DB_playItem_t *
@@ -388,7 +397,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     totalsamples = total_sample_duration * samplerate / alac->sample_rate;
     duration = total_sample_duration / (float)alac->sample_rate;
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, alac_plugin.plugin.id);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, alac_plugin.decoder.plugin.id);
     ftype = "ALAC";
     deadbeef->pl_add_meta (it, ":FILETYPE", ftype);
     deadbeef->plt_set_item_duration (plt, it, duration);
@@ -446,16 +455,16 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 static const char * exts[] = { "mp4", "m4a", NULL };
 
 // define plugin interface
-static DB_decoder_t alac_plugin = {
-    .plugin.api_vmajor = 1,
-    .plugin.api_vminor = 0,
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.id = "alac",
-    .plugin.name = "ALAC player",
-    .plugin.descr = "plays alac files from MP4 and M4A files",
-    .plugin.copyright = 
+static ddb_decoder2_t alac_plugin = {
+    .decoder.plugin.api_vmajor = 1,
+    .decoder.plugin.api_vminor = 0,
+    .decoder.plugin.version_major = 1,
+    .decoder.plugin.version_minor = 0,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.id = "alac",
+    .decoder.plugin.name = "ALAC player",
+    .decoder.plugin.descr = "plays alac files from MP4 and M4A files",
+    .decoder.plugin.copyright =
         "ALAC plugin for deadbeef\n"
         "Copyright (C) 2012-2013 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "Uses the reverse engineered ALAC decoder (C) 2005 David Hammerton\n"
@@ -481,17 +490,18 @@ static DB_decoder_t alac_plugin = {
         "FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR\n"
         "OTHER DEALINGS IN THE SOFTWARE.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .open = alacplug_open,
-    .init = alacplug_init,
-    .free = alacplug_free,
-    .read = alacplug_read,
-    .seek = alacplug_seek,
-    .seek_sample = alacplug_seek_sample,
-    .insert = alacplug_insert,
-    .read_metadata = mp4_read_metadata,
-    .write_metadata = mp4_write_metadata,
-    .exts = exts,
+    .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.open = alacplug_open,
+    .decoder.init = alacplug_init,
+    .decoder.free = alacplug_free,
+    .decoder.read = alacplug_read,
+    .decoder.seek = alacplug_seek,
+    .decoder.seek_sample = alacplug_seek_sample,
+    .decoder.insert = alacplug_insert,
+    .decoder.read_metadata = mp4_read_metadata,
+    .decoder.write_metadata = mp4_write_metadata,
+    .decoder.exts = exts,
+    .seek_sample64 = alacplug_seek_sample64,
 };
 
 DB_plugin_t *
