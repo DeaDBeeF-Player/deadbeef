@@ -2510,7 +2510,7 @@ scope_draw_cairo (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
             for (int x = 0; x < width; x++) {
                 float ymin = min(draw_rect.height-1, max(0, minmax->ymin));
                 float ymax = min(draw_rect.height-1, max(0, minmax->ymax));
-                _draw_vline_aa (data, stride, x, ymin, ymax, w->draw_color, 0x0);
+                _draw_vline_aa (data, stride, x, ymin, ymax, w->draw_color, w->background_color);
                 minmax++;
             }
         }
