@@ -51,7 +51,7 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-static DB_decoder_t plugin;
+static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;
 
 typedef struct {
@@ -64,6 +64,9 @@ typedef struct {
     int64_t startsample;
     int64_t endsample;
 } wvctx_t;
+
+static int
+wv_seek_sample64 (DB_fileinfo_t *_info, int64_t sample);
 
 #ifdef TINYWV
 int32_t wv_read_stream(void *buf, int32_t sz, void *file_handle) {
@@ -169,7 +172,7 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         fprintf (stderr, "wavpack error: %s\n", error);
         return -1;
     }
-    _info->plugin = &plugin;
+    _info->plugin = &plugin.decoder;
     _info->fmt.bps = WavpackGetBytesPerSample (info->ctx) * 8;
     _info->fmt.channels = WavpackGetNumChannels (info->ctx);
     _info->fmt.samplerate = WavpackGetSampleRate (info->ctx);
@@ -188,7 +191,7 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (endsample > 0) {
         info->startsample = deadbeef->pl_item_get_startsample (it);
         info->endsample = endsample;
-        if (plugin.seek_sample (_info, 0) < 0) {
+        if (wv_seek_sample64(_info, 0) < 0) {
             return -1;
         }
     }
@@ -285,19 +288,24 @@ wv_read (DB_fileinfo_t *_info, char *bytes, int size) {
 }
 
 static int
-wv_seek_sample (DB_fileinfo_t *_info, int sample) {
+wv_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
 #ifndef TINYWV
     wvctx_t *info = (wvctx_t *)_info;
-    WavpackSeekSample (info->ctx, (uint32_t)(sample + info->startsample));
-    _info->readpos = (float)(WavpackGetSampleIndex (info->ctx) - info->startsample) / WavpackGetSampleRate (info->ctx);
+    WavpackSeekSample64 (info->ctx, sample + info->startsample);
+    _info->readpos = (float)((double)(WavpackGetSampleIndex64 (info->ctx) - info->startsample) / WavpackGetSampleRate (info->ctx));
 #endif
     return 0;
 }
 
 static int
+wv_seek_sample (DB_fileinfo_t *_info, int sample) {
+    return wv_seek_sample64(_info, sample);
+}
+
+static int
 wv_seek (DB_fileinfo_t *_info, float sec) {
     wvctx_t *info = (wvctx_t *)_info;
-    return wv_seek_sample (_info, sec * WavpackGetSampleRate (info->ctx));
+    return wv_seek_sample (_info, (int64_t)((double)sec * (int64_t)WavpackGetSampleRate (info->ctx)));
 }
 
 static DB_playItem_t *
@@ -325,7 +333,7 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int samplerate = WavpackGetSampleRate (ctx);
     float duration = (float)totalsamples / samplerate;
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
     deadbeef->pl_add_meta (it, ":FILETYPE", "wv");
     deadbeef->plt_set_item_duration (plt, it, duration);
     trace ("wv: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
@@ -429,15 +437,16 @@ wv_write_metadata (DB_playItem_t *it) {
 
 static const char *exts[] = { "wv", NULL };
 // define plugin interface
-static DB_decoder_t plugin = {
-    DDB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.id = "wv",
-    .plugin.name = "WavPack decoder",
-    .plugin.descr = "WavPack (.wv, .iso.wv) player",
-    .plugin.copyright = 
+static ddb_decoder2_t plugin = {
+    .decoder.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .decoder.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .decoder.plugin.version_major = 1,
+    .decoder.plugin.version_minor = 0,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.id = "wv",
+    .decoder.plugin.name = "WavPack decoder",
+    .decoder.plugin.descr = "WavPack (.wv, .iso.wv) player",
+    .decoder.plugin.copyright =
         "WavPack plugin for DeaDBeeF Player\n"
         "Copyright (C) 2009-2011, Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "Copyright (C) 2010-2011, David Bryant <david@wavpack.com>\n"
@@ -465,17 +474,18 @@ static DB_decoder_t plugin = {
         "(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS\n"
         "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .open = wv_open,
-    .init = wv_init,
-    .free = wv_free,
-    .read = wv_read,
-    .seek = wv_seek,
-    .seek_sample = wv_seek_sample,
-    .insert = wv_insert,
-    .read_metadata = wv_read_metadata,
-    .write_metadata = wv_write_metadata,
-    .exts = exts,
+    .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.open = wv_open,
+    .decoder.init = wv_init,
+    .decoder.free = wv_free,
+    .decoder.read = wv_read,
+    .decoder.seek = wv_seek,
+    .decoder.seek_sample = wv_seek_sample,
+    .decoder.insert = wv_insert,
+    .decoder.read_metadata = wv_read_metadata,
+    .decoder.write_metadata = wv_write_metadata,
+    .decoder.exts = exts,
+    .seek_sample64 = wv_seek_sample64,
 };
 
 DB_plugin_t *
