@@ -492,7 +492,7 @@ ffmpeg_seek_sample (DB_fileinfo_t *_info, int sample) {
 
 static int
 ffmpeg_seek (DB_fileinfo_t *_info, float time) {
-    return ffmpeg_seek_sample64 (_info, time * _info->fmt.samplerate);
+    return ffmpeg_seek_sample64 (_info, (int64_t)((double)time * (int64_t)_info->fmt.samplerate));
 }
 
 static const char *map[] = {
