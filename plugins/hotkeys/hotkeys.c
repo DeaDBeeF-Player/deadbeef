@@ -584,6 +584,9 @@ hotkeys_reset (void) {
 #ifndef NO_XLIB_H
     need_reset = 1;
     trace ("hotkeys: reset flagged\n");
+#else
+    // When not using X11, it's assumed that this is always called from UI branch.
+    read_config();
 #endif
 }
 
