@@ -741,7 +741,7 @@ aac_seek_sample (DB_fileinfo_t *_info, int sample) {
 
 static int
 aac_seek (DB_fileinfo_t *_info, float t) {
-    return aac_seek_sample64 (_info, t * _info->fmt.samplerate);
+    return aac_seek_sample64 (_info, (float)((double)t * (int64_t)_info->fmt.samplerate));
 }
 
 typedef struct {
