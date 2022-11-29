@@ -45,7 +45,7 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-static DB_decoder_t plugin;
+static ddb_decoder2_t plugin;
 DB_functions_t *deadbeef;
 
 typedef struct {
@@ -65,6 +65,9 @@ typedef struct {
     int remaining;
     int open2_was_used;
 } wmaplug_info_t;
+
+static int
+wmaplug_seek_sample64 (DB_fileinfo_t *_info, int64_t sample);
 
 // allocate codec control structure
 static DB_fileinfo_t *
@@ -149,7 +152,7 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->startsample = deadbeef->pl_item_get_startsample (it);
     info->endsample = deadbeef->pl_item_get_endsample (it);
-    _info->plugin = &plugin;
+    _info->plugin = &plugin.decoder;
     _info->fmt.bps = info->wfx.bitspersample;
     _info->fmt.channels = info->wfx.channels;
     _info->fmt.samplerate = info->wfx.rate;
@@ -162,7 +165,7 @@ wmaplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         if (endsample > 0) {
             info->startsample = deadbeef->pl_item_get_startsample (it);
             info->endsample = endsample;
-            plugin.seek_sample (_info, 0);
+            wmaplug_seek_sample64 (_info, 0);
         }
     }
     if (info->info.file->vfs->is_streaming ()) {
@@ -340,12 +343,12 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
 }
 
 static int
-wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
+wmaplug_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
     wmaplug_info_t *info = (wmaplug_info_t *)_info;
 
     sample += info->startsample;
 
-    trace ("seek to sample %d\n", sample);
+    trace ("seek to sample %lld\n", sample);
 
     info->remaining = 0;
     info->wmadec.last_superframe_len = 0;
@@ -353,18 +356,8 @@ wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
 
     memset(info->wmadec.frame_out, 0, sizeof(fixed32) * MAX_CHANNELS * BLOCK_MAX_SIZE * 2);
 
-#if 0
-    // this only works for CBR wma
-    int n_subframes = info->wfx.packet_size / info->wfx.blockalign;
-
-    int frame = sample / (info->wmadec.frame_len * n_subframes);
-    int64_t offs = frame * info->wfx.packet_size + info->first_frame_offset;
-    deadbeef->fseek (info->info.file, offs, SEEK_SET);
-    info->skipsamples = sample - frame * info->wmadec.frame_len * n_subframes;
-    info->currentsample = sample;
-#else
     int skip_ms;
-    int res = asf_seek ((int64_t)sample * 1000 / info->wfx.rate, &info->wfx, info->info.file, info->first_frame_offset, &skip_ms);
+    int res = asf_seek (sample * 1000 / info->wfx.rate, &info->wfx, info->info.file, info->first_frame_offset, &skip_ms);
     if (res < 0) {
         info->skipsamples = 0;
         info->currentsample = 0;
@@ -373,16 +366,20 @@ wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
         info->skipsamples = (int64_t)skip_ms * info->wfx.rate / 1000;
         info->currentsample = sample;
     }
-#endif
 
-    _info->readpos = (float)(info->currentsample - info->startsample)/_info->fmt.samplerate;
+    _info->readpos = (float)((double)(info->currentsample - info->startsample)/_info->fmt.samplerate);
 
     return 0;
 }
 
 static int
+wmaplug_seek_sample (DB_fileinfo_t *_info, int sample) {
+    return wmaplug_seek_sample64(_info, sample);
+}
+
+static int
 wmaplug_seek (DB_fileinfo_t *_info, float t) {
-    return wmaplug_seek_sample (_info, t * _info->fmt.samplerate);
+    return wmaplug_seek_sample (_info, (int64_t)((double)t * (int64_t)_info->fmt.samplerate));
 }
 
 static int
@@ -413,7 +410,7 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     int64_t first_frame_offset;
 
-    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.plugin.id);
+    DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
 
     int res = get_asf_metadata (fp, it, &wfx, &first_frame_offset);
     if (!res) {
@@ -455,15 +452,16 @@ wmaplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 static const char * exts[] = { "wma", NULL };
 
 // define plugin interface
-static DB_decoder_t plugin = {
-    DDB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.type = DB_PLUGIN_DECODER,
-    .plugin.id = "wma",
-    .plugin.name = "WMA player",
-    .plugin.descr = "plays WMA files",
-    .plugin.copyright = 
+static ddb_decoder2_t plugin = {
+    .decoder.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .decoder.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .decoder.plugin.version_major = 1,
+    .decoder.plugin.version_minor = 0,
+    .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.id = "wma",
+    .decoder.plugin.name = "WMA player",
+    .decoder.plugin.descr = "plays WMA files",
+    .decoder.plugin.copyright =
         "WMA plugin for deadbeef\n"
         "Copyright (C) 2013 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "WMA and ASF libraries (C) RockBox & FFMPEG developers\n"
@@ -486,17 +484,18 @@ static DB_decoder_t plugin = {
         "\n"
         "3. This notice may not be removed or altered from any source distribution.\n"
     ,
-    .plugin.website = "http://deadbeef.sf.net",
-    .open = wmaplug_open,
-    .open2 = wmaplug_open2,
-    .init = wmaplug_init,
-    .free = wmaplug_free,
-    .read = wmaplug_read,
-    .seek = wmaplug_seek,
-    .seek_sample = wmaplug_seek_sample,
-    .insert = wmaplug_insert,
-    .read_metadata = wmaplug_read_metadata,
-    .exts = exts,
+    .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.open = wmaplug_open,
+    .decoder.open2 = wmaplug_open2,
+    .decoder.init = wmaplug_init,
+    .decoder.free = wmaplug_free,
+    .decoder.read = wmaplug_read,
+    .decoder.seek = wmaplug_seek,
+    .decoder.seek_sample = wmaplug_seek_sample,
+    .decoder.insert = wmaplug_insert,
+    .decoder.read_metadata = wmaplug_read_metadata,
+    .decoder.exts = exts,
+    .seek_sample64 = wmaplug_seek_sample64,
 };
 
 DB_plugin_t *
