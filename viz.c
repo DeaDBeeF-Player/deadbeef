@@ -194,52 +194,51 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         waveform_data->data = data;
         waveform_data->nframes = wave_size;
 
+        if (_need_reset || out_fmt->channels != audio_data_channels || !spectrum_listeners) {
+            // reset
+            audio_data_channels = out_fmt->channels;
+            memset (_freq_data, 0, sizeof (float) * _fft_size * DDB_FREQ_MAX_CHANNELS);
+            memset (_audio_data, 0, sizeof (float) * _fft_size * 2 * DDB_FREQ_MAX_CHANNELS);
+            _need_reset = 0;
+        }
+
+        if (spectrum_listeners) {
+            // convert samples in planar layout
+            assert (fft_nframes == _fft_size * 2);
+            for (int c = 0; c < audio_data_channels; c++) {
+                float *channel = &_audio_data[_fft_size * 2 * c];
+                for (int s = 0; s < fft_nframes; s++) {
+                    channel[s] = data[s * audio_data_channels + c];
+                }
+            }
+
+            // calc fft
+            if (_audio_data != NULL) {
+                for (int c = 0; c < audio_data_channels; c++) {
+                    fft_calculate (&_audio_data[_fft_size * 2 * c], &_freq_data[_fft_size * c], _fft_size);
+                }
+            }
+            ddb_audio_data_t spectrum_data = {
+                .fmt = out_fmt,
+                .data = _freq_data,
+                .nframes = _fft_size
+            };
+            for (wavedata_listener_t *l = spectrum_listeners; l; l = l->next) {
+                l->callback (l->ctx, &spectrum_data);
+            }
+        }
+
         // Pass to async queue for processing and callbacks
         dispatch_async (process_queue, ^{
             for (wavedata_listener_t *l = waveform_listeners; l; l = l->next) {
                 l->callback (l->ctx, waveform_data);
             }
 
-            dispatch_sync(sync_queue, ^{
-                if (_need_reset || out_fmt->channels != audio_data_channels || !spectrum_listeners) {
-                    // reset
-                    audio_data_channels = out_fmt->channels;
-                    memset (_freq_data, 0, sizeof (float) * _fft_size * DDB_FREQ_MAX_CHANNELS);
-                    memset (_audio_data, 0, sizeof (float) * _fft_size * 2 * DDB_FREQ_MAX_CHANNELS);
-                    _need_reset = 0;
-                }
-
-                if (spectrum_listeners) {
-                    // convert samples in planar layout
-                    assert (fft_nframes == _fft_size * 2);
-                    for (int c = 0; c < audio_data_channels; c++) {
-                        float *channel = &_audio_data[_fft_size * 2 * c];
-                        for (int s = 0; s < fft_nframes; s++) {
-                            channel[s] = data[s * audio_data_channels + c];
-                        }
-                    }
-
-                    // calc fft
-                    if (_audio_data != NULL) {
-                        for (int c = 0; c < audio_data_channels; c++) {
-                            fft_calculate (&_audio_data[_fft_size * 2 * c], &_freq_data[_fft_size * c], _fft_size);
-                        }
-                    }
-                    ddb_audio_data_t spectrum_data = {
-                        .fmt = out_fmt,
-                        .data = _freq_data,
-                        .nframes = _fft_size
-                    };
-                    for (wavedata_listener_t *l = spectrum_listeners; l; l = l->next) {
-                        l->callback (l->ctx, &spectrum_data);
-                    }
-                }
-            });
-
             free (data);
             free (out_fmt);
             free (waveform_data);
         });
+
     });
 }
 
