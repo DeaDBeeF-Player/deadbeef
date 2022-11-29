@@ -488,7 +488,7 @@ opusdec_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
 static int
 opusdec_seek (DB_fileinfo_t *_info, float time) {
-    return opusdec_seek_sample64 (_info, time * _info->fmt.samplerate);
+    return opusdec_seek_sample64 (_info, (int64_t)((double)time * (int64_t)_info->fmt.samplerate));
 }
 
 static off_t
