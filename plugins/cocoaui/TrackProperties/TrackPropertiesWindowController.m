@@ -557,6 +557,9 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
 - (IBAction)applyTrackPropertiesAction:(id)sender {
     if (!self.modified) {
+        if (self.close_after_writing) {
+            [self close];
+        }
         return;
     }
     deadbeef->pl_lock ();
@@ -693,8 +696,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 }
 
 - (IBAction)okTrackPropertiesAction:(id)sender {
+    self.close_after_writing = YES;
     [self applyTrackPropertiesAction:sender];
-    [self close];
 }
 
 
