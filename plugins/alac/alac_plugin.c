@@ -461,6 +461,7 @@ static ddb_decoder2_t alac_plugin = {
     .decoder.plugin.version_major = 1,
     .decoder.plugin.version_minor = 0,
     .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.flags = DDB_PLUGIN_FLAG_IMPLEMENTS_DECODER2,
     .decoder.plugin.id = "alac",
     .decoder.plugin.name = "ALAC player",
     .decoder.plugin.descr = "plays alac files from MP4 and M4A files",

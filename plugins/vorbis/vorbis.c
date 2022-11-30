@@ -841,6 +841,7 @@ static ddb_decoder2_t plugin = {
     .decoder.plugin.version_major = 1,
     .decoder.plugin.version_minor = 0,
     .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.flags = DDB_PLUGIN_FLAG_IMPLEMENTS_DECODER2,
     .decoder.plugin.id = "stdogg",
     .decoder.plugin.name = "Ogg Vorbis decoder",
     .decoder.plugin.descr = "Ogg Vorbis decoder using standard xiph.org libraries",

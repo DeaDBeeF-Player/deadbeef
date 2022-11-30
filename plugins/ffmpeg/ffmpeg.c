@@ -929,6 +929,7 @@ static ddb_decoder2_t plugin = {
     .decoder.plugin.version_major = 1,
     .decoder.plugin.version_minor = 2,
     .decoder.plugin.type = DB_PLUGIN_DECODER,
+    .decoder.plugin.flags = DDB_PLUGIN_FLAG_IMPLEMENTS_DECODER2,
     .decoder.plugin.id = "ffmpeg",
     .decoder.plugin.name = "FFMPEG audio player",
     .decoder.plugin.descr = "decodes audio formats using FFMPEG libavcodec",
