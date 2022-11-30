@@ -40,6 +40,7 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include <errno.h>
+#include <pthread.h>
 #include "../../deadbeef.h"
 #include "converter.h"
 #include "../../strdupa.h"
@@ -855,8 +856,27 @@ static const unsigned char format_id_pcm[] = {
     0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71
 };
 
+static int
+get_abort (int *pabort) {
+    return pabort ? *pabort : 1;
+}
+
+static int
+get_abort_lock (pthread_rwlock_t *abort_lock, int *pabort) {
+    int abort = 0;
+    if (abort_lock) {
+        pthread_rwlock_rdlock(abort_lock);
+        abort = get_abort (pabort);
+        pthread_rwlock_unlock(abort_lock);
+    }
+    else {
+        abort = get_abort (pabort);
+    }
+    return abort;
+}
+
 static int64_t
-_write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, int *abort, int fd, int output_bps, int output_is_float) {
+_write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, pthread_rwlock_t *abort_lock, int *abort, int fd, int output_bps, int output_is_float) {
     int64_t res = -1;
     char *buffer = NULL;
     char *dspbuffer = NULL;
@@ -885,7 +905,7 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
         if (eof) {
             break;
         }
-        if (abort && *abort) {
+        if (get_abort_lock (abort_lock, abort)) {
             break;
         }
         int sz = dec->read (fileinfo, buffer, bs);
@@ -1343,7 +1363,7 @@ ddb_mktemp(char *template, size_t template_size, char *suffix) {
 }
 
 static int
-convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out, int *pabort) {
+convert3 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out, pthread_rwlock_t *abort_lock, int *pabort) {
     int output_bps = settings->output_bps;
     int output_is_float = settings->output_is_float;
     ddb_encoder_preset_t *encoder_preset = settings->encoder_preset;
@@ -1482,13 +1502,13 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
                 }
 
                 if (temp_file > 0) {
-                    int64_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, pabort, temp_file, output_bps, output_is_float);
+                    int64_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, abort_lock, pabort, temp_file, output_bps, output_is_float);
 
                     if (outsize < 0) {
                         goto error;
                     }
 
-                    if (pabort && *pabort) {
+                    if (get_abort_lock (abort_lock, pabort)) {
                         goto error;
                     }
 
@@ -1531,7 +1551,7 @@ error:
         dec->free (fileinfo);
         fileinfo = NULL;
     }
-    if (pabort && *pabort && out[0]) {
+    if (get_abort_lock (abort_lock, pabort) && out[0]) {
         unlink (out);
     }
     if (input_file_name[0] && strcmp (input_file_name, "-")) {
@@ -1544,6 +1564,11 @@ error:
     (void)_converter_write_tags (encoder_preset, it, out);
 
     return err;
+}
+
+static int
+convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out, int *pabort) {
+    return convert3 (settings, it, out, NULL, pabort);
 }
 
 static int
@@ -1657,6 +1682,8 @@ static ddb_converter_t plugin = {
     .get_output_path2 = get_output_path2,
     // 1.5 entry points
     .convert2 = convert2,
+    // 1.9.3 entry points
+    .convert3 = convert3,
 };
 
 DB_plugin_t *

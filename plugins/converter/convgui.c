@@ -441,8 +441,7 @@ try_convert (shared_converter_ctx_t *self, int item_id) {
     converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, self->root, conv->write_to_source_folder, outpath, sizeof (outpath));
     int skip = get_skip_conversion (item, outpath, conv);
     if (!skip) {
-        int cancelled = get_shared_converter_cancel_lock (self);
-        converter_plugin->convert2 (&self->settings, item, outpath, &cancelled);
+        converter_plugin->convert3 (&self->settings, item, outpath, &self->cancel_lock, &self->conv->cancelled);
     }
 }
 

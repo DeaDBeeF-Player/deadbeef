@@ -265,6 +265,25 @@ typedef struct {
          // *pabort will be checked regularly, conversion will be interrupted if it's non-zero
          int *pabort
     );
+
+    // for multi-threaded calls since 1.9.3
+    int
+    (*convert3) (
+         // converter settings
+         ddb_converter_settings_t *settings,
+
+         // track to convert
+         DB_playItem_t *it,
+
+         // fully qualified output path with filename and extension
+         const char *outpath,
+
+         // read lock for accessing pabort
+         pthread_rwlock_t *abort_lock,
+
+         // *pabort will be checked regularly, conversion will be interrupted if it's non-zero
+         int *pabort
+    );
 } ddb_converter_t;
 
 #endif
