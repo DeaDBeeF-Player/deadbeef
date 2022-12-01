@@ -1116,7 +1116,7 @@ project "artwork_plugin"
   includedirs {"../libmp4ff", "./shared"}
   buildoptions {"-fblocks"}
   defines {"USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1"}
-  links {"jpeg", "png", "z", "FLAC", "ogg", "vorbis", "mp4p", "dispatch", "BlocksRuntime"}
+  links {"jpeg", "png", "z", "FLAC", "ogg", "vorbis", "vorbisfile", "mp4p", "dispatch", "BlocksRuntime"}
 else
   options_dic["plugin-artwork"] = "no"
 end
