@@ -2,8 +2,11 @@ if HAVE_ARTWORK
 pkglib_LTLIBRARIES = artwork.la
 
 if HAVE_OGG
+if HAVE_VORBIS
 ogg_def = -DUSE_OGG=1
 ogg_libs = $(OGG_LIBS)
+ogg_sources = base64.c base64.h artwork_ogg.c artwork_ogg.h
+endif
 endif
 
 if ARTWORK_USE_VFS_CURL
@@ -14,7 +17,7 @@ endif
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = artwork.h
 
-artwork_la_SOURCES = artwork.c artwork.h cache.c cache.h artwork_internal.c artwork_internal.h artwork_flac.c artwork_flac.h coverinfo.c coverinfo.h  $(artwork_net_sources)
+artwork_la_SOURCES = artwork.c artwork.h cache.c cache.h artwork_internal.c artwork_internal.h artwork_flac.c artwork_flac.h coverinfo.c coverinfo.h $(artwork_net_sources) $(ogg_sources)
 
 artwork_la_LDFLAGS = -module -avoid-version
 

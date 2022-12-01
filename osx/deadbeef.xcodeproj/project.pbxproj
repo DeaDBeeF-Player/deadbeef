@@ -1614,6 +1614,12 @@
 		2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
 		2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */; };
 		2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
+		2D95F6B72939283D002D8499 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
+		2D95F6BA29392884002D8499 /* artwork_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6B829392884002D8499 /* artwork_ogg.h */; };
+		2D95F6BB29392884002D8499 /* artwork_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F6B929392884002D8499 /* artwork_ogg.c */; };
+		2D95F6BE29392CE9002D8499 /* libvorbislib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */; };
+		2D95F6C129392F18002D8499 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F6BF29392F17002D8499 /* base64.c */; };
+		2D95F6C229392F18002D8499 /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6C029392F17002D8499 /* base64.h */; };
 		2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D977F461CA4B209006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D9793E3276E854F0062585E /* covermanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9793E1276E854F0062585E /* covermanager.h */; };
@@ -3615,6 +3621,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D9177371A0E8966004BC222;
 			remoteInfo = alac;
+		};
+		2D95F6A629392833002D8499 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D7C37EB1B2C40520029DE0A;
+			remoteInfo = ogglib;
+		};
+		2D95F6BC29392CE1002D8499 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D7C37F31B2C40580029DE0A;
+			remoteInfo = vorbislib;
 		};
 		2DA04E9723B6A46C0070AC01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6077,6 +6097,10 @@
 		2D93DC521AADFEEF003D2D8D /* pluginsettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pluginsettings.c; sourceTree = "<group>"; };
 		2D93DC531AADFEEF003D2D8D /* pluginsettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pluginsettings.h; sourceTree = "<group>"; };
 		2D93DC541AADFEEF003D2D8D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		2D95F6B829392884002D8499 /* artwork_ogg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_ogg.h; sourceTree = "<group>"; };
+		2D95F6B929392884002D8499 /* artwork_ogg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_ogg.c; sourceTree = "<group>"; };
+		2D95F6BF29392F17002D8499 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
+		2D95F6C029392F17002D8499 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
 		2D977F441CA4B1F3006DBE79 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		2D9793E1276E854F0062585E /* covermanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = covermanager.h; sourceTree = "<group>"; };
 		2D9793E2276E854F0062585E /* covermanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = covermanager.c; sourceTree = "<group>"; };
@@ -7591,6 +7615,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D95F6BE29392CE9002D8499 /* libvorbislib.dylib in Frameworks */,
+				2D95F6B72939283D002D8499 /* libogglib.dylib in Frameworks */,
 				2D71F1BC24AE7A3300E753D3 /* mp4p.framework in Frameworks */,
 				2DE1B36F24A8AAD80070CD7C /* libflaclib.dylib in Frameworks */,
 			);
@@ -9570,8 +9596,12 @@
 				2DA7C22D251002390080963D /* artwork_flac.h */,
 				2D621FAE1CD92CC500EB6D22 /* artwork_internal.c */,
 				2D621FAF1CD92CC500EB6D22 /* artwork_internal.h */,
+				2D95F6B929392884002D8499 /* artwork_ogg.c */,
+				2D95F6B829392884002D8499 /* artwork_ogg.h */,
 				2D621FA91CD92CC500EB6D22 /* artwork.c */,
 				2D621FAA1CD92CC500EB6D22 /* artwork.h */,
+				2D95F6BF29392F17002D8499 /* base64.c */,
+				2D95F6C029392F17002D8499 /* base64.h */,
 				2D621FB01CD92CC500EB6D22 /* cache.c */,
 				2D621FB11CD92CC500EB6D22 /* cache.h */,
 				2DAF900326A4533600C1CA25 /* coverinfo.c */,
@@ -13309,8 +13339,10 @@
 			files = (
 				2D621FD51CD92CCA00EB6D22 /* escape.h in Headers */,
 				2D621FD31CD92CCA00EB6D22 /* cache.h in Headers */,
+				2D95F6BA29392884002D8499 /* artwork_ogg.h in Headers */,
 				2D621FDE1CD92CCA00EB6D22 /* wos.h in Headers */,
 				2DA7C22F251002390080963D /* artwork_flac.h in Headers */,
+				2D95F6C229392F18002D8499 /* base64.h in Headers */,
 				2DAF900426A4533600C1CA25 /* coverinfo.h in Headers */,
 				2D621FD11CD92CCA00EB6D22 /* artwork_internal.h in Headers */,
 				2D621FCE1CD92CCA00EB6D22 /* artwork.h in Headers */,
@@ -14808,6 +14840,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D95F6BD29392CE1002D8499 /* PBXTargetDependency */,
+				2D95F6A729392833002D8499 /* PBXTargetDependency */,
 				2D71F1BB24AE7A2F00E753D3 /* PBXTargetDependency */,
 				2DE1B36E24A8AACD0070CD7C /* PBXTargetDependency */,
 			);
@@ -16824,9 +16858,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DA7C230251002390080963D /* artwork_flac.c in Sources */,
+				2D95F6C129392F18002D8499 /* base64.c in Sources */,
 				2D621FD41CD92CCA00EB6D22 /* escape.c in Sources */,
 				2D621FD21CD92CCA00EB6D22 /* cache.c in Sources */,
 				2D621FD01CD92CCA00EB6D22 /* artwork_internal.c in Sources */,
+				2D95F6BB29392884002D8499 /* artwork_ogg.c in Sources */,
 				2D621FDD1CD92CCA00EB6D22 /* wos.c in Sources */,
 				2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */,
 				2D5193C824ABBC1600134891 /* mp4tagutil.c in Sources */,
@@ -18557,6 +18593,16 @@
 			isa = PBXTargetDependency;
 			target = 2D9177371A0E8966004BC222 /* alac */;
 			targetProxy = 2D9177401A0E89B8004BC222 /* PBXContainerItemProxy */;
+		};
+		2D95F6A729392833002D8499 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D7C37EB1B2C40520029DE0A /* ogglib */;
+			targetProxy = 2D95F6A629392833002D8499 /* PBXContainerItemProxy */;
+		};
+		2D95F6BD29392CE1002D8499 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D7C37F31B2C40580029DE0A /* vorbislib */;
+			targetProxy = 2D95F6BC29392CE1002D8499 /* PBXContainerItemProxy */;
 		};
 		2DA04E9823B6A46C0070AC01 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -20876,6 +20922,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_VFS_CURL=1",
 					"USE_METAFLAC=1",
+					"USE_OGG=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -20887,6 +20934,8 @@
 					"\"$(SRCROOT)/deps/libpng-1.6.21\"",
 					"\"$(SRCROOT)/deps/flac-1.3.0/include\"",
 					"\"$(SRCROOT)/../external/mp4p/include\"",
+					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
+					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20911,6 +20960,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_VFS_CURL=1",
 					"USE_METAFLAC=1",
+					"USE_OGG=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -20922,6 +20972,8 @@
 					"\"$(SRCROOT)/deps/libpng-1.6.21\"",
 					"\"$(SRCROOT)/deps/flac-1.3.0/include\"",
 					"\"$(SRCROOT)/../external/mp4p/include\"",
+					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
+					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
