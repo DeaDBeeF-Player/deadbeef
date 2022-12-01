@@ -37,6 +37,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSMenuItem *rgScanAsAlbumsItem;
 @property (nonatomic) NSMenuItem *rgRemoveInformationItem;
 
+@property (nonatomic) NSMenuItem *showInFinderItem;
 @property (nonatomic) NSMenuItem *deleteFromDiskItem;
 
 @property (nonatomic) NSMenuItem *pluginActionsSeparatorItem;
@@ -140,6 +141,8 @@ extern DB_functions_t *deadbeef;
     self.convertItem = [self addItemWithTitle:@"Convert" action:@selector(convertSelection) keyEquivalent:@""];
     self.convertItem.target = self;
 
+    self.showInFinderItem = [self addItemWithTitle:@"Show in Finder" action:@selector(showInFinder) keyEquivalent:@""];
+    self.showInFinderItem.target = self;
     self.deleteFromDiskItem = [self addItemWithTitle:@"Delete from Disk" action:@selector(deleteFromDisk) keyEquivalent:@""];
     self.deleteFromDiskItem.target = self;
 
@@ -159,6 +162,7 @@ extern DB_functions_t *deadbeef;
         selected = tracks[0];
     }
 
+    self.showInFinderItem.enabled = selected_count != 0;
     self.deleteFromDiskItem.enabled = selected_count != 0;
 
     if ([self addPluginActionItemsForSelectedTrack:selected selectedCount:selected_count actionContext:actionContext]) {
@@ -502,6 +506,25 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
     ddbDeleteFromDiskControllerRunWithDelegate(self.deleteFromDiskController, delegate);
 
     deadbeef->plt_unref (plt);
+}
+
+- (void)showInFinder {
+    NSMutableArray *urls = [NSMutableArray arrayWithCapacity:ddbUtilTrackListGetTrackCount(self.selectedTracksList)];
+    [self forEachTrack:^(DB_playItem_t *it) {
+        if (deadbeef->pl_is_selected (it)) {
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            NSString *str = [NSString stringWithUTF8String:uri];
+            NSURL *url = [NSURL URLWithString:str];
+            if (!url) {
+                url = [NSURL fileURLWithPath:str];
+            }
+            if (url) {
+                [urls addObject:url];
+            }
+        }
+        return YES;
+    }];
+    [NSWorkspace.sharedWorkspace activateFileViewerSelectingURLs:urls];
 }
 
 #pragma mark - Playback Queue
