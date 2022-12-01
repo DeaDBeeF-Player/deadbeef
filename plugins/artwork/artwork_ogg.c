@@ -136,7 +136,7 @@ ogg_extract_art (ddb_cover_info_t *cover) {
         uint8_t *buffer = decoded_blob;
         int buffer_size = decoded_size;
 
-        __unused int32_t picture_type = READ_UINT32();
+        /*int32_t picture_type = */READ_UINT32();
         int32_t mime_size = READ_UINT32();
         mime_type = calloc(1, mime_size + 1);
         READ_BUF(mime_type, mime_size);
@@ -149,10 +149,10 @@ ogg_extract_art (ddb_cover_info_t *cover) {
         descr[descr_size] = 0;
         free (descr);
         descr = NULL;
-        __unused uint32_t width = READ_UINT32();
-        __unused uint32_t height = READ_UINT32();
-        __unused uint32_t depth = READ_UINT32();
-        __unused uint32_t palette_size = READ_UINT32();
+        /*uint32_t width = */READ_UINT32();
+        /*uint32_t height = */READ_UINT32();
+        /*uint32_t depth = */READ_UINT32();
+        /*uint32_t palette_size = */READ_UINT32();
         uint32_t picture_data_len = READ_UINT32();
 
         cover->priv->blob_size = picture_data_len;
