@@ -1308,7 +1308,7 @@ main (int argc, char *argv[]) {
             trace_err ("fatal: install path is too long: %s\n", dbresourcedir);
             return -1;
         }
-        if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/pixmaps", dbresourcedir) > (int)sizeof (dbpixmapdir)) {
+        if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s", dbresourcedir) > (int)sizeof (dbpixmapdir)) {
             trace_err ("fatal: install path is too long: %s\n", dbresourcedir);
             return -1;
         }
