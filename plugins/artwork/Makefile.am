@@ -4,7 +4,7 @@ pkglib_LTLIBRARIES = artwork.la
 if HAVE_OGG
 if HAVE_VORBIS
 ogg_def = -DUSE_OGG=1
-ogg_libs = $(OGG_LIBS)
+ogg_libs = $(OGG_LIBS) $(VORBIS_LIBS)
 ogg_sources = base64.c base64.h artwork_ogg.c artwork_ogg.h
 endif
 endif
