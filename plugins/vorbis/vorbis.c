@@ -264,7 +264,7 @@ cvorbis_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (!info->info.file) {
         deadbeef->pl_lock ();
-	const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
+        const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
         info->info.file = deadbeef->fopen (uri);
         if (!info->info.file) {
@@ -694,6 +694,7 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     }
     if (fp->vfs->is_streaming ()) {
         trace ("cvorbis_read_metadata: failed to fopen %s\n", uri);
+        deadbeef->fclose(fp);
         return -1;
     }
     ov_callbacks ovcb = {
@@ -705,6 +706,7 @@ cvorbis_read_metadata (DB_playItem_t *it) {
     int res = ov_open_callbacks (fp, &vorbis_file, NULL, 0, ovcb);
     if (res != 0) {
         trace ("cvorbis_read_metadata: ov_open_callbacks returned %d\n", res);
+        deadbeef->fclose(fp);
         return -1;
     }
     int tracknum = deadbeef->pl_find_meta_int (it, ":TRACKNUM", -1);
