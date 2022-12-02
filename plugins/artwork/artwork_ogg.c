@@ -110,8 +110,13 @@ ogg_extract_art (ddb_cover_info_t *cover) {
         goto error;
     }
 
+    // TODO: currently it will just return the first picture,
+    // but would be great to be able to enumerate / return all pictures,
+    // as well as prioritize by picture type.
+
     const char key[] = "METADATA_BLOCK_PICTURE=";
     for (int i = 0; i < vc->comments; i++) {
+        uint8_t *decoded_blob = NULL;
         char *mime_type = NULL;
         char *descr = NULL;
         int size = vc->comment_lengths[i];
@@ -123,14 +128,17 @@ ogg_extract_art (ddb_cover_info_t *cover) {
 
         // decode base64
         char *blob = vc->user_comments[i] + sizeof (key) - 1;
-        int decoded_size = Base64decode_len(blob);
+        const int predicted_decoded_size = Base64decode_len(blob);
 
-        if (decoded_size <= 0) {
-            break;
+        if (predicted_decoded_size <= 0) {
+            continue;
         }
 
-        uint8_t *decoded_blob = malloc (decoded_size);
-        Base64decode((char *)decoded_blob, blob);
+        decoded_blob = malloc (predicted_decoded_size);
+        if (decoded_blob == NULL) {
+            goto error_decode_flac_block;
+        }
+        const int decoded_size = Base64decode((char *)decoded_blob, blob);
 
         // decode flac picture block
         uint8_t *buffer = decoded_blob;
@@ -141,6 +149,14 @@ ogg_extract_art (ddb_cover_info_t *cover) {
         mime_type = calloc(1, mime_size + 1);
         READ_BUF(mime_type, mime_size);
         mime_type[mime_size] = 0;
+
+        // skip non-image data
+        if (strcasecmp(mime_type, "image/")
+            && strcasecmp(mime_type, "image/png")
+            && strcasecmp(mime_type, "image/jpeg")) {
+            goto error_decode_flac_block; // unsupported mime type
+        }
+
         free (mime_type);
         mime_type = NULL;
         int32_t descr_size = READ_UINT32();
