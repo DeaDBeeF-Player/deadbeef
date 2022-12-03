@@ -42,8 +42,8 @@
         [DdbUndoBufferRetainer.shared releaseBuffer:target];
 
         undobuffer_t *undobuffer = undomanager_consume_buffer(undomanager_shared());
-        DdbUndoBuffer *redoBuffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
-        [self registerUndoBuffer:redoBuffer];
+        DdbUndoBuffer *wrappedBuffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
+        [self registerUndoBuffer:wrappedBuffer];
     }];
 }
 
