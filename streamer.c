@@ -2471,21 +2471,23 @@ play_index (int idx, int startpaused) {
 
     playqueue_clear ();
 
-    if (idx < 0) {
-        goto error;
-    }
-
     plt = plt_get_curr ();
-    it = plt_get_item_for_idx (plt, idx, PL_MAIN);
-    if (!it) {
-        goto error;
-    }
 
     pl_lock ();
     if (plt != streamer_playlist) {
         streamer_set_streamer_playlist (plt);
     }
     pl_unlock();
+
+    if (idx < 0) {
+        plt_reshuffle (plt, NULL, NULL);
+        goto error;
+    }
+
+    it = plt_get_item_for_idx (plt, idx, PL_MAIN);
+    if (!it) {
+        goto error;
+    }
 
     // rebuild shuffle order
     _rebuild_shuffle_albums_after_manual_trigger (plt, it);
