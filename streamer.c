@@ -2474,13 +2474,18 @@ play_index (int idx, int startpaused) {
     plt = plt_get_curr ();
 
     pl_lock ();
-    if (plt != streamer_playlist) {
-        streamer_set_streamer_playlist (plt);
-    }
+    int playlist_did_change = plt != streamer_playlist;
     pl_unlock();
 
+    if (playlist_did_change) {
+        streamer_set_streamer_playlist (plt);
+    }
+
     if (idx < 0) {
-        plt_reshuffle (plt, NULL, NULL);
+        if (playlist_did_change) {
+            plt_reshuffle (plt, NULL, NULL);
+            streamer_set_last_played(NULL);
+        }
         goto error;
     }
 
