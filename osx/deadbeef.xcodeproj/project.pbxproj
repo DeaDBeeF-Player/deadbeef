@@ -1640,6 +1640,7 @@
 		2D95F6BE29392CE9002D8499 /* libvorbislib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */; };
 		2D95F6C129392F18002D8499 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F6BF29392F17002D8499 /* base64.c */; };
 		2D95F6C229392F18002D8499 /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6C029392F17002D8499 /* base64.h */; };
+		2D95F6DD293B58E1002D8499 /* undo_playlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6DB293B58E1002D8499 /* undo_playlist.h */; };
 		2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D977F461CA4B209006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D9793E3276E854F0062585E /* covermanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9793E1276E854F0062585E /* covermanager.h */; };
@@ -6210,6 +6211,7 @@
 		2D95F6B929392884002D8499 /* artwork_ogg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_ogg.c; sourceTree = "<group>"; };
 		2D95F6BF29392F17002D8499 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
 		2D95F6C029392F17002D8499 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		2D95F6DB293B58E1002D8499 /* undo_playlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undo_playlist.h; sourceTree = "<group>"; };
 		2D977F441CA4B1F3006DBE79 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		2D9793E1276E854F0062585E /* covermanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = covermanager.h; sourceTree = "<group>"; };
 		2D9793E2276E854F0062585E /* covermanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = covermanager.c; sourceTree = "<group>"; };
@@ -12029,6 +12031,7 @@
 		2DDD75EF25E14FC200FA6FE5 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
+				2D95F6DB293B58E1002D8499 /* undo_playlist.h */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -14623,6 +14626,7 @@
 				2DC657C62748502F00583E14 /* SegmentedTabView.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
 				2DC6580D274A994100583E14 /* TableViewWithReturnAction.h in Headers */,
+				2D95F6DD293B58E1002D8499 /* undo_playlist.h in Headers */,
 				2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
 				2D78C55927568B4A00F96F9D /* medialibscanner.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
