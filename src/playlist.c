@@ -71,6 +71,8 @@
 #include "sort.h"
 #include "cueutil.h"
 #include "playmodes.h"
+#include "undo/undomanager.h"
+#include "undo/undo_playlist.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -713,7 +715,7 @@ plt_get_modification_idx (playlist_t *plt) {
 void
 plt_free (playlist_t *plt) {
     LOCK;
-
+    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 0);
     plt_clear (plt);
 
     if (plt->title) {
@@ -729,6 +731,7 @@ plt_free (playlist_t *plt) {
     }
 
     free (plt);
+    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
     UNLOCK;
 }
 
@@ -1643,6 +1646,8 @@ plt_remove_item (playlist_t *playlist, playItem_t *it) {
 
     // remove from both lists
     LOCK;
+    undo_remove_items(undomanager_get_buffer(undomanager_shared()), playlist, &it, 1);
+
     for (int iter = PL_MAIN; iter <= PL_SEARCH; iter++) {
         if (it->prev[iter] || it->next[iter] || playlist->head[iter] == it || playlist->tail[iter] == it) {
             playlist->count[iter]--;
@@ -1794,6 +1799,7 @@ pl_get_idx_of_iter (playItem_t *it, int iter) {
 playItem_t *
 plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
     LOCK;
+    undo_insert_items(undomanager_get_buffer(undomanager_shared()), playlist, &it, 1);
     pl_item_ref (it);
     if (!after) {
         it->next[PL_MAIN] = playlist->head[PL_MAIN];
@@ -2336,6 +2342,8 @@ plt_load_int (
     playItem_t *it = NULL;
     playItem_t *last_added = NULL;
 
+    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 0);
+
 #ifdef __MINGW32__
     if (!strncmp (fname, "file://", 7)) {
         fname += 7;
@@ -2387,6 +2395,7 @@ plt_load_int (
                         loaded_it =
                             plug[p]->load2 (visibility, (ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort);
                     }
+                    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
                     return (playItem_t *)loaded_it;
                 }
             }
@@ -2395,6 +2404,7 @@ plt_load_int (
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
         //        trace ("plt_load: failed to open %s\n", fname);
+        undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
         return NULL;
     }
 
@@ -2651,6 +2661,7 @@ plt_load_int (
     if (last_added) {
         pl_item_unref (last_added);
     }
+    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
     return last_added;
 load_fail:
     if (it) {
@@ -2664,6 +2675,7 @@ load_fail:
     if (last_added) {
         pl_item_unref (last_added);
     }
+    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
     return last_added;
 }
 

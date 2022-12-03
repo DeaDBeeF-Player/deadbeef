@@ -96,6 +96,8 @@
 //#include "scriptable/scriptable_tfquery.h"
 #endif
 
+#include "undo/undomanager.h"
+
 #ifndef PREFIX
 #    error PREFIX must be defined
 #endif
@@ -1111,6 +1113,8 @@ main_cleanup_and_quit (void) {
         plug_cleanup ();
         trace ("logger_free\n");
 
+        undomanager_free(undomanager_shared());
+
         trace ("💛💙\n");
         ddb_logger_free ();
 
@@ -1120,6 +1124,7 @@ main_cleanup_and_quit (void) {
 
         exit (0);
     });
+
 }
 
 static void
@@ -1570,6 +1575,8 @@ main (int argc, char *argv[]) {
     }
 
     streamer_playmodes_init ();
+
+    undomanager_shared_init();
 
     pl_load_all ();
 

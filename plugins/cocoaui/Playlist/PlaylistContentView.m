@@ -1029,6 +1029,7 @@ static int grouptitleheight = 22;
             break;
         default:
             [super keyDown:theEvent];
+            deadbeef->runloop_end();
             return;
         }
 

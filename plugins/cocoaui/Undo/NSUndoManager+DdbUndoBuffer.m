@@ -21,18 +21,21 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef undo_playlist_h
-#define undo_playlist_h
+#import "DdbUndoBuffer.h"
+#import "NSUndoManager+DdbUndoBuffer.h"
+#include "undomanager.h"
 
-#include "undobuffer.h"
+@implementation NSUndoManager (DdbUndoBuffer)
 
-void
-undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+- (void)registerUndoBuffer:(DdbUndoBuffer *)undoBuffer {
+    [self registerUndoWithTarget:undoBuffer handler:^(id  _Nonnull target) {
+        // Undo-able operations are supposed to be only allowed on the main thread,
+        // and we expect that at this point the current undobuffer is empty
+        [undoBuffer apply];
+        undobuffer_t *undobuffer = undomanager_consume_buffer(undomanager_shared());
+        DdbUndoBuffer *redoBuffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
+        [self registerUndoBuffer:redoBuffer];
+    }];
+}
 
-//void
-//undo_append_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
-
-void
-undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
-
-#endif /* undo_playlist_h */
+@end

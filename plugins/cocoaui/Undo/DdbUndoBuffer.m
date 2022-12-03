@@ -21,18 +21,28 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef undo_playlist_h
-#define undo_playlist_h
+#import "DdbUndoBuffer.h"
 
-#include "undobuffer.h"
+@interface DdbUndoBuffer()
 
-void
-undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+@property (nonatomic) undobuffer_t *buffer;
 
-//void
-//undo_append_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+@end
 
-void
-undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+@implementation DdbUndoBuffer
 
-#endif /* undo_playlist_h */
+- (void)dealloc {
+    undobuffer_free (_buffer);
+}
+
+- (instancetype)initWithUndoBuffer:(undobuffer_t *)buffer {
+    self = [super init];
+    _buffer = buffer;
+    return self;
+}
+
+- (void)apply {
+    undobuffer_execute(self.buffer);
+}
+
+@end

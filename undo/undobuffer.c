@@ -23,19 +23,18 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include "undo.h"
+#include "undobuffer.h"
 
 struct _undobuffer_s {
     undo_operation_t *operations;
+    int enabled;
 };
 
 undobuffer_t *
 undobuffer_alloc(void) {
-    return calloc (1, sizeof (undobuffer_t));
-}
-
-void
-undobuffer_init(undobuffer_t *undobuffer) {
+    undobuffer_t *undobuffer = calloc (1, sizeof (undobuffer_t));
+    undobuffer->enabled = 1;
+    return undobuffer;
 }
 
 static void
@@ -60,6 +59,16 @@ undobuffer_free (undobuffer_t *undobuffer) {
     free (undobuffer);
 }
 
+void
+undobuffer_set_enabled (undobuffer_t *undobuffer, int enabled) {
+    undobuffer->enabled = enabled;
+}
+
+int
+undobuffer_is_enabled (undobuffer_t *undobuffer) {
+    return undobuffer->enabled;
+}
+
 static void
 _undobuffer_append_operation(undobuffer_t *undobuffer, undo_operation_t *op, undo_operation_t **operations) {
     op->next = *operations;
@@ -78,4 +87,9 @@ undobuffer_execute (undobuffer_t *undobuffer) {
             op->perform(undobuffer, op);
         }
     }
+}
+
+int
+undobuffer_has_operations(undobuffer_t *undobuffer) {
+    return undobuffer->operations != NULL;
 }

@@ -21,18 +21,37 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef undo_playlist_h
-#define undo_playlist_h
+#ifndef undomanager_h
+#define undomanager_h
 
 #include "undobuffer.h"
 
+struct undomanager_s;
+
+typedef struct undomanager_s undomanager_t;
+
+undomanager_t *
+undomanager_alloc (void);
+
 void
-undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+undomanager_free (undomanager_t *undomanager);
 
-//void
-//undo_append_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+undobuffer_t *
+undomanager_get_buffer (undomanager_t *undomanager);
+
+undobuffer_t *
+undomanager_consume_buffer (undomanager_t *undomanager);
+
+// Send the accumulated undo buffer to the UI for registration
+void
+undomanager_flush(undomanager_t *undomanager, const char *name);
+
+#pragma mark - Shared instance
+
+undomanager_t *
+undomanager_shared (void);
 
 void
-undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+undomanager_shared_init (void);
 
-#endif /* undo_playlist_h */
+#endif /* undomanager_h */

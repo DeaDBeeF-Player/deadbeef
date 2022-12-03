@@ -24,6 +24,9 @@
 #import <Cocoa/Cocoa.h>
 #import "AppDelegate.h"
 #include <deadbeef/deadbeef.h>
+#import "DdbUndoBuffer.h"
+#import "NSUndoManager+DdbUndoBuffer.h"
+#include "undobuffer.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -45,6 +48,24 @@ int cocoaui_message (uint32_t _id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return [appDelegate ddb_message:_id ctx:ctx p1:p1 p2:p2];
 }
 
+int cocoaui_command (int command, ...) {
+    if (command == 111) {
+        // register undo
+        va_list args;
+        va_start(args, command);
+        undobuffer_t *undobuffer = va_arg(args, undobuffer_t *);
+        const char *name = va_arg(args, const char *);
+        va_end(args);
+        NSUndoManager *undoManager = g_appDelegate.mainWindow.undoManager;
+        DdbUndoBuffer *buffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
+
+        [undoManager setActionName:[NSString stringWithUTF8String:name]];
+        [undoManager registerUndoBuffer:buffer];
+    }
+
+    return 0;
+}
+
 DB_gui_t plugin = {
     .plugin.type = DB_PLUGIN_GUI,
     DDB_PLUGIN_SET_API_VERSION
@@ -55,6 +76,7 @@ DB_gui_t plugin = {
     .plugin.start = cocoaui_start,
     .plugin.stop = cocoaui_stop,
     .plugin.message = cocoaui_message,
+    .plugin.command = cocoaui_command,
     // NSApplicationMain doesn't return, so it doesn't seem it's possible to cleanup
 };
 

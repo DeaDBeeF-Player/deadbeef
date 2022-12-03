@@ -21,18 +21,16 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef undo_playlist_h
-#define undo_playlist_h
-
+#import <Foundation/Foundation.h>
 #include "undobuffer.h"
 
-void
-undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+NS_ASSUME_NONNULL_BEGIN
 
-//void
-//undo_append_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+@interface DdbUndoBuffer : NSObject
 
-void
-undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+- (instancetype)initWithUndoBuffer:(undobuffer_t *)buffer;
+- (void)apply;
 
-#endif /* undo_playlist_h */
+@end
+
+NS_ASSUME_NONNULL_END

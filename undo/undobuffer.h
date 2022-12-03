@@ -23,8 +23,8 @@
 
 
 
-#ifndef undo_h
-#define undo_h
+#ifndef undobuffer_h
+#define undobuffer_h
 
 #include "../playlist.h"
 
@@ -46,10 +46,13 @@ undobuffer_t *
 undobuffer_alloc(void);
 
 void
-undobuffer_init(undobuffer_t *undobuffer);
+undobuffer_free (undobuffer_t *undobuffer);
 
 void
-undobuffer_free (undobuffer_t *undobuffer);
+undobuffer_set_enabled (undobuffer_t *undobuffer, int enabled);
+
+int
+undobuffer_is_enabled (undobuffer_t *undobuffer);
 
 void
 undobuffer_append_operation (undobuffer_t *undobuffer, undo_operation_t *op);
@@ -57,4 +60,7 @@ undobuffer_append_operation (undobuffer_t *undobuffer, undo_operation_t *op);
 void
 undobuffer_execute (undobuffer_t *undobuffer);
 
-#endif /* undo_h */
+int
+undobuffer_has_operations(undobuffer_t *undobuffer);
+
+#endif /* undobuffer_h */
