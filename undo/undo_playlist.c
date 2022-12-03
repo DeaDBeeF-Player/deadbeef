@@ -55,6 +55,7 @@ static undo_operation_item_list_t *
 _undo_operation_item_list_new(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count) {
     undo_operation_item_list_t *op = calloc (1, sizeof (undo_operation_item_list_t));
     op->items = calloc (count, sizeof (playItem_t *));
+    op->count = count;
     plt_ref(plt);
     op->plt = plt;
     for (size_t i = 0; i < count; i++) {
@@ -96,7 +97,7 @@ _undo_operation_item_list_new(undobuffer_t *undobuffer, playlist_t *plt, playIte
 //}
 //
 static void
-_undo_perform_remove_items(undo_operation_item_list_t *op) {
+_undo_perform_remove_items(undobuffer_t *undobuffer, undo_operation_item_list_t *op) {
     // FIXME: add plt_remove_items function
     for (size_t i = 0; i < op->count; i++) {
         plt_remove_item(op->plt, op->items[i]);
@@ -111,7 +112,7 @@ _undo_perform_remove_items(undo_operation_item_list_t *op) {
 //}
 
 static void
-_undo_perform_insert_items (undo_operation_item_list_t *op) {
+_undo_perform_insert_items (undobuffer_t *undobuffer, undo_operation_item_list_t *op) {
     // FIXME: add plt_insert_items function
     playItem_t *after = op->insert_position;
     for (size_t i = 0; i < op->count; i++) {

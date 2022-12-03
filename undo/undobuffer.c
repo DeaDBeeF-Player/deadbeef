@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include "undobuffer.h"
 
+extern DB_functions_t *deadbeef;
+
 struct _undobuffer_s {
     undo_operation_t *operations;
     int enabled;
@@ -86,6 +88,9 @@ undobuffer_execute (undobuffer_t *undobuffer) {
         if (op->perform != NULL) {
             op->perform(undobuffer, op);
         }
+    }
+    if (undobuffer->operations != NULL) {
+        deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
     }
 }
 

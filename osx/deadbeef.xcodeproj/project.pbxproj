@@ -1645,6 +1645,8 @@
 		2D95F721293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F71F293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.h */; };
 		2D95F725293BA3DA002D8499 /* DdbUndoBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F723293BA3DA002D8499 /* DdbUndoBuffer.h */; };
 		2D95F726293BA3DA002D8499 /* DdbUndoBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F724293BA3DA002D8499 /* DdbUndoBuffer.m */; };
+		2D95F729293BB295002D8499 /* DdbUndoBufferRetainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F727293BB295002D8499 /* DdbUndoBufferRetainer.h */; };
+		2D95F72A293BB295002D8499 /* DdbUndoBufferRetainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F728293BB295002D8499 /* DdbUndoBufferRetainer.m */; };
 		2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D977F461CA4B209006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D9793E3276E854F0062585E /* covermanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9793E1276E854F0062585E /* covermanager.h */; };
@@ -6221,6 +6223,8 @@
 		2D95F720293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSUndoManager+DdbUndoBuffer.m"; sourceTree = "<group>"; };
 		2D95F723293BA3DA002D8499 /* DdbUndoBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbUndoBuffer.h; sourceTree = "<group>"; };
 		2D95F724293BA3DA002D8499 /* DdbUndoBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbUndoBuffer.m; sourceTree = "<group>"; };
+		2D95F727293BB295002D8499 /* DdbUndoBufferRetainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbUndoBufferRetainer.h; sourceTree = "<group>"; };
+		2D95F728293BB295002D8499 /* DdbUndoBufferRetainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbUndoBufferRetainer.m; sourceTree = "<group>"; };
 		2D977F441CA4B1F3006DBE79 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		2D9793E1276E854F0062585E /* covermanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = covermanager.h; sourceTree = "<group>"; };
 		2D9793E2276E854F0062585E /* covermanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = covermanager.c; sourceTree = "<group>"; };
@@ -10977,6 +10981,8 @@
 				2D95F724293BA3DA002D8499 /* DdbUndoBuffer.m */,
 				2D95F71F293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.h */,
 				2D95F720293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.m */,
+				2D95F727293BB295002D8499 /* DdbUndoBufferRetainer.h */,
+				2D95F728293BB295002D8499 /* DdbUndoBufferRetainer.m */,
 			);
 			path = Undo;
 			sourceTree = "<group>";
@@ -14685,6 +14691,7 @@
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
 				2D98B6A3273483A700E655AE /* AAPLConfig.h in Headers */,
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
+				2D95F729293BB295002D8499 /* DdbUndoBufferRetainer.h in Headers */,
 				2D98613E226C814100BAACB1 /* PropertySheetViewController.h in Headers */,
 				2DDF87ED2402845C00CA8E91 /* NSMenu+ActionItems.h in Headers */,
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
@@ -18299,6 +18306,7 @@
 				2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */,
 				2D92D33B29B9323600218F1D /* scope.c in Sources */,
 				2DC6582A274AB03800583E14 /* LyricsViewController.m in Sources */,
+				2D95F72A293BB295002D8499 /* DdbUndoBufferRetainer.m in Sources */,
 				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
 				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,

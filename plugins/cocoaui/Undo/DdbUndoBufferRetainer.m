@@ -21,30 +21,39 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+
 #import "DdbUndoBuffer.h"
 #import "DdbUndoBufferRetainer.h"
-#import "NSUndoManager+DdbUndoBuffer.h"
-#include "undomanager.h"
 
-@implementation NSUndoManager (DdbUndoBuffer)
+@interface DdbUndoBufferRetainer()
 
-- (void)registerUndoBuffer:(DdbUndoBuffer *)undoBuffer {
-    // Need to retain the DdbUndoBuffer here, since undoManager holds a weak reference.
-    // DdbUndoBuffer is expected to always be executed only once,
-    // so we can unregister it then
+@property (nonatomic) NSMutableSet<DdbUndoBuffer *> *buffers;
 
-    [DdbUndoBufferRetainer.shared retainBuffer:undoBuffer];
+@end
 
-    [self registerUndoWithTarget:undoBuffer handler:^(id  _Nonnull target) {
-        // Undo-able operations are supposed to be only allowed on the main thread,
-        // and we expect that at this point the current undobuffer is empty
-        [target apply];
-        [DdbUndoBufferRetainer.shared releaseBuffer:target];
+@implementation DdbUndoBufferRetainer
 
-        undobuffer_t *undobuffer = undomanager_consume_buffer(undomanager_shared());
-        DdbUndoBuffer *redoBuffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
-        [self registerUndoBuffer:redoBuffer];
-    }];
++ (DdbUndoBufferRetainer *)shared {
+    static DdbUndoBufferRetainer *_instance;
+    if (_instance == nil) {
+        _instance = [DdbUndoBufferRetainer new];
+    }
+    return _instance;
 }
+
+- (instancetype)init {
+    self = [super init];
+    _buffers = [NSMutableSet new];
+    return self;
+}
+
+- (void)retainBuffer:(DdbUndoBuffer *)buffer {
+    [self.buffers addObject:buffer];
+}
+
+- (void)releaseBuffer:(DdbUndoBuffer *)buffer {
+    [self.buffers removeObject:buffer];
+}
+
 
 @end
