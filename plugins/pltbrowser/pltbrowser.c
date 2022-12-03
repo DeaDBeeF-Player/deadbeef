@@ -786,8 +786,10 @@ on_pltbrowser_popup_menu (GtkWidget *widget, gpointer user_data) {
 
 static void
 on_pltbrowser_row_activated (GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data) {
-    if (deadbeef->conf_get_int ("gtkui.pltbrowser.play_on_double_click", 1))
-        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+    if (deadbeef->conf_get_int ("gtkui.pltbrowser.play_on_double_click", 1)) {
+        deadbeef->sendmessage (DB_EV_STOP, 0, 0, 0);
+        deadbeef->sendmessage (DB_EV_NEXT, 0, 0, 0);
+    }
 }
 
 static void
