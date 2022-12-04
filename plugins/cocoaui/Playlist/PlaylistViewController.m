@@ -1367,12 +1367,13 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 }
 
 -(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)_after {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = deadbeef->plt_alloc("drag-drop-playlist");
+    ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
     if (!deadbeef->plt_add_files_begin (plt, 0)) {
         dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(aQueue, ^{
             DB_playItem_t *first = NULL;
-            DB_playItem_t *after = (DB_playItem_t *)_after;
+            DB_playItem_t *after = NULL;
             for(NSUInteger i = 0; i < paths.count; i++ )
             {
                 NSString* path = paths[i];
@@ -1409,9 +1410,15 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 deadbeef->pl_item_unref (after);
             }
             deadbeef->plt_add_files_end (plt, 0);
-            deadbeef->plt_unref (plt);
-            deadbeef->pl_save_current();
-            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // move items to UI playlist
+                [self moveItemsFrom:plt to:plt_curr after:(ddb_playItem_t *)_after];
+
+                deadbeef->plt_unref (plt);
+                deadbeef->plt_unref (plt_curr);
+                deadbeef->pl_save_current();
+                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+            });
         });
     }
     else {
@@ -1421,6 +1428,21 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         deadbeef->plt_unref (plt);
     }
     deadbeef->pl_save_all();
+}
+
+// FIXME: This should be added to the API, as a reusable function, convenient for Undo
+- (void)moveItemsFrom:(ddb_playlist_t *)from to:(ddb_playlist_t *)to after:(ddb_playItem_t *)after {
+    ddb_playItem_t *it = deadbeef->plt_get_head_item(from, PL_MAIN);
+    while (it != NULL) {
+        ddb_playItem_t *next = deadbeef->pl_get_next(it, PL_MAIN);
+
+        deadbeef->plt_remove_item(from, it);
+        deadbeef->plt_insert_item(to, after, it);
+        after = it;
+
+        deadbeef->pl_item_unref(it);
+        it = next;
+    }
 }
 
 - (void)dropPlayItems:(DdbListviewRow_t *)items before:(DdbListviewRow_t)before count:(int)count {
