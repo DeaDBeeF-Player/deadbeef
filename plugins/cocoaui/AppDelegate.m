@@ -29,6 +29,7 @@
 #import "conf.h"
 #import "CoverManager.h"
 #import "DdbShared.h"
+#import "DdbUndoBufferRetainer.h"
 #import "DesignModeDefs.h"
 #import "DesignModeState.h"
 #import "EqualizerWindowController.h"
@@ -263,6 +264,7 @@ main_cleanup_and_quit (void);
 
 - (void)applicationWillTerminate:(NSNotification *)notification {
     @autoreleasepool {
+        [DdbUndoBufferRetainer cleanupShared];
         [ConverterWindowController cleanup];
         [ReplayGainScannerController cleanup];
         [_searchWindow close];

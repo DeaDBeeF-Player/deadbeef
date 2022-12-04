@@ -33,12 +33,17 @@
 
 @implementation DdbUndoBufferRetainer
 
+static DdbUndoBufferRetainer *_instance;
+
 + (DdbUndoBufferRetainer *)shared {
-    static DdbUndoBufferRetainer *_instance;
     if (_instance == nil) {
         _instance = [DdbUndoBufferRetainer new];
     }
     return _instance;
+}
+
++ (void)cleanupShared {
+    _instance = nil;
 }
 
 - (instancetype)init {

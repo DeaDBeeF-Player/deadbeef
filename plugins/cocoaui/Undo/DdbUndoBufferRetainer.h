@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DdbUndoBufferRetainer : NSObject
 
 @property (class,nonatomic,readonly) DdbUndoBufferRetainer *shared;
++ (void)cleanupShared;
 
 - (void)retainBuffer:(DdbUndoBuffer *)buffer;
 - (void)releaseBuffer:(DdbUndoBuffer *)buffer;
