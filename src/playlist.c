@@ -2343,6 +2343,7 @@ plt_load_int (
     playItem_t *last_added = NULL;
 
     unsigned undo_enabled = plt->undo_enabled;
+    plt->undo_enabled = 0;
 
 #ifdef __MINGW32__
     if (!strncmp (fname, "file://", 7)) {
