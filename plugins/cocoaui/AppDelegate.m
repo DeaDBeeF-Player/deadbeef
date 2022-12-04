@@ -454,7 +454,11 @@ main_cleanup_and_quit (void);
                         deadbeef->plt_clear(plt_curr);
                         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                     }
-                    [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:NULL];
+                    ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
+                    [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:tail];
+                    if (tail != NULL) {
+                        deadbeef->pl_item_unref (tail);
+                    }
                     deadbeef->pl_save_current();
                     if (play) {
                         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
@@ -488,10 +492,10 @@ main_cleanup_and_quit (void);
     if ( [openDlg runModal] == NSModalResponseOK )
     {
         NSArray* files = openDlg.URLs;
-        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        ddb_playlist_t *plt = deadbeef->plt_alloc ("add-folders");
+        ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
         if (!deadbeef->plt_add_files_begin (plt, 0)) {
-            dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-            dispatch_async(aQueue, ^{
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 for (NSUInteger i = 0; i < files.count; i++) {
                     NSString *fileName = [files[i] path];
                     if (fileName) {
@@ -499,13 +503,22 @@ main_cleanup_and_quit (void);
                     }
                 }
                 deadbeef->plt_add_files_end (plt, 0);
-                deadbeef->plt_unref (plt);
-                deadbeef->pl_save_current();
-                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
+                    [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:tail];
+                    if (tail != NULL) {
+                        deadbeef->pl_item_unref (tail);
+                    }
+                    deadbeef->plt_unref (plt);
+                    deadbeef->plt_unref (plt_curr);
+                    deadbeef->pl_save_current();
+                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+                });
             });
         }
         else {
             deadbeef->plt_unref (plt);
+            deadbeef->plt_unref (plt_curr);
         }
     }
 }
