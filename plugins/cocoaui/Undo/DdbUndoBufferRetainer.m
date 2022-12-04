@@ -60,5 +60,4 @@ static DdbUndoBufferRetainer *_instance;
     [self.buffers removeObject:buffer];
 }
 
-
 @end

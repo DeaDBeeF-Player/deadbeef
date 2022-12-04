@@ -32,13 +32,6 @@ typedef struct {
     size_t count;
 } undo_operation_item_list_t;
 
-//typedef struct {
-//    undo_operation_t _super;
-//    playlist_t *plt;
-//    playItem_t *first;
-//    playItem_t *second;
-//} undo_operation_item_pair_t;
-//
 static void
 _undo_operation_item_list_deinit(undo_operation_item_list_t *op) {
     for (size_t i = 0; i < op->count; i++) {
@@ -66,36 +59,6 @@ _undo_operation_item_list_new(undobuffer_t *undobuffer, playlist_t *plt, playIte
     return op;
 }
 
-//static void
-//_undo_operation_item_pair_deinit(undo_operation_item_pair_t *op) {
-//    plt_unref(op->plt);
-//    if (op->first != NULL) {
-//        pl_item_unref (op->first);
-//    }
-//    if (op->second != NULL) {
-//        pl_item_unref (op->second);
-//    }
-//}
-//
-//static undo_operation_item_pair_t *
-//_undo_operation_item_pair_new(undobuffer_t *undobuffer, playlist_t *plt, playItem_t *first, playItem_t *second) {
-//    undo_operation_item_pair_t *op = calloc (1, sizeof (undo_operation_item_pair_t));
-//    op->plt = plt;
-//    op->first = first;
-//    op->second = second;
-//
-//    plt_ref(plt);
-//    if (first != NULL) {
-//        pl_item_ref (first);
-//    }
-//    if (second != NULL) {
-//        pl_item_ref (second);
-//    }
-//
-//    op->_super.deinit = (undo_operation_deinit_fn)_undo_operation_item_pair_deinit;
-//    return op;
-//}
-//
 static void
 _undo_perform_remove_items(undobuffer_t *undobuffer, undo_operation_item_list_t *op) {
     // FIXME: add plt_remove_items function
@@ -103,14 +66,6 @@ _undo_perform_remove_items(undobuffer_t *undobuffer, undo_operation_item_list_t 
         plt_remove_item(op->plt, op->items[i]);
     }
 }
-
-//static void
-//_undo_perform_append_items(undo_operation_item_list_t *op) {
-//    for (size_t i = 0; i < op->count; i++) {
-//        plt_insert_item(op->plt, NULL, op->items[i]);
-//    }
-//}
-
 static void
 _undo_perform_insert_items (undobuffer_t *undobuffer, undo_operation_item_list_t *op) {
     // FIXME: add plt_insert_items function
@@ -133,14 +88,6 @@ undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items,
     op->_super.perform = (undo_operation_perform_fn)_undo_perform_insert_items;
     undobuffer_append_operation(undobuffer, &op->_super);
 }
-
-//void
-//undo_append_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count) {
-//    undo_operation_item_list_t *op = _undo_operation_item_list_new(undobuffer, plt, items, count);
-//    op->_super.perform = (undo_operation_perform_fn)_undo_perform_remove_items;
-//    undobuffer_append_operation(undobuffer, &op->_super);
-//}
-//
 void
 undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count) {
     if (!undobuffer_is_enabled(undobuffer)) {
