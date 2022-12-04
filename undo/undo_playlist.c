@@ -106,7 +106,7 @@ _undo_perform_change_selection (undobuffer_t *undobuffer, undo_operation_item_li
 
 static int
 _undo_operation_prepare(undobuffer_t *undobuffer, playlist_t *plt) {
-    if (!undobuffer_is_enabled(undobuffer)) {
+    if (!plt->undo_enabled) {
         return 1;
     }
 
@@ -142,7 +142,7 @@ undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items,
 
 void
 undo_change_selection(undobuffer_t *undobuffer, playlist_t *plt) {
-    if (!undobuffer_is_enabled(undobuffer)) {
+    if (!plt->undo_enabled) {
         return;
     }
 

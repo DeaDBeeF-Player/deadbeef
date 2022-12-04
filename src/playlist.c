@@ -454,6 +454,7 @@ plt_add (int before, const char *title) {
             }
         }
     }
+    plt->undo_enabled = 1;
     UNLOCK;
 
     plt_gen_conf ();
@@ -715,7 +716,7 @@ plt_get_modification_idx (playlist_t *plt) {
 void
 plt_free (playlist_t *plt) {
     LOCK;
-    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 0);
+    plt->undo_enabled = 0;
     plt_clear (plt);
 
     if (plt->title) {
@@ -731,7 +732,6 @@ plt_free (playlist_t *plt) {
     }
 
     free (plt);
-    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
     UNLOCK;
 }
 
@@ -2342,7 +2342,7 @@ plt_load_int (
     playItem_t *it = NULL;
     playItem_t *last_added = NULL;
 
-    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 0);
+    unsigned undo_enabled = plt->undo_enabled;
 
 #ifdef __MINGW32__
     if (!strncmp (fname, "file://", 7)) {
@@ -2395,7 +2395,7 @@ plt_load_int (
                         loaded_it =
                             plug[p]->load2 (visibility, (ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort);
                     }
-                    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
+                    plt->undo_enabled = undo_enabled;
                     return (playItem_t *)loaded_it;
                 }
             }
@@ -2404,7 +2404,7 @@ plt_load_int (
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
         //        trace ("plt_load: failed to open %s\n", fname);
-        undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
+        plt->undo_enabled = undo_enabled;
         return NULL;
     }
 
@@ -2661,7 +2661,7 @@ plt_load_int (
     if (last_added) {
         pl_item_unref (last_added);
     }
-    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
+    plt->undo_enabled = undo_enabled;
     return last_added;
 load_fail:
     if (it) {
@@ -2675,7 +2675,7 @@ load_fail:
     if (last_added) {
         pl_item_unref (last_added);
     }
-    undobuffer_set_enabled(undomanager_get_buffer(undomanager_shared()), 1);
+    plt->undo_enabled = undo_enabled;
     return last_added;
 }
 

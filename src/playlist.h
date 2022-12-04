@@ -92,6 +92,7 @@ typedef struct playlist_s {
     unsigned loading_cue : 1;
     unsigned ignore_archives : 1;
     unsigned follow_symlinks : 1;
+    unsigned undo_enabled: 1;
 } playlist_t;
 
 // global playlist control functions
