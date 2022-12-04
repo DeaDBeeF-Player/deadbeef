@@ -854,7 +854,7 @@ main_cleanup_and_quit (void);
                 deadbeef->plt_add_files_end (plt, 0);
                 if (!abort) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        deadbeef->plt_clear (plt);
+                        deadbeef->plt_clear (plt_curr);
                         [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:NULL];
                         deadbeef->plt_save_config (plt);
                         deadbeef->plt_unref (plt);
