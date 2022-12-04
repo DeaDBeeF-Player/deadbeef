@@ -1647,6 +1647,8 @@
 		2D95F726293BA3DA002D8499 /* DdbUndoBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F724293BA3DA002D8499 /* DdbUndoBuffer.m */; };
 		2D95F729293BB295002D8499 /* DdbUndoBufferRetainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F727293BB295002D8499 /* DdbUndoBufferRetainer.h */; };
 		2D95F72A293BB295002D8499 /* DdbUndoBufferRetainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F728293BB295002D8499 /* DdbUndoBufferRetainer.m */; };
+		2D95F72D293CF75A002D8499 /* PlaylistUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F72B293CF75A002D8499 /* PlaylistUtil.h */; };
+		2D95F72E293CF75A002D8499 /* PlaylistUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F72C293CF75A002D8499 /* PlaylistUtil.m */; };
 		2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D977F461CA4B209006DBE79 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
 		2D9793E3276E854F0062585E /* covermanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9793E1276E854F0062585E /* covermanager.h */; };
@@ -6225,6 +6227,8 @@
 		2D95F724293BA3DA002D8499 /* DdbUndoBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbUndoBuffer.m; sourceTree = "<group>"; };
 		2D95F727293BB295002D8499 /* DdbUndoBufferRetainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbUndoBufferRetainer.h; sourceTree = "<group>"; };
 		2D95F728293BB295002D8499 /* DdbUndoBufferRetainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbUndoBufferRetainer.m; sourceTree = "<group>"; };
+		2D95F72B293CF75A002D8499 /* PlaylistUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistUtil.h; sourceTree = "<group>"; };
+		2D95F72C293CF75A002D8499 /* PlaylistUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistUtil.m; sourceTree = "<group>"; };
 		2D977F441CA4B1F3006DBE79 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		2D9793E1276E854F0062585E /* covermanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = covermanager.h; sourceTree = "<group>"; };
 		2D9793E2276E854F0062585E /* covermanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = covermanager.c; sourceTree = "<group>"; };
@@ -9648,6 +9652,8 @@
 				2DAA402C269AF864006D2754 /* TrackPositionFormatter.m */,
 				2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */,
 				2D3992E025C2038700CFA936 /* WeakRefWrapper.m */,
+				2D95F72B293CF75A002D8499 /* PlaylistUtil.h */,
+				2D95F72C293CF75A002D8499 /* PlaylistUtil.m */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -14595,6 +14601,7 @@
 				2DD3774A27404E11007AD315 /* VisualizationSettingsUtil.h in Headers */,
 				2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */,
+				2D95F72D293CF75A002D8499 /* PlaylistUtil.h in Headers */,
 				2DBC62D624CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h in Headers */,
 				0D568528271DC35E0026F700 /* ScopeWidget.h in Headers */,
 				2DC657F1274A7A6900583E14 /* PlaylistContextMenu.h in Headers */,
@@ -18262,6 +18269,7 @@
 				2D8EE27524D03601005C5B4B /* MediaLibraryOutlineViewController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2DBF3D4427086AA900023138 /* MainContentViewController.m in Sources */,
+				2D95F72E293CF75A002D8499 /* PlaylistUtil.m in Sources */,
 				2D9EBB7325E45BAA00255592 /* DesignModeDeps.m in Sources */,
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
 				2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */,
