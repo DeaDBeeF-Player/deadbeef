@@ -441,7 +441,11 @@ try_convert (shared_converter_ctx_t *self, int item_id) {
     converter_plugin->get_output_path2 (item, conv->convert_playlist, conv->outfolder, conv->outfile, conv->encoder_preset, conv->preserve_folder_structure, self->root, conv->write_to_source_folder, outpath, sizeof (outpath));
     int skip = get_skip_conversion (item, outpath, conv);
     if (!skip) {
-        converter_plugin->convert3 (&self->settings, item, outpath, &self->cancel_lock, &self->conv->cancelled);
+        ddb_converter_abort_status_t abort_status = {
+            .lock = &self->cancel_lock,
+            .abort = &self->conv->cancelled
+        };
+        converter_plugin->convert3 (&self->settings, item, outpath, &abort_status);
     }
 }
 

@@ -861,22 +861,22 @@ get_abort (int *pabort) {
     return pabort ? *pabort : 1;
 }
 
-static int
-get_abort_lock (pthread_rwlock_t *abort_lock, int *pabort) {
+int
+ddb_get_abort_status_lock (ddb_converter_abort_status_t *abort_status) {
     int abort = 0;
-    if (abort_lock) {
-        pthread_rwlock_rdlock(abort_lock);
-        abort = get_abort (pabort);
-        pthread_rwlock_unlock(abort_lock);
+    if (abort_status->lock) {
+        pthread_rwlock_rdlock(abort_status->lock);
+        abort = get_abort (abort_status->abort);
+        pthread_rwlock_unlock(abort_status->lock);
     }
     else {
-        abort = get_abort (pabort);
+        abort = get_abort (abort_status->abort);
     }
     return abort;
 }
 
 static int64_t
-_write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, pthread_rwlock_t *abort_lock, int *abort, int fd, int output_bps, int output_is_float) {
+_write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_dsp_preset_t *dsp_preset, ddb_encoder_preset_t *encoder_preset, ddb_converter_abort_status_t *abort_status, int fd, int output_bps, int output_is_float) {
     int64_t res = -1;
     char *buffer = NULL;
     char *dspbuffer = NULL;
@@ -905,7 +905,7 @@ _write_wav (DB_playItem_t *it, DB_decoder_t *dec, DB_fileinfo_t *fileinfo, ddb_d
         if (eof) {
             break;
         }
-        if (get_abort_lock (abort_lock, abort)) {
+        if (ddb_get_abort_status_lock (abort_status)) {
             break;
         }
         int sz = dec->read (fileinfo, buffer, bs);
@@ -1363,7 +1363,7 @@ ddb_mktemp(char *template, size_t template_size, char *suffix) {
 }
 
 static int
-convert3 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out, pthread_rwlock_t *abort_lock, int *pabort) {
+convert3 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out, ddb_converter_abort_status_t *abort_status) {
     int output_bps = settings->output_bps;
     int output_is_float = settings->output_is_float;
     ddb_encoder_preset_t *encoder_preset = settings->encoder_preset;
@@ -1502,13 +1502,13 @@ convert3 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
                 }
 
                 if (temp_file > 0) {
-                    int64_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, abort_lock, pabort, temp_file, output_bps, output_is_float);
+                    int64_t outsize = _write_wav (it, dec, fileinfo, dsp_preset, encoder_preset, abort_status, temp_file, output_bps, output_is_float);
 
                     if (outsize < 0) {
                         goto error;
                     }
 
-                    if (get_abort_lock (abort_lock, pabort)) {
+                    if (ddb_get_abort_status_lock (abort_status)) {
                         goto error;
                     }
 
@@ -1551,7 +1551,7 @@ error:
         dec->free (fileinfo);
         fileinfo = NULL;
     }
-    if (get_abort_lock (abort_lock, pabort) && out[0]) {
+    if (ddb_get_abort_status_lock (abort_status) && out[0]) {
         unlink (out);
     }
     if (input_file_name[0] && strcmp (input_file_name, "-")) {
@@ -1568,7 +1568,11 @@ error:
 
 static int
 convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out, int *pabort) {
-    return convert3 (settings, it, out, NULL, pabort);
+    ddb_converter_abort_status_t abort_status = {
+        .lock = NULL,
+        .abort = pabort
+    };
+    return convert3 (settings, it, out, &abort_status);
 }
 
 static int

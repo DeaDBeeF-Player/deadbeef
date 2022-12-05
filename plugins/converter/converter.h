@@ -101,6 +101,14 @@ typedef struct ddb_converter_settings_s {
     int rewrite_tags_after_copy;
 } ddb_converter_settings_t;
 
+typedef struct ddb_converter_abort_status_s {
+    pthread_rwlock_t *lock;
+    int *abort;
+} ddb_converter_abort_status_t;
+
+int
+ddb_get_abort_status_lock (ddb_converter_abort_status_t *abort_status);
+
 typedef struct {
     DB_misc_t misc;
 
@@ -278,11 +286,8 @@ typedef struct {
          // fully qualified output path with filename and extension
          const char *outpath,
 
-         // read lock for accessing pabort
-         pthread_rwlock_t *abort_lock,
-
-         // *pabort will be checked regularly, conversion will be interrupted if it's non-zero
-         int *pabort
+         // *abort_status is checked regularly, conversion is stopped if ddb_get_abort_lock_status return non-zero values
+         ddb_converter_abort_status_t *abort_status
     );
 } ddb_converter_t;
 
