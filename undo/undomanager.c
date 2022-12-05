@@ -44,6 +44,9 @@ undomanager_free (undomanager_t *undomanager) {
     if (undomanager == _shared) {
         _shared = NULL;
     }
+    if (undomanager->buffer != NULL) {
+        undobuffer_free(undomanager->buffer);
+    }
     free (undomanager);
 }
 

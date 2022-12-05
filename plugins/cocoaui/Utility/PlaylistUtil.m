@@ -38,6 +38,7 @@ extern DB_functions_t *deadbeef;
     return instance;
 }
 
+// TODO: This can be done way more optimally via the API.
 - (void)moveItemsFromPlaylist:(ddb_playlist_t *)from toPlaylist:(ddb_playlist_t *)to afterItem:(ddb_playItem_t *)after {
     ddb_playItem_t *it = deadbeef->plt_get_head_item(from, PL_MAIN);
     while (it != NULL) {
