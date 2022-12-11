@@ -73,7 +73,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings * _Nonnull)settings {
     [self.labelsView updateSettings:settings];
-//    [self.visualizationView updateSettings:settings];
     if (_analyzer.mode != settings.mode || _analyzer.octave_bars_step != settings.barGranularity) {
         _analyzer.mode_did_change = 1;
     }
@@ -84,7 +83,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)loadView {
     self.labelsView = [SpectrumAnalyzerLabelsView new];
-//    self.visualizationView = [SpectrumAnalyzerVisualizationView new];
     self.visualizationView = [[AAPLNSView alloc] initWithFrame:NSZeroRect];
 
     self.labelsView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -171,9 +169,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     self.view.menu = menu;
 
-//    self.visualizationView.baseColor = VisualizationSettingsUtil.shared.baseColor;
-//    self.visualizationView.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
-
     // Setup analyzer
     _input_data.fmt = &_fmt;
 
@@ -219,7 +214,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
     
     [self.labelsView updateDrawData:&_draw_data];
-//    [self.visualizationView updateDrawData:&_draw_data];
     self.visualizationView.needsDisplay = YES;
 }
 
@@ -346,8 +340,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     if (_id == DB_EV_CONFIGCHANGED) {
-//        self.visualizationView.baseColor = VisualizationSettingsUtil.shared.baseColor;
-//        self.visualizationView.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
+        self.labelsView.needsDisplay = YES;
     }
 }
 
