@@ -1524,7 +1524,7 @@
 		2D8BA3531E2672C3001D5708 /* libflaclib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32F9A719A63094000FFDE0 /* libflaclib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */; };
 		2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */; };
-		2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 2D8D96B01D1091F900A5C7E6 /* noartwork.png */; };
+		2D8D96B11D1091F900A5C7E6 /* noartwork.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D8D96B01D1091F900A5C7E6 /* noartwork.png */; };
 		2D8DA07A1C97184B0044CC15 /* psf.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DFD50951C9715B800961D19 /* psf.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D8DA0ED1C9718C10044CC15 /* ao.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8DA0881C9718C10044CC15 /* ao.h */; };
 		2D8DA0EE1C9718C10044CC15 /* corlett.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8DA08A1C9718C10044CC15 /* corlett.c */; };
@@ -4222,6 +4222,16 @@
 				2D00FE95243539CB000FC130 /* libzip.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D7C1F7C2945EBB400163538 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = pixmaps;
+			dstSubfolderSpec = 7;
+			files = (
+				2D8D96B11D1091F900A5C7E6 /* noartwork.png in CopyFiles */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2D9E5C6524AE6DC60099B108 /* Copy Frameworks */ = {
@@ -15430,6 +15440,7 @@
 				4DA7719C1945B91400EB0AC1 /* Headers */,
 				2DE1B22024A89E550070CD7C /* Copy Plugins */,
 				2D9E5C6524AE6DC60099B108 /* Copy Frameworks */,
+				2D7C1F7C2945EBB400163538 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -16126,7 +16137,6 @@
 			files = (
 				2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */,
 				2DB05F7B252E4F170090635E /* iconLibraryTemplate.pdf in Resources */,
-				2D8D96B11D1091F900A5C7E6 /* noartwork.png in Resources */,
 				2DBCA69B27944B2200D7432F /* COPYING.LGPLv2.1 in Resources */,
 				2DC655752741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib in Resources */,
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
