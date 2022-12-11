@@ -5938,6 +5938,7 @@
 		2D7C1FAF2946025600163538 /* ShaderRendererTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderRendererTypes.h; sourceTree = "<group>"; };
 		2D7C1FB029461C6900163538 /* SpectrumAnalyzerLabelsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerLabelsView.h; sourceTree = "<group>"; };
 		2D7C1FB129461C6900163538 /* SpectrumAnalyzerLabelsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerLabelsView.m; sourceTree = "<group>"; };
+		2D7C1FD52946342600163538 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* JunklibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JunklibTests.m; sourceTree = "<group>"; };
@@ -8175,11 +8176,7 @@
 		0D568539271DC6550026F700 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				2D98B6A2273483A700E655AE /* AAPLConfig.h */,
-				2D98B696273482B900E655AE /* AAPLNSView.h */,
-				2D98B697273482BA00E655AE /* AAPLNSView.m */,
-				2D98B69C273482F600E655AE /* AAPLView.h */,
-				2D98B69D273482F700E655AE /* AAPLView.m */,
+				2D7C1FC4294633D300163538 /* Apple */,
 				2D98B66E272B272300E655AE /* ScopeShaderTypes.h */,
 				2D7C1FAB2946001B00163538 /* ShaderRenderer.h */,
 				2D7C1FAC2946001B00163538 /* ShaderRenderer.m */,
@@ -10241,6 +10238,27 @@
 				2D8EE27324D03601005C5B4B /* MediaLibraryOutlineViewController.m */,
 			);
 			path = MediaLibrary;
+			sourceTree = "<group>";
+		};
+		2D7C1FC4294633D300163538 /* Apple */ = {
+			isa = PBXGroup;
+			children = (
+				2D7C1FD42946342600163538 /* LICENSE */,
+				2D98B6A2273483A700E655AE /* AAPLConfig.h */,
+				2D98B696273482B900E655AE /* AAPLNSView.h */,
+				2D98B697273482BA00E655AE /* AAPLNSView.m */,
+				2D98B69C273482F600E655AE /* AAPLView.h */,
+				2D98B69D273482F700E655AE /* AAPLView.m */,
+			);
+			path = Apple;
+			sourceTree = "<group>";
+		};
+		2D7C1FD42946342600163538 /* LICENSE */ = {
+			isa = PBXGroup;
+			children = (
+				2D7C1FD52946342600163538 /* LICENSE.txt */,
+			);
+			path = LICENSE;
 			sourceTree = "<group>";
 		};
 		2D887BC524B1C82A0078392F /* medialib */ = {
