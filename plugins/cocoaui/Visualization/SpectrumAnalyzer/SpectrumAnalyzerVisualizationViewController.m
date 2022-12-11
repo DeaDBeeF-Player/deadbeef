@@ -1,7 +1,6 @@
 #import "AAPLNSView.h"
 #import "AAPLView.h"
 #import "ShaderRenderer.h"
-#import "SpectrumAnalyzerVisualizationView.h"
 #import "SpectrumAnalyzerPreferencesWindowController.h"
 #import "SpectrumAnalyzerPreferencesViewController.h"
 #import "SpectrumAnalyzerVisualizationViewController.h"
