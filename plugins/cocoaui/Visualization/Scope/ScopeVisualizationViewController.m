@@ -368,6 +368,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 #endif
     return NSColor.alternateSelectedControlColor;
 }
+
+// Called by the timer in superclass
+- (void)draw {
+    self.view.needsDisplay = YES;
+}
+
 #pragma mark - ShaderRendererDelegate
 
 - (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder {
@@ -397,5 +403,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
 }
+
 
 @end

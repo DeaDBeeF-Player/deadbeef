@@ -118,8 +118,8 @@
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
 
-        [self.backgroundColor setFill];
-        NSRectFill(dirtyRect);
+    [self.backgroundColor setFill];
+    NSRectFill(dirtyRect);
 
     if (_draw_data == NULL) {
         return;
@@ -130,6 +130,9 @@
 }
 
 - (void)updateDrawData:(ddb_analyzer_draw_data_t *)drawData {
+    if (_draw_data == NULL) {
+        self.needsDisplay = YES;
+    }
     _draw_data = drawData;
 }
 

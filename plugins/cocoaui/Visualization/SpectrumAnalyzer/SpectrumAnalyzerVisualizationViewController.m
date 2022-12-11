@@ -167,11 +167,13 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 }
 
-- (void)prepareForDisplay {
+// Called by the timer in superclass
+- (void)draw {
     // for some reason KVO is not triggered when the window becomes hidden
     [self updateVisListening];
 
     if (_input_data.nframes == 0) {
+        self.visualizationView.needsDisplay = YES;
         return;
     }
 
@@ -185,6 +187,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     [self.labelsView updateDrawData:&_draw_data];
     [self.visualizationView updateDrawData:&_draw_data];
+    self.visualizationView.needsDisplay = YES;
 }
 
 #pragma mark - Actions

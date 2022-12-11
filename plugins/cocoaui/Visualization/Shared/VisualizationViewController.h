@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface VisualizationViewController : NSViewController
 
-// Override to prepare views for rendering
-- (void)prepareForDisplay;
+// Override to draw the content
+- (void)draw;
 
 @end
 

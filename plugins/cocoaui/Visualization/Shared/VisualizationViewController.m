@@ -41,8 +41,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
                     strongSelf.tickTimer = nil;
                 }
 
-                [strongSelf prepareForDisplay];
-                strongSelf.view.needsDisplay = YES;
+                [strongSelf draw];
             }];
 
             // FIXME: this should not be called for the metal visualizations, since AAPLNSView handles it
@@ -64,7 +63,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     [self visibilityDidChange];
 }
 
-- (void)prepareForDisplay {
+- (void)draw {
 }
 
 @end
