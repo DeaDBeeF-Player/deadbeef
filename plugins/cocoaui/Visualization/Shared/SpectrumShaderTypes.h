@@ -35,6 +35,8 @@ struct SpectrumFragParams
     float barWidth;
     vector_uint2 size;
     int barCount;
+    int gridLineCount;
+    float gridScale;
     int discreteFrequencies;
 };
 

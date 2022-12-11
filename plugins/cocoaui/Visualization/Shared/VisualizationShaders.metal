@@ -99,11 +99,11 @@ fragment float4 spectrumFragmentShader(RasterizerData in [[stage_in]], constant 
     float4 out = params.backgroundColor;
 
     // grid
-    for (int i = 1; i < 8; i++) {
-        float line_y = params.size.y * (float)i / 8;
+    for (int i = 1; i < params.gridLineCount; i++) {
+        float line_y = params.size.y * (float)i / params.gridLineCount;
         float line = 1.0-clamp(abs(y-line_y), 0.0, 1.0);
 
-        if (((int)x) % 6 > 1) {
+        if (((int)(x / params.gridScale)) % 3 > 0) {
             line = 0;
         }
 
