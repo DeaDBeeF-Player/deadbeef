@@ -70,23 +70,20 @@ float drawBar(float x, float y, float barX, float barY, float barWidth, float ba
 }
 
 float4 drawSpectrumBar(float x, float y, int barIndex, float4 out, constant SpectrumFragParams &params, constant SpectrumFragBar *barData) {
+    // fetch bar data
     float xpos = barData[barIndex].barX;
     float peak_ypos = barData[barIndex].peakY;
     float bar_height = barData[barIndex].barHeight;
 
     float line = 0;
 
-    // peaks
-
-    line = drawBar(x, y, xpos, params.size.y - peak_ypos - 2, params.barWidth, 2);
-
-    out = params.peakColor * line + out * (1-line);
-
     // bars
-
     line = drawBar(x, y, xpos, params.size.y-bar_height, params.barWidth, bar_height);
-
     out = params.barColor * line + out * (1-line);
+
+    // peaks
+    line = drawBar(x, y, xpos, params.size.y - peak_ypos - 2, params.barWidth, 2);
+    out = params.peakColor * line + out * (1-line);
 
     return out;
 }
@@ -110,14 +107,15 @@ fragment float4 spectrumFragmentShader(RasterizerData in [[stage_in]], constant 
         out = params.lineColor * line + out * (1-line);
     }
 
-    // fetch bar data
     if (!params.discreteFrequencies) {
+        // octave bands
         int barIndex = x / (float)params.size.x * params.barCount;
         barIndex = clamp(barIndex, 0, params.barCount-1);
 
         out = drawSpectrumBar(x, y, barIndex, out, params, barData);
     }
     else {
+        // discrete frequencies (ugh -- could use a lookup table here)
         for (int barIndex = 0; barIndex < params.barCount; barIndex++) {
             out = drawSpectrumBar(x, y, barIndex, out, params, barData);
         }
