@@ -157,14 +157,8 @@ extern DB_functions_t *deadbeef;
 #pragma mark -
 
 - (IBAction)tableViewAction:(id)sender {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    int cur = deadbeef->plt_get_cursor (plt, PL_MAIN);
-    deadbeef->plt_unref (plt);
-
-    if (cur == -1) {
-        cur = 0;
-    }
-    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, cur, 0);
+    deadbeef->sendmessage (DB_EV_STOP, 0, 0, 0);
+    deadbeef->sendmessage (DB_EV_NEXT, 0, 0, 0);
 }
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
