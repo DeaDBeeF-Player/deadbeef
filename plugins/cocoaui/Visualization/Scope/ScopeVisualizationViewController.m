@@ -6,6 +6,7 @@
 //  Copyright © 2021 Oleksiy Yakovenko. All rights reserved.
 //
 
+#import "AAPLNSView.h"
 #import "AAPLView.h"
 #import "ScopePreferencesViewController.h"
 #import "ScopePreferencesWindowController.h"
@@ -57,9 +58,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     ddb_scope_draw_data_dealloc(&_draw_data);
 }
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
+- (void)loadView {
+    self.view = [[AAPLNSView alloc] initWithFrame:NSZeroRect];
+    self.view.translatesAutoresizingMaskIntoConstraints = NO;
+}
 
+- (void)viewDidLoad {
     NSMenu *menu = [NSMenu new];
     NSMenuItem *renderModeMenuItem = [menu addItemWithTitle:@"Rendering Mode" action:nil keyEquivalent:@""];
     NSMenuItem *scaleModeMenuItem = [menu addItemWithTitle:@"Scale" action:nil keyEquivalent:@""];
