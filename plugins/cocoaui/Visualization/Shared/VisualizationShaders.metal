@@ -96,6 +96,7 @@ fragment float4 spectrumFragmentShader(RasterizerData in [[stage_in]], constant 
     float4 out = params.backgroundColor;
 
     // grid
+    float lineAlpha = params.lineColor.w;
     for (int i = 0; i < params.gridLineCount; i++) {
         float yMin = params.size.y * (float)i / (float)params.gridLineCount;
         float yMax = yMin + params.backingScaleFactor;
@@ -106,7 +107,7 @@ fragment float4 spectrumFragmentShader(RasterizerData in [[stage_in]], constant 
             line = 0;
         }
 
-        out.xyz = params.lineColor.xyz * line * params.lineColor.w + out.xyz * (1-line);
+        out.xyz = params.lineColor.xyz * line * lineAlpha + out.xyz * (1 - line * lineAlpha);
     }
 
     if (!params.discreteFrequencies) {
