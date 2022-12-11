@@ -140,6 +140,7 @@
 
 - (void)updateSettings:(SpectrumAnalyzerSettings * _Nonnull)settings {
     self.settings = settings;
+    self.needsDisplay = YES;
 }
 
 @end
