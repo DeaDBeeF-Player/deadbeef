@@ -1,3 +1,4 @@
+#include <assert.h>
 #import "AAPLNSView.h"
 #import "AAPLView.h"
 #import "ShaderRenderer.h"
@@ -436,6 +437,8 @@ static inline vector_float4 vec4color (NSColor *color) {
 
     // Metal documentation states that MTLBuffer should be used for buffers larger than 4K in size.
     // Alternative is to use setFragmentBytes, which also works, but could have compatibility issues on older hardware.
+
+    assert(sizeof(struct SpectrumFragBar) == sizeof (ddb_analyzer_draw_bar_t));
 
     // bar data
     id<MTLBuffer> buffer = [device newBufferWithBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) options:0];
