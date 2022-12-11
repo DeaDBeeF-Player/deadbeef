@@ -64,8 +64,8 @@ float drawBar(float x, float y, float barX, float barY, float barWidth, float ba
     float yMin = barY;
     float yMax = barY + barHeight;
 
-    float line = smoothstep(yMin - 1, yMin, y) * smoothstep(-yMax - 1, -yMax, -y);
-    line *= smoothstep(xMin - 1, xMin, x) * smoothstep(-xMax - 1, -xMax, -x);
+    float line = smoothstep(floor(yMin), ceil(yMin), y) * smoothstep(floor(-yMax), ceil(-yMax), -y);
+    line *= smoothstep(floor(xMin), ceil(xMin), x) * smoothstep(floor(-xMax), ceil(-xMax), -x);
     return line;
 }
 
