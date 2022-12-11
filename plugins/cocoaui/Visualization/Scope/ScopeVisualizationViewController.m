@@ -10,11 +10,11 @@
 #import "AAPLView.h"
 #import "ScopePreferencesViewController.h"
 #import "ScopePreferencesWindowController.h"
-#import "ShaderRenderer.h"
-#import "ScopeVisualizationViewController.h"
-#import "VisualizationSettingsUtil.h"
-#import "ShaderRendererTypes.h"
 #import "ScopeShaderTypes.h"
+#import "ScopeVisualizationViewController.h"
+#import "ShaderRenderer.h"
+#import "ShaderRendererTypes.h"
+#import "VisualizationSettingsUtil.h"
 #include "deadbeef.h"
 #include "scope.h"
 
@@ -68,6 +68,27 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
 }
 
+- (void)setupMetalRenderer {
+    id<MTLDevice> device = MTLCreateSystemDefaultDevice();
+
+    AAPLView *view = (AAPLView *)self.view;
+
+    // Set the device for the layer so the layer can create drawable textures that can be rendered to
+    // on this device.
+    view.metalLayer.device = device;
+
+    // Set this class as the delegate to receive resize and render callbacks.
+    view.delegate = self;
+
+    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+
+    _renderer = [[ShaderRenderer alloc] initWithMetalDevice:device
+                                        drawablePixelFormat:view.metalLayer.pixelFormat
+                                         fragmentShaderName:@"scopeFragmentShader"
+    ];
+    _renderer.delegate = self;
+}
+
 - (void)viewDidLoad {
     NSMenu *menu = [NSMenu new];
     NSMenuItem *renderModeMenuItem = [menu addItemWithTitle:@"Rendering Mode" action:nil keyEquivalent:@""];
@@ -103,24 +124,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     ddb_scope_init(&_scope);
     _scope.mode = DDB_SCOPE_MULTICHANNEL;
 
-    id<MTLDevice> device = MTLCreateSystemDefaultDevice();
-
-    AAPLView *view = (AAPLView *)self.view;
-
-    // Set the device for the layer so the layer can create drawable textures that can be rendered to
-    // on this device.
-    view.metalLayer.device = device;
-
-    // Set this class as the delegate to receive resize and render callbacks.
-    view.delegate = self;
-
-    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
-
-    _renderer = [[ShaderRenderer alloc] initWithMetalDevice:device
-                                      drawablePixelFormat:view.metalLayer.pixelFormat
-                 fragmentShaderName:@"scopeFragmentShader"
-    ];
-    _renderer.delegate = self;
+    [self setupMetalRenderer];
     self.baseColor = VisualizationSettingsUtil.shared.baseColor;
 }
 

@@ -4,6 +4,7 @@ using namespace metal;
 
 #include "ShaderRendererTypes.h"
 #include "ScopeShaderTypes.h"
+#include "SpectrumShaderTypes.h"
 
 struct RasterizerData {
     float4 position [[position]];
@@ -56,3 +57,71 @@ fragment float4 scopeFragmentShader(RasterizerData in [[stage_in]], constant Sco
     return params.color * line + params.backgroundColor * (1.0 - line);
 }
 
+float drawBar(float x, float y, float barX, float barY, float barWidth, float barHeight) {
+
+    float xMin = barX;
+    float xMax = barX + barWidth;
+    float yMin = barY;
+    float yMax = barY + barHeight;
+
+    float line = smoothstep(yMin - 1, yMin, y) * smoothstep(-yMax - 1, -yMax, -y);
+    line *= smoothstep(xMin - 1, xMin, x) * smoothstep(-xMax - 1, -xMax, -x);
+    return line;
+}
+
+float4 drawSpectrumBar(float x, float y, int barIndex, float4 out, constant SpectrumFragParams &params, constant SpectrumFragBar *barData) {
+    float xpos = barData[barIndex].barX;
+    float peak_ypos = barData[barIndex].peakY;
+    float bar_height = barData[barIndex].barHeight;
+
+    float line = 0;
+
+    // peaks
+
+    line = drawBar(x, y, xpos, params.size.y - peak_ypos - 2, params.barWidth, 2);
+
+    out = params.peakColor * line + out * (1-line);
+
+    // bars
+
+    line = drawBar(x, y, xpos, params.size.y-bar_height, params.barWidth, bar_height);
+
+    out = params.barColor * line + out * (1-line);
+
+    return out;
+}
+
+fragment float4 spectrumFragmentShader(RasterizerData in [[stage_in]], constant SpectrumFragParams &params [[buffer(0)]], constant SpectrumFragBar *barData [[buffer(1)]]) {
+
+    float x = in.position.x;
+    float y = in.position.y;
+
+    float4 out = params.backgroundColor;
+
+    // grid
+    for (int i = 1; i < 8; i++) {
+        float line_y = params.size.y * (float)i / 8;
+        float line = 1.0-clamp(abs(y-line_y), 0.0, 1.0);
+
+        if (((int)x) % 6 > 1) {
+            line = 0;
+        }
+
+        out = params.lineColor * line + out * (1-line);
+    }
+
+    // fetch bar data
+    if (!params.discreteFrequencies) {
+        int barIndex = x / (float)params.size.x * params.barCount;
+        barIndex = clamp(barIndex, 0, params.barCount-1);
+
+        out = drawSpectrumBar(x, y, barIndex, out, params, barData);
+    }
+    else {
+        for (int barIndex = 0; barIndex < params.barCount; barIndex++) {
+            out = drawSpectrumBar(x, y, barIndex, out, params, barData);
+        }
+    }
+
+    return out;
+}

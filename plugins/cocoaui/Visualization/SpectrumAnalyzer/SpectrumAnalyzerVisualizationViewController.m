@@ -1,9 +1,13 @@
+#import "AAPLNSView.h"
+#import "AAPLView.h"
+#import "ShaderRenderer.h"
 #import "SpectrumAnalyzerVisualizationView.h"
 #import "SpectrumAnalyzerPreferencesWindowController.h"
 #import "SpectrumAnalyzerPreferencesViewController.h"
 #import "SpectrumAnalyzerVisualizationViewController.h"
 #import "SpectrumAnalyzerLabelsView.h"
 #import "VisualizationSettingsUtil.h"
+#import "SpectrumShaderTypes.h"
 #include "analyzer.h"
 #include "deadbeef.h"
 
@@ -16,7 +20,8 @@ extern DB_functions_t *deadbeef;
 static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
 static void *kIsVisibleContext = &kIsVisibleContext;
 
-@interface SpectrumAnalyzerVisualizationViewController() {
+@interface SpectrumAnalyzerVisualizationViewController() <AAPLViewDelegate, ShaderRendererDelegate> {
+    ShaderRenderer *_renderer;
     ddb_analyzer_t _analyzer;
     ddb_analyzer_draw_data_t _draw_data;
     ddb_waveformat_t _fmt;
@@ -26,7 +31,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 @property (nonatomic) SpectrumAnalyzerPreferencesWindowController *preferencesWindowController;
 @property (nonatomic) NSPopover *preferencesPopover;
 @property (nonatomic) SpectrumAnalyzerLabelsView *labelsView;
-@property (nonatomic) SpectrumAnalyzerVisualizationView *visualizationView;
+@property (nonatomic) NSView *visualizationView;
 
 @property (nonatomic) BOOL isListening;
 
@@ -68,7 +73,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings * _Nonnull)settings {
     [self.labelsView updateSettings:settings];
-    [self.visualizationView updateSettings:settings];
+//    [self.visualizationView updateSettings:settings];
     if (_analyzer.mode != settings.mode || _analyzer.octave_bars_step != settings.barGranularity) {
         _analyzer.mode_did_change = 1;
     }
@@ -79,7 +84,8 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)loadView {
     self.labelsView = [SpectrumAnalyzerLabelsView new];
-    self.visualizationView = [SpectrumAnalyzerVisualizationView new];
+//    self.visualizationView = [SpectrumAnalyzerVisualizationView new];
+    self.visualizationView = [[AAPLNSView alloc] initWithFrame:NSZeroRect];
 
     self.labelsView.translatesAutoresizingMaskIntoConstraints = NO;
     self.visualizationView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -116,9 +122,28 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 }
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
+- (void)setupMetalRenderer {
+    id<MTLDevice> device = MTLCreateSystemDefaultDevice();
 
+    AAPLView *view = (AAPLView *)self.visualizationView;
+
+    // Set the device for the layer so the layer can create drawable textures that can be rendered to
+    // on this device.
+    view.metalLayer.device = device;
+
+    // Set this class as the delegate to receive resize and render callbacks.
+    view.delegate = self;
+
+    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+
+    _renderer = [[ShaderRenderer alloc] initWithMetalDevice:device
+                                        drawablePixelFormat:view.metalLayer.pixelFormat
+                                         fragmentShaderName:@"spectrumFragmentShader"
+    ];
+    _renderer.delegate = self;
+}
+
+- (void)viewDidLoad {
     NSMenu *menu = [NSMenu new];
     NSMenuItem *modeMenuItem = [menu addItemWithTitle:@"Mode" action:nil keyEquivalent:@""];
     NSMenuItem *gapSizeMenuItem = [menu addItemWithTitle:@"Gap Size" action:nil keyEquivalent:@""];
@@ -146,8 +171,8 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     self.view.menu = menu;
 
-    self.visualizationView.baseColor = VisualizationSettingsUtil.shared.baseColor;
-    self.visualizationView.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
+//    self.visualizationView.baseColor = VisualizationSettingsUtil.shared.baseColor;
+//    self.visualizationView.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
 
     // Setup analyzer
     _input_data.fmt = &_fmt;
@@ -165,28 +190,36 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
 
+    [self setupMetalRenderer];
+}
+
+- (BOOL)updateDrawData {
+    // for some reason KVO is not triggered when the window becomes hidden
+    [self updateVisListening];
+
+    if (!self.isListening || _input_data.nframes == 0) {
+        return NO;
+    }
+    CGFloat scale = self.view.window.backingScaleFactor;
+
+    @synchronized (self) {
+        ddb_analyzer_process(&_analyzer, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
+        ddb_analyzer_tick(&_analyzer);
+        ddb_analyzer_get_draw_data(&_analyzer, self.visualizationView.bounds.size.width * scale, self.visualizationView.bounds.size.height * scale, &_draw_data);
+    }
+
+    return YES;
 }
 
 // Called by the timer in superclass
 - (void)draw {
-    // for some reason KVO is not triggered when the window becomes hidden
-    [self updateVisListening];
-
-    if (_input_data.nframes == 0) {
+    if (![self updateDrawData]) {
         self.visualizationView.needsDisplay = YES;
         return;
     }
-
-    if (self.isListening) {
-        @synchronized (self) {
-            ddb_analyzer_process(&_analyzer, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
-            ddb_analyzer_tick(&_analyzer);
-            ddb_analyzer_get_draw_data(&_analyzer, self.visualizationView.bounds.size.width, self.visualizationView.bounds.size.height, &_draw_data);
-        }
-    }
-
+    
     [self.labelsView updateDrawData:&_draw_data];
-    [self.visualizationView updateDrawData:&_draw_data];
+//    [self.visualizationView updateDrawData:&_draw_data];
     self.visualizationView.needsDisplay = YES;
 }
 
@@ -313,9 +346,99 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     if (_id == DB_EV_CONFIGCHANGED) {
-        self.visualizationView.baseColor = VisualizationSettingsUtil.shared.baseColor;
-        self.visualizationView.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
+//        self.visualizationView.baseColor = VisualizationSettingsUtil.shared.baseColor;
+//        self.visualizationView.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
     }
 }
 
+- (NSColor *)backgroundColor {
+    if (self.settings.useCustomBackgroundColor) {
+        NSColor *color = self.settings.customBackgroundColor;
+        if (color != nil) {
+            return color;
+        }
+    }
+
+    return VisualizationSettingsUtil.shared.backgroundColor;
+}
+
+- (NSColor *)barColor {
+    if (self.settings.useCustomBarColor) {
+        NSColor *color = self.settings.customBarColor;
+        if (color != nil) {
+            return color;
+        }
+    }
+    NSColor *tempColor = [VisualizationSettingsUtil.shared.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+    CGFloat h, s, b, a;
+    [tempColor getHue:&h saturation:&s brightness:&b alpha:&a];
+    return [NSColor colorWithHue:h saturation:s brightness:b*0.7 alpha:1];
+}
+
+- (NSColor *)peakColor {
+    if (self.settings.useCustomPeakColor) {
+        NSColor *color = self.settings.customPeakColor;
+        if (color != nil) {
+            return color;
+        }
+    }
+    NSColor *tempColor = [VisualizationSettingsUtil.shared.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
+    CGFloat h, s, b, a;
+    [tempColor getHue:&h saturation:&s brightness:&b alpha:&a];
+
+    return [NSColor colorWithHue:h saturation:s*0.7 brightness:b*1.1 alpha:1];
+}
+
+
+- (NSColor *)lineColor {
+    return [NSColor.whiteColor colorWithAlphaComponent:0.4];
+}
+
+static inline vector_float4 vec4color (NSColor *color) {
+    CGFloat components[4];
+    [[color colorUsingColorSpace:NSColorSpace.sRGBColorSpace] getComponents:components];
+    return (vector_float4){ (float)components[0], (float)components[1], (float)components[2], 1 };
+}
+
+#pragma mark - AAPLViewDelegate
+
+- (void)drawableResize:(CGSize)size {
+    [_renderer drawableResize:size];
+}
+
+- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer
+{
+    if (![self updateDrawData]) {
+        return;
+    }
+
+    [_renderer renderToMetalLayer:layer];
+}
+
+#pragma mark - ShaderRendererDelegate
+
+- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder {
+
+    struct SpectrumFragParams params;
+
+    params.backgroundColor = vec4color([self.backgroundColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace]);
+
+    params.barColor = vec4color(self.barColor);
+    params.peakColor = vec4color(self.peakColor);
+    params.lineColor = vec4color(self.lineColor);
+    params.size.x = viewport.x;
+    params.size.y = viewport.y;
+    params.barCount = _draw_data.bar_count;
+    params.barWidth = _draw_data.bar_width;
+    params.discreteFrequencies = _draw_data.mode == DDB_ANALYZER_MODE_FREQUENCIES;
+    [encoder setFragmentBytes:&params length:sizeof (params) atIndex:0];
+
+    // Metal documentation states that MTLBuffer should be used for buffers larger than 4K in size.
+    // Alternative is to use setFragmentBytes, which also works, but could have compatibility issues on older hardware.
+
+    // bar data
+    id<MTLBuffer> buffer = [device newBufferWithBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) options:0];
+
+    [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
+}
 @end

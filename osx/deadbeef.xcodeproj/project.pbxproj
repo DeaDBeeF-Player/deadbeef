@@ -2037,7 +2037,6 @@
 		2DBC62D624CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBC62D424CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h */; };
 		2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC62D524CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m */; };
 		2DBC62DA24CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBC62D824CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h */; };
-		2DBC62DB24CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBC62D924CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m */; };
 		2DBCA6962794492D00D7432F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA6952794492D00D7432F /* Credits.rtf */; };
 		2DBCA69A27944B2200D7432F /* COPYING.GPLv2 in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69827944B2200D7432F /* COPYING.GPLv2 */; };
 		2DBCA69B27944B2200D7432F /* COPYING.LGPLv2.1 in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */; };
@@ -5939,6 +5938,7 @@
 		2D7C1FB029461C6900163538 /* SpectrumAnalyzerLabelsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerLabelsView.h; sourceTree = "<group>"; };
 		2D7C1FB129461C6900163538 /* SpectrumAnalyzerLabelsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerLabelsView.m; sourceTree = "<group>"; };
 		2D7C1FD52946342600163538 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		2D7C1FD62946392F00163538 /* SpectrumShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumShaderTypes.h; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* JunklibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JunklibTests.m; sourceTree = "<group>"; };
@@ -6131,7 +6131,7 @@
 		2D986140226C815F00BAACB1 /* BrowseButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowseButton.h; sourceTree = "<group>"; };
 		2D986141226C816000BAACB1 /* BrowseButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowseButton.m; sourceTree = "<group>"; };
 		2D98B66E272B272300E655AE /* ScopeShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeShaderTypes.h; sourceTree = "<group>"; };
-		2D98B67E272B272300E655AE /* VisualizationShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = VisualizationShaders.metal; sourceTree = "<group>"; };
+		2D98B67E272B272300E655AE /* VisualizationShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = VisualizationShaders.metal; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.metal; };
 		2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopeVisualizationViewController.h; sourceTree = "<group>"; };
 		2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeVisualizationViewController.m; sourceTree = "<group>"; };
 		2D98B689272D573700E655AE /* ScopeSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopeSettings.h; sourceTree = "<group>"; };
@@ -8181,6 +8181,7 @@
 				2D7C1FAB2946001B00163538 /* ShaderRenderer.h */,
 				2D7C1FAC2946001B00163538 /* ShaderRenderer.m */,
 				2D7C1FAF2946025600163538 /* ShaderRendererTypes.h */,
+				2D7C1FD62946392F00163538 /* SpectrumShaderTypes.h */,
 				2DD3774827404E11007AD315 /* VisualizationSettingsUtil.h */,
 				2DD3774927404E11007AD315 /* VisualizationSettingsUtil.m */,
 				2D98B67E272B272300E655AE /* VisualizationShaders.metal */,
@@ -17840,7 +17841,6 @@
 				2DDD789E25E15C9E00FA6FE5 /* WidgetBase.m in Sources */,
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
 				2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */,
-				2DBC62DB24CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m in Sources */,
 				2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */,
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
