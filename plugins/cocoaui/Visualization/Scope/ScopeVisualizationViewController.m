@@ -242,10 +242,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [self.preferencesPopover showRelativeToRect:NSZeroRect ofView:self.view preferredEdge:NSRectEdgeMaxY];
 }
 
-- (void)drawableResize:(CGSize)size {
-    [_renderer drawableResize:size];
-}
-
 - (CGFloat)scaleFactor {
     switch (self.scaleMode) {
     case ScopeScaleModeAuto:
@@ -278,15 +274,6 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 
     return YES;
-}
-
-- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer
-{
-    if (![self updateDrawData]) {
-        return;
-    }
-
-    [_renderer renderToMetalLayer:layer];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem {
@@ -372,6 +359,21 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 // Called by the timer in superclass
 - (void)draw {
     self.view.needsDisplay = YES;
+}
+
+#pragma mark - AAPLViewDelegate
+
+- (void)drawableResize:(CGSize)size {
+    [_renderer drawableResize:size];
+}
+
+- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer
+{
+    if (![self updateDrawData]) {
+        return;
+    }
+
+    [_renderer renderToMetalLayer:layer];
 }
 
 #pragma mark - ShaderRendererDelegate
