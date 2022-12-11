@@ -2,30 +2,115 @@
 #import "SpectrumAnalyzerPreferencesWindowController.h"
 #import "SpectrumAnalyzerPreferencesViewController.h"
 #import "SpectrumAnalyzerVisualizationViewController.h"
+#import "SpectrumAnalyzerLabelsView.h"
 #import "VisualizationSettingsUtil.h"
 #include "analyzer.h"
 #include "deadbeef.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface SpectrumAnalyzerVisualizationViewController()
+#define LOWER_BOUND -80
+static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
+static void *kIsVisibleContext = &kIsVisibleContext;
+
+@interface SpectrumAnalyzerVisualizationViewController() {
+    ddb_analyzer_t _analyzer;
+    ddb_analyzer_draw_data_t _draw_data;
+    ddb_waveformat_t _fmt;
+    ddb_audio_data_t _input_data;
+}
 
 @property (nonatomic) SpectrumAnalyzerPreferencesWindowController *preferencesWindowController;
 @property (nonatomic) NSPopover *preferencesPopover;
+@property (nonatomic) SpectrumAnalyzerLabelsView *labelsView;
+@property (nonatomic) SpectrumAnalyzerVisualizationView *visualizationView;
+
+@property (nonatomic) BOOL isListening;
+
 
 @end
 
 @implementation SpectrumAnalyzerVisualizationViewController
 
+static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
+    SpectrumAnalyzerVisualizationViewController *view = (__bridge SpectrumAnalyzerVisualizationViewController *)(ctx);
+    [view updateFFTData:data];
+}
+
+- (void)updateFFTData:(const ddb_audio_data_t *)data {
+    @synchronized (self) {
+        // copy the input data for later consumption
+        if (_input_data.nframes != data->nframes) {
+            free (_input_data.data);
+            _input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
+            _input_data.nframes = data->nframes;
+        }
+        memcpy (_input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
+        memcpy (_input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
+    }
+}
+
+- (void)dealloc {
+    if (self.isListening) {
+        deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
+        self.isListening = NO;
+    }
+    ddb_analyzer_dealloc(&_analyzer);
+    ddb_analyzer_draw_data_dealloc(&_draw_data);
+    free (_input_data.data);
+    _input_data.data = NULL;
+    [self removeObserver:self forKeyPath:kWindowIsVisibleKey];
+}
+
+
 - (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings * _Nonnull)settings {
-    SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
-    [view updateAnalyzerSettings:settings];
+    [self.labelsView updateSettings:settings];
+    [self.visualizationView updateSettings:settings];
+    if (_analyzer.mode != settings.mode || _analyzer.octave_bars_step != settings.barGranularity) {
+        _analyzer.mode_did_change = 1;
+    }
+    _analyzer.mode = settings.mode;
+    _analyzer.bar_gap_denominator = settings.distanceBetweenBars;
+    _analyzer.octave_bars_step = settings.barGranularity;
 }
 
 - (void)loadView {
-    SpectrumAnalyzerVisualizationView *view = [[SpectrumAnalyzerVisualizationView alloc] initWithFrame:NSZeroRect];
-    self.view = view;
-    self.view.translatesAutoresizingMaskIntoConstraints = NO;
+    self.labelsView = [SpectrumAnalyzerLabelsView new];
+    self.visualizationView = [SpectrumAnalyzerVisualizationView new];
+
+    self.labelsView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.visualizationView.translatesAutoresizingMaskIntoConstraints = NO;
+
+    [self.labelsView addSubview:self.visualizationView];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [self.visualizationView.leadingAnchor constraintEqualToAnchor:self.labelsView.leadingAnchor],
+        [self.visualizationView.trailingAnchor constraintEqualToAnchor:self.labelsView.trailingAnchor],
+        [self.visualizationView.topAnchor constraintEqualToAnchor:self.labelsView.topAnchor],
+        [self.visualizationView.bottomAnchor constraintEqualToAnchor:self.labelsView.bottomAnchor],
+    ]];
+
+    self.view = self.labelsView;
+}
+
+- (void)updateVisListening {
+    if (self.isListening && !self.view.window.isVisible) {
+        deadbeef->vis_spectrum_unlisten ((__bridge void *)(self));
+        self.isListening = NO;
+    }
+    else if (!self.isListening && self.view.window.isVisible) {
+        deadbeef->vis_spectrum_listen2((__bridge void *)(self), vis_callback);
+        self.isListening = YES;
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if (context == kIsVisibleContext) {
+        [self updateVisListening];
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (void)awakeFromNib {
@@ -58,10 +143,45 @@ extern DB_functions_t *deadbeef;
 
     self.view.menu = menu;
 
-    SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
+    self.visualizationView.baseColor = VisualizationSettingsUtil.shared.baseColor;
+    self.visualizationView.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
 
-    view.baseColor = VisualizationSettingsUtil.shared.baseColor;
-    view.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
+    // Setup analyzer
+    _input_data.fmt = &_fmt;
+
+    ddb_analyzer_init(&_analyzer);
+    _analyzer.db_lower_bound = LOWER_BOUND;
+    _analyzer.peak_hold = 10;
+    _analyzer.view_width = 1000;
+    _analyzer.fractional_bars = 1;
+    _analyzer.octave_bars_step = 2;
+    _analyzer.max_of_stereo_data = 1;
+    _analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
+    _analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
+    _isListening = NO;
+
+    [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
+
+}
+
+- (void)prepareForDisplay {
+    // for some reason KVO is not triggered when the window becomes hidden
+    [self updateVisListening];
+
+    if (_input_data.nframes == 0) {
+        return;
+    }
+
+    if (self.isListening) {
+        @synchronized (self) {
+            ddb_analyzer_process(&_analyzer, _input_data.fmt->samplerate, _input_data.fmt->channels, _input_data.data, _input_data.nframes);
+            ddb_analyzer_tick(&_analyzer);
+            ddb_analyzer_get_draw_data(&_analyzer, self.visualizationView.bounds.size.width, self.visualizationView.bounds.size.height, &_draw_data);
+        }
+    }
+
+    [self.labelsView updateDrawData:&_draw_data];
+    [self.visualizationView updateDrawData:&_draw_data];
 }
 
 #pragma mark - Actions
@@ -187,10 +307,8 @@ extern DB_functions_t *deadbeef;
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     if (_id == DB_EV_CONFIGCHANGED) {
-        SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
-
-        view.baseColor = VisualizationSettingsUtil.shared.baseColor;
-        view.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
+        self.visualizationView.baseColor = VisualizationSettingsUtil.shared.baseColor;
+        self.visualizationView.backgroundColor = VisualizationSettingsUtil.shared.backgroundColor;
     }
 }
 

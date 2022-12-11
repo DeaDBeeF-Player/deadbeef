@@ -1454,6 +1454,8 @@
 		2D78C5682756990B00F96F9D /* medialibfilesystem_stub.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C5672756990B00F96F9D /* medialibfilesystem_stub.c */; };
 		2D7C1FAD2946001B00163538 /* ShaderRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7C1FAB2946001B00163538 /* ShaderRenderer.h */; };
 		2D7C1FAE2946001B00163538 /* ShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C1FAC2946001B00163538 /* ShaderRenderer.m */; };
+		2D7C1FB229461C6900163538 /* SpectrumAnalyzerLabelsView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7C1FB029461C6900163538 /* SpectrumAnalyzerLabelsView.h */; };
+		2D7C1FB329461C6900163538 /* SpectrumAnalyzerLabelsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C1FB129461C6900163538 /* SpectrumAnalyzerLabelsView.m */; };
 		2D7C37F81B2C405F0029DE0A /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA141B2AF7F50072FD43 /* bitwise.c */; };
 		2D7C37F91B2C405F0029DE0A /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA151B2AF7F50072FD43 /* framing.c */; };
 		2D7C37FA1B2C40640029DE0A /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA191B2AF8610072FD43 /* analysis.c */; };
@@ -5934,6 +5936,8 @@
 		2D7C1FAB2946001B00163538 /* ShaderRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderRenderer.h; sourceTree = "<group>"; };
 		2D7C1FAC2946001B00163538 /* ShaderRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShaderRenderer.m; sourceTree = "<group>"; };
 		2D7C1FAF2946025600163538 /* ShaderRendererTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderRendererTypes.h; sourceTree = "<group>"; };
+		2D7C1FB029461C6900163538 /* SpectrumAnalyzerLabelsView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerLabelsView.h; sourceTree = "<group>"; };
+		2D7C1FB129461C6900163538 /* SpectrumAnalyzerLabelsView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpectrumAnalyzerLabelsView.m; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* JunklibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JunklibTests.m; sourceTree = "<group>"; };
@@ -8151,6 +8155,8 @@
 				2DBC62D524CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m */,
 				2DBC62D824CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.h */,
 				2DBC62D924CCDFB200AA20BF /* SpectrumAnalyzerVisualizationView.m */,
+				2D7C1FB029461C6900163538 /* SpectrumAnalyzerLabelsView.h */,
+				2D7C1FB129461C6900163538 /* SpectrumAnalyzerLabelsView.m */,
 			);
 			path = SpectrumAnalyzer;
 			sourceTree = "<group>";
@@ -14220,6 +14226,7 @@
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
 				2DAA402D269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
 				2DA5C2C226A75B840098AF24 /* viz.h in Headers */,
+				2D7C1FB229461C6900163538 /* SpectrumAnalyzerLabelsView.h in Headers */,
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
 				2DBF3D4327086AA900023138 /* MainContentViewController.h in Headers */,
 				2DC657E2274A5F6000583E14 /* PlaylistBrowserWidget.h in Headers */,
@@ -17754,6 +17761,7 @@
 				2DF55C402270FCB9002C44DC /* ScriptableNodeEditorViewController.m in Sources */,
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D9BD67A2405A81600C02D60 /* SoundPreferencesViewController.m in Sources */,
+				2D7C1FB329461C6900163538 /* SpectrumAnalyzerLabelsView.m in Sources */,
 				2D30D20E25E2A8930023A299 /* WidgetTopLevelView.m in Sources */,
 				2DC6580F274A994100583E14 /* TableViewWithReturnAction.m in Sources */,
 				2DDF87EE2402845C00CA8E91 /* NSMenu+ActionItems.m in Sources */,

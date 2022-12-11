@@ -41,6 +41,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
                     strongSelf.tickTimer = nil;
                 }
 
+                [strongSelf prepareForDisplay];
                 strongSelf.view.needsDisplay = YES;
             }];
 
@@ -63,5 +64,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     [self visibilityDidChange];
 }
 
+- (void)prepareForDisplay {
+}
 
 @end

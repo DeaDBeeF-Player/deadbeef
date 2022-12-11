@@ -187,6 +187,8 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
         draw_data->bar_count = analyzer->bar_count;
     }
 
+    draw_data->mode = analyzer->mode;
+
     if (analyzer->mode == DDB_ANALYZER_MODE_FREQUENCIES) {
         draw_data->bar_width = 1;
     }

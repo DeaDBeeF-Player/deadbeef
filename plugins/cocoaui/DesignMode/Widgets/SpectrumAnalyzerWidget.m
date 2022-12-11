@@ -25,7 +25,6 @@ static void *kCustomBackgroundColor = &kCustomBackgroundColor;
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 @property (nonatomic) SpectrumAnalyzerVisualizationViewController *visualizationViewController;
-//@property (nonatomic) SpectrumAnalyzerVisualizationView *visualizationView;
 @property (nonatomic) SpectrumAnalyzerSettings *settings;
 
 @end

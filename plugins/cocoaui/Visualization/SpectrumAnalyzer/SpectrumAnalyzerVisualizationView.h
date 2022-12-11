@@ -8,12 +8,14 @@
 
 #import <Cocoa/Cocoa.h>
 #import "SpectrumAnalyzerSettings.h"
+#include "analyzer.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface SpectrumAnalyzerVisualizationView : NSView
 
-- (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings *)settings;
+- (void)updateSettings:(SpectrumAnalyzerSettings * _Nonnull)settings;
+- (void)updateDrawData:(ddb_analyzer_draw_data_t *)drawData;
 
 @property (nonatomic) NSColor *baseColor;
 @property (nonatomic) NSColor *backgroundColor;

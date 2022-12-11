@@ -54,7 +54,13 @@ typedef struct {
     float bar_height;
 } ddb_analyzer_draw_bar_t;
 
+typedef enum {
+    DDB_ANALYZER_MODE_FREQUENCIES,
+    DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS,
+}  ddb_analyzer_mode_t;
+
 typedef struct {
+    ddb_analyzer_mode_t mode;
     int bar_count;
     ddb_analyzer_draw_bar_t *bars;
     float bar_width;
@@ -64,11 +70,6 @@ typedef struct {
     char label_freq_texts[DDB_ANALYZER_MAX_LABEL_FREQS][4];
     int label_freq_count;
 } ddb_analyzer_draw_data_t;
-
-typedef enum {
-    DDB_ANALYZER_MODE_FREQUENCIES,
-    DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS,
-}  ddb_analyzer_mode_t;
 
 typedef struct ddb_analyzer_s {
     // Settings
