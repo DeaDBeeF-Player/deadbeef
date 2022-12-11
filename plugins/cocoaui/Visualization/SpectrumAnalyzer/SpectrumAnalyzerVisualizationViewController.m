@@ -9,6 +9,9 @@
 
 extern DB_functions_t *deadbeef;
 
+#define VisXOffset 40
+#define VisYOffset 12
+
 #define LOWER_BOUND -80
 static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
 static void *kIsVisibleContext = &kIsVisibleContext;
@@ -84,9 +87,9 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [self.labelsView addSubview:self.visualizationView];
 
     [NSLayoutConstraint activateConstraints:@[
-        [self.visualizationView.leadingAnchor constraintEqualToAnchor:self.labelsView.leadingAnchor],
+        [self.visualizationView.leadingAnchor constraintEqualToAnchor:self.labelsView.leadingAnchor constant:VisXOffset],
         [self.visualizationView.trailingAnchor constraintEqualToAnchor:self.labelsView.trailingAnchor],
-        [self.visualizationView.topAnchor constraintEqualToAnchor:self.labelsView.topAnchor],
+        [self.visualizationView.topAnchor constraintEqualToAnchor:self.labelsView.topAnchor constant:VisYOffset],
         [self.visualizationView.bottomAnchor constraintEqualToAnchor:self.labelsView.bottomAnchor],
     ]];
 
