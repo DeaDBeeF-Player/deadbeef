@@ -8,7 +8,6 @@
 
 #import "SpectrumAnalyzerWidget.h"
 #import "SpectrumAnalyzerVisualizationViewController.h"
-#import "SpectrumAnalyzerVisualizationView.h"
 #import "SpectrumAnalyzerSettings.h"
 #import "VisualizationSettingsUtil.h"
 
@@ -26,7 +25,7 @@ static void *kCustomBackgroundColor = &kCustomBackgroundColor;
 
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 @property (nonatomic) SpectrumAnalyzerVisualizationViewController *visualizationViewController;
-@property (nonatomic) SpectrumAnalyzerVisualizationView *visualizationView;
+//@property (nonatomic) SpectrumAnalyzerVisualizationView *visualizationView;
 @property (nonatomic) SpectrumAnalyzerSettings *settings;
 
 @end
@@ -58,9 +57,6 @@ static void *kCustomBackgroundColor = &kCustomBackgroundColor;
     _deps = deps;
 
     _visualizationViewController = [SpectrumAnalyzerVisualizationViewController new];
-    _visualizationView = [[SpectrumAnalyzerVisualizationView alloc] initWithFrame:NSZeroRect];
-    _visualizationViewController.view = _visualizationView;
-    _visualizationViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
     [_visualizationViewController awakeFromNib];
 
     [self.topLevelView addSubview:_visualizationViewController.view];
@@ -86,7 +82,7 @@ static void *kCustomBackgroundColor = &kCustomBackgroundColor;
     self.settings.distanceBetweenBars = 3;
 
     _visualizationViewController.settings = _settings;
-    [_visualizationView updateAnalyzerSettings:_settings];
+    [_visualizationViewController updateAnalyzerSettings:_settings];
 
     return self;
 }
@@ -94,31 +90,31 @@ static void *kCustomBackgroundColor = &kCustomBackgroundColor;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     // update the visualization view and save settings
     if (context == kModeContext) {
-        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.visualizationViewController updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kDistanceBetweenBarsContext) {
-        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.visualizationViewController updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kBarGranularity) {
-        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.visualizationViewController updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kUseCustomPeakColor) {
-        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.visualizationViewController updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kUseCustomBarColor) {
-        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.visualizationViewController updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kUseCustomBackgroundColor) {
-        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.visualizationViewController updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kCustomPeakColor) {
-        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.visualizationViewController updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kCustomBarColor) {
-        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.visualizationViewController updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else if (context == kCustomBackgroundColor) {
-        [self.visualizationView updateAnalyzerSettings:self.settings];
+        [self.visualizationViewController updateAnalyzerSettings:self.settings];
         [self.deps.state layoutDidChange];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];

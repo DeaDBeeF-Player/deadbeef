@@ -17,6 +17,17 @@ extern DB_functions_t *deadbeef;
 
 @implementation SpectrumAnalyzerVisualizationViewController
 
+- (void)updateAnalyzerSettings:(SpectrumAnalyzerSettings * _Nonnull)settings {
+    SpectrumAnalyzerVisualizationView *view = (SpectrumAnalyzerVisualizationView *)self.view;
+    [view updateAnalyzerSettings:settings];
+}
+
+- (void)loadView {
+    SpectrumAnalyzerVisualizationView *view = [[SpectrumAnalyzerVisualizationView alloc] initWithFrame:NSZeroRect];
+    self.view = view;
+    self.view.translatesAutoresizingMaskIntoConstraints = NO;
+}
+
 - (void)awakeFromNib {
     [super awakeFromNib];
 
