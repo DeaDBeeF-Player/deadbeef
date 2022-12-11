@@ -430,7 +430,7 @@ static inline vector_float4 vec4color (NSColor *color) {
     params.size.y = viewport.y;
     params.barCount = _draw_data.bar_count;
     params.gridLineCount = -LOWER_BOUND / 10;
-    params.gridScale = self.view.window.backingScaleFactor;
+    params.backingScaleFactor = self.view.window.backingScaleFactor;
     params.barWidth = _draw_data.bar_width;
     params.discreteFrequencies = _draw_data.mode == DDB_ANALYZER_MODE_FREQUENCIES;
     [encoder setFragmentBytes:&params length:sizeof (params) atIndex:0];

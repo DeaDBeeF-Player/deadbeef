@@ -83,24 +83,26 @@
         }
         NSString *string = [NSString stringWithUTF8String:_draw_data->label_freq_texts[i]];
         CGFloat x = xOffset + _draw_data->label_freq_positions[i];
-        [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
+        [string drawAtPoint:NSMakePoint(x / self.window.backingScaleFactor, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
     }
 }
 
 - (void)drawDBLabels {
     CGFloat visHeight = self.subviews[0].frame.size.height;
     CGFloat yOffset = self.subviews[0].frame.origin.y + visHeight;
+    CGFloat xSpace = self.subviews[0].frame.origin.x;
     float saLowerBound;
     saLowerBound = LOWER_BOUND;
     CGFloat lower = -floor(saLowerBound);
-    for (int db = 10; db < lower; db += 10) {
+    for (int db = 0; db < lower; db += 10) {
         CGFloat y = (CGFloat)(db / lower) * visHeight;
         if (y >= NSHeight(self.bounds)) {
             break;
         }
 
         NSString *string = [NSString stringWithFormat:@"%d dB", -db];
-        [string drawAtPoint:NSMakePoint(0, yOffset-y-12) withAttributes:self.textAttrs];
+        NSSize extents = [string sizeWithAttributes:self.textAttrs];
+        [string drawAtPoint:NSMakePoint(xSpace - extents.width - 4, yOffset - y - 12) withAttributes:self.textAttrs];
     }
 }
 

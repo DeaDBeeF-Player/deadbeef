@@ -82,7 +82,7 @@ float4 drawSpectrumBar(float x, float y, int barIndex, float4 out, constant Spec
     out = params.barColor * line + out * (1-line);
 
     // peaks
-    line = drawBar(x, y, xpos, params.size.y - peak_ypos - 2, params.barWidth, 2);
+    line = drawBar(x, y, xpos, params.size.y - peak_ypos - params.backingScaleFactor/2, params.barWidth, params.backingScaleFactor);
     out = params.peakColor * line + out * (1-line);
 
     return out;
@@ -96,15 +96,17 @@ fragment float4 spectrumFragmentShader(RasterizerData in [[stage_in]], constant 
     float4 out = params.backgroundColor;
 
     // grid
-    for (int i = 1; i < params.gridLineCount; i++) {
-        float line_y = params.size.y * (float)i / params.gridLineCount;
-        float line = 1.0-clamp(abs(y-line_y), 0.0, 1.0);
+    for (int i = 0; i < params.gridLineCount; i++) {
+        float yMin = params.size.y * (float)i / (float)params.gridLineCount;
+        float yMax = yMin + params.backingScaleFactor;
 
-        if (((int)(x / params.gridScale)) % 3 > 0) {
+        float line = smoothstep(floor(yMin), ceil(yMin), y) * smoothstep(floor(-yMax), ceil(-yMax), -y);
+
+        if (((int)(x / params.backingScaleFactor)) % 3 > 0) {
             line = 0;
         }
 
-        out = params.lineColor * line + out * (1-line);
+        out.xyz = params.lineColor.xyz * line * params.lineColor.w + out.xyz * (1-line);
     }
 
     if (!params.discreteFrequencies) {
