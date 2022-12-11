@@ -69,7 +69,7 @@ float drawBar(float x, float y, float barX, float barY, float barWidth, float ba
     return line;
 }
 
-float4 drawSpectrumBar(float x, float y, int barIndex, float4 out, constant SpectrumFragParams &params, constant SpectrumFragBar *barData) {
+float4 drawSpectrumBar(float x, float y, int barIndex, float barWidth, float4 out, constant SpectrumFragParams &params, constant SpectrumFragBar *barData) {
     // fetch bar data
     float xpos = barData[barIndex].barX;
     float peak_ypos = barData[barIndex].peakY;
@@ -78,18 +78,24 @@ float4 drawSpectrumBar(float x, float y, int barIndex, float4 out, constant Spec
     float line = 0;
 
     // bars
-    line = drawBar(x, y, xpos, params.size.y-bar_height, params.barWidth, bar_height);
+    line = drawBar(x, y, xpos, params.size.y - bar_height, barWidth, bar_height);
     out = params.barColor * line + out * (1-line);
 
     // peaks
-    line = drawBar(x, y, xpos, params.size.y - peak_ypos - params.backingScaleFactor/2, params.barWidth, params.backingScaleFactor);
+    line = drawBar(x, y, xpos, params.size.y - peak_ypos - params.backingScaleFactor/2, barWidth, params.backingScaleFactor);
     out = params.peakColor * line + out * (1-line);
 
     return out;
 }
 
-fragment float4 spectrumFragmentShader(RasterizerData in [[stage_in]], constant SpectrumFragParams &params [[buffer(0)]], constant SpectrumFragBar *barData [[buffer(1)]]) {
-
+fragment float4
+spectrumFragmentShader(
+                       RasterizerData in [[stage_in]],
+                       constant SpectrumFragParams &params [[buffer(0)]],
+                       constant SpectrumFragBar *barData [[buffer(1)]],
+                       constant int *barIndexTable [[buffer(2)]]
+                       )
+{
     float x = in.position.x;
     float y = in.position.y;
 
@@ -110,19 +116,23 @@ fragment float4 spectrumFragmentShader(RasterizerData in [[stage_in]], constant 
         out.xyz = params.lineColor.xyz * line * lineAlpha + out.xyz * (1 - line * lineAlpha);
     }
 
+    int barIndex;
+    float barWidth;
     if (!params.discreteFrequencies) {
         // octave bands
-        int barIndex = x / (float)params.size.x * params.barCount;
+        barIndex = x / (float)params.size.x * params.barCount;
         barIndex = clamp(barIndex, 0, params.barCount-1);
-
-        out = drawSpectrumBar(x, y, barIndex, out, params, barData);
+        barWidth = params.barWidth;
     }
     else {
-        // discrete frequencies (ugh -- could use a lookup table here)
-        for (int barIndex = 0; barIndex < params.barCount; barIndex++) {
-            out = drawSpectrumBar(x, y, barIndex, out, params, barData);
+        barIndex = barIndexTable[(int)x];
+        if (barIndex == -1) {
+            return out;
         }
+        barWidth = params.backingScaleFactor;
     }
+
+    out = drawSpectrumBar(x, y, barIndex, barWidth, out, params, barData);
 
     return out;
 }

@@ -79,6 +79,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     _analyzer.mode = settings.mode;
     _analyzer.bar_gap_denominator = settings.distanceBetweenBars;
     _analyzer.octave_bars_step = settings.barGranularity;
+    _analyzer.enable_bar_index_lookup_table = 1;
 }
 
 - (void)loadView {
@@ -432,8 +433,22 @@ static inline vector_float4 vec4color (NSColor *color) {
 
     // bar data
 
-    // The buffer is not bigger than ~2.5KB (211 bars * 12 bytes),
-    // therefore it should be safe to use setFragmentBytes.
-    [encoder setFragmentBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) atIndex:1];
+    if (_draw_data.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+        // In this scenario, the buffer is too large, need to use MTLBuffer.
+        id<MTLBuffer> buffer = [device newBufferWithBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) options:0];
+
+        [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
+
+        if (_draw_data.bar_index_for_x_coordinate_table != NULL) {
+            id<MTLBuffer> lookupBuffer = [device newBufferWithBytes:_draw_data.bar_index_for_x_coordinate_table length:_draw_data.bar_index_for_x_coordinate_table_size * sizeof (int) options:0];
+            [encoder setFragmentBuffer:lookupBuffer offset:0 atIndex:2];
+        }
+    }
+    else {
+        // The buffer is not bigger than ~2.5KB (211 bars * 12 bytes),
+        // therefore it should be safe to use setFragmentBytes.
+        [encoder setFragmentBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) atIndex:1];
+    }
+
 }
 @end

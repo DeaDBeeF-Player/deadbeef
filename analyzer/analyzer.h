@@ -65,6 +65,13 @@ typedef struct {
     ddb_analyzer_draw_bar_t *bars;
     float bar_width;
 
+    // Reverse lookup table, to get bar position from pixel X coordinate.
+    // If there's no bar at the coordinate, value is -1.
+    // Size of the table equals to view_width.
+    // Only valid for DDB_ANALYZER_MODE_FREQUENCIES mode.
+    int *bar_index_for_x_coordinate_table;
+    int bar_index_for_x_coordinate_table_size;
+
     // freq label drawing positions in view space
     float label_freq_positions[DDB_ANALYZER_MAX_LABEL_FREQS];
     char label_freq_texts[DDB_ANALYZER_MAX_LABEL_FREQS][4];
@@ -92,6 +99,10 @@ typedef struct ddb_analyzer_s {
     /// If this value is 0, no gap will be created.
     /// If the gap is >=1, a gap of at least 1px will be created, unless the bar width itself is 1px.
     int bar_gap_denominator;
+
+    /// Whether to calculate reverse lookup table to get bar index from pixel coordinate.
+    /// The table generated only for FREQUENCIES mode, and only in draw data.
+    int enable_bar_index_lookup_table;
 
     /// Can be either a real or virtual view width.
     /// The calculated values are normalized,
