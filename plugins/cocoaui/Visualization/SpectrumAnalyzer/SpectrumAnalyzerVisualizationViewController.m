@@ -428,14 +428,12 @@ static inline vector_float4 vec4color (NSColor *color) {
     params.discreteFrequencies = _draw_data.mode == DDB_ANALYZER_MODE_FREQUENCIES;
     [encoder setFragmentBytes:&params length:sizeof (params) atIndex:0];
 
-    // Metal documentation states that MTLBuffer should be used for buffers larger than 4K in size.
-    // Alternative is to use setFragmentBytes, which also works, but could have compatibility issues on older hardware.
-
     assert(sizeof(struct SpectrumFragBar) == sizeof (ddb_analyzer_draw_bar_t));
 
     // bar data
-    id<MTLBuffer> buffer = [device newBufferWithBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) options:0];
 
-    [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
+    // The buffer is not bigger than ~2.5KB (211 bars * 12 bytes),
+    // therefore it should be safe to use setFragmentBytes.
+    [encoder setFragmentBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) atIndex:1];
 }
 @end
