@@ -2,6 +2,7 @@
 
 using namespace metal;
 
+#include "ShaderRendererTypes.h"
 #include "ScopeShaderTypes.h"
 
 struct RasterizerData {
@@ -10,8 +11,8 @@ struct RasterizerData {
 
 vertex RasterizerData
 vertexShader(uint vertexID [[vertex_id]],
-             constant ScopeVertex *vertices [[buffer(ScopeVertexInputIndexVertices)]],
-             constant vector_uint2 *viewportSizePointer [[buffer(ScopeVertexInputIndexViewportSize)]]) {
+             constant ShaderRendererVertex *vertices [[buffer(ShaderRendererVertexInputIndexVertices)]],
+             constant vector_uint2 *viewportSizePointer [[buffer(ShaderRendererVertexInputIndexViewportSize)]]) {
     RasterizerData out;
 
     // Index into the array of positions to get the current vertex.
@@ -31,7 +32,7 @@ vertexShader(uint vertexID [[vertex_id]],
     return out;
 }
 
-fragment float4 fragmentShader(RasterizerData in [[stage_in]], constant FragParams &params [[buffer(0)]], constant float2 *minmax [[buffer(1)]]) {
+fragment float4 scopeFragmentShader(RasterizerData in [[stage_in]], constant ScopeFragParams &params [[buffer(0)]], constant float2 *minmax [[buffer(1)]]) {
     float index = floor(in.position.x/params.scale);
     float y = floor(in.position.y / params.scale);
 

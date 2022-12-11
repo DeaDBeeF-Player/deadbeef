@@ -1452,6 +1452,8 @@
 		2D78C5632756919300F96F9D /* medialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D887BC724B1C82A0078392F /* medialib.c */; };
 		2D78C5642756919500F96F9D /* medialib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D887BC724B1C82A0078392F /* medialib.c */; };
 		2D78C5682756990B00F96F9D /* medialibfilesystem_stub.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C5672756990B00F96F9D /* medialibfilesystem_stub.c */; };
+		2D7C1FAD2946001B00163538 /* ShaderRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7C1FAB2946001B00163538 /* ShaderRenderer.h */; };
+		2D7C1FAE2946001B00163538 /* ShaderRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D7C1FAC2946001B00163538 /* ShaderRenderer.m */; };
 		2D7C37F81B2C405F0029DE0A /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA141B2AF7F50072FD43 /* bitwise.c */; };
 		2D7C37F91B2C405F0029DE0A /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA151B2AF7F50072FD43 /* framing.c */; };
 		2D7C37FA1B2C40640029DE0A /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D88EA191B2AF8610072FD43 /* analysis.c */; };
@@ -1636,15 +1638,13 @@
 		2D986142226C816000BAACB1 /* BrowseButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D986140226C815F00BAACB1 /* BrowseButton.h */; };
 		2D986143226C816000BAACB1 /* BrowseButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D986141226C816000BAACB1 /* BrowseButton.m */; };
 		2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B66E272B272300E655AE /* ScopeShaderTypes.h */; };
-		2D98B681272B272300E655AE /* ScopeShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B67E272B272300E655AE /* ScopeShaders.metal */; };
+		2D98B681272B272300E655AE /* VisualizationShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B67E272B272300E655AE /* VisualizationShaders.metal */; };
 		2D98B685272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */; };
 		2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */; };
 		2D98B68B272D573700E655AE /* ScopeSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B689272D573700E655AE /* ScopeSettings.h */; };
 		2D98B68C272D573700E655AE /* ScopeSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B689272D573700E655AE /* ScopeSettings.h */; };
 		2D98B68D272D573700E655AE /* ScopeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B68A272D573700E655AE /* ScopeSettings.m */; };
 		2D98B68E272D573700E655AE /* ScopeSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B68A272D573700E655AE /* ScopeSettings.m */; };
-		2D98B69227347C7C00E655AE /* ScopeRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B69027347C7C00E655AE /* ScopeRenderer.h */; };
-		2D98B69427347C7C00E655AE /* ScopeRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B69127347C7C00E655AE /* ScopeRenderer.m */; };
 		2D98B698273482BA00E655AE /* AAPLNSView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B696273482B900E655AE /* AAPLNSView.h */; };
 		2D98B69A273482BA00E655AE /* AAPLNSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B697273482BA00E655AE /* AAPLNSView.m */; };
 		2D98B69E273482F700E655AE /* AAPLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B69C273482F600E655AE /* AAPLView.h */; };
@@ -5931,6 +5931,9 @@
 		2D78C55C27568D9600F96F9D /* medialibtree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibtree.c; sourceTree = "<group>"; };
 		2D78C565275698D400F96F9D /* medialibfilesystem_inotify.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem_inotify.c; sourceTree = "<group>"; };
 		2D78C5672756990B00F96F9D /* medialibfilesystem_stub.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem_stub.c; sourceTree = "<group>"; };
+		2D7C1FAB2946001B00163538 /* ShaderRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderRenderer.h; sourceTree = "<group>"; };
+		2D7C1FAC2946001B00163538 /* ShaderRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShaderRenderer.m; sourceTree = "<group>"; };
+		2D7C1FAF2946025600163538 /* ShaderRendererTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderRendererTypes.h; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7F38021B2858AC00692A7B /* JunklibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JunklibTests.m; sourceTree = "<group>"; };
@@ -6123,13 +6126,11 @@
 		2D986140226C815F00BAACB1 /* BrowseButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowseButton.h; sourceTree = "<group>"; };
 		2D986141226C816000BAACB1 /* BrowseButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowseButton.m; sourceTree = "<group>"; };
 		2D98B66E272B272300E655AE /* ScopeShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeShaderTypes.h; sourceTree = "<group>"; };
-		2D98B67E272B272300E655AE /* ScopeShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = ScopeShaders.metal; sourceTree = "<group>"; };
+		2D98B67E272B272300E655AE /* VisualizationShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = VisualizationShaders.metal; sourceTree = "<group>"; };
 		2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopeVisualizationViewController.h; sourceTree = "<group>"; };
 		2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeVisualizationViewController.m; sourceTree = "<group>"; };
 		2D98B689272D573700E655AE /* ScopeSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopeSettings.h; sourceTree = "<group>"; };
 		2D98B68A272D573700E655AE /* ScopeSettings.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeSettings.m; sourceTree = "<group>"; };
-		2D98B69027347C7C00E655AE /* ScopeRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopeRenderer.h; sourceTree = "<group>"; };
-		2D98B69127347C7C00E655AE /* ScopeRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeRenderer.m; sourceTree = "<group>"; };
 		2D98B696273482B900E655AE /* AAPLNSView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLNSView.h; sourceTree = "<group>"; };
 		2D98B697273482BA00E655AE /* AAPLNSView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLNSView.m; sourceTree = "<group>"; };
 		2D98B69C273482F600E655AE /* AAPLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLView.h; sourceTree = "<group>"; };
@@ -8159,10 +8160,6 @@
 			children = (
 				2DD3775727414BC2007AD315 /* Preferences */,
 				2D98B68F272D573C00E655AE /* Models */,
-				2D98B69027347C7C00E655AE /* ScopeRenderer.h */,
-				2D98B69127347C7C00E655AE /* ScopeRenderer.m */,
-				2D98B67E272B272300E655AE /* ScopeShaders.metal */,
-				2D98B66E272B272300E655AE /* ScopeShaderTypes.h */,
 				2D98B683272D56F100E655AE /* ScopeVisualizationViewController.h */,
 				2D98B684272D56F100E655AE /* ScopeVisualizationViewController.m */,
 			);
@@ -8177,10 +8174,15 @@
 				2D98B697273482BA00E655AE /* AAPLNSView.m */,
 				2D98B69C273482F600E655AE /* AAPLView.h */,
 				2D98B69D273482F700E655AE /* AAPLView.m */,
-				0D56853A271DC6670026F700 /* VisualizationViewController.h */,
-				0D56853B271DC6670026F700 /* VisualizationViewController.m */,
+				2D98B66E272B272300E655AE /* ScopeShaderTypes.h */,
+				2D7C1FAB2946001B00163538 /* ShaderRenderer.h */,
+				2D7C1FAC2946001B00163538 /* ShaderRenderer.m */,
+				2D7C1FAF2946025600163538 /* ShaderRendererTypes.h */,
 				2DD3774827404E11007AD315 /* VisualizationSettingsUtil.h */,
 				2DD3774927404E11007AD315 /* VisualizationSettingsUtil.m */,
+				2D98B67E272B272300E655AE /* VisualizationShaders.metal */,
+				0D56853A271DC6670026F700 /* VisualizationViewController.h */,
+				0D56853B271DC6670026F700 /* VisualizationViewController.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -14189,7 +14191,6 @@
 				2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2DBC62D624CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h in Headers */,
 				0D568528271DC35E0026F700 /* ScopeWidget.h in Headers */,
-				2D98B69227347C7C00E655AE /* ScopeRenderer.h in Headers */,
 				2DC657F1274A7A6900583E14 /* PlaylistContextMenu.h in Headers */,
 				2D98B698273482BA00E655AE /* AAPLNSView.h in Headers */,
 				2DC657EA274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */,
@@ -14203,6 +14204,7 @@
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
 				2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */,
 				2D9793E3276E854F0062585E /* covermanager.h in Headers */,
+				2D7C1FAD2946001B00163538 /* ShaderRenderer.h in Headers */,
 				2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */,
 				2DE1D3E619B11539009B5BC6 /* PlaceholderWidget.h in Headers */,
 				2DDD781625E1578C00FA6FE5 /* SplitterWidget.h in Headers */,
@@ -17741,8 +17743,8 @@
 			files = (
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
+				2D7C1FAE2946001B00163538 /* ShaderRenderer.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
-				2D98B69427347C7C00E655AE /* ScopeRenderer.m in Sources */,
 				2DC657A92746D9E400583E14 /* TabsWidget.m in Sources */,
 				2DE5562926075B8400285BF9 /* AlbumArtWidget.m in Sources */,
 				2D98B69A273482BA00E655AE /* AAPLNSView.m in Sources */,
@@ -17848,7 +17850,7 @@
 				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,
 				2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */,
 				2DC657EC274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */,
-				2D98B681272B272300E655AE /* ScopeShaders.metal in Sources */,
+				2D98B681272B272300E655AE /* VisualizationShaders.metal in Sources */,
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
 				0D56852A271DC35E0026F700 /* ScopeWidget.m in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,

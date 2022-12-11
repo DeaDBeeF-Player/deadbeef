@@ -1,17 +1,32 @@
-//
-//  ScopeRenderer.m
-//  deadbeef
-//
-//  Created by Oleksiy Yakovenko on 04/11/2021.
-//  Copyright © 2021 Oleksiy Yakovenko. All rights reserved.
-//
+/*
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2022 Oleksiy Yakovenko and other contributors
+
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
 
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>
-#import "ScopeRenderer.h"
-#import "ScopeShaderTypes.h"
+#import "ShaderRenderer.h"
+#import "ShaderRendererTypes.h"
 
-@implementation ScopeRenderer {
+@implementation ShaderRenderer {
     // renderer global ivars
     id <MTLDevice>              _device;
     id <MTLCommandQueue>        _commandQueue;
@@ -26,18 +41,9 @@
     NSUInteger _frameNum;
 }
 
-- (NSColor *)baselor {
-#ifdef MAC_OS_X_VERSION_10_14
-    if (@available(macOS 10.14, *)) {
-        return NSColor.controlAccentColor;
-    }
-#endif
-    return NSColor.alternateSelectedControlColor;
-}
-
-
 - (nonnull instancetype)initWithMetalDevice:(nonnull id<MTLDevice>)device
                         drawablePixelFormat:(MTLPixelFormat)drawablePixelFormat
+                         fragmentShaderName:(NSString *)fragmentShaderName
 {
     self = [super init];
     if (self)
@@ -69,7 +75,7 @@
                 return nil;
             }
 
-            id <MTLFunction> fragmentProgram = [shaderLib newFunctionWithName:@"fragmentShader"];
+            id <MTLFunction> fragmentProgram = [shaderLib newFunctionWithName:fragmentShaderName];
             if(!fragmentProgram)
             {
                 NSLog(@" ERROR: Couldn't load fragment function from default library");
@@ -97,8 +103,13 @@
     return self;
 }
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer drawData:(ddb_scope_draw_data_t *)drawData scale:(float)scale
+
+- (void)drawableResize:(CGSize)drawableSize
 {
+    _viewportSize = drawableSize;
+}
+
+- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer {
     if (_viewportSize.width == 0 || _viewportSize.height == 0) {
         return;
     }
@@ -126,7 +137,7 @@
 
     // Upload min/max coordinates into texture
 
-    ScopeVertex quadVertices[] =
+    ShaderRendererVertex quadVertices[] =
     {
         // 2D positions,    RGBA colors
         { {  (float)_viewportSize.width/2, -(float)_viewportSize.height/2 } },
@@ -148,35 +159,14 @@
     // Pass in the parameter data.
     [renderEncoder setVertexBytes:quadVertices
                            length:sizeof(quadVertices)
-                          atIndex:ScopeVertexInputIndexVertices];
+                          atIndex:ShaderRendererVertexInputIndexVertices];
 
     vector_uint2 vp = { (uint)_viewportSize.width, (uint)_viewportSize.height };
     [renderEncoder setVertexBytes:&vp
                            length:sizeof(vp)
-                          atIndex:ScopeVertexInputIndexViewportSize];
+                          atIndex:ShaderRendererVertexInputIndexViewportSize];
 
-    NSColor *color = [self.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
-    NSColor *backgroundColor = [self.backgroundColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
-    CGFloat components[4];
-    [color getComponents:components];
-    CGFloat backgroundComponents[4];
-    [backgroundColor getComponents:backgroundComponents];
-
-    struct FragParams params;
-    params.color = (vector_float4){ (float)components[0], (float)components[1], (float)components[2], 1 };
-    params.backgroundColor = (vector_float4){ (float)backgroundComponents[0], (float)backgroundComponents[1], (float)backgroundComponents[2], 1 };
-    params.size.x = vp.x;
-    params.size.y = vp.y;
-    params.point_count = drawData->point_count;
-    params.channels = drawData->mode == DDB_SCOPE_MONO ? 1 : drawData->channels;
-    params.scale = scale;
-    [renderEncoder setFragmentBytes:&params length:sizeof (params) atIndex:0];
-
-    // Metal documentation states that MTLBuffer should be used for buffers larger than 4K in size.
-    // Alternative is to use setFragmentBytes, which also works, but could have compatibility issues on older hardware.
-    id<MTLBuffer> buffer = [_device newBufferWithBytes:drawData->points length:drawData->point_count * sizeof (ddb_scope_point_t) * params.channels options:0];
-
-    [renderEncoder setFragmentBuffer:buffer offset:0 atIndex:1];
+    [self.delegate applyFragParamsWithViewport:vp device:_device encoder:renderEncoder];
 
     // Draw the triangle.
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip
@@ -193,9 +183,5 @@
     [commandBuffer commit];
 }
 
-- (void)drawableResize:(CGSize)drawableSize
-{
-    _viewportSize = drawableSize;
-}
 
 @end
