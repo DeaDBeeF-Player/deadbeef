@@ -391,7 +391,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 static inline vector_float4 vec4color (NSColor *color) {
     CGFloat components[4];
     [[color colorUsingColorSpace:NSColorSpace.sRGBColorSpace] getComponents:components];
-    return (vector_float4){ (float)components[0], (float)components[1], (float)components[2], 1 };
+    return (vector_float4){ (float)components[0], (float)components[1], (float)components[2], (float)components[3] };
 }
 
 #pragma mark - AAPLViewDelegate
