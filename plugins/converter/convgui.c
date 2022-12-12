@@ -86,9 +86,9 @@ fill_presets (GtkListStore *mdl, ddb_preset_t *head, int type) {
     while (p) {
         GtkTreeIter iter;
         gtk_list_store_append (mdl, &iter);
+        char stock[1000];
         const char *s = p->title;
         if (type == PRESET_TYPE_ENCODER && ((ddb_encoder_preset_t *)p)->readonly) {
-            char stock[1000];
             snprintf (stock, sizeof (stock), _("[Built-in] %s"), p->title);
             s = stock;
         }
@@ -979,7 +979,7 @@ edit_encoder_preset (char *title, GtkWidget *toplevel) {
         }
         break;
     }
-    
+
     gtk_widget_destroy (dlg);
     return r;
 }
@@ -1599,7 +1599,7 @@ on_dsp_preset_add                     (GtkButton       *button,
 {
 
     current_ctx->current_dsp_preset = converter_plugin->dsp_preset_alloc ();
-    
+
     GtkWidget *toplevel = gtk_widget_get_toplevel (GTK_WIDGET (button));
 
     if (GTK_RESPONSE_OK == edit_dsp_preset (_("New DSP Preset"), toplevel, NULL)) {
@@ -1870,7 +1870,7 @@ DB_misc_t plugin = {
         "· select some tracks in playlist\n"
         "· right click\n"
         "· select «Convert»\n",
-    .plugin.copyright = 
+    .plugin.copyright =
         "Converter UI for DeaDBeeF Player\n"
         "Copyright (C) 2009-2015 Oleksiy Yakovenko and other contributors\n"
         "\n"
