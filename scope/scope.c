@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "scope.h"
+#include "../fastftoi.h"
 
 #pragma mark - Public
 
@@ -99,6 +100,7 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
 
     int output_channels;
     int average_channels;
+    float faverage_channels_inv;
     switch (scope->mode) {
     case DDB_SCOPE_MONO:
         output_channels = 1;
@@ -110,22 +112,33 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
         break;
     }
 
+    faverage_channels_inv = 1.f / average_channels;
+
     float channel_height = view_height / output_channels;
     float pixel_amplitude = channel_height / 2;
 
-    float left_a = 0;
-    float left_b = 0;
+    fpu_control fpu;
+    (void)fpu;
+    fpu_setround(&fpu);
+
+    int left_a = 0;
+    int left_b = 0;
     float leftfrac = 0;
+
+    float fpoint_count = (float)draw_data->point_count;
+    float fsample_count = (float)scope->sample_count;
+
     for (int i = 0; i < draw_data->point_count; i++) {
-        float right = (float)(i+1) / draw_data->point_count * scope->sample_count;
+        float right = (float)(i+1) / fpoint_count * fsample_count;
         if (right > scope->sample_count-1) {
             right = scope->sample_count-1;
         }
 
-        float right_a = floor(right);
-        float right_b = ceil(right);
+        int right_a = ftoi(floor(right));
+        float fright_b = ceil(right);
+        int right_b = ftoi(fright_b);
 
-        float rightfrac = right_b-right;
+        float rightfrac = fright_b - right;
 
         for (int c = 0; c < output_channels; c++) {
             draw_data->points[draw_data->point_count * c + i].ymin = 1;
@@ -135,52 +148,54 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
         for (int c = 0; c < output_channels; c++) {
             int output_channel = c;
 
-            ddb_scope_point_t *minmax = &draw_data->points[draw_data->point_count * output_channel + i];
+            ddb_scope_point_t * restrict minmax = &draw_data->points[draw_data->point_count * output_channel + i];
+            float minmax_ymin = minmax->ymin;
+            float minmax_ymax = minmax->ymax;
 
             // Interpolated leftmost and rightmost samples
             float leftsample = 0;
             float rightsample = 0;
 
             for (int ac = 0; ac < average_channels; ac++) {
-                float leftsample_a = scope->samples[(int)left_a * scope->channels + c + ac];
-                float leftsample_b = scope->samples[(int)left_b * scope->channels + c + ac];
+                float leftsample_a = scope->samples[left_a * scope->channels + c + ac];
+                float leftsample_b = scope->samples[left_b * scope->channels + c + ac];
                 leftsample += leftsample_a + (leftsample_b - leftsample_a) * leftfrac;
 
-                float rightsample_a = scope->samples[(int)right_a * scope->channels + c + ac];
-                float rightsample_b = scope->samples[(int)right_b * scope->channels + c + ac];
+                float rightsample_a = scope->samples[right_a * scope->channels + c + ac];
+                float rightsample_b = scope->samples[right_b * scope->channels + c + ac];
                 rightsample += rightsample_a + (rightsample_b - rightsample_a) * rightfrac;
             }
 
-            leftsample /= (float)average_channels;
-            rightsample /= (float)average_channels;
+            leftsample *= faverage_channels_inv;
+            rightsample *= faverage_channels_inv;
 
-            if (leftsample > minmax->ymax) {
-                minmax->ymax = leftsample;
+            if (leftsample > minmax_ymax) {
+                minmax_ymax = leftsample;
             }
-            if (leftsample < minmax->ymin) {
-                minmax->ymin = leftsample;
+            if (leftsample < minmax_ymin) {
+                minmax_ymin = leftsample;
             }
 
-            if (rightsample > minmax->ymax) {
-                minmax->ymax = rightsample;
+            if (rightsample > minmax_ymax) {
+                minmax_ymax = rightsample;
             }
-            if (rightsample < minmax->ymin) {
-                minmax->ymin = rightsample;
+            if (rightsample < minmax_ymin) {
+                minmax_ymin = rightsample;
             }
 
             // The rest of the "whole" samples
-            for (int n = (int)left_b; n <= (int)right_a; n++) {
+            for (int n = left_b; n <= right_a; n++) {
                 float sample = 0;
                 for (int ac = 0; ac < average_channels; ac++) {
                     sample += scope->samples[n * scope->channels + c + ac];
                 }
-                sample /= (float)average_channels;
+                sample *= faverage_channels_inv;
 
-                if (sample > minmax->ymax) {
-                    minmax->ymax = sample;
+                if (sample > minmax_ymax) {
+                    minmax_ymax = sample;
                 }
-                if (sample < minmax->ymin) {
-                    minmax->ymin = sample;
+                if (sample < minmax_ymin) {
+                    minmax_ymin = sample;
                 }
             }
 
@@ -189,13 +204,13 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
             float ymax;
             if (y_axis_flip) {
                 offs = output_channel * channel_height;
-                ymin = -minmax->ymax;
-                ymax = -minmax->ymin;
+                ymin = -minmax_ymax;
+                ymax = -minmax_ymin;
             }
             else {
                 offs = (output_channels - output_channel - 1) * channel_height;
-                ymin = minmax->ymin;
-                ymax = minmax->ymax;
+                ymin = minmax_ymin;
+                ymax = minmax_ymax;
             }
             minmax->ymin = ymin * pixel_amplitude + pixel_amplitude + offs;
             minmax->ymax = ymax * pixel_amplitude + pixel_amplitude + offs;
@@ -204,6 +219,8 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
         left_b = right_b;
         leftfrac = rightfrac;
     }
+
+    fpu_restore(fpu);
 
     draw_data->mode = scope->mode;
     draw_data->channels = scope->channels;
