@@ -400,12 +400,7 @@ static inline vector_float4 vec4color (NSColor *color) {
     [_renderer drawableResize:size];
 }
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer
-{
-    if (![self updateDrawData]) {
-        return;
-    }
-
+- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer {
     [_renderer renderToMetalLayer:layer];
 }
 
