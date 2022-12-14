@@ -150,6 +150,11 @@ ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
                 }
             }
 
+            // log10 will return nan for x < 0
+            if (norm_h < 0) {
+                norm_h = 0;
+            }
+
             float bound = -analyzer->db_lower_bound;
             float height = (20*log10(norm_h) + bound)/bound;
 
@@ -456,6 +461,8 @@ _tempered_scale_bands_precalc (ddb_analyzer_t *analyzer) {
 
 static float
 _interpolate_bin_with_ratio (float *fft_data, int bin, float ratio) {
-    return fft_data[bin] + (fft_data[bin + 1] - fft_data[bin]) * ratio;
+    float a = fft_data[bin];
+    float b = fft_data[bin + 1];
+    return a + (b - a) * ratio;
 }
 
