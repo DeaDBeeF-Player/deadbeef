@@ -150,10 +150,7 @@ ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
                 }
             }
 
-            // log10 will return nan for x < 0
-            if (norm_h < 0) {
-                norm_h = 0;
-            }
+            norm_h = norm_h;
 
             float bound = -analyzer->db_lower_bound;
             float height = (20*log10(norm_h) + bound)/bound;
@@ -463,6 +460,14 @@ static float
 _interpolate_bin_with_ratio (float *fft_data, int bin, float ratio) {
     float a = fft_data[bin];
     float b = fft_data[bin + 1];
-    return a + (b - a) * ratio;
+    float result = a + (b - a) * ratio;
+
+    // Don't allow to go lower than 0,
+    // since log10(x<0) returns NaN,
+    // which may result in visual glitches
+    if (result < 0.f) {
+        return 0.f;
+    }
+    return result;
 }
 
