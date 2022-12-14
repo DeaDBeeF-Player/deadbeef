@@ -57,16 +57,20 @@ fragment float4 scopeFragmentShader(RasterizerData in [[stage_in]], constant Sco
     return params.color * line + params.backgroundColor * (1.0 - line);
 }
 
-float drawBar(float x, float y, float barX, float barY, float barWidth, float barHeight) {
+// sdBox credit: https://iquilezles.org/articles/distfunctions2d/
+float sdBox(float2 p, float2 b) {
+    float2 d = abs(p)-b;
+    return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+}
 
-    float xMin = barX;
-    float xMax = barX + barWidth;
-    float yMin = barY;
-    float yMax = barY + barHeight;
-
-    float line = smoothstep(floor(yMin), ceil(yMin), y) * smoothstep(floor(-yMax), ceil(-yMax), -y);
-    line *= smoothstep(floor(xMin), ceil(xMin), x) * smoothstep(floor(-xMax), ceil(-xMax), -x);
-    return line;
+float drawBar(
+    float x, float y, float barX,
+    float barY, float barWidth, float barHeight
+) {
+    float2 p(x - barX - barWidth/2, y - barY - barHeight/2);
+    float2 b(barWidth/2, barHeight/2);
+    float d = sdBox(p, b);
+    return smoothstep(1, -1, d);
 }
 
 float4 drawSpectrumBar(float x, float y, int barIndex, float barWidth, float4 out, constant SpectrumFragParams &params, constant SpectrumFragBar *barData) {
