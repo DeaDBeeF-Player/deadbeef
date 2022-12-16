@@ -7,6 +7,7 @@
 //
 
 #import "AlbumArtWidget.h"
+#import "ChiptuneVoicesWidget.h"
 #import "DesignModeDeps.h"
 #import "HolderWidget.h"
 #import "LyricsWidget.h"
@@ -99,6 +100,9 @@
     }];
     [self registerType:LyricsWidget.widgetType displayName:@"Lyrics" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[LyricsWidget alloc] initWithDeps:self.deps];
+    }];
+    [self registerType:ChiptuneVoicesWidget.widgetType displayName:@"Chiptune Voices" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[ChiptuneVoicesWidget alloc] initWithDeps:self.deps];
     }];
 }
 

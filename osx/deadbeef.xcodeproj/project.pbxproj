@@ -2416,6 +2416,15 @@
 		2DC6583E274C361C00583E14 /* HolderWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6583B274C361C00583E14 /* HolderWidget.h */; };
 		2DC6583F274C361C00583E14 /* HolderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6583C274C361C00583E14 /* HolderWidget.m */; };
 		2DC65840274C361C00583E14 /* HolderWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6583C274C361C00583E14 /* HolderWidget.m */; };
+		2DC6C5E1294CE06B00A63CEB /* ChiptuneVoicesWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6C5DF294CE06B00A63CEB /* ChiptuneVoicesWidget.h */; };
+		2DC6C5E2294CE06B00A63CEB /* ChiptuneVoicesWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6C5DF294CE06B00A63CEB /* ChiptuneVoicesWidget.h */; };
+		2DC6C5E3294CE06B00A63CEB /* ChiptuneVoicesWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C5E0294CE06B00A63CEB /* ChiptuneVoicesWidget.m */; };
+		2DC6C5E4294CE06B00A63CEB /* ChiptuneVoicesWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C5E0294CE06B00A63CEB /* ChiptuneVoicesWidget.m */; };
+		2DC6C5F8294CE14B00A63CEB /* ChiptuneVoicesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6C5F5294CE14B00A63CEB /* ChiptuneVoicesViewController.h */; };
+		2DC6C5F9294CE14B00A63CEB /* ChiptuneVoicesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6C5F5294CE14B00A63CEB /* ChiptuneVoicesViewController.h */; };
+		2DC6C5FA294CE14B00A63CEB /* ChiptuneVoicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C5F6294CE14B00A63CEB /* ChiptuneVoicesViewController.m */; };
+		2DC6C5FB294CE14B00A63CEB /* ChiptuneVoicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C5F6294CE14B00A63CEB /* ChiptuneVoicesViewController.m */; };
+		2DC6C5FC294CE14B00A63CEB /* ChiptuneVoicesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC6C5F7294CE14B00A63CEB /* ChiptuneVoicesViewController.xib */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -6754,6 +6763,11 @@
 		2DC65825274AB03700583E14 /* LyricsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LyricsViewController.m; sourceTree = "<group>"; };
 		2DC6583B274C361C00583E14 /* HolderWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HolderWidget.h; sourceTree = "<group>"; };
 		2DC6583C274C361C00583E14 /* HolderWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HolderWidget.m; sourceTree = "<group>"; };
+		2DC6C5DF294CE06B00A63CEB /* ChiptuneVoicesWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChiptuneVoicesWidget.h; sourceTree = "<group>"; };
+		2DC6C5E0294CE06B00A63CEB /* ChiptuneVoicesWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChiptuneVoicesWidget.m; sourceTree = "<group>"; };
+		2DC6C5F5294CE14B00A63CEB /* ChiptuneVoicesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChiptuneVoicesViewController.h; sourceTree = "<group>"; };
+		2DC6C5F6294CE14B00A63CEB /* ChiptuneVoicesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChiptuneVoicesViewController.m; sourceTree = "<group>"; };
+		2DC6C5F7294CE14B00A63CEB /* ChiptuneVoicesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChiptuneVoicesViewController.xib; sourceTree = "<group>"; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
@@ -11333,6 +11347,18 @@
 			path = Lyrics;
 			sourceTree = "<group>";
 		};
+		2DC6C5F4294CE11B00A63CEB /* ChiptuneVoices */ = {
+			isa = PBXGroup;
+			children = (
+				2DC6C5DF294CE06B00A63CEB /* ChiptuneVoicesWidget.h */,
+				2DC6C5E0294CE06B00A63CEB /* ChiptuneVoicesWidget.m */,
+				2DC6C5F5294CE14B00A63CEB /* ChiptuneVoicesViewController.h */,
+				2DC6C5F6294CE14B00A63CEB /* ChiptuneVoicesViewController.m */,
+				2DC6C5F7294CE14B00A63CEB /* ChiptuneVoicesViewController.xib */,
+			);
+			path = ChiptuneVoices;
+			sourceTree = "<group>";
+		};
 		2DCB281819E8616E008E9DF6 /* m3u */ = {
 			isa = PBXGroup;
 			children = (
@@ -11731,6 +11757,7 @@
 		2DE5562426075B4200285BF9 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2DC6C5F4294CE11B00A63CEB /* ChiptuneVoices */,
 				2DC65820274AB03700583E14 /* Lyrics */,
 				2DC657E6274A603A00583E14 /* PlaylistBrowser */,
 				2DC657D0274957FE00583E14 /* Tabs */,
@@ -12926,6 +12953,7 @@
 				2DC657F2274A7A6900583E14 /* PlaylistContextMenu.h in Headers */,
 				2DC6580E274A994100583E14 /* TableViewWithReturnAction.h in Headers */,
 				0D568529271DC35E0026F700 /* ScopeWidget.h in Headers */,
+				2DC6C5F9294CE14B00A63CEB /* ChiptuneVoicesViewController.h in Headers */,
 				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */,
 				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
@@ -12936,6 +12964,7 @@
 				2DC657F9274A7C4600583E14 /* RenamePlaylistViewController.h in Headers */,
 				2DC6583E274C361C00583E14 /* HolderWidget.h in Headers */,
 				2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
+				2DC6C5E2294CE06B00A63CEB /* ChiptuneVoicesWidget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14214,6 +14243,7 @@
 				2DC657F1274A7A6900583E14 /* PlaylistContextMenu.h in Headers */,
 				2D98B698273482BA00E655AE /* AAPLNSView.h in Headers */,
 				2DC657EA274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */,
+				2DC6C5F8294CE14B00A63CEB /* ChiptuneVoicesViewController.h in Headers */,
 				2DA273892406FBD800FB9BE1 /* DspPreferencesViewController.h in Headers */,
 				2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
 				2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */,
@@ -14318,6 +14348,7 @@
 				0D56856C272197B30026F700 /* scope.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
 				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
+				2DC6C5E1294CE06B00A63CEB /* ChiptuneVoicesWidget.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16191,6 +16222,7 @@
 				2DC657FC274A7C4600583E14 /* RenamePlaylistViewController.xib in Resources */,
 				2DB05FFD252E53220090635E /* iconGUISettingsTemplate.pdf in Resources */,
 				2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */,
+				2DC6C5FC294CE14B00A63CEB /* ChiptuneVoicesViewController.xib in Resources */,
 				2DBF3D40270868D400023138 /* MainContentViewController.xib in Resources */,
 				2D828E5419E5679800EE874F /* Search.xib in Resources */,
 				2D3EBD9D1A9379BD00E5E255 /* Preferences.xib in Resources */,
@@ -16354,6 +16386,7 @@
 				2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */,
 				2D01D7D71AB2219C00BCD3C4 /* handler.c in Sources */,
 				2DC657FB274A7C4600583E14 /* RenamePlaylistViewController.m in Sources */,
+				2DC6C5E4294CE06B00A63CEB /* ChiptuneVoicesWidget.m in Sources */,
 				2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */,
 				2DAE701A25BDDC3300E40154 /* deletefromdisk.c in Sources */,
 				2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */,
@@ -16401,6 +16434,7 @@
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
+				2DC6C5FB294CE14B00A63CEB /* ChiptuneVoicesViewController.m in Sources */,
 				2D98B68E272D573700E655AE /* ScopeSettings.m in Sources */,
 				2D5F05F325E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
@@ -17762,6 +17796,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
+				2DC6C5FA294CE14B00A63CEB /* ChiptuneVoicesViewController.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
 				2D7C1FAE2946001B00163538 /* ShaderRenderer.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
@@ -17839,6 +17874,7 @@
 				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				2DC657C12746F67600583E14 /* RenameTabViewController.m in Sources */,
+				2DC6C5E3294CE06B00A63CEB /* ChiptuneVoicesWidget.m in Sources */,
 				2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */,
 				2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */,
 				2DA8912325FFEB9B0084860D /* PlaylistGroup.m in Sources */,
