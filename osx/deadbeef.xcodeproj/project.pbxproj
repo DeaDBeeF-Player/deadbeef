@@ -1502,7 +1502,7 @@
 		2D7C38281B2C407C0029DE0A /* libvorbislib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */; };
 		2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D62C0C51E4C9ACA005F9482 /* streamreader.c */; };
 		2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DC96E6D1E4CC9670093CFD3 /* dsp.c */; };
-		2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F38021B2858AC00692A7B /* JunklibTests.m */; };
+		2D7F38031B2858AC00692A7B /* JunklibTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F38021B2858AC00692A7B /* JunklibTests.cpp */; };
 		2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8030CC24B261A400539F9F /* MediaLibraryItem.h */; };
 		2D828E5419E5679800EE874F /* Search.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D828E5319E5679800EE874F /* Search.xib */; };
 		2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D828E5919E56B4D00EE874F /* SearchViewController.h */; };
@@ -2425,6 +2425,9 @@
 		2DC6C5FA294CE14B00A63CEB /* ChiptuneVoicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C5F6294CE14B00A63CEB /* ChiptuneVoicesViewController.m */; };
 		2DC6C5FB294CE14B00A63CEB /* ChiptuneVoicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C5F6294CE14B00A63CEB /* ChiptuneVoicesViewController.m */; };
 		2DC6C5FC294CE14B00A63CEB /* ChiptuneVoicesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC6C5F7294CE14B00A63CEB /* ChiptuneVoicesViewController.xib */; };
+		2DC6C61E294DE60400A63CEB /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C61D294DE60400A63CEB /* gtest-all.cc */; };
+		2DC6C621294DE70F00A63CEB /* GTMGoogleTestRunner.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C620294DE70E00A63CEB /* GTMGoogleTestRunner.mm */; };
+		2DC6C624294DE72D00A63CEB /* libgoogletest.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC6C609294DE5C700A63CEB /* libgoogletest.dylib */; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -4015,6 +4018,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 4D9C5AEE1FDEBAAE00D83CEF;
 			remoteInfo = opus;
+		};
+		2DC6C622294DE72300A63CEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DC6C608294DE5C700A63CEB;
+			remoteInfo = googletest;
 		};
 		2DC8263C24A7432700DB756B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5949,7 +5959,7 @@
 		2D7C1FD62946392F00163538 /* SpectrumShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumShaderTypes.h; sourceTree = "<group>"; };
 		2D7C37EC1B2C40520029DE0A /* libogglib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libogglib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libvorbislib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D7F38021B2858AC00692A7B /* JunklibTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JunklibTests.m; sourceTree = "<group>"; };
+		2D7F38021B2858AC00692A7B /* JunklibTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JunklibTests.cpp; sourceTree = "<group>"; };
 		2D8030CC24B261A400539F9F /* MediaLibraryItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaLibraryItem.h; sourceTree = "<group>"; };
 		2D828E5319E5679800EE874F /* Search.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Search.xib; sourceTree = "<group>"; };
 		2D828E5919E56B4D00EE874F /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
@@ -6768,6 +6778,9 @@
 		2DC6C5F5294CE14B00A63CEB /* ChiptuneVoicesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChiptuneVoicesViewController.h; sourceTree = "<group>"; };
 		2DC6C5F6294CE14B00A63CEB /* ChiptuneVoicesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChiptuneVoicesViewController.m; sourceTree = "<group>"; };
 		2DC6C5F7294CE14B00A63CEB /* ChiptuneVoicesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChiptuneVoicesViewController.xib; sourceTree = "<group>"; };
+		2DC6C609294DE5C700A63CEB /* libgoogletest.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgoogletest.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DC6C61D294DE60400A63CEB /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "gtest-all.cc"; path = "../external/googletest/googletest/src/gtest-all.cc"; sourceTree = "<group>"; };
+		2DC6C620294DE70E00A63CEB /* GTMGoogleTestRunner.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GTMGoogleTestRunner.mm; sourceTree = "<group>"; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
@@ -7777,6 +7790,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DC6C624294DE72D00A63CEB /* libgoogletest.dylib in Frameworks */,
 				2D6E2CFC26AC1617008FCD4B /* Accelerate.framework in Frameworks */,
 				2DAA4071269B63B5006D2754 /* libjansson.dylib in Frameworks */,
 				2D01D7ED1AB2222400BCD3C4 /* libddbcore.a in Frameworks */,
@@ -7818,6 +7832,13 @@
 				2DC6573C274428F200583E14 /* CoreAudio.framework in Frameworks */,
 				2DC6573D274428F200583E14 /* AudioUnit.framework in Frameworks */,
 				2DC6573E274428F200583E14 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC6C607294DE5C700A63CEB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11193,6 +11214,7 @@
 		2DAA4C091AAF88DE00519559 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				2DC6C61F294DE6F300A63CEB /* GoogleTestRunner */,
 				4D9272CF214156E300E7B4D0 /* PresetManagerData */,
 				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
 				2D7492861CCFFE7700D3A59E /* TestData */,
@@ -11204,7 +11226,7 @@
 				2DA66ECA1EDF4F2C00E20989 /* fakeout.h */,
 				4D0B0CED20162D95004162DA /* FormatConversionTests.m */,
 				2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.m */,
-				2D7F38021B2858AC00692A7B /* JunklibTests.m */,
+				2D7F38021B2858AC00692A7B /* JunklibTests.cpp */,
 				2DA59D9025D00A8E00947C19 /* M3UTests.m */,
 				2DAA405A269B6308006D2754 /* MediaLibTests.m */,
 				4D6CF18C20EB788A00811034 /* MP3DecoderTests.m */,
@@ -11357,6 +11379,22 @@
 				2DC6C5F7294CE14B00A63CEB /* ChiptuneVoicesViewController.xib */,
 			);
 			path = ChiptuneVoices;
+			sourceTree = "<group>";
+		};
+		2DC6C61C294DE5DD00A63CEB /* GoogleTest */ = {
+			isa = PBXGroup;
+			children = (
+				2DC6C61D294DE60400A63CEB /* gtest-all.cc */,
+			);
+			name = GoogleTest;
+			sourceTree = "<group>";
+		};
+		2DC6C61F294DE6F300A63CEB /* GoogleTestRunner */ = {
+			isa = PBXGroup;
+			children = (
+				2DC6C620294DE70E00A63CEB /* GTMGoogleTestRunner.mm */,
+			);
+			path = GoogleTestRunner;
 			sourceTree = "<group>";
 		};
 		2DCB281819E8616E008E9DF6 /* m3u */ = {
@@ -11906,6 +11944,7 @@
 				4D1B514C1837EF7C003E6066 /* plugins */,
 				4D1B3EB31837EC44003E6066 /* deadbeef */,
 				2DAA4C091AAF88DE00519559 /* Tests */,
+				2DC6C61C294DE5DD00A63CEB /* GoogleTest */,
 				2D0AC90D2856450200F6D56A /* Integration Tests */,
 				4D1B3E7C18379829003E6066 /* Frameworks */,
 				4D1B3E7B18379829003E6066 /* Products */,
@@ -11989,6 +12028,7 @@
 				2DC6578C274428F200583E14 /* DeaDBeeF GTK2.app */,
 				2DE77467275E893400890350 /* converter_gtk3.dylib */,
 				2D0AC90C2856450100F6D56A /* Integration Tests.xctest */,
+				2DC6C609294DE5C700A63CEB /* libgoogletest.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -13860,6 +13900,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DC6C605294DE5C700A63CEB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DCB281219E86162008E9DF6 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -15204,6 +15251,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DC6C623294DE72300A63CEB /* PBXTargetDependency */,
 				2DAA406F269B6393006D2754 /* PBXTargetDependency */,
 				2DAA406D269B638D006D2754 /* PBXTargetDependency */,
 				4D6CF19020EB82B200811034 /* PBXTargetDependency */,
@@ -15327,6 +15375,23 @@
 			productName = deadbeef;
 			productReference = 2DC6578C274428F200583E14 /* DeaDBeeF GTK2.app */;
 			productType = "com.apple.product-type.application";
+		};
+		2DC6C608294DE5C700A63CEB /* googletest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DC6C61B294DE5C900A63CEB /* Build configuration list for PBXNativeTarget "googletest" */;
+			buildPhases = (
+				2DC6C605294DE5C700A63CEB /* Headers */,
+				2DC6C606294DE5C700A63CEB /* Sources */,
+				2DC6C607294DE5C700A63CEB /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = googletest;
+			productName = googletest;
+			productReference = 2DC6C609294DE5C700A63CEB /* libgoogletest.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		2DCB281319E86162008E9DF6 /* m3u */ = {
 			isa = PBXNativeTarget;
@@ -15849,6 +15914,9 @@
 						DevelopmentTeam = F69NGENSKX;
 						ProvisioningStyle = Automatic;
 					};
+					2DC6C608294DE5C700A63CEB = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					2DCB281319E86162008E9DF6 = {
 						CreatedOnToolsVersion = 6.0.1;
 					};
@@ -15964,6 +16032,7 @@
 				4D32F9E919A63441000FFDE0 /* ffap */,
 				2D026D881CAC5BBF00E27961 /* ffmpeg */,
 				2D2A135919B647CF00AD1EB7 /* gme */,
+				2DC6C608294DE5C700A63CEB /* googletest */,
 				2DE3B82F2269C9FB00AFF9AE /* hotkeys */,
 				2DA0ABE01AA71055007EDD43 /* in_sc68 */,
 				2D621FE71CD92FA400EB6D22 /* jpeg */,
@@ -17483,6 +17552,7 @@
 			files = (
 				2DA59DD125D00A9A00947C19 /* m3u.c in Sources */,
 				2D78C55427568B0800F96F9D /* medialibdb.c in Sources */,
+				2DC6C621294DE70F00A63CEB /* GTMGoogleTestRunner.mm in Sources */,
 				2DA59D9125D00A8E00947C19 /* M3UTests.m in Sources */,
 				2D78C55627568B0800F96F9D /* medialibcommon.c in Sources */,
 				2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.m in Sources */,
@@ -17512,7 +17582,7 @@
 				2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTests.m in Sources */,
 				2DBF3DC5270A101400023138 /* medialibstate.c in Sources */,
-				2D7F38031B2858AC00692A7B /* JunklibTests.m in Sources */,
+				2D7F38031B2858AC00692A7B /* JunklibTests.cpp in Sources */,
 				4D0B0CEE20162D95004162DA /* FormatConversionTests.m in Sources */,
 				2DA04EF223B6A81A0070AC01 /* ShellexecTests.m in Sources */,
 				4DC416FE2180919D0056133E /* PlaylistTests.m in Sources */,
@@ -17614,6 +17684,14 @@
 				2DC65734274428F200583E14 /* main.c in Sources */,
 				2DC65735274428F200583E14 /* plugins.c in Sources */,
 				2DC65736274428F200583E14 /* coreaudio.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DC6C606294DE5C700A63CEB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC6C61E294DE60400A63CEB /* gtest-all.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18931,6 +19009,11 @@
 			isa = PBXTargetDependency;
 			target = 4D9C5AEE1FDEBAAE00D83CEF /* opus */;
 			targetProxy = 2DC65732274428F200583E14 /* PBXContainerItemProxy */;
+		};
+		2DC6C623294DE72300A63CEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DC6C608294DE5C700A63CEB /* googletest */;
+			targetProxy = 2DC6C622294DE72300A63CEB /* PBXContainerItemProxy */;
 		};
 		2DC8263D24A7432700DB756B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -22185,6 +22268,7 @@
 		2DAA4C111AAF88DF00519559 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -22204,8 +22288,9 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 					"$(inherited)",
+					"$(SRCROOT)/deps/jansson-2.13.1/src",
+					"$(SRCROOT)/../external/googletest/googletest/include",
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22227,6 +22312,7 @@
 		2DAA4C121AAF88DF00519559 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -22246,8 +22332,9 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 					"$(inherited)",
+					"$(SRCROOT)/deps/jansson-2.13.1/src",
+					"$(SRCROOT)/../external/googletest/googletest/include",
 				);
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22575,6 +22662,72 @@
 				PUBLIC_HEADERS_FOLDER_PATH = "$(CONTENTS_FOLDER_PATH)/Headers/deadbeef";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		2DC6C60A294DE5C900A63CEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = F69NGENSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../external/googletest/googletest/include",
+					"$(SRCROOT)/../external/googletest/googletest/",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2DC6C60B294DE5C900A63CEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = F69NGENSKX;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../external/googletest/googletest/include",
+					"$(SRCROOT)/../external/googletest/googletest/",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -24637,6 +24790,15 @@
 			buildConfigurations = (
 				2DC6578A274428F200583E14 /* Debug */,
 				2DC6578B274428F200583E14 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DC6C61B294DE5C900A63CEB /* Build configuration list for PBXNativeTarget "googletest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DC6C60A294DE5C900A63CEB /* Debug */,
+				2DC6C60B294DE5C900A63CEB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

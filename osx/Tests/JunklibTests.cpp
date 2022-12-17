@@ -21,31 +21,25 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <Cocoa/Cocoa.h>
-#import <XCTest/XCTest.h>
 #include "ConvertUTF.h"
 #include "junklib.h"
+#include <gtest/gtest.h>
 
-@interface Junklib : XCTestCase
-
-@end
-
-@implementation Junklib
-
-- (void)setUp {
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-}
-
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
-}
-
-- (void)testConvertUTF16BEtoUTF8 {
-    extern ConversionResult
+extern "C" {
+    ConversionResult
     ConvertUTF16BEtoUTF8 (const UTF16** sourceStart, const UTF16* sourceEnd, UTF8** targetStart, UTF8* targetEnd, ConversionFlags flags);
 
+    ConversionResult
+    ConvertUTF8toUTF16BE (const UTF8** sourceStart, const UTF8* sourceEnd, UTF16** targetStart, UTF16* targetEnd, ConversionFlags flags);
+
+    void
+    _split_multivalue (char *text, size_t text_size);
+
+    int
+    junk_utf8_to_cp1252(const uint8_t *in, int inlen, uint8_t *out, int outlen);
+}
+
+TEST(JunklibTests, testConvertUTF16BEtoUTF8) {
     const char input[] = {0x04, 0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x00, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64};
     const char *pInput = input;
     size_t inlen = sizeof (input);
@@ -57,10 +51,10 @@
 
     *pOut = 0;
 
-    XCTAssert(result == conversionOK && !strcmp (output, "АБВГДabcd"), @"Pass");
+    EXPECT_TRUE(result == conversionOK && !strcmp (output, "АБВГДabcd"));
 }
 
-- (void)testConvertUTF16toUTF8 {
+TEST(JunklibTests, testConvertUTF16toUTF8) {
     const char input[] = {0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x04, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64, 0x00};
     const char *pInput = input;
     size_t inlen = sizeof (input);
@@ -72,13 +66,10 @@
 
     *pOut = 0;
 
-    XCTAssert(result == conversionOK && !strcmp (output, "АБВГДabcd"), @"Pass");
+    EXPECT_TRUE(result == conversionOK && !strcmp (output, "АБВГДabcd"));
 }
 
-- (void)testConvertUTF8toUTF16 {
-    extern ConversionResult
-    ConvertUTF8toUTF16BE (const UTF8** sourceStart, const UTF8* sourceEnd, UTF16** targetStart, UTF16* targetEnd, ConversionFlags flags);
-
+TEST(JunklibTests, testConvertUTF8toUTF16) {
     const char input[] = "АБВГДabcd";
     const char *pInput = input;
     size_t inlen = sizeof (input);
@@ -91,13 +82,11 @@
     *pOut = 0;
 
     const char utf16be_reference[] = {0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x04, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64, 0x00};
-    XCTAssert(result == conversionOK && !memcmp (output, utf16be_reference, sizeof (utf16be_reference)), @"Pass");
+    EXPECT_TRUE(result == conversionOK && !memcmp (output, utf16be_reference, sizeof (utf16be_reference)));
 }
 
 
-- (void)testConvertUTF8toUTF16BE {
-    extern ConversionResult
-    ConvertUTF8toUTF16BE (const UTF8** sourceStart, const UTF8* sourceEnd, UTF16** targetStart, UTF16* targetEnd, ConversionFlags flags);
+TEST(JunklibTests, testConvertUTF8toUTF16BE) {
 
     const char input[] = "АБВГДabcd";
     const char *pInput = input;
@@ -111,13 +100,10 @@
     *pOut = 0;
 
     const char utf16be_reference[] = {0x04, 0x10, 0x04, 0x11, 0x04, 0x12, 0x04, 0x13, 0x04, 0x14, 0x00, 0x61, 0x00, 0x62, 0x00, 0x63, 0x00, 0x64};
-    XCTAssert(result == conversionOK && !memcmp (output, utf16be_reference, sizeof (utf16be_reference)), @"Pass");
+    EXPECT_TRUE(result == conversionOK && !memcmp (output, utf16be_reference, sizeof (utf16be_reference)));
 }
 
-- (void)testConvertUTF8toCP1252 {
-    int
-    junk_utf8_to_cp1252(const uint8_t *in, int inlen, uint8_t *out, int outlen);
-
+TEST(JunklibTests, testConvertUTF8toCP1252) {
     const char input[] = "€ù‰•abcd";
     size_t inlen = sizeof (input)-1;
     char output[1024];
@@ -126,184 +112,179 @@
 
     int res = junk_utf8_to_cp1252((const uint8_t *)input, (int)inlen, (uint8_t *)output, (int)outlen);
 
-    const char cp1252_reference[] = { 0x80, 0xf9, 0x89, 0x95, 0x61, 0x62, 0x63, 0x64 };
-    XCTAssert(res == sizeof (cp1252_reference) && !memcmp (output, cp1252_reference, sizeof (cp1252_reference)), @"Pass");
+    const unsigned char cp1252_reference[] = { 0x80, 0xf9, 0x89, 0x95, 0x61, 0x62, 0x63, 0x64 };
+    EXPECT_TRUE(res == sizeof (cp1252_reference) && !memcmp (output, cp1252_reference, sizeof (cp1252_reference)));
 }
 
-void
-_split_multivalue (char *text, size_t text_size);
-
-- (void)testSplitMultivalue_IgnoresUnspacedSlash {
+TEST(JunklibTests, testSplitMultivalue_IgnoresUnspacedSlash) {
     char input[] = "Test/Value/With/Shashes";
     _split_multivalue(input, sizeof (input)-1);
 
-    XCTAssert(!strcmp (input, "Test/Value/With/Shashes"), @"Pass");
+    EXPECT_TRUE(!strcmp (input, "Test/Value/With/Shashes"));
 }
 
-- (void)testSplitMultivalue_SplitsOnSpacedSlash {
+TEST(JunklibTests, testSplitMultivalue_SplitsOnSpacedSlash) {
     char input[] = "Test / Value / With / Shashes";
     _split_multivalue(input, sizeof (input)-1);
 
-    XCTAssert(!strcmp (input, "Test\0\0\0Value\0\0\0With\0\0\0Shashes"), @"Pass");
+    EXPECT_TRUE(!strcmp (input, "Test\0\0\0Value\0\0\0With\0\0\0Shashes"));
 }
 
-- (void)testSplitMultivalue_IgnoreSpacedSlashBegin {
+TEST(JunklibTests, testSplitMultivalue_IgnoreSpacedSlashBegin) {
     char input[] = "/ Test";
     _split_multivalue(input, sizeof (input)-1);
 
-    XCTAssert(!strcmp (input, "/ Test"), @"Pass");
+    EXPECT_TRUE(!strcmp (input, "/ Test"));
 }
 
-- (void)testSplitMultivalue_IgnoreSpacedSlashEnd {
+TEST(JunklibTests, testSplitMultivalue_IgnoreSpacedSlashEnd) {
     char input[] = "Test /";
     _split_multivalue(input, sizeof (input)-1);
 
-    XCTAssert(!strcmp (input, "Test /"), @"Pass");
+    EXPECT_TRUE(!strcmp (input, "Test /"));
 }
 
-- (void)test_starsFromPopmRating_0_0 {
+TEST(JunklibTests, test_starsFromPopmRating_0_0) {
     unsigned stars = junk_stars_from_popm_rating (0);
-    XCTAssertEqual(stars, 0);
+    EXPECT_EQ(stars, 0);
 }
 
-- (void)test_starsFromPopmRating_1_1 {
+TEST(JunklibTests, test_starsFromPopmRating_1_1) {
     unsigned stars = junk_stars_from_popm_rating (1);
-    XCTAssertEqual(stars, 1);
+    EXPECT_EQ(stars, 1);
 }
 
-- (void)test_starsFromPopmRating_63_1 {
+TEST(JunklibTests, test_starsFromPopmRating_63_1) {
     unsigned stars = junk_stars_from_popm_rating (63);
-    XCTAssertEqual(stars, 1);
+    EXPECT_EQ(stars, 1);
 }
 
-- (void)test_starsFromPopmRating_64_2 {
+TEST(JunklibTests, test_starsFromPopmRating_64_2) {
     unsigned stars = junk_stars_from_popm_rating (64);
-    XCTAssertEqual(stars, 2);
+    EXPECT_EQ(stars, 2);
 }
 
-- (void)test_starsFromPopmRating_127_2 {
+TEST(JunklibTests, test_starsFromPopmRating_127_2) {
     unsigned stars = junk_stars_from_popm_rating (127);
-    XCTAssertEqual(stars, 2);
+    EXPECT_EQ(stars, 2);
 }
 
-- (void)test_starsFromPopmRating_128_3 {
+TEST(JunklibTests, test_starsFromPopmRating_128_3) {
     unsigned stars = junk_stars_from_popm_rating (128);
-    XCTAssertEqual(stars, 3);
+    EXPECT_EQ(stars, 3);
 }
 
-- (void)test_starsFromPopmRating_195_3 {
+TEST(JunklibTests, test_starsFromPopmRating_195_3) {
     unsigned stars = junk_stars_from_popm_rating (195);
-    XCTAssertEqual(stars, 3);
+    EXPECT_EQ(stars, 3);
 }
 
-- (void)test_starsFromPopmRating_196_4 {
+TEST(JunklibTests, test_starsFromPopmRating_196_4) {
     unsigned stars = junk_stars_from_popm_rating (196);
-    XCTAssertEqual(stars, 4);
+    EXPECT_EQ(stars, 4);
 }
 
-- (void)test_starsFromPopmRating_254_4 {
+TEST(JunklibTests, test_starsFromPopmRating_254_4) {
     unsigned stars = junk_stars_from_popm_rating (254);
-    XCTAssertEqual(stars, 4);
+    EXPECT_EQ(stars, 4);
 }
 
-- (void)test_starsFromPopmRating_255_5 {
+TEST(JunklibTests, test_starsFromPopmRating_255_5) {
     unsigned stars = junk_stars_from_popm_rating (255);
-    XCTAssertEqual(stars, 5);
+    EXPECT_EQ(stars, 5);
 }
 
-- (void)test_popmRatingFromStars_0_0 {
+TEST(JunklibTests, test_popmRatingFromStars_0_0) {
     uint8_t rating = junk_popm_rating_from_stars(0);
-    XCTAssertEqual(rating, 0);
+    EXPECT_EQ(rating, 0);
 }
 
-- (void)test_popmRatingFromStars_1_63 {
+TEST(JunklibTests, test_popmRatingFromStars_1_63) {
     uint8_t rating = junk_popm_rating_from_stars(1);
-    XCTAssertEqual(rating, 63);
+    EXPECT_EQ(rating, 63);
 }
 
-- (void)test_popmRatingFromStars_2_127 {
+TEST(JunklibTests, test_popmRatingFromStars_2_127) {
     uint8_t rating = junk_popm_rating_from_stars(2);
-    XCTAssertEqual(rating, 127);
+    EXPECT_EQ(rating, 127);
 }
 
-- (void)test_popmRatingFromStars_3_195 {
+TEST(JunklibTests, test_popmRatingFromStars_3_195) {
     uint8_t rating = junk_popm_rating_from_stars(3);
-    XCTAssertEqual(rating, 195);
+    EXPECT_EQ(rating, 195);
 }
 
-- (void)test_popmRatingFromStars_4_254 {
+TEST(JunklibTests, test_popmRatingFromStars_4_254) {
     uint8_t rating = junk_popm_rating_from_stars(4);
-    XCTAssertEqual(rating, 254);
+    EXPECT_EQ(rating, 254);
 }
 
-- (void)test_junkMakeTdrcString_fullInput_validOutput {
+TEST(JunklibTests, test_junkMakeTdrcString_fullInput_validOutput) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, 55);
 
-    XCTAssertTrue(!strcmp(buffer, "2022-11-07-T16:55"));
+    EXPECT_TRUE(!strcmp(buffer, "2022-11-07-T16:55"));
 }
 
-- (void)test_junkMakeTdrcString_invalidHours_noTimeInOutput {
+TEST(JunklibTests, test_junkMakeTdrcString_invalidHours_noTimeInOutput) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, -1, 55);
 
-    XCTAssertTrue(!strcmp(buffer, "2022-11-07"));
+    EXPECT_TRUE(!strcmp(buffer, "2022-11-07"));
 }
 
-- (void)test_junkMakeTdrcString_invalidMinutes_noTimeInOutput {
+TEST(JunklibTests, test_junkMakeTdrcString_invalidMinutes_noTimeInOutput) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, -1);
 
-    XCTAssertTrue(!strcmp(buffer, "2022-11-07"));
+    EXPECT_TRUE(!strcmp(buffer, "2022-11-07"));
 }
 
-- (void)test_junkMakeTdrcString_zeroMinutes_validOutputWithTime {
+TEST(JunklibTests, test_junkMakeTdrcString_zeroMinutes_validOutputWithTime) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, 00);
 
-    XCTAssertTrue(!strcmp(buffer, "2022-11-07-T16:00"));
+    EXPECT_TRUE(!strcmp(buffer, "2022-11-07-T16:00"));
 }
 
-- (void)test_junkMakeTdrcString_zeroHours_validOutputWithTime {
+TEST(JunklibTests, test_junkMakeTdrcString_zeroHours_validOutputWithTime) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 00, 55);
 
-    XCTAssertTrue(!strcmp(buffer, "2022-11-07-T00:55"));
+    EXPECT_TRUE(!strcmp(buffer, "2022-11-07-T00:55"));
 }
 
-- (void)test_junkMakeTdrcString_invalidDay_emptyOutput {
+TEST(JunklibTests, test_junkMakeTdrcString_invalidDay_emptyOutput) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, -1, 16, 55);
 
-    XCTAssertTrue(!strcmp(buffer, ""));
+    EXPECT_TRUE(!strcmp(buffer, ""));
 }
 
-- (void)test_junkMakeTdrcString_invalidMonth_emptyOutput {
+TEST(JunklibTests, test_junkMakeTdrcString_invalidMonth_emptyOutput) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 0, 7, 16, 55);
 
-    XCTAssertTrue(!strcmp(buffer, ""));
+    EXPECT_TRUE(!strcmp(buffer, ""));
 }
 
-- (void)test_junkMakeTdrcString_invalidYear_emptyOutput {
+TEST(JunklibTests, test_junkMakeTdrcString_invalidYear_emptyOutput) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 0, 11, 7, 16, 55);
 
-    XCTAssertTrue(!strcmp(buffer, ""));
+    EXPECT_TRUE(!strcmp(buffer, ""));
 }
 
-- (void)test_junkMakeTdrcString_bufferTooSmallForTime_outputClippedAtDateBoundary {
+TEST(JunklibTests, test_junkMakeTdrcString_bufferTooSmallForTime_outputClippedAtDateBoundary) {
     char buffer[12];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, 55);
 
-    XCTAssertTrue(!strcmp(buffer, "2022-11-07"));
+    EXPECT_TRUE(!strcmp(buffer, "2022-11-07"));
 }
 
-- (void)test_junkMakeTdrcString_bufferTooSmallForDate_outputEmpty {
+TEST(JunklibTests, test_junkMakeTdrcString_bufferTooSmallForDate_outputEmpty) {
     char buffer[5];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, 55);
 
-    XCTAssertTrue(!strcmp(buffer, ""));
+    EXPECT_TRUE(!strcmp(buffer, ""));
 }
-
-@end

@@ -7,3 +7,6 @@
 [submodule "external/apbuild"]
 	path = external/apbuild
 	url = https://github.com/DeaDBeeF-Player/apbuild.git
+[submodule "external/googletest"]
+	path = external/googletest
+	url = https://github.com/DeaDBeeF-Player/googletest.git
