@@ -19,9 +19,13 @@ CXX="${CXX:-clang++}"
 
 CFLAGS="-fblocks -O3 -D_FORTIFY_SOURCE=0 -D_GNU_SOURCE $INCLUDE -DHAVE_LOG2=1 -DDOCDIR=\"\" -DPREFIX=\"\" -DLIBDIR=\"\" -DVERSION=\"\" -DUSE_LIBMAD -DUSE_LIBMPG123 -DXCTEST -DGOOGLETEST_STATIC"
 
-rm $ORIGIN/$STATIC_DEPS/lib-x86-64/lib/*c++*.so*
+# hack: move c++ runtime out of the lib folder, to allow linking test runner to
+# the newer c++ runtime
 rm -rf "$BUILD"
 mkdir -p "$BUILD"
+
+mkdir -p "$BUILD/cpplibs"
+mv $ORIGIN/$STATIC_DEPS/lib-x86-64/lib/*c++*.so* "$BUILD/cpplibs/"
 
 for file in $TEST_C_SOURCES; do
     base=$(basename $file)
@@ -40,3 +44,6 @@ done
 
 $CXX $LDFLAGS $BUILD/*.o $LIBRARIES -o "$BUILD/runtests"
 "$BUILD/runtests"
+
+# restore cpp libs
+mv "$BUILD"/cpplibs/* $ORIGIN/$STATIC_DEPS/lib-x86-64/lib/
