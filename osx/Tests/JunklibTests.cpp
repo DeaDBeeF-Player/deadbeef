@@ -258,21 +258,21 @@ TEST(JunklibTests, test_junkMakeTdrcString_invalidDay_emptyOutput) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, -1, 16, 55);
 
-    EXPECT_TRUE(!strcmp(buffer, ""));
+    EXPECT_STREQ(buffer, "");
 }
 
 TEST(JunklibTests, test_junkMakeTdrcString_invalidMonth_emptyOutput) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 0, 7, 16, 55);
 
-    EXPECT_TRUE(!strcmp(buffer, ""));
+    EXPECT_STREQ(buffer, "");
 }
 
 TEST(JunklibTests, test_junkMakeTdrcString_invalidYear_emptyOutput) {
     char buffer[100];
     junk_make_tdrc_string(buffer, sizeof(buffer), 0, 11, 7, 16, 55);
 
-    EXPECT_TRUE(!strcmp(buffer, ""));
+    EXPECT_STREQ(buffer, "");
 }
 
 TEST(JunklibTests, test_junkMakeTdrcString_bufferTooSmallForTime_outputClippedAtDateBoundary) {
