@@ -1,6 +1,6 @@
 #!/bin/bash
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
-ORIGIN=`pwd | perl -ne 'chomp and print'`
+ORIGIN=$PWD
 STATIC_DEPS=static-deps
 AP=$ORIGIN/external/apbuild
 #ARCH=`uname -m | perl -ne 'chomp and print'`

@@ -56,6 +56,7 @@ TEST(CuesheetTests, test_BogusEmbeddedImageCueInSingleTrack_ReturnsSingleTrackWi
 
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
+    EXPECT_NE(it, nullptr);
     EXPECT_EQ(plt_get_item_count(plt, PL_MAIN), 1);
     EXPECT_EQ(strcmp (pl_find_meta (it, "title"), "TrackTitle2"), 0);
     EXPECT_EQ(strcmp (pl_find_meta (it, "track"), "2"), 0);

@@ -6,7 +6,7 @@
 //  Copyright © 2018 Oleksiy Yakovenko. All rights reserved.
 //
 
-#include "mp3parser.h"
+#include "../plugins/mp3/mp3parser.h"
 #include "../common.h"
 #include "vfs.h"
 #include <gtest/gtest.h>

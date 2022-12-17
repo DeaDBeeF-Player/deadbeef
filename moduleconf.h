@@ -9,3 +9,6 @@ PLUG(nullout)
 #ifdef HAVE_XGUI
 PLUG(xgui)
 #endif
+#ifdef GOOGLETEST_STATIC
+PLUG(mp3)
+#endif

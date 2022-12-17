@@ -8,7 +8,7 @@
 
 #include "deadbeef.h"
 #include "playlist.h"
-#include "shellexecutil.h"
+#include "../plugins/shellexec/shellexecutil.h"
 #include <gtest/gtest.h>
 
 TEST(ShellexecTests, test_EvalCommand_FilePathNoSpecialChars_OutputsDirectory) {

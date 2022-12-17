@@ -6,7 +6,7 @@
 //  Copyright © 2021 Oleksiy Yakovenko. All rights reserved.
 //
 
-#import "m3u.h"
+#import "../plugins/m3u/m3u.h"
 #include "../common.h"
 #include <gtest/gtest.h>
 

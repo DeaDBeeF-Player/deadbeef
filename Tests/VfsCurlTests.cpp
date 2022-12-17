@@ -6,7 +6,7 @@
 //  Copyright © 2019 Oleksiy Yakovenko. All rights reserved.
 //
 
-#include "vfs_curl.h"
+#include "../plugins/vfs_curl/vfs_curl.h"
 #include "plmeta.h"
 #include <gtest/gtest.h>
 
