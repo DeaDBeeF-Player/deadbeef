@@ -134,10 +134,10 @@ protected:
     }
     void TearDown() override {
         plt_set_curr(NULL);
+        _fakeout->stop ();
         streamer_free();
         deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
         thread_join (_mainloop_tid);
-        _fakeout->stop ();
         messagepump_free();
     }
     DB_output_t *_fakeout;

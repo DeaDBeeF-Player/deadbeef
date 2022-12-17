@@ -1,5 +1,7 @@
 #!/bin/sh
 
-docker build --progress plain -t deadbeef-clang-unittest-18.04 -f tools/docker/18.04/Dockerfile-unittest . || exit 1
+set -e
+
+docker build --progress plain -t deadbeef-clang-unittest-18.04 -f tools/docker/18.04/Dockerfile-unittest .
 mkdir -p docker-artifacts
-docker run --rm -v ${PWD}/docker-artifacts:/usr/src/deadbeef/portable deadbeef-clang-unittest-18.04 || exit 1
+docker run -i --rm -v ${PWD}/docker-artifacts:/usr/src/deadbeef/portable deadbeef-clang-unittest-18.04

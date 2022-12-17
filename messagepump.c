@@ -81,6 +81,7 @@ messagepump_free () {
     mutex_unlock (mutex);
     mutex_free (mutex);
     cond_free (cond);
+    mutex = 0;
 }
 
 static void
@@ -97,6 +98,11 @@ messagepump_reset (void) {
 
 int
 messagepump_push (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+#ifdef XCTEST
+    if (mutex == 0) {
+        return 0;
+    }
+#endif
     mutex_lock (mutex);
     if (!mfree) {
         mutex_unlock (mutex);
