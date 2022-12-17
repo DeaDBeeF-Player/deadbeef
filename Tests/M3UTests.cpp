@@ -7,7 +7,7 @@
 //
 
 #import "m3u.h"
-#include "../../common.h"
+#include "../common.h"
 #include <gtest/gtest.h>
 
 extern DB_functions_t *deadbeef;

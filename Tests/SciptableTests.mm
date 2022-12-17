@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #include "conf.h"
-#include "../../common.h"
-#include "../../logger.h"
+#include "../common.h"
+#include "../logger.h"
 #include "scriptable.h"
 #include "scriptable_dsp.h"
 #include "scriptable_encoder.h"

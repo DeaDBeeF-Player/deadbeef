@@ -11242,7 +11242,8 @@
 				2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.cpp */,
 				2D15721523785BD900985E47 /* VfsCurlTests.cpp */,
 			);
-			path = Tests;
+			name = Tests;
+			path = ../Tests;
 			sourceTree = "<group>";
 		};
 		2DAA4C0A1AAF88DE00519559 /* Supporting Files */ = {
@@ -22185,7 +22186,7 @@
 					"$(SRCROOT)/deps/jansson-2.13.1/src",
 					"$(SRCROOT)/../external/googletest/googletest/include",
 				);
-				INFOPLIST_FILE = Tests/Info.plist;
+				INFOPLIST_FILE = ../Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -22228,7 +22229,7 @@
 					"$(SRCROOT)/deps/jansson-2.13.1/src",
 					"$(SRCROOT)/../external/googletest/googletest/include",
 				);
-				INFOPLIST_FILE = Tests/Info.plist;
+				INFOPLIST_FILE = ../Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

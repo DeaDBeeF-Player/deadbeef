@@ -6,7 +6,7 @@
 //  Copyright © 2019 Oleksiy Yakovenko. All rights reserved.
 //
 
-#include "../../common.h"
+#include "../common.h"
 #include "deadbeef.h"
 #include "conf.h"
 #include "fakeout.h"

@@ -7,7 +7,7 @@
 //
 
 #include "deadbeef.h"
-#include "../../common.h"
+#include "../common.h"
 #include "playlist.h"
 #include <gtest/gtest.h>
 

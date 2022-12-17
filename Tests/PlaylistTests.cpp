@@ -7,7 +7,7 @@
 //
 
 #include "deadbeef.h"
-#include "../../common.h"
+#include "../common.h"
 #include "plmeta.h"
 #include "plugins.h"
 #include <gtest/gtest.h>

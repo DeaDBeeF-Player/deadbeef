@@ -25,7 +25,7 @@
 #include "playlist.h"
 #include "plugins.h"
 #include "conf.h"
-#include "../../common.h"
+#include "../common.h"
 #include "streamer.h"
 #include "threading.h"
 #include "messagepump.h"
