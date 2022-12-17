@@ -3,15 +3,6 @@ set -e
 case "$TRAVIS_OS_NAME" in
     linux)
         ls -l .
-        if [ ! -d static-deps ]; then
-            rm -rf static-deps
-            STATICDEPS_URL="http://sourceforge.net/projects/deadbeef/files/staticdeps/ddb-static-deps-latest.tar.bz2/download"
-            mkdir static-deps
-            echo "Downloading static deps..."
-            wget "$STATICDEPS_URL" -O ddb-static-deps.tar.bz2
-            echo "Unpacking static deps..."
-            tar jxf ddb-static-deps.tar.bz2 -C static-deps
-        fi
 #        echo "building for i686"
 #        ARCH=i686 ./scripts/static_build.sh
 #        ARCH=i686 ./scripts/portable_package_static.sh
