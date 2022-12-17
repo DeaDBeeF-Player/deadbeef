@@ -4,7 +4,7 @@ jobs:
   build_linux:
     name: CI for Linux
     runs-on: ubuntu-latest
-    container: ubuntu:16.04
+    container: ubuntu:14.04
     steps:
     - name: Install dependencies for Linux
       run: |
@@ -18,8 +18,6 @@ jobs:
         submodules: true
     - name: Fetch static-deps
       run: travis/download-linux-static-deps.sh
-    - name: Run Tests
-      run: scripts/test.sh
     - name: Build for Linux
       run: TRAVIS_OS_NAME=linux travis/build.sh
     - name: Upload for Linux
