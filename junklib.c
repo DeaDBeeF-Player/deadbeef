@@ -2736,6 +2736,7 @@ junk_id3v2_convert_23_to_24 (DB_id3v2_tag_t *tag23, DB_id3v2_tag_t *tag24) {
 void
 junk_make_tdrc_string(char *tdrc, size_t tdrc_size, int year, int month, int day, int hour, int minute) {
     if (year <= 0 || month <= 0 || day <= 0) {
+        tdrc[0] = 0;
         return;
     }
     int n = snprintf (tdrc, tdrc_size, "%04d-%02d-%02d", year, month, day);
