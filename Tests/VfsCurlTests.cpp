@@ -7,6 +7,7 @@
 //
 
 #include "../plugins/vfs_curl/vfs_curl.h"
+#include "messagepump.h"
 #include "plmeta.h"
 #include <gtest/gtest.h>
 
@@ -16,6 +17,7 @@ extern "C" DB_plugin_t *vfs_curl_load (DB_functions_t *api);
 class VfsCurlTests: public ::testing::Test {
 protected:
     void SetUp() override {
+        messagepump_init();
         vfs_curl_load (deadbeef);
 
         _file = (HTTP_FILE *)calloc (1, sizeof (HTTP_FILE));
@@ -23,6 +25,17 @@ protected:
     }
     void TearDown() override {
         vfs_curl_free_file(_file);
+        // drain
+        uint32_t msg;
+        uintptr_t ctx;
+        uint32_t p1;
+        uint32_t p2;
+        while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+            if (msg >= DB_EV_FIRST && ctx) {
+                messagepump_event_free ((ddb_event_t *)ctx);
+            }
+        }
+        messagepump_free();
     }
     HTTP_FILE *_file;
 };
