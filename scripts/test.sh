@@ -38,8 +38,8 @@ done
 
 for file in $GOOGLE_TEST_SOURCES $TEST_CPP_SOURCES; do
     base=$(basename $file)
-    echo $CXX -std=c++11 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
-    $CXX -std=c++11 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
+    echo $CXX -std=c++14 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
+    $CXX -std=c++14 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
 done
 
 $CXX $LDFLAGS $BUILD/*.o $LIBRARIES -o "$BUILD/runtests"
