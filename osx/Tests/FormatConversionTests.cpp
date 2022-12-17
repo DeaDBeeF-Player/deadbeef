@@ -21,27 +21,11 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <XCTest/XCTest.h>
 #include "deadbeef.h"
 #include "premix.h"
+#include <gtest/gtest.h>
 
-@interface FormatConversion : XCTestCase
-
-@end
-
-@implementation FormatConversion
-
-- (void)setUp {
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-}
-
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
-}
-
-- (void)testConvertFromStereoToBackLeftBackRight_AllSamplesDiscarded {
+TEST(FormatConversionTests, testConvertFromStereoToBackLeftBackRight_AllSamplesDiscarded) {
     int16_t samples[4] = { 0x1000, 0x2000, 0x3000, 0x4000 };
     int16_t outsamples[4] = { 0, 0, 0, 0 };
 
@@ -60,14 +44,14 @@
     };
 
     int res = pcm_convert (&inputfmt, (const char *)samples, &outputfmt, (char *)outsamples, sizeof (samples));
-    XCTAssert(res == 8, @"The result is %d", res);
-    XCTAssert(outsamples[0] == 0, @"sample0 is %d", outsamples[0]);
-    XCTAssert(outsamples[1] == 0, @"sample1 is %d", outsamples[1]);
-    XCTAssert(outsamples[2] == 0, @"sample2 is %d", outsamples[2]);
-    XCTAssert(outsamples[3] == 0, @"sample3 is %d", outsamples[3]);
+    EXPECT_TRUE(res == 8);
+    EXPECT_TRUE(outsamples[0] == 0);
+    EXPECT_TRUE(outsamples[1] == 0);
+    EXPECT_TRUE(outsamples[2] == 0);
+    EXPECT_TRUE(outsamples[3] == 0);
 }
 
-- (void)testConvertFromStereoToBackLeftFrontRight_LeftChannelDiscarded {
+TEST(FormatConversionTests, testConvertFromStereoToBackLeftFrontRight_LeftChannelDiscarded) {
     int16_t samples[4] = { 0x1000, 0x2000, 0x3000, 0x4000 };
     int16_t outsamples[4] = { 0, 0, 0, 0 };
 
@@ -86,11 +70,9 @@
     };
 
     int res = pcm_convert (&inputfmt, (const char *)samples, &outputfmt, (char *)outsamples, sizeof (samples));
-    XCTAssert(res == 8, @"The result is %d", res);
-    XCTAssert(outsamples[0] == 0, @"sample0 is %d", outsamples[0]);
-    XCTAssert(outsamples[1] == 0x2000, @"sample1 is %d", outsamples[1]);
-    XCTAssert(outsamples[2] == 0, @"sample2 is %d", outsamples[2]);
-    XCTAssert(outsamples[3] == 0x4000, @"sample3 is %d", outsamples[3]);
+    EXPECT_TRUE(res == 8);
+    EXPECT_TRUE(outsamples[0] == 0);
+    EXPECT_TRUE(outsamples[1] == 0x2000);
+    EXPECT_TRUE(outsamples[2] == 0);
+    EXPECT_TRUE(outsamples[3] == 0x4000);
 }
-
-@end

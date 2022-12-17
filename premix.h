@@ -30,8 +30,17 @@
 
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+#define restrict
+extern "C" {
+#endif
+
 // @returns number of output bytes
 int
 pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict input, const ddb_waveformat_t * restrict outputfmt, char * restrict output, int inputsize);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

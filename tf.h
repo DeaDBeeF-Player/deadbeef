@@ -24,6 +24,10 @@
 #ifndef __TF_H
 #define __TF_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // compile the input title formatting string into bytecode
 // script: freeform string with title formatting special characters in it
 // returns the pointer to compiled bytecode, which must be tf_free'd by the caller.
@@ -45,5 +49,9 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen);
 // convert legacy title formatting to the new format, usable with tf_compile
 void
 tf_import_legacy (const char *fmt, char *out, int outsize);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __TF_H

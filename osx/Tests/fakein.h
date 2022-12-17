@@ -24,8 +24,16 @@
 #ifndef fakein_h
 #define fakein_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // amount of sleep (µsec) on each read, for simulating slow streaming
 void
 fakein_set_sleep (int sleep);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* fakein_h */

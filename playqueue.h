@@ -30,6 +30,10 @@
 
 #include "playlist.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int
 playqueue_push (playItem_t *it);
 
@@ -59,5 +63,9 @@ playqueue_remove_nth (int n);
 
 void
 playqueue_insert_at (int n, playItem_t *it);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* defined(__deadbeef__playqueue__) */

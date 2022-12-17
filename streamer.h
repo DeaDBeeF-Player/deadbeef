@@ -30,6 +30,10 @@
 #include "playlist.h"
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // events to pass to streamer thread
 enum {
     STR_EV_PLAY_TRACK_IDX, // p1 = idx, or -1 to stop
@@ -182,5 +186,9 @@ streamer_set_output (DB_output_t *output);
 
 void
 streamer_notify_track_deleted (void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __STREAMER_H

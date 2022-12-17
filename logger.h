@@ -26,6 +26,10 @@
 
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int
 ddb_logger_init (void);
 
@@ -52,5 +56,9 @@ ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, 
 
 void
 ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* logger_h */

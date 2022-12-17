@@ -29,6 +29,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 intptr_t
 thread_start (void (*fn)(void *ctx), void *ctx);
 
@@ -73,6 +77,10 @@ cond_signal (uintptr_t cond);
 
 int
 cond_broadcast (uintptr_t cond);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

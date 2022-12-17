@@ -1,6 +1,10 @@
 #ifndef scriptable_h
 #define scriptable_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct scriptableKeyValue_s {
     struct scriptableKeyValue_s *next;
     char *key;
@@ -156,5 +160,8 @@ scriptableFree (void);
 scriptableItem_t *
 scriptableRoot (void);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* scriptable_h */

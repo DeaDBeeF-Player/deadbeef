@@ -26,6 +26,10 @@
 
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // how much bigger should read-buffer be to allow upsampling.
 // e.g. 8000Hz -> 192000Hz upsampling requires 24x buffer size,
 // so if we originally request 4096 bytes blocks -
@@ -68,5 +72,9 @@ dsp_get_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt);
 
 int
 dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, int inputsize, int output_samplerate, char **out_bytes, int *out_numbytes);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* dsp_h */

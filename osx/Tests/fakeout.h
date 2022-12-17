@@ -24,6 +24,10 @@
 #ifndef fakeout_h
 #define fakeout_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void
 fakeout_set_manual (int manual);
 
@@ -32,5 +36,9 @@ fakeout_consume (int nbytes);
 
 void
 fakeout_set_realtime (int realtime);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* fakeout_h */

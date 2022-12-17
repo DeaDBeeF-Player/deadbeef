@@ -11,6 +11,10 @@
 
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     size_t size;
     size_t avail;
@@ -38,5 +42,9 @@ growableBufferAdvanceBy (growableBuffer_t *buffer, size_t size);
 
 void
 growableBufferPrintf (growableBuffer_t *buffer, const char *fmt, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* growableBuffer_h */

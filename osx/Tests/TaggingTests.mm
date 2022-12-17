@@ -21,36 +21,36 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <Cocoa/Cocoa.h>
-#import <XCTest/XCTest.h>
+#import <Foundation/Foundation.h>
 #include "plmeta.h"
 #include "junklib.h"
 #include "vfs.h"
 #include "../../common.h"
 #include "tf.h"
+#include <gtest/gtest.h>
+
+#define EXPECT_EQ_WITH_ACCURACY(a,b,accuracy) EXPECT_LT(std::abs(a-b), accuracy)
 
 #define TESTFILE "/tmp/ddb_test.mp3"
 
-@interface Tagging : XCTestCase {
+static void
+copy_file(const char *from, const char *to) {
+    // FIXME: make portable
+    [NSFileManager.defaultManager copyItemAtPath:[NSString stringWithUTF8String:from] toPath:[NSString stringWithUTF8String:to] error:nil];
+}
+
+class TaggingTests: public ::testing::Test {
+protected:
+    void SetUp() override {
+        it = pl_item_alloc_init (TESTFILE, "stdmpg");
+    }
+    void TearDown() override {
+        pl_item_unref (it);
+    }
     playItem_t *it;
-}
-@end
+};
 
-@implementation Tagging
-
-- (void)setUp {
-    [super setUp];
-
-    it = pl_item_alloc_init (TESTFILE, "stdmpg");
-}
-
-- (void)tearDown {
-    pl_item_unref (it);
-
-    [super tearDown];
-}
-
-- (void)test_loadTestfileTags_DoesntCrash {
+TEST_F(TaggingTests, test_loadTestfileTags_DoesntCrash) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -58,7 +58,7 @@
     vfs_fclose (fp);
 }
 
-- (void)test_ReadID3v24MultiValueTPE1_ReadsAs3Values {
+TEST_F(TaggingTests, test_ReadID3v24MultiValueTPE1_ReadsAs3Values) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tpe1_multivalue_id3v2.4.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -66,14 +66,14 @@
     vfs_fclose (fp);
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
-    XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Value1"), @"Got value: %s", meta->value);
+    EXPECT_TRUE(meta);
+    EXPECT_TRUE(!strcmp (meta->value, "Value1"));
 
     const char refdata[] = "Value1\0Value2\0Value3\0";
-    XCTAssert(sizeof (refdata)-1 == meta->valuesize && !memcmp (meta->value, refdata, meta->valuesize), @"Got value: %s", meta->value);
+    EXPECT_TRUE(sizeof (refdata)-1 == meta->valuesize && !memcmp (meta->value, refdata, meta->valuesize));
 }
 
-- (void)test_ReadID3v23MultiValueTPE1_ReadsAs3Values {
+TEST_F(TaggingTests, test_ReadID3v23MultiValueTPE1_ReadsAs3Values) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tpe1_multivalue_id3v2.3.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -81,14 +81,14 @@
     vfs_fclose (fp);
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
-    XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Value1"), @"Got value: %s", meta->value);
+    EXPECT_TRUE(meta);
+    EXPECT_TRUE(!strcmp (meta->value, "Value1"));
 
     const char refdata[] = "Value1\0Value2\0Value3\0";
-    XCTAssert(sizeof (refdata)-1 == meta->valuesize && !memcmp (meta->value, refdata, meta->valuesize), @"Got value: %s", meta->value);
+    EXPECT_TRUE(sizeof (refdata)-1 == meta->valuesize && !memcmp (meta->value, refdata, meta->valuesize));
 }
 
-- (void)test_ReadID3v2MultiLineTPE1_ReadsAs1Value {
+TEST_F(TaggingTests, test_ReadID3v2MultiLineTPE1_ReadsAs1Value) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tpe1_multiline.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -96,12 +96,12 @@
     vfs_fclose (fp);
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
-    XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Line1\r\nLine2\r\nLine3"), @"Actual value: %s", meta->value);
-    XCTAssert(strlen (meta->value) + 1 == meta->valuesize, @"Pass");
+    EXPECT_TRUE(meta);
+    EXPECT_TRUE(!strcmp (meta->value, "Line1\r\nLine2\r\nLine3"));
+    EXPECT_TRUE(strlen (meta->value) + 1 == meta->valuesize);
 }
 
-- (void)test_ReadAPEv2MultiValueArtist_ReadsAs3Values {
+TEST_F(TaggingTests, test_ReadAPEv2MultiValueArtist_ReadsAs3Values) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/artist_multivalue_apev2.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -109,14 +109,14 @@
     vfs_fclose (fp);
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
-    XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Value1"), @"Got value: %s", meta->value);
+    EXPECT_TRUE(meta);
+    EXPECT_TRUE(!strcmp (meta->value, "Value1"));
 
     const char refdata[] = "Value1\0Value2\0Value3\0";
-    XCTAssert(sizeof (refdata)-1 == meta->valuesize && !memcmp (meta->value, refdata, meta->valuesize), @"Got value: %s", meta->value);
+    EXPECT_TRUE(sizeof (refdata)-1 == meta->valuesize && !memcmp (meta->value, refdata, meta->valuesize));
 }
 
-- (void)test_ReadAPEv2MultiLineArtist_ReadsAs1Value {
+TEST_F(TaggingTests, test_ReadAPEv2MultiLineArtist_ReadsAs1Value) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/artist_multiline_apev2.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -124,17 +124,17 @@
     vfs_fclose (fp);
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "artist");
-    XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Line1\r\nLine2\r\nLine3"), @"Actual value: %s", meta->value);
-    XCTAssert(strlen (meta->value) + 1 == meta->valuesize, @"Pass");
+    EXPECT_TRUE(meta);
+    EXPECT_TRUE(!strcmp (meta->value, "Line1\r\nLine2\r\nLine3"));
+    EXPECT_TRUE(strlen (meta->value) + 1 == meta->valuesize);
 }
 
-- (void)test_WriteID3v2MultiLineArtist_MatchingBinaryReference {
+TEST_F(TaggingTests, test_WriteID3v2MultiLineArtist_MatchingBinaryReference) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
 
     pl_append_meta (it, "artist", "Line1\nLine2\nLine3");
-    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    copy_file(path, TESTFILE);
     junk_rewrite_tags(it, JUNK_WRITE_ID3V2, 3, NULL);
 
     DB_FILE *fp = vfs_fopen (TESTFILE);
@@ -146,15 +146,15 @@
 
     DB_id3v2_frame_t *tpe1 = id3v2.frames;
 
-    XCTAssert (!strcmp (tpe1->id, "TPE1"), @"Unexpected frame: %s", tpe1->id);
+    EXPECT_TRUE(!strcmp (tpe1->id, "TPE1"));
 
     const char refdata[] = "\0Line1\nLine2\nLine3";
-    XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+    EXPECT_TRUE(!memcmp (tpe1->data, refdata, sizeof (refdata)-1));
 
     junk_id3v2_free (&id3v2);
 }
 
-- (void)test_WriteID3v23MultiValueArtist_MatchingBinaryReference {
+TEST_F(TaggingTests, test_WriteID3v23MultiValueArtist_MatchingBinaryReference) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
 
@@ -162,7 +162,7 @@
     pl_append_meta (it, "artist", "Value2");
     pl_append_meta (it, "artist", "Value3");
 
-    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    copy_file(path, TESTFILE);
     junk_rewrite_tags(it, JUNK_WRITE_ID3V2, 3, NULL);
 
     DB_FILE *fp = vfs_fopen (TESTFILE);
@@ -174,15 +174,15 @@
 
     DB_id3v2_frame_t *tpe1 = id3v2.frames;
 
-    XCTAssert (!strcmp (tpe1->id, "TPE1"), @"Unexpected frame: %s", tpe1->id);
+    EXPECT_TRUE(!strcmp (tpe1->id, "TPE1"));
 
     const char refdata[] = "\0Value1 / Value2 / Value3";
-    XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+    EXPECT_TRUE(!memcmp (tpe1->data, refdata, sizeof (refdata)-1));
 
     junk_id3v2_free (&id3v2);
 }
 
-- (void)test_WriteID3v24MultiValueArtist_MatchingBinaryReference {
+TEST_F(TaggingTests, test_WriteID3v24MultiValueArtist_MatchingBinaryReference) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
 
@@ -190,7 +190,7 @@
     pl_append_meta (it, "artist", "Value2");
     pl_append_meta (it, "artist", "Value3");
 
-    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    copy_file(path, TESTFILE);
     junk_rewrite_tags(it, JUNK_WRITE_ID3V2, 4, NULL);
 
     DB_FILE *fp = vfs_fopen (TESTFILE);
@@ -202,20 +202,20 @@
 
     DB_id3v2_frame_t *tpe1 = id3v2.frames;
 
-    XCTAssert (!strcmp (tpe1->id, "TPE1"), @"Unexpected frame: %s", tpe1->id);
+    EXPECT_TRUE(!strcmp (tpe1->id, "TPE1"));
 
     const char refdata[] = "\x03Value1\0Value2\0Value3";
-    XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+    EXPECT_TRUE(!memcmp (tpe1->data, refdata, sizeof (refdata)-1));
 
     junk_id3v2_free (&id3v2);
 }
 
-- (void)test_WriteAPEv2MultiLineArtist_MatchingBinaryReference {
+TEST_F(TaggingTests, test_WriteAPEv2MultiLineArtist_MatchingBinaryReference) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
 
     pl_append_meta (it, "artist", "Line1\nLine2\nLine3");
-    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    copy_file(path, TESTFILE);
     junk_rewrite_tags(it, JUNK_WRITE_APEV2, 3, NULL);
 
     DB_FILE *fp = vfs_fopen (TESTFILE);
@@ -227,15 +227,15 @@
 
     DB_apev2_frame_t *artist = apev2.frames;
 
-    XCTAssert (!strcasecmp (artist->key, "artist"), @"Unexpected frame: %s", artist->key);
+    EXPECT_TRUE(!strcasecmp (artist->key, "artist"));
 
     const char refdata[] = "Line1\nLine2\nLine3";
-    XCTAssert (!memcmp (artist->data, refdata, sizeof (refdata)-1), @"ARTIST frame contents don't match reference");
+    EXPECT_TRUE(!memcmp (artist->data, refdata, sizeof (refdata)-1));
 
     junk_apev2_free (&apev2);
 }
 
-- (void)test_WriteAPEv2MultiValueArtist_MatchingBinaryReference {
+TEST_F(TaggingTests, test_WriteAPEv2MultiValueArtist_MatchingBinaryReference) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
 
@@ -243,7 +243,7 @@
     pl_append_meta (it, "artist", "Value2");
     pl_append_meta (it, "artist", "Value3");
 
-    [[NSFileManager defaultManager] copyItemAtPath:[NSString stringWithUTF8String:path] toPath:@TESTFILE error:nil];
+    copy_file(path, TESTFILE);
     junk_rewrite_tags(it, JUNK_WRITE_APEV2, 3, NULL);
 
     DB_FILE *fp = vfs_fopen (TESTFILE);
@@ -255,15 +255,15 @@
 
     DB_apev2_frame_t *artist = apev2.frames;
 
-    XCTAssert (!strcasecmp (artist->key, "artist"), @"Unexpected frame: %s", artist->key);
+    EXPECT_TRUE(!strcasecmp (artist->key, "artist"));
 
     const char refdata[] = "Value1\0Value2\0Value3";
-    XCTAssert (!memcmp (artist->data, refdata, sizeof (refdata)-1), @"ARTIST frame contents don't match reference");
+    EXPECT_TRUE(!memcmp (artist->data, refdata, sizeof (refdata)-1));
 
     junk_apev2_free (&apev2);
 }
 
-- (void)test_ReadID3v2WithNonprintableChars_MatchingBinaryReference {
+TEST_F(TaggingTests, test_ReadID3v2WithNonprintableChars_MatchingBinaryReference) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tpe1_nonprintable_id3v2.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -272,7 +272,7 @@
     junk_id3v2_read_full (NULL, &id3v2, fp);
     vfs_fclose (fp);
 
-    const char refdata[] = {
+    const unsigned char refdata[] = {
         0x01, 0xff, 0xfe, 0x4c,
         0x00, 0x69, 0x00, 0x6e, 0x00, 0x65, 0x00, 0x31, 0x00, 0x01, 0x00, 0x02,
         0x00, 0x03, 0x00, 0x04, 0x00, 0x05, 0x00, 0x06, 0x00, 0x07, 0x00, 0x08,
@@ -285,13 +285,13 @@
     };
 
     DB_id3v2_frame_t *tpe1 = id3v2.frames;
-    XCTAssert (!strcmp (tpe1->id, "TPE1"), @"Unexpected frame: %s", tpe1->id);
-    XCTAssert (!memcmp (tpe1->data, refdata, sizeof (refdata)-1), @"TPE1 frame contents don't match reference");
+    EXPECT_TRUE(!strcmp (tpe1->id, "TPE1"));
+    EXPECT_TRUE(!memcmp (tpe1->data, refdata, sizeof (refdata)-1));
 
     junk_id3v2_free (&id3v2);
 }
 
-- (void)test_ReadID3v2WithNonprintableChars_TFReplacesNonprintableWithUnderscores {
+TEST_F(TaggingTests, test_ReadID3v2WithNonprintableChars_TFReplacesNonprintableWithUnderscores) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tpe1_nonprintable_id3v2.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -310,10 +310,10 @@
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
 
-    XCTAssert (!strcmp (buffer, "Line1________________________________Line2__Line3"), @"Unexpected data: %s", buffer);
+    EXPECT_TRUE(!strcmp (buffer, "Line1________________________________Line2__Line3"));
 }
 
-- (void)test_ReadID3v2COMM_ObtainsTheData {
+TEST_F(TaggingTests, test_ReadID3v2COMM_ObtainsTheData) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/comm_id3v2.3.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -321,12 +321,12 @@
     vfs_fclose (fp);
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "comment");
-    XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."), @"Actual value: %s", meta->value);
-    XCTAssert(strlen (meta->value) + 1 == meta->valuesize, @"Pass");
+    EXPECT_TRUE(meta);
+    EXPECT_TRUE(!strcmp (meta->value, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."));
+    EXPECT_TRUE(strlen (meta->value) + 1 == meta->valuesize);
 }
 
-- (void)test_ReadID3v2TXXX_ObtainsTheData {
+TEST_F(TaggingTests, test_ReadID3v2TXXX_ObtainsTheData) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/txxx_album_artist_id3v2.3.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -334,12 +334,12 @@
     vfs_fclose (fp);
 
     DB_metaInfo_t *meta = pl_meta_for_key (it, "album artist");
-    XCTAssert(meta, @"Pass");
-    XCTAssert(!strcmp (meta->value, "Artist From ID3v2.3 Test File txxx_album_artist_id3v2.3"), @"Actual value: %s", meta->value);
-    XCTAssert(strlen (meta->value) + 1 == meta->valuesize, @"Pass");
+    EXPECT_TRUE(meta);
+    EXPECT_TRUE(!strcmp (meta->value, "Artist From ID3v2.3 Test File txxx_album_artist_id3v2.3"));
+    EXPECT_TRUE(strlen (meta->value) + 1 == meta->valuesize);
 }
 
-- (void)test_ReadID3v23TRCK_ReadsAsTrackNumAndTrackTotal {
+TEST_F(TaggingTests, test_ReadID3v23TRCK_ReadsAsTrackNumAndTrackTotal) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/trck_num_with_total_id3v2.3.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
@@ -357,43 +357,43 @@
     tf_eval (&ctx, bc, buffer, sizeof (buffer));
     tf_free (bc);
 
-    XCTAssert(!strcmp (buffer, "track:10 total:11"), @"Got value: %s", buffer);
+    EXPECT_TRUE(!strcmp (buffer, "track:10 total:11"));
 }
 
-- (void)test_ShortMP3WithId3v1_TailIs128Bytes {
+TEST_F(TaggingTests, test_ShortMP3WithId3v1_TailIs128Bytes) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tone1sec_id3v1.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
     uint32_t head, tail;
     junk_get_tag_offsets(fp, &head, &tail);
     vfs_fclose (fp);
-    XCTAssert(head == 0);
-    XCTAssert(tail == 128);
+    EXPECT_TRUE(head == 0);
+    EXPECT_TRUE(tail == 128);
 }
 
-- (void)test_ShortMP3WithApev2_TailIs52Bytes {
+TEST_F(TaggingTests, test_ShortMP3WithApev2_TailIs52Bytes) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tone1sec_apev2.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
     uint32_t head, tail;
     junk_get_tag_offsets(fp, &head, &tail);
     vfs_fclose (fp);
-    XCTAssert(head == 0);
-    XCTAssert(tail == 52);
+    EXPECT_TRUE(head == 0);
+    EXPECT_TRUE(tail == 52);
 }
 
-- (void)test_ShortMP3WithApev2AndId3v1_TailIs186Bytes {
+TEST_F(TaggingTests, test_ShortMP3WithApev2AndId3v1_TailIs186Bytes) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tone1sec_id3v1_apev2.mp3", dbplugindir);
     DB_FILE *fp = vfs_fopen (path);
     uint32_t head, tail;
     junk_get_tag_offsets(fp, &head, &tail);
     vfs_fclose (fp);
-    XCTAssert(head == 0);
-    XCTAssert(tail == 186);
+    EXPECT_TRUE(head == 0);
+    EXPECT_TRUE(tail == 186);
 }
 
-- (void)test_ShortMP3WithId3v1_ScansCorrectSize {
+TEST_F(TaggingTests, test_ShortMP3WithId3v1_ScansCorrectSize) {
     playlist_t *plt = plt_alloc("test");
 
     char path[PATH_MAX];
@@ -401,11 +401,11 @@
 
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
-    XCTAssertEqualWithAccuracy(it->_duration, 1.04489791f, 0.0001f);
+    EXPECT_EQ_WITH_ACCURACY(it->_duration, 1.04489791f, 0.0001f);
     plt_unref (plt);
 }
 
-- (void)test_ShortMP3WithApev2_ScansCorrectSize {
+TEST_F(TaggingTests, test_ShortMP3WithApev2_ScansCorrectSize) {
     playlist_t *plt = plt_alloc("test");
 
     char path[PATH_MAX];
@@ -413,11 +413,11 @@
 
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
-    XCTAssertEqualWithAccuracy(it->_duration, 1.04489791f, 0.0001f);
+    EXPECT_EQ_WITH_ACCURACY(it->_duration, 1.04489791f, 0.0001f);
     plt_unref (plt);
 }
 
-- (void)test_ShortMP3WithId3v1AndApev2_ScansCorrectSize {
+TEST_F(TaggingTests, test_ShortMP3WithId3v1AndApev2_ScansCorrectSize) {
     playlist_t *plt = plt_alloc("test");
 
     char path[PATH_MAX];
@@ -425,8 +425,6 @@
 
     playItem_t *it = plt_insert_file2(0, plt, NULL, path, NULL, NULL, NULL);
 
-    XCTAssertEqualWithAccuracy(it->_duration, 1.04489791f, 0.0001f);
+    EXPECT_EQ_WITH_ACCURACY(it->_duration, 1.04489791f, 0.0001f);
     plt_unref (plt);
 }
-
-@end

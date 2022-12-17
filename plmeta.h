@@ -3,6 +3,10 @@
 
 #include "playlist.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void
 pl_add_meta_full (playItem_t *it, const char *key, const char *value, int valuesize);
 
@@ -79,5 +83,9 @@ pl_meta_free_values (DB_metaInfo_t *meta);
 
 void
 pl_add_meta_copy (playItem_t *it, DB_metaInfo_t *meta);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* plmeta_h */

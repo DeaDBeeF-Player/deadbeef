@@ -30,6 +30,10 @@
 
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 DB_FILE* vfs_fopen (const char *fname);
 void vfs_set_track (DB_FILE *stream, DB_playItem_t *it);
 void vfs_fclose (DB_FILE *f);
@@ -42,5 +46,9 @@ const char *vfs_get_content_type (DB_FILE *stream);
 void vfs_fabort (DB_FILE *stream);
 uint64_t vfs_get_identifier (DB_FILE *stream);
 void vfs_abort_with_identifier (DB_vfs_t *vfs, uint64_t identifier);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __VFS_H

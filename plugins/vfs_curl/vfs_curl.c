@@ -391,7 +391,7 @@ http_content_header_handler_int (void *ptr, size_t size, void *stream, int *end_
 
 // returns number of bytes consumed
 size_t
-vfs_curl_handle_icy_headers (size_t avail, HTTP_FILE *fp, char *ptr) {
+vfs_curl_handle_icy_headers (size_t avail, HTTP_FILE *fp, const char *ptr) {
     size_t size = avail;
 
     // check if that's ICY

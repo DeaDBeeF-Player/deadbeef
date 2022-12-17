@@ -28,6 +28,10 @@
 #define __PLUGINS_H
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern DB_functions_t *deadbeef;
 
 struct playItem_s;
@@ -177,5 +181,9 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle);
 
 const char *
 plug_get_path_for_plugin_ptr (DB_plugin_t *plugin_ptr);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __PLUGINS_H

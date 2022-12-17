@@ -29,6 +29,10 @@
 
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int
 conf_load (void);
 
@@ -92,5 +96,9 @@ conf_item_free (DB_conf_item_t *it);
 
 void
 conf_enable_saving (int enable);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __CONF_H

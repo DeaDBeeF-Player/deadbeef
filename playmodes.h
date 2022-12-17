@@ -3,6 +3,10 @@
 
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void
 streamer_playmodes_init (void);
 
@@ -21,5 +25,8 @@ streamer_set_repeat (ddb_repeat_t repeat);
 ddb_repeat_t
 streamer_get_repeat (void);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* playmodes_h */

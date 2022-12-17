@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     int tint;
 
@@ -17,5 +21,9 @@ typedef struct {
 
 unsigned
 calculate_tint_stops_from_string (const char *inputString, tint_stop_t *tintRanges, unsigned maxRanges, char** plainString);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

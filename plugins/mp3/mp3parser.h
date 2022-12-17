@@ -27,6 +27,10 @@
 #include <stdint.h>
 #include "../../deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 enum {
     MP3_PARSE_FULLSCAN = 1,
     MP3_PARSE_ESTIMATE_DURATION = 2,
@@ -113,5 +117,9 @@ typedef struct {
 // the caller is supposed to start decoding from info->packet_offs, and skip info->skipsamples samples
 int
 mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int startoffs, int endoffs, int64_t seek_to_sample);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* mp3parser_h */

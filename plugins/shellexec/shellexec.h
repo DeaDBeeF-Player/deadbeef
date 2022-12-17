@@ -26,6 +26,10 @@
 // Version history:
 // 1.2: changed configuration to JSON, use new title formatting
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //Probably it's reasonable to move these flags to parent struct
 enum {
     SHX_ACTION_LOCAL_ONLY       = 1 << 0,
@@ -42,12 +46,16 @@ typedef struct Shx_action_s
 
 typedef struct Shx_plugin_s
 {
-	DB_misc_t misc;
-
-	void (*save_actions) (void);
-	Shx_action_t* (*action_add) (void);
-	void (*action_remove) (Shx_action_t *a);
-	void (*action_free) (Shx_action_t *a);
+    DB_misc_t misc;
+    
+    void (*save_actions) (void);
+    Shx_action_t* (*action_add) (void);
+    void (*action_remove) (Shx_action_t *a);
+    void (*action_free) (Shx_action_t *a);
 } Shx_plugin_t;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -12,6 +12,10 @@
 #include <curl/curl.h>
 #include "../../deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define BUFFER_SIZE (0x10000)
 #define BUFFER_MASK 0xffff
 
@@ -67,9 +71,13 @@ typedef struct {
 } HTTP_FILE;
 
 size_t
-vfs_curl_handle_icy_headers (size_t avail, HTTP_FILE *fp, char *ptr);
+vfs_curl_handle_icy_headers (size_t avail, HTTP_FILE *fp, const char *ptr);
 
 void
 vfs_curl_free_file (HTTP_FILE *fp);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* vfs_curl_h */

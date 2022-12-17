@@ -33,6 +33,10 @@
 #include <limits.h>
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
@@ -83,5 +87,9 @@ extern DB_plugin_t main_plugin;
 extern DB_functions_t *deadbeef;
 #define trace(...) { deadbeef->log_detailed (&main_plugin, DDB_LOG_LAYER_INFO, __VA_ARGS__); }
 #define trace_err(...) { deadbeef->log_detailed (&main_plugin, DDB_LOG_LAYER_DEFAULT, __VA_ARGS__); }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __COMMON_H

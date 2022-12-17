@@ -6,27 +6,20 @@
 //  Copyright © 2021 Oleksiy Yakovenko. All rights reserved.
 //
 
-#import <XCTest/XCTest.h>
 #import "m3u.h"
 #include "../../common.h"
+#include <gtest/gtest.h>
 
 extern DB_functions_t *deadbeef;
 
-@interface M3UTests : XCTestCase
+class M3UTests: public ::testing::Test {
+protected:
+    void SetUp() override {
+        m3u_load(deadbeef);
+    }
+};
 
-@end
-
-@implementation M3UTests
-
-- (void)setUp {
-    m3u_load(deadbeef);
-}
-
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-}
-
-- (void)test_loadM3UFromBuffer_SimplePlaylist_Loads2Items {
+TEST_F(M3UTests, test_loadM3UFromBuffer_SimplePlaylist_Loads2Items) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
 
@@ -42,12 +35,13 @@ extern DB_functions_t *deadbeef;
 
     ddb_playItem_t *after = load_m3u_from_buffer(NULL, m3u, strlen(m3u), NULL, "", NULL, plt, NULL);
 
-    XCTAssertTrue(after);
-    XCTAssertEqual(deadbeef->plt_get_item_count(plt, PL_MAIN), 2);
+    EXPECT_TRUE(after);
+    EXPECT_EQ(deadbeef->plt_get_item_count(plt, PL_MAIN), 2);
 
     deadbeef->plt_unref (plt);
 }
-- (void)test_loadM3UFromBuffer_UnicodeCharactersNoDash_LoadsItemWithCorrectArtistTitle {
+
+TEST_F(M3UTests, test_loadM3UFromBuffer_UnicodeCharactersNoDash_LoadsItemWithCorrectArtistTitle) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
 
@@ -63,19 +57,19 @@ extern DB_functions_t *deadbeef;
 
     ddb_playItem_t *after = load_m3u_from_buffer(NULL, m3u, strlen(m3u), NULL, "", NULL, plt, NULL);
 
-    XCTAssertTrue(after);
-    XCTAssertEqual(deadbeef->plt_get_item_count(plt, PL_MAIN), 1);
+    EXPECT_TRUE(after);
+    EXPECT_EQ(deadbeef->plt_get_item_count(plt, PL_MAIN), 1);
 
     const char *title = deadbeef->pl_find_meta(after, "title");
     const char *artist = deadbeef->pl_find_meta(after, "artist");
 
-    XCTAssertTrue(!strcmp (title, "АБВГД"));
-    XCTAssertTrue(artist == NULL);
+    EXPECT_TRUE(!strcmp (title, "АБВГД"));
+    EXPECT_TRUE(artist == NULL);
 
     deadbeef->plt_unref (plt);
 }
 
-- (void)test_loadM3UFromBuffer_TrailingExtinf_LoadsItemWithCorrectArtistTitle {
+TEST_F(M3UTests, test_loadM3UFromBuffer_TrailingExtinf_LoadsItemWithCorrectArtistTitle) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
 
@@ -92,20 +86,20 @@ extern DB_functions_t *deadbeef;
 
     ddb_playItem_t *after = load_m3u_from_buffer(NULL, m3u, strlen(m3u), NULL, "", NULL, plt, NULL);
 
-    XCTAssertTrue(after);
-    XCTAssertEqual(deadbeef->plt_get_item_count(plt, PL_MAIN), 1);
+    EXPECT_TRUE(after);
+    EXPECT_EQ(deadbeef->plt_get_item_count(plt, PL_MAIN), 1);
 
     const char *title = deadbeef->pl_find_meta(after, "title");
     const char *artist = deadbeef->pl_find_meta(after, "artist");
 
-    XCTAssertTrue(!strcmp (title, "АБВГД"));
-    XCTAssertTrue(artist == NULL);
+    EXPECT_TRUE(!strcmp (title, "АБВГД"));
+    EXPECT_TRUE(artist == NULL);
 
     deadbeef->plt_unref (plt);
 }
 
 
-- (void)test_loadM3UFromBuffer_UnicodeCharactersWithDash_LoadsItemWithCorrectArtistTitle {
+TEST_F(M3UTests, test_loadM3UFromBuffer_UnicodeCharactersWithDash_LoadsItemWithCorrectArtistTitle) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
 
@@ -121,19 +115,19 @@ extern DB_functions_t *deadbeef;
 
     ddb_playItem_t *after = load_m3u_from_buffer(NULL, m3u, strlen(m3u), NULL, "", NULL, plt, NULL);
 
-    XCTAssertTrue(after);
-    XCTAssertEqual(deadbeef->plt_get_item_count(plt, PL_MAIN), 1);
+    EXPECT_TRUE(after);
+    EXPECT_EQ(deadbeef->plt_get_item_count(plt, PL_MAIN), 1);
 
     const char *title = deadbeef->pl_find_meta(after, "title");
     const char *artist = deadbeef->pl_find_meta(after, "artist");
 
-    XCTAssertTrue(!strcmp (title, "Sample title"));
-    XCTAssertTrue(!strcmp (artist, "АБВГД"));
+    EXPECT_TRUE(!strcmp (title, "Sample title"));
+    EXPECT_TRUE(!strcmp (artist, "АБВГД"));
 
     deadbeef->plt_unref (plt);
 }
 
-- (void)test_loadM3UFromBuffer_UnicodeBom_LoadsCorrectly {
+TEST_F(M3UTests, test_loadM3UFromBuffer_UnicodeBom_LoadsCorrectly) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
 
@@ -149,16 +143,15 @@ extern DB_functions_t *deadbeef;
 
     ddb_playItem_t *after = load_m3u_from_buffer(NULL, m3u, strlen(m3u), NULL, "", NULL, plt, NULL);
 
-    XCTAssertTrue(after);
-    XCTAssertEqual(deadbeef->plt_get_item_count(plt, PL_MAIN), 1);
+    EXPECT_TRUE(after);
+    EXPECT_EQ(deadbeef->plt_get_item_count(plt, PL_MAIN), 1);
 
     const char *title = deadbeef->pl_find_meta(after, "title");
     const char *artist = deadbeef->pl_find_meta(after, "artist");
 
-    XCTAssertTrue(!strcmp (title, "Sample title"));
-    XCTAssertTrue(!strcmp (artist, "АБВГД"));
+    EXPECT_TRUE(!strcmp (title, "Sample title"));
+    EXPECT_TRUE(!strcmp (artist, "АБВГД"));
 
     deadbeef->plt_unref (plt);
 }
 
-@end

@@ -21,7 +21,6 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <XCTest/XCTest.h>
 #include "deadbeef.h"
 #include "playlist.h"
 #include "plugins.h"
@@ -33,10 +32,13 @@
 #include "fakein.h"
 #include "fakeout.h"
 #include "playmodes.h"
-
-static int count_played;
+#include <gtest/gtest.h>
 
 static void (*_trackinfochanged_handler)(ddb_event_track_t *ev);
+static int count_played;
+
+extern "C" DB_plugin_t * fakein_load (DB_functions_t *api);
+extern "C" DB_plugin_t * fakeout_load (DB_functions_t *api);
 
 // super oversimplified mainloop
 static void
@@ -120,13 +122,13 @@ mainloop (void *ctx) {
 void
 wait_until_stopped (void) {
     // wait until finished!
-    BOOL finished = NO;
+    bool finished = false;
 
     while (!finished) {
         playItem_t *streaming_track = streamer_get_streaming_track();
         playItem_t *playing_track = streamer_get_playing_track();
         if (!streaming_track && !playing_track) {
-            finished = YES;
+            finished = true;
         }
         if (streaming_track) {
             pl_item_unref (streaming_track);
@@ -137,54 +139,47 @@ wait_until_stopped (void) {
     }
 }
 
-@interface StreamerTest : XCTestCase {
+class StreamerTests: public ::testing::Test {
+protected:
+
+    void SetUp() override {
+        messagepump_init ();
+
+        // register fakein and fakeout plugin
+        plug_init_plugin (fakein_load, NULL);
+        plug_init_plugin (fakeout_load, NULL);
+
+        _fakein = fakein_load (plug_get_api ());
+        _fakeout = (DB_output_t *)fakeout_load (plug_get_api ());
+        plug_register_in (_fakein);
+        plug_register_out ((DB_plugin_t *)_fakeout);
+
+        plug_set_output (_fakeout);
+
+        streamer_init ();
+
+        streamer_set_repeat(DDB_REPEAT_OFF);
+        count_played = 0;
+
+        _mainloop_tid = thread_start (mainloop, NULL);
+    }
+
+    void TearDown() override {
+        deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+        thread_join (_mainloop_tid);
+
+        _fakeout->stop ();
+        streamer_free ();
+    }
+
+private:
+
     DB_plugin_t *_fakein;
     DB_output_t *_fakeout;
     uintptr_t _mainloop_tid;
-}
+};
 
-@end
-
-@implementation StreamerTest
-
-- (void)setUp {
-    [super setUp];
-
-    messagepump_init ();
-
-    // register fakein and fakeout plugin
-    extern DB_plugin_t * fakein_load (DB_functions_t *api);
-    extern DB_plugin_t * fakeout_load (DB_functions_t *api);
-
-    plug_init_plugin (fakein_load, NULL);
-    plug_init_plugin (fakeout_load, NULL);
-
-    _fakein = fakein_load (plug_get_api ());
-    _fakeout = (DB_output_t *)fakeout_load (plug_get_api ());
-    plug_register_in (_fakein);
-    plug_register_out ((DB_plugin_t *)_fakeout);
-
-    plug_set_output (_fakeout);
-
-    streamer_init ();
-
-    streamer_set_repeat(DDB_REPEAT_OFF);
-    count_played = 0;
-
-    _mainloop_tid = thread_start (mainloop, NULL);
-}
-
-- (void)tearDown {
-    deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
-    thread_join (_mainloop_tid);
-
-    _fakeout->stop ();
-    streamer_free ();
-
-    [super tearDown];
-}
-
-- (void)test_Play2TracksNoLoop_Sends2SongChanged {
+TEST_F(StreamerTests, test_Play2TracksNoLoop_Sends2SongChanged) {
     playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
 //    DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL);
@@ -201,7 +196,7 @@ wait_until_stopped (void) {
     deadbeef->plt_unref ((ddb_playlist_t *)plt);
 
 
-    XCTAssert (count_played = 2);
+    EXPECT_TRUE(count_played = 2);
 }
 
 // This test is a complicated
@@ -227,7 +222,7 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     }
 }
 
-- (void)test_SwitchBetweenTracks_DoesNotJumpBackToPrevious {
+TEST_F(StreamerTests, test_SwitchBetweenTracks_DoesNotJumpBackToPrevious) {
     // for this test, we want "loop single" mode, to make sure first track is playing when we start the 2nd one.
     streamer_set_repeat(DDB_REPEAT_SINGLE);
 
@@ -269,8 +264,6 @@ static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
     plt_set_curr (NULL);
     deadbeef->plt_unref ((ddb_playlist_t *)plt);
 
-    XCTAssert (switchtest_counts[0] == 0);
-    XCTAssert (count_played = 2);
+    EXPECT_TRUE(switchtest_counts[0] == 0);
+    EXPECT_TRUE(count_played = 2);
 }
-
-@end

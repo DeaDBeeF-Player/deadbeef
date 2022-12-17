@@ -32,6 +32,10 @@
 #include <time.h>
 #include "deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define PL_MAX_ITERATORS 2
 
 // predefined properties stored in metadata for storage unification:
@@ -558,5 +562,9 @@ pl_get_shufflerating (playItem_t *it);
 
 void
 pl_set_shufflerating (playItem_t *it, int rating);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __PLAYLIST_H

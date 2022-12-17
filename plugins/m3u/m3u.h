@@ -11,11 +11,18 @@
 
 #include "../../deadbeef.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 DB_plugin_t *
 m3u_load (DB_functions_t *api);
 
 DB_playItem_t *
 load_m3u_from_buffer(DB_playItem_t *after, const char *buffer, int64_t sz, int (*cb)(DB_playItem_t *, void *), const char *fname, int *pabort, ddb_playlist_t *plt, void *user_data);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* m3u_h */
