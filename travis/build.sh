@@ -20,14 +20,19 @@ case "$TRAVIS_OS_NAME" in
         make dist
     ;;
     osx)
-        echo gem install xcpretty ...
+        echo "Install xcbeautify ..."
         brew install xcbeautify 1> /dev/null 2> /dev/null
+        echo "Patch Info.plist ..."
         VERSION=`tr -d '\r' < PORTABLE_VERSION`
         /usr/libexec/PlistBuddy -c "Set CFBundleShortVersionString $VERSION" plugins/cocoaui/deadbeef-Info.plist
         rev=`git rev-parse --short HEAD`
         /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $rev" plugins/cocoaui/deadbeef-Info.plist
-        xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" test -project osx/deadbeef.xcodeproj -scheme deadbeef -configuration Release | xcbeautify ; test ${PIPESTATUS[0]} -eq 0
-        xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" -project osx/deadbeef.xcodeproj -target DeaDBeeF -configuration Release -quiet | tee osx/build/Release/build.log | xcbeautify ; test ${PIPESTATUS[0]} -eq 0
+        echo "Build & run tests ..."
+        mkdir -p osx/build/reports
+        mkdir -p osx/build/Release
+        xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" test -project osx/deadbeef.xcodeproj -scheme deadbeef -configuration Release | xcbeautify --report junit --report-path "osx/build/reports"  ; test ${PIPESTATUS[0]} -eq 0
+        echo "Build DeaDBeeF.app ..."
+        xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" -project osx/deadbeef.xcodeproj -target DeaDBeeF -configuration Release | tee osx/build/Release/build.log | xcbeautify ; test ${PIPESTATUS[0]} -eq 0
         cd osx/build/Release
         zip -r deadbeef-$VERSION-macos-universal.zip DeaDBeeF.app
         cd ../../..
