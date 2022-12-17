@@ -16,10 +16,10 @@ jobs:
       uses: actions/checkout@v1
       with:
         submodules: true
-    - name: Run Tests
-      run: scripts/test.sh
     - name: Build for Linux
       run: TRAVIS_OS_NAME=linux travis/build.sh
+    - name: Run Tests
+      run: scripts/test.sh
     - name: Upload for Linux
       env:
           gh_rsa_key: ${{ secrets.GH_ENCRYPTED_RSA_KEY }}
