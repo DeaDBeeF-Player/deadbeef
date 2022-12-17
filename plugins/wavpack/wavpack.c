@@ -305,7 +305,7 @@ wv_seek_sample (DB_fileinfo_t *_info, int sample) {
 static int
 wv_seek (DB_fileinfo_t *_info, float sec) {
     wvctx_t *info = (wvctx_t *)_info;
-    return wv_seek_sample (_info, (int64_t)((double)sec * (int64_t)WavpackGetSampleRate (info->ctx)));
+    return wv_seek_sample64 (_info, (int64_t)((double)sec * (int64_t)WavpackGetSampleRate (info->ctx)));
 }
 
 static DB_playItem_t *
