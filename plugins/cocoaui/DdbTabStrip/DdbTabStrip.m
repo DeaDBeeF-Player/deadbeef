@@ -673,6 +673,7 @@ static const int close_btn_left_offs = 8;
         menu.clickPoint = coord;
         menu.delegate = self;
         menu.renamePlaylistDelegate = self;
+        menu.deletePlaylistDelegate = self;
         menu.autoenablesItems = YES;
 
         ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)_clickedTabIndex);
