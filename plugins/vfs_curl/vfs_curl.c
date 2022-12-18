@@ -308,7 +308,7 @@ parse_header (const uint8_t *p, const uint8_t *e, uint8_t *key, int keysize, uin
 }
 
 static size_t
-http_content_header_handler_int (void *ptr, size_t size, void *stream, int *end_of_headers) {
+http_content_header_handler_int (const void *ptr, size_t size, void *stream, int *end_of_headers) {
 //    trace ("http_content_header_handler\n");
     assert (stream);
     HTTP_FILE *fp = (HTTP_FILE *)stream;
