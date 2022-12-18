@@ -10,3 +10,6 @@
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/DeaDBeeF-Player/googletest.git
+[submodule "external/ddb_output_pw"]
+	path = external/ddb_output_pw
+	url = https://github.com/DeaDBeeF-Player/ddb_output_pw.git

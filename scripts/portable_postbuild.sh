@@ -71,6 +71,7 @@ else
     echo ./plugins/gtkui/.libs/ddb_gui_GTK3.so not found
 fi
 
+cp ./external/.libs/ddb_out_pw.so $PLUGDIR/
 #pixmaps
 
 for i in pause_16.png play_16.png noartwork.png buffering_16.png; do
