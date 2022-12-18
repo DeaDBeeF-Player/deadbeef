@@ -18,6 +18,8 @@ jobs:
         submodules: true
     - name: Fetch static-deps
       run: travis/download-linux-static-deps.sh
+    - name: Run Tests
+      run: scripts/test.sh
     - name: Build for Linux
       run: TRAVIS_OS_NAME=linux travis/build.sh
     - name: Upload for Linux
