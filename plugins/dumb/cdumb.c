@@ -43,7 +43,9 @@ typedef struct {
     DB_fileinfo_t info;
     DUH *duh;
     DUH_SIGRENDERER *renderer;
+    int chip_voices;
     int can_loop;
+    int rawsignal;
 } dumb_info_t;
 
 //#define DUMB_RQ_ALIASING
@@ -67,6 +69,8 @@ static DB_fileinfo_t *
 cdumb_open (uint32_t hints) {
     dumb_info_t *info = calloc (1, sizeof (dumb_info_t));
     info->can_loop = hints & DDB_DECODER_HINT_CAN_LOOP;
+    info->rawsignal = hints & DDB_DECODER_HINT_RAW_SIGNAL;
+    info->chip_voices = 0xff;
     return &info->info;
 }
 
@@ -178,6 +182,18 @@ cdumb_read (DB_fileinfo_t *_info, char *bytes, int size) {
     long ret;
 
     DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer (info->renderer);
+
+    if (!info->rawsignal) {
+        int chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
+        if (chip_voices != info->chip_voices) {
+            info->chip_voices = chip_voices;
+
+            for (int i = 0; i < 8; i++) {
+                dumb_it_sr_set_channel_muted(itsr, i, (chip_voices&(1<<i)) == 0);
+            }
+        }
+    }
+
     if (conf_play_forever && info->can_loop)
         dumb_it_set_loop_callback (itsr, &cdumb_it_callback_loop_forever, NULL);
     else
