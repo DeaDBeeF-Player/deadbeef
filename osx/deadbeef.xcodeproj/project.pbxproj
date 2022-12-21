@@ -2409,6 +2409,7 @@
 		2DC6C624294DE72D00A63CEB /* libgoogletest.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC6C609294DE5C700A63CEB /* libgoogletest.dylib */; };
 		2DC6C64E294E1CB400A63CEB /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C64D294E1CB300A63CEB /* gtest-all.cc */; };
 		2DC6C64F294E5E7900A63CEB /* AlbumArtImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9FD9E22607C68500F406D1 /* AlbumArtImageView.m */; };
+		2DC6C65A29539AAE00A63CEB /* ddb_dsp_libretro.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -4002,6 +4003,20 @@
 			remoteGlobalIDString = 2DC6C608294DE5C700A63CEB;
 			remoteInfo = googletest;
 		};
+		2DC6C6542953996000A63CEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DC6C6502953995F00A63CEB /* ddb_dsp_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2DC1B62426939F5100C43C4F;
+			remoteInfo = ddb_dsp_libretro;
+		};
+		2DC6C6582953998200A63CEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DC6C6502953995F00A63CEB /* ddb_dsp_libretro.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DC1B62326939F5100C43C4F;
+			remoteInfo = ddb_dsp_libretro;
+		};
 		2DC8263C24A7432700DB756B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -4389,6 +4404,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2DC6C65A29539AAE00A63CEB /* ddb_dsp_libretro.dylib in Copy Plugins */,
 				2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */,
 				2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */,
 				2DD377012739B869007AD315 /* libavutil.56.dylib in Copy Plugins */,
@@ -6757,6 +6773,7 @@
 		2DC6C609294DE5C700A63CEB /* libgoogletest.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libgoogletest.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DC6C620294DE70E00A63CEB /* GTMGoogleTestRunner.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GTMGoogleTestRunner.mm; sourceTree = "<group>"; };
 		2DC6C64D294E1CB300A63CEB /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "gtest-all.cc"; path = "googletest/googletest/src/gtest-all.cc"; sourceTree = "<group>"; };
+		2DC6C6502953995F00A63CEB /* ddb_dsp_libretro.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ddb_dsp_libretro.xcodeproj; path = ddb_dsp_libretro/Xcode/ddb_dsp_libretro/ddb_dsp_libretro.xcodeproj; sourceTree = "<group>"; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
@@ -10739,6 +10756,7 @@
 		2D9E5BFE24AE6AAD0099B108 /* external */ = {
 			isa = PBXGroup;
 			children = (
+				2DC6C6502953995F00A63CEB /* ddb_dsp_libretro.xcodeproj */,
 				2DA84F7624F58894003507A2 /* jansson.xcodeproj */,
 				2D71F1AB24AE799B00E753D3 /* mp4p.xcodeproj */,
 				2D9E5BFF24AE6AAD0099B108 /* wcwidth */,
@@ -11373,6 +11391,14 @@
 				2DC6C64D294E1CB300A63CEB /* gtest-all.cc */,
 			);
 			name = GoogleTest;
+			sourceTree = "<group>";
+		};
+		2DC6C6512953996000A63CEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		2DCB281819E8616E008E9DF6 /* m3u */ = {
@@ -15540,6 +15566,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DC6C6592953998200A63CEB /* PBXTargetDependency */,
 				2DBF3D98270885C400023138 /* PBXTargetDependency */,
 				2DA5AB0525D033A100947C19 /* PBXTargetDependency */,
 				2D71F1B524AE7A1400E753D3 /* PBXTargetDependency */,
@@ -15963,6 +15990,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 2DC6C6512953996000A63CEB /* Products */;
+					ProjectRef = 2DC6C6502953995F00A63CEB /* ddb_dsp_libretro.xcodeproj */;
+				},
+				{
 					ProductGroup = 2DDFABC92438E56000E13E85 /* Products */;
 					ProjectRef = 2D65D9891E0A930400FD1C8A /* FDK.xcodeproj */;
 				},
@@ -16146,6 +16177,13 @@
 			fileType = "compiled.mach-o.dylib";
 			path = libjansson.dylib;
 			remoteRef = 2DA84F7A24F58894003507A2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = ddb_dsp_libretro.dylib;
+			remoteRef = 2DC6C6542953996000A63CEB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		2DDFABCD2438E56000E13E85 /* libFDK.a */ = {
@@ -18967,6 +19005,11 @@
 			isa = PBXTargetDependency;
 			target = 2DC6C608294DE5C700A63CEB /* googletest */;
 			targetProxy = 2DC6C622294DE72300A63CEB /* PBXContainerItemProxy */;
+		};
+		2DC6C6592953998200A63CEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ddb_dsp_libretro;
+			targetProxy = 2DC6C6582953998200A63CEB /* PBXContainerItemProxy */;
 		};
 		2DC8263D24A7432700DB756B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

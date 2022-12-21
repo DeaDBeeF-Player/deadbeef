@@ -13,3 +13,6 @@
 [submodule "external/ddb_output_pw"]
 	path = external/ddb_output_pw
 	url = https://github.com/DeaDBeeF-Player/ddb_output_pw.git
+[submodule "external/ddb_dsp_libretro"]
+	path = external/ddb_dsp_libretro
+	url = https://github.com/DeaDBeeF-Player/ddb_dsp_libretro.git
