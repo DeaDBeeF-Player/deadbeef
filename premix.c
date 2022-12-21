@@ -43,7 +43,7 @@ pcm_write_samples_8_to_8 (const ddb_waveformat_t * restrict inputfmt, const char
             if (channelmap[c] < 0) {
                 continue;
             }
-            *(output + channelmap[c]) = *(input + c);
+            *(output + c) = *(input + channelmap[c]);
         }
         input += inputfmt->channels;
         output += outputsamplesize;
@@ -57,7 +57,7 @@ pcm_write_samples_8_to_16 (const ddb_waveformat_t * restrict inputfmt, const cha
             if (channelmap[c] < 0) {
                 continue;
             }
-            *((int16_t*)(output + 2 * channelmap[c])) = (int16_t)(*(input + c) << 8);
+            *((int16_t*)(output + 2 * c)) = (int16_t)(*(input + channelmap[c]) << 8);
         }
         input += inputfmt->channels;
         output += outputsamplesize;
@@ -71,10 +71,10 @@ pcm_write_samples_8_to_24 (const ddb_waveformat_t * restrict inputfmt, const cha
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + 3 * channelmap[c];
+            char *out = output + 3 * c;
             out[0] = 0;
             out[1] = 0;
-            out[2] = *(input + c);
+            out[2] = *(input + channelmap[c]);
         }
         input += inputfmt->channels;
         output += outputsamplesize;
@@ -88,11 +88,11 @@ pcm_write_samples_8_to_32 (const ddb_waveformat_t * restrict inputfmt, const cha
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + 4 * channelmap[c];
+            char *out = output + 4 * c;
             out[0] = 0;
             out[1] = 0;
             out[2] = 0;
-            out[3] = *(input + c);
+            out[3] = *(input + channelmap[c]);
         }
         input += inputfmt->channels;
         output += outputsamplesize;
@@ -106,8 +106,8 @@ pcm_write_samples_8_to_float (const ddb_waveformat_t * restrict inputfmt, const 
             if (channelmap[c] < 0) {
                 continue;
             }
-            float sample = (*(input+c)) / (float)0x80;
-            *((float *)(output + 4 * channelmap[c])) = sample;
+            float sample = (*(input+channelmap[c])) / (float)0x80;
+            *((float *)(output + 4 * c)) = sample;
         }
         input += inputfmt->channels;
         output += outputsamplesize;
@@ -121,7 +121,7 @@ pcm_write_samples_16_to_16 (const ddb_waveformat_t * restrict inputfmt, const ch
             if (channelmap[c] < 0) {
                 continue;
             }
-            *((int16_t*)(output + 2 * channelmap[c])) = *((int16_t*)(input + c*2));
+            *((int16_t*)(output + 2 * c)) = *((int16_t*)(input + channelmap[c]*2));
         }
         input += 2 * inputfmt->channels;
         output += outputsamplesize;
@@ -135,7 +135,7 @@ pcm_write_samples_16_to_8 (const ddb_waveformat_t * restrict inputfmt, const cha
             if (channelmap[c] < 0) {
                 continue;
             }
-            *((int8_t*)(output + channelmap[c])) = *((int16_t*)(input + c*2)) >> 8;
+            *((int8_t*)(output + c)) = *((int16_t*)(input + channelmap[c]*2)) >> 8;
         }
         input += 2 * inputfmt->channels;
         output += outputsamplesize;
@@ -149,8 +149,8 @@ pcm_write_samples_16_to_24 (const ddb_waveformat_t * restrict inputfmt, const ch
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + 3 * channelmap[c];
-            const char *in = input + c*2;
+            char *out = output + 3 * c;
+            const char *in = input + channelmap[c]*2;
             out[0] = 0;
             out[1] = in[0];
             out[2] = in[1];
@@ -167,8 +167,8 @@ pcm_write_samples_16_to_32 (const ddb_waveformat_t * restrict inputfmt, const ch
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + 4 * channelmap[c];
-            const char *in = input + c*2;
+            char *out = output + 4 * c;
+            const char *in = input + channelmap[c]*2;
             out[0] = 0;
             out[1] = 0;
             out[2] = in[0];
@@ -186,8 +186,8 @@ pcm_write_samples_16_to_float (const ddb_waveformat_t * restrict inputfmt, const
             if (channelmap[c] < 0) {
                 continue;
             }
-            float sample = (*((int16_t*)(input + c * 2))) / (float)0x8000;
-            *((float *)(output + 4 * channelmap[c])) = sample;
+            float sample = (*((int16_t*)(input + channelmap[c]*2))) / (float)0x8000;
+            *((float *)(output + 4 * c)) = sample;
         }
         input += 2 * inputfmt->channels;
         output += outputsamplesize;
@@ -201,8 +201,8 @@ pcm_write_samples_24_to_8 (const ddb_waveformat_t * restrict inputfmt, const cha
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + channelmap[c];
-            *out = (input + c * 3)[2];
+            char *out = output + c;
+            *out = (input + channelmap[c] * 3)[2];
         }
         input += 3 * inputfmt->channels;
         output += outputsamplesize;
@@ -216,8 +216,8 @@ pcm_write_samples_24_to_24 (const ddb_waveformat_t * restrict inputfmt, const ch
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + 3 * channelmap[c];
-            const char *in = input + c * 3;
+            char *out = output + 3 * c;
+            const char *in = input + channelmap[c] * 3;
             out[0] = in[0];
             out[1] = in[1];
             out[2] = in[2];
@@ -234,8 +234,8 @@ pcm_write_samples_24_to_32 (const ddb_waveformat_t * restrict inputfmt, const ch
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + 4 * channelmap[c];
-            const char *in = input + 3 * c;
+            char *out = output + 4 * c;
+            const char *in = input + 3 * channelmap[c];
             out[0] = 0;
             out[1] = in[0];
             out[2] = in[1];
@@ -253,8 +253,8 @@ pcm_write_samples_24_to_16 (const ddb_waveformat_t * restrict inputfmt, const ch
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + 2 * channelmap[c];
-            const char *in = input + 3 * c;
+            char *out = output + 2 * c;
+            const char *in = input + 3 * channelmap[c];
             out[0] = in[1];
             out[1] = in[2];
         }
@@ -270,8 +270,8 @@ pcm_write_samples_24_to_float (const ddb_waveformat_t * restrict inputfmt, const
             if (channelmap[c] < 0) {
                 continue;
             }
-            float *out = (float *)(output + 4 * channelmap[c]);
-            const char *in = input + 3 * c;
+            float *out = (float *)(output + 4 * c);
+            const char *in = input + 3 * channelmap[c];
             int32_t sample = ((unsigned char)in[0]) | ((unsigned char)in[1]<<8) | ((signed char)in[2]<<16);
             *out = sample / (float)0x800000;
         }
@@ -287,8 +287,8 @@ pcm_write_samples_32_to_8 (const ddb_waveformat_t * restrict inputfmt, const cha
             if (channelmap[c] < 0) {
                 continue;
             }
-            int8_t *out = (int8_t*)(output + channelmap[c]);
-            int32_t sample = *((int32_t*)(input + 4 * c));
+            int8_t *out = (int8_t*)(output + c);
+            int32_t sample = *((int32_t*)(input + 4 * channelmap[c]));
             *out = (int8_t)(sample>>24);
         }
         input += 4 * inputfmt->channels;
@@ -303,8 +303,8 @@ pcm_write_samples_32_to_16 (const ddb_waveformat_t * restrict inputfmt, const ch
             if (channelmap[c] < 0) {
                 continue;
             }
-            int16_t *out = (int16_t*)(output + 2 * channelmap[c]);
-            int32_t sample = *((int32_t*)(input + 4 * c));
+            int16_t *out = (int16_t*)(output + 2 * c);
+            int32_t sample = *((int32_t*)(input + 4 * channelmap[c]));
             *out = (int16_t)(sample>>16);
         }
         input += 4 * inputfmt->channels;
@@ -319,8 +319,8 @@ pcm_write_samples_32_to_24 (const ddb_waveformat_t * restrict inputfmt, const ch
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + 3 * channelmap[c];
-            const char *in = input + 4 * c;
+            char *out = output + 3 * c;
+            const char *in = input + 4 * channelmap[c];
             out[0] = in[1];
             out[1] = in[2];
             out[2] = in[3];
@@ -337,7 +337,7 @@ pcm_write_samples_32_to_32 (const ddb_waveformat_t * restrict inputfmt, const ch
             if (channelmap[c] < 0) {
                 continue;
             }
-            *((int32_t*)(output + 4 * channelmap[c])) = *((int32_t*)(input + c * 4));
+            *((int32_t*)(output + 4 * c)) = *((int32_t*)(input + channelmap[c] * 4));
         }
         input += 4 * inputfmt->channels;
         output += outputsamplesize;
@@ -352,8 +352,8 @@ pcm_write_samples_32_to_float (const ddb_waveformat_t * restrict inputfmt, const
             if (channelmap[c] < 0) {
                 continue;
             }
-            float *out = (float *)(output + 4 * channelmap[c]);
-            int32_t sample = *((int32_t*)(input + c * 4));
+            float *out = (float *)(output + 4 * c);
+            int32_t sample = *((int32_t*)(input + channelmap[c] * 4));
             *out = sample / (float)0x80000000;
         }
         input += 4 * inputfmt->channels;
@@ -370,8 +370,8 @@ pcm_write_samples_float_to_8 (const ddb_waveformat_t * restrict inputfmt, const 
             if (channelmap[c] < 0) {
                 continue;
             }
-            int8_t *out = (int8_t*)(output + channelmap[c]);
-            float sample = *((float*)(input + c * 4));
+            int8_t *out = (int8_t*)(output + c);
+            float sample = *((float*)(input + channelmap[c] * 4));
             int isample = ftoi(sample * 0x80);
             if (isample > 0x7f) {
                 isample = 0x7f;
@@ -397,8 +397,8 @@ pcm_write_samples_float_to_16 (const ddb_waveformat_t * restrict inputfmt, const
             if (channelmap[c] < 0) {
                 continue;
             }
-            int16_t *out = (int16_t*)(output + 2 * channelmap[c]);
-            float sample = *((float*)(input + 4 * c));
+            int16_t *out = (int16_t*)(output + 2 * c);
+            float sample = *((float*)(input + 4 * channelmap[c]));
             int isample = ftoi (sample*0x8000);
             if (isample > 0x7fff) {
                 isample = 0x7fff;
@@ -424,8 +424,8 @@ pcm_write_samples_float_to_24 (const ddb_waveformat_t * restrict inputfmt, const
             if (channelmap[c] < 0) {
                 continue;
             }
-            char *out = output + 3 * channelmap[c];
-            float sample = *((float*)(input + c * 4));
+            char *out = output + 3 * c;
+            float sample = *((float*)(input + channelmap[c] * 4));
             int32_t outsample = (int32_t)ftoi (sample * 0x800000);
             if (outsample >= 0x7fffff) {
                 outsample = 0x7fffff;
@@ -451,7 +451,7 @@ pcm_write_samples_float_to_32 (const ddb_waveformat_t * restrict inputfmt, const
             if (channelmap[c] < 0) {
                 continue;
             }
-            float fsample = (*((float*)(input + c * 4)));
+            float fsample = (*((float*)(input + channelmap[c] * 4)));
             if (fsample > (float)0x7fffffff/0x80000000) {
                 fsample = (float)0x7fffffff/0x80000000;
             }
@@ -459,7 +459,7 @@ pcm_write_samples_float_to_32 (const ddb_waveformat_t * restrict inputfmt, const
                 fsample = -1.f;
             }
             int32_t sample = ftoi(fsample * (float)0x80000000);
-            *((int32_t *)(output + 4 * channelmap[c])) = sample;
+            *((int32_t *)(output + 4 * c)) = sample;
         }
         input += 4 * inputfmt->channels;
         output += outputsamplesize;
