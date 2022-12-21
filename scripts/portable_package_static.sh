@@ -74,6 +74,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/converter_gtk3.so\
     $PLUGDIR/convpresets\
     $PLUGDIR/pulse.so\
+    $PLUGDIR/ddb_out_pw.so\
     $PLUGDIR/dsp_libsrc.so\
     $PLUGDIR/ddb_mono2stereo.so\
     $PLUGDIR/alac.so\

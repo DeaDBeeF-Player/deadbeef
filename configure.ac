@@ -82,6 +82,7 @@ AX_CHECK_COMPILER_FLAGS(-fblocks,[],[AC_MSG_ERROR(Clang is required to build Dea
 AC_ARG_ENABLE(nullout,  [AS_HELP_STRING([--disable-nullout ], [disable NULL output plugin (default: enabled)])], [enable_nullout=$enableval], [enable_nullout=yes])
 AC_ARG_ENABLE(alsa,     [AS_HELP_STRING([--disable-alsa    ], [disable ALSA output plugin (default: enabled)])], [enable_alsa=$enableval], [enable_alsa=yes])
 AC_ARG_ENABLE(oss,      [AS_HELP_STRING([--disable-oss     ], [disable Open Sound System output plugin (default: enabled)])], [enable_oss=$enableval], [enable_oss=yes])
+AC_ARG_ENABLE(pipewire, [AS_HELP_STRING([--disable-pipewire   ], [disable Pipewire output plugin (default: enabled)])], [enable_pipewire=$enableval], [enable_pipewire=yes])
 AC_ARG_ENABLE(pulse,    [AS_HELP_STRING([--disable-pulse   ], [disable PulseAudio output plugin (default: enabled)])], [enable_pulse=$enableval], [enable_pulse=yes])
 AC_ARG_ENABLE(coreaudio,[AS_HELP_STRING([--disable-coreaudio], [disable CoreAudio output plugin (default: enabled)])], [enable_coreaudio=$enableval], [enable_coreaudio=yes])
 AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--disable-gtk3     ], [disable GTK3 version of gtkui plugin (default: enabled)])], [enable_gtk3=$enableval], [enable_gtk3=yes])
@@ -333,10 +334,22 @@ AS_IF([test "${enable_pulse}" != "no"], [
         HAVE_PULSE=yes
         PULSE_DEPS_LIBS="-lpulse-simple"
         PULSE_DEPS_CFLAGS="-I../../$LIB/include/"
-        AC_SUBST(DBUS_DEPS_CFLAGS)
-        AC_SUBST(DBUS_DEPS_LIBS)
+        AC_SUBST(PULSE_DEPS_CFLAGS)
+        AC_SUBST(PULSE_DEPS_LIBS)
     ], [
         PKG_CHECK_MODULES(PULSE_DEPS, libpulse-simple, HAVE_PULSE=yes, HAVE_PULSE=no)
+    ])
+])
+
+AS_IF([test "${enable_pipewire}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        HAVE_PIPEWIRE=yes
+        PIPEWIRE_DEPS_LIBS="-lpipewire-0.3"
+        PIPEWIRE_DEPS_CFLAGS="-D_REENTRANT -I../$LIB/include/pipewire-0.3 -I../$LIB/include/spa-0.2"
+        AC_SUBST(PIPEWIRE_DEPS_CFLAGS)
+        AC_SUBST(PIPEWIRE_DEPS_LIBS)
+    ], [
+        PKG_CHECK_MODULES(PIPEWIRE_DEPS, libpipewire-0.3, HAVE_PIPEWIRE=yes, HAVE_PIPEWIRE=no)
     ])
 ])
 
@@ -632,6 +645,12 @@ AS_IF([test "${enable_pulseaudio}" != "no"], [
     ])
 ])
 
+AS_IF([test "${enable_pipewire}" != "no"], [
+    AS_IF([test "${HAVE_PIPEWIRE}" = "yes"], [
+        HAVE_PIPEWIRE_PLUGIN=yes
+    ])
+])
+
 dnl lastfm plugin
 AS_IF([test "${enable_lfm}" != "no"], [
     AS_IF([test "${HAVE_CURL}" = "yes" -a "${enable_lastfm}" != "no"], [
@@ -838,6 +857,7 @@ AM_CONDITIONAL(HAVE_GTK3, test "x$HAVE_GTK3" = "xyes")
 AM_CONDITIONAL(HAVE_ALSA, test "x$HAVE_ALSAPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_COREAUDIO, test "x$HAVE_COREAUDIO" = "xyes")
 AM_CONDITIONAL(HAVE_FFMPEG, test "x$HAVE_FFMPEGPLUGIN" = "xyes")
+AM_CONDITIONAL(HAVE_PIPEWIRE, test "x$HAVE_PIPEWIRE_PLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_PULSE, test "x$HAVE_PULSEPLUGIN" = "xyes")
 AM_CONDITIONAL(HAVE_ARTWORK, test "x$HAVE_ARTWORK" = "xyes")
 AM_CONDITIONAL(ARTWORK_USE_VFS_CURL, test "x$ARTWORK_USE_VFS_CURL" = "xyes")
@@ -1008,6 +1028,7 @@ PRINT_PLUGIN_INFO([opus],[ogg opus player],[test "x$HAVE_OPUSPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([oss],[oss output plugin],[test "x$HAVE_OSS" = "xyes"])
 PRINT_PLUGIN_INFO([pltbrowser],[playlist browser gui plugin],[test "x$HAVE_PLTBROWSER" = "xyes"])
 PRINT_PLUGIN_INFO([psf],[PSF player, using Audio Overload SDK],[test "x$HAVE_PSF" = "xyes"])
+PRINT_PLUGIN_INFO([pipewire],[Pipewire output plugin],[test "x$HAVE_PIPEWIRE_PLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([pulse],[PulseAudio output plugin],[test "x$HAVE_PULSEPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([rgscanner],[plugin for ReplayGain scanner support],[test "x$HAVE_RGSCANNER" = "xyes"])
 PRINT_PLUGIN_INFO([sc68],[sc68 Atari ST And Amiga player],[test "x$HAVE_SC68" = "xyes"])
