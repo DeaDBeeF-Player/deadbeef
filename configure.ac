@@ -88,6 +88,7 @@ AC_ARG_ENABLE(coreaudio,[AS_HELP_STRING([--disable-coreaudio], [disable CoreAudi
 AC_ARG_ENABLE(gtk3,     [AS_HELP_STRING([--disable-gtk3     ], [disable GTK3 version of gtkui plugin (default: enabled)])], [enable_gtk3=$enableval], [enable_gtk3=yes])
 AC_ARG_ENABLE(gtk2,     [AS_HELP_STRING([--disable-gtk2     ], [disable GTK2 version of gtkui plugin (default: enabled)])], [enable_gtk2=$enableval], [enable_gtk2=yes])
 AC_ARG_ENABLE(vfs_curl, [AS_HELP_STRING([--disable-vfs-curl], [disable HTTP streaming vfs plugin (default: enabled)])], [enable_vfs_curl=$enableval], [enable_vfs_curl=yes])
+AC_ARG_ENABLE(libretro, [AS_HELP_STRING([--disable-libretro   ], [disable Libretro resampler plugin (default: enabled)])], [enable_libretro=$enableval], [enable_libretro=yes])
 AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/libre.fm scrobbler plugin (default: enabled)])], [enable_lfm=$enableval], [enable_lfm=yes])
 AC_ARG_ENABLE(artwork,  [AS_HELP_STRING([--disable-artwork ], [disable album art loader plugin (default: enabled)])], [enable_artwork=$enableval], [enable_artwork=yes])
 AC_ARG_ENABLE(artwork-network,  [AS_HELP_STRING([--disable-artwork-network ], [disable album art network loading support (default: enabled)])], [enable_artwork_network=$enableval], [enable_artwork_network=yes])
@@ -345,12 +346,16 @@ AS_IF([test "${enable_pipewire}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_PIPEWIRE=yes
         PIPEWIRE_DEPS_LIBS="-lpipewire-0.3"
-        PIPEWIRE_DEPS_CFLAGS="-D_REENTRANT -I../$LIB/include/pipewire-0.3 -I../$LIB/include/spa-0.2"
+        PIPEWIRE_DEPS_CFLAGS="-D_REENTRANT -I../../$LIB/include/pipewire-0.3 -I../../$LIB/include/spa-0.2"
         AC_SUBST(PIPEWIRE_DEPS_CFLAGS)
         AC_SUBST(PIPEWIRE_DEPS_LIBS)
     ], [
         PKG_CHECK_MODULES(PIPEWIRE_DEPS, libpipewire-0.3, HAVE_PIPEWIRE=yes, HAVE_PIPEWIRE=no)
     ])
+])
+
+AS_IF([test "${enable_libretro}" != "no"], [
+    HAVE_LIBRETRO=yes
 ])
 
 AC_CHECK_HEADER([iconv.h],[],[iconv.h not found.])
@@ -867,6 +872,7 @@ AM_CONDITIONAL(HAVE_SID, test "x$HAVE_SID" = "xyes")
 AM_CONDITIONAL(HAVE_NULLOUT, test "x$HAVE_NULLOUT" = "xyes")
 AM_CONDITIONAL(HAVE_VTX, test "x$HAVE_VTX" = "xyes")
 AM_CONDITIONAL(HAVE_GME, test "x$HAVE_GME" = "xyes")
+AM_CONDITIONAL(HAVE_LIBRETRO, test "x$HAVE_LIBRETRO" = "xyes")
 AM_CONDITIONAL(HAVE_LASTFM, test "x$HAVE_LASTFM" = "xyes")
 AM_CONDITIONAL(HAVE_VFS_CURL, test "x$HAVE_VFS_CURL" = "xyes")
 AM_CONDITIONAL(HAVE_HOTKEYS, test "x$HAVE_HOTKEYS" = "xyes")
@@ -913,6 +919,8 @@ AC_SUBST(PLUGINS_DIRS)
 AC_CONFIG_FILES([
 Makefile
 external/Makefile
+external/ddb_dsp_libretro/Makefile
+external/ddb_output_pw/Makefile
 shared/Makefile
 analyzer/Makefile
 scope/Makefile
@@ -1015,6 +1023,7 @@ PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes"])
 PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes"])
 PRINT_PLUGIN_INFO([hotkeys],[Local and global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
 PRINT_PLUGIN_INFO([lastfm],[last.fm scrobbler],[test "x$HAVE_LASTFM" = "xyes"])
+PRINT_PLUGIN_INFO([libretro],[Libretro resampler plugin],[test "x$HAVE_LIBRETRO" = "xyes"])
 PRINT_PLUGIN_INFO([m3u],[M3U and PLS playlist support],[test "x$HAVE_M3U" = "xyes"])
 PRINT_PLUGIN_INFO([mms],[mms streaming support],[test "x$HAVE_MMS" = "xyes"])
 PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STEREO" = "xyes"])
