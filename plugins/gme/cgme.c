@@ -50,8 +50,6 @@ static DB_decoder_t plugin;
 static DB_functions_t *deadbeef;
 static int conf_fadeout = 10;
 static int conf_loopcount = 2;
-static int chip_voices = 0xff;
-static int chip_voices_changed = 0;
 static int conf_play_forever = 0;
 static char *coleco_rom;
 
@@ -61,14 +59,18 @@ typedef struct {
     int reallength;
     float duration; // of current song
     int eof;
+    int chip_voices;
     int can_loop;
+    int rawsignal;
     int fade_set;
 } gme_fileinfo_t;
 
 static DB_fileinfo_t *
-cgme_open (uint32_t hint) {
+cgme_open (uint32_t hints) {
     gme_fileinfo_t *info = calloc (1, sizeof (gme_fileinfo_t));
-    info->can_loop = hint & DDB_DECODER_HINT_CAN_LOOP;
+    info->chip_voices = 0xff;
+    info->can_loop = hints & DDB_DECODER_HINT_CAN_LOOP;
+    info->rawsignal = hints & DDB_DECODER_HINT_RAW_SIGNAL;
     return &info->info;
 }
 
@@ -223,8 +225,6 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         trace ("failed with error %d\n", res);
         return -1;
     }
-    chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
-    gme_mute_voices (info->emu, chip_voices^0xff);
     gme_start_track (info->emu, deadbeef->pl_find_meta_int (it, ":TRACKNUM", 0));
 
     gme_info_t *inf;
@@ -266,10 +266,12 @@ cgme_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
     }
 
-    if (chip_voices_changed) {
-        chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
-        chip_voices_changed = 0;
-        gme_mute_voices (info->emu, chip_voices^0xff);
+    if (!info->rawsignal) {
+        int chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
+        if (chip_voices != info->chip_voices) {
+            info->chip_voices = chip_voices;
+            gme_mute_voices (info->emu, chip_voices^0xff);
+        }
     }
 
     // FIXME: it makes more sense to call gme_set_fade on init and configchanged
@@ -537,9 +539,6 @@ cgme_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         conf_fadeout = deadbeef->conf_get_int ("gme.fadeout", 10);
         conf_loopcount = deadbeef->conf_get_int ("gme.loopcount", 2);
         conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
-        if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
-            chip_voices_changed = 1;
-        }
         init_coleco_bios ();
         break;
     }
