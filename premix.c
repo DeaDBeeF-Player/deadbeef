@@ -548,48 +548,31 @@ pcm_convert (const ddb_waveformat_t * restrict inputfmt, const char * restrict i
         }
         uint32_t inputbitmask = 1;
 
-        // special case: mono L/R to multichannel L/R
-        if (inputfmt->channels == 1
-            && (inputfmt->channelmask & (DDB_SPEAKER_FRONT_LEFT|DDB_SPEAKER_FRONT_RIGHT))) {
-            int ch = 0;
-            if (outputfmt->channelmask & DDB_SPEAKER_FRONT_LEFT) {
-                channelmap[ch] = 0;
-                ch += 1;
-            }
-            if (outputfmt->channelmask & DDB_SPEAKER_FRONT_RIGHT) {
-                channelmap[ch] = 0;
-            }
-        }
-        else {
-            for (int i = 0; i < inputfmt->channels; i++) {
-                // find next input channel
-                while (inputbitmask < 0x80000000 && !(inputfmt->channelmask & inputbitmask)) {
-                    inputbitmask <<= 1;
-                }
-                if (!(inputfmt->channelmask & inputbitmask)) {
-                    trace ("pcm_convert: channelmask doesn't correspond to the inputfmt (channels=%d, channelmask=%X)!\n", inputfmt->channels, inputfmt->channelmask);
-                    break;
-                }
-                if (outputfmt->channelmask & inputbitmask) {
-                    int o = 0;
-                    uint32_t outputbitmask = 1;
-                    while (outputbitmask < 0x80000000 && (outputfmt->channelmask & outputbitmask) != inputbitmask) {
-                        outputbitmask <<= 1;
-                        o++;
-                    }
-                    if (!(inputfmt->channelmask & outputbitmask)) {
-                        // no corresponding output channel -- ignore
-                        continue;
-                    }
-                    outchannels |= outputbitmask;
-                    channelmap[i] = o; // input channel i going to output channel o
-                    //trace ("channelmap[%d]=%d\n", i, o);
-                }
-                else {
-                    channelmap[i] = -1;
-                }
+        for (int i = 0; i < inputfmt->channels; i++) {
+            // find next input channel
+            while (inputbitmask < 0x80000000 && !(inputfmt->channelmask & inputbitmask)) {
                 inputbitmask <<= 1;
             }
+            if (!(inputfmt->channelmask & inputbitmask)) {
+                trace ("pcm_convert: channelmask doesn't correspond to the inputfmt (channels=%d, channelmask=%X)!\n", inputfmt->channels, inputfmt->channelmask);
+                break;
+            }
+            if (outputfmt->channelmask & inputbitmask) {
+                int o = 0;
+                uint32_t outputbitmask = 1;
+                while (outputbitmask < 0x80000000 && (outputfmt->channelmask & outputbitmask) != inputbitmask) {
+                    outputbitmask <<= 1;
+                    o++;
+                }
+                if (!(inputfmt->channelmask & outputbitmask)) {
+                    // no corresponding output channel -- ignore
+                    continue;
+                }
+                outchannels |= outputbitmask;
+                channelmap[o] = i; // input channel i going to output channel o
+                //trace ("channelmap[%d]=%d\n", i, o);
+            }
+            inputbitmask <<= 1;
         }
 
         if (outchannels != outputfmt->channelmask) {
