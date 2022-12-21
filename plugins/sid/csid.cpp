@@ -291,7 +291,20 @@ csid_mute_voices (sid_info_t *info, int chip_voices) {
         if (emu) {
             for (int i = 0; i < 3; i++) {
                 bool mute = chip_voices & (1 << i) ? false : true;
-                emu->voice (i, mute ? 0x00 : 0xff, mute);
+
+                if (maxsids == 2) {
+                    // in stereo mode, sid0 has voices 0 and 2 muted, and sid1 has voice 1 muted
+                    // (libsidplay2 config.cpp:217)
+                    if (k == 0 && i != 1) {
+                        mute = true;
+                    }
+                    else if (k == 1 && i == 1) {
+                        mute = true;
+                    }
+                }
+
+                // volume parameter is ignored, pass 0
+                emu->voice (i, 0, mute);
             }
         }
     }
