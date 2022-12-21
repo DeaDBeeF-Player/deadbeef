@@ -48,6 +48,8 @@ typedef struct {
     ReSIDBuilder *resid;
     SidTune *tune;
     float duration; // of the current song
+    int chip_voices;
+    int rawsignal;
 } sid_info_t;
 
 static inline void
@@ -76,9 +78,6 @@ static size_t sldb_lengths_count;
 static int sldb_loaded;
 static int sldb_disable;
 static int sldb_legacy;
-
-static int chip_voices = 0xff;
-static int chip_voices_changed = 0;
 
 static int conf_hvsc_enable = 0;
 
@@ -279,6 +278,8 @@ sldb_find (const uint8_t *digest) {
 DB_fileinfo_t *
 csid_open (uint32_t hints) {
     sid_info_t *info = (sid_info_t *)calloc (1, sizeof (sid_info_t));
+    info->rawsignal = hints & DDB_DECODER_HINT_RAW_SIGNAL;
+    info->chip_voices = 0xff;
     return &info->info;
 }
 
@@ -347,8 +348,6 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
 
-    chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
-    csid_mute_voices (info, chip_voices);
     return 0;
 }
 
@@ -363,6 +362,17 @@ csid_free (DB_fileinfo_t *_info) {
     }
 }
 
+static void
+_mute_voices(sid_info_t *info) {
+    if (!info->rawsignal) {
+        int chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
+        if (chip_voices != info->chip_voices) {
+            info->chip_voices = chip_voices;
+            csid_mute_voices (info, chip_voices);
+        }
+    }
+}
+
 int
 csid_read (DB_fileinfo_t *_info, char *bytes, int size) {
     sid_info_t *info = (sid_info_t *)_info;
@@ -370,11 +380,7 @@ csid_read (DB_fileinfo_t *_info, char *bytes, int size) {
         return 0;
     }
 
-    if (chip_voices_changed) {
-        chip_voices = deadbeef->conf_get_int ("chip.voices", 0xff);
-        chip_voices_changed = 0;
-        csid_mute_voices (info, chip_voices);
-    }
+    _mute_voices(info);
 
     int rd = info->sidplay->play (bytes, size);
 
@@ -393,7 +399,7 @@ csid_seek (DB_fileinfo_t *_info, float time) {
     if (t < _info->readpos) {
         // reinit
         info->sidplay->load (info->tune);
-        csid_mute_voices (info, chip_voices);
+        _mute_voices(info);
     }
     else {
         t -= _info->readpos;
@@ -591,10 +597,6 @@ sid_configchanged (void) {
 
     // pick up new sldb filename in case it was changed
     sldb_free ();
-
-    if (chip_voices != deadbeef->conf_get_int ("chip.voices", 0xff)) {
-        chip_voices_changed = 1;
-    }
 
     return 0;
 }
