@@ -134,8 +134,8 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
             right = scope->sample_count-1;
         }
 
-        int right_a = ftoi(floor(right));
-        float fright_b = ceil(right);
+        int right_a = ftoi(floorf(right));
+        float fright_b = ceilf(right);
         int right_b = ftoi(fright_b);
 
         float rightfrac = fright_b - right;
