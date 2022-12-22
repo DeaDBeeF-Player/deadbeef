@@ -145,8 +145,8 @@ static __inline void fpu_restore(fpu_control fpu){
 typedef int16_t fpu_control;
 
 #include <emmintrin.h>
-static __inline int ftoi(double f){
-        return _mm_cvtsd_si32(_mm_load_sd(&f));
+static __inline int ftoi(float f){
+        return _mm_cvtt_ss2si(_mm_load_ss(&f));
 }
 
 static __inline void fpu_setround(fpu_control *fpu){
