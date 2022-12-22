@@ -193,6 +193,10 @@ typedef struct {
     GtkWidget *fragment_duration_500ms_item;
 } w_scope_t;
 
+
+#define SpectrumVisXOffset 40
+#define SpectrumVisYOffset 12
+
 typedef struct {
     ddb_gtkui_widget_t base;
     ddb_gtkui_widget_extended_api_t exapi;
@@ -2971,14 +2975,11 @@ static void
 _spectrum_draw_grid(w_spectrum_t *w, cairo_t *cr, GtkAllocation size) {
     // horz lines, db scale
     float lower = -floor(w->analyzer.db_lower_bound);
-    for (int db = 10; db < lower; db += 10) {
-        float y = (float)(db / lower) * size.height;
-        if (y >= size.height) {
-            break;
-        }
+    for (int db = 0; db < lower; db += 10) {
+        float y = (float)(db / lower) * (size.height - SpectrumVisYOffset);
 
-        cairo_move_to (cr, 0, size.height-y);
-        cairo_line_to (cr, size.width-1, size.height-y);
+        cairo_move_to (cr, SpectrumVisXOffset, y + SpectrumVisYOffset);
+        cairo_line_to (cr, size.width-1, y + SpectrumVisYOffset);
     }
 
     static const double dash[2] = {1, 2};
@@ -2989,16 +2990,13 @@ _spectrum_draw_grid(w_spectrum_t *w, cairo_t *cr, GtkAllocation size) {
     // db text
     cairo_set_font_size(cr, 10);
 
-    for (int db = 10; db < lower; db += 10) {
-        float y = (float)(db / lower) * size.height;
-        if (y >= size.height) {
-            break;
-        }
+    for (int db = 0; db < lower; db += 10) {
+        float y = (float)(db / lower) * (size.height - SpectrumVisYOffset);
 
         char str[20];
         snprintf (str, sizeof (str), "%d dB", -db);
 
-        cairo_move_to(cr, 0, y + 9);
+        cairo_move_to(cr, 0, y + 9 + SpectrumVisYOffset);
         cairo_show_text(cr, str);
     }
 }
@@ -3011,7 +3009,7 @@ _spectrum_draw_frequency_labels (w_spectrum_t *w, cairo_t *cr, GtkAllocation siz
             continue;
         }
 
-        cairo_move_to(cr, w->draw_data.label_freq_positions[i], 9);
+        cairo_move_to(cr, w->draw_data.label_freq_positions[i] + SpectrumVisXOffset, 9);
         cairo_show_text(cr, w->draw_data.label_freq_texts[i]);
     }
 }
@@ -3038,7 +3036,8 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     deadbeef->mutex_lock (w->mutex);
         ddb_analyzer_process(&w->analyzer, w->input_data.fmt->samplerate, w->input_data.fmt->channels, w->input_data.data, w->input_data.nframes);
         ddb_analyzer_tick(&w->analyzer);
-        ddb_analyzer_get_draw_data(&w->analyzer, a.width, a.height, &w->draw_data);
+
+        ddb_analyzer_get_draw_data(&w->analyzer, a.width - SpectrumVisXOffset, a.height - SpectrumVisYOffset, &w->draw_data);
     deadbeef->mutex_unlock(w->mutex);
 
     cairo_set_source_rgb(cr, w->grid_color[0], w->grid_color[1], w->grid_color[2]);
@@ -3054,7 +3053,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
             cairo_line_to(cr, bar->xpos, a.height-1);
         }
         else {
-            cairo_rectangle(cr, bar->xpos, a.height-bar->bar_height, w->draw_data.bar_width, bar->bar_height);
+            cairo_rectangle(cr, bar->xpos + SpectrumVisXOffset, a.height-bar->bar_height + SpectrumVisYOffset, w->draw_data.bar_width, bar->bar_height);
         }
     }
 
@@ -3070,7 +3069,7 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     bar = w->draw_data.bars;
     cairo_set_source_rgb(cr, w->peak_color[0], w->peak_color[1], w->peak_color[2]);
     for (int i = 0; i < w->draw_data.bar_count; i++, bar++) {
-        cairo_rectangle(cr, bar->xpos, a.height-bar->peak_ypos-1, w->draw_data.bar_width, 1);
+        cairo_rectangle(cr, bar->xpos + SpectrumVisXOffset, a.height-bar->peak_ypos-1 + SpectrumVisYOffset, w->draw_data.bar_width, 1);
     }
     cairo_fill(cr);
 
