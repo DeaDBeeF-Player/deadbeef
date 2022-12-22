@@ -1174,6 +1174,16 @@ project "tta"
   }
 end
 
+if option ("plugin-libretro") then
+project "ddb_dsp_libretro"
+  files {
+    "external/ddb_dsp_libretro/libretro.cpp"
+  }
+  buildoptions {
+    "-msse3"
+  }
+end
+
 project "translations"
   kind "Utility"
   files {
