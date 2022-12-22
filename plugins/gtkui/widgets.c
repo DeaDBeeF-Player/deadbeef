@@ -2365,8 +2365,8 @@ _alpha_blend (uint32_t color, uint32_t background_color, float alpha) {
 
 static inline void
 _draw_vline_aa (uint8_t * restrict data, int stride, int x0, float y0, float y1, uint32_t color, uint32_t background_color) {
-    int floor_y0 = ftoi(floor(y0));
-    int ceil_y1 = ftoi(ceil(y1));
+    int floor_y0 = ftoi(floorf(y0));
+    int ceil_y1 = ftoi(ceilf(y1));
     uint32_t *ptr = (uint32_t*)&data[floor_y0*stride+x0*4];
     int y = floor_y0;
     while (y <= ceil_y1) {
