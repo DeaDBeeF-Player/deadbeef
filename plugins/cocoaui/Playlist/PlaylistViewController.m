@@ -1205,7 +1205,14 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         }
             break;
         case DB_EV_PLAYLISTCHANGED: {
-            if (!p1 || (p1 == DDB_PLAYLIST_CHANGE_SEARCHRESULT)) {
+            if (p1 == 0) {
+                // a change requiring full reload -- such as adding/removing a track
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    PlaylistView *listview = (PlaylistView *)self.view;
+                    [listview.contentView reloadData];
+                });
+            }
+            else if (p1 == DDB_PLAYLIST_CHANGE_SEARCHRESULT) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     PlaylistView *listview = (PlaylistView *)self.view;
                     if ([self playlistIter] == PL_SEARCH) {
