@@ -43,9 +43,6 @@ case "$TRAVIS_OS_NAME" in
         echo "Downloading windows deps..."
         git clone "$DEPS_URL"
         wget "$PREMAKE_URL" -O premake.zip && unzip premake.zip
-        echo "Downgrading openssh"
-        wget http://repo.msys2.org/msys/x86_64/openssh-8.7p1-1-x86_64.pkg.tar.zst
-        pacman --noconfirm -U openssh-8.7p1-1-x86_64.pkg.tar.zst
         echo "Building for x86_64"
         $mingw64 ./premake5 --standard gmake2
         $mingw64 make config=release_windows CC=clang CXX=clang++
