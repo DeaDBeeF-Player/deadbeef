@@ -206,7 +206,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             if (idx >= 0) {
                 [self updateColumn:idx];
                 PlaylistView *listview = (PlaylistView *)self.view;
-                [listview.contentView reloadData];
+                listview.contentView.needsDisplay = YES;
             }
         }
     }];
@@ -235,7 +235,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             if (idx >= 0) {
                 [self updateColumn:idx];
                 PlaylistView *listview = (PlaylistView *)self.view;
-                [listview.contentView reloadData];
+                listview.contentView.needsDisplay = YES;
             }
         }
     }];
@@ -247,7 +247,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         [self removeColumnAtIndex:self.menuColumn];
         [self columnsChanged];
         PlaylistView *listview = (PlaylistView *)self.view;
-        [listview.contentView reloadData];
+        listview.contentView.needsDisplay = YES;
     }
 }
 
@@ -1208,14 +1208,16 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             if (!p1 || (p1 == DDB_PLAYLIST_CHANGE_SEARCHRESULT)) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     PlaylistView *listview = (PlaylistView *)self.view;
-                    [listview.contentView reloadData];
+                    if ([self playlistIter] == PL_SEARCH) {
+                        [listview.contentView reloadData];
+                    }
                 });
             }
             else if (p1 == DDB_PLAYLIST_CHANGE_SELECTION) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     PlaylistView *listview = (PlaylistView *)self.view;
                     if (ctx != (uintptr_t)listview) {
-                        [listview.contentView reloadData];
+                        listview.contentView.needsDisplay = YES;
                     }
                 });
             }
