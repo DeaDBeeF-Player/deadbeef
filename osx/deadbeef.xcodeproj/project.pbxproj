@@ -766,7 +766,6 @@
 		2D22F75919E13850009C631E /* csid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D22F6F719E137A6009C631E /* csid.h */; };
 		2D22F75A19E13850009C631E /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F6F819E137A6009C631E /* plugin.c */; };
 		2D22F75B19E13850009C631E /* csid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D22F6F919E137A6009C631E /* csid.cpp */; };
-		2D22F75E19E138B3009C631E /* sid.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D22F75519E1384B009C631E /* sid.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D22F76119E13AD7009C631E /* liblibsidplay2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D22F70319E1382C009C631E /* liblibsidplay2.a */; };
 		2D2351211B138F1100A62936 /* converter.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D23511B1B138ECB00A62936 /* converter.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D2351251B138F3200A62936 /* converter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2351231B138F3200A62936 /* converter.c */; };
@@ -1597,6 +1596,7 @@
 		2D8DA1451C9718C10044CC15 /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8DA0EB1C9718C10044CC15 /* plugin.c */; };
 		2D8DA1461C97194C0044CC15 /* dma2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8DA0B71C9718C10044CC15 /* dma2.c */; };
 		2D8DA1471C9719680044CC15 /* registers2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D8DA0BD1C9718C10044CC15 /* registers2.c */; };
+		2D8DDA6729571BEA0015D3B5 /* libsidplayfp.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D8DDA5E295719C90015D3B5 /* libsidplayfp.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D8E9C1819ED5C4400EE1408 /* curl_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8E9C1719ED5C4400EE1408 /* curl_config.h */; };
 		2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B3EDF1837EC44003E6066 /* deadbeef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2D8EE27424D03601005C5B4B /* MediaLibraryOutlineViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8EE27224D03601005C5B4B /* MediaLibraryOutlineViewController.h */; };
@@ -2412,6 +2412,7 @@
 		2DC6C64E294E1CB400A63CEB /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C64D294E1CB300A63CEB /* gtest-all.cc */; };
 		2DC6C64F294E5E7900A63CEB /* AlbumArtImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9FD9E22607C68500F406D1 /* AlbumArtImageView.m */; };
 		2DC6C65A29539AAE00A63CEB /* ddb_dsp_libretro.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC6C8AA29570D0900A63CEB /* sidfp.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DC6C891295707E300A63CEB /* sidfp.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
@@ -3606,6 +3607,13 @@
 			remoteGlobalIDString = 2D88E9EC1B2AF6640072FD43;
 			remoteInfo = vorbis;
 		};
+		2D8DDA5D295719C90015D3B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D8DDA59295719C90015D3B5 /* sidplayfp.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2DC6C6982957019E00A63CEB;
+			remoteInfo = sidplayfp;
+		};
 		2D9177401A0E89B8004BC222 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -4019,6 +4027,20 @@
 			remoteGlobalIDString = 2DC1B62326939F5100C43C4F;
 			remoteInfo = ddb_dsp_libretro;
 		};
+		2DC6C890295707E300A63CEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DC6C88C295707E200A63CEB /* sidfp.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2DC6C885295707C400A63CEB;
+			remoteInfo = sidfp;
+		};
+		2DC6C8A829570CFA00A63CEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DC6C88C295707E200A63CEB /* sidfp.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DC6C884295707C400A63CEB;
+			remoteInfo = sidfp;
+		};
 		2DC8263C24A7432700DB756B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -4406,6 +4428,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2D8DDA6729571BEA0015D3B5 /* libsidplayfp.dylib in Copy Plugins */,
+				2DC6C8AA29570D0900A63CEB /* sidfp.dylib in Copy Plugins */,
 				2DC6C65A29539AAE00A63CEB /* ddb_dsp_libretro.dylib in Copy Plugins */,
 				2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */,
 				2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */,
@@ -4441,7 +4465,6 @@
 				2D9177421A0E89C8004BC222 /* alac.dylib in Copy Plugins */,
 				2DCB281D19E86194008E9DF6 /* m3u.dylib in Copy Plugins */,
 				2DA24BA319E72A2500E34920 /* vfs_curl.dylib in Copy Plugins */,
-				2D22F75E19E138B3009C631E /* sid.dylib in Copy Plugins */,
 				4DAF343F19B75FF500EE96ED /* ddb_dumb.dylib in Copy Plugins */,
 				2D2A14BA19B6485200AD1EB7 /* gme.dylib in Copy Plugins */,
 				2DB96AA819ABB52200E318A8 /* dsp_libsrc.dylib in Copy Plugins */,
@@ -6108,6 +6131,7 @@
 		2D8DA0E91C9718C10044CC15 /* mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mem.h; sourceTree = "<group>"; };
 		2D8DA0EA1C9718C10044CC15 /* osd_cpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osd_cpu.h; sourceTree = "<group>"; };
 		2D8DA0EB1C9718C10044CC15 /* plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugin.c; sourceTree = "<group>"; };
+		2D8DDA59295719C90015D3B5 /* sidplayfp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplayfp.xcodeproj; path = libsidplayfp/Xcode/sidplayfp/sidplayfp.xcodeproj; sourceTree = "<group>"; };
 		2D8E9C1719ED5C4400EE1408 /* curl_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = curl_config.h; path = osx/curl_config.h; sourceTree = "<group>"; };
 		2D8E9C1919ED5C8200EE1408 /* libpoll.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpoll.dylib; path = usr/lib/libpoll.dylib; sourceTree = SDKROOT; };
 		2D8EE27224D03601005C5B4B /* MediaLibraryOutlineViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryOutlineViewController.h; sourceTree = "<group>"; };
@@ -6780,6 +6804,7 @@
 		2DC6C620294DE70E00A63CEB /* GTMGoogleTestRunner.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GTMGoogleTestRunner.mm; sourceTree = "<group>"; };
 		2DC6C64D294E1CB300A63CEB /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "gtest-all.cc"; path = "googletest/googletest/src/gtest-all.cc"; sourceTree = "<group>"; };
 		2DC6C6502953995F00A63CEB /* ddb_dsp_libretro.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ddb_dsp_libretro.xcodeproj; path = ddb_dsp_libretro/Xcode/ddb_dsp_libretro/ddb_dsp_libretro.xcodeproj; sourceTree = "<group>"; };
+		2DC6C88C295707E200A63CEB /* sidfp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidfp.xcodeproj; path = plugins/sidfp/sidfp.xcodeproj; sourceTree = "<group>"; };
 		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
@@ -10525,6 +10550,14 @@
 			path = eng_ssf;
 			sourceTree = "<group>";
 		};
+		2D8DDA5A295719C90015D3B5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2D8DDA5E295719C90015D3B5 /* libsidplayfp.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		2D91772E1A0E892F004BC222 /* alac */ = {
 			isa = PBXGroup;
 			children = (
@@ -10765,6 +10798,7 @@
 				2DC6C6502953995F00A63CEB /* ddb_dsp_libretro.xcodeproj */,
 				2DA84F7624F58894003507A2 /* jansson.xcodeproj */,
 				2D71F1AB24AE799B00E753D3 /* mp4p.xcodeproj */,
+				2D8DDA59295719C90015D3B5 /* sidplayfp.xcodeproj */,
 				2D9E5BFF24AE6AAD0099B108 /* wcwidth */,
 				2DC6C63C294E1C8800A63CEB /* GoogleTest */,
 			);
@@ -11404,6 +11438,14 @@
 			isa = PBXGroup;
 			children = (
 				2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2DC6C88D295707E200A63CEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2DC6C891295707E300A63CEB /* sidfp.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -12213,6 +12255,7 @@
 		4D1B514C1837EF7C003E6066 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				2DC6C88C295707E200A63CEB /* sidfp.xcodeproj */,
 				4D9C5D6D1FDEBCB000D83CEF /* opuslib */,
 				2D28F02F1C283B1F004A6E7B /* aac */,
 				2D652FDD1CE79ED400163808 /* adplug */,
@@ -15575,6 +15618,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DC6C8A929570CFA00A63CEB /* PBXTargetDependency */,
 				2DC6C6592953998200A63CEB /* PBXTargetDependency */,
 				2DBF3D98270885C400023138 /* PBXTargetDependency */,
 				2DA5AB0525D033A100947C19 /* PBXTargetDependency */,
@@ -16018,6 +16062,14 @@
 					ProductGroup = 2D71F1AC24AE799B00E753D3 /* Products */;
 					ProjectRef = 2D71F1AB24AE799B00E753D3 /* mp4p.xcodeproj */;
 				},
+				{
+					ProductGroup = 2DC6C88D295707E200A63CEB /* Products */;
+					ProjectRef = 2DC6C88C295707E200A63CEB /* sidfp.xcodeproj */;
+				},
+				{
+					ProductGroup = 2D8DDA5A295719C90015D3B5 /* Products */;
+					ProjectRef = 2D8DDA59295719C90015D3B5 /* sidplayfp.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -16181,6 +16233,13 @@
 			remoteRef = 2D71F1B224AE799B00E753D3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		2D8DDA5E295719C90015D3B5 /* libsidplayfp.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libsidplayfp.dylib;
+			remoteRef = 2D8DDA5D295719C90015D3B5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		2DA84F7B24F58894003507A2 /* libjansson.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
@@ -16193,6 +16252,13 @@
 			fileType = "compiled.mach-o.dylib";
 			path = ddb_dsp_libretro.dylib;
 			remoteRef = 2DC6C6542953996000A63CEB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2DC6C891295707E300A63CEB /* sidfp.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = sidfp.dylib;
+			remoteRef = 2DC6C890295707E300A63CEB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		2DDFABCD2438E56000E13E85 /* libFDK.a */ = {
@@ -19022,6 +19088,11 @@
 			isa = PBXTargetDependency;
 			name = ddb_dsp_libretro;
 			targetProxy = 2DC6C6582953998200A63CEB /* PBXContainerItemProxy */;
+		};
+		2DC6C8A929570CFA00A63CEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = sidfp;
+			targetProxy = 2DC6C8A829570CFA00A63CEB /* PBXContainerItemProxy */;
 		};
 		2DC8263D24A7432700DB756B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

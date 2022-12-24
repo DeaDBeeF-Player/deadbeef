@@ -16,3 +16,6 @@
 [submodule "external/ddb_dsp_libretro"]
 	path = external/ddb_dsp_libretro
 	url = https://github.com/DeaDBeeF-Player/ddb_dsp_libretro.git
+[submodule "external/libsidplayfp"]
+	path = external/libsidplayfp
+	url = https://github.com/DeaDBeeF-Player/libsidplayfp.git

@@ -1,0 +1,346 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 53;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2D8DDA6429571BD10015D3B5 /* libsidplayfp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D8DDA6329571B880015D3B5 /* libsidplayfp.dylib */; };
+		2DC6C8A52957096800A63CEB /* csid.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC6C8A22957096800A63CEB /* csid.h */; };
+		2DC6C8A62957096800A63CEB /* csid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C8A32957096800A63CEB /* csid.cpp */; };
+		2DC6C8A72957096800A63CEB /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C8A42957096800A63CEB /* plugin.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2D8DDA6229571B880015D3B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DC6C8982957080800A63CEB /* sidplayfp.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2DC6C6982957019E00A63CEB;
+			remoteInfo = sidplayfp;
+		};
+		2D8DDA6529571BD50015D3B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2DC6C8982957080800A63CEB /* sidplayfp.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DC6C6972957019E00A63CEB;
+			remoteInfo = sidplayfp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2DC6C885295707C400A63CEB /* sidfp.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sidfp.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DC6C8982957080800A63CEB /* sidplayfp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sidplayfp.xcodeproj; path = ../../external/libsidplayfp/Xcode/sidplayfp/sidplayfp.xcodeproj; sourceTree = "<group>"; };
+		2DC6C8A22957096800A63CEB /* csid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = csid.h; sourceTree = "<group>"; };
+		2DC6C8A32957096800A63CEB /* csid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = csid.cpp; sourceTree = "<group>"; };
+		2DC6C8A42957096800A63CEB /* plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plugin.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2DC6C883295707C400A63CEB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D8DDA6429571BD10015D3B5 /* libsidplayfp.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2D8DDA5F29571B880015D3B5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2D8DDA6329571B880015D3B5 /* libsidplayfp.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2DC6C87C295707C400A63CEB = {
+			isa = PBXGroup;
+			children = (
+				2DC6C8A32957096800A63CEB /* csid.cpp */,
+				2DC6C8A22957096800A63CEB /* csid.h */,
+				2DC6C8A42957096800A63CEB /* plugin.c */,
+				2DC6C8982957080800A63CEB /* sidplayfp.xcodeproj */,
+				2DC6C886295707C400A63CEB /* Products */,
+				2DC6C8A02957081E00A63CEB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		2DC6C886295707C400A63CEB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2DC6C885295707C400A63CEB /* sidfp.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2DC6C8A02957081E00A63CEB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		2DC6C881295707C400A63CEB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC6C8A52957096800A63CEB /* csid.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		2DC6C884295707C400A63CEB /* sidfp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DC6C889295707C400A63CEB /* Build configuration list for PBXNativeTarget "sidfp" */;
+			buildPhases = (
+				2DC6C881295707C400A63CEB /* Headers */,
+				2DC6C882295707C400A63CEB /* Sources */,
+				2DC6C883295707C400A63CEB /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2D8DDA6629571BD50015D3B5 /* PBXTargetDependency */,
+			);
+			name = sidfp;
+			productName = sidfp;
+			productReference = 2DC6C885295707C400A63CEB /* sidfp.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2DC6C87D295707C400A63CEB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1420;
+				TargetAttributes = {
+					2DC6C884295707C400A63CEB = {
+						CreatedOnToolsVersion = 14.2;
+					};
+				};
+			};
+			buildConfigurationList = 2DC6C880295707C400A63CEB /* Build configuration list for PBXProject "sidfp" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2DC6C87C295707C400A63CEB;
+			productRefGroup = 2DC6C886295707C400A63CEB /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 2D8DDA5F29571B880015D3B5 /* Products */;
+					ProjectRef = 2DC6C8982957080800A63CEB /* sidplayfp.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				2DC6C884295707C400A63CEB /* sidfp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		2D8DDA6329571B880015D3B5 /* libsidplayfp.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = libsidplayfp.dylib;
+			remoteRef = 2D8DDA6229571B880015D3B5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2DC6C882295707C400A63CEB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DC6C8A72957096800A63CEB /* plugin.c in Sources */,
+				2DC6C8A62957096800A63CEB /* csid.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2D8DDA6629571BD50015D3B5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = sidplayfp;
+			targetProxy = 2D8DDA6529571BD50015D3B5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2DC6C887295707C400A63CEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2DC6C888295707C400A63CEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		2DC6C88A295707C400A63CEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../external/libsidplayfp/src\"";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2DC6C88B295707C400A63CEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../external/libsidplayfp/src\"";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2DC6C880295707C400A63CEB /* Build configuration list for PBXProject "sidfp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DC6C887295707C400A63CEB /* Debug */,
+				2DC6C888295707C400A63CEB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DC6C889295707C400A63CEB /* Build configuration list for PBXNativeTarget "sidfp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DC6C88A295707C400A63CEB /* Debug */,
+				2DC6C88B295707C400A63CEB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2DC6C87D295707C400A63CEB /* Project object */;
+}
