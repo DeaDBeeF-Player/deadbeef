@@ -202,7 +202,7 @@ encoder_preset_save (ddb_encoder_preset_t *p, int overwrite) {
         FILE *fp = fopen (path, "rb");
         if (fp) {
             fclose (fp);
-            return -2; 
+            return -2;
         }
     }
 
@@ -408,7 +408,7 @@ dsp_preset_save (ddb_dsp_preset_t *p, int overwrite) {
         FILE *fp = fopen (path, "rb");
         if (fp) {
             fclose (fp);
-            return -2; 
+            return -2;
         }
     }
 
@@ -817,7 +817,7 @@ check_dir (const char *dir, mode_t mode)
             *slash = 0;
         if (0 != mkdir (tmp, mode))
         {
-            if (errno == EEXIST && (-1 == stat (tmp, &stat_buf)) || errno != EEXIST)
+            if ( (errno == EEXIST && (-1 == stat (tmp, &stat_buf))) || errno != EEXIST)
             {
                 trace ("Failed to create %s\n", tmp);
                 free (tmp);
@@ -1597,7 +1597,7 @@ static ddb_converter_t plugin = {
     .misc.plugin.id = "converter",
     .misc.plugin.descr = "Converts any supported formats to other formats.\n"
         "Requires separate GUI plugin, e.g. Converter GTK UI\n",
-    .misc.plugin.copyright = 
+    .misc.plugin.copyright =
         "Converter for DeaDBeeF Player\n"
         "Copyright (C) 2009-2015 Oleksiy Yakovenko and other contributors\n"
         "\n"
