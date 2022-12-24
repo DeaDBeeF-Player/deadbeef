@@ -26,7 +26,7 @@ case "$TRAVIS_OS_NAME" in
         /usr/libexec/PlistBuddy -c "Set CFBundleShortVersionString $VERSION" plugins/cocoaui/deadbeef-Info.plist
         rev=`git rev-parse --short HEAD`
         /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $rev"  plugins/cocoaui/deadbeef-Info.plist
-        xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" test -project osx/deadbeef.xcodeproj -scheme deadbeef -configuration Release -quiet | xcpretty ; test ${PIPESTATUS[0]} -eq 0
+        xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" test -project osx/deadbeef.xcodeproj -scheme deadbeef -configuration Release | xcpretty -t ; test ${PIPESTATUS[0]} -eq 0
         xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" -project osx/deadbeef.xcodeproj -target DeaDBeeF -configuration Release -quiet | xcpretty ; test ${PIPESTATUS[0]} -eq 0
         cd osx/build/Release
         zip -r deadbeef-$VERSION-macos-universal.zip DeaDBeeF.app
