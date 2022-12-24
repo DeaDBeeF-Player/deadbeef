@@ -27,6 +27,7 @@
 
 #include "rg_scanner.h"
 
+#include <dispatch/dispatch.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -34,6 +35,10 @@
 #include "../../deadbeef.h"
 #include "ebur128/ebur128.h"
 #include "../../strdupa.h"
+
+#ifndef DISPATCH_QUEUE_CONCURRENT
+#define DISPATCH_QUEUE_CONCURRENT NULL
+#endif
 
 #define trace(...) { deadbeef->log_detailed (&plugin.misc.plugin, 0, __VA_ARGS__); }
 
@@ -47,17 +52,17 @@ typedef struct {
     ddb_rg_scanner_settings_t *settings;
     ebur128_state **gain_state;
     ebur128_state **peak_state;
+    dispatch_queue_t sync_queue;
 } track_state_t;
 
 void
-rg_calc_thread(void *ctx) {
+rg_calc_track(track_state_t *st) {
     DB_decoder_t *dec = NULL;
     DB_fileinfo_t *fileinfo = NULL;
 
     char *buffer = NULL;
     float *bufferf = NULL;
 
-    track_state_t *st = (track_state_t *)ctx;
     if (st->settings->pabort && *(st->settings->pabort)) {
         return;
     }
@@ -152,11 +157,11 @@ rg_calc_thread(void *ctx) {
 
             int sz = dec->read (fileinfo, buffer, bs); // read one block
 
-            deadbeef->mutex_lock (st->settings->sync_mutex);
-            int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps >> 3);
-            int numsamples = sz / samplesize;
-            st->settings->cd_samples_processed += numsamples * 44100 / fileinfo->fmt.samplerate;
-            deadbeef->mutex_unlock (st->settings->sync_mutex);
+            dispatch_sync(st->sync_queue, ^{
+                int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps >> 3);
+                int numsamples = sz / samplesize;
+                st->settings->cd_samples_processed += numsamples * 44100 / fileinfo->fmt.samplerate;
+            });
 
             if (sz != bs) {
                 eof = 1;
@@ -263,8 +268,6 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
         return -1;
     }
 
-    settings->sync_mutex = deadbeef->mutex_create ();
-
     if (settings->num_threads <= 0) {
         settings->num_threads = 4;
     }
@@ -290,48 +293,47 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
     gain_state = calloc (settings->num_tracks, sizeof (ebur128_state *));
     peak_state = calloc (settings->num_tracks, sizeof (ebur128_state *));
 
-    // used for joining threads
-    intptr_t *rg_threads = calloc (settings->num_tracks, sizeof (intptr_t));
     track_state_t *track_states = calloc (settings->num_tracks, sizeof (track_state_t));
+
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(settings->num_threads);
+    dispatch_queue_t queue = dispatch_queue_create("rg_scanner", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_queue_t sync_queue = dispatch_queue_create("rg_scanner_sync", 0);
 
     // calculate gain for each track and album
     for (int i = 0; i < settings->num_tracks; ++i) {
         if (settings->progress_callback) {
             settings->progress_callback (i, settings->progress_cb_user_data);
         }
-        // limit number of parallel threads
-        if (i >= settings->num_threads) {
-            // simple blocking mechanism: join the 'oldest' thread
-            deadbeef->thread_join(rg_threads[i - settings->num_threads]);
-            rg_threads[i - settings->num_threads] = 0;
-        }
 
         if (settings->pabort && *(settings->pabort)) {
+            // wait for remaining jobs / close semaphore
+            for (int i = 0; i < settings->num_threads; i++) {
+                dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+            }
             goto cleanup;
         }
+
+        // close semaphore before starting the next job
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
 
         // initialize arguments
         track_states[i].track_index = i;
         track_states[i].settings = settings;
         track_states[i].gain_state = gain_state;
         track_states[i].peak_state = peak_state;
+        track_states[i].sync_queue = sync_queue;
 
-        // run thread
-        rg_threads[i] = deadbeef->thread_start(&rg_calc_thread, (void*)(&track_states[i]));
+        dispatch_async(queue, ^{
+            rg_calc_track(&track_states[i]);
+
+            // open semaphore when the job is done
+            dispatch_semaphore_signal(semaphore);
+        });
     }
 
-    // wait for remaining threads to join
-    int remaining_thread_id = settings->num_tracks - settings->num_threads;
-    if (remaining_thread_id < 0) {
-        remaining_thread_id = 0;
-    }
-    for (int i = remaining_thread_id; i < settings->num_tracks; ++i) {
-        deadbeef->thread_join(rg_threads[i]);
-        rg_threads[i] = 0;
-
-        if (settings->pabort && *(settings->pabort)) {
-            goto cleanup;
-        }
+    // wait for remaining jobs / close semaphore
+    for (int i = 0; i < settings->num_threads; i++) {
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     }
 
     if (settings->mode == DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS) {
@@ -381,19 +383,17 @@ rg_scan (ddb_rg_scanner_settings_t *settings) {
     }
 
 cleanup:
-    // free thread storage
-    if (rg_threads) {
-        // join the still-active threads
-        for (int i = 0; i < settings->num_tracks; i++) {
-            if (rg_threads[i]) {
-                deadbeef->thread_join (rg_threads[i]);
-                rg_threads[i] = 0;
-            }
-        }
-
-        free (rg_threads);
-        rg_threads = NULL;
+    // It is assumed that semaphore is closed at this point,
+    // need to open before calling release.
+    for (int i = 0; i < settings->num_threads; i++) {
+        dispatch_semaphore_signal (semaphore);
     }
+    dispatch_release(semaphore);
+    semaphore = NULL;
+    dispatch_release(queue);
+    queue = NULL;
+    dispatch_release(sync_queue);
+    sync_queue = NULL;
 
     if (track_states) {
         free (track_states);
@@ -423,11 +423,6 @@ cleanup:
     if (album_signature_tf) {
         deadbeef->tf_free (album_signature_tf);
         album_signature_tf = NULL;
-    }
-
-    if (settings->sync_mutex) {
-        deadbeef->mutex_free (settings->sync_mutex);
-        settings->sync_mutex = 0;
     }
 
     return 0;

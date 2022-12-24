@@ -869,6 +869,8 @@ project "rg_scanner"
     "plugins/rg_scanner/*.c",
     "plugins/rg_scanner/ebur128/*.c"
   }
+  buildoptions {"-fblocks"}
+  links {"dispatch", "BlocksRuntime"}
 end
 
 if option ("plugin-converter") then
