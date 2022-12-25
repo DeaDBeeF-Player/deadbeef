@@ -1086,7 +1086,7 @@ _setup_tf_once() {
             album_tf = deadbeef->tf_compile ("%album%");
         }
         if (!artist_tf) {
-            artist_tf = deadbeef->tf_compile ("%artist%");
+            artist_tf = deadbeef->tf_compile ("$itematindex(0,%artist%)");
         }
         if (!title_tf) {
             title_tf = deadbeef->tf_compile ("%title%");
