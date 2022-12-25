@@ -24,6 +24,8 @@
 #ifndef __TF_H
 #define __TF_H
 
+#include "deadbeef.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

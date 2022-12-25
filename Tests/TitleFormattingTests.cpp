@@ -1089,7 +1089,7 @@ TEST_F(TitleFormattingTests, test_MultipleArtists_ReturnsArtistsSeparatedByComma
     char *bc = tf_compile("%artist%");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    EXPECT_TRUE(!strcmp (buffer, "Artist1, Artist2"));
+    EXPECT_STREQ(buffer, "Artist1, Artist2");
 }
 
 TEST_F(TitleFormattingTests, test_EmptyTitle_YieldsFilename) {
@@ -1097,14 +1097,14 @@ TEST_F(TitleFormattingTests, test_EmptyTitle_YieldsFilename) {
     char *bc = tf_compile("%title%");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    EXPECT_TRUE(!strcmp (buffer, "filename"));
+    EXPECT_STREQ(buffer, "filename");
 }
 
 TEST_F(TitleFormattingTests, test_DoublingPercentDollarApostrophe_OutputsSinglePercentDollarApostrophe) {
     char *bc = tf_compile("''$$%%");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    EXPECT_TRUE(!strcmp (buffer, "'$%"));
+    EXPECT_STREQ(buffer, "'$%");
 }
 
 TEST_F(TitleFormattingTests, test_PlaybackTime_OutputsPlaybackTime) {
@@ -2669,3 +2669,67 @@ TEST_F(TitleFormattingTests, test_year_LongerThan4WithText_returnYear) {
     EXPECT_TRUE(!strcmp (buffer, "9999"));
 }
 
+TEST_F(TitleFormattingTests, test_itematindex_0_returnsFirstItem) {
+    char *bc = tf_compile("$itematindex(0,%artist%)");
+
+    char value[] = "value1\0value2";
+    pl_add_meta_full(it, "artist", value, sizeof(value));
+
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "value1");
+}
+
+TEST_F(TitleFormattingTests, test_itematindex_1_returnsSecondItem) {
+    char *bc = tf_compile("$itematindex(1,%artist%)");
+
+    char value[] = "value1\0value2";
+    pl_add_meta_full(it, "artist", value, sizeof(value));
+
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "value2");
+}
+
+TEST_F(TitleFormattingTests, test_itematindex_outOfBounds_returnsEmpty) {
+    char *bc = tf_compile("$itematindex(2,%artist%)");
+
+    char value[] = "value1\0value2";
+    pl_add_meta_full(it, "artist", value, sizeof(value));
+
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "");
+}
+
+TEST_F(TitleFormattingTests, test_itematindex_singleValue_returnsValue) {
+    char *bc = tf_compile("$itematindex(2,%artist%)");
+
+    char value[] = "value1";
+    pl_add_meta_full(it, "artist", value, sizeof(value));
+
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "value1");
+}
+
+TEST_F(TitleFormattingTests, test_itematindex_NoArguments_returnsEmpty) {
+    char *bc = tf_compile("$itematindex()");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "");
+}
+
+TEST_F(TitleFormattingTests, test_itematindex_1Arguments_returnsEmpty) {
+    char *bc = tf_compile("$itematindex(0)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "");
+}
+
+TEST_F(TitleFormattingTests, test_itematindex_3Arguments_returnsEmpty) {
+    char *bc = tf_compile("$itematindex(0,1,2)");
+    tf_eval (&ctx, bc, buffer, 1000);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "");
+}
