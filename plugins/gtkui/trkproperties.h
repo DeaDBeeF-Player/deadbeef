@@ -26,6 +26,17 @@
 
 #include "../../deadbeef.h"
 
+// list store column meanings (for Metadata and Properties, also used by Selection properties widget)
+enum {
+    META_COL_TITLE = 0,
+    META_COL_DISPLAY_VAL = 1,
+    META_COL_KEY = 2,
+    META_COL_IS_MULT = 3,
+    META_COL_VALUE = 4,
+    META_COL_PANGO_WEIGHT = 5,
+    META_COL_COUNT
+};
+
 struct DB_playItem_s;
 
 typedef struct {

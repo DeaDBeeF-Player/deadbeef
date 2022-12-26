@@ -301,15 +301,15 @@ w_selproperties_create (void) {
     gtk_tree_view_set_enable_search (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_container_add (GTK_CONTAINER (scroll), w->tree);
 
-    GtkListStore *store = gtk_list_store_new (6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT);
+    GtkListStore *store = gtk_list_store_new (META_COL_COUNT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT);
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
 
     GtkCellRenderer *rend1 = gtk_cell_renderer_text_new ();
     GtkCellRenderer *rend2 = gtk_cell_renderer_text_new ();
-    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend1, "text", 0, "weight", 5,  NULL);
+    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend1, "text", META_COL_TITLE, "weight", META_COL_PANGO_WEIGHT,  NULL);
     gtk_tree_view_column_set_sizing (col1, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend2, "text", 1, NULL);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend2, "text", META_COL_DISPLAY_VAL, NULL);
     gtk_tree_view_column_set_sizing (col2, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (w->tree), col2);

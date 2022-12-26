@@ -65,6 +65,7 @@ static int last_ctx;
 static ddb_playlist_t *last_plt;
 static trkproperties_delegate_t *_delegate;
 
+
 // Max length of a string displayed in the TableView
 // If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks
 #define MAX_GUI_FIELD_LEN 500
@@ -266,7 +267,7 @@ static void
 _set_metadata_row(GtkListStore *store, GtkTreeIter *iter, const char *key, int is_mult, const char *title, char *value) {
     char *clipped_val = clip_multiline_value (value);
     char *display_val = clipped_val ?: value;
-    gtk_list_store_set (store, iter, 0, title, 1, display_val, 2, key, 3, is_mult ? 1 : 0, 4, value, 5, PANGO_WEIGHT_NORMAL, -1);
+    gtk_list_store_set (store, iter, META_COL_TITLE, title, META_COL_DISPLAY_VAL, display_val, META_COL_KEY, key, META_COL_IS_MULT, is_mult ? 1 : 0, META_COL_VALUE, value, META_COL_PANGO_WEIGHT, PANGO_WEIGHT_NORMAL, -1);
     free (clipped_val);
 }
 
@@ -292,7 +293,7 @@ add_field (GtkListStore *store, const char *key, const char *title, int is_prop,
         _set_metadata_row(store, &iter, key, n, title, v);
     }
     else {
-        gtk_list_store_set (store, &iter, 0, title, 1, n ? val : val + ml, 5, PANGO_WEIGHT_NORMAL, -1);
+        gtk_list_store_set (store, &iter, META_COL_TITLE, title, META_COL_DISPLAY_VAL, n ? val : val + ml, META_COL_PANGO_WEIGHT, PANGO_WEIGHT_NORMAL, -1);
     }
 
     free (val);
@@ -302,7 +303,7 @@ void
 add_field_section(GtkListStore *store, const char *title, const char *value) {
 	GtkTreeIter iter;
 	gtk_list_store_append (store, &iter);
-	gtk_list_store_set(store, &iter, 0, title, 1, value, 5, PANGO_WEIGHT_BOLD, -1);
+	gtk_list_store_set(store, &iter, META_COL_TITLE, title, META_COL_DISPLAY_VAL, value, META_COL_PANGO_WEIGHT, PANGO_WEIGHT_BOLD, -1);
 }
 
 void
@@ -430,7 +431,7 @@ show_track_properties_dlg_with_current_track_list (void) {
 
         // metadata tree
         tree = GTK_TREE_VIEW (lookup_widget (trackproperties, "metalist"));
-        store = gtk_list_store_new (5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
+        store = gtk_list_store_new (6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT);
         gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
         GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
         rend_text2 = GTK_CELL_RENDERER (ddb_cell_renderer_text_multiline_new ());
@@ -438,21 +439,21 @@ show_track_properties_dlg_with_current_track_list (void) {
 
         g_signal_connect ((gpointer)rend_text2, "edited", G_CALLBACK (on_metadata_edited), store);
 
-        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend_text, "text", 0, NULL);
-        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_text2, "text", 1, NULL);
+        GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes (_("Name"), rend_text, "text", META_COL_TITLE, NULL);
+        GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_text2, "text", META_COL_DISPLAY_VAL, NULL);
 
         gtk_tree_view_append_column (tree, col1);
         gtk_tree_view_append_column (tree, col2);
 
         // properties tree
         proptree = GTK_TREE_VIEW (lookup_widget (trackproperties, "properties"));
-        propstore = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
+        propstore = gtk_list_store_new (6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT);
         gtk_tree_view_set_model (proptree, GTK_TREE_MODEL (propstore));
         GtkCellRenderer *rend_propkey = gtk_cell_renderer_text_new ();
         GtkCellRenderer *rend_propvalue = gtk_cell_renderer_text_new ();
         g_object_set (G_OBJECT (rend_propvalue), "editable", FALSE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-        col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_propkey, "text", 0, NULL);
-        col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_propvalue, "text", 1, NULL);
+        col1 = gtk_tree_view_column_new_with_attributes (_("Key"), rend_propkey, "text", META_COL_TITLE, NULL);
+        col2 = gtk_tree_view_column_new_with_attributes (_("Value"), rend_propvalue, "text", META_COL_DISPLAY_VAL, NULL);
         gtk_tree_view_append_column (proptree, col1);
         gtk_tree_view_append_column (proptree, col2);
     }
@@ -830,7 +831,7 @@ on_individual_field_edited (GtkCellRendererText *renderer, gchar *path, gchar *n
     // The multiple values case gets cleared on attempt to edit,
     // that's why the change gets applied unconditionally for multivalue case
     if (strcmp (svalue, new_text)) {
-        gtk_list_store_set (store, &iter, 2, new_text, 3, 0, 4, new_text, -1);
+        gtk_list_store_set (store, &iter, META_COL_KEY, new_text, META_COL_IS_MULT, 0, META_COL_VALUE, new_text, -1);
     }
 
     G_IS_VALUE (&value) ? ((void)(g_value_unset (&value)), NULL) : NULL;
@@ -973,8 +974,7 @@ _edit_field_multiple_tracks (void) {
     }
 
     // Initialize the individual values tab
-
-    GtkListStore *list_store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
+    GtkListStore *list_store = gtk_list_store_new(META_COL_COUNT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING, G_TYPE_INT);
 
     GtkTreeView *tree = GTK_TREE_VIEW (lookup_widget (dlg, "treeview_individual_values"));
     gtk_tree_view_set_model (tree, GTK_TREE_MODEL (list_store));
@@ -986,9 +986,9 @@ _edit_field_multiple_tracks (void) {
     g_object_set (G_OBJECT (rend_text3), "editable", TRUE, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
     g_signal_connect ((gpointer)rend_text3, "edited", G_CALLBACK (on_individual_field_edited), list_store);
 
-    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("#", rend_text, "text", 0, NULL);
-    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Item"), rend_text2, "text", 1, NULL);
-    GtkTreeViewColumn *col3 = gtk_tree_view_column_new_with_attributes (_("Field"), rend_text3, "text", 2, NULL);
+    GtkTreeViewColumn *col1 = gtk_tree_view_column_new_with_attributes ("#", rend_text, "text", META_COL_TITLE, NULL);
+    GtkTreeViewColumn *col2 = gtk_tree_view_column_new_with_attributes (_("Item"), rend_text2, "text", META_COL_DISPLAY_VAL, NULL);
+    GtkTreeViewColumn *col3 = gtk_tree_view_column_new_with_attributes (_("Field"), rend_text3, "text", META_COL_KEY, NULL);
 
     gtk_tree_view_column_set_resizable(col2, TRUE);
     gtk_tree_view_column_set_resizable(col3, TRUE);
@@ -1019,7 +1019,8 @@ _edit_field_multiple_tracks (void) {
 
         GtkTreeIter new_iter;
         gtk_list_store_append(list_store, &new_iter);
-        gtk_list_store_set (list_store, &new_iter, 0, idx, 1, item, 2, field, 3, 0, 4, field, -1);
+        gtk_list_store_set (list_store, &new_iter, META_COL_TITLE, idx, META_COL_DISPLAY_VAL, item, META_COL_KEY, field, META_COL_IS_MULT, 0, META_COL_VALUE, field, -1);
+
 
         free (field);
     }
@@ -1247,7 +1248,7 @@ on_trkproperties_add_new_field_activate
                 const char *key = text;
 
                 gtk_list_store_append (store, &iter);
-                gtk_list_store_set (store, &iter, 0, title, 1, value, 2, key, 3, 0, 4, value, -1);
+                gtk_list_store_set (store, &iter, META_COL_TITLE, title, META_COL_DISPLAY_VAL, value, META_COL_KEY, key, META_COL_IS_MULT, 0, META_COL_VALUE, value, -1);
                 GtkTreePath *path;
                 gint rows = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (store), NULL);
                 path = gtk_tree_path_new_from_indices (rows - 1, -1);
