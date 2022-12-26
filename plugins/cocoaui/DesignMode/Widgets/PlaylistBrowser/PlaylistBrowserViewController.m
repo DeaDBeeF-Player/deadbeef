@@ -341,8 +341,10 @@ extern DB_functions_t *deadbeef;
 #pragma mark - DeletePlaylistConfirmationControllerDelegate
 
 - (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
-    deadbeef->plt_remove ((int)self.clickedRowIndex);
-    self.clickedRowIndex = -1;
+    if (self.clickedRowIndex != -1) {
+        deadbeef->plt_remove ((int)self.clickedRowIndex);
+        self.clickedRowIndex = -1;
+    }
 }
 
 #pragma mark - TrackContextMenuDelegate

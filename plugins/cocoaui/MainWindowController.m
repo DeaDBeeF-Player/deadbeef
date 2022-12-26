@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "DeletePlaylistConfirmationController.h"
 #import "DesignModeState.h"
 #import "DesignModeDeps.h"
 #import "GuiPreferencesWindowController.h"
@@ -35,7 +36,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface MainWindowController () <NSMenuDelegate> {
+@interface MainWindowController () <NSMenuDelegate,DeletePlaylistConfirmationControllerDelegate> {
     NSTimer *_updateTimer;
     char *_titlebar_playing_script;
     char *_titlebar_playing_subtitle_script;
@@ -43,6 +44,7 @@ extern DB_functions_t *deadbeef;
     char *_titlebar_stopped_subtitle_script;
     char *_statusbar_playing_script;
     int _prevSeekBarPos;
+    int _deletePlaylistIndex;
 }
 
 @property (nonatomic,weak) IBOutlet NSView *designableContainerView;
@@ -380,9 +382,13 @@ static char sb_text[512];
 }
 
 - (IBAction)performCloseTabAction:(id)sender {
-    int idx = deadbeef->plt_get_curr_idx ();
-    if (idx != -1) {
-        deadbeef->plt_remove (idx);
+    _deletePlaylistIndex = deadbeef->plt_get_curr_idx ();
+    if (_deletePlaylistIndex != -1) {
+        DeletePlaylistConfirmationController *controller = [DeletePlaylistConfirmationController new];
+        controller.window = self.window;
+        controller.title = plt_get_title_wrapper (_deletePlaylistIndex);
+        controller.delegate = self;
+        [controller run];
     }
 }
 
@@ -476,6 +482,15 @@ static char sb_text[512];
         self.volumeDbScaleItem.state = !strcmp (scale, "dB") ? NSControlStateValueOn : NSControlStateValueOff;
         self.volumeLinearScaleItem.state = !strcmp (scale, "linear") ? NSControlStateValueOn : NSControlStateValueOff;
         self.volumeCubicScaleItem.state = !strcmp (scale, "cubic") ? NSControlStateValueOn : NSControlStateValueOff;
+    }
+}
+
+#pragma mark - DeletePlaylistConfirmationControllerDelegate
+
+- (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
+    if (_deletePlaylistIndex != -1) {
+        deadbeef->plt_remove (_deletePlaylistIndex);
+        _deletePlaylistIndex = -1;
     }
 }
 
