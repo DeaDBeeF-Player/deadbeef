@@ -763,6 +763,9 @@ _edit_field_single_track (void) {
 
     GtkTreeIter iter;
     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
+    g_list_free_full (lst, (GDestroyNotify) gtk_tree_path_free);
+    path = NULL;
+    lst = NULL;
 
     GValue title = {};
     GValue key = {};
@@ -788,11 +791,6 @@ _edit_field_single_track (void) {
     gtk_text_view_set_buffer (GTK_TEXT_VIEW (lookup_widget (dlg, "field_value")), buffer);
 
     g_value_unset (&value);
-
-    for (GList *l = lst; l; l = l->next) {
-        gtk_tree_path_free (l->data);
-    }
-    g_list_free (lst);
 
     int response = gtk_dialog_run (GTK_DIALOG (dlg));
     if (response == GTK_RESPONSE_OK) {
@@ -937,7 +935,9 @@ _edit_field_multiple_tracks (void) {
 
     GtkTreeIter iter;
     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
-
+    g_list_free_full (lst, (GDestroyNotify) gtk_tree_path_free);
+    path = NULL;
+    lst = NULL;
 
     GValue title = {};
     GValue key = {};
