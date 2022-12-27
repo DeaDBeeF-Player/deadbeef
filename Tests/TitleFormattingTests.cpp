@@ -1777,7 +1777,7 @@ TEST_F(TitleFormattingTests, test_InvalidContextSizeCheck_ReturnsEmpty) {
     ctx._size = (int)((char *)&ctx.dimmed - (char *)&ctx - 1);
     tf_eval (&ctx, bc, buffer, 1000);
     ctx._size = sizeof (ctx);
-    EXPECT_TRUE(!strcmp (buffer, ""));
+    EXPECT_STREQ(buffer, "");
 }
 
 TEST_F(TitleFormattingTests, test_PadHelloWith5_GivesHello) {

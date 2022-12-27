@@ -71,7 +71,6 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // API version history:
-// 1.17 -- deadbeef-1.9.5
 // 1.16 -- deadbeef-1.9.4
 // 1.15 -- deadbeef-1.9.0
 // 1.14 -- deadbeef-1.8.8
@@ -101,7 +100,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 17
+#define DB_API_VERSION_MINOR 16
 
 #if defined(__clang__)
 
@@ -136,12 +135,6 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
-#endif
-
-#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 17)
-#define DEPRECATED_117 DDB_DEPRECATED("since deadbeef API 1.17")
-#else
-#define DEPRECATED_117
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 16)
@@ -734,11 +727,6 @@ typedef struct ddb_file_found_data_s {
 } ddb_file_found_data_t;
 #endif
 
-#if (DDB_API_LEVEL >= 17)
-struct ddb_tf_context_priv_s;
-typedef struct ddb_tf_context_priv_s ddb_tf_context_priv_t;
-#endif
-
 // context for title formatting interpreter
 typedef struct {
     int _size; // must be set to sizeof(tf_context_t)
@@ -771,9 +759,6 @@ typedef struct {
     // Return value, is set to non-zero if text was <<<dimmed>>> or >>>brightened<<<
     // It's used to determine whether the text needs to be searched for the corresponding esc sequences
     int dimmed;
-#endif
-#if (DDB_API_LEVEL >= 17)
-    ddb_tf_context_priv_t *priv;
 #endif
 } ddb_tf_context_t;
 #endif

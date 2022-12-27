@@ -73,17 +73,16 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-// check the presence of `dimmed` field in context, based on reported size
-#define HAS_DIMMED(ctx) (ctx->_size > (char *)&ctx->dimmed - (char *)ctx)
-
 #define TF_INTERNAL_FLAG_LOCKED (1<<16)
 
-struct ddb_tf_context_priv_s {
+typedef struct {
+    ddb_tf_context_t _ctx;
+
     /// indicates that current code is evaluated as the argument of $itematindex
     unsigned getting_item_at_index;
     /// the index parameter of $itematindex
     int item_at_index;
-};
+} ddb_tf_context_int_t;
 
 typedef struct {
     const char *i;
@@ -154,36 +153,34 @@ snprintf_clip (char *buf, size_t len, const char *fmt, ...) {
  * @param outlen bytes available in the buffer `out`, including the terminating null byte
  */
 int
-tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
-    if (
-        // 0.7.2
-        ctx->_size != (char *)&ctx->dimmed - (char *)ctx
-        // 0.8
-        && ctx->_size != sizeof (ddb_tf_context_t)
-        ) {
+tf_eval (ddb_tf_context_t *_ctx, const char *code, char *out, int outlen) {
+    // ensure the size is valid
+    if (_ctx->_size < (char *)&_ctx->dimmed - (char *)_ctx) {
         *out = 0;
         return -1;
     }
 
-    ddb_tf_context_priv_t priv = {0};
-    if (ctx->_size >= (char *)&ctx->priv - (char *)ctx) {
-        ctx->priv = &priv;
-    }
+    // normalize the context
+    ddb_tf_context_int_t ctx = {0};
+    ctx._ctx._size = sizeof (ddb_tf_context_t);
+    ctx._ctx.flags = _ctx->flags;
+    ctx._ctx.it = _ctx->it;
+    ctx._ctx.plt = _ctx->plt;
+    ctx._ctx.idx = _ctx->idx;
+    ctx._ctx.id = _ctx->id;
+    ctx._ctx.iter = _ctx->iter;
+    ctx._ctx.update = _ctx->update;
 
     if (!code) {
         code = empty_code;
     }
 
-    int null_it = 0;
-    if (!ctx->it) {
-        null_it = 1;
-        ctx->it = (ddb_playItem_t *)&empty_track;
+    if (!ctx._ctx.it) {
+        ctx._ctx.it = (ddb_playItem_t *)&empty_track;
     }
 
-    int null_plt = 0;
-    if (!ctx->plt) {
-        null_plt = 1;
-        ctx->plt = (ddb_playlist_t *)&empty_playlist;
+    if (!ctx._ctx.plt) {
+        ctx._ctx.plt = (ddb_playlist_t *)&empty_playlist;
     }
 
     int32_t codelen = *((int32_t *)code);
@@ -193,38 +190,34 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
 
     int bool_out = 0;
     int id = -1;
-    if (ctx->flags & DDB_TF_CONTEXT_HAS_ID) {
-        id = ctx->id;
-    }
-
-    if (HAS_DIMMED (ctx)) {
-        ctx->dimmed = 0;
+    if (_ctx->flags & DDB_TF_CONTEXT_HAS_ID) {
+        id = _ctx->id;
     }
 
     switch (id) {
     case DB_COLUMN_FILENUMBER:
-        if (ctx->flags & DDB_TF_CONTEXT_HAS_INDEX) {
-            l = snprintf_clip (out, outlen, "%d", ctx->idx+1);
+        if (ctx._ctx.flags & DDB_TF_CONTEXT_HAS_INDEX) {
+            l = snprintf_clip (out, outlen, "%d", ctx._ctx.idx+1);
         }
-        else if (ctx->plt) {
-            int idx = plt_get_item_idx ((playlist_t *)ctx->plt, (playItem_t *)ctx->it, PL_MAIN);
+        else if (ctx._ctx.plt) {
+            int idx = plt_get_item_idx ((playlist_t *)ctx._ctx.plt, (playItem_t *)ctx._ctx.it, PL_MAIN);
             l = snprintf_clip (out, outlen, "%d", idx+1);
         }
         break;
     case DB_COLUMN_PLAYING:
-        l = pl_format_item_queue ((playItem_t *)ctx->it, out, outlen);
+        l = pl_format_item_queue ((playItem_t *)ctx._ctx.it, out, outlen);
         break;
     default:
         // tf_eval_int expects outlen to not include the terminating zero
-        TF_EVAL_CHECK(l, ctx, code, codelen, out, outlen - 1, 0);
+        TF_EVAL_CHECK(l, &ctx._ctx, code, codelen, out, outlen - 1, 0);
         break;
     }
 
-    if (!(ctx->flags & DDB_TF_CONTEXT_MULTILINE)) {
+    if (!(ctx._ctx.flags & DDB_TF_CONTEXT_MULTILINE)) {
         // replace any unprintable char with '_'
         for (; *out; out++) {
             if ((uint8_t)(*out) < ' ') {
-                if (*out == '\033' && (ctx->flags & DDB_TF_CONTEXT_TEXT_DIM)) {
+                if (*out == '\033' && (ctx._ctx.flags & DDB_TF_CONTEXT_TEXT_DIM)) {
                     continue;
                 }
                 *out = '_';
@@ -232,12 +225,10 @@ tf_eval (ddb_tf_context_t *ctx, const char *code, char *out, int outlen) {
         }
     }
 
-    if (null_it) {
-        ctx->it = NULL;
+    if (_ctx->_size >= (char *)&_ctx->dimmed - (char *)_ctx + sizeof(_ctx->dimmed)) {
+        _ctx->dimmed = ctx._ctx.dimmed;
     }
-    if (null_plt) {
-        ctx->plt = NULL;
-    }
+
     return l;
 }
 
@@ -2180,10 +2171,10 @@ tf_append_out (char **out, int *out_len, const char *in, int in_len) {
 }
 
 static int
-tf_item_index_for_context(ddb_tf_context_t *ctx) {
-    int has_priv = ctx->_size >= (char *)&ctx->priv - (char *)ctx;
-    if (has_priv && ctx->priv->getting_item_at_index) {
-        return ctx->priv->item_at_index;
+tf_item_index_for_context(ddb_tf_context_t *_ctx) {
+    ddb_tf_context_int_t *ctx = (ddb_tf_context_int_t *)_ctx;
+    if (ctx->getting_item_at_index) {
+        return ctx->item_at_index;
     }
     return -1;
 }
@@ -2457,9 +2448,7 @@ tf_func_rgb (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
 
         memcpy (out, rgbseq, rgbseqlen);
         out += rgbseqlen;
-        if (HAS_DIMMED(ctx)) {
-            ctx->dimmed = 1;
-        }
+        ctx->dimmed = 1;
     }
     *out = 0;
     return rgbseqlen;
@@ -2499,24 +2488,19 @@ tf_func_itematindex (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, c
         return -1;
     }
 
-    int has_priv = ctx->_size >= (char *)&ctx->priv - (char *)ctx;
-
     int bool_out = 0;
 
     int len;
     char temp_str[10];
     TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
 
-    if (has_priv) {
-        ctx->priv->getting_item_at_index = 1;
-        ctx->priv->item_at_index = atoi(temp_str);
-    }
+    ddb_tf_context_int_t *priv = (ddb_tf_context_int_t *)ctx;
+    priv->getting_item_at_index = 1;
+    priv->item_at_index = atoi(temp_str);
 
     TF_EVAL_CHECK(len, ctx, args+arglens[0], arglens[1], out, outlen, fail_on_undef);
 
-    if (has_priv) {
-        ctx->priv->getting_item_at_index = 0;
-    }
+    priv->getting_item_at_index = 0;
 
     return len;
 }
@@ -3435,9 +3419,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     memcpy (out, dim, dimlen);
                     out += dimlen;
                     outlen -= dimlen;
-                    if (HAS_DIMMED(ctx)) {
-                        ctx->dimmed = 1;
-                    }
+                    ctx->dimmed = 1;
                 }
 
                 int32_t len;
