@@ -763,7 +763,10 @@ _edit_field_single_track (void) {
 
     GtkTreeIter iter;
     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
-    g_list_free_full (lst, (GDestroyNotify) gtk_tree_path_free);
+    for (GList *l = lst; l; l = l->next) {
+        gtk_tree_path_free (l->data);
+    }
+    g_list_free (lst);
     path = NULL;
     lst = NULL;
 
@@ -935,7 +938,10 @@ _edit_field_multiple_tracks (void) {
 
     GtkTreeIter iter;
     gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, path);
-    g_list_free_full (lst, (GDestroyNotify) gtk_tree_path_free);
+    for (GList *l = lst; l; l = l->next) {
+        gtk_tree_path_free (l->data);
+    }
+    g_list_free (lst);
     path = NULL;
     lst = NULL;
 
