@@ -63,7 +63,7 @@ int
 pl_common_is_album_art_column (void *user_data);
 
 void
-pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *group, void *user_data, int min_y, int next_y, int x, int y, int width, int height);
+pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *group, void *user_data, int min_y, int next_y, int x, int y, int width, int height, int alignment);
 
 gboolean
 list_handle_keypress (DdbListview *ps, int keyval, int state, int iter);

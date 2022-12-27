@@ -133,7 +133,7 @@ typedef struct {
 
 typedef struct {
     void (*draw_group_title) (DdbListview *listview, cairo_t *drawable, DdbListviewIter iter, int x, int y, int width, int height, int group_depth);
-    void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DdbListviewGroup *grp, void *user_data, int pinned, int next_y, int x, int y, int width, int height);
+    void (*draw_album_art) (DdbListview *listview, cairo_t *cr, DdbListviewGroup *grp, void *user_data, int pinned, int next_y, int x, int y, int width, int height, int alignment);
     void (*draw_column_data) (DdbListview *listview, cairo_t *cr, DdbListviewIter it, int idx, int align, void *user_data, GdkColor *fg_clr, int x, int y, int width, int height, int even);
 } ddb_listview_renderer_t;
 

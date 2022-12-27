@@ -1709,7 +1709,7 @@ ddb_listview_list_render_album_art (DdbListview *listview, cairo_t *cr, DdbListv
         if (listview->datasource->is_album_art_column(c->user_data) && x + c->width > clip->x) {
             fill_list_background(listview, cr, x, y, c->width, grp->height-priv->grouptitle_height, clip);
             if (priv->grouptitle_height > 0) {
-                listview->renderer->draw_album_art(listview, cr, grp, c->user_data, min_y, grp_next_y, x, y, c->width, grp->height-priv->grouptitle_height);
+                listview->renderer->draw_album_art(listview, cr, grp, c->user_data, min_y, grp_next_y, x, y, c->width, grp->height-priv->grouptitle_height, c->align_right);
             }
         }
     }

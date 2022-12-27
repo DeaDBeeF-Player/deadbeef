@@ -266,7 +266,7 @@ cover_draw_cairo (GdkPixbuf *pixbuf, int x, int min_y, int max_y, int width, int
 }
 
 void
-pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *grp, void *user_data, int min_y, int next_y, int x, int y, int width, int height) {
+pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *grp, void *user_data, int min_y, int next_y, int x, int y, int width, int height, int alignment) {
     int art_width = width - ART_PADDING_HORZ * 2;
     int art_height = height - ART_PADDING_VERT * 2;
     if (art_width < 8 || art_height < 8 || !grp->head) {
@@ -311,13 +311,21 @@ pl_common_draw_album_art (DdbListview *listview, cairo_t *cr, DdbListviewGroup *
     availableSize.height = art_height;
     GtkAllocation desiredSize = covermanager_desired_size_for_image_size(cm, size, availableSize);
 
+    GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, image, desiredSize);
+    int scaled_image_width = gdk_pixbuf_get_width(scaled_image);
+    int scaled_image_height = gdk_pixbuf_get_height(scaled_image);
+
     // center horizontally
     if (size.width < size.height) {
-        art_x += art_width/2 - desiredSize.width/2;
+        if (alignment == 1) { // align
+            art_x += art_width - scaled_image_width;
+        }
+        else if (alignment == 2) { // center
+            art_x += art_width/2 - scaled_image_width/2;
+        }
     }
 
-    GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, image, desiredSize);
-    cover_draw_cairo(scaled_image, art_x, min_y, next_y, art_width, art_height, cr, CAIRO_FILTER_FAST);
+    cover_draw_cairo(scaled_image, art_x, min_y, next_y, scaled_image_width, scaled_image_height, cr, CAIRO_FILTER_FAST);
     g_object_unref(scaled_image);
 
     gobj_unref(image);
