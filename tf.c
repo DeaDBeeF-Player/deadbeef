@@ -2616,7 +2616,6 @@ _tf_get_combined_value (playItem_t *it, const char *key, int *needs_free, int it
     }
 
     char *out = malloc (len + 1);
-    *out = 0;
 
     char *p = out;
 
@@ -2641,7 +2640,7 @@ _tf_get_combined_value (playItem_t *it, const char *key, int *needs_free, int it
         value += len + 1;
         index += 1;
     }
-
+    *p = 0;
     *needs_free = 1;
     return out;
 }
