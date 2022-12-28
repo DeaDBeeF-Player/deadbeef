@@ -574,7 +574,7 @@ end
 
 if option ("plugin-sc68") then
 project "sc68_plugin"
-  targetname "sc68"
+  targetname "in_sc68"
   files {
     "plugins/sc68/in_sc68.c",
     "plugins/sc68/file68/src/*.c",
