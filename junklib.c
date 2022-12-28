@@ -71,7 +71,6 @@ int enable_shift_jis_detection = 0;
 #define MAX_CUESHEET_FRAME_SIZE 10000
 #define MAX_APEV2_FRAME_SIZE 2000000
 #define MAX_ID3V2_FRAME_SIZE 100000
-#define MAX_ID3V2_APIC_FRAME_SIZE 2000000
 
 #define UTF8_STR "utf-8"
 
@@ -4380,17 +4379,24 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             readptr += 2;
 
             if (!strcmp (frameid, "APIC")) {
-                if (sz > MAX_ID3V2_APIC_FRAME_SIZE) {
-                    trace ("junk_id3v2_read_full: frame %s size is too big (%d), discarded\n", frameid, sz);
+                // don't attempt to parse APIC when we're not planning to use it
+                if (tag_store == NULL) {
                     readptr += sz;
                     continue;
                 }
             }
-            else if (sz > MAX_ID3V2_FRAME_SIZE || readptr - tag + sz > size) {
+            else if (sz > MAX_ID3V2_FRAME_SIZE) {
                 trace ("junk_id3v2_read_full: frame %s size is too big (%d), discarded\n", frameid, sz);
                 readptr += sz;
                 continue;
             }
+
+            if (readptr - tag + sz > size) {
+                trace ("junk_id3v2_read_full: frame %s size is crossing beyond the end of tag (%d), discarded\n", frameid, sz);
+                readptr += sz;
+                continue;
+            }
+
             int synched_size = sz;
             if (unsync) {
                 synched_size = junklib_id3v2_sync_frame (version_major, readptr, sz);
@@ -4511,7 +4517,8 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 break; // frame must be at least 1 byte long
             }
             if (!strcmp (frameid, "PIC")) {
-                if (sz > MAX_ID3V2_APIC_FRAME_SIZE) {
+                // don't attempt to parse APIC when we're not planning to use it
+                if (tag_store == NULL) {
                     trace ("junk_id3v2_read_full: frame %s size is too big (%d), discarded\n", frameid, sz);
                     readptr += sz;
                     continue;
@@ -4522,6 +4529,13 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 readptr += sz;
                 continue;
             }
+
+            if (readptr - tag + sz > size) {
+                trace ("junk_id3v2_read_full: frame %s size is crossing beyond the end of tag (%d), discarded\n", frameid, sz);
+                readptr += sz;
+                continue;
+            }
+
             int synched_size = sz;
             if (unsync) {
                 synched_size = junklib_id3v2_sync_frame (version_major, readptr, sz);
