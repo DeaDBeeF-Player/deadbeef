@@ -25,8 +25,8 @@ jobs:
       run: TRAVIS_OS_NAME=windows travis/build.sh
     - name: Upload for Windows
       env:
-          gh_rsa_key: ${{ secrets.GH_ENCRYPTED_RSA_KEY }}
-          gh_rsa_iv: ${{ secrets.GH_ENCRYPTED_RSA_IV }}
+          gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
+          gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
       shell: msys2 {0}
       run: TRAVIS_OS_NAME=windows travis/upload.sh
     - name: Upload artifact

@@ -24,8 +24,8 @@ jobs:
       run: TRAVIS_OS_NAME=linux travis/build.sh
     - name: Upload for Linux
       env:
-          gh_rsa_key: ${{ secrets.GH_ENCRYPTED_RSA_KEY }}
-          gh_rsa_iv: ${{ secrets.GH_ENCRYPTED_RSA_IV }}
+          gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
+          gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
       run: TRAVIS_OS_NAME=linux travis/upload.sh
     - name: Upload artifact
       uses: actions/upload-artifact@v2
