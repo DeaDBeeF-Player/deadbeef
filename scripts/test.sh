@@ -17,7 +17,7 @@ export LD_LIBRARY_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-64/lib"
 CC="${CC:-clang}"
 CXX="${CXX:-clang++}"
 
-CFLAGS="-fblocks -O3 -D_FORTIFY_SOURCE=0 -D_GNU_SOURCE $INCLUDE -DHAVE_LOG2=1 -DDOCDIR=\"\" -DPREFIX=\"\" -DLIBDIR=\"\" -DVERSION=\"\" -DUSE_LIBMAD -DUSE_LIBMPG123 -DXCTEST -DGOOGLETEST_STATIC"
+CFLAGS="-fblocks -fcommon -O3 -D_FORTIFY_SOURCE=0 -D_GNU_SOURCE $INCLUDE -DHAVE_LOG2=1 -DDOCDIR=\"\" -DPREFIX=\"\" -DLIBDIR=\"\" -DVERSION=\"\" -DUSE_LIBMAD -DUSE_LIBMPG123 -DXCTEST -DGOOGLETEST_STATIC"
 
 # hack: move c++ runtime out of the lib folder, to allow linking test runner to
 # the newer c++ runtime
