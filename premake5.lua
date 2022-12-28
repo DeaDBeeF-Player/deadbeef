@@ -326,8 +326,6 @@ project "dca_plugin"
     "plugins/dca/bitstream.c",
     "plugins/dca/downmix.c"
   }
-  prebuildcommands {"touch plugins/dca/config.h"}
-  postbuildcommands {"rm plugins/dca/config.h"}
 end
 
 if option ("plugin-dumb") then
