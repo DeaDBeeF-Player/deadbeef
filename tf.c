@@ -3527,7 +3527,8 @@ tf_compile_func (tf_compiler_t *c) {
             c->o += 2;
             // store arg length
             // FIXME: `arglens` comes in a byte stream without 16 bit alignment, this may cause unaligned access and crash.
-            arglens[*start] = (uint16_t)len;
+            uint16_t len16 = (uint16_t)len;
+            memcpy(&arglens[*start], &len16, sizeof (uint16_t));
             (*start)++; // num args++
             argstart = c->o;
 
