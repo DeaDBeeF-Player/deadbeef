@@ -508,6 +508,22 @@ ConvertUTF8toUTF16BE (const UTF8** sourceStart, const UTF8* sourceEnd, UTF16** t
     return res;
 }
 
+// Copy a buffer to a memory address which is (at least) 2-byte aligned.
+// If the input buffer is already aligned -- return NULL.
+static char *
+_get_aligned_copy (const char *in, size_t inlen) {
+    if (((uintptr_t)in&1) == 0 || inlen == 0 || in == NULL) {
+        return NULL;
+    }
+
+    char *aligned = malloc (inlen);
+    if (aligned == NULL) {
+        return NULL;
+    }
+    memcpy (aligned, in, inlen);
+    return aligned;
+}
+
 int
 ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const char *in, int inlen) {
     long len = -1;
@@ -551,7 +567,16 @@ ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const c
         }
         else if (!strcasecmp (cs_in, "UTF-16LE") || !strcasecmp (cs_in, "UCS-2LE")) {
             char *target = out;
+
+            char *aligned_in = _get_aligned_copy (in, inlen);
+            if (aligned_in != NULL) {
+                in = aligned_in;
+            }
+
             ConversionResult result = ConvertUTF16toUTF8 ((const UTF16**)&in, (const UTF16*)(in + inlen), (UTF8**)&target, (UTF8*)(out + outlen), strictConversion);
+
+            free (aligned_in);
+
             if (result == conversionOK) {
                 *target = 0;
                 len = target - out;
@@ -559,7 +584,7 @@ ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const c
         }
         else if (!strcasecmp (cs_in, "UTF-16BE") || !strcasecmp (cs_in, "UCS-2BE")) {
             // convert to big endian
-            char temp[inlen];
+            char *temp = malloc(inlen);
             for (int i = 0; i < inlen; i += 2) {
                 temp[i] = in[i+1];
                 temp[i+1] = in[i];
@@ -567,6 +592,7 @@ ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const c
             in = temp;
             char *target = out;
             ConversionResult result = ConvertUTF16toUTF8 ((const UTF16**)&in, (const UTF16*)(in + inlen), (UTF8**)&target, (UTF8*)(out + outlen), strictConversion);
+            free (temp);
             if (result == conversionOK) {
                 *target = 0;
                 len = target - out;
