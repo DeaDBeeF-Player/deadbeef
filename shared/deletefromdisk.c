@@ -248,7 +248,6 @@ _warningCallback (ddbDeleteFromDiskController_t ctl, int shouldCancel) {
         return;
     }
 
-    deadbeef->pl_lock ();
     DB_playItem_t **tracklist = trackListData->tracklist;
     unsigned trackcount = trackListData->trackcount;
     ddb_playlist_t *plt = trackListData->plt;
@@ -275,7 +274,6 @@ _warningCallback (ddbDeleteFromDiskController_t ctl, int shouldCancel) {
         }
     }
 
-    deadbeef->pl_unlock ();
     data->delegate.completed(ctl, shouldCancel);
 }
 
