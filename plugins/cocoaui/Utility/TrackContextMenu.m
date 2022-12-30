@@ -379,17 +379,21 @@ static void _warningMessageForCtx (ddbDeleteFromDiskController_t ctl, ddb_action
 static int
 _deleteFile (ddbDeleteFromDiskController_t ctl, const char *uri) {
     NSString *str = [NSString stringWithUTF8String:uri];
-    NSURL *url = [NSURL URLWithString:str];
-    if (!url) {
+
+    NSURL *url;
+
+    if (uri[0] == '/') {
         url = [NSURL fileURLWithPath:str];
     }
+    else if (!strncmp(uri, "file://", 7)) {
+        url = [NSURL URLWithString:str];
+    }
+
     if (!url) {
         return -1;
     }
     if (deadbeef->conf_get_int ("cocoaui.delete_use_bin", 1)) {
-        [NSWorkspace.sharedWorkspace recycleURLs:@[url] completionHandler:^(NSDictionary<NSURL *,NSURL *> * _Nonnull newURLs, NSError * _Nullable error) {
-            //            trace ("Failed to delete file: %s\n", uri);
-        }];
+        [NSWorkspace.sharedWorkspace recycleURLs:@[url] completionHandler:nil];
     } else {
         (void)unlink (uri);
 
@@ -454,7 +458,12 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
 #endif
 
         [alert beginSheetModalForWindow:self.view.window completionHandler:^(NSModalResponse returnCode) {
-            callback(ctl, returnCode != NSAlertSecondButtonReturn);
+            BOOL shouldCancel = returnCode != NSAlertSecondButtonReturn;
+            // Defer the execution to next tick,
+            // to ensure that the alert is dismissed before proceeding.
+            dispatch_async(dispatch_get_main_queue(), ^{
+                callback(ctl, shouldCancel);
+            });
         }];
     }
     else {
