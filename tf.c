@@ -225,6 +225,7 @@ tf_eval (ddb_tf_context_t *_ctx, const char *code, char *out, int outlen) {
         }
     }
 
+    _ctx->update = ctx._ctx.update;
     if (_ctx->_size >= (char *)&_ctx->dimmed - (char *)_ctx + sizeof(_ctx->dimmed)) {
         _ctx->dimmed = ctx._ctx.dimmed;
     }
