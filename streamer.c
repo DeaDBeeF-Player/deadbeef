@@ -2097,6 +2097,9 @@ streamer_apply_soft_volume (char *bytes, int sz) {
             }
         }
     }
+    else if (audio_is_mute ()) {
+        memset (bytes, 0, sz);
+    }
 }
 
 static int
