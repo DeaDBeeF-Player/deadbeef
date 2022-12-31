@@ -34,25 +34,89 @@
 #include "playmodes.h"
 #include <gtest/gtest.h>
 
-static void (*_trackinfochanged_handler)(ddb_event_track_t *ev);
-static int count_played;
-
 extern "C" DB_plugin_t * fakein_load (DB_functions_t *api);
 extern "C" DB_plugin_t * fakeout_load (DB_functions_t *api);
 
-// super oversimplified mainloop
-static void
-mainloop (void *ctx) {
-    for (;;) {
-        uint32_t msg;
-        uintptr_t ctx;
-        uint32_t p1;
-        uint32_t p2;
-        int term = 0;
-        while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
-            if (!term) {
-                DB_output_t *output = plug_get_output ();
-                switch (msg) {
+
+
+class StreamerTests: public ::testing::Test {
+protected:
+
+    void SetUp() override {
+        messagepump_init ();
+
+        // register fakein and fakeout plugin
+        plug_init_plugin (fakein_load, NULL);
+        plug_init_plugin (fakeout_load, NULL);
+
+        _fakein = fakein_load (plug_get_api ());
+        _fakeout = (DB_output_t *)fakeout_load (plug_get_api ());
+        plug_register_in (_fakein);
+        plug_register_out ((DB_plugin_t *)_fakeout);
+
+        plug_set_output (_fakeout);
+
+        streamer_init ();
+
+        streamer_set_repeat(DDB_REPEAT_OFF);
+        count_played = 0;
+
+        _mainloop_tid = thread_start (mainloop_wrapper, this);
+    }
+
+    void TearDown() override {
+        deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+        thread_join (_mainloop_tid);
+
+        _fakeout->stop ();
+        streamer_free ();
+    }
+
+protected:
+
+    DB_plugin_t *_fakein;
+    DB_output_t *_fakeout;
+    uintptr_t _mainloop_tid;
+
+    DB_playItem_t *switchtest_tracks[2];
+    int switchtest_counts[2];
+    int count_played;
+
+    static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev, StreamerTests *self) {
+        if (deadbeef->streamer_ok_to_read (-1)) {
+            DB_playItem_t *playing = deadbeef->streamer_get_playing_track_safe ();
+            if (ev->track == self->switchtest_tracks[0] && playing == ev->track) {
+                self->switchtest_counts[0]++;
+            }
+            else if (ev->track == self->switchtest_tracks[1] && playing == ev->track) {
+                self->switchtest_counts[1]++;
+            }
+            if (playing) {
+                deadbeef->pl_item_unref (playing);
+            }
+        }
+    }
+
+    // super oversimplified mainloop
+    static void
+    mainloop_wrapper (void *ctx) {
+        StreamerTests *self = (StreamerTests *)ctx;
+        self->mainloop();
+    }
+
+    static void (*_trackinfochanged_handler)(ddb_event_track_t *ev, StreamerTests *self);
+
+    void mainloop() {
+        for (;;) {
+            uint32_t msg;
+            uintptr_t ctx;
+            uint32_t p1;
+            uint32_t p2;
+            int term = 0;
+            while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+                if (!term) {
+                    DB_output_t *output = plug_get_output ();
+                    switch (msg) {
                     case DB_EV_TERMINATE:
                         term = 1;
                         break;
@@ -90,94 +154,57 @@ mainloop (void *ctx) {
                         streamer_move_to_randomsong (1);
                         break;
                     case DB_EV_SEEK:
-                    {
-                        int32_t pos = (int32_t)p1;
-                        if (pos < 0) {
-                            pos = 0;
+                        {
+                            int32_t pos = (int32_t)p1;
+                            if (pos < 0) {
+                                pos = 0;
+                            }
+                            streamer_set_seek (p1 / 1000.f);
                         }
-                        streamer_set_seek (p1 / 1000.f);
-                    }
                         break;
                     case DB_EV_SONGSTARTED:
                         count_played++;
                         break;
                     case DB_EV_TRACKINFOCHANGED:
                         if (_trackinfochanged_handler) {
-                            _trackinfochanged_handler ((ddb_event_track_t *)ctx);
+                            _trackinfochanged_handler ((ddb_event_track_t *)ctx, this);
                         }
                         break;
+                    }
+                }
+                if (msg >= DB_EV_FIRST && ctx) {
+                    messagepump_event_free ((ddb_event_t *)ctx);
                 }
             }
-            if (msg >= DB_EV_FIRST && ctx) {
-                messagepump_event_free ((ddb_event_t *)ctx);
+            if (term) {
+                return;
+            }
+            messagepump_wait ();
+        }
+    }
+
+    void
+    wait_until_stopped (void) {
+        // wait until finished!
+        bool finished = false;
+
+        while (!finished) {
+            playItem_t *streaming_track = streamer_get_streaming_track();
+            playItem_t *playing_track = streamer_get_playing_track();
+            if (!streaming_track && !playing_track) {
+                finished = true;
+            }
+            if (streaming_track) {
+                pl_item_unref (streaming_track);
+            }
+            if (playing_track) {
+                pl_item_unref(playing_track);
             }
         }
-        if (term) {
-            return;
-        }
-        messagepump_wait ();
     }
-}
-
-void
-wait_until_stopped (void) {
-    // wait until finished!
-    bool finished = false;
-
-    while (!finished) {
-        playItem_t *streaming_track = streamer_get_streaming_track();
-        playItem_t *playing_track = streamer_get_playing_track();
-        if (!streaming_track && !playing_track) {
-            finished = true;
-        }
-        if (streaming_track) {
-            pl_item_unref (streaming_track);
-        }
-        if (playing_track) {
-            pl_item_unref(playing_track);
-        }
-    }
-}
-
-class StreamerTests: public ::testing::Test {
-protected:
-
-    void SetUp() override {
-        messagepump_init ();
-
-        // register fakein and fakeout plugin
-        plug_init_plugin (fakein_load, NULL);
-        plug_init_plugin (fakeout_load, NULL);
-
-        _fakein = fakein_load (plug_get_api ());
-        _fakeout = (DB_output_t *)fakeout_load (plug_get_api ());
-        plug_register_in (_fakein);
-        plug_register_out ((DB_plugin_t *)_fakeout);
-
-        plug_set_output (_fakeout);
-
-        streamer_init ();
-
-        streamer_set_repeat(DDB_REPEAT_OFF);
-        count_played = 0;
-
-        _mainloop_tid = thread_start (mainloop, NULL);
-    }
-
-    void TearDown() override {
-        deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
-        thread_join (_mainloop_tid);
-
-        _fakeout->stop ();
-        streamer_free ();
-    }
-
-private:
-
-    DB_plugin_t *_fakein;
-    DB_output_t *_fakeout;
-    uintptr_t _mainloop_tid;
 };
+
+void (*StreamerTests::_trackinfochanged_handler)(ddb_event_track_t *ev, StreamerTests *self);
 
 TEST_F(StreamerTests, test_Play2TracksNoLoop_Sends2SongChanged) {
     playlist_t *plt = plt_alloc ("testplt");
@@ -204,23 +231,6 @@ TEST_F(StreamerTests, test_Play2TracksNoLoop_Sends2SongChanged) {
 // Start track A
 // Start track B
 // Monitor trackinfochanged events, and make sure that track A is never in "playing" state after track B started "buffering"
-
-static DB_playItem_t *switchtest_tracks[2];
-static int switchtest_counts[2];
-static void switchtest_trackinfochanged_handler (ddb_event_track_t *ev) {
-    if (deadbeef->streamer_ok_to_read (-1)) {
-        DB_playItem_t *playing = deadbeef->streamer_get_playing_track_safe ();
-        if (ev->track == switchtest_tracks[0] && playing == ev->track) {
-            switchtest_counts[0]++;
-        }
-        else if (ev->track == switchtest_tracks[1] && playing == ev->track) {
-            switchtest_counts[1]++;
-        }
-        if (playing) {
-            deadbeef->pl_item_unref (playing);
-        }
-    }
-}
 
 TEST_F(StreamerTests, test_SwitchBetweenTracks_DoesNotJumpBackToPrevious) {
     // for this test, we want "loop single" mode, to make sure first track is playing when we start the 2nd one.
