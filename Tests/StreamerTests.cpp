@@ -277,3 +277,47 @@ TEST_F(StreamerTests, test_SwitchBetweenTracks_DoesNotJumpBackToPrevious) {
     EXPECT_TRUE(switchtest_counts[0] == 0);
     EXPECT_TRUE(count_played = 2);
 }
+
+TEST_F(StreamerTests, test_nextTrack_currentWasDeleted_picksNextTrack) {
+    streamer_set_repeat(DDB_REPEAT_OFF);
+    streamer_set_shuffle(DDB_SHUFFLE_OFF);
+    ddb_playlist_t *plt = deadbeef->plt_alloc ("testplt");
+
+    ddb_playItem_t *tracks[5] = {
+        deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL),
+        deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL),
+        deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL),
+        deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL),
+        deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL),
+    };
+
+    fakein_set_sleep (0);
+    fakeout_set_manual (1);
+    fakeout_set_realtime (0);
+
+    deadbeef->plt_set_curr (plt);
+
+    streamer_set_nextsong (2, 0);
+    streamer_yield ();
+    fakeout_consume (44100 * 4 * 2);
+
+    ddb_playItem_t *curr = deadbeef->streamer_get_streaming_track();
+    EXPECT_EQ(curr, tracks[2]);
+
+    deadbeef->plt_remove_item(plt, tracks[2]);
+
+    streamer_move_to_nextsong(0);
+    streamer_yield ();
+    fakeout_consume (44100 * 4 * 2);
+
+    curr = deadbeef->streamer_get_streaming_track();
+
+    EXPECT_EQ(deadbeef->plt_get_item_count(plt, PL_MAIN), 4);
+    EXPECT_EQ(curr, tracks[1]); // the list is reversed
+
+    deadbeef->pl_item_unref(curr);
+
+    plt_set_curr (NULL);
+    deadbeef->plt_unref(plt);
+}
+

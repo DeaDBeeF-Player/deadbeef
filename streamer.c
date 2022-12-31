@@ -105,6 +105,11 @@ static int streamer_is_buffering;
 
 static playlist_t *streamer_playlist;
 static playItem_t *playing_track;
+
+// If streaming_track has been removed from playlist, fallback to one of those tracks to pick next/prev.
+static playItem_t *next_track_to_play;
+static playItem_t *prev_track_to_play;
+
 static playItem_t *buffering_track;
 static float playtime; // total playtime of playing track
 static time_t started_timestamp; // result of calling time(NULL)
@@ -551,6 +556,13 @@ get_random_track (void) {
 static playItem_t *
 get_next_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     pl_lock ();
+
+    if (next_track_to_play != NULL) {
+        pl_item_ref(next_track_to_play);
+        pl_unlock();
+        return next_track_to_play;
+    }
+
     if (!streamer_playlist) {
         playlist_t *plt = plt_get_curr ();
         streamer_set_streamer_playlist (plt);
@@ -572,12 +584,14 @@ get_next_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
         return NULL; // empty playlist
     }
 
-    playlist_t *item_plt = pl_get_playlist(curr);
-    if (!item_plt) {
-        curr = NULL;
-    }
-    if (item_plt) {
-        plt_unref (item_plt);
+    if (plt_get_item_idx (streamer_playlist, curr, PL_MAIN) == -1) {
+        playlist_t *item_plt = pl_get_playlist(curr);
+        if (!item_plt) {
+            curr = NULL;
+        }
+        if (item_plt) {
+            plt_unref (item_plt);
+        }
     }
 
     if (shuffle == DDB_SHUFFLE_TRACKS || shuffle == DDB_SHUFFLE_ALBUMS) { // shuffle
@@ -685,6 +699,12 @@ static playItem_t *
 get_prev_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     pl_lock ();
     
+    if (prev_track_to_play != NULL) {
+        pl_item_ref(prev_track_to_play);
+        pl_unlock();
+        return prev_track_to_play;
+    }
+
     // check if prev song is in this playlist
     if (curr && -1 == str_get_idx_of (curr)) {
         curr = NULL;
@@ -805,12 +825,59 @@ streamer_move_to_randomsong (int r) {
     return 0;
 }
 
+static void
+streamer_set_next_track_to_play(playItem_t *next) {
+    if (next_track_to_play != NULL) {
+        pl_item_unref(next_track_to_play);
+        next_track_to_play = NULL;
+    }
+    next_track_to_play = next;
+    if (next_track_to_play) {
+        pl_item_ref(next_track_to_play);
+    }
+}
+
+static void
+streamer_set_prev_track_to_play(playItem_t *prev) {
+    if (prev_track_to_play != NULL) {
+        pl_item_unref(prev_track_to_play);
+        prev_track_to_play = NULL;
+    }
+    prev_track_to_play = prev;
+    if (prev_track_to_play) {
+        pl_item_ref(prev_track_to_play);
+    }
+}
+
 // playlist must call that whenever item was removed
 void
 streamer_song_removed_notify (playItem_t *it) {
     if (!mutex) {
         return; // streamer is not running
     }
+    streamer_lock();
+
+    playItem_t *next = NULL;
+    playItem_t *prev = NULL;
+
+    if (streaming_track == it || next_track_to_play == it) {
+        ddb_shuffle_t shuffle = streamer_get_shuffle ();
+        ddb_repeat_t repeat = streamer_get_repeat ();
+        streamer_set_next_track_to_play (NULL);
+        next = get_next_track (it, shuffle, repeat);
+        prev = get_prev_track (it, shuffle, repeat);
+    }
+    streamer_set_next_track_to_play (next);
+    streamer_set_prev_track_to_play (prev);
+
+    if (next != NULL) {
+        pl_item_unref(next);
+    }
+    if (prev != NULL) {
+        pl_item_unref(prev);
+    }
+
+    streamer_unlock();
 }
 
 static ddb_ctmap_t *streamer_ctmap;
@@ -1828,6 +1895,8 @@ streamer_free (void) {
         first_failed_track = NULL;
     }
     streamer_set_streaming_track(NULL);
+    streamer_set_next_track_to_play(NULL);
+    streamer_set_prev_track_to_play(NULL);
     streamer_set_playing_track(NULL);
     streamer_set_buffering_track(NULL);
     streamer_set_last_played(NULL);
@@ -2413,6 +2482,8 @@ _play_track (playItem_t *it, int startpaused) {
     }
 
     streamer_set_playing_track(NULL);
+    streamer_set_next_track_to_play(NULL);
+    streamer_set_prev_track_to_play(NULL);
     streamer_set_buffering_track (it);
     handle_track_change (prev, it);
 
