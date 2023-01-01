@@ -2113,7 +2113,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
     char *stream = bytes;
     int bytesread = sz;
     if (output->fmt.bps == 16) {
-        int16_t ivolume = (int16_t)vol;
+        int16_t ivolume = (int16_t)(vol * 1000);
         if (ivolume != 1000) {
             int half = bytesread/2;
             for (int i = 0; i < half; i++) {
@@ -2124,16 +2124,16 @@ streamer_apply_soft_volume (char *bytes, int sz) {
         }
     }
     else if (output->fmt.bps == 8) {
-        int16_t ivolume = (int16_t)vol;
+        int16_t ivolume = (int16_t)(vol * 255);
         if (ivolume != 255) {
             for (int i = 0; i < bytesread; i++) {
-                *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 1000);
+                *stream = (int8_t)(((int32_t)(*stream)) * ivolume / 255);
                 stream++;
             }
         }
     }
     else if (output->fmt.bps == 24) {
-        int16_t ivolume = (int16_t)vol;
+        int16_t ivolume = (int16_t)(vol * 1000);
         if (ivolume != 1000) {
             int third = bytesread/3;
             for (int i = 0; i < third; i++) {
@@ -2147,7 +2147,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
         }
     }
     else if (output->fmt.bps == 32 && !output->fmt.is_float) {
-        int16_t ivolume = (int16_t)vol;
+        int16_t ivolume = (int16_t)(vol * 1000);
         if (ivolume != 1000) {
             for (int i = 0; i < bytesread/4; i++) {
                 int32_t sample = *((int32_t*)stream);
