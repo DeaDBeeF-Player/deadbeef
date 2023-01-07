@@ -1,3 +1,10 @@
+// external/ddb_output_pw/pw.c
+// xgettext:no-c-format
+_("PipeWire remote daemon name (empty for default)");
+// xgettext:no-c-format
+_("Custom properties (overrides existing ones):");
+// xgettext:no-c-format
+_("Use PipeWire volume control");
 // plugins/adplug/plugin.c
 // xgettext:no-c-format
 _("Prefer Ken emu over Satoh (surround won't work)");
