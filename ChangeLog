@@ -1,3 +1,23 @@
+version 1.9.5
+	Fixed: GME chiptune voice muting was affecting converter / replaygain scanner
+	Fixed: SID  chiptune voice muting was affecting converter / replaygain scanner
+	Fixed: SID stereo was not working the way it was intended
+	Fixed: Wave format conversion regressions, which could lead to wrong channels mapping
+	Fixed: Converter race condition bug when checking whether a directory exists (dakeryas)
+	Fixed: Album art fetching for tracks with multiple artists
+	Fixed: GTK warning when opening track properties
+	Fixed: Prompting before deleting playlist via middle mouse button
+	Fixed: Album art left/right/center alignment in GTKUI
+	Fixed: Removed embedded album art size limit for ID3v2 tags
+	Fixed: Deadlock when trying to delete files from disk
+	Fixed: Mute functionality for output plugins with their own volume control
+	Fixed: Switching to previous/next track after the current track is removed
+	Added: Pipewire output plugin (saivert)
+	Added: LibRetro resampling plugin (toadking)
+	Added: Chiptune voice muting in DUMB plugin
+	Added: Improved drawing of spectrum analyzer
+	Added: $itematindex(index,value) function to title formatting, get value by index from multivalue fields
+	
 version 1.9.4
 	Fixed: Deadlock when playing network streams
 	Fixed: Handling multi-value genre in ID3v2
