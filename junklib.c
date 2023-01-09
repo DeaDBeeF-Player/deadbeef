@@ -3605,22 +3605,23 @@ junk_apev2_free (DB_apev2_tag_t *tag) {
 }
 
 static int
-junklib_id3v2_sync_frame (int version_major, uint8_t *data, int size) {
+junklib_id3v2_sync_frame (const int version_major, uint8_t *data, const int synced_size, int *consumed_size) {
     char *writeptr = data;
     int written = 0;
-    while (size > 0) {
-        *writeptr = *data;
-        if (data[0] == 0xff && size >= 2 && data[1] == 0) {
-            data++;
-            if (version_major == 4) {
-                size--;
-            }
-        }
-        writeptr++;
-        data++;
-        size--;
+    int consumed = 0;
+    while (written < synced_size) {
+        *writeptr++ = *data;
         written++;
+        if (data[0] == 0xff && synced_size-written >= 2 && data[1] == 0) {
+            data++;
+            consumed++;
+        }
+        data++;
+        consumed++;
     }
+
+    *consumed_size = consumed;
+
     return written;
 }
 
@@ -4425,7 +4426,10 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
 
             int synched_size = sz;
             if (unsync) {
-                synched_size = junklib_id3v2_sync_frame (version_major, readptr, sz);
+                int consumed = 0;
+                synched_size = junklib_id3v2_sync_frame (version_major, readptr, sz, &consumed);
+                sz = consumed;
+
                 trace ("size: %d/%d\n", synched_size, sz);
             }
 
@@ -4564,7 +4568,9 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
 
             int synched_size = sz;
             if (unsync) {
-                synched_size = junklib_id3v2_sync_frame (version_major, readptr, sz);
+                int consumed = 0;
+                synched_size = junklib_id3v2_sync_frame (version_major, readptr, sz, &consumed);
+                sz = consumed;
             }
 
             DB_id3v2_frame_t *frm = malloc (sizeof (DB_id3v2_frame_t) + sz);
