@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# heskjestad <cato@heskjestad.xyz>, 2021-2022
+# heskjestad <cato@heskjestad.xyz>, 2021-2023
 # heskjestad <cato@heskjestad.xyz>, 2019-2021
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-07 13:35+0100\n"
+"POT-Creation-Date: 2023-01-17 19:59+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: heskjestad <cato@heskjestad.xyz>, 2021-2022\n"
+"Last-Translator: heskjestad <cato@heskjestad.xyz>, 2021-2023\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -544,7 +544,7 @@ msgid "DSP Presets"
 msgstr "DSP-oppsett"
 
 #: ../plugins/converter/convgui.c:1792 ../plugins/converter/convgui.c:1800
-#: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:646
+#: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:647
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/gtkui/interface.c:976
 #: ../translation/plugins.c:174
 #, no-c-format
@@ -630,17 +630,17 @@ msgstr "Åpne spilleliste"
 msgid "Save Playlist As"
 msgstr "Lagre spilleliste som"
 
-#: ../plugins/gtkui/callbacks.c:362
+#: ../plugins/gtkui/callbacks.c:363
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Om DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:375
+#: ../plugins/gtkui/callbacks.c:376
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s – endringslogg"
 
-#: ../plugins/gtkui/callbacks.c:635
+#: ../plugins/gtkui/callbacks.c:636
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF-oversettere"
@@ -1359,7 +1359,7 @@ msgstr "Selvvalgt basisfarge for visualisering"
 
 #: ../plugins/gtkui/deadbeef.glade.h:165 ../plugins/gtkui/interface.c:2834
 msgid "Custom visualization background color"
-msgstr ""
+msgstr "Selvvalgt bakgrunnsfarge for visualisering"
 
 #: ../plugins/gtkui/deadbeef.glade.h:166 ../plugins/gtkui/interface.c:2846
 msgid "Visualizations"
@@ -2767,17 +2767,17 @@ msgstr "Innebygd cuesheet"
 #: ../translation/plugins.c:3
 #, no-c-format
 msgid "PipeWire remote daemon name (empty for default)"
-msgstr ""
+msgstr "Tjenestenavn for ekstern PipeWire (la være tom for å bruke forvalgt)"
 
 #: ../translation/plugins.c:5
 #, no-c-format
 msgid "Custom properties (overrides existing ones):"
-msgstr ""
+msgstr "Selvvalgte egenskaper (overstyrer eksisterende):"
 
 #: ../translation/plugins.c:7
 #, no-c-format
 msgid "Use PipeWire volume control"
-msgstr ""
+msgstr "Bruk PipeWire-volumkontroll"
 
 #. plugins/adplug/plugin.c
 #: ../translation/plugins.c:10
