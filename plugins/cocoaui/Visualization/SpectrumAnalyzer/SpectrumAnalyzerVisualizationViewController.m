@@ -48,7 +48,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 - (void)updateFFTData:(const ddb_audio_data_t *)data {
     @synchronized (self) {
         // copy the input data for later consumption
-        if (_input_data.nframes != data->nframes) {
+        if (_input_data.nframes != data->nframes || _input_data.fmt->channels != data->fmt->channels) {
             free (_input_data.data);
             _input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
             _input_data.nframes = data->nframes;
