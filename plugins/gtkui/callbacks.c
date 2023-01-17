@@ -222,6 +222,7 @@ on_mainwin_key_press_event             (GtkWidget       *widget,
         DB_plugin_action_t *act = ((DB_hotkeys_plugin_t *)hkplug)->get_action_for_keycombo (accel_key, accel_mods, 0, &ctx);
         if (act && act->callback2) {
             trace ("executing action %s in ctx %d\n", act->name, ctx);
+            deadbeef->action_set_playlist(NULL);
             act->callback2 (act, ctx);
             return TRUE;
         }

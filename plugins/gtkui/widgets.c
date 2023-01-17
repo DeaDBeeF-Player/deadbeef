@@ -2915,7 +2915,7 @@ spectrum_audio_listener (void *ctx, const ddb_audio_data_t *data) {
 
     deadbeef->mutex_lock (w->mutex);
     // copy the input data for later consumption
-    if (w->input_data.nframes != data->nframes) {
+    if (w->input_data.nframes != data->nframes || w->input_data.fmt->channels != data->fmt->channels) {
         free (w->input_data.data);
         w->input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
         w->input_data.nframes = data->nframes;
