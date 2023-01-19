@@ -78,13 +78,19 @@ Custom view base class
 
 - (void)renderOnEvent
 {
+    AAPLViewParams params = {
+        .backingScaleFactor = self.window.backingScaleFactor,
+        .isVisible = self.window.visible,
+        .bounds = self.bounds
+    };
+
 #if RENDER_ON_MAIN_THREAD
-    [self render];
+    [self renderWithViewParams:params];
 #else
     // Dispatch rendering on a concurrent queue
     dispatch_queue_t globalQueue = dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0);
     dispatch_async(globalQueue, ^(){
-        [self render];
+        [self renderWithViewParams:params];
     });
 #endif
 }
@@ -131,16 +137,16 @@ Custom view base class
 #pragma mark - Drawing
 //////////////////////
 
-- (void)render
+- (void)renderWithViewParams:(AAPLViewParams)params
 {
 #if RENDER_ON_MAIN_THREAD
-    [_delegate renderToMetalLayer:_metalLayer];
+    [_delegate renderToMetalLayer:_metalLayer viewParams:params];
 #else
     // Must synchronize if rendering on background thread to ensure resize operations from the
     // main thread are complete before rendering which depends on the size occurs.
     @synchronized(_metalLayer)
     {
-        [_delegate renderToMetalLayer:_metalLayer];
+        [_delegate renderToMetalLayer:_metalLayer viewParams:params];
     }
 #endif
 }

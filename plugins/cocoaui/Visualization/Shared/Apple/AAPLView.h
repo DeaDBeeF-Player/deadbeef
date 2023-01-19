@@ -15,12 +15,18 @@ Custom view base class
 #import <AppKit/AppKit.h>
 #endif
 
+typedef struct {
+    CGFloat backingScaleFactor;
+    BOOL isVisible;
+    CGRect bounds;
+} AAPLViewParams;
+
 // Protocol to provide resize and redraw callbacks to a delegate
 @protocol AAPLViewDelegate <NSObject>
 
 - (void)drawableResize:(CGSize)size;
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer *)metalLayer;
+- (void)renderToMetalLayer:(nonnull CAMetalLayer *)metalLayer viewParams:(AAPLViewParams)params;
 
 @end
 
@@ -47,6 +53,6 @@ Custom view base class
 - (void)stopRenderLoop;
 #endif
 
-- (void)render;
+- (void)renderWithViewParams:(AAPLViewParams)params;
 
 @end

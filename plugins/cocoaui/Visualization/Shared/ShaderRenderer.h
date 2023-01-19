@@ -21,16 +21,15 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-
-
 #import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 #import <simd/simd.h>
+#import "AAPLView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol ShaderRendererDelegate
-- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id <MTLDevice>)device encoder:(id <MTLRenderCommandEncoder>)encoder;
+- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id <MTLDevice>)device encoder:(id <MTLRenderCommandEncoder>)encoder viewParams:(AAPLViewParams)params;
 @end
 
 @interface ShaderRenderer : NSObject
@@ -43,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)drawableResize:(CGSize)drawableSize;
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer;
+- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer viewParams:(AAPLViewParams)params;
 
 @end
 
