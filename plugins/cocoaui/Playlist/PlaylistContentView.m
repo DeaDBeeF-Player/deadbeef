@@ -1371,10 +1371,16 @@ static int grouptitleheight = 22;
 }
 
 - (void)updateContentFrame {
-    _fullwidth = 0;
+    int fullwidth = 0;
     for (DdbListviewCol_t c = [self.delegate firstColumn]; c != [self.delegate invalidColumn]; c = [self.delegate nextColumn:c]) {
-        _fullwidth += [self.delegate columnWidth:c];
+        fullwidth += [self.delegate columnWidth:c];
     }
+
+    if (fullwidth == _fullwidth) {
+        return;
+    }
+
+    _fullwidth = fullwidth;
 
     if (!self.widthConstraint) {
         self.widthConstraint = [self.widthAnchor constraintGreaterThanOrEqualToConstant:_fullwidth];
