@@ -274,8 +274,7 @@
         [delegate sortColumn:self.dragging];
     }
     else if (self.dragging != [delegate invalidColumn] || self.sizing != [delegate invalidColumn]) {
-        [delegate columnsChanged];
-        [self.listview.contentView updateContentFrame];
+        [delegate columnsDidChange];
     }
     self.dragging = [delegate invalidColumn];
     self.sizing = [delegate invalidColumn];
@@ -309,7 +308,6 @@
             self.dragPt = NSMakePoint(self.dragPt.x - scroll, self.dragPt.y);
 
             [self.listview.contentView reloadData];
-            [self.listview.contentView updateContentFrame];
             [self.listview.contentView layoutSubtreeIfNeeded];
 
             if (self.scrollFirstGroup != -1) {

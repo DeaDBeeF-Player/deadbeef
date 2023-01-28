@@ -41,8 +41,7 @@ static int grouptitleheight = 22;
 @property (nonatomic) NSMutableArray<PlaylistGroup *> *groups;
 @property (nonatomic,readwrite) int grouptitle_height;
 @property (nonatomic) int groups_build_idx;
-@property (nonatomic) int fullwidth;
-@property (nonatomic) int fullheight;
+@property (nonatomic) CGSize contentSize;
 @property (nonatomic) int scroll_direction;
 @property (nonatomic) int scroll_pointer_y;
 
@@ -351,8 +350,6 @@ static int grouptitleheight = 22;
 }
 
 - (void)drawListView:(NSRect)dirtyRect {
-    [self groupCheck];
-
     CGFloat clip_y = dirtyRect.origin.y;
     CGFloat clip_h = dirtyRect.size.height;
 
@@ -470,8 +467,8 @@ static int grouptitleheight = 22;
     [self drawListView:dirtyRect];
 
     // draw rows below the real list
-    if ([self fullheight] < dirtyRect.origin.y + dirtyRect.size.height) {
-        int y = [self fullheight];
+    if (_contentSize.height < dirtyRect.origin.y + dirtyRect.size.height) {
+        int y = _contentSize.height;
         int ii = [self.dataModel rowCount]+1;
         while (y < dirtyRect.origin.y + dirtyRect.size.height) {
             if (y + rowheight >= dirtyRect.origin.y) {
@@ -1156,8 +1153,8 @@ static int grouptitleheight = 22;
 
     [self freeGroups];
 
-    _fullwidth = 0;
-    _fullheight = 0;
+    CGSize contentSize = CGSizeZero;
+
     PlaylistGroup *grp = NULL;
 
     NSString *str;
@@ -1168,7 +1165,7 @@ static int grouptitleheight = 22;
         if ([self.delegate columnMinHeight:c] && [self.delegate columnWidth:c] > min_height) {
             min_height = [self.delegate columnGroupHeight:c];
         }
-        _fullwidth += [self.delegate columnWidth:c];
+        contentSize.width += [self.delegate columnWidth:c];
     }
 
     _grouptitle_height = grouptitleheight;
@@ -1190,7 +1187,7 @@ static int grouptitleheight = 22;
                 if (grp->height - _grouptitle_height < min_height) {
                     grp->height = min_height + _grouptitle_height;
                 }
-                _fullheight += grp->height;
+                contentSize.height += grp->height;
             }
 
             [self.groups addObject:newgroup];
@@ -1218,9 +1215,10 @@ static int grouptitleheight = 22;
         if (grp->height - _grouptitle_height < min_height) {
             grp->height = min_height + _grouptitle_height;
         }
-        _fullheight += grp->height;
+        contentSize.height += grp->height;
     }
-    [self updateContentFrame];
+
+    [self updateContentFrame:contentSize];
 }
 
 - (void)groupCheck {
@@ -1370,32 +1368,34 @@ static int grouptitleheight = 22;
     [self scrollPoint:NSMakePoint(vis.origin.x, verticalPosition)];
 }
 
-- (void)updateContentFrame {
-    int fullwidth = 0;
-    for (DdbListviewCol_t c = [self.delegate firstColumn]; c != [self.delegate invalidColumn]; c = [self.delegate nextColumn:c]) {
-        fullwidth += [self.delegate columnWidth:c];
-    }
-
-    if (fullwidth == _fullwidth) {
-        return;
-    }
-
-    _fullwidth = fullwidth;
-
+- (void)updateContentFrame:(CGSize)size {
     if (!self.widthConstraint) {
-        self.widthConstraint = [self.widthAnchor constraintGreaterThanOrEqualToConstant:_fullwidth];
-        self.heightConstraint = [self.heightAnchor constraintGreaterThanOrEqualToConstant:_fullheight];
+        self.widthConstraint = [self.widthAnchor constraintGreaterThanOrEqualToConstant:size.width];
+        self.heightConstraint = [self.heightAnchor constraintGreaterThanOrEqualToConstant:size.height];
         self.widthConstraint.priority = NSLayoutPriorityDefaultHigh;
         self.heightConstraint.priority = NSLayoutPriorityDefaultHigh;
         self.widthConstraint.active = YES;
         self.heightConstraint.active = YES;
     }
     else {
-        self.widthConstraint.constant = _fullwidth;
-        self.heightConstraint.constant = _fullheight;
+        if (_contentSize.width != size.width) {
+            self.widthConstraint.constant = size.width;
+        }
+        if (_contentSize.height != size.height) {
+            self.heightConstraint.constant = size.height;
+        }
     }
 
+    _contentSize = size;
     [self updatePinnedGroup];
+}
+
+- (void)columnsDidChange {
+    CGSize contentSize = _contentSize;
+    contentSize.width = 0;
+    for (DdbListviewCol_t c = [self.delegate firstColumn]; c != [self.delegate invalidColumn]; c = [self.delegate nextColumn:c]) {
+        contentSize.width += [self.delegate columnWidth:c];
+    }
 }
 
 - (NSInteger)getScrollFocusGroupAndOffset:(CGFloat *)offset {
