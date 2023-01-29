@@ -27,11 +27,12 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 
 @property (nonatomic) BOOL isListening;
 @property (nonatomic) ScopeScaleMode scaleMode;
-@property (nonatomic,readonly) CGFloat scaleFactor;
 @property (nonatomic) NSPopover *preferencesPopover;
 
 @property (nonatomic) NSColor *baseColor;
 @property (nonatomic) NSColor *backgroundColor;
+
+@property (atomic) BOOL isVisible;
 
 @end
 
@@ -129,11 +130,11 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)updateVisListening {
-    if (!self.isListening && self.view.window.isVisible) {
+    if (!self.isListening && self.isVisible) {
         deadbeef->vis_waveform_listen((__bridge void *)(self), vis_callback);
         self.isListening = YES;
     }
-    else if (self.isListening && !self.view.window.isVisible) {
+    else if (self.isListening && !self.isVisible) {
         deadbeef->vis_waveform_unlisten ((__bridge void *)(self));
         self.isListening = NO;
     }
@@ -246,22 +247,23 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [self.preferencesPopover showRelativeToRect:NSZeroRect ofView:self.view preferredEdge:NSRectEdgeMaxY];
 }
 
-- (CGFloat)scaleFactor {
+- (CGFloat)scaleFactorForBackingScaleFactor:(CGFloat)backingScaleFactor {
     switch (self.scaleMode) {
     case ScopeScaleModeAuto:
         return 1;
     case ScopeScaleMode1x:
-        return self.view.window.backingScaleFactor;
+        return backingScaleFactor;
     case ScopeScaleMode2x:
-        return self.view.window.backingScaleFactor / 2;
+        return backingScaleFactor / 2;
     case ScopeScaleMode3x:
-        return self.view.window.backingScaleFactor / 3;
+        return backingScaleFactor / 3;
     case ScopeScaleMode4x:
-        return self.view.window.backingScaleFactor / 4;
+        return backingScaleFactor / 4;
     }
 }
 
-- (BOOL)updateDrawData {
+- (BOOL)updateDrawDataWithViewParams:(AAPLViewParams)params {
+    self.isVisible = params.isVisible;
     [self updateVisListening];
 
     if (!self.isListening) {
@@ -269,11 +271,11 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 
     @synchronized (self) {
-        CGFloat scale = self.scaleFactor;
+        CGFloat scale = [self scaleFactorForBackingScaleFactor:params.backingScaleFactor];
 
         if (_scope.sample_count != 0) {
             ddb_scope_tick(&_scope);
-            ddb_scope_get_draw_data(&_scope, (int)(self.view.bounds.size.width * scale), (int)(self.view.bounds.size.height * scale), 1, &_draw_data);
+            ddb_scope_get_draw_data(&_scope, (int)(params.bounds.size.width * scale), (int)(params.bounds.size.height * scale), 1, &_draw_data);
         }
     }
 
@@ -371,20 +373,19 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [_renderer drawableResize:size];
 }
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer
+- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer viewParams:(AAPLViewParams)params
 {
-    if (![self updateDrawData]) {
+    if (![self updateDrawDataWithViewParams:params]) {
         return;
     }
 
-    [_renderer renderToMetalLayer:layer];
+    [_renderer renderToMetalLayer:layer viewParams:params];
 }
 
 #pragma mark - ShaderRendererDelegate
 
-- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder {
-
-    float scale = (float)(self.view.window.backingScaleFactor / self.scaleFactor);
+- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(AAPLViewParams)viewParams {
+    float scale = (float)(viewParams.backingScaleFactor / [self scaleFactorForBackingScaleFactor:viewParams.backingScaleFactor]);
 
     struct ScopeFragParams params;
     NSColor *color = [self.baseColor colorUsingColorSpace:NSColorSpace.sRGBColorSpace];
@@ -409,6 +410,5 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
 }
-
 
 @end

@@ -109,7 +109,7 @@
     _viewportSize = drawableSize;
 }
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer {
+- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer viewParams:(AAPLViewParams)viewParams {
     if (_viewportSize.width == 0 || _viewportSize.height == 0) {
         return;
     }
@@ -166,7 +166,7 @@
                            length:sizeof(vp)
                           atIndex:ShaderRendererVertexInputIndexViewportSize];
 
-    [self.delegate applyFragParamsWithViewport:vp device:_device encoder:renderEncoder];
+    [self.delegate applyFragParamsWithViewport:vp device:_device encoder:renderEncoder viewParams:viewParams];
 
     // Draw the triangle.
     [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip

@@ -209,12 +209,10 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 // Called by the timer in superclass
 - (void)draw {
-    if (![self updateDrawData]) {
-        self.visualizationView.needsDisplay = YES;
-        return;
+    if ([self updateDrawData]) {
+        [self.labelsView updateDrawData:&_draw_data];
     }
     
-    [self.labelsView updateDrawData:&_draw_data];
     self.visualizationView.needsDisplay = YES;
 }
 
@@ -341,7 +339,9 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     if (_id == DB_EV_CONFIGCHANGED) {
-        self.labelsView.needsDisplay = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.labelsView.needsDisplay = YES;
+        });
     }
 }
 
@@ -400,13 +400,13 @@ static inline vector_float4 vec4color (NSColor *color) {
     [_renderer drawableResize:size];
 }
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer {
-    [_renderer renderToMetalLayer:layer];
+- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer viewParams:(AAPLViewParams)params {
+    [_renderer renderToMetalLayer:layer viewParams:params];
 }
 
 #pragma mark - ShaderRendererDelegate
 
-- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder {
+- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(AAPLViewParams)viewParams {
 
     struct SpectrumFragParams params;
 
@@ -419,7 +419,7 @@ static inline vector_float4 vec4color (NSColor *color) {
     params.size.y = viewport.y;
     params.barCount = _draw_data.bar_count;
     params.gridLineCount = -LOWER_BOUND / 10;
-    params.backingScaleFactor = self.view.window.backingScaleFactor;
+    params.backingScaleFactor = viewParams.backingScaleFactor;
     params.barWidth = _draw_data.bar_width;
     params.discreteFrequencies = _draw_data.mode == DDB_ANALYZER_MODE_FREQUENCIES;
     [encoder setFragmentBytes:&params length:sizeof (params) atIndex:0];

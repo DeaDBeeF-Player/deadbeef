@@ -27,7 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)scrollToRowWithIndex:(int)idx;
 - (void)scrollVerticalPosition:(CGFloat)verticalPosition;
 
-- (void)updateContentFrame;
 - (void)reloadData;
 
 - (void)scrollChanged:(NSRect)visibleRect;

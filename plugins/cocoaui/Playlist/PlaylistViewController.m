@@ -245,7 +245,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 - (void)menuRemoveColumn:(id)sender {
     if (self.menuColumn >= 0) {
         [self removeColumnAtIndex:self.menuColumn];
-        [self columnsChanged];
+        [self columnsDidChange];
         PlaylistView *listview = (PlaylistView *)self.view;
         listview.contentView.needsDisplay = YES;
     }
@@ -314,7 +314,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     }];
 }
 
-- (void)columnsChanged {
+- (void)columnsDidChange {
     PlaylistView *lv = (PlaylistView *)self.view;
     lv.headerView.needsDisplay = YES;
     lv.contentView.needsDisplay = YES;
@@ -338,7 +338,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     NSError *err = nil;
     NSData *dt = [NSJSONSerialization dataWithJSONObject:columns options:0 error:&err];
 
-    [lv.contentView updateContentFrame];
+    [lv.contentView reloadData];
 
     NSString *json = [[NSString alloc] initWithData:dt encoding:NSUTF8StringEncoding];
     [self writeColumnConfig:json];
@@ -398,7 +398,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                  sortFormat:self.editColumnWindowController.sortFormatTextField.stringValue.UTF8String
                   alignment:(int)self.editColumnWindowController.alignmentPopUpButton.indexOfSelectedItem shouldSetColor:(self.editColumnWindowController.setColorButton.state == NSControlStateValueOn)
                       color:rgba];
-    [self columnsChanged];
+    [self columnsDidChange];
 }
 
 #define DEFAULT_COLUMNS "[{\"title\":\"Playing\", \"id\":\"1\", \"format\":\"%playstatus%\", \"size\":\"50\"}, {\"title\":\"Artist / Album\", \"format\":\"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]\", \"size\":\"150\"}, {\"title\":\"Track Nr\", \"format\":\"%track number%\", \"size\":\"50\"}, {\"title\":\"Title / Track Artist\", \"format\":\"%title%[ // %track artist%]\", \"size\":\"150\"}, {\"title\":\"Length\", \"format\":\"%length%\", \"size\":\"50\"}]"

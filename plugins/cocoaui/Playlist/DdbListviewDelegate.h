@@ -33,7 +33,7 @@ typedef intptr_t DdbListviewCol_t;
 
 - (void)moveColumn:(DdbListviewCol_t)col to:(DdbListviewCol_t)to;
 
-- (void)columnsChanged;
+- (void)columnsDidChange;
 
 - (NSMenu *)contextMenuForColumn:(DdbListviewCol_t)col withEvent:(NSEvent*)theEvent forView:(NSView *)view;
 
