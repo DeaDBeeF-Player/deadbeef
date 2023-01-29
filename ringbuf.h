@@ -44,6 +44,9 @@ void
 ringbuf_init (ringbuf_t *p, char *buffer, size_t size);
 
 void
+ringbuf_deinit (ringbuf_t *p);
+
+void
 ringbuf_flush (ringbuf_t *p);
 
 int

@@ -1691,6 +1691,7 @@
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DA21F4D298680990077BD4C /* RingBufTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA21F4C298680990077BD4C /* RingBufTests.cpp */; };
+		2DA21F6029868F9C0077BD4C /* resizable_buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA21F5E29868F930077BD4C /* resizable_buffer.c */; };
 		2DA24AE119E7203A00E34920 /* asyn-ares.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A0F19E7203700E34920 /* asyn-ares.c */; };
 		2DA24AE219E7203A00E34920 /* asyn-thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A1019E7203700E34920 /* asyn-thread.c */; };
 		2DA24AE319E7203A00E34920 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A1119E7203700E34920 /* base64.c */; };
@@ -6239,6 +6240,8 @@
 		2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = in_sc68.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA0ACEA1AA7162C007EDD43 /* in_sc68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = in_sc68.c; sourceTree = "<group>"; };
 		2DA21F4C298680990077BD4C /* RingBufTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RingBufTests.cpp; sourceTree = "<group>"; };
+		2DA21F5D29868F930077BD4C /* resizable_buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resizable_buffer.h; sourceTree = "<group>"; };
+		2DA21F5E29868F930077BD4C /* resizable_buffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = resizable_buffer.c; sourceTree = "<group>"; };
 		2DA2499E19E71FEB00E34920 /* libcurl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcurl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA24A0F19E7203700E34920 /* asyn-ares.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-ares.c"; path = "osx/deps/curl-7.38.0/lib/asyn-ares.c"; sourceTree = "<group>"; };
 		2DA24A1019E7203700E34920 /* asyn-thread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-thread.c"; path = "osx/deps/curl-7.38.0/lib/asyn-thread.c"; sourceTree = "<group>"; };
@@ -12179,6 +12182,8 @@
 				2DA5C2C026A75B840098AF24 /* viz.h */,
 				4D1B49ED1837EC49003E6066 /* volume.c */,
 				4D1B49EE1837EC49003E6066 /* volume.h */,
+				2DA21F5D29868F930077BD4C /* resizable_buffer.h */,
+				2DA21F5E29868F930077BD4C /* resizable_buffer.c */,
 			);
 			name = deadbeef;
 			path = ..;
@@ -16508,6 +16513,7 @@
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2DB951C726B0874200602876 /* decodedblock.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
+				2DA21F6029868F9C0077BD4C /* resizable_buffer.c in Sources */,
 				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,
 				2D01D7E11AB2219C00BCD3C4 /* ringbuf.c in Sources */,
 			);

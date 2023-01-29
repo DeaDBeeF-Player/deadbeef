@@ -46,6 +46,7 @@ deadbeef_SOURCES =\
 	plugins.c plugins.h moduleconf.h\
 	premix.c premix.h\
 	replaygain.c replaygain.h\
+	resizable_buffer.c resizable_buffer.h\
 	ringbuf.c ringbuf.h\
 	sort.c sort.h\
 	strdupa.h\

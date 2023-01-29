@@ -48,6 +48,8 @@
 #include "premix.h"
 #include "handler.h"
 #include "plugins/libparser/parser.h"
+#include "resizable_buffer.h"
+#include "ringbuf.h"
 #include "strdupa.h"
 #include "playqueue.h"
 #include "streamreader.h"
@@ -143,10 +145,12 @@ static DB_vfs_t *streamer_file_vfs;
 //
 // It's guaranteed that outbuffer contains only samples from the files with same wave format.
 //
-#define OUTPUT_BUFFER_SIZE (512*1024) // FIXME: need to be able to calculate that size from DSP chain
-static char *_output_buffer;
-static size_t _output_buffer_size;
-static int _outbuffer_remaining;
+#define _INT_OUTPUT_BUFFER_SIZE (512*1024) // FIXME: need to be able to calculate that size from DSP chain
+static char *_int_output_buffer;
+static ringbuf_t _output_ringbuf;
+
+static resizable_buffer_t _dsp_process_buffer;
+static resizable_buffer_t _viz_read_buffer;
 
 #if defined(HAVE_XGUI) || defined(ANDROID)
 #include "equalizer.h"
@@ -1867,6 +1871,9 @@ streamer_init (void) {
 
     streamer_dsp_init ();
 
+    _int_output_buffer = calloc(1, _INT_OUTPUT_BUFFER_SIZE);
+    ringbuf_init(&_output_ringbuf, _int_output_buffer, _INT_OUTPUT_BUFFER_SIZE);
+
     ctmap_init_mutex ();
     conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, conf_network_ctmapping, sizeof (conf_network_ctmapping));
     ddb_ctmap_free (streamer_ctmap);
@@ -1923,23 +1930,12 @@ streamer_free (void) {
     playpos = 0;
     playtime = 0;
 
-    free (_output_buffer);
-    _output_buffer = NULL;
-    _output_buffer_size = 0;
-    _outbuffer_remaining = 0;
-}
+    ringbuf_deinit(&_output_ringbuf);
+    free (_int_output_buffer);
+    _int_output_buffer = NULL;
 
-static char *
-_get_output_buffer (size_t size) {
-    if (_output_buffer) {
-        if (_output_buffer_size >= size) {
-            return _output_buffer;
-        }
-        free (_output_buffer);
-    }
-    _output_buffer_size = size;
-    _output_buffer = malloc (_output_buffer_size);
-    return _output_buffer;
+    resizable_buffer_deinit(&_dsp_process_buffer);
+    resizable_buffer_deinit(&_viz_read_buffer);
 }
 
 void
@@ -1953,7 +1949,7 @@ streamer_reset (int full) { // must be called when current song changes by exter
     streamreader_reset ();
     decoded_blocks_reset();
     dsp_reset ();
-    _outbuffer_remaining = 0;
+    ringbuf_flush(&_output_ringbuf);
     streamer_unlock();
     viz_reset ();
 }
@@ -2171,14 +2167,8 @@ static int
 _streamer_get_bytes (char *bytes, int size) {
     DB_output_t *output = plug_get_output ();
 
-    char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
-
-    streamer_lock ();
-    int remaining = _outbuffer_remaining;
-    streamer_unlock ();
-
     // consume decoded data
-    int sz = min (size, remaining);
+    int sz = size;
     if (!sz) {
         // no data available
         memset (bytes, 0, size);
@@ -2192,7 +2182,6 @@ _streamer_get_bytes (char *bytes, int size) {
     }
 
     int rb = sz;
-    char *readptr = outbuffer;
     char *writeptr = bytes;
 
     // streamer_reset may clear all blocks, therefore need a lock
@@ -2209,9 +2198,8 @@ _streamer_get_bytes (char *bytes, int size) {
         }
 
         if (decoded_block->remaining_bytes != 0) {
-            int got_bytes = min (rb, decoded_block->remaining_bytes);
-            memcpy (writeptr, readptr, got_bytes);
-            readptr += got_bytes;
+            size_t got_bytes = min (rb, decoded_block->remaining_bytes);
+            got_bytes = ringbuf_read(&_output_ringbuf, writeptr, got_bytes);
             writeptr += got_bytes;
             rb -= got_bytes;
 
@@ -2234,14 +2222,6 @@ _streamer_get_bytes (char *bytes, int size) {
 
     sz -= rb; // how many bytes we actually got
 
-    if (sz < _outbuffer_remaining) {
-        // FIXME: This is the slowest operation on audio thread, can be optimized with a ring buffer
-        memmove (outbuffer, outbuffer + sz, _outbuffer_remaining - sz);
-        _outbuffer_remaining -= sz;
-    }
-    else {
-        _outbuffer_remaining = 0;
-    }
     streamer_unlock();
 
     streamer_apply_soft_volume (bytes, sz);
@@ -2285,23 +2265,23 @@ _streamer_fill_playback_buffer(void) {
 
     // only decode until the next format change
     // decode enough blocks to fill the output buffer
-    char *outbuffer = _get_output_buffer (OUTPUT_BUFFER_SIZE);
+    resizable_buffer_ensure_size(&_dsp_process_buffer, block->size * MAX_DSP_RATIO);
     while (block != NULL
            && decoded_blocks_have_free()
            && decoded_blocks_playback_time_total() < conf_playback_buffer_size
-           && OUTPUT_BUFFER_SIZE-_outbuffer_remaining >= block->size * MAX_DSP_RATIO
+           && _output_ringbuf.size - _output_ringbuf.remaining >= block->size * MAX_DSP_RATIO
            && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
-        int rb = process_output_block (block, outbuffer + _outbuffer_remaining, OUTPUT_BUFFER_SIZE - _outbuffer_remaining);
+        int rb = process_output_block (block, _dsp_process_buffer.buffer, block->size * MAX_DSP_RATIO);
         if (rb <= 0) {
             break;
         }
-        _outbuffer_remaining += rb;
+        ringbuf_write(&_output_ringbuf, _dsp_process_buffer.buffer, rb);
         block_bitrate = block->bitrate;
         block = streamreader_get_curr_block();
     }
     // empty buffer and the next block format differs? request format change!
 
-    if (!_outbuffer_remaining && block && memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+    if (_output_ringbuf.remaining == 0 && block && memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         streamer_set_output_format (&block->fmt);
         memcpy (&last_block_fmt, &block->fmt, sizeof (ddb_waveformat_t));
 
@@ -2347,9 +2327,11 @@ streamer_read (char *bytes, int size) {
     // Process
 #ifndef ANDROID
     // Read extra bytes from output buffer
-    int viz_bytes = min (_outbuffer_remaining, max_bytes);
+    size_t viz_bytes = min (_output_ringbuf.size, max_bytes);
     int wave_size = size / ss;
-    viz_process (_output_buffer, viz_bytes, output, 4096, wave_size); // FIXME: fft size needs to be configurable
+    resizable_buffer_ensure_size(&_viz_read_buffer, max_bytes);
+    ringbuf_read_keep(&_output_ringbuf, _viz_read_buffer.buffer, viz_bytes);
+    viz_process (_viz_read_buffer.buffer, (int)viz_bytes, output, 4096, wave_size); // FIXME: fft size needs to be configurable
 #endif
 
     // Play

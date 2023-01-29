@@ -32,15 +32,20 @@ void
 ringbuf_init (ringbuf_t *p, char *buffer, size_t size) {
     memset (p, 0, sizeof (ringbuf_t));
     p->bytes = buffer;
-    p->cursor = 0;
     p->size = size;
-    p->remaining = 0;
 }
+
+void
+ringbuf_deinit (ringbuf_t *p) {
+    memset (p, 0, sizeof (ringbuf_t));
+}
+
 
 void
 ringbuf_flush (ringbuf_t *p) {
     p->cursor = 0;
     p->remaining = 0;
+    memset (p->bytes, 0, p->size);
 }
 
 int
