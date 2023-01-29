@@ -29,6 +29,10 @@
 
 #include <sys/types.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     char *bytes;
     size_t size;
@@ -50,5 +54,9 @@ ringbuf_read (ringbuf_t *p, char *bytes, size_t size);
 
 size_t
 ringbuf_read_keep (ringbuf_t *p, char *bytes, size_t size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

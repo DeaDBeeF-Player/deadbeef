@@ -71,37 +71,30 @@ ringbuf_write (ringbuf_t *p, char *bytes, size_t size) {
 }
 
 size_t
-ringbuf_read_int (ringbuf_t *p, char *bytes, size_t size, int keep) {
+ringbuf_read_int (ringbuf_t * restrict p, char *bytes, size_t size, int keep) {
     if (p->remaining < size) {
         size = p->remaining;
     }
-    size_t rb = size;
 
-    if (p->size - p->cursor >= size) {
-        memcpy (bytes, p->bytes + p->cursor, size);
-        if (!keep) {
-            p->cursor += size;
-            p->remaining -= size;
-        }
+    size_t readsize1 = p->size - p->cursor;
+    size_t readsize2 = 0;
+    if (readsize1 < size) {
+        readsize2 = size - readsize1;
     }
     else {
-        size_t n = p->size - p->cursor;
-        if (n > 0) {
-            memcpy (bytes, p->bytes + p->cursor, n);
-            if (!keep) {
-                p->cursor += n;
-                p->remaining -= n;
-            }
-            bytes += n;
-            size -= n;
-        }
-        memcpy (bytes, p->bytes, size);
-        if (!keep) {
-            p->cursor = size;
-            p->remaining -= size;
-        }
+        readsize1 = size;
     }
-    return rb;
+    memcpy (bytes, p->bytes + p->cursor, readsize1);
+    if (readsize2 != 0) {
+        memcpy (bytes + readsize1, p->bytes, readsize2);
+    }
+
+    if (!keep) {
+        p->remaining -= size;
+        p->cursor += size;
+        p->cursor %= p->size;
+    }
+    return size;
 }
 
 size_t
