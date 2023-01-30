@@ -29,6 +29,7 @@ resizable_buffer_ensure_size(resizable_buffer_t *buffer, size_t size) {
     if (buffer->size < size) {
         free (buffer->buffer);
         buffer->buffer = calloc (1, size);
+        buffer->size = size;
     }
 }
 
