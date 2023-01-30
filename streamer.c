@@ -2224,16 +2224,9 @@ _streamer_get_bytes (char *bytes, int size) {
 // @return latency buffer size
 static size_t
 _output_ringbuf_setup(const ddb_waveformat_t *fmt) {
-    // The ringbuffer is expected to be large enough to decode and upsample any 16K block plus 3 seconds of history.
-    // History is used for visualization delay, when audio output has large latency (e.g. when playing over Airplay).
-    //#define _INT_MAX_DECODED_BLOCK_SIZE (16384 * (192000*4*8) / (8000))
-    //#define _INT_OUTPUT_BUFFER_SIZE (512*1024)
-#define _INT_OUTPUT_BUFFER_SIZE 30000000
-
     // Need to be able to upsample from 8000 mono to the current format.
     // Add some padding to allow multiple blocks to be decoded.
-    // FIXME: this could be calculated by walking the current dsp chain, and calculating the real ratio.
-
+    // FIXME: this could be improved by walking the current dsp chain, and calculating the real ratio.
     size_t size = (size_t)(16384 * 1.5 * MAX_DSP_RATIO);
     size_t latency = 0;
 #ifdef __APPLE__
