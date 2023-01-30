@@ -6242,6 +6242,7 @@
 		2DA21F4C298680990077BD4C /* RingBufTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RingBufTests.cpp; sourceTree = "<group>"; };
 		2DA21F5D29868F930077BD4C /* resizable_buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resizable_buffer.h; sourceTree = "<group>"; };
 		2DA21F5E29868F930077BD4C /* resizable_buffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = resizable_buffer.c; sourceTree = "<group>"; };
+		2DA21F6129883DAE0077BD4C /* coreaudio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = coreaudio.h; sourceTree = "<group>"; };
 		2DA2499E19E71FEB00E34920 /* libcurl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcurl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA24A0F19E7203700E34920 /* asyn-ares.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-ares.c"; path = "osx/deps/curl-7.38.0/lib/asyn-ares.c"; sourceTree = "<group>"; };
 		2DA24A1019E7203700E34920 /* asyn-thread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "asyn-thread.c"; path = "osx/deps/curl-7.38.0/lib/asyn-thread.c"; sourceTree = "<group>"; };
@@ -12294,6 +12295,7 @@
 			isa = PBXGroup;
 			children = (
 				4D011FFC19AB9589005499B4 /* coreaudio.c */,
+				2DA21F6129883DAE0077BD4C /* coreaudio.h */,
 			);
 			name = coreaudio;
 			path = plugins/coreaudio;

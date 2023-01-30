@@ -22,6 +22,7 @@
 */
 
 #include "../../deadbeef.h"
+#include "coreaudio.h"
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>
 #include <IOKit/pwr_mgt/IOPMLib.h>
@@ -166,7 +167,7 @@ error:
     return res;
 }
 
-OSStatus callbackFunction(AudioObjectID inObjectID,
+OSStatus propertiesChanged(AudioObjectID inObjectID,
                           UInt32 inNumberAddresses,
                           const AudioObjectPropertyAddress inAddresses[],
                           void *inClientData) {
@@ -320,7 +321,26 @@ ca_init (void) {
     };
     AudioObjectAddPropertyListener(kAudioObjectSystemObject,
                                    &outputDeviceAddress,
-                                   &callbackFunction, nil);
+                                   &propertiesChanged, nil);
+
+    UInt32 transportType = 0;
+    sz = sizeof (transportType);
+    theAddress.mScope = kAudioDevicePropertyScopeOutput;
+    theAddress.mElement = kAudioObjectPropertyElementMaster;
+    theAddress.mSelector = kAudioDevicePropertyTransportType;
+    err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &transportType);
+    if (err != noErr) {
+        trace ("AudioObjectGetPropertyData kAudioDevicePropertyTransportType: %x\n", err);
+        return -1;
+    }
+
+
+    if (transportType == kAudioDeviceTransportTypeAirPlay) {
+        plugin.plugin.flags |= DDB_COREAUDIO_FLAG_AIRPLAY;
+    }
+    else {
+        plugin.plugin.flags &= ~DDB_COREAUDIO_FLAG_AIRPLAY;
+    }
 
     state = DDB_PLAYBACK_STATE_STOPPED;
 

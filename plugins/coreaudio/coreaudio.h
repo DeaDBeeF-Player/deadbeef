@@ -1,14 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>FILEHEADER</key>
-	<string>
 /*
     DeaDBeeF -- the music player
     Copyright (C) 2009-2023 Oleksiy Yakovenko and other contributors
 
-    This software is provided &apos;as-is&apos;, without any express or implied
+    This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
     arising from the use of this software.
 
@@ -27,6 +21,9 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-</string>
-</dict>
-</plist>
+#ifndef coreaudio_h
+#define coreaudio_h
+
+#define DDB_COREAUDIO_FLAG_AIRPLAY 0x00010000
+
+#endif /* coreaudio_h */

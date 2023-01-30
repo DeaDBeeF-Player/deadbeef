@@ -76,12 +76,17 @@ ringbuf_write (ringbuf_t *p, char *bytes, size_t size) {
 }
 
 size_t
-ringbuf_read_int (ringbuf_t * restrict p, char *bytes, size_t size, int keep) {
+ringbuf_read_int (ringbuf_t * restrict p, char *bytes, size_t size, int keep, off_t offset) {
     if (p->remaining < size) {
         size = p->remaining;
     }
 
-    size_t readsize1 = p->size - p->cursor;
+    off_t cursor = p->cursor + offset;
+    if (cursor < 0) {
+        cursor += p->size;
+    }
+
+    size_t readsize1 = p->size - cursor;
     size_t readsize2 = 0;
     if (readsize1 < size) {
         readsize2 = size - readsize1;
@@ -89,7 +94,7 @@ ringbuf_read_int (ringbuf_t * restrict p, char *bytes, size_t size, int keep) {
     else {
         readsize1 = size;
     }
-    memcpy (bytes, p->bytes + p->cursor, readsize1);
+    memcpy (bytes, p->bytes + cursor, readsize1);
     if (readsize2 != 0) {
         memcpy (bytes + readsize1, p->bytes, readsize2);
     }
@@ -104,10 +109,15 @@ ringbuf_read_int (ringbuf_t * restrict p, char *bytes, size_t size, int keep) {
 
 size_t
 ringbuf_read (ringbuf_t *p, char *bytes, size_t size) {
-    return ringbuf_read_int(p, bytes, size, 0);
+    return ringbuf_read_int(p, bytes, size, 0, 0);
 }
 
 size_t
 ringbuf_read_keep (ringbuf_t *p, char *bytes, size_t size) {
-    return ringbuf_read_int(p, bytes, size, 1);
+    return ringbuf_read_int(p, bytes, size, 1, 0);
+}
+
+size_t
+ringbuf_read_keep_offset (ringbuf_t *p, char *bytes, size_t size, off_t offset) {
+    return ringbuf_read_int(p, bytes, size, 1, offset);
 }

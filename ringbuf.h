@@ -58,6 +58,9 @@ ringbuf_read (ringbuf_t *p, char *bytes, size_t size);
 size_t
 ringbuf_read_keep (ringbuf_t *p, char *bytes, size_t size);
 
+size_t
+ringbuf_read_keep_offset (ringbuf_t *p, char *bytes, size_t size, off_t offset);
+
 #ifdef __cplusplus
 }
 #endif

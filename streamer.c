@@ -58,6 +58,9 @@
 #include "playmodes.h"
 #include "viz.h"
 #include "fft.h"
+#ifdef __APPLE__
+#include "coreaudio.h"
+#endif
 
 #ifdef trace
 #undef trace
@@ -138,14 +141,6 @@ static int _audio_stall_count;
 static uint64_t streamer_file_identifier;
 static DB_vfs_t *streamer_file_vfs;
 
-// We always decode the entire block, 16384 bytes of input PCM
-// after DSP that can become really big.
-// Think converting from 8KHz/8 bit to 192KHz/32 bit, thats 96x size increase,
-// which gives us the need of 1.5MB buffer.
-//
-// It's guaranteed that outbuffer contains only samples from the files with same wave format.
-//
-#define _INT_OUTPUT_BUFFER_SIZE (512*1024) // FIXME: need to be able to calculate that size from DSP chain
 static char *_int_output_buffer;
 static ringbuf_t _output_ringbuf;
 
@@ -1871,9 +1866,6 @@ streamer_init (void) {
 
     streamer_dsp_init ();
 
-    _int_output_buffer = calloc(1, _INT_OUTPUT_BUFFER_SIZE);
-    ringbuf_init(&_output_ringbuf, _int_output_buffer, _INT_OUTPUT_BUFFER_SIZE);
-
     ctmap_init_mutex ();
     conf_get_str ("network.ctmapping", DDB_DEFAULT_CTMAPPING, conf_network_ctmapping, sizeof (conf_network_ctmapping));
     ddb_ctmap_free (streamer_ctmap);
@@ -2229,6 +2221,36 @@ _streamer_get_bytes (char *bytes, int size) {
     return sz;
 }
 
+// @return latency buffer size
+static size_t
+_output_ringbuf_setup(const ddb_waveformat_t *fmt) {
+    // The ringbuffer is expected to be large enough to decode and upsample any 16K block plus 3 seconds of history.
+    // History is used for visualization delay, when audio output has large latency (e.g. when playing over Airplay).
+    //#define _INT_MAX_DECODED_BLOCK_SIZE (16384 * (192000*4*8) / (8000))
+    //#define _INT_OUTPUT_BUFFER_SIZE (512*1024)
+#define _INT_OUTPUT_BUFFER_SIZE 30000000
+
+    // Need to be able to upsample from 8000 mono to the current format.
+    // Add some padding to allow multiple blocks to be decoded.
+    // FIXME: this could be calculated by walking the current dsp chain, and calculating the real ratio.
+
+    size_t size = (size_t)(16384 * 1.5 * MAX_DSP_RATIO);
+    size_t latency = 0;
+#ifdef __APPLE__
+    // add 3 seconds of history for airplay latency / visualization compensation
+    latency = 3 * fmt->channels * fmt->samplerate * fmt->bps / 8;
+#endif
+    size += latency;
+
+    if (size != _output_ringbuf.size) {
+        free (_int_output_buffer);
+        _int_output_buffer = malloc (size);
+        ringbuf_init(&_output_ringbuf, _int_output_buffer, size);
+    }
+
+    return latency;
+}
+
 // Decode enough blocks to fill the _output_buffer, and update avg_bitrate
 static void
 _streamer_fill_playback_buffer(void) {
@@ -2266,16 +2288,20 @@ _streamer_fill_playback_buffer(void) {
     // only decode until the next format change
     // decode enough blocks to fill the output buffer
     resizable_buffer_ensure_size(&_dsp_process_buffer, block->size * MAX_DSP_RATIO);
+
+    size_t latency = _output_ringbuf_setup(&plug_get_output ()->fmt);
+
     while (block != NULL
            && decoded_blocks_have_free()
            && decoded_blocks_playback_time_total() < conf_playback_buffer_size
-           && _output_ringbuf.size - _output_ringbuf.remaining >= block->size * MAX_DSP_RATIO
+           && (_output_ringbuf.size - _output_ringbuf.remaining - latency) >= block->size * MAX_DSP_RATIO
            && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         int rb = process_output_block (block, _dsp_process_buffer.buffer, block->size * MAX_DSP_RATIO);
         if (rb <= 0) {
             break;
         }
         ringbuf_write(&_output_ringbuf, _dsp_process_buffer.buffer, rb);
+
         block_bitrate = block->bitrate;
         block = streamreader_get_curr_block();
     }
@@ -2330,7 +2356,15 @@ streamer_read (char *bytes, int size) {
     size_t viz_bytes = min (_output_ringbuf.size, max_bytes);
     int wave_size = size / ss;
     resizable_buffer_ensure_size(&_viz_read_buffer, max_bytes);
-    ringbuf_read_keep(&_output_ringbuf, _viz_read_buffer.buffer, viz_bytes);
+    size_t offset = 0;
+
+#ifdef __APPLE__
+    const int AIRPLAY_LATENCY = 2;
+    if (output->plugin.flags & DDB_COREAUDIO_FLAG_AIRPLAY) {
+        offset = AIRPLAY_LATENCY * output->fmt.samplerate * output->fmt.channels * output->fmt.bps/8;
+    }
+#endif
+    ringbuf_read_keep_offset(&_output_ringbuf, _viz_read_buffer.buffer, viz_bytes, -offset);
     viz_process (_viz_read_buffer.buffer, (int)viz_bytes, output, 4096, wave_size); // FIXME: fft size needs to be configurable
 #endif
 
