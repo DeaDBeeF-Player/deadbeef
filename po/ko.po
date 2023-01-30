@@ -7,16 +7,16 @@
 # Junghee Lee <daemul72@gmail.com>, 2020
 # Junghee Lee <daemul72@gmail.com>, 2019-2020
 # ieukori <ieukori@gmail.com>, 2016
-# Junghee Lee <daemul72@gmail.com>, 2022
+# Junghee Lee <daemul72@gmail.com>, 2022-2023
 # Junghee Lee <daemul72@gmail.com>, 2020-2022
 # Junghee Lee <daemul72@gmail.com>, 2021-2022
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-07 13:35+0100\n"
+"POT-Creation-Date: 2023-01-30 19:41+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Junghee Lee <daemul72@gmail.com>, 2022\n"
+"Last-Translator: Junghee Lee <daemul72@gmail.com>, 2022-2023\n"
 "Language-Team: Korean (http://www.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -549,7 +549,7 @@ msgid "DSP Presets"
 msgstr "DSP 프리셋"
 
 #: ../plugins/converter/convgui.c:1792 ../plugins/converter/convgui.c:1800
-#: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:646
+#: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:647
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/gtkui/interface.c:976
 #: ../translation/plugins.c:174
 #, no-c-format
@@ -635,17 +635,17 @@ msgstr "재생목록 불러오기"
 msgid "Save Playlist As"
 msgstr "다른 이름으로 재생목록 저장"
 
-#: ../plugins/gtkui/callbacks.c:362
+#: ../plugins/gtkui/callbacks.c:363
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "DeaDBeeF %s 정보"
 
-#: ../plugins/gtkui/callbacks.c:375
+#: ../plugins/gtkui/callbacks.c:376
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s 변경 로그"
 
-#: ../plugins/gtkui/callbacks.c:635
+#: ../plugins/gtkui/callbacks.c:636
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF 번역자"
@@ -1364,7 +1364,7 @@ msgstr "사용자 지정 시각화 기본 색상"
 
 #: ../plugins/gtkui/deadbeef.glade.h:165 ../plugins/gtkui/interface.c:2834
 msgid "Custom visualization background color"
-msgstr ""
+msgstr "사용자 지정 시각화 배경색"
 
 #: ../plugins/gtkui/deadbeef.glade.h:166 ../plugins/gtkui/interface.c:2846
 msgid "Visualizations"
@@ -2772,17 +2772,17 @@ msgstr "임베드된 큐시트"
 #: ../translation/plugins.c:3
 #, no-c-format
 msgid "PipeWire remote daemon name (empty for default)"
-msgstr ""
+msgstr "PipeWire 원격 데몬 이름 (기본값은 비어 있음)"
 
 #: ../translation/plugins.c:5
 #, no-c-format
 msgid "Custom properties (overrides existing ones):"
-msgstr ""
+msgstr "사용자 지정 속성 (기존 속성 재정의):"
 
 #: ../translation/plugins.c:7
 #, no-c-format
 msgid "Use PipeWire volume control"
-msgstr ""
+msgstr "PipeWire 음량 조절 사용하기"
 
 #. plugins/adplug/plugin.c
 #: ../translation/plugins.c:10
