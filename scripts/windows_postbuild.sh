@@ -98,4 +98,4 @@ echo "gui_plugin GTK3" >> "$1/config/config"
 # ca-certs
 
 mkdir -p "$1/share/ssl"
-cp -ru "$MSYSTEM_PREFIX/ssl/certs" "$1/share/ssl/"
+cp -ru "$MSYSTEM_PREFIX/etc/ssl/certs" "$1/share/ssl/"
