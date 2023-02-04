@@ -379,6 +379,7 @@ csid_seek (DB_fileinfo_t *_info, float time) {
     }
 
     info->resid->filter (false);
+    info->sidplay->setIsMuted(true);
     int samples = t * _info->fmt.samplerate;
     samples *= (_info->fmt.bps>>3) * _info->fmt.channels;
     uint16_t buffer[2048 * _info->fmt.channels];
@@ -391,6 +392,7 @@ csid_seek (DB_fileinfo_t *_info, float time) {
         }
         samples -= done;
     }
+    info->sidplay->setIsMuted(false);
     info->resid->filter (true);
     _info->readpos = time;
 
