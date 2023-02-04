@@ -1489,9 +1489,13 @@ streamer_seek_real (float seekpos) {
 
         if (fileinfo_curr && track && dur > 0) {
             streamer_lock ();
-            if (fileinfo_curr->plugin->seek (fileinfo_curr, playpos) >= 0) {
+            float seek_to_playpos = playpos;
+            streamer_unlock();
+
+            if (fileinfo_curr->plugin->seek (fileinfo_curr, seek_to_playpos) >= 0) {
                 streamer_reset (1);
             }
+            streamer_lock ();
             playpos = fileinfo_curr->readpos;
             avg_bitrate = -1;
             streamer_unlock();
