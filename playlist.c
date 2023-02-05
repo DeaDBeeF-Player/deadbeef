@@ -1804,19 +1804,32 @@ pl_item_unref (playItem_t *it) {
 
 int
 plt_delete_selected (playlist_t *playlist) {
+
     LOCK;
-    int i = 0;
-    int ret = -1;
+    int count = plt_getselcount (playlist);
+    if (count == 0) {
+        UNLOCK;
+        return -1;
+    }
+    playItem_t **items_to_delete = calloc(count, sizeof (playItem_t *));
     playItem_t *next = NULL;
-    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next, i++) {
+    int i = 0;
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next) {
         next = it->next[PL_MAIN];
         if (it->selected) {
-            if (ret == -1) {
-                ret = i;
-            }
-            plt_remove_item (playlist, it);
+            items_to_delete[i++] = it;
+            pl_item_ref(it);
         }
     }
+    UNLOCK;
+
+    for (i = 0; i < count; i++) {
+        plt_remove_item (playlist, items_to_delete[i]);
+        pl_item_unref(items_to_delete[i]);
+    }
+    free (items_to_delete);
+
+    LOCK;
     if (playlist->current_row[PL_MAIN] >= playlist->count[PL_MAIN]) {
         playlist->current_row[PL_MAIN] = playlist->count[PL_MAIN] - 1;
     }
@@ -1824,35 +1837,50 @@ plt_delete_selected (playlist_t *playlist) {
         playlist->current_row[PL_SEARCH] = playlist->count[PL_SEARCH] - 1;
     }
     UNLOCK;
-    return ret;
+    return count - 1;
 }
 
 int
 pl_delete_selected (void) {
     LOCK;
-    int ret = plt_delete_selected (_current_playlist);
+    playlist_t *curr = _current_playlist;
+    plt_ref (curr);
     UNLOCK;
-    return ret;
+    int res = plt_delete_selected (curr);
+    plt_unref (curr);
+    return res;
 }
 
 void
 plt_crop_selected (playlist_t *playlist) {
     LOCK;
+    int count = plt_get_item_count(playlist, PL_MAIN) - plt_getselcount (playlist);
+    if (count == 0) {
+        UNLOCK;
+        return;
+    }
+    playItem_t **items_to_delete = calloc(count, sizeof (playItem_t *));
     playItem_t *next = NULL;
+    int i = 0;
     for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next) {
         next = it->next[PL_MAIN];
         if (!it->selected) {
-            plt_remove_item (playlist, it);
+            items_to_delete[i++] = it;
+            pl_item_ref(it);
         }
     }
     UNLOCK;
+
+    for (i = 0; i < count; i++) {
+        plt_remove_item (playlist, items_to_delete[i]);
+        pl_item_unref(items_to_delete[i]);
+    }
+    free (items_to_delete);
 }
 
 void
 pl_crop_selected (void) {
-    LOCK;
     plt_crop_selected (_current_playlist);
-    UNLOCK;
 }
 
 static uint16_t
