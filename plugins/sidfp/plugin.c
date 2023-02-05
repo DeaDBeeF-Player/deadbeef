@@ -1,5 +1,5 @@
 /*
-    SID plugin for DeaDBeeF Player
+    SIDFP plugin for DeaDBeeF Player
     Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>
 
     This program is free software: you can redistribute it and/or modify
@@ -34,12 +34,12 @@ DB_decoder_t sid_plugin = {
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
-    .plugin.name = "SID player",
+    .plugin.name = "SIDFP player",
     .plugin.id = "sidplayfp",
-    .plugin.descr = "SID player based on libsidplay2",
+    .plugin.descr = "SID player based on libsidplayfp",
     .plugin.copyright = 
-        "SID plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
+        "SIDFP plugin for DeaDBeeF Player\n"
+        "Copyright (C) 2009-2023 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
         "\n"
         "This program is free software: you can redistribute it and/or modify\n"
         "it under the terms of the GNU General Public License as published by\n"

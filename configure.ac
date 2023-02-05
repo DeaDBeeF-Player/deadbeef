@@ -94,7 +94,8 @@ AC_ARG_ENABLE(lfm,      [AS_HELP_STRING([--disable-lfm     ], [disable last.fm/l
 AC_ARG_ENABLE(artwork,  [AS_HELP_STRING([--disable-artwork ], [disable album art loader plugin (default: enabled)])], [enable_artwork=$enableval], [enable_artwork=yes])
 AC_ARG_ENABLE(artwork-network,  [AS_HELP_STRING([--disable-artwork-network ], [disable album art network loading support (default: enabled)])], [enable_artwork_network=$enableval], [enable_artwork_network=yes])
 AC_ARG_ENABLE(supereq,  [AS_HELP_STRING([--disable-supereq ], [disable SuperEQ DSP plugin (default: enabled)])], [enable_supereq=$enableval], [enable_supereq=yes])
-AC_ARG_ENABLE(sid,      [AS_HELP_STRING([--disable-sid     ], [disable commodore64 SID music player plugin (default: enabled)])], [enable_sid=$enableval], [enable_sid=yes])
+AC_ARG_ENABLE(sid,      [AS_HELP_STRING([--disable-sid     ], [disable C64 SID music player plugin using libsidplay2 (default: enabled)])], [enable_sid=$enableval], [enable_sid=yes])
+AC_ARG_ENABLE(sidfp,      [AS_HELP_STRING([--disable-sidfp     ], [disable C64 SID music player plugin using libsidplayfp (default: enabled)])], [enable_sidfp=$enableval], [enable_sidfp=yes])
 AC_ARG_ENABLE(mp3,      [AS_HELP_STRING([--disable-mp3     ], [disable mp3 plugin (default: enabled)])], [enable_mp3=$enableval], [enable_mp3=yes])
 AC_ARG_ENABLE(libmad,   [AS_HELP_STRING([--disable-libmad     ], [disable libmad support in mp3 plugin (default: auto)])], [enable_libmad=$enableval], [enable_libmad=yes])
 AC_ARG_ENABLE(libmpg123,[AS_HELP_STRING([--disable-libmpg123     ], [disable libmpg123 support in mp3 plugin (default: auto)])], [enable_libmpg123=$enableval], [enable_libmpg123=yes])
@@ -699,6 +700,9 @@ AS_IF([test "${enable_sid}" != "no"], [
     HAVE_SID=yes
 ])
 
+AS_IF([test "${enable_sidfp}" != "no"], [
+    HAVE_SIDFP=yes
+])
 AS_IF([test "${enable_nullout}" != "no"], [
     HAVE_NULLOUT=yes
 ])
@@ -846,7 +850,7 @@ AS_IF([test "${enable_soundtouch}" != "no"], [
     HAVE_SOUNDTOUCH=yes
 ])
 
-PLUGINS_DIRS="plugins/liboggedit plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/rg_scanner plugins/soundtouch"
+PLUGINS_DIRS="plugins/liboggedit plugins/libparser plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/sidfp plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/rg_scanner plugins/soundtouch"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -870,6 +874,7 @@ AM_CONDITIONAL(ARTWORK_USE_VFS_CURL, test "x$ARTWORK_USE_VFS_CURL" = "xyes")
 AM_CONDITIONAL(HAVE_ADPLUG, test "x$HAVE_ADPLUG" = "xyes")
 AM_CONDITIONAL(HAVE_FFAP, test "x$HAVE_FFAP" = "xyes")
 AM_CONDITIONAL(HAVE_SID, test "x$HAVE_SID" = "xyes")
+AM_CONDITIONAL(HAVE_SIDFP, test "x$HAVE_SIDFP" = "xyes")
 AM_CONDITIONAL(HAVE_NULLOUT, test "x$HAVE_NULLOUT" = "xyes")
 AM_CONDITIONAL(HAVE_VTX, test "x$HAVE_VTX" = "xyes")
 AM_CONDITIONAL(HAVE_GME, test "x$HAVE_GME" = "xyes")
@@ -948,6 +953,7 @@ plugins/vtx/Makefile
 plugins/adplug/Makefile
 plugins/ffmpeg/Makefile
 plugins/sid/Makefile
+plugins/sidfp/Makefile
 plugins/oss/Makefile
 plugins/pulse/Makefile
 plugins/artwork/Makefile
@@ -1046,6 +1052,7 @@ PRINT_PLUGIN_INFO([shellexec],[shell commands plugin],[test "x$HAVE_SHELLEXEC" =
 PRINT_PLUGIN_INFO([shellexecui],[GTK user interface for setting up shellexec plugin],[test "x$HAVE_SHELLEXECUI" = "xyes"])
 PRINT_PLUGIN_INFO([shn],[SHN plugin based on xmms-shn],[test "x$HAVE_SHN" = "xyes"])
 PRINT_PLUGIN_INFO([sid],[SID player based on libsidplay2],[test "x$HAVE_SID" = "xyes"])
+PRINT_PLUGIN_INFO([sidfp],[SID player based on libsidplayfp],[test "x$HAVE_SIDFP" = "xyes"])
 PRINT_PLUGIN_INFO([sndfile],[PCM (wav,aiff,etc) player based on libsndfile],[test "x$HAVE_SNDFILEPLUGIN" = "xyes"])
 PRINT_PLUGIN_INFO([soundtouch],[SoundTouch plugin used for time stretching and pitch shifting],[test "x$HAVE_SOUNDTOUCH" = "xyes"])
 PRINT_PLUGIN_INFO([stdio],[Standard IO plugin],[true])

@@ -55,7 +55,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/shellexec.so\
     $PLUGDIR/shellexecui_gtk2.so\
     $PLUGDIR/shellexecui_gtk3.so\
-    $PLUGDIR/sid.so\
+    $PLUGDIR/sidfp.so\
     $PLUGDIR/sndfile.so\
     $PLUGDIR/supereq.so\
     $PLUGDIR/tta.so\

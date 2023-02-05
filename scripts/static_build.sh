@@ -57,7 +57,7 @@ export OBJC=$AP/apgcc
 
 ./autogen.sh || exit 1
 
-./configure CFLAGS="$CFLAGS -O3 -D_FORTIFY_SOURCE=0" CXXFLAGS="$CXXFLAGS -O3 -D_FORTIFY_SOURCE=0" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --disable-artwork-imlib2 --prefix=/opt/deadbeef || {
+./configure CFLAGS="$CFLAGS -O3 -D_FORTIFY_SOURCE=0" CXXFLAGS="$CXXFLAGS -O3 -D_FORTIFY_SOURCE=0" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --disable-sid --prefix=/opt/deadbeef || {
     # store failed config.log in portable dir, which is mapped to
     # docker-artifacts when using docker.
     cp config.log ./portable/
