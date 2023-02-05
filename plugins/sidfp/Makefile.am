@@ -184,6 +184,6 @@ sidfp_la_SOURCES = plugin.c csid.cpp csid.h\
 sidfp_la_LDFLAGS = -module -avoid-version
 
 sidfp_la_CFLAGS = $(CFLAGS) -std=c99 -I$(sidpath) -fPIC
-sidfp_la_CXXFLAGS = $(CXXFLAGS) -DHAVE_UNIX -I$(sidpath) -I$(sidpath)/builders/residfp-builder/residfp -DHAVE_CXX11 -DHAVE_DLFCN_H -DPACKAGE_URL=\"\"
+sidfp_la_CXXFLAGS = $(CXXFLAGS) -std=c++11 -DHAVE_UNIX -I$(sidpath) -I$(sidpath)/builders/residfp-builder/residfp -DHAVE_CXX11 -DHAVE_DLFCN_H -DPACKAGE_URL=\"\"
 
 endif
