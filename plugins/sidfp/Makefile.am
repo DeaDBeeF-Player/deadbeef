@@ -49,6 +49,15 @@ sidfp_la_SOURCES = plugin.c csid.cpp csid.h\
     $(sidpath)/c64/Banks/Bank.h\
     $(sidpath)/player.cpp\
     $(sidpath)/sidcxx14.h\
+    $(sidpath)/builders/resid-builder/resid/envelope.cc\
+    $(sidpath)/builders/resid-builder/resid/sid.cc\
+    $(sidpath)/builders/resid-builder/resid/version.cc\
+    $(sidpath)/builders/resid-builder/resid/filter8580new.cc\
+    $(sidpath)/builders/resid-builder/resid/pot.cc\
+    $(sidpath)/builders/resid-builder/resid/wave.cc\
+    $(sidpath)/builders/resid-builder/resid/extfilt.cc\
+    $(sidpath)/builders/resid-builder/resid/voice.cc\
+    $(sidpath)/builders/resid-builder/resid/dac.cc\
     $(sidpath)/builders/resid-builder/resid-emu.h\
     $(sidpath)/builders/resid-builder/resid/siddefs.h\
     $(sidpath)/builders/resid-builder/resid/dac.h\
@@ -73,6 +82,7 @@ sidfp_la_SOURCES = plugin.c csid.cpp csid.h\
     $(sidpath)/builders/resid-builder/resid-builder.cpp\
     $(sidpath)/builders/resid-builder/resid.h\
     $(sidpath)/builders/resid-builder/resid-emu.cpp\
+    $(sidpath)/builders/residfp-builder/residfp/version.cc\
     $(sidpath)/builders/residfp-builder/residfp-emu.cpp\
     $(sidpath)/builders/residfp-builder/residfp-builder.cpp\
     $(sidpath)/builders/residfp-builder/residfp/Dac.h\
@@ -180,7 +190,7 @@ sidfp_la_SOURCES = plugin.c csid.cpp csid.h\
     $(sidpath)/sidendian.h\
     $(sidpath)/EventCallback.h\
     $(sidpath)/sidcxx11.h
-	
+
 sidfp_la_LDFLAGS = -module -avoid-version
 
 sidfp_la_CFLAGS = $(CFLAGS) -std=c99 -I$(sidpath) -fPIC
