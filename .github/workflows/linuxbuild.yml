@@ -15,7 +15,7 @@ jobs:
     - name: Checkout for Linux
       uses: actions/checkout@v1
       with:
-        submodules: true
+        submodules: recursive
     - name: Fetch static-deps
       run: travis/download-linux-static-deps.sh
     - name: Run Tests
