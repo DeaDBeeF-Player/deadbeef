@@ -15,6 +15,7 @@ version 1.9.5
 	Fixed: Incorrect playlist affected by hotkeys
 	Fixed: Unsynchronized ID3v2 tag loading (credit: Robin Seth Ekman)
 	Fixed: Spectrum analyzer buffer overflow
+	Fixed: Deadlock when removing multiple selected tracks while one of them is playing
 	Added: Pipewire output plugin (saivert)
 	Added: LibRetro resampling plugin (toadking)
 	Added: Chiptune voice muting in DUMB plugin
