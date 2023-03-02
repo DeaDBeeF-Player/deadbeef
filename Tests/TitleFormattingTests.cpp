@@ -2733,3 +2733,11 @@ TEST_F(TitleFormattingTests, test_itematindex_3Arguments_returnsEmpty) {
     tf_free (bc);
     EXPECT_STREQ(buffer, "");
 }
+
+TEST_F(TitleFormattingTests, test_meta_bufferTooShortWithMultibyteCharsInput_returnsOnlyWholeMultibyteChars) {
+    char *bc = tf_compile("$meta(comment)");
+    pl_add_meta(it, "comment", "ΘΘΘΘ");
+    tf_eval (&ctx, bc, buffer, 8);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "ΘΘΘ");
+}
