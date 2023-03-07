@@ -454,6 +454,7 @@ static DB_functions_t deadbeef_api = {
     .tf_eval= tf_eval,
 
     .plt_sort_v2 = (void (*) (ddb_playlist_t *plt, int iter, int id, const char *format, int order))plt_sort_v2,
+    .plt_autosort = (void (*) (ddb_playlist_t *plt)) plt_autosort,
 
     .playqueue_push = (int (*) (DB_playItem_t *))playqueue_push,
     .playqueue_clear = playqueue_clear,

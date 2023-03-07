@@ -4,6 +4,7 @@ EXTRA_DIST = deadbeef.glade\
 
 GTKUI_SOURCES = \
     ../../utf8.c\
+	../../deadbeef.h \
 	actions.c actions.h\
 	callbacks.c callbacks.h\
 	support.c support.h\

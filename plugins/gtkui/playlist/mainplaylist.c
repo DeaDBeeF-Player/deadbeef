@@ -100,6 +100,9 @@ main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint3
     if (!copy && from_playlist != plt) {
         deadbeef->plt_save_config (from_playlist);
     }
+    if ( (ddb_playlist_t *)from_playlist != plt) {
+        deadbeef->plt_autosort (plt);
+    }
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
