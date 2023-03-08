@@ -31,7 +31,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "../../gettext.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "gtkui.h"
 #include "../libparser/parser.h"
 #include "support.h"

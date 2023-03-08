@@ -21,7 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #import "DdbShared.h"
 #import "DdbTabStrip.h"
 #import "DeletePlaylistConfirmationController.h"

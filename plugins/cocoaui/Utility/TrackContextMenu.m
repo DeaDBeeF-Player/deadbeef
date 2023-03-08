@@ -7,7 +7,7 @@
 //
 
 #include <sys/stat.h>
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "deletefromdisk.h"
 #include "rg_scanner.h"
 #include "artwork.h"

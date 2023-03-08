@@ -29,12 +29,12 @@
 #endif
 #include <stdlib.h>
 #include <math.h>
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 #include "aac_parser.h"
 #include "aac_decoder_faad2.h"
 
-#include "../../shared/mp4tagutil.h"
+#include "../../src/shared/mp4tagutil.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))

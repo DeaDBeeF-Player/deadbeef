@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

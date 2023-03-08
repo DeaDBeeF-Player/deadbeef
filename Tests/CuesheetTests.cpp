@@ -22,7 +22,7 @@
 */
 
 #include "plmeta.h"
-#include "../common.h"
+#include <deadbeef/common.h>
 #include <gtest/gtest.h>
 
 TEST(CuesheetTests, testCueWithoutTitles) {

@@ -10,7 +10,7 @@
 #define vfs_curl_h
 
 #include <curl/curl.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #ifdef __cplusplus
 extern "C" {

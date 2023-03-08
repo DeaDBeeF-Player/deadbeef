@@ -13,7 +13,7 @@
 #import "DdbShared.h"
 #import "MedialibItemDragDropHolder.h"
 #import "PlaylistLocalDragDropHolder.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 extern DB_functions_t *deadbeef;
 

@@ -15,7 +15,7 @@
 #import "ShaderRenderer.h"
 #import "ShaderRendererTypes.h"
 #import "VisualizationSettingsUtil.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "scope.h"
 
 extern DB_functions_t *deadbeef;

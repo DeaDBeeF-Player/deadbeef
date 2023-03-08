@@ -2,7 +2,7 @@
 #define _ASF_H
 
 #include <inttypes.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 /* ASF codec IDs */
 #define ASF_CODEC_ID_WMAV1      0x160

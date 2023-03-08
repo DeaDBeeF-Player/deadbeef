@@ -29,8 +29,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 #include "wildmidi_lib.h"
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"

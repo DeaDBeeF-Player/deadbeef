@@ -25,7 +25,7 @@
 #include "plmeta.h"
 #include "junklib.h"
 #include "vfs.h"
-#include "../common.h"
+#include <deadbeef/common.h>
 #include "tf.h"
 #include <gtest/gtest.h>
 

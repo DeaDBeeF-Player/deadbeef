@@ -30,7 +30,7 @@
 #include <stdbool.h>
 #include <ogg/ogg.h>
 #include <limits.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "oggedit.h"
 
 #define OPUSNAME "Opus"

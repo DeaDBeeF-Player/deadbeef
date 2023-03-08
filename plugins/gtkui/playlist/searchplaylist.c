@@ -23,7 +23,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../../gettext.h"
 #include "gtkui.h"
 #include "plcommon.h"

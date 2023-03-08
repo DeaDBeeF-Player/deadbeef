@@ -48,7 +48,7 @@
 #endif
 #include <unistd.h>
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "artwork_flac.h"
 #ifdef USE_OGG
 #include "artwork_ogg.h"
@@ -61,7 +61,7 @@
 #include "lastfm.h"
 #include "musicbrainz.h"
 #include "mp4tagutil.h"
-#include "../../strdupa.h"
+#include <deadbeef/strdupa.h>
 #include "wos.h"
 
 //#define DEBUG_COUNTER 1

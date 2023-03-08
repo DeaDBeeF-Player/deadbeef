@@ -63,7 +63,7 @@ typedef struct
 #endif
 #endif
 #include "hotkeys.h"
-#include "../../strdupa.h"
+#include <deadbeef/strdupa.h>
 
 int gtkui_hotkeys_changed = 0;
 

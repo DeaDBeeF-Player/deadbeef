@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../gettext.h"
 
 #include "callbacks.h"

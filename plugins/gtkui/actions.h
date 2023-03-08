@@ -25,7 +25,7 @@
 #define __ACTIONS_H
 
 #include <gtk/gtk.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 void
 add_mainmenu_actions (void);

@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 #include "adplug.h"
 #include "emuopl.h"
 #include "kemuopl.h"

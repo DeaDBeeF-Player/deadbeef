@@ -6,8 +6,8 @@
 //  Copyright © 2018 Oleksiy Yakovenko. All rights reserved.
 //
 
-#include "deadbeef.h"
-#include "../common.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/common.h>
 #include "plmeta.h"
 #include "plugins.h"
 #include <gtest/gtest.h>

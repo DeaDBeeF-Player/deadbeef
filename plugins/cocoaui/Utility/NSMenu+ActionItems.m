@@ -6,7 +6,7 @@
 //  Copyright © 2020 Oleksiy Yakovenko. All rights reserved.
 //
 
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #import <AppKit/AppKit.h>
 #import "DdbShared.h"
 #import "NSMenu+ActionItems.h"

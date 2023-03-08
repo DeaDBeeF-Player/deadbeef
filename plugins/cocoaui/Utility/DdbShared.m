@@ -23,7 +23,7 @@
 
 #import <Foundation/Foundation.h>
 #import "DdbShared.h"
-#import "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 NSString * const ddbPlaylistItemsUTIType = @"org.deadbeef.playlistItems";
 NSString * const ddbMedialibItemUTIType = @"org.deadbeef.medialibItem";

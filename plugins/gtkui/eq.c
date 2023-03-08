@@ -28,7 +28,7 @@
 #include "gtkui.h"
 #include "support.h"
 #include "ddbequalizer.h"
-#include "../../shared/eqpreset.h"
+#include "../../src/shared/eqpreset.h"
 
 static GtkWidget *eqcont;
 static GtkWidget *eqwin;

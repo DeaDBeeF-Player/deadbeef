@@ -28,7 +28,7 @@
 #include <math.h>
 #include "interface.h"
 #include "support.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #include "../rg_scanner/rg_scanner.h"
 

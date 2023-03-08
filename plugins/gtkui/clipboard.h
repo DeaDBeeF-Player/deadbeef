@@ -24,7 +24,7 @@
 #ifndef __CLIPBOARD_H
 #define __CLIPBOARD_H
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 void
 clipboard_free_current (void);

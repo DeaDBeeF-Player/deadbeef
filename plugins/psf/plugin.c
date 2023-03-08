@@ -18,8 +18,8 @@
 */
 #include <stdlib.h>
 #include <string.h>
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 #include "ao.h"
 #include "eng_protos.h"
 

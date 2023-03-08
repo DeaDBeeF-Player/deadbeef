@@ -25,7 +25,7 @@
 #include <zip.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)

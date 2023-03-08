@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#include "scriptable.h"
+#include "scriptable/scriptable.h"
 
 typedef NS_ENUM(NSUInteger, ScriptableItemChange) {
     ScriptableItemChangeCreate,

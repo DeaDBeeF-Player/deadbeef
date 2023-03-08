@@ -23,8 +23,8 @@
 //#include <alloca.h>
 #include <errno.h>
 
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>

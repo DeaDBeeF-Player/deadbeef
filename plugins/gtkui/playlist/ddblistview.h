@@ -28,7 +28,7 @@
 #include <sys/time.h>
 #include <stdint.h>
 #include "../drawing.h"
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #define DDB_LISTVIEW_MIN_COLUMN_WIDTH 16
 

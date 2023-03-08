@@ -29,7 +29,7 @@
 #import "PlaylistWidget.h"
 #import "PreferencesWindowController.h"
 #import "TrackPositionFormatter.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #import "DdbShared.h"
 #include <sys/time.h>
 #import "SidebarSplitViewController.h"

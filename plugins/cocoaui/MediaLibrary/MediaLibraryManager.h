@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "medialib.h"
 
 NS_ASSUME_NONNULL_BEGIN

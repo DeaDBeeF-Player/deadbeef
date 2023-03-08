@@ -29,7 +29,7 @@
 #include <string.h>
 #include <curl/curl.h>
 #include <math.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin, 0, __VA_ARGS__); }
 

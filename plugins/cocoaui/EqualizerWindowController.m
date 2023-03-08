@@ -9,7 +9,7 @@
 #import "EqualizerWindowController.h"
 #import "PropertySheetViewController.h"
 #import "PropertySheetContentView.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "eqpreset.h"
 
 extern DB_functions_t *deadbeef;

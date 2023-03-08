@@ -24,7 +24,7 @@
 #ifndef plmenu_h
 #define plmenu_h
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "trkproperties.h"
 
 /// This must be called before terminating the app, to ensure global variables are freed.

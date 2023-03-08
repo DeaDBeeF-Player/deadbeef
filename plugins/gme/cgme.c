@@ -31,8 +31,8 @@
 #include <math.h>
 #include "gme/gme.h"
 #include <zlib.h>
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 #if HAVE_SYS_CDEFS_H
 #include <sys/cdefs.h>
 #endif

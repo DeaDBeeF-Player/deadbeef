@@ -31,7 +31,7 @@
 #include "umr.h"
 #include "cdumb.h"
 #include "modloader.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 // FIXME: config
 static int cfg_dumb_count_patterns = 1; // MOD - Count patterns from the order list

@@ -24,8 +24,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 #include "sc68/sc68.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }

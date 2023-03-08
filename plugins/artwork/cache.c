@@ -33,7 +33,7 @@
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "artwork.h"
 #include "artwork_internal.h"
 

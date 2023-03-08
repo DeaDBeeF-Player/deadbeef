@@ -41,9 +41,9 @@
 #include <FLAC/stream_decoder.h>
 #include <FLAC/metadata.h>
 #include <limits.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../liboggedit/oggedit.h"
-#include "../../strdupa.h"
+#include <deadbeef/strdupa.h>
 
 static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;

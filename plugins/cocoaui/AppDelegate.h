@@ -26,7 +26,7 @@
 #import "MediaLibraryManager.h"
 #import "SearchWindowController.h"
 #import "PreferencesWindowController.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #define MAX_COLUMNS 20
 

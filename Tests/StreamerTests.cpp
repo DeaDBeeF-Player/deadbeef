@@ -21,11 +21,11 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "playlist.h"
 #include "plugins.h"
 #include "conf.h"
-#include "../common.h"
+#include <deadbeef/common.h>
 #include "streamer.h"
 #include "threading.h"
 #include "messagepump.h"

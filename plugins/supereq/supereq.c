@@ -20,7 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "Equ.h"
 
 static DB_functions_t *deadbeef;

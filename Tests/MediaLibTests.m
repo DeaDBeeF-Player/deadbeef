@@ -7,7 +7,7 @@
 //
 
 #import <XCTest/XCTest.h>
-#include "../../common.h"
+#include <deadbeef/common.h>
 #include "medialib.h"
 #include "plugins.h"
 

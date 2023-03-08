@@ -24,7 +24,7 @@
 // this is a decoder plugin skeleton
 // use to create new decoder plugins
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 extern const char *adplug_exts[];
 

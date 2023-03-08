@@ -24,7 +24,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../support.h"
 #include "../../artwork/artwork.h"
 #include "albumartwidget.h"

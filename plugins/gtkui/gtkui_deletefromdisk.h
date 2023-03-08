@@ -24,7 +24,7 @@
 #ifndef gtkui_deletefromdisk_h
 #define gtkui_deletefromdisk_h
 
-#include "../../shared/deletefromdisk.h"
+#include "../../src/shared/deletefromdisk.h"
 
 void
 gtkui_warning_message_for_ctx (ddbDeleteFromDiskController_t ctl, ddb_action_context_t ctx, unsigned trackcount, ddbDeleteFromDiskControllerWarningCallback_t callback);

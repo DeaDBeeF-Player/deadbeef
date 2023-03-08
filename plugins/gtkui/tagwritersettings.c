@@ -28,7 +28,7 @@
 #include "../../gettext.h"
 #include "interface.h"
 #include "support.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "gtkui.h"
 
 void

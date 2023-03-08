@@ -8,7 +8,7 @@
 
 #import "PlaylistViewController.h"
 #import "EditColumnWindowController.h"
-#import "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 @interface EditColumnWindowController()
 

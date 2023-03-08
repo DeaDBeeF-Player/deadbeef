@@ -22,7 +22,7 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 @interface ConverterWindowController : NSWindowController<NSWindowDelegate>
 

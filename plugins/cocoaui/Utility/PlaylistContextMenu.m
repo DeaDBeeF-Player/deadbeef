@@ -6,7 +6,7 @@
 //  Copyright © 2021 Oleksiy Yakovenko. All rights reserved.
 //
 
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #import "DdbShared.h"
 #import "DeletePlaylistConfirmationController.h"
 #import "NSMenu+ActionItems.h"

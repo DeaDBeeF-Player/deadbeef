@@ -23,7 +23,7 @@
 #ifndef deadbeef_mp3_h
 #define deadbeef_mp3_h
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #ifdef USE_LIBMAD
 #include <mad.h>

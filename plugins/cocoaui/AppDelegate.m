@@ -22,8 +22,8 @@
 */
 
 #include <sys/time.h>
-#include "../../common.h"
-#include "../../deadbeef.h"
+#include <deadbeef/common.h>
+#include <deadbeef/deadbeef.h>
 #include "../../plugins/artwork/artwork.h"
 #import "AppDelegate.h"
 #import "conf.h"

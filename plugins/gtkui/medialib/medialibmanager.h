@@ -9,7 +9,7 @@
 #ifndef medialibmanager_h
 #define medialibmanager_h
 
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 ddb_mediasource_source_t
 gtkui_medialib_get_source (void);

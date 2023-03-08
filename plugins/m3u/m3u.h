@@ -9,7 +9,7 @@
 #ifndef m3u_h
 #define m3u_h
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #ifdef __cplusplus
 extern "C" {

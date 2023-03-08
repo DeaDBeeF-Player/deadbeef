@@ -1,7 +1,7 @@
 #ifndef shellexecutil_h
 #define shellexecutil_h
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #ifdef __cplusplus
 extern "C" {

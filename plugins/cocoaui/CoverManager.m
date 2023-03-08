@@ -22,7 +22,7 @@
 */
 
 #import "CoverManager.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../plugins/artwork/artwork.h"
 
 #define DEBUG_COUNTER 0

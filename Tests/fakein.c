@@ -25,7 +25,7 @@
 #include <string.h>
 #include <math.h>
 #include <unistd.h>
-#include "../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 

@@ -6,7 +6,7 @@
 //  Copyright © 2020 Oleksiy Yakovenko. All rights reserved.
 //
 
-#import "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #import "DdbShared.h"
 #import "medialib.h"
 #import "artwork.h"

@@ -39,7 +39,7 @@
 #ifndef TTADEC_H_
 #define TTADEC_H_
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #ifdef _WIN32
 #pragma pack(1)

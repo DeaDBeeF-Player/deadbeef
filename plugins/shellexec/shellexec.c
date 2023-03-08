@@ -47,7 +47,7 @@
 #include <limits.h>
 #include <assert.h>
 #include <jansson.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "shellexec.h"
 #include "shellexecutil.h"
 

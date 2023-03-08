@@ -25,7 +25,7 @@
 #import "PlaylistHeaderView.h"
 #import "PlaylistContentView.h"
 #import "DdbShared.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 extern DB_functions_t *deadbeef;
 

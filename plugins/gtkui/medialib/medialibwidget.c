@@ -10,7 +10,7 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../../gettext.h"
 #include "../prefwin/prefwin.h"
 #include "../support.h"

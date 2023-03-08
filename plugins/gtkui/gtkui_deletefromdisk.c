@@ -28,7 +28,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../gettext.h"
 #include "gtkui.h"
 #include "gtkui_api.h"

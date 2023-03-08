@@ -25,8 +25,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 #include "ayemu.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))

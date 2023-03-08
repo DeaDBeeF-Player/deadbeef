@@ -30,7 +30,7 @@
 #include <ctype.h>
 #include <inttypes.h>
 #include <unistd.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #include <libasf/asf.h>
 

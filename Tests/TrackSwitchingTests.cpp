@@ -6,8 +6,8 @@
 //  Copyright © 2019 Oleksiy Yakovenko. All rights reserved.
 //
 
-#include "../common.h"
-#include "deadbeef.h"
+#include <deadbeef/common.h>
+#include <deadbeef/deadbeef.h>
 #include "conf.h"
 #include "fakeout.h"
 #include "messagepump.h"

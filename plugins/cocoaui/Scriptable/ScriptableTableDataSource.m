@@ -1,6 +1,6 @@
 #import "ScriptableTableDataSource.h"
-#include "deadbeef.h"
-#include "../../../scriptable/scriptable.h"
+#include <deadbeef/deadbeef.h>
+#include "scriptable/scriptable.h"
 
 extern DB_functions_t *deadbeef;
 

@@ -25,7 +25,7 @@
 #define mp3parser_h
 
 #include <stdint.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #ifdef __cplusplus
 extern "C" {

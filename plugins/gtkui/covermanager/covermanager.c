@@ -23,7 +23,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../artwork/artwork.h"
 #include "covermanager.h"
 #include "gobjcache.h"

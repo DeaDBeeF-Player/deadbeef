@@ -36,7 +36,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../gettext.h"
 #include "../hotkeys/hotkeys.h"
 #include "../libparser/parser.h"

@@ -25,7 +25,7 @@
 #include "sidendian.h"
 #include "PP20.h"
 #include <stdio.h>
-#include "../../../../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #ifdef HAVE_EXCEPTIONS
 #   include <new>

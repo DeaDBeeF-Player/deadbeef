@@ -26,7 +26,7 @@
 #include <stdlib.h>
 
 #include "gtkui.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "support.h"
 #include "actions.h"
 

@@ -7,7 +7,7 @@
 //
 
 #include "../plugins/mp3/mp3parser.h"
-#include "../common.h"
+#include <deadbeef/common.h>
 #include "vfs.h"
 #include <gtest/gtest.h>
 

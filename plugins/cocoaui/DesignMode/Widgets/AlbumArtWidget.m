@@ -9,8 +9,8 @@
 #import "AlbumArtImageView.h"
 #import "AlbumArtWidget.h"
 #import "CoverManager.h"
-#import "deadbeef.h"
-#import "artwork.h"
+#include <deadbeef/deadbeef.h>
+#include "artwork.h"
 
 extern DB_functions_t *deadbeef;
 

@@ -22,7 +22,7 @@
 */
 #import "MediaLibraryItem.h"
 #import "TrackPropertiesWindowController.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "utf8.h"
 #include "trkproperties_shared.h"
 

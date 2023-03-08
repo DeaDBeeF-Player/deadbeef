@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "AppDelegate.h"
 #import "MediaLibraryPreferencesViewController.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "medialib.h"
 
 static NSString * const kMedialibBrowseInitialFolder = @"MedialibBrowseInitialFolder";

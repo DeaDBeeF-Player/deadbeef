@@ -21,7 +21,7 @@
 #ifndef __SHELLEXEC_H
 #define __SHELLEXEC_H
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 // Version history:
 // 1.2: changed configuration to JSON, use new title formatting

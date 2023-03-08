@@ -24,7 +24,7 @@
 
 #include "binio.h"
 
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 class binfbase: virtual public binio
 {

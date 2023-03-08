@@ -7,7 +7,7 @@
 //
 
 
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../../gettext.h"
 #include "../support.h"
 #include "medialibmanager.h"

@@ -6,7 +6,7 @@
 //  Copyright © 2019 Oleksiy Yakovenko. All rights reserved.
 //
 
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "playlist.h"
 #include "../plugins/shellexec/shellexecutil.h"
 #include <gtest/gtest.h>

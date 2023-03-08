@@ -33,7 +33,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <limits.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "artwork_internal.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

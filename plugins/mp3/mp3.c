@@ -28,8 +28,8 @@
 #include <limits.h>
 #include <unistd.h>
 #include <sys/time.h>
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 #include "mp3.h"
 #ifdef USE_LIBMAD
 #include "mp3_mad.h"

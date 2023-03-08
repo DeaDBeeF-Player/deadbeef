@@ -8,7 +8,7 @@
 
 #import "DesignModeState.h"
 #import "DesignModeDeps.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 extern DB_functions_t *deadbeef;
 

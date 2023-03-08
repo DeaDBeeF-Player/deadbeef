@@ -28,10 +28,10 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../../analyzer/analyzer.h"
-#include "../../fastftoi.h"
-#include "../../scope/scope.h"
-#include "../../strdupa.h"
+#include <deadbeef/fastftoi.h>
+#include <deadbeef/strdupa.h>
+#include "../../src/viz/analyzer.h"
+#include "../../src/viz/scope.h"
 #include "../libparser/parser.h"
 #include "actions.h"
 #include "callbacks.h"

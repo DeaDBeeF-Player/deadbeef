@@ -30,8 +30,8 @@
 #include "dumb.h"
 #include "internal/it.h"
 #include "modloader.h"
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)

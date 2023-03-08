@@ -27,7 +27,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "artwork.h"
 #include "artwork_internal.h"
 #include "escape.h"

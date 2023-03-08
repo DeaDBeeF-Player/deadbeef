@@ -30,7 +30,7 @@
 #include "../../config.h"
 #endif
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #if GTK_CHECK_VERSION(3,0,0)
 #include "deadbeefapp.h"

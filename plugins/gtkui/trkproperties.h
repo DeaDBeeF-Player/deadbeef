@@ -24,7 +24,7 @@
 #ifndef __TRKPROPERTIES_H
 #define __TRKPROPERTIES_H
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 // list store column meanings (for Metadata and Properties, also used by Selection properties widget)
 enum {

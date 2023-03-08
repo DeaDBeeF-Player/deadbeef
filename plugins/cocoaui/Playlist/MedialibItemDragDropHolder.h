@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 @interface MedialibItemDragDropHolder : NSObject<NSPasteboardReading, NSPasteboardWriting, NSSecureCoding>
 

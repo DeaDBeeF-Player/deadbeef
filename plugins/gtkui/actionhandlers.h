@@ -24,7 +24,7 @@
 #ifndef __ACTIONHANDLERS_H
 #define __ACTIONHANDLERS_H
 
-#include "../../shared/deletefromdisk.h"
+#include "../../src/shared/deletefromdisk.h"
 
 gboolean
 action_open_files_handler_cb (void *userdata);

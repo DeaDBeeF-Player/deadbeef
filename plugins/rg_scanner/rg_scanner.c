@@ -32,9 +32,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "ebur128/ebur128.h"
-#include "../../strdupa.h"
+#include <deadbeef/strdupa.h>
 
 #ifndef DISPATCH_QUEUE_CONCURRENT
 #define DISPATCH_QUEUE_CONCURRENT NULL

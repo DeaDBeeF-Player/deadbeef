@@ -28,9 +28,9 @@
 #include <unistd.h>
 #include <gdk/gdkkeysyms.h>
 #include "gtkui.h"
-#include "../../../strdupa.h"
+#include <deadbeef/strdupa.h>
 #include "../../libparser/parser.h"
-#include "../../../shared/deletefromdisk.h"
+#include "../../../src/shared/deletefromdisk.h"
 #include "actions.h"
 #include "actionhandlers.h"
 #include "clipboard.h"
@@ -39,7 +39,7 @@
 #include "plcommon.h"
 #include "../support.h"
 #include "trkproperties.h"
-#include "../../../shared/tftintutil.h"
+#include "../../../src/shared/tftintutil.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))

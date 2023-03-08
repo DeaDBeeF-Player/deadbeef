@@ -27,7 +27,7 @@
 #include <gtk/gtk.h>
 #include <stdint.h>
 #include <dispatch/dispatch.h>
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 typedef struct covermanager_s covermanager_t;
 

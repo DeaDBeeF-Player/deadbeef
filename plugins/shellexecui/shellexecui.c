@@ -23,7 +23,7 @@
 #include "interface.h"
 #include "callbacks.h"
 #include "support.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../gtkui/gtkui_api.h"
 #include "../shellexec/shellexec.h"
 

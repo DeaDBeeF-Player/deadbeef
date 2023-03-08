@@ -7,7 +7,7 @@
 //
 
 #import "ScriptableErrorViewer.h"
-#include "scriptable.h"
+#include "scriptable/scriptable.h"
 
 @implementation ScriptableErrorViewer
 

@@ -23,7 +23,7 @@
 #ifndef cdumb_h
 #define cdumb_h
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 typedef struct {
     DB_FILE *file;

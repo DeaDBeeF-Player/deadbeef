@@ -737,7 +737,6 @@
 		2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */; };
 		2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */; };
 		2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */; };
-		2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EE7226E38AF00BAAE84 /* scriptable.h */; };
 		2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
 		2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */; };
 		2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */; };
@@ -770,7 +769,6 @@
 		2D22F76119E13AD7009C631E /* liblibsidplay2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D22F70319E1382C009C631E /* liblibsidplay2.a */; };
 		2D2351211B138F1100A62936 /* converter.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D23511B1B138ECB00A62936 /* converter.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D2351251B138F3200A62936 /* converter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2351231B138F3200A62936 /* converter.c */; };
-		2D2351261B138F3200A62936 /* converter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2351241B138F3200A62936 /* converter.h */; };
 		2D2351281B13922400A62936 /* Converter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2351271B13922400A62936 /* Converter.xib */; };
 		2D27AEE81D9D871600842D76 /* rg_scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEE61D9D871600842D76 /* rg_scanner.c */; };
 		2D27AEE91D9D871600842D76 /* rg_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D27AEE71D9D871600842D76 /* rg_scanner.h */; };
@@ -1339,8 +1337,6 @@
 		2D667E181C9C2E8C00359129 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D667DFE1C9C2D1800359129 /* libcrypto.dylib */; };
 		2D6965391D74338A00EB99D8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
 		2D69653A1D74338A00EB99D8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
-		2D69653B1D74338A00EB99D8 /* mp4tagutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6965381D74338A00EB99D8 /* mp4tagutil.h */; };
-		2D69653C1D74338A00EB99D8 /* mp4tagutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6965381D74338A00EB99D8 /* mp4tagutil.h */; };
 		2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */; };
 		2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */; };
 		2D6DCB3E291B105D00D6ECE6 /* fastftoi.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6DCB3D291B105D00D6ECE6 /* fastftoi.h */; };
@@ -1834,7 +1830,6 @@
 		2DA5A92C25D0330600947C19 /* pack_dns.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B763B2035A2FB006D56D0 /* pack_dns.c */; };
 		2DA5A92D25D0330600947C19 /* open_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B76292035A2F4006D56D0 /* open_utils.c */; };
 		2DA5A92E25D0330600947C19 /* unpack3_seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B76392035A2FA006D56D0 /* unpack3_seek.c */; };
-		2DA5A92F25D0330600947C19 /* wavpack.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B76682035A420006D56D0 /* wavpack.c */; };
 		2DA5A93225D0330600947C19 /* unpack3.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B762D2035A2F5006D56D0 /* unpack3.h */; };
 		2DA5A93325D0330600947C19 /* wavpack_version.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B76332035A2F6006D56D0 /* wavpack_version.h */; };
 		2DA5A93425D0330600947C19 /* wavpack_local.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D1B76232035A2F3006D56D0 /* wavpack_local.h */; };
@@ -8220,13 +8215,17 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
-		0D56855A272197A30026F700 /* scope */ = {
+		0D56855A272197A30026F700 /* viz */ = {
 			isa = PBXGroup;
 			children = (
-				0D56856A272197B30026F700 /* scope.h */,
+				2DD39ED826AD8D1600C5846D /* analyzer.c */,
+				2DD39ED726AD8D1600C5846D /* analyzer.h */,
 				0D56856B272197B30026F700 /* scope.c */,
+				0D56856A272197B30026F700 /* scope.h */,
+				2DA5C2C126A75B840098AF24 /* viz.c */,
+				2DA5C2C026A75B840098AF24 /* viz.h */,
 			);
-			path = scope;
+			path = viz;
 			sourceTree = "<group>";
 		};
 		2D00F2552434DE87000FC130 /* soundtouch */ = {
@@ -10633,6 +10632,111 @@
 			name = libmpg123;
 			sourceTree = "<group>";
 		};
+		2D92D18C29B9039A00218F1D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				2D6E2CFF26AC3022008FCD4B /* Apple */,
+				4D1B3ED71837EC44003E6066 /* ConvertUTF */,
+				4D1B3F861837EC44003E6066 /* md5 */,
+				2DDD764125E1506100FA6FE5 /* metadata */,
+				2D135EE6226E388E00BAAE84 /* scriptable */,
+				2D93DC511AADFEEF003D2D8D /* shared */,
+				0D56855A272197A30026F700 /* viz */,
+				2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */,
+				2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */,
+				2DD9EF0419A5089F00189344 /* cocoautil.h */,
+				2DD9EF0519A5089F00189344 /* cocoautil.m */,
+				4D1B3ECE1837EC44003E6066 /* conf.c */,
+				4D1B3ECF1837EC44003E6066 /* conf.h */,
+				2D40208D1F27BD7200D4EA4F /* cueutil.c */,
+				2D40208E1F27BD7200D4EA4F /* cueutil.h */,
+				2DB951B426B07E7B00602876 /* decodedblock.h */,
+				2DB951B526B07E7B00602876 /* decodedblock.c */,
+				4DC96E6D1E4CC9670093CFD3 /* dsp.c */,
+				4DC96E6E1E4CC9670093CFD3 /* dsp.h */,
+				4D1B3EE21837EC44003E6066 /* dsppreset.c */,
+				4D1B3EE31837EC44003E6066 /* dsppreset.h */,
+				2DA6F89B19A5332D002151EB /* escape.c */,
+				2DA6F89F19A53334002151EB /* escape.h */,
+				4D1B3EE71837EC44003E6066 /* fft.c */,
+				4D1B3EE81837EC44003E6066 /* fft.h */,
+				4D1B3EEA1837EC44003E6066 /* handler.c */,
+				4D1B3EEB1837EC44003E6066 /* handler.h */,
+				4D1B3F5A1837EC44003E6066 /* junklib.c */,
+				4D1B3F5B1837EC44003E6066 /* junklib.h */,
+				2D448A821D5C5C6500B43F12 /* logger.c */,
+				2D448A831D5C5C6500B43F12 /* logger.h */,
+				4D1B3F831837EC44003E6066 /* main.c */,
+				4D1B3F891837EC44003E6066 /* messagepump.c */,
+				4D1B3F8A1837EC44003E6066 /* messagepump.h */,
+				4D1B3F8B1837EC44003E6066 /* metacache.c */,
+				4D1B3F8C1837EC44003E6066 /* metacache.h */,
+				4D1B3F8E1837EC44003E6066 /* moduleconf.h */,
+				4D1B3F9A1837EC44003E6066 /* playlist.c */,
+				4D1B3F9B1837EC44003E6066 /* playlist.h */,
+				2D0A6B1A237718DA00252E6D /* playmodes.c */,
+				2D0A6B19237718DA00252E6D /* playmodes.h */,
+				2D713FFB1A5D7D5900EFF139 /* playqueue.c */,
+				2D713FFC1A5D7D5900EFF139 /* playqueue.h */,
+				4D1B3F9C1837EC44003E6066 /* plmeta.c */,
+				2D5DD91C246C697800734047 /* plmeta.h */,
+				4D1B3F9D1837EC44003E6066 /* pltmeta.c */,
+				4D1B3F9E1837EC44003E6066 /* pltmeta.h */,
+				4D1B47481837EC47003E6066 /* plugins.c */,
+				4D1B47491837EC47003E6066 /* plugins.h */,
+				4D1B47871837EC47003E6066 /* premix.c */,
+				4D1B47881837EC47003E6066 /* premix.h */,
+				4D1B47A21837EC48003E6066 /* replaygain.c */,
+				4D1B47A31837EC48003E6066 /* replaygain.h */,
+				4D1B47A41837EC48003E6066 /* ringbuf.c */,
+				4D1B47A51837EC48003E6066 /* ringbuf.h */,
+				4D1B47B91837EC48003E6066 /* sj_to_unicode.h */,
+				2D642EAD1AE9152E00FC1F7B /* sort.c */,
+				2D642EAE1AE9152E00FC1F7B /* sort.h */,
+				4D1B47BB1837EC48003E6066 /* streamer.c */,
+				4D1B47BC1837EC48003E6066 /* streamer.h */,
+				4D62C0C51E4C9ACA005F9482 /* streamreader.c */,
+				4D62C0C61E4C9ACA005F9482 /* streamreader.h */,
+				2D0A002519C390E9006F7462 /* tf.c */,
+				2D0A002619C390E9006F7462 /* tf.h */,
+				4D1B47BE1837EC48003E6066 /* threading_pthread.c */,
+				4D1B47BD1837EC48003E6066 /* threading.h */,
+				4D1B49E61837EC49003E6066 /* u8_lc_map.h */,
+				2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */,
+				4D1B49E81837EC49003E6066 /* utf8.c */,
+				4D1B49E91837EC49003E6066 /* utf8.h */,
+				4D1B49EC1837EC49003E6066 /* vfs_stdio.c */,
+				4D1B49EA1837EC49003E6066 /* vfs.c */,
+				4D1B49EB1837EC49003E6066 /* vfs.h */,
+				4D1B49ED1837EC49003E6066 /* volume.c */,
+				4D1B49EE1837EC49003E6066 /* volume.h */,
+				2DA21F5D29868F930077BD4C /* resizable_buffer.h */,
+				2DA21F5E29868F930077BD4C /* resizable_buffer.c */,
+			);
+			name = src;
+			path = ../src;
+			sourceTree = "<group>";
+		};
+		2D92D19C29B9044300218F1D /* include */ = {
+			isa = PBXGroup;
+			children = (
+				2D92D19D29B9044800218F1D /* deadbeef */,
+			);
+			name = include;
+			path = ../include;
+			sourceTree = "<group>";
+		};
+		2D92D19D29B9044800218F1D /* deadbeef */ = {
+			isa = PBXGroup;
+			children = (
+				4D1B3ECD1837EC44003E6066 /* common.h */,
+				4D1B3EDF1837EC44003E6066 /* deadbeef.h */,
+				4D1B47BA1837EC48003E6066 /* strdupa.h */,
+				2D6DCB3D291B105D00D6ECE6 /* fastftoi.h */,
+			);
+			path = deadbeef;
+			sourceTree = "<group>";
+		};
 		2D93DC511AADFEEF003D2D8D /* shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -11448,6 +11552,7 @@
 				2DCD78D219A665CA00EA50FA /* 1024x1024 */,
 			);
 			name = icons;
+			path = ../icons;
 			sourceTree = "<group>";
 		};
 		2DCD78B819A665CA00EA50FA /* 16x16 */ = {
@@ -11600,15 +11705,6 @@
 				2DD3775A27414BD9007AD315 /* ScopePreferencesWindowController.xib */,
 			);
 			path = Preferences;
-			sourceTree = "<group>";
-		};
-		2DD39EC726AD8CFD00C5846D /* analyzer */ = {
-			isa = PBXGroup;
-			children = (
-				2DD39ED726AD8D1600C5846D /* analyzer.h */,
-				2DD39ED826AD8D1600C5846D /* analyzer.c */,
-			);
-			path = analyzer;
 			sourceTree = "<group>";
 		};
 		2DD81C2D25152D86008C716C /* pixmaps */ = {
@@ -11949,11 +12045,12 @@
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
+				2D92D19C29B9044300218F1D /* include */,
+				2D92D18C29B9039A00218F1D /* src */,
 				2DA9777324C5EC26002405DA /* xcodeconfig */,
 				2D9E5BFE24AE6AAD0099B108 /* external */,
 				2DCD78AD19A6658C00EA50FA /* icons */,
 				4D1B514C1837EF7C003E6066 /* plugins */,
-				4D1B3EB31837EC44003E6066 /* deadbeef */,
 				2DAA4C091AAF88DE00519559 /* Tests */,
 				2D0AC90D2856450200F6D56A /* Integration Tests */,
 				4D1B3E7C18379829003E6066 /* Frameworks */,
@@ -12097,100 +12194,6 @@
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
-		};
-		4D1B3EB31837EC44003E6066 /* deadbeef */ = {
-			isa = PBXGroup;
-			children = (
-				0D56855A272197A30026F700 /* scope */,
-				2DD39EC726AD8CFD00C5846D /* analyzer */,
-				2D6E2CFF26AC3022008FCD4B /* Apple */,
-				4D1B3ED71837EC44003E6066 /* ConvertUTF */,
-				4D1B3F861837EC44003E6066 /* md5 */,
-				2DDD764125E1506100FA6FE5 /* metadata */,
-				2D135EE6226E388E00BAAE84 /* scriptable */,
-				2D93DC511AADFEEF003D2D8D /* shared */,
-				2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */,
-				2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */,
-				2DD9EF0419A5089F00189344 /* cocoautil.h */,
-				2DD9EF0519A5089F00189344 /* cocoautil.m */,
-				4D1B3ECD1837EC44003E6066 /* common.h */,
-				4D1B3ECE1837EC44003E6066 /* conf.c */,
-				4D1B3ECF1837EC44003E6066 /* conf.h */,
-				2D40208D1F27BD7200D4EA4F /* cueutil.c */,
-				2D40208E1F27BD7200D4EA4F /* cueutil.h */,
-				4D1B3EDF1837EC44003E6066 /* deadbeef.h */,
-				2DB951B426B07E7B00602876 /* decodedblock.h */,
-				2DB951B526B07E7B00602876 /* decodedblock.c */,
-				4DC96E6D1E4CC9670093CFD3 /* dsp.c */,
-				4DC96E6E1E4CC9670093CFD3 /* dsp.h */,
-				4D1B3EE21837EC44003E6066 /* dsppreset.c */,
-				4D1B3EE31837EC44003E6066 /* dsppreset.h */,
-				2DA6F89B19A5332D002151EB /* escape.c */,
-				2DA6F89F19A53334002151EB /* escape.h */,
-				2D6DCB3D291B105D00D6ECE6 /* fastftoi.h */,
-				4D1B3EE71837EC44003E6066 /* fft.c */,
-				4D1B3EE81837EC44003E6066 /* fft.h */,
-				4D1B3EEA1837EC44003E6066 /* handler.c */,
-				4D1B3EEB1837EC44003E6066 /* handler.h */,
-				4D1B3F5A1837EC44003E6066 /* junklib.c */,
-				4D1B3F5B1837EC44003E6066 /* junklib.h */,
-				2D448A821D5C5C6500B43F12 /* logger.c */,
-				2D448A831D5C5C6500B43F12 /* logger.h */,
-				4D1B3F831837EC44003E6066 /* main.c */,
-				4D1B3F891837EC44003E6066 /* messagepump.c */,
-				4D1B3F8A1837EC44003E6066 /* messagepump.h */,
-				4D1B3F8B1837EC44003E6066 /* metacache.c */,
-				4D1B3F8C1837EC44003E6066 /* metacache.h */,
-				4D1B3F8E1837EC44003E6066 /* moduleconf.h */,
-				4D1B3F9A1837EC44003E6066 /* playlist.c */,
-				4D1B3F9B1837EC44003E6066 /* playlist.h */,
-				2D0A6B1A237718DA00252E6D /* playmodes.c */,
-				2D0A6B19237718DA00252E6D /* playmodes.h */,
-				2D713FFB1A5D7D5900EFF139 /* playqueue.c */,
-				2D713FFC1A5D7D5900EFF139 /* playqueue.h */,
-				4D1B3F9C1837EC44003E6066 /* plmeta.c */,
-				2D5DD91C246C697800734047 /* plmeta.h */,
-				4D1B3F9D1837EC44003E6066 /* pltmeta.c */,
-				4D1B3F9E1837EC44003E6066 /* pltmeta.h */,
-				4D1B47481837EC47003E6066 /* plugins.c */,
-				4D1B47491837EC47003E6066 /* plugins.h */,
-				4D1B47871837EC47003E6066 /* premix.c */,
-				4D1B47881837EC47003E6066 /* premix.h */,
-				4D1B47A21837EC48003E6066 /* replaygain.c */,
-				4D1B47A31837EC48003E6066 /* replaygain.h */,
-				4D1B47A41837EC48003E6066 /* ringbuf.c */,
-				4D1B47A51837EC48003E6066 /* ringbuf.h */,
-				4D1B47B91837EC48003E6066 /* sj_to_unicode.h */,
-				2D642EAD1AE9152E00FC1F7B /* sort.c */,
-				2D642EAE1AE9152E00FC1F7B /* sort.h */,
-				4D1B47BA1837EC48003E6066 /* strdupa.h */,
-				4D1B47BB1837EC48003E6066 /* streamer.c */,
-				4D1B47BC1837EC48003E6066 /* streamer.h */,
-				4D62C0C51E4C9ACA005F9482 /* streamreader.c */,
-				4D62C0C61E4C9ACA005F9482 /* streamreader.h */,
-				2D0A002519C390E9006F7462 /* tf.c */,
-				2D0A002619C390E9006F7462 /* tf.h */,
-				4D1B47BE1837EC48003E6066 /* threading_pthread.c */,
-				4D1B47BD1837EC48003E6066 /* threading.h */,
-				4D1B49E61837EC49003E6066 /* u8_lc_map.h */,
-				2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */,
-				4D1B49E81837EC49003E6066 /* utf8.c */,
-				4D1B49E91837EC49003E6066 /* utf8.h */,
-				4D1B49EC1837EC49003E6066 /* vfs_stdio.c */,
-				4D1B49EA1837EC49003E6066 /* vfs.c */,
-				4D1B49EB1837EC49003E6066 /* vfs.h */,
-				2DA5C2C126A75B840098AF24 /* viz.c */,
-				2DA5C2C026A75B840098AF24 /* viz.h */,
-				4D1B49ED1837EC49003E6066 /* volume.c */,
-				4D1B49EE1837EC49003E6066 /* volume.h */,
-				2DA21F5D29868F930077BD4C /* resizable_buffer.h */,
-				2DA21F5E29868F930077BD4C /* resizable_buffer.c */,
-			);
-			name = deadbeef;
-			path = ..;
-			sourceTree = "<group>";
-			usesTabs = 0;
-			wrapsLines = 0;
 		};
 		4D1B3ED71837EC44003E6066 /* ConvertUTF */ = {
 			isa = PBXGroup;
@@ -13009,7 +13012,6 @@
 				2DC6C5F9294CE14B00A63CEB /* ChiptuneVoicesViewController.h in Headers */,
 				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */,
-				2D135EEF226E47AA00BAAE84 /* scriptable.h in Headers */,
 				2DC65808274A876300583E14 /* DeletePlaylistConfirmationController.h in Headers */,
 				2D98B68C272D573700E655AE /* ScopeSettings.h in Headers */,
 				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
@@ -13145,7 +13147,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D2351261B138F3200A62936 /* converter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13164,7 +13165,6 @@
 				2DDFABE32438EA6000E13E85 /* aac_decoder_faad2.h in Headers */,
 				2D28F0491C283BF7004A6E7B /* aac_parser.h in Headers */,
 				2DDFABE12438EA6000E13E85 /* aac_decoder_protocol.h in Headers */,
-				2D69653C1D74338A00EB99D8 /* mp4tagutil.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13637,7 +13637,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DF1ED691DAA376B00E23298 /* decomp.h in Headers */,
-				2D69653B1D74338A00EB99D8 /* mp4tagutil.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17543,7 +17542,6 @@
 				2DA5A92C25D0330600947C19 /* pack_dns.c in Sources */,
 				2DA5A92D25D0330600947C19 /* open_utils.c in Sources */,
 				2DA5A92E25D0330600947C19 /* unpack3_seek.c in Sources */,
-				2DA5A92F25D0330600947C19 /* wavpack.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19347,7 +19345,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../plugins/wma",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19374,7 +19372,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../plugins/wma",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19403,6 +19401,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/musepack",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19428,6 +19427,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/musepack",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19453,6 +19453,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/musepack",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19478,6 +19479,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/musepack",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19505,6 +19507,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19529,6 +19532,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19768,6 +19772,11 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../src\"",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -19811,6 +19820,11 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../src\"",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -19840,6 +19854,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/ffmpeg/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
@@ -19872,6 +19887,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/ffmpeg/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
@@ -19906,6 +19922,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libsndfile-1.0.28/src\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -19932,6 +19949,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libsndfile-1.0.28/src\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../PlugIns/$(EXECUTABLE_PATH)";
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -20223,6 +20241,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20245,6 +20264,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20404,6 +20424,7 @@
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/libsidplay/include\"",
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include\"",
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20433,6 +20454,7 @@
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/libsidplay/include\"",
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include\"",
 					"\"$(SRCROOT)/../plugins/sid/sidplay-libs/builders/resid-builder/include/sidplay/builders\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20464,6 +20486,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/../external/mp4p/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20494,6 +20517,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/../external/mp4p/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20524,6 +20548,7 @@
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20549,6 +20574,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20578,6 +20604,7 @@
 					"\"$(SRCROOT)/../plugins/fdk/libSYS/include\"",
 					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
 					"\"$(SRCROOT)/../external/mp4p/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20609,6 +20636,7 @@
 					"\"$(SRCROOT)/../plugins/fdk/libSYS/include\"",
 					"\"$(SRCROOT)/deps/faad2-2.7/include\"",
 					"\"$(SRCROOT)/../external/mp4p/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20721,6 +20749,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/gme/game-music-emu-0.6pre",
 					"$(SRCROOT)/../plugins/gme/game-music-emu-0.6pre/gme",
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20757,6 +20786,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/gme/game-music-emu-0.6pre",
 					"$(SRCROOT)/../plugins/gme/game-music-emu-0.6pre/gme",
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -20909,6 +20939,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../src\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/DeaDBeeF GTK3.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -20951,6 +20984,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../src\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/DeaDBeeF GTK3.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -21030,6 +21066,7 @@
 					"\"$(SRCROOT)/../external/mp4p/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -21067,6 +21104,7 @@
 					"\"$(SRCROOT)/../external/mp4p/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -21209,6 +21247,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -21243,6 +21282,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -21398,6 +21438,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "";
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -21425,6 +21466,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				LD_DYLIB_INSTALL_NAME = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -21503,6 +21545,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/../external/mp4p/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = alac;
@@ -21527,6 +21570,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/../external/mp4p/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = alac;
@@ -21861,6 +21905,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/sc68/libsc68",
 					"$(SRCROOT)/../plugins/sc68/file68",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -21929,6 +21974,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../plugins/sc68/libsc68",
 					"$(SRCROOT)/../plugins/sc68/file68",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -22198,6 +22244,8 @@
 					"$(inherited)",
 					"$(SRCROOT)/deps/jansson-2.13.1/src",
 					"$(SRCROOT)/../external/googletest/googletest/include",
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
 				);
 				INFOPLIST_FILE = ../Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22241,6 +22289,8 @@
 					"$(inherited)",
 					"$(SRCROOT)/deps/jansson-2.13.1/src",
 					"$(SRCROOT)/../external/googletest/googletest/include",
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
 				);
 				INFOPLIST_FILE = ../Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22391,6 +22441,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -22453,6 +22504,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -22501,6 +22553,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../src\"",
 				);
 				INFOPLIST_FILE = "DeaDBeeF GTK2.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22544,6 +22599,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../src\"",
 				);
 				INFOPLIST_FILE = "DeaDBeeF GTK2.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22704,6 +22762,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -22766,6 +22825,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -22990,6 +23050,7 @@
 					"$(inherited)",
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -23022,6 +23083,7 @@
 				EXCLUDED_ARCHS = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -23059,6 +23121,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/WavPack-5.1.0/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -23092,6 +23155,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/WavPack-5.1.0/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -23173,6 +23237,7 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23204,6 +23269,7 @@
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23231,6 +23297,7 @@
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23260,6 +23327,7 @@
 				GCC_WARN_MISSING_PARENTHESES = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../include\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23429,6 +23497,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../src\"",
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
@@ -23483,6 +23554,9 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../src\"",
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
@@ -23582,6 +23656,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23604,6 +23679,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23678,6 +23754,7 @@
 					"\"$(SRCROOT)/deps/mpg123-1.31.1/ports/Xcode\"",
 					"\"$(SRCROOT)/mpg123\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23702,6 +23779,7 @@
 					"\"$(SRCROOT)/deps/mpg123-1.31.1/ports/Xcode\"",
 					"\"$(SRCROOT)/mpg123\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23724,6 +23802,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/deps/flac-1.3.0/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23742,6 +23821,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/deps/flac-1.3.0/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23762,6 +23842,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../plugins/dumb/dumb-kode54/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23783,6 +23864,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/../plugins/dumb/dumb-kode54/include",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/../include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
@@ -23884,6 +23966,7 @@
 					"\"$(SRCROOT)/deps/opus-1.2.1/include\"",
 					"\"$(SRCROOT)/deps/opusfile-0.9/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -23926,6 +24009,7 @@
 					"\"$(SRCROOT)/deps/opus-1.2.1/include\"",
 					"\"$(SRCROOT)/deps/opusfile-0.9/include\"",
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
+					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";

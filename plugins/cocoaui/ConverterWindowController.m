@@ -27,8 +27,8 @@
 #import "ScriptableSelectViewController.h"
 #import "scriptable_dsp.h"
 #import "scriptable_encoder.h"
-#include "converter.h"
-#include "deadbeef.h"
+#include "../converter/converter.h"
+#include <deadbeef/deadbeef.h>
 
 extern DB_functions_t *deadbeef;
 static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";

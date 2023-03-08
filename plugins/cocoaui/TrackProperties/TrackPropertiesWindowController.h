@@ -21,7 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #import <Cocoa/Cocoa.h>
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 @class MediaLibraryItem;
 @class TrackPropertiesWindowController;

@@ -20,7 +20,7 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>

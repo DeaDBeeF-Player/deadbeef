@@ -22,7 +22,7 @@
 */
 
 #import <Foundation/Foundation.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 @interface CoverManager : NSObject
 

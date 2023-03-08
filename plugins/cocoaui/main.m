@@ -23,7 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "AppDelegate.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 extern DB_functions_t *deadbeef;
 

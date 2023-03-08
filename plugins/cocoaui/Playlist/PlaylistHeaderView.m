@@ -9,7 +9,7 @@
 #import "PlaylistView.h"
 #import "PlaylistHeaderView.h"
 #import "PlaylistContentView.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 @interface PlaylistHeaderView()
 

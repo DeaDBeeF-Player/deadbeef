@@ -38,7 +38,7 @@
 
 #include "../libparser/parser.h"
 #include "hotkeys.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "actionhandlers.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

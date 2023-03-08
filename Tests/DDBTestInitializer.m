@@ -9,7 +9,7 @@
 #import "DDBTestInitializer.h"
 #include "conf.h"
 #include "playlist.h"
-#include "../common.h"
+#include <deadbeef/common.h>
 #include "logger.h"
 #include "vfs.h"
 #include "plugins.h"

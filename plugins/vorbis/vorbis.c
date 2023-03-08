@@ -30,7 +30,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <stdbool.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../liboggedit/oggedit.h"
 #if TREMOR
     #include <tremor/ivorbisfile.h>
@@ -38,7 +38,7 @@
 #else
     #include <vorbis/vorbisfile.h>
 #endif
-#include "../../strdupa.h"
+#include <deadbeef/strdupa.h>
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))

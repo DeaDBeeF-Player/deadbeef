@@ -21,7 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "coreaudio.h"
 #include <AudioUnit/AudioUnit.h>
 #include <AudioToolbox/AudioToolbox.h>

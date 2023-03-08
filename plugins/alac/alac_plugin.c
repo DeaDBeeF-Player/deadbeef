@@ -24,7 +24,7 @@
     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
     OTHER DEALINGS IN THE SOFTWARE.
  */
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif
@@ -34,11 +34,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "../../strdupa.h"
+#include <deadbeef/strdupa.h>
 
 #include "decomp.h"
 
-#include "../../shared/mp4tagutil.h"
+#include "../../src/shared/mp4tagutil.h"
 
 #include <mp4p/mp4p.h>
 

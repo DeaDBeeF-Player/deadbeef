@@ -25,7 +25,7 @@
 #define medialibdb_h
 
 #include <stdint.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "medialibstate.h"
 
 // This struct represents a leaf node (track) in the tree of a collection.

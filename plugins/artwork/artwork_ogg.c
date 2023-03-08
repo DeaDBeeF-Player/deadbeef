@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <vorbis/vorbisfile.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "artwork_ogg.h"
 #include "artwork_internal.h"
 #include "base64.h"

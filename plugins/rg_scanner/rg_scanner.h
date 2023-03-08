@@ -26,7 +26,7 @@
 #ifndef __RG_SCANNER_H
 #define __RG_SCANNER_H
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 enum {
     DDB_RG_SCAN_MODE_TRACK = 1,

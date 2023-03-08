@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "asf.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 extern DB_functions_t *deadbeef;
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt,...)

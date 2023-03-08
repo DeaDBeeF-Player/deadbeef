@@ -24,7 +24,7 @@
 #ifndef medialib_h
 #define medialib_h
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #define DDB_MEDIALIB_VERSION_MAJOR 1
 #define DDB_MEDIALIB_VERSION_MINOR 0

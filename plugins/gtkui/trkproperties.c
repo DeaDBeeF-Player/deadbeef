@@ -31,9 +31,9 @@
 #include <gtk/gtk.h>
 #include <math.h>
 #include <string.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../gettext.h"
-#include "../../shared/trkproperties_shared.h"
+#include "../../src/shared/trkproperties_shared.h"
 #include "callbacks.h"
 #include "ddbcellrenderertextmultiline.h"
 #include "gtkui.h"

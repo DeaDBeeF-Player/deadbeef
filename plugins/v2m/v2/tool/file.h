@@ -3,7 +3,7 @@
 
 #include <string.h>
 #include "../types.h"
-#include "../../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 extern DB_functions_t *deadbeef;
 
 #define GETPUTMETHODS(T) virtual T get##T() { T t; read(&t, sizeof(T)); return t; } \

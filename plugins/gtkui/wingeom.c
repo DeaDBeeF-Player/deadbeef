@@ -26,7 +26,7 @@
 #endif
 #include <gtk/gtk.h>
 #include "wingeom.h"
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "gtkui.h"
 #include "support.h"
 

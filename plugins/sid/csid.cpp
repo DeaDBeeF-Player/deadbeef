@@ -28,8 +28,8 @@
 //#include "md5.h"
 // #include "sidplay/sidendian.h"
 
-#include "../../deadbeef.h"
-#include "../../strdupa.h"
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
 #include "csid.h"
 
 extern DB_decoder_t sid_plugin;

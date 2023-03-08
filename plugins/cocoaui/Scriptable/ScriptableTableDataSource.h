@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
-#include "deadbeef.h"
-#include "../../../scriptable/scriptable.h"
+#include <deadbeef/deadbeef.h>
+#include "scriptable/scriptable.h"
 #import "ScriptableProtocols.h"
 
 NS_ASSUME_NONNULL_BEGIN

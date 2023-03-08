@@ -24,7 +24,7 @@
 #ifndef __HOTKEYS_H
 #define __HOTKEYS_H
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 typedef struct DB_hotkeys_plugin_s {
     DB_misc_t misc;

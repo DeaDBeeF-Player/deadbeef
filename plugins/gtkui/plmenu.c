@@ -23,8 +23,8 @@
 
 #include <gtk/gtk.h>
 #include <stdlib.h>
-#include "../../shared/deletefromdisk.h"
-#include "../../strdupa.h"
+#include "../../src/shared/deletefromdisk.h"
+#include <deadbeef/strdupa.h>
 #include "actions.h"
 #include "actionhandlers.h"
 #include "clipboard.h"

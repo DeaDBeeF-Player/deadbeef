@@ -33,7 +33,7 @@
 #import "TrackContextMenu.h"
 #import "tftintutil.h"
 
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "medialib.h"
 #include "utf8.h"
 #include "artwork.h"

@@ -1,4 +1,4 @@
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #include "v2/v2mplayer.h"
 #include "v2/libv2.h"

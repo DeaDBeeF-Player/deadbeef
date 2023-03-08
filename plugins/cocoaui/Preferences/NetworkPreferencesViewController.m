@@ -9,7 +9,7 @@
 #import "DdbShared.h"
 #import "NetworkPreferencesViewController.h"
 #include "ctmap.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 extern DB_functions_t *deadbeef;
 

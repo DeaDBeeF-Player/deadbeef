@@ -8,7 +8,7 @@
 
 #import "DdbShared.h"
 #import "PlaybackPreferencesViewController.h"
-#include "deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 extern DB_functions_t *deadbeef;
 

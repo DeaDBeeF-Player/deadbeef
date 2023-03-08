@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#include "scriptable.h"
+#include "scriptable/scriptable.h"
 #import "ScriptableTableDataSource.h"
 #import "ScriptableProtocols.h"
 

@@ -40,10 +40,10 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include <errno.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "converter.h"
-#include "../../strdupa.h"
-#include "../../shared/mp4tagutil.h"
+#include <deadbeef/strdupa.h>
+#include "../../src/shared/mp4tagutil.h"
 
 static ddb_converter_t plugin;
 

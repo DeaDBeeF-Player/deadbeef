@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../gtkui.h"
-#include "../../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "../../artwork/artwork.h"
 #include "mainplaylist.h"
 #include "playlistcontroller.h"

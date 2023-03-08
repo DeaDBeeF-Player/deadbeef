@@ -25,7 +25,7 @@
 #define medialibscanner_h
 
 #include <stdint.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "medialib.h"
 #include "medialibsource.h"
 

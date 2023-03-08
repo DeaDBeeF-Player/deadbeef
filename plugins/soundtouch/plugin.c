@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "st.h"
 
 enum {

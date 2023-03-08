@@ -25,7 +25,7 @@
 #define medialibtree_h
 
 #include <stdint.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "medialibdb.h"
 
 typedef enum {

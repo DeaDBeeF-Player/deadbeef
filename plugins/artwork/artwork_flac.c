@@ -23,7 +23,7 @@
 
 #include <string.h>
 #include <limits.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include "artwork_flac.h"
 #include "artwork_internal.h"
 #ifdef USE_METAFLAC
