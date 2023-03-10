@@ -30,8 +30,8 @@
 #include <string.h>
 #include <deadbeef/fastftoi.h>
 #include <deadbeef/strdupa.h>
-#include "../../src/viz/analyzer.h"
-#include "../../src/viz/scope.h"
+#include "../../shared/analyzer/analyzer.h"
+#include "../../shared/scope/scope.h"
 #include "../libparser/parser.h"
 #include "actions.h"
 #include "callbacks.h"

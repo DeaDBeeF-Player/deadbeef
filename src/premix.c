@@ -29,8 +29,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <deadbeef/deadbeef.h>
+#include <deadbeef/fastftoi.h>
 #include "premix.h"
-#include "fastftoi.h"
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); }
 //#define trace(fmt,...)

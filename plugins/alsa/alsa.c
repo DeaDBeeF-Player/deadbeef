@@ -21,7 +21,7 @@
 #include <unistd.h>
 #include <sys/prctl.h>
 #include <pthread.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
 #endif

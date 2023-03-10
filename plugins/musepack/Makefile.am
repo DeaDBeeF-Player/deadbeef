@@ -27,6 +27,6 @@ mpc/minimax.h
 musepack_la_LDFLAGS = -module -avoid-version
 musepack_la_LIBADD = $(LDADD) -lm
 
-AM_CFLAGS = $(CFLAGS) -fPIC -std=c99
+musepack_la_CFLAGS = $(CFLAGS) -fPIC -std=c99 -I@top_srcdir@/include
 
 endif

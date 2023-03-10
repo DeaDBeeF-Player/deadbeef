@@ -4,8 +4,8 @@ EXTRA_DIST = $(dumbpath)/readme.txt $(dumbpath)/ChangeLog $(dumbpath)/licence.tx
 if HAVE_DUMB
 pkglib_LTLIBRARIES = ddb_dumb.la
 
-ddb_dumb_la_CFLAGS = $(CFLAGS) $(ALLOCA_H_CFLAGS) -I$(dumbpath)/include -std=gnu99
-ddb_dumb_la_CXXFLAGS = $(CFLAGS) $(ALLOCA_H_CFLAGS) -I$(dumbpath)/include -fno-exceptions -fno-rtti -fno-unwind-tables
+ddb_dumb_la_CFLAGS = $(CFLAGS) $(ALLOCA_H_CFLAGS) -I$(dumbpath)/include -I@top_srcdir@/include -std=gnu99
+ddb_dumb_la_CXXFLAGS = $(CFLAGS) $(ALLOCA_H_CFLAGS) -I$(dumbpath)/include -I@top_srcdir@/include -fno-exceptions -fno-rtti -fno-unwind-tables
 ddb_dumb_la_LDFLAGS = -module -avoid-version -lm $(NOCPPLIB)
 if HAVE_SSE2
 noinst_LTLIBRARIES = libdumbsse2.la

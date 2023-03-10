@@ -1,8 +1,8 @@
 deadbeef.desktop.in
 intl/plural.c
-main.c
-playlist.c
-plugins.c
+src/main.c
+src/playlist.c
+src/plugins.c
 plugins/converter/converter.glade
 plugins/converter/convgui.c
 plugins/converter/interface.c
@@ -47,6 +47,6 @@ plugins/shellexecui/shellexec.glade
 plugins/shellexecui/shellexecui.c
 plugins/shellexecui/support.c
 plugins/wildmidi/wildmidiplug.c
-tf.c
+src/tf.c
 translation/extra.c
 translation/plugins.c

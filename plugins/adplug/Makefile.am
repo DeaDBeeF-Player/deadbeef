@@ -3,9 +3,9 @@ adplugpath=@top_srcdir@/plugins/adplug
 
 pkglib_LTLIBRARIES = adplug.la
 
-adplug_la_CFLAGS = $(CFLAGS) -std=c99 -I$(adplugpath)/adplug -I$(adplugpath)/libbinio -fPIC
+adplug_la_CFLAGS = $(CFLAGS) -std=c99 -I$(adplugpath)/adplug -I$(adplugpath)/libbinio -I@top_srcdir@/include -fPIC
 adplug_la_LDFLAGS = -module -avoid-version $(NOCPPLIB) -lm
-adplug_la_CXXFLAGS = $(CXXFLAGS) -Dstricmp=strcasecmp -DVERSION=\"2.3.1\" -I$(adplugpath)/adplug -I$(adplugpath)/libbinio
+adplug_la_CXXFLAGS = $(CXXFLAGS) -Dstricmp=strcasecmp -DVERSION=\"2.3.1\" -I$(adplugpath)/adplug -I$(adplugpath)/libbinio -I@top_srcdir@/include
 
 adplug_la_SOURCES = plugin.c\
                    adplug-db.cpp\

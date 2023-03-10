@@ -38,7 +38,7 @@
 
 #include "decomp.h"
 
-#include "../../src/shared/mp4tagutil.h"
+#include "../../shared/mp4tagutil.h"
 
 #include <mp4p/mp4p.h>
 

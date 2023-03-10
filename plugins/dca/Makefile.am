@@ -25,6 +25,6 @@ bitstream.h
 dca_la_LDFLAGS = -module -avoid-version
 dca_la_LIBADD = $(LDADD) -lm
 
-AM_CFLAGS = $(CFLAGS) -fPIC -std=c99
+dca_la_CFLAGS = $(CFLAGS) -fPIC -std=c99 -I@top_srcdir@/include
 
 endif

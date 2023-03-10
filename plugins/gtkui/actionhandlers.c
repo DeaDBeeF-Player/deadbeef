@@ -32,7 +32,7 @@
 #include <unistd.h>
 #include <deadbeef/deadbeef.h>
 #include "../../gettext.h"
-#include "../../src/shared/deletefromdisk.h"
+#include "../../shared/deletefromdisk.h"
 #include "callbacks.h"
 #include "playlist/ddblistview.h"
 #include "gtkui.h"

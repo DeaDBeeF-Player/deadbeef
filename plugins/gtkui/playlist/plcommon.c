@@ -30,7 +30,7 @@
 #include "gtkui.h"
 #include <deadbeef/strdupa.h>
 #include "../../libparser/parser.h"
-#include "../../../src/shared/deletefromdisk.h"
+#include "../../../shared/deletefromdisk.h"
 #include "actions.h"
 #include "actionhandlers.h"
 #include "clipboard.h"
@@ -39,7 +39,7 @@
 #include "plcommon.h"
 #include "../support.h"
 #include "trkproperties.h"
-#include "../../../src/shared/tftintutil.h"
+#include "../../../shared/tftintutil.h"
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))

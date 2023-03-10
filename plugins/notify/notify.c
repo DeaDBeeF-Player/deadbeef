@@ -19,7 +19,7 @@
 #include <Block.h>
 #include <dbus/dbus.h>
 #include <dispatch/dispatch.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

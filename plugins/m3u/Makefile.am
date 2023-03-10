@@ -7,5 +7,5 @@ m3u_la_LDFLAGS = -module -avoid-version -lm
 
 m3u_la_LIBADD = $(LIBADD)
 
-m3u_la_CFLAGS = $(CFLAGS) -std=c99
+m3u_la_CFLAGS = $(CFLAGS) -I@top_srcdir@/include -std=c99
 endif

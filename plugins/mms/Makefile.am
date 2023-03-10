@@ -17,5 +17,5 @@ mms_la_SOURCES = mmsplug.c\
 mms_la_LDFLAGS = -module -avoid-version
 
 mms_la_LIBADD = $(LDADD) $(LIBMMS_LIBS)
-AM_CFLAGS = $(CFLAGS) -std=c99
+mms_la_CFLAGS = $(CFLAGS) -std=c99 -I@top_srcdir@/include
 endif

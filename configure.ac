@@ -919,12 +919,13 @@ AC_SUBST(PLUGINS_DIRS)
 
 AC_CONFIG_FILES([
 Makefile
+src/Makefile
+shared/Makefile
+shared/analyzer/Makefile
+shared/scope/Makefile
 external/Makefile
 external/ddb_dsp_libretro/Makefile
 external/ddb_output_pw/Makefile
-shared/Makefile
-analyzer/Makefile
-scope/Makefile
 pixmaps/Makefile
 icons/Makefile
 plugins/liboggedit/Makefile

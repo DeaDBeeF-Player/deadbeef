@@ -26,6 +26,6 @@ FLAC_DEPS=$(FLAC_LIBS)
 flac_cflags=-DUSE_METAFLAC $(FLAC_CFLAGS)
 endif
 
-artwork_la_CFLAGS = -std=c99  -I@top_srcdir@/external/mp4p/include -I@top_srcdir@/shared $(CFLAGS) $(ARTWORK_CFLAGS) $(flac_cflags) $(artwork_net_cflags) $(ogg_def) $(DISPATCH_CFLAGS)
+artwork_la_CFLAGS = -std=c99  -I@top_srcdir@/external/mp4p/include -I@top_srcdir@/include -I@top_srcdir@/shared $(CFLAGS) $(ARTWORK_CFLAGS) $(flac_cflags) $(artwork_net_cflags) $(ogg_def) $(DISPATCH_CFLAGS)
 artwork_la_LIBADD = $(LDADD) $(ARTWORK_DEPS) $(FLAC_DEPS) $(DISPATCH_LIBS) $(ogg_libs) ../../shared/libmp4tagutil.la ../../external/libmp4p.la
 endif

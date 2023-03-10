@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall
+CFLAGS=-Wall -I../../include
 LDFLAGS=-lpthread -ldl -lm
 
 all:

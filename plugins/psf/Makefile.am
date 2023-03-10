@@ -21,6 +21,6 @@ eng_psf/peops2/adsr.h eng_psf/peops2/dma.h eng_psf/peops2/externals.h eng_psf/pe
 psf_la_LDFLAGS = -module -avoid-version $(ZLIB_LIBS)
 
 psf_la_LIBADD = $(LDADD)
-AM_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -Wall -DHAS_PSXCPU=1 -I.. -Ieng_ssf -Ieng_qsf -Ieng_dsf -lm -fPIC 
+psf_la_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -Wall -DHAS_PSXCPU=1 -I.. -Ieng_ssf -Ieng_qsf -Ieng_dsf -lm -fPIC -I@top_srcdir@/include
 endif
 

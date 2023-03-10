@@ -5,5 +5,5 @@ ddb_shn_la_SOURCES = array.c convert.c misc.c output.c seek.c shn.c shn.h shorte
 ddb_shn_la_LDFLAGS = -module -avoid-version
 
 ddb_shn_la_LIBADD = $(LDADD) -lm
-AM_CFLAGS = $(CFLAGS) -std=c99
+ddb_shn_la_CFLAGS = $(CFLAGS) -std=c99 -I@top_srcdir@/include
 endif

@@ -2,7 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "tftintutil.h"
-#include "../utf8.h"
+#include "../src/utf8.h"
 
 static size_t
 get_stop_from_string(const char *string, size_t len, tint_stop_t *stop) {

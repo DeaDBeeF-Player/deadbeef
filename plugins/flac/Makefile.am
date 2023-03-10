@@ -9,5 +9,5 @@ oggedit_lib = ../liboggedit/liboggedit.la $(OGG_LIBS)
 endif
 
 flac_la_LIBADD = $(LDADD) $(FLAC_LIBS) $(oggedit_lib)
-AM_CFLAGS = $(CFLAGS) $(FLAC_CFLAGS) $(oggedit_def) -std=c99
+flac_la_CFLAGS = $(CFLAGS) $(FLAC_CFLAGS) $(oggedit_def) -std=c99 -I@top_srcdir@/include
 endif

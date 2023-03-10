@@ -116,10 +116,6 @@
 		0D56853D271DC6670026F700 /* VisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56853A271DC6670026F700 /* VisualizationViewController.h */; };
 		0D56853E271DC6670026F700 /* VisualizationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56853A271DC6670026F700 /* VisualizationViewController.h */; };
 		0D56853F271DC6670026F700 /* VisualizationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D56853B271DC6670026F700 /* VisualizationViewController.m */; };
-		0D56856C272197B30026F700 /* scope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D56856A272197B30026F700 /* scope.h */; };
-		0D56856D272197B30026F700 /* scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 0D56856B272197B30026F700 /* scope.c */; };
-		0D56856E27219F3C0026F700 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD39ED826AD8D1600C5846D /* analyzer.c */; };
-		0D56856F27219F410026F700 /* scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 0D56856B272197B30026F700 /* scope.c */; };
 		2D00F2AA2434DEB3000FC130 /* st.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F2772434DE87000FC130 /* st.cpp */; };
 		2D00F2AB2434DEB3000FC130 /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00F2782434DE87000FC130 /* plugin.c */; };
 		2D00F2E72434F98F000FC130 /* st.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D00F2752434DE87000FC130 /* st.h */; };
@@ -663,7 +659,6 @@
 		2D00FE93243539AA000FC130 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D8C8D3F1C43116A008ACE29 /* libz.tbd */; };
 		2D00FE94243539CB000FC130 /* libzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; };
 		2D00FE95243539CB000FC130 /* libzip.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
 		2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
 		2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D713FFB1A5D7D5900EFF139 /* playqueue.c */; };
@@ -706,15 +701,12 @@
 		2D046F7E25E2B55200F68459 /* MainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D046F7C25E2B55200F68459 /* MainWindow.m */; };
 		2D04701525E2D97D00F68459 /* WidgetMenuBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D04701325E2D97D00F68459 /* WidgetMenuBuilder.h */; };
 		2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D04701425E2D97D00F68459 /* WidgetMenuBuilder.m */; };
-		2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */; };
-		2D04C3CF2433B147003C2AAC /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */; };
 		2D04C3D12433B3B9003C2AAC /* GrowableBufferTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.cpp */; };
 		2D05A8D61B4BE616004C913D /* sndfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D05A8D51B4BE616004C913D /* sndfile.c */; };
 		2D05A8D91B4BE63D004C913D /* sndfile.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D05A8291B4BE59D004C913D /* sndfile.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D05A8DC1B4BE652004C913D /* libsndfilelib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D05A8311B4BE5BC004C913D /* libsndfilelib.a */; };
 		2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D061F7919E9685000CE6C29 /* DdbShared.m */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
-		2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1BE23E203B9000E4135 /* eqpreset.c */; };
 		2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.cpp */; };
 		2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A6B19237718DA00252E6D /* playmodes.h */; };
 		2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B1A237718DA00252E6D /* playmodes.c */; };
@@ -743,7 +735,6 @@
 		2D135EF4226E47CE00BAAE84 /* SciptableTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EF3226E47CE00BAAE84 /* SciptableTests.mm */; };
 		2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */; };
 		2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */; };
-		2D14E0541E14170E009870E6 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
 		2D15721623785BD900985E47 /* VfsCurlTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D15721523785BD900985E47 /* VfsCurlTests.cpp */; };
 		2D15722423785BEC00985E47 /* vfs_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24B5019E724E100E34920 /* vfs_curl.c */; };
 		2D15722723785D0100985E47 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
@@ -970,7 +961,6 @@
 		2D4A9459223EFC1700199551 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4A9467223EFC6700199551 /* CoreAudioTests.m */; };
 		2D5121C61B01DEFD009F6410 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
-		2D5193C824ABBC1600134891 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
 		2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */; };
 		2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */; };
 		2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D54915522B1711E000FE7E3 /* HelpWindowController.h */; };
@@ -1335,8 +1325,6 @@
 		2D667E151C9C2E0D00359129 /* curl_darwinssl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA24B7419E7254F00E34920 /* curl_darwinssl.h */; };
 		2D667E171C9C2E8400359129 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D667E161C9C2E8400359129 /* libssl.dylib */; };
 		2D667E181C9C2E8C00359129 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D667DFE1C9C2D1800359129 /* libcrypto.dylib */; };
-		2D6965391D74338A00EB99D8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
-		2D69653A1D74338A00EB99D8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
 		2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */; };
 		2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */; };
 		2D6DCB3E291B105D00D6ECE6 /* fastftoi.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6DCB3D291B105D00D6ECE6 /* fastftoi.h */; };
@@ -1601,9 +1589,44 @@
 		2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D90EF982438A5A600AF6F4B /* ScriptableErrorViewer.m */; };
 		2D9177391A0E8966004BC222 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2D9177421A0E89C8004BC222 /* alac.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D91773F1A0E8966004BC222 /* alac.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
-		2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */; };
-		2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
+		2D92D1D429B92A8300218F1D /* viz.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1D229B92A8300218F1D /* viz.c */; };
+		2D92D1D529B92A8300218F1D /* viz.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D1D329B92A8300218F1D /* viz.h */; };
+		2D92D24329B92DFA00218F1D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D92D1FB29B92DF900218F1D /* README */; };
+		2D92D24429B92DFA00218F1D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D92D1FB29B92DF900218F1D /* README */; };
+		2D92D24529B92DFA00218F1D /* README in Resources */ = {isa = PBXBuildFile; fileRef = 2D92D1FB29B92DF900218F1D /* README */; };
+		2D92D30E29B92F7B00218F1D /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1FE29B92DF900218F1D /* mp4tagutil.c */; };
+		2D92D30F29B92F7C00218F1D /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1FE29B92DF900218F1D /* mp4tagutil.c */; };
+		2D92D31029B92F7D00218F1D /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1FE29B92DF900218F1D /* mp4tagutil.c */; };
+		2D92D31129B92F8000218F1D /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1FE29B92DF900218F1D /* mp4tagutil.c */; };
+		2D92D31529B92F8700218F1D /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21C29B92DF900218F1D /* analyzer.c */; };
+		2D92D31729B92F8700218F1D /* scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F729B92DF900218F1D /* scope.c */; };
+		2D92D31829B92F8700218F1D /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21C29B92DF900218F1D /* analyzer.c */; };
+		2D92D31A29B92F8700218F1D /* scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F729B92DF900218F1D /* scope.c */; };
+		2D92D31D29B92F8D00218F1D /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1EF29B92DF900218F1D /* eqpreset.c */; };
+		2D92D31E29B92F8D00218F1D /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F029B92DF900218F1D /* deletefromdisk.c */; };
+		2D92D31F29B92F8D00218F1D /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1EF29B92DF900218F1D /* eqpreset.c */; };
+		2D92D32029B92F8D00218F1D /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F029B92DF900218F1D /* deletefromdisk.c */; };
+		2D92D32129B92F9100218F1D /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
+		2D92D32429B92F9600218F1D /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F329B92DF900218F1D /* tftintutil.c */; };
+		2D92D32529B92F9700218F1D /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F329B92DF900218F1D /* tftintutil.c */; };
+		2D92D32A29B92FC800218F1D /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F129B92DF900218F1D /* trkproperties_shared.c */; };
+		2D92D32B29B92FC900218F1D /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F129B92DF900218F1D /* trkproperties_shared.c */; };
+		2D92D32C29B92FCA00218F1D /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F129B92DF900218F1D /* trkproperties_shared.c */; };
+		2D92D32D29B9305B00218F1D /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
+		2D92D32E29B9305B00218F1D /* ctmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21E29B92DF900218F1D /* ctmap.c */; };
+		2D92D32F29B9305B00218F1D /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F529B92DF900218F1D /* growableBuffer.c */; };
+		2D92D33029B9305B00218F1D /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
+		2D92D33129B9305B00218F1D /* ctmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21E29B92DF900218F1D /* ctmap.c */; };
+		2D92D33229B9305B00218F1D /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F529B92DF900218F1D /* growableBuffer.c */; };
+		2D92D33329B931C600218F1D /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F029B92DF900218F1D /* deletefromdisk.c */; };
+		2D92D33629B931FB00218F1D /* ctmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21E29B92DF900218F1D /* ctmap.c */; };
+		2D92D33729B9320200218F1D /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1EF29B92DF900218F1D /* eqpreset.c */; };
+		2D92D33829B9320500218F1D /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F529B92DF900218F1D /* growableBuffer.c */; };
+		2D92D33A29B9322700218F1D /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F329B92DF900218F1D /* tftintutil.c */; };
+		2D92D33B29B9323600218F1D /* scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F729B92DF900218F1D /* scope.c */; };
+		2D92D33C29B9323600218F1D /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21C29B92DF900218F1D /* analyzer.c */; };
+		2D92D33D29B9324A00218F1D /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F329B92DF900218F1D /* tftintutil.c */; };
+		2D92D33E29B9324A00218F1D /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
 		2D95F6B72939283D002D8499 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D95F6BA29392884002D8499 /* artwork_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6B829392884002D8499 /* artwork_ogg.h */; };
 		2D95F6BB29392884002D8499 /* artwork_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F6B929392884002D8499 /* artwork_ogg.c */; };
@@ -1657,7 +1680,6 @@
 		2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9E904F24F453960037D323 /* MediaLibraryPreferencesViewController.h */; };
 		2D9E905224F453960037D323 /* MediaLibraryPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9E905024F453960037D323 /* MediaLibraryPreferencesViewController.m */; };
 		2D9E9B5126BB1DF000757C71 /* fft_accelerate.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6E2CE726AC13DF008FCD4B /* fft_accelerate.c */; };
-		2D9E9B5226BB1EDE00757C71 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD39ED826AD8D1600C5846D /* analyzer.c */; };
 		2D9E9B5526BB207300757C71 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6E2CF926AC157A008FCD4B /* Accelerate.framework */; };
 		2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBAA925E44A0700255592 /* WidgetSerializer.h */; };
 		2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBAA925E44A0700255592 /* WidgetSerializer.h */; };
@@ -1668,7 +1690,6 @@
 		2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */; };
 		2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */; };
 		2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9FD9E12607C68500F406D1 /* AlbumArtImageView.h */; };
-		2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D6965371D74338A00EB99D8 /* mp4tagutil.c */; };
 		2DA04E9523B6A4520070AC01 /* shellexec.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA04E9323B6A4510070AC01 /* shellexec.h */; };
 		2DA04E9623B6A4520070AC01 /* shellexec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04E9423B6A4510070AC01 /* shellexec.c */; };
 		2DA04EA923B6A4B70070AC01 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EA223B6A4B60070AC01 /* interface.c */; };
@@ -1789,13 +1810,10 @@
 		2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */; };
 		2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */; };
 		2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */; };
-		2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30E5E2402D1B1001BAB8A /* ctmap.h */; };
-		2DA30E6F2402D29A001BAB8A /* ctmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E5F2402D1B1001BAB8A /* ctmap.c */; };
 		2DA30E7424032550001BAB8A /* NetworkPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30E7224032550001BAB8A /* NetworkPreferencesViewController.h */; };
 		2DA30E7524032550001BAB8A /* NetworkPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */; };
 		2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA30E772403292D001BAB8A /* PlaybackPreferencesViewController.h */; };
 		2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */; };
-		2DA320F526557874002DD229 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
 		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
 		2DA59D9125D00A8E00947C19 /* M3UTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA59D9025D00A8E00947C19 /* M3UTests.cpp */; };
@@ -1837,8 +1855,6 @@
 		2DA5AAC225D0334100947C19 /* libwavpacklib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA5A93925D0330600947C19 /* libwavpacklib.dylib */; };
 		2DA5AB0625D033AA00947C19 /* libwavpacklib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA5A93925D0330600947C19 /* libwavpacklib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DA5AC1E25D0393C00947C19 /* libwavpacklib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA5A93925D0330600947C19 /* libwavpacklib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DA5C2C226A75B840098AF24 /* viz.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA5C2C026A75B840098AF24 /* viz.h */; };
-		2DA5C2D326A75CEE0098AF24 /* viz.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5C2C126A75B840098AF24 /* viz.c */; };
 		2DA5E331238DB0C4005832B7 /* EditColumnPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */; };
 		2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */; };
 		2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */; };
@@ -1978,10 +1994,6 @@
 		2DACBB241A40CEB100CCF401 /* mp3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 4D32FA5019A64577000FFDE0 /* mp3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */; };
 		2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */; };
-		2DAE701925BDDC3300E40154 /* deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAE701725BDDC3300E40154 /* deletefromdisk.h */; };
-		2DAE701A25BDDC3300E40154 /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAE701825BDDC3300E40154 /* deletefromdisk.c */; };
-		2DAE706925BDE55D00E40154 /* deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAE701725BDDC3300E40154 /* deletefromdisk.h */; };
-		2DAE706A25BDE55D00E40154 /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAE701825BDDC3300E40154 /* deletefromdisk.c */; };
 		2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */; };
 		2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */; };
 		2DAF900426A4533600C1CA25 /* coverinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF900226A4533600C1CA25 /* coverinfo.h */; };
@@ -2028,8 +2040,6 @@
 		2DBCA69A27944B2200D7432F /* COPYING.GPLv2 in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69827944B2200D7432F /* COPYING.GPLv2 */; };
 		2DBCA69B27944B2200D7432F /* COPYING.LGPLv2.1 in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */; };
 		2DBCA69D27944BB600D7432F /* ChangeLog in Resources */ = {isa = PBXBuildFile; fileRef = 2DBCA69C27944BB600D7432F /* ChangeLog */; };
-		2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBCB71F240ADCC10012F178 /* tftintutil.h */; };
-		2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DBF129D22DE53D200D59073 /* icy2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D565AB21A40BCE200CE1F5D /* icy2utf8.c */; };
 		2DBF3D40270868D400023138 /* MainContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DBF3D3F270868D400023138 /* MainContentViewController.xib */; };
 		2DBF3D4327086AA900023138 /* MainContentViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DBF3D4127086AA900023138 /* MainContentViewController.h */; };
@@ -2189,7 +2199,6 @@
 		2DC656752744289C00583E14 /* clipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5E72269BB4300AFF9AE /* clipboard.h */; };
 		2DC656762744289C00583E14 /* ddbtabstrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5CE2269BB4300AFF9AE /* ddbtabstrip.h */; };
 		2DC656772744289C00583E14 /* prefwinmisc.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1026C836FE0022A8F0 /* prefwinmisc.h */; };
-		2DC656782744289C00583E14 /* trkproperties_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */; };
 		2DC656792744289C00583E14 /* widgets.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5B72269BB4300AFF9AE /* widgets.h */; };
 		2DC6567A2744289C00583E14 /* drawing.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B59C2269BB4300AFF9AE /* drawing.h */; };
 		2DC6567B2744289C00583E14 /* deadbeefapp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5A32269BB4300AFF9AE /* deadbeefapp.h */; };
@@ -2206,12 +2215,10 @@
 		2DC656862744289C00583E14 /* ddb_splitter_size_mode.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5EE2269BB4300AFF9AE /* ddb_splitter_size_mode.h */; };
 		2DC656872744289C00583E14 /* prefwinnetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C1826C839020022A8F0 /* prefwinnetwork.h */; };
 		2DC656882744289C00583E14 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B6962269BB4300AFF9AE /* support.h */; };
-		2DC656892744289C00583E14 /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
 		2DC6568A2744289C00583E14 /* ctmapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5CB2269BB4300AFF9AE /* ctmapping.h */; };
 		2DC6568B2744289C00583E14 /* prefwinplayback.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C0C26C835E90022A8F0 /* prefwinplayback.h */; };
 		2DC6568C2744289C00583E14 /* prefwinmedialib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D715C3426C8451A0022A8F0 /* prefwinmedialib.h */; };
 		2DC6568D2744289C00583E14 /* rg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5F32269BB4300AFF9AE /* rg.h */; };
-		2DC6568E2744289C00583E14 /* deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAE701725BDDC3300E40154 /* deletefromdisk.h */; };
 		2DC6568F2744289C00583E14 /* plcommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5FB2269BB4300AFF9AE /* plcommon.h */; };
 		2DC656902744289C00583E14 /* progress.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B57A2269BB4300AFF9AE /* progress.h */; };
 		2DC656912744289C00583E14 /* eq.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B5D92269BB4300AFF9AE /* eq.h */; };
@@ -2235,8 +2242,6 @@
 		2DC656A62744289C00583E14 /* interface.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5872269BB4300AFF9AE /* interface.c */; };
 		2DC656A72744289C00583E14 /* namedicons.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6912269BB4300AFF9AE /* namedicons.c */; };
 		2DC656A82744289C00583E14 /* prefwinplugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1D26C83A010022A8F0 /* prefwinplugins.c */; };
-		2DC656A92744289C00583E14 /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1BE23E203B9000E4135 /* eqpreset.c */; };
-		2DC656AA2744289C00583E14 /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
 		2DC656AB2744289C00583E14 /* prefwin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5A42269BB4300AFF9AE /* prefwin.c */; };
 		2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5AF2269BB4300AFF9AE /* ddbseekbar.c */; };
 		2DC656AE2744289C00583E14 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5B82269BB4300AFF9AE /* support.c */; };
@@ -2254,11 +2259,7 @@
 		2DC656BC2744289C00583E14 /* wingeom.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5C02269BB4300AFF9AE /* wingeom.c */; };
 		2DC656BD2744289C00583E14 /* tagwritersettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5942269BB4300AFF9AE /* tagwritersettings.c */; };
 		2DC656BE2744289C00583E14 /* gtkui.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5CA2269BB4300AFF9AE /* gtkui.c */; };
-		2DC656BF2744289C00583E14 /* scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 0D56856B272197B30026F700 /* scope.c */; };
-		2DC656C02744289C00583E14 /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD39ED826AD8D1600C5846D /* analyzer.c */; };
 		2DC656C12744289C00583E14 /* ddblistview.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B57D2269BB4300AFF9AE /* ddblistview.c */; };
-		2DC656C22744289C00583E14 /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAE701825BDDC3300E40154 /* deletefromdisk.c */; };
-		2DC656C32744289C00583E14 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
 		2DC656C42744289C00583E14 /* search.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5C22269BB4300AFF9AE /* search.c */; };
 		2DC656C52744289C00583E14 /* ddbequalizer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5CF2269BB4300AFF9AE /* ddbequalizer.c */; };
 		2DC656C62744289C00583E14 /* ddb_splitter_size_mode.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B58E2269BB4300AFF9AE /* ddb_splitter_size_mode.c */; };
@@ -2275,7 +2276,6 @@
 		2DC656D12744289C00583E14 /* trkproperties.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5CD2269BB4300AFF9AE /* trkproperties.c */; };
 		2DC656D22744289C00583E14 /* ctmapping.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5892269BB4300AFF9AE /* ctmapping.c */; };
 		2DC656D32744289C00583E14 /* prefwinnetwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D715C1926C839020022A8F0 /* prefwinnetwork.c */; };
-		2DC656D42744289C00583E14 /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DBCB720240ADCC10012F178 /* tftintutil.c */; };
 		2DC656D62744289C00583E14 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2DC65734274428F200583E14 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		2DC65735274428F200583E14 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
@@ -2443,7 +2443,6 @@
 		2DD3775D27414BD9007AD315 /* ScopePreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD3775A27414BD9007AD315 /* ScopePreferencesWindowController.xib */; };
 		2DD3776027414BF6007AD315 /* ScopePreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3775E27414BF6007AD315 /* ScopePreferencesViewController.h */; };
 		2DD3776127414BF6007AD315 /* ScopePreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3775F27414BF6007AD315 /* ScopePreferencesViewController.m */; };
-		2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD39ED726AD8D1600C5846D /* analyzer.h */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
 		2DD6C5DD279B278E00CABBE6 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2575,10 +2574,6 @@
 		2DE3B8092269BF3100AFF9AE /* namedicons.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6912269BB4300AFF9AE /* namedicons.c */; };
 		2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6952269BB4300AFF9AE /* widgets.c */; };
 		2DE3B80B2269BF3100AFF9AE /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B6962269BB4300AFF9AE /* support.h */; };
-		2DE3B8142269C0A400AFF9AE /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */; };
-		2DE3B8152269C0A400AFF9AE /* trkproperties_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */; };
-		2DE3B8162269C0A400AFF9AE /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D93DC521AADFEEF003D2D8D /* pluginsettings.c */; };
-		2DE3B8172269C0A400AFF9AE /* pluginsettings.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D93DC531AADFEEF003D2D8D /* pluginsettings.h */; };
 		2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49E81837EC49003E6066 /* utf8.c */; };
 		2DE3B85E2269CA1500AFF9AE /* actionhandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8422269CA1500AFF9AE /* actionhandlers.h */; };
 		2DE3B8622269CA1500AFF9AE /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8482269CA1500AFF9AE /* hotkeys.h */; };
@@ -2605,8 +2600,6 @@
 		2DE77496275E8AFB00890350 /* converter_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE77467275E893400890350 /* converter_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */; };
 		2DE92F561BAFFBEE00F37154 /* wavpack.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1BD23E203B9000E4135 /* eqpreset.h */; };
-		2DEBA1CE23E20466000E4135 /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1BE23E203B9000E4135 /* eqpreset.c */; };
 		2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */; };
 		2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */; };
 		2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */; };
@@ -4643,8 +4636,6 @@
 		0D568527271DC35E0026F700 /* ScopeWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopeWidget.m; sourceTree = "<group>"; };
 		0D56853A271DC6670026F700 /* VisualizationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationViewController.h; sourceTree = "<group>"; };
 		0D56853B271DC6670026F700 /* VisualizationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VisualizationViewController.m; sourceTree = "<group>"; };
-		0D56856A272197B30026F700 /* scope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scope.h; sourceTree = "<group>"; };
-		0D56856B272197B30026F700 /* scope.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scope.c; sourceTree = "<group>"; };
 		2D00F23F2434DE4E000FC130 /* ddb_soundtouch.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_soundtouch.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D00F2752434DE87000FC130 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
 		2D00F2772434DE87000FC130 /* st.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = st.cpp; sourceTree = "<group>"; };
@@ -5256,8 +5247,6 @@
 		2D046F7C25E2B55200F68459 /* MainWindow.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainWindow.m; sourceTree = "<group>"; };
 		2D04701325E2D97D00F68459 /* WidgetMenuBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetMenuBuilder.h; sourceTree = "<group>"; };
 		2D04701425E2D97D00F68459 /* WidgetMenuBuilder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetMenuBuilder.m; sourceTree = "<group>"; };
-		2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = growableBuffer.h; sourceTree = "<group>"; };
-		2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = growableBuffer.c; sourceTree = "<group>"; };
 		2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GrowableBufferTests.cpp; sourceTree = "<group>"; };
 		2D05A8291B4BE59D004C913D /* sndfile.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = sndfile.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D05A8311B4BE5BC004C913D /* libsndfilelib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsndfilelib.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5865,8 +5854,6 @@
 		2D667E101C9C2DF600359129 /* openssl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = openssl.c; sourceTree = "<group>"; };
 		2D667E111C9C2DF600359129 /* openssl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = openssl.h; sourceTree = "<group>"; };
 		2D667E161C9C2E8400359129 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib/libssl.dylib; sourceTree = DEVELOPER_DIR; };
-		2D6965371D74338A00EB99D8 /* mp4tagutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4tagutil.c; sourceTree = "<group>"; };
-		2D6965381D74338A00EB99D8 /* mp4tagutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4tagutil.h; sourceTree = "<group>"; };
 		2D6D81ED1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbTableViewRightClickActivate.h; sourceTree = "<group>"; };
 		2D6D81EE1CCF9E0B00028788 /* DdbTableViewRightClickActivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbTableViewRightClickActivate.m; sourceTree = "<group>"; };
 		2D6DCB3D291B105D00D6ECE6 /* fastftoi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastftoi.h; sourceTree = "<group>"; };
@@ -6111,11 +6098,29 @@
 		2D90EF982438A5A600AF6F4B /* ScriptableErrorViewer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableErrorViewer.m; sourceTree = "<group>"; };
 		2D91773F1A0E8966004BC222 /* alac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = alac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D917E781A4046FE00C3EB44 /* libmpg123.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmpg123.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trkproperties_shared.c; sourceTree = "<group>"; };
-		2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trkproperties_shared.h; sourceTree = "<group>"; };
-		2D93DC521AADFEEF003D2D8D /* pluginsettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pluginsettings.c; sourceTree = "<group>"; };
-		2D93DC531AADFEEF003D2D8D /* pluginsettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pluginsettings.h; sourceTree = "<group>"; };
-		2D93DC541AADFEEF003D2D8D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		2D92D1D229B92A8300218F1D /* viz.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = viz.c; sourceTree = "<group>"; };
+		2D92D1D329B92A8300218F1D /* viz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = viz.h; sourceTree = "<group>"; };
+		2D92D1EE29B92DF900218F1D /* mp4tagutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4tagutil.h; sourceTree = "<group>"; };
+		2D92D1EF29B92DF900218F1D /* eqpreset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eqpreset.c; sourceTree = "<group>"; };
+		2D92D1F029B92DF900218F1D /* deletefromdisk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = deletefromdisk.c; sourceTree = "<group>"; };
+		2D92D1F129B92DF900218F1D /* trkproperties_shared.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trkproperties_shared.c; sourceTree = "<group>"; };
+		2D92D1F329B92DF900218F1D /* tftintutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tftintutil.c; sourceTree = "<group>"; };
+		2D92D1F429B92DF900218F1D /* ctmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ctmap.h; sourceTree = "<group>"; };
+		2D92D1F529B92DF900218F1D /* growableBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = growableBuffer.c; sourceTree = "<group>"; };
+		2D92D1F729B92DF900218F1D /* scope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scope.c; sourceTree = "<group>"; };
+		2D92D1F929B92DF900218F1D /* scope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scope.h; sourceTree = "<group>"; };
+		2D92D1FA29B92DF900218F1D /* pluginsettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pluginsettings.h; sourceTree = "<group>"; };
+		2D92D1FB29B92DF900218F1D /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		2D92D1FD29B92DF900218F1D /* eqpreset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eqpreset.h; sourceTree = "<group>"; };
+		2D92D1FE29B92DF900218F1D /* mp4tagutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp4tagutil.c; sourceTree = "<group>"; };
+		2D92D1FF29B92DF900218F1D /* trkproperties_shared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trkproperties_shared.h; sourceTree = "<group>"; };
+		2D92D20029B92DF900218F1D /* deletefromdisk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = deletefromdisk.h; sourceTree = "<group>"; };
+		2D92D21629B92DF900218F1D /* tftintutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tftintutil.h; sourceTree = "<group>"; };
+		2D92D21729B92DF900218F1D /* pluginsettings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pluginsettings.c; sourceTree = "<group>"; };
+		2D92D21A29B92DF900218F1D /* analyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analyzer.h; sourceTree = "<group>"; };
+		2D92D21C29B92DF900218F1D /* analyzer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
+		2D92D21D29B92DF900218F1D /* growableBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = growableBuffer.h; sourceTree = "<group>"; };
+		2D92D21E29B92DF900218F1D /* ctmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ctmap.c; sourceTree = "<group>"; };
 		2D95F6B829392884002D8499 /* artwork_ogg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_ogg.h; sourceTree = "<group>"; };
 		2D95F6B929392884002D8499 /* artwork_ogg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_ogg.c; sourceTree = "<group>"; };
 		2D95F6BF29392F17002D8499 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
@@ -6343,8 +6348,6 @@
 		2DA2A0ED1BE7FE4700601670 /* u8_uc_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = u8_uc_map.h; sourceTree = "<group>"; };
 		2DA30B7D23F1C9A3003D22E3 /* PropertySheetContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PropertySheetContentView.h; sourceTree = "<group>"; };
 		2DA30B7E23F1C9A3003D22E3 /* PropertySheetContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PropertySheetContentView.m; sourceTree = "<group>"; };
-		2DA30E5E2402D1B1001BAB8A /* ctmap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctmap.h; sourceTree = "<group>"; };
-		2DA30E5F2402D1B1001BAB8A /* ctmap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ctmap.c; sourceTree = "<group>"; };
 		2DA30E7224032550001BAB8A /* NetworkPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkPreferencesViewController.h; sourceTree = "<group>"; };
 		2DA30E7324032550001BAB8A /* NetworkPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NetworkPreferencesViewController.m; sourceTree = "<group>"; };
 		2DA30E772403292D001BAB8A /* PlaybackPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaybackPreferencesViewController.h; sourceTree = "<group>"; };
@@ -6355,8 +6358,6 @@
 		2DA59E1125D00C6200947C19 /* m3u.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m3u.h; sourceTree = "<group>"; };
 		2DA5A34825D01CA500947C19 /* libebur128.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libebur128.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA5A93925D0330600947C19 /* libwavpacklib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libwavpacklib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DA5C2C026A75B840098AF24 /* viz.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = viz.h; sourceTree = "<group>"; };
-		2DA5C2C126A75B840098AF24 /* viz.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = viz.c; sourceTree = "<group>"; };
 		2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditColumnPanel.xib; sourceTree = "<group>"; };
 		2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditColumnWindowController.h; sourceTree = "<group>"; };
 		2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditColumnWindowController.m; sourceTree = "<group>"; };
@@ -6531,8 +6532,6 @@
 		2DAC162026B9C0AF0080F8E6 /* samplerate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = samplerate.h; path = "deps/libsamplerate-0.2.1/include/samplerate.h"; sourceTree = "<group>"; };
 		2DAD809F2416DBB100EB3075 /* CustomToolbarItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomToolbarItem.h; sourceTree = "<group>"; };
 		2DAD80A02416DBB100EB3075 /* CustomToolbarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomToolbarItem.m; sourceTree = "<group>"; };
-		2DAE701725BDDC3300E40154 /* deletefromdisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = deletefromdisk.h; sourceTree = "<group>"; };
-		2DAE701825BDDC3300E40154 /* deletefromdisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = deletefromdisk.c; sourceTree = "<group>"; };
 		2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesWindowController.h; sourceTree = "<group>"; };
 		2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesWindowController.m; sourceTree = "<group>"; };
 		2DAF900226A4533600C1CA25 /* coverinfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = coverinfo.h; sourceTree = "<group>"; };
@@ -6579,8 +6578,6 @@
 		2DBCA69827944B2200D7432F /* COPYING.GPLv2 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.GPLv2; path = ../../COPYING.GPLv2; sourceTree = "<group>"; };
 		2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; name = COPYING.LGPLv2.1; path = ../../COPYING.LGPLv2.1; sourceTree = "<group>"; };
 		2DBCA69C27944BB600D7432F /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../../ChangeLog; sourceTree = "<group>"; };
-		2DBCB71F240ADCC10012F178 /* tftintutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tftintutil.h; sourceTree = "<group>"; };
-		2DBCB720240ADCC10012F178 /* tftintutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tftintutil.c; sourceTree = "<group>"; };
 		2DBF3D3F270868D400023138 /* MainContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainContentViewController.xib; sourceTree = "<group>"; };
 		2DBF3D4127086AA900023138 /* MainContentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainContentViewController.h; sourceTree = "<group>"; };
 		2DBF3D4227086AA900023138 /* MainContentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainContentViewController.m; sourceTree = "<group>"; };
@@ -6823,8 +6820,6 @@
 		2DD3775A27414BD9007AD315 /* ScopePreferencesWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScopePreferencesWindowController.xib; sourceTree = "<group>"; };
 		2DD3775E27414BF6007AD315 /* ScopePreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopePreferencesViewController.h; sourceTree = "<group>"; };
 		2DD3775F27414BF6007AD315 /* ScopePreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopePreferencesViewController.m; sourceTree = "<group>"; };
-		2DD39ED726AD8D1600C5846D /* analyzer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = analyzer.h; sourceTree = "<group>"; };
-		2DD39ED826AD8D1600C5846D /* analyzer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
 		2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSeekBar.h; sourceTree = "<group>"; };
 		2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSeekBar.m; sourceTree = "<group>"; };
@@ -6967,8 +6962,6 @@
 		2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = bufferingTemplate.pdf; sourceTree = "<group>"; };
 		2DE7A8FA1CA493CE00318A9F /* CuesheetTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CuesheetTests.cpp; sourceTree = "<group>"; };
 		2DE92F2F1BAFFB4F00F37154 /* wavpack.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wavpack.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DEBA1BD23E203B9000E4135 /* eqpreset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = eqpreset.h; sourceTree = "<group>"; };
-		2DEBA1BE23E203B9000E4135 /* eqpreset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = eqpreset.c; sourceTree = "<group>"; };
 		2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EqualizerWindowController.h; sourceTree = "<group>"; };
 		2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EqualizerWindowController.m; sourceTree = "<group>"; };
 		2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EqualizerWindowController.xib; sourceTree = "<group>"; };
@@ -8213,19 +8206,6 @@
 				0D56853B271DC6670026F700 /* VisualizationViewController.m */,
 			);
 			path = Shared;
-			sourceTree = "<group>";
-		};
-		0D56855A272197A30026F700 /* viz */ = {
-			isa = PBXGroup;
-			children = (
-				2DD39ED826AD8D1600C5846D /* analyzer.c */,
-				2DD39ED726AD8D1600C5846D /* analyzer.h */,
-				0D56856B272197B30026F700 /* scope.c */,
-				0D56856A272197B30026F700 /* scope.h */,
-				2DA5C2C126A75B840098AF24 /* viz.c */,
-				2DA5C2C026A75B840098AF24 /* viz.h */,
-			);
-			path = viz;
 			sourceTree = "<group>";
 		};
 		2D00F2552434DE87000FC130 /* soundtouch */ = {
@@ -10640,8 +10620,6 @@
 				4D1B3F861837EC44003E6066 /* md5 */,
 				2DDD764125E1506100FA6FE5 /* metadata */,
 				2D135EE6226E388E00BAAE84 /* scriptable */,
-				2D93DC511AADFEEF003D2D8D /* shared */,
-				0D56855A272197A30026F700 /* viz */,
 				2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */,
 				2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */,
 				2DD9EF0419A5089F00189344 /* cocoautil.h */,
@@ -10708,6 +10686,8 @@
 				4D1B49EC1837EC49003E6066 /* vfs_stdio.c */,
 				4D1B49EA1837EC49003E6066 /* vfs.c */,
 				4D1B49EB1837EC49003E6066 /* vfs.h */,
+				2D92D1D229B92A8300218F1D /* viz.c */,
+				2D92D1D329B92A8300218F1D /* viz.h */,
 				4D1B49ED1837EC49003E6066 /* volume.c */,
 				4D1B49EE1837EC49003E6066 /* volume.h */,
 				2DA21F5D29868F930077BD4C /* resizable_buffer.h */,
@@ -10737,28 +10717,49 @@
 			path = deadbeef;
 			sourceTree = "<group>";
 		};
-		2D93DC511AADFEEF003D2D8D /* shared */ = {
+		2D92D1ED29B92DF900218F1D /* shared */ = {
 			isa = PBXGroup;
 			children = (
-				2D93DC541AADFEEF003D2D8D /* README */,
-				2DA30E5F2402D1B1001BAB8A /* ctmap.c */,
-				2DA30E5E2402D1B1001BAB8A /* ctmap.h */,
-				2DAE701825BDDC3300E40154 /* deletefromdisk.c */,
-				2DAE701725BDDC3300E40154 /* deletefromdisk.h */,
-				2DEBA1BE23E203B9000E4135 /* eqpreset.c */,
-				2DEBA1BD23E203B9000E4135 /* eqpreset.h */,
-				2D04C3BF2433B0FD003C2AAC /* growableBuffer.c */,
-				2D04C3BE2433B0FD003C2AAC /* growableBuffer.h */,
-				2D6965371D74338A00EB99D8 /* mp4tagutil.c */,
-				2D6965381D74338A00EB99D8 /* mp4tagutil.h */,
-				2D93DC521AADFEEF003D2D8D /* pluginsettings.c */,
-				2D93DC531AADFEEF003D2D8D /* pluginsettings.h */,
-				2DBCB720240ADCC10012F178 /* tftintutil.c */,
-				2DBCB71F240ADCC10012F178 /* tftintutil.h */,
-				2D92D0541CD513AA00CD53F0 /* trkproperties_shared.c */,
-				2D92D0551CD513AA00CD53F0 /* trkproperties_shared.h */,
+				2D92D21929B92DF900218F1D /* analyzer */,
+				2D92D1F629B92DF900218F1D /* scope */,
+				2D92D1FB29B92DF900218F1D /* README */,
+				2D92D21E29B92DF900218F1D /* ctmap.c */,
+				2D92D1F429B92DF900218F1D /* ctmap.h */,
+				2D92D1F029B92DF900218F1D /* deletefromdisk.c */,
+				2D92D20029B92DF900218F1D /* deletefromdisk.h */,
+				2D92D1EF29B92DF900218F1D /* eqpreset.c */,
+				2D92D1FD29B92DF900218F1D /* eqpreset.h */,
+				2D92D1F529B92DF900218F1D /* growableBuffer.c */,
+				2D92D21D29B92DF900218F1D /* growableBuffer.h */,
+				2D92D1FE29B92DF900218F1D /* mp4tagutil.c */,
+				2D92D1EE29B92DF900218F1D /* mp4tagutil.h */,
+				2D92D21729B92DF900218F1D /* pluginsettings.c */,
+				2D92D1FA29B92DF900218F1D /* pluginsettings.h */,
+				2D92D1F329B92DF900218F1D /* tftintutil.c */,
+				2D92D21629B92DF900218F1D /* tftintutil.h */,
+				2D92D1F129B92DF900218F1D /* trkproperties_shared.c */,
+				2D92D1FF29B92DF900218F1D /* trkproperties_shared.h */,
 			);
-			path = shared;
+			name = shared;
+			path = ../shared;
+			sourceTree = "<group>";
+		};
+		2D92D1F629B92DF900218F1D /* scope */ = {
+			isa = PBXGroup;
+			children = (
+				2D92D1F729B92DF900218F1D /* scope.c */,
+				2D92D1F929B92DF900218F1D /* scope.h */,
+			);
+			path = scope;
+			sourceTree = "<group>";
+		};
+		2D92D21929B92DF900218F1D /* analyzer */ = {
+			isa = PBXGroup;
+			children = (
+				2D92D21A29B92DF900218F1D /* analyzer.h */,
+				2D92D21C29B92DF900218F1D /* analyzer.c */,
+			);
+			path = analyzer;
 			sourceTree = "<group>";
 		};
 		2D9793E0276E853E0062585E /* covermanager */ = {
@@ -12046,6 +12047,7 @@
 			isa = PBXGroup;
 			children = (
 				2D92D19C29B9044300218F1D /* include */,
+				2D92D1ED29B92DF900218F1D /* shared */,
 				2D92D18C29B9039A00218F1D /* src */,
 				2DA9777324C5EC26002405DA /* xcodeconfig */,
 				2D9E5BFE24AE6AAD0099B108 /* external */,
@@ -13000,10 +13002,8 @@
 				2DC657E3274A5F6000583E14 /* PlaylistBrowserWidget.h in Headers */,
 				2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */,
 				2DAA402E269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
-				2DAE701925BDDC3300E40154 /* deletefromdisk.h in Headers */,
 				2DDD778F25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
 				2DDD781725E1578C00FA6FE5 /* SplitterWidget.h in Headers */,
-				2DBCB725240AE0BE0012F178 /* tftintutil.h in Headers */,
 				2DDD789D25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
 				0D56853E271DC6670026F700 /* VisualizationViewController.h in Headers */,
 				2DC657F2274A7A6900583E14 /* PlaylistContextMenu.h in Headers */,
@@ -13017,6 +13017,7 @@
 				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2DC657F9274A7C4600583E14 /* RenamePlaylistViewController.h in Headers */,
+				2D92D1D529B92A8300218F1D /* viz.h in Headers */,
 				2DC6583E274C361C00583E14 /* HolderWidget.h in Headers */,
 				2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
 				2DC6C5E2294CE06B00A63CEB /* ChiptuneVoicesWidget.h in Headers */,
@@ -13855,7 +13856,6 @@
 				2DC656752744289C00583E14 /* clipboard.h in Headers */,
 				2DC656762744289C00583E14 /* ddbtabstrip.h in Headers */,
 				2DC656772744289C00583E14 /* prefwinmisc.h in Headers */,
-				2DC656782744289C00583E14 /* trkproperties_shared.h in Headers */,
 				2DC656792744289C00583E14 /* widgets.h in Headers */,
 				2DC6567A2744289C00583E14 /* drawing.h in Headers */,
 				2DC6567B2744289C00583E14 /* deadbeefapp.h in Headers */,
@@ -13875,13 +13875,11 @@
 				2DC656862744289C00583E14 /* ddb_splitter_size_mode.h in Headers */,
 				2DC656872744289C00583E14 /* prefwinnetwork.h in Headers */,
 				2DC656882744289C00583E14 /* support.h in Headers */,
-				2DC656892744289C00583E14 /* pluginsettings.h in Headers */,
 				2D60EAFE277235C800C28A44 /* playlistcontroller.h in Headers */,
 				2DC6568A2744289C00583E14 /* ctmapping.h in Headers */,
 				2DC6568B2744289C00583E14 /* prefwinplayback.h in Headers */,
 				2DC6568C2744289C00583E14 /* prefwinmedialib.h in Headers */,
 				2DC6568D2744289C00583E14 /* rg.h in Headers */,
-				2DC6568E2744289C00583E14 /* deletefromdisk.h in Headers */,
 				2DC6568F2744289C00583E14 /* plcommon.h in Headers */,
 				2DC656902744289C00583E14 /* progress.h in Headers */,
 				2DC656912744289C00583E14 /* eq.h in Headers */,
@@ -13941,7 +13939,6 @@
 				2DE3B7F72269BF3100AFF9AE /* clipboard.h in Headers */,
 				2DE3B7EB2269BF3100AFF9AE /* ddbtabstrip.h in Headers */,
 				2D715C1226C836FE0022A8F0 /* prefwinmisc.h in Headers */,
-				2DE3B8152269C0A400AFF9AE /* trkproperties_shared.h in Headers */,
 				2DE3B7E02269BF3100AFF9AE /* widgets.h in Headers */,
 				2DE3B7D32269BF1700AFF9AE /* drawing.h in Headers */,
 				2DE3B7D62269BF1700AFF9AE /* deadbeefapp.h in Headers */,
@@ -13961,13 +13958,11 @@
 				2DE3B7FB2269BF3100AFF9AE /* ddb_splitter_size_mode.h in Headers */,
 				2D715C1A26C839020022A8F0 /* prefwinnetwork.h in Headers */,
 				2DE3B80B2269BF3100AFF9AE /* support.h in Headers */,
-				2DE3B8172269C0A400AFF9AE /* pluginsettings.h in Headers */,
 				2D60EAFF277235C800C28A44 /* playlistcontroller.h in Headers */,
 				2DE3B7E92269BF3100AFF9AE /* ctmapping.h in Headers */,
 				2D715C0E26C835E90022A8F0 /* prefwinplayback.h in Headers */,
 				2D715C3626C8451A0022A8F0 /* prefwinmedialib.h in Headers */,
 				2DE3B7FD2269BF3100AFF9AE /* rg.h in Headers */,
-				2DAE706925BDE55D00E40154 /* deletefromdisk.h in Headers */,
 				2DE3B8032269BF3100AFF9AE /* plcommon.h in Headers */,
 				2DE3B7C12269BF1300AFF9AE /* progress.h in Headers */,
 				2DE3B7F22269BF3100AFF9AE /* eq.h in Headers */,
@@ -14278,7 +14273,6 @@
 				2D78C55D27568D9600F96F9D /* medialibtree.h in Headers */,
 				2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */,
 				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
-				2DD39ED926AD8D1600C5846D /* analyzer.h in Headers */,
 				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
 				2DC657CC2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
@@ -14294,7 +14288,6 @@
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
 				2DD3774A27404E11007AD315 /* VisualizationSettingsUtil.h in Headers */,
 				2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */,
-				2D93DC561AADFEEF003D2D8D /* pluginsettings.h in Headers */,
 				2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2DBC62D624CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h in Headers */,
 				0D568528271DC35E0026F700 /* ScopeWidget.h in Headers */,
@@ -14310,7 +14303,6 @@
 				2DD3775B27414BD9007AD315 /* ScopePreferencesWindowController.h in Headers */,
 				2D9EBB7125E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
-				2DEBA1BF23E203B9000E4135 /* eqpreset.h in Headers */,
 				2D9793E3276E854F0062585E /* covermanager.h in Headers */,
 				2D7C1FAD2946001B00163538 /* ShaderRenderer.h in Headers */,
 				2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */,
@@ -14327,7 +14319,6 @@
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
 				2DAA402D269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
-				2DA5C2C226A75B840098AF24 /* viz.h in Headers */,
 				2D7C1FB229461C6900163538 /* SpectrumAnalyzerLabelsView.h in Headers */,
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
 				2DBF3D4327086AA900023138 /* MainContentViewController.h in Headers */,
@@ -14337,8 +14328,6 @@
 				2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */,
 				2D61723119B7A1BE008D4A26 /* DdbTabStrip.h in Headers */,
 				2D5F05F025E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
-				2D92D0571CD513AA00CD53F0 /* trkproperties_shared.h in Headers */,
-				2DA30E602402D1B1001BAB8A /* ctmap.h in Headers */,
 				2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */,
 				0D56853D271DC6670026F700 /* VisualizationViewController.h in Headers */,
 				2D9793F1276F6D2B0062585E /* albumartwidget.h in Headers */,
@@ -14402,8 +14391,6 @@
 				2D046F3925E2B17700F68459 /* DesignModeEventHandler.h in Headers */,
 				2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */,
 				2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */,
-				2D04C3C02433B0FD003C2AAC /* growableBuffer.h in Headers */,
-				0D56856C272197B30026F700 /* scope.h in Headers */,
 				2D986142226C816000BAACB1 /* BrowseButton.h in Headers */,
 				2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */,
 				2DC6C5E1294CE06B00A63CEB /* ChiptuneVoicesWidget.h in Headers */,
@@ -16216,6 +16203,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D92D24529B92DFA00218F1D /* README in Resources */,
 				2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */,
 				2D48DC2F2269B731002CACFD /* convpresets in Resources */,
 				2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */,
@@ -16270,6 +16258,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D92D24429B92DFA00218F1D /* README in Resources */,
 				2DC65740274428F200583E14 /* Images.xcassets in Resources */,
 				2DC65741274428F200583E14 /* convpresets in Resources */,
 				2DC65742274428F200583E14 /* deadbeef.png in Resources */,
@@ -16299,6 +16288,7 @@
 				2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */,
 				2DC65828274AB03800583E14 /* LyricsViewController.xib in Resources */,
 				2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */,
+				2D92D24329B92DFA00218F1D /* README in Resources */,
 				2DBCA6962794492D00D7432F /* Credits.rtf in Resources */,
 				2DE7A7B119A689E600F8C0B8 /* bufferingTemplate.pdf in Resources */,
 				4DA72BEC1838EAAB00A98C62 /* Images.xcassets in Resources */,
@@ -16470,23 +16460,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */,
+				2D92D33E29B9324A00218F1D /* pluginsettings.c in Sources */,
 				2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */,
 				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,
 				2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */,
 				2D01D7DD1AB2219C00BCD3C4 /* pltmeta.c in Sources */,
-				2D01D7CE1AB2219C00BCD3C4 /* pluginsettings.c in Sources */,
 				2D01D7D71AB2219C00BCD3C4 /* handler.c in Sources */,
 				2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */,
-				2DAE701A25BDDC3300E40154 /* deletefromdisk.c in Sources */,
+				2D92D33329B931C600218F1D /* deletefromdisk.c in Sources */,
 				2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */,
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
+				2D92D33729B9320200218F1D /* eqpreset.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
 				2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
+				2D92D33829B9320500218F1D /* growableBuffer.c in Sources */,
 				2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */,
 				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
 				2D9E5C6724AE6DE60099B108 /* wcwidth.c in Sources */,
-				2DA30E6F2402D29A001BAB8A /* ctmap.c in Sources */,
 				2D9E9B5126BB1DF000757C71 /* fft_accelerate.c in Sources */,
 				2D01D7E21AB2219C00BCD3C4 /* streamer.c in Sources */,
 				2D448A841D5C5C6500B43F12 /* logger.c in Sources */,
@@ -16494,24 +16485,23 @@
 				2D01D7E61AB2219C00BCD3C4 /* vfs_stdio.c in Sources */,
 				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
 				2D01D7D81AB2219C00BCD3C4 /* junklib.c in Sources */,
-				2D0A549223E8CC9500E0F978 /* eqpreset.c in Sources */,
 				2D01D7D31AB2219C00BCD3C4 /* escape.c in Sources */,
 				2DDD764525E1506100FA6FE5 /* metadata.c in Sources */,
 				2D01D7DA1AB2219C00BCD3C4 /* metacache.c in Sources */,
-				2DA5C2D326A75CEE0098AF24 /* viz.c in Sources */,
+				2D92D1D429B92A8300218F1D /* viz.c in Sources */,
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
 				2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */,
 				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
 				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
 				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,
+				2D92D33629B931FB00218F1D /* ctmap.c in Sources */,
 				2D01D7D51AB2219C00BCD3C4 /* dsppreset.c in Sources */,
-				2D04C3CF2433B147003C2AAC /* growableBuffer.c in Sources */,
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
-				2DBCB726240AE28E0012F178 /* tftintutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
+				2D92D33D29B9324A00218F1D /* tftintutil.c in Sources */,
 				2DB951C726B0874200602876 /* decodedblock.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
 				2DA21F6029868F9C0077BD4C /* resizable_buffer.c in Sources */,
@@ -16716,7 +16706,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D9FFA251D7588A700D1B5F8 /* mp4tagutil.c in Sources */,
+				2D92D30E29B92F7B00218F1D /* mp4tagutil.c in Sources */,
 				2D2351251B138F3200A62936 /* converter.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16733,7 +16723,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D69653A1D74338A00EB99D8 /* mp4tagutil.c in Sources */,
+				2D92D31029B92F7D00218F1D /* mp4tagutil.c in Sources */,
 				2D28F0481C283BF7004A6E7B /* aac_parser.c in Sources */,
 				2D28F04A1C283BF7004A6E7B /* aac.c in Sources */,
 				2DDFABEE2438F20400E13E85 /* aac_decoder_wrap.c in Sources */,
@@ -16974,7 +16964,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D48DBD62269B731002CACFD /* main.c in Sources */,
+				2D92D33029B9305B00218F1D /* pluginsettings.c in Sources */,
+				2D92D33229B9305B00218F1D /* growableBuffer.c in Sources */,
 				2D48DBE42269B731002CACFD /* plugins.c in Sources */,
+				2D92D33129B9305B00218F1D /* ctmap.c in Sources */,
 				2D48DBE62269B731002CACFD /* coreaudio.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16999,9 +16992,9 @@
 				2D95F6BB29392884002D8499 /* artwork_ogg.c in Sources */,
 				2D621FDD1CD92CCA00EB6D22 /* wos.c in Sources */,
 				2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */,
-				2D5193C824ABBC1600134891 /* mp4tagutil.c in Sources */,
 				2DAF900526A4533600C1CA25 /* coverinfo.c in Sources */,
 				2D621FD71CD92CCA00EB6D22 /* lastfm.c in Sources */,
+				2D92D31129B92F8000218F1D /* mp4tagutil.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17237,9 +17230,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D92D30F29B92F7C00218F1D /* mp4tagutil.c in Sources */,
 				2DF1ED6A1DAA376B00E23298 /* alac.c in Sources */,
 				2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */,
-				2D6965391D74338A00EB99D8 /* mp4tagutil.c in Sources */,
 				2D9177391A0E8966004BC222 /* m3u.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17563,7 +17556,6 @@
 				2D04C3D12433B3B9003C2AAC /* GrowableBufferTests.cpp in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
-				2D14E0541E14170E009870E6 /* mp4tagutil.c in Sources */,
 				2D15721623785BD900985E47 /* VfsCurlTests.cpp in Sources */,
 				4D6CF18B20EB783900811034 /* MP3ParserTests.cpp in Sources */,
 				2D78C5682756990B00F96F9D /* medialibfilesystem_stub.c in Sources */,
@@ -17613,22 +17605,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D92D31729B92F8700218F1D /* scope.c in Sources */,
 				2DC6569D2744289C00583E14 /* prefwinappearance.c in Sources */,
 				2D9793E6276E86C50062585E /* covermanager.c in Sources */,
 				2D5C6AD62752B6930073632B /* plmenu.c in Sources */,
 				2DC6569E2744289C00583E14 /* rg.c in Sources */,
 				2DC6569F2744289C00583E14 /* utf8.c in Sources */,
 				2DC656A02744289C00583E14 /* gtkui_deletefromdisk.c in Sources */,
+				2D92D31E29B92F8D00218F1D /* deletefromdisk.c in Sources */,
 				2DC656A12744289C00583E14 /* fileman.c in Sources */,
 				2DC656A22744289C00583E14 /* prefwinsound.c in Sources */,
 				2D9793ED276E894E0062585E /* gobjcache.c in Sources */,
+				2D92D31D29B92F8D00218F1D /* eqpreset.c in Sources */,
 				2DC656A42744289C00583E14 /* eq.c in Sources */,
 				2DC656A52744289C00583E14 /* deadbeefapp.c in Sources */,
 				2DC656A62744289C00583E14 /* interface.c in Sources */,
 				2DC656A72744289C00583E14 /* namedicons.c in Sources */,
 				2DC656A82744289C00583E14 /* prefwinplugins.c in Sources */,
-				2DC656A92744289C00583E14 /* eqpreset.c in Sources */,
-				2DC656AA2744289C00583E14 /* trkproperties_shared.c in Sources */,
 				2DC656AB2744289C00583E14 /* prefwin.c in Sources */,
 				2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */,
 				2DC656AE2744289C00583E14 /* support.c in Sources */,
@@ -17649,13 +17642,11 @@
 				2DC656BC2744289C00583E14 /* wingeom.c in Sources */,
 				2DC656BD2744289C00583E14 /* tagwritersettings.c in Sources */,
 				2D60EAC42771119500C28A44 /* playlistrenderer.c in Sources */,
+				2D92D32C29B92FCA00218F1D /* trkproperties_shared.c in Sources */,
 				2DC656BE2744289C00583E14 /* gtkui.c in Sources */,
-				2DC656BF2744289C00583E14 /* scope.c in Sources */,
 				2D60EAE3277127EE00C28A44 /* ddblistviewheader.c in Sources */,
-				2DC656C02744289C00583E14 /* analyzer.c in Sources */,
 				2DC656C12744289C00583E14 /* ddblistview.c in Sources */,
-				2DC656C22744289C00583E14 /* deletefromdisk.c in Sources */,
-				2DC656C32744289C00583E14 /* pluginsettings.c in Sources */,
+				2D92D31529B92F8700218F1D /* analyzer.c in Sources */,
 				2DC656C42744289C00583E14 /* search.c in Sources */,
 				2DC656C52744289C00583E14 /* ddbequalizer.c in Sources */,
 				2DC656C62744289C00583E14 /* ddb_splitter_size_mode.c in Sources */,
@@ -17663,6 +17654,7 @@
 				2DC656C72744289C00583E14 /* ddbvolumebar.c in Sources */,
 				2DC656C82744289C00583E14 /* actionhandlers.c in Sources */,
 				2DC656C92744289C00583E14 /* ddb_splitter.c in Sources */,
+				2D92D32429B92F9600218F1D /* tftintutil.c in Sources */,
 				2DC656CA2744289C00583E14 /* tfimport.c in Sources */,
 				2DC656CB2744289C00583E14 /* mainplaylist.c in Sources */,
 				2DC656CC2744289C00583E14 /* parser.c in Sources */,
@@ -17673,7 +17665,6 @@
 				2DC656D12744289C00583E14 /* trkproperties.c in Sources */,
 				2DC656D22744289C00583E14 /* ctmapping.c in Sources */,
 				2DC656D32744289C00583E14 /* prefwinnetwork.c in Sources */,
-				2DC656D42744289C00583E14 /* tftintutil.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17682,7 +17673,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DC65734274428F200583E14 /* main.c in Sources */,
+				2D92D32D29B9305B00218F1D /* pluginsettings.c in Sources */,
+				2D92D32F29B9305B00218F1D /* growableBuffer.c in Sources */,
 				2DC65735274428F200583E14 /* plugins.c in Sources */,
+				2D92D32E29B9305B00218F1D /* ctmap.c in Sources */,
 				2DC65736274428F200583E14 /* coreaudio.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17707,22 +17701,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D92D31A29B92F8700218F1D /* scope.c in Sources */,
 				2D715C1726C837A80022A8F0 /* prefwinappearance.c in Sources */,
 				2D9793E5276E86C50062585E /* covermanager.c in Sources */,
 				2D5C6AD72752B6930073632B /* plmenu.c in Sources */,
 				2DE3B7DF2269BF3100AFF9AE /* rg.c in Sources */,
 				2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */,
 				2DA62BA626F3C8A800ED449A /* gtkui_deletefromdisk.c in Sources */,
+				2D92D32029B92F8D00218F1D /* deletefromdisk.c in Sources */,
 				2DE3B7FA2269BF3100AFF9AE /* fileman.c in Sources */,
 				2D715C0B26C833570022A8F0 /* prefwinsound.c in Sources */,
 				2D9793EE276E894F0062585E /* gobjcache.c in Sources */,
+				2D92D31F29B92F8D00218F1D /* eqpreset.c in Sources */,
 				2DE3B7C02269BF1300AFF9AE /* eq.c in Sources */,
 				2DE3B8022269BF3100AFF9AE /* deadbeefapp.c in Sources */,
 				2DE3B7C92269BF1300AFF9AE /* interface.c in Sources */,
 				2DE3B8092269BF3100AFF9AE /* namedicons.c in Sources */,
 				2D715C1F26C83A010022A8F0 /* prefwinplugins.c in Sources */,
-				2DEBA1CE23E20466000E4135 /* eqpreset.c in Sources */,
-				2DE3B8142269C0A400AFF9AE /* trkproperties_shared.c in Sources */,
 				2DE3B7D72269BF1700AFF9AE /* prefwin.c in Sources */,
 				2DE3B7DC2269BF1700AFF9AE /* ddbseekbar.c in Sources */,
 				2DE3B7E12269BF3100AFF9AE /* support.c in Sources */,
@@ -17743,13 +17738,11 @@
 				2DE3B7E32269BF3100AFF9AE /* wingeom.c in Sources */,
 				2DE3B7CF2269BF1700AFF9AE /* tagwritersettings.c in Sources */,
 				2D60EAC52771119500C28A44 /* playlistrenderer.c in Sources */,
+				2D92D32B29B92FC900218F1D /* trkproperties_shared.c in Sources */,
 				2DE3B7E82269BF3100AFF9AE /* gtkui.c in Sources */,
-				0D56856F27219F410026F700 /* scope.c in Sources */,
 				2D60EAE4277127EE00C28A44 /* ddblistviewheader.c in Sources */,
-				2D9E9B5226BB1EDE00757C71 /* analyzer.c in Sources */,
 				2DE3B7C22269BF1300AFF9AE /* ddblistview.c in Sources */,
-				2DAE706A25BDE55D00E40154 /* deletefromdisk.c in Sources */,
-				2DE3B8162269C0A400AFF9AE /* pluginsettings.c in Sources */,
+				2D92D31829B92F8700218F1D /* analyzer.c in Sources */,
 				2DE3B7E42269BF3100AFF9AE /* search.c in Sources */,
 				2DE3B7EC2269BF3100AFF9AE /* ddbequalizer.c in Sources */,
 				2DE3B7CE2269BF1700AFF9AE /* ddb_splitter_size_mode.c in Sources */,
@@ -17757,6 +17750,7 @@
 				2DE3B7FE2269BF3100AFF9AE /* ddbvolumebar.c in Sources */,
 				2DE3B7F52269BF3100AFF9AE /* actionhandlers.c in Sources */,
 				2DE3B7C82269BF1300AFF9AE /* ddb_splitter.c in Sources */,
+				2D92D32529B92F9700218F1D /* tftintutil.c in Sources */,
 				2DE3B7E62269BF3100AFF9AE /* tfimport.c in Sources */,
 				2DE3B7F42269BF3100AFF9AE /* mainplaylist.c in Sources */,
 				2DE3B86F2269CAEA00AFF9AE /* parser.c in Sources */,
@@ -17767,7 +17761,6 @@
 				2DE3B7EA2269BF3100AFF9AE /* trkproperties.c in Sources */,
 				2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */,
 				2D715C1B26C839020022A8F0 /* prefwinnetwork.c in Sources */,
-				2DA320F526557874002DD229 /* tftintutil.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17916,7 +17909,6 @@
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,
 				2DC65809274A876300583E14 /* DeletePlaylistConfirmationController.m in Sources */,
-				0D56856D272197B30026F700 /* scope.c in Sources */,
 				2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */,
@@ -17932,6 +17924,8 @@
 				2DD3774727404401007AD315 /* AppearancePreferencesViewController.m in Sources */,
 				2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* PlaceholderWidget.m in Sources */,
+				2D92D32A29B92FC800218F1D /* trkproperties_shared.c in Sources */,
+				2D92D33A29B9322700218F1D /* tftintutil.c in Sources */,
 				2DDE52A724F821630096EF80 /* MediaLibraryOutlineView.m in Sources */,
 				2DC657FA274A7C4600583E14 /* RenamePlaylistViewController.m in Sources */,
 				2DC657C82748502F00583E14 /* SegmentedTabView.m in Sources */,
@@ -17942,6 +17936,7 @@
 				2DC657F3274A7A6900583E14 /* PlaylistContextMenu.m in Sources */,
 				2DD3775227412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m in Sources */,
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
+				2D92D33C29B9323600218F1D /* analyzer.c in Sources */,
 				2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */,
 				2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */,
 				2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */,
@@ -17950,7 +17945,6 @@
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
 				2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */,
 				2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */,
-				2D92D0561CD513AA00CD53F0 /* trkproperties_shared.c in Sources */,
 				4DA72BE71838EAAB00A98C62 /* AppDelegate.m in Sources */,
 				2DC657C12746F67600583E14 /* RenameTabViewController.m in Sources */,
 				2DC6C5E3294CE06B00A63CEB /* ChiptuneVoicesWidget.m in Sources */,
@@ -17963,6 +17957,7 @@
 				2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */,
 				2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */,
 				2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */,
+				2D92D33B29B9323600218F1D /* scope.c in Sources */,
 				2DC6582A274AB03800583E14 /* LyricsViewController.m in Sources */,
 				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
@@ -17977,7 +17972,6 @@
 				2D046F7E25E2B55200F68459 /* MainWindow.m in Sources */,
 				2D747E4124B6580A00BBB987 /* MainWindowSidebarViewController.m in Sources */,
 				2DC657CE2749544000583E14 /* PlaylistWithTabsWidget.m in Sources */,
-				0D56856E27219F3C0026F700 /* analyzer.c in Sources */,
 				2DF55C442270FF7E002C44DC /* ScriptablePropertySheetDataSource.m in Sources */,
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
@@ -17992,6 +17986,7 @@
 				2D986143226C816000BAACB1 /* BrowseButton.m in Sources */,
 				2DC657E4274A5F6000583E14 /* PlaylistBrowserWidget.m in Sources */,
 				2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */,
+				2D92D32129B92F9100218F1D /* pluginsettings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

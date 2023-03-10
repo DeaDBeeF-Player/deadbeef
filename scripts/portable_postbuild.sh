@@ -21,7 +21,7 @@ mkdir -p $PLUGDIR
 mkdir -p $DOCDIR
 mkdir -p $PIXMAPDIR
 
-cp ./deadbeef $OUTDIR
+cp src/deadbeef $OUTDIR
 
 for i in converter pltbrowser shellexecui ; do
     if [ -f ./plugins/$i/.libs/${i}_gtk2.so ]; then

@@ -37,7 +37,7 @@ endif
 convdatadir = $(libdir)/deadbeef/convpresets
 convdata_DATA = $(convdata)
 
-converter_la_CFLAGS =  $(CFLAGS) -I@top_srcdir@/external/mp4p/include -std=c99 -fPIC -DUSE_TAGGING=1
+converter_la_CFLAGS =  $(CFLAGS) -I@top_srcdir@/external/mp4p/include -I@top_srcdir@/include -std=c99 -fPIC -DUSE_TAGGING=1
 converter_la_SOURCES = converter.c converter.h
 converter_la_LDFLAGS = -module -avoid-version
 converter_la_LIBADD = $(LDADD) ../../shared/libmp4tagutil.la ../../external/libmp4p.la
@@ -46,14 +46,14 @@ if HAVE_GTK2
 converter_gtk2_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h
 converter_gtk2_la_LDFLAGS = -module -avoid-version
 converter_gtk2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS)
-converter_gtk2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS)
+converter_gtk2_la_CFLAGS = -std=c99 $(GTK2_DEPS_CFLAGS) -I@top_srcdir@/include
 endif
 
 if HAVE_GTK3
 converter_gtk3_la_SOURCES = convgui.c interface.c support.c callbacks.h converter.h interface.h support.h
 converter_gtk3_la_LDFLAGS = -module -avoid-version
 converter_gtk3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS)
-converter_gtk3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS)
+converter_gtk3_la_CFLAGS = -std=c99 $(GTK3_DEPS_CFLAGS) -I@top_srcdir@/include
 endif
 
 sdkdir = $(pkgincludedir)

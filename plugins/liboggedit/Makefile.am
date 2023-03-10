@@ -5,5 +5,5 @@ liboggedit_la_SOURCES = oggedit_internal.h oggedit.h \
 if HAVE_OGG_STREAM_FLUSH_FILL
 OGG_CFLAGS += -DHAVE_OGG_STREAM_FLUSH_FILL
 endif
-AM_CFLAGS = $(OGG_CFLAGS) -fPIC -std=c99
+liboggedit_la_CFLAGS = $(OGG_CFLAGS) -fPIC -std=c99 -I@top_srcdir@/include
 endif

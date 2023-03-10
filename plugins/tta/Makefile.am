@@ -8,6 +8,6 @@ tta_la_SOURCES = ttaplug.c filter.h ttadec.c ttadec.h
 
 tta_la_LDFLAGS = -module -avoid-version
 
-AM_CFLAGS = $(CFLAGS) -std=c99 -fPIC
+tta_la_CFLAGS = $(CFLAGS) -std=c99 -fPIC -I@top_srcdir@/include
 endif
 

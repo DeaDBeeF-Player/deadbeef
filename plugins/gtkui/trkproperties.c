@@ -33,7 +33,7 @@
 #include <string.h>
 #include <deadbeef/deadbeef.h>
 #include "../../gettext.h"
-#include "../../src/shared/trkproperties_shared.h"
+#include "../../shared/trkproperties_shared.h"
 #include "callbacks.h"
 #include "ddbcellrenderertextmultiline.h"
 #include "gtkui.h"

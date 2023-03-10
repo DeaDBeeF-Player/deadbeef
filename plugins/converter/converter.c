@@ -43,7 +43,7 @@
 #include <deadbeef/deadbeef.h>
 #include "converter.h"
 #include <deadbeef/strdupa.h>
-#include "../../src/shared/mp4tagutil.h"
+#include "../../shared/mp4tagutil.h"
 
 static ddb_converter_t plugin;
 

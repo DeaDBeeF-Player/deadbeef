@@ -322,6 +322,6 @@ gme_la_SOURCES = cgme.c gmewrap.cpp gmewrap.h\
 gme_la_LDFLAGS = -module -avoid-version $(NOCPPLIB)
 gme_la_LIBADD = $(ZLIB_LIBS)
 
-AM_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -I$(gmepath) -std=c99 -DGME_VERSION_055
-AM_CXXFLAGS = $(CXXFLAGS) $(ZLIB_CFLAGS) -I$(gmepath) -I$(gmepath)/gme -DGME_VERSION_055 -fno-exceptions -fno-rtti -fno-unwind-tables
+gme_la_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -I$(gmepath) -std=c99 -DGME_VERSION_055 -I@top_srcdir@/include
+gme_la_CXXFLAGS = $(CXXFLAGS) $(ZLIB_CFLAGS) -I$(gmepath) -I$(gmepath)/gme -DGME_VERSION_055 -fno-exceptions -fno-rtti -fno-unwind-tables -I@top_srcdir@/include
 endif
