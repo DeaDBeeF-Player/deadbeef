@@ -54,7 +54,7 @@
 #include <windows.h>
 #include <ksmedia.h>
 #include <mmreg.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 
 #define trace(...) { fprintf(stderr, __VA_ARGS__); fflush(stderr); }
 //#define trace(fmt,...)

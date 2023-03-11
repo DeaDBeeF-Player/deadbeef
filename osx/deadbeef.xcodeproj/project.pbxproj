@@ -901,7 +901,6 @@
 		2D4739B21F10ECBF008B95A3 /* psfmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D4739B11F10ECBF008B95A3 /* psfmain.c */; };
 		2D48DBD62269B731002CACFD /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		2D48DBE42269B731002CACFD /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
-		2D48DBE62269B731002CACFD /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		2D48DBF02269B731002CACFD /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
 		2D48DBF12269B731002CACFD /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
 		2D48DBF22269B731002CACFD /* libddbcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */; };
@@ -958,7 +957,6 @@
 		2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D49856E1D5CF0E900E4D985 /* Log.xib */; };
 		2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D49857D1D5CF13F00E4D985 /* LogWindowController.h */; };
 		2D4985801D5CF13F00E4D985 /* LogWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D49857E1D5CF13F00E4D985 /* LogWindowController.m */; };
-		2D4A9459223EFC1700199551 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D4A9467223EFC6700199551 /* CoreAudioTests.m */; };
 		2D5121C61B01DEFD009F6410 /* sort.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D642EAD1AE9152E00FC1F7B /* sort.c */; };
 		2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D524C071B245AE00018C4FA /* DdbTitleFormattingHelpButton.h */; };
@@ -2279,7 +2277,6 @@
 		2DC656D62744289C00583E14 /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2DC65734274428F200583E14 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		2DC65735274428F200583E14 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
-		2DC65736274428F200583E14 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		2DC65738274428F200583E14 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D6E2CF926AC157A008FCD4B /* Accelerate.framework */; };
 		2DC65739274428F200583E14 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
 		2DC6573A274428F200583E14 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
@@ -2603,6 +2600,15 @@
 		2DEBA1D223E207A3000E4135 /* EqualizerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */; };
 		2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */; };
 		2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */; };
+		2DEE302829BC8D1900A293AD /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEE302729BC8D1900A293AD /* coreaudio.c */; };
+		2DEE302929BC8D1900A293AD /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEE302729BC8D1900A293AD /* coreaudio.c */; };
+		2DEE302A29BC8D1900A293AD /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEE302729BC8D1900A293AD /* coreaudio.c */; };
+		2DEE302B29BC8D1900A293AD /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DEE302729BC8D1900A293AD /* coreaudio.c */; };
+		2DEE302D29BC8E7F00A293AD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEE302C29BC8E7E00A293AD /* CoreGraphics.framework */; };
+		2DEE302F29BC8E9C00A293AD /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEE302E29BC8E9B00A293AD /* CoreImage.framework */; };
+		2DEE303129BC8ED900A293AD /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEE303029BC8ED900A293AD /* MediaPlayer.framework */; };
+		2DEE303329BC8EEC00A293AD /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEE303229BC8EEC00A293AD /* Metal.framework */; };
+		2DEE303529BC8F1000A293AD /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DEE303429BC8F1000A293AD /* Quartz.framework */; };
 		2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEF494219C4DB4100B718C1 /* PlaylistView.h */; };
 		2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DEF494319C4DB4100B718C1 /* PlaylistView.m */; };
 		2DF16CB61DCB62FD007D7F05 /* supereq.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DF16CB01DCB62D9007D7F05 /* supereq.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -2624,7 +2630,6 @@
 		2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304D1AB817310030C0CA /* wildmidi_lib.c */; };
 		2DF930521AB817310030C0CA /* wildmidiplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304E1AB817310030C0CA /* wildmidiplug.c */; };
 		2DFD51681C97175F00961D19 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
-		4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D011FFC19AB9589005499B4 /* coreaudio.c */; };
 		4D0B0CEE20162D95004162DA /* FormatConversionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B0CED20162D95004162DA /* FormatConversionTests.cpp */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
@@ -5258,7 +5263,7 @@
 		2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TrackSwitchingTests.cpp; sourceTree = "<group>"; };
 		2D0A6B19237718DA00252E6D /* playmodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = playmodes.h; sourceTree = "<group>"; };
 		2D0A6B1A237718DA00252E6D /* playmodes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = playmodes.c; sourceTree = "<group>"; };
-		2D0AC90C2856450100F6D56A /* Integration Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Integration Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D0AC90C2856450100F6D56A /* IntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D0AC9152856452500F6D56A /* ActionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ActionTests.m; sourceTree = "<group>"; };
 		2D0AC9992864E12600F6D56A /* selpropertieswidget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = selpropertieswidget.c; sourceTree = "<group>"; };
 		2D0AC9A92864E12600F6D56A /* selpropertieswidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = selpropertieswidget.h; sourceTree = "<group>"; };
@@ -6965,6 +6970,12 @@
 		2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EqualizerWindowController.h; sourceTree = "<group>"; };
 		2DEBA1D023E207A3000E4135 /* EqualizerWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EqualizerWindowController.m; sourceTree = "<group>"; };
 		2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EqualizerWindowController.xib; sourceTree = "<group>"; };
+		2DEE302729BC8D1900A293AD /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
+		2DEE302C29BC8E7E00A293AD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		2DEE302E29BC8E9B00A293AD /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		2DEE303029BC8ED900A293AD /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		2DEE303229BC8EEC00A293AD /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		2DEE303429BC8F1000A293AD /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		2DEF494219C4DB4100B718C1 /* PlaylistView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaylistView.h; sourceTree = "<group>"; };
 		2DEF494319C4DB4100B718C1 /* PlaylistView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaylistView.m; sourceTree = "<group>"; };
 		2DF16CB01DCB62D9007D7F05 /* supereq.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = supereq.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6987,7 +6998,6 @@
 		2DF9304D1AB817310030C0CA /* wildmidi_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wildmidi_lib.c; sourceTree = "<group>"; usesTabs = 1; };
 		2DF9304E1AB817310030C0CA /* wildmidiplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wildmidiplug.c; path = plugins/wildmidi/wildmidiplug.c; sourceTree = "<group>"; };
 		2DFD50951C9715B800961D19 /* psf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = psf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		4D011FFC19AB9589005499B4 /* coreaudio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = coreaudio.c; sourceTree = "<group>"; };
 		4D0B0CED20162D95004162DA /* FormatConversionTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormatConversionTests.cpp; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* DeaDBeeF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeaDBeeF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -7900,6 +7910,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DEE303529BC8F1000A293AD /* Quartz.framework in Frameworks */,
+				2DEE303329BC8EEC00A293AD /* Metal.framework in Frameworks */,
+				2DEE303129BC8ED900A293AD /* MediaPlayer.framework in Frameworks */,
+				2DEE302F29BC8E9C00A293AD /* CoreImage.framework in Frameworks */,
+				2DEE302D29BC8E7F00A293AD /* CoreGraphics.framework in Frameworks */,
 				2D76DD4B24F6D693000EDA3E /* IOKit.framework in Frameworks */,
 				2D6E2CFA26AC157A008FCD4B /* Accelerate.framework in Frameworks */,
 				4D66DBA11F6181C400BFF76B /* AudioToolbox.framework in Frameworks */,
@@ -9236,12 +9251,12 @@
 			path = plugins/sndfile;
 			sourceTree = "<group>";
 		};
-		2D0AC90D2856450200F6D56A /* Integration Tests */ = {
+		2D0AC90D2856450200F6D56A /* IntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
 				2D0AC9152856452500F6D56A /* ActionTests.m */,
 			);
-			path = "Integration Tests";
+			path = IntegrationTests;
 			sourceTree = "<group>";
 		};
 		2D0B1C8619C5CF4A00CED0B5 /* Supporting files */ = {
@@ -12054,7 +12069,7 @@
 				2DCD78AD19A6658C00EA50FA /* icons */,
 				4D1B514C1837EF7C003E6066 /* plugins */,
 				2DAA4C091AAF88DE00519559 /* Tests */,
-				2D0AC90D2856450200F6D56A /* Integration Tests */,
+				2D0AC90D2856450200F6D56A /* IntegrationTests */,
 				4D1B3E7C18379829003E6066 /* Frameworks */,
 				4D1B3E7B18379829003E6066 /* Products */,
 				2D48DC5C2269B732002CACFD /* DeaDBeeF GTK3.plist */,
@@ -12136,7 +12151,7 @@
 				2DC656DA2744289C00583E14 /* ddb_gui_GTK2.dylib */,
 				2DC6578C274428F200583E14 /* DeaDBeeF GTK2.app */,
 				2DE77467275E893400890350 /* converter_gtk3.dylib */,
-				2D0AC90C2856450100F6D56A /* Integration Tests.xctest */,
+				2D0AC90C2856450100F6D56A /* IntegrationTests.xctest */,
 				2DC6C609294DE5C700A63CEB /* libgoogletest.dylib */,
 			);
 			name = Products;
@@ -12145,6 +12160,11 @@
 		4D1B3E7C18379829003E6066 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2DEE303429BC8F1000A293AD /* Quartz.framework */,
+				2DEE303229BC8EEC00A293AD /* Metal.framework */,
+				2DEE303029BC8ED900A293AD /* MediaPlayer.framework */,
+				2DEE302E29BC8E9B00A293AD /* CoreImage.framework */,
+				2DEE302C29BC8E7E00A293AD /* CoreGraphics.framework */,
 				2D78C525275583E900F96F9D /* CoreServices.framework */,
 				2DD376FC2739B854007AD315 /* libavcodec.58.dylib */,
 				2DD376FE2739B854007AD315 /* libavformat.58.dylib */,
@@ -12299,7 +12319,7 @@
 		4D1B515C1837F59F003E6066 /* coreaudio */ = {
 			isa = PBXGroup;
 			children = (
-				4D011FFC19AB9589005499B4 /* coreaudio.c */,
+				2DEE302729BC8D1900A293AD /* coreaudio.c */,
 				2DA21F6129883DAE0077BD4C /* coreaudio.h */,
 			);
 			name = coreaudio;
@@ -14643,9 +14663,9 @@
 			productReference = 2D05A8311B4BE5BC004C913D /* libsndfilelib.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		2D0AC90B2856450100F6D56A /* Integration Tests */ = {
+		2D0AC90B2856450100F6D56A /* IntegrationTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D0AC9122856450200F6D56A /* Build configuration list for PBXNativeTarget "Integration Tests" */;
+			buildConfigurationList = 2D0AC9122856450200F6D56A /* Build configuration list for PBXNativeTarget "IntegrationTests" */;
 			buildPhases = (
 				2D0AC9082856450100F6D56A /* Sources */,
 				2D0AC9092856450100F6D56A /* Frameworks */,
@@ -14656,9 +14676,9 @@
 			dependencies = (
 				2D0AC9112856450200F6D56A /* PBXTargetDependency */,
 			);
-			name = "Integration Tests";
+			name = IntegrationTests;
 			productName = "Integration Tests";
-			productReference = 2D0AC90C2856450100F6D56A /* Integration Tests.xctest */;
+			productReference = 2D0AC90C2856450100F6D56A /* IntegrationTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		2D11D3B81B9DC67100C7C731 /* vtx */ = {
@@ -16011,6 +16031,7 @@
 				2DC656DE274428F200583E14 /* DeaDBeeF GTK2 */,
 				2D48DB832269B731002CACFD /* DeaDBeeF GTK3 */,
 				2DAA4C071AAF88DE00519559 /* Tests */,
+				2D0AC90B2856450100F6D56A /* IntegrationTests */,
 				2D28F0401C283BE3004A6E7B /* aac */,
 				2D652FCA1CE79E8500163808 /* adplug */,
 				2D9177371A0E8966004BC222 /* alac */,
@@ -16077,7 +16098,6 @@
 				2DF930431AB816DC0030C0CA /* wildmidi */,
 				07021EAB1C2734AC00FC9AF9 /* wmalib */,
 				07021F2F1C2734F100FC9AF9 /* wma */,
-				2D0AC90B2856450100F6D56A /* Integration Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -16966,9 +16986,9 @@
 				2D48DBD62269B731002CACFD /* main.c in Sources */,
 				2D92D33029B9305B00218F1D /* pluginsettings.c in Sources */,
 				2D92D33229B9305B00218F1D /* growableBuffer.c in Sources */,
+				2DEE302A29BC8D1900A293AD /* coreaudio.c in Sources */,
 				2D48DBE42269B731002CACFD /* plugins.c in Sources */,
 				2D92D33129B9305B00218F1D /* ctmap.c in Sources */,
-				2D48DBE62269B731002CACFD /* coreaudio.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17556,13 +17576,13 @@
 				2D04C3D12433B3B9003C2AAC /* GrowableBufferTests.cpp in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
+				2DEE302B29BC8D1900A293AD /* coreaudio.c in Sources */,
 				2D15721623785BD900985E47 /* VfsCurlTests.cpp in Sources */,
 				4D6CF18B20EB783900811034 /* MP3ParserTests.cpp in Sources */,
 				2D78C5682756990B00F96F9D /* medialibfilesystem_stub.c in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* TaggingTests.mm in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
-				2D4A9459223EFC1700199551 /* coreaudio.c in Sources */,
 				2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */,
 				2D78C5632756919300F96F9D /* medialib.c in Sources */,
 				2D78C55F27568F8600F96F9D /* medialibtree.c in Sources */,
@@ -17675,9 +17695,9 @@
 				2DC65734274428F200583E14 /* main.c in Sources */,
 				2D92D32D29B9305B00218F1D /* pluginsettings.c in Sources */,
 				2D92D32F29B9305B00218F1D /* growableBuffer.c in Sources */,
+				2DEE302929BC8D1900A293AD /* coreaudio.c in Sources */,
 				2DC65735274428F200583E14 /* plugins.c in Sources */,
 				2D92D32E29B9305B00218F1D /* ctmap.c in Sources */,
-				2DC65736274428F200583E14 /* coreaudio.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17913,6 +17933,7 @@
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */,
 				2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */,
+				2DEE302829BC8D1900A293AD /* coreaudio.c in Sources */,
 				2D8EE27524D03601005C5B4B /* MediaLibraryOutlineViewController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2DBF3D4427086AA900023138 /* MainContentViewController.m in Sources */,
@@ -17968,7 +17989,6 @@
 				2DD3776127414BF6007AD315 /* ScopePreferencesViewController.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,
 				2DDBA26123E5EA3800051320 /* PlaylistLocalDragDropHolder.m in Sources */,
-				4D011FFD19AB9589005499B4 /* coreaudio.c in Sources */,
 				2D046F7E25E2B55200F68459 /* MainWindow.m in Sources */,
 				2D747E4124B6580A00BBB987 /* MainWindowSidebarViewController.m in Sources */,
 				2DC657CE2749544000583E14 /* PlaylistWithTabsWidget.m in Sources */,
@@ -20177,6 +20197,10 @@
 				);
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -20206,6 +20230,10 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/..\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -22636,7 +22664,7 @@
 					"$(SRCROOT)/../external/googletest/googletest/include",
 					"$(SRCROOT)/../external/googletest/googletest/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -22665,7 +22693,7 @@
 					"$(SRCROOT)/../external/googletest/googletest/include",
 					"$(SRCROOT)/../external/googletest/googletest/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -23455,7 +23483,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
-				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
@@ -23514,7 +23541,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
-				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
@@ -24385,7 +24411,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D0AC9122856450200F6D56A /* Build configuration list for PBXNativeTarget "Integration Tests" */ = {
+		2D0AC9122856450200F6D56A /* Build configuration list for PBXNativeTarget "IntegrationTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D0AC9132856450200F6D56A /* Debug */,

@@ -51,6 +51,7 @@ filter "configurations:release"
 filter "configurations:debug or release"
   includedirs {
     "include",
+    ".",
     "static-deps/lib-x86-64/include/x86_64-linux-gnu",
     "static-deps/lib-x86-64/include",
   }
@@ -190,8 +191,8 @@ project "deadbeef"
   kind (ddb_type)
   targetdir "bin/%{cfg.buildcfg}"
   files {
+    "src/md5/*.c",
     "src/*.c",
-    "md5/*.c",
     "plugins/libparser/*.c",
     "external/wcwidth/wcwidth.c",
     "shared/ctmap.c",
@@ -815,10 +816,10 @@ project "ddb_gui_GTK2"
     "shared/eqpreset.c",
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
-    "analyzer/analyzer.c",
-    "scope/scope.c",
+    "shared/analyzer/analyzer.c",
+    "shared/scope/scope.c",
     "plugins/libparser/parser.c",
-    "utf8.c"
+    "src/utf8.c"
   }
   excludes {
     "plugins/gtkui/deadbeefapp.c",
@@ -845,10 +846,10 @@ project "ddb_gui_GTK3"
     "shared/eqpreset.c",
     "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
-    "analyzer/analyzer.c",
-    "scope/scope.c",
+    "shared/analyzer/analyzer.c",
+    "shared/scope/scope.c",
     "plugins/libparser/parser.c",
-    "utf8.c"
+    "src/utf8.c"
   }
   includedirs {
     "plugins/gtkui",
@@ -1202,7 +1203,7 @@ project "translations"
 
 project "resources"
   kind "Utility"
-  files {"main.c"}
+  files {"src/main.c"}
   filter 'files:**.c'
     buildcommands {
       "mkdir -p bin/%{cfg.buildcfg}/pixmaps",
@@ -1217,7 +1218,7 @@ project "resources_windows"
   kind "Utility"
   removeplatforms {"Linux"}
   dependson {"translations", "ddb_gui_GTK3", "ddb_gui_GTK2"}
-  files {"main.c"}
+  files {"src/main.c"}
   filter 'files:**.c'
     buildcommands {"./scripts/windows_postbuild.sh bin/%{cfg.buildcfg}"}
     buildoutputs {'%{cfg.objdir}/%{file.basename}.c_fake'}

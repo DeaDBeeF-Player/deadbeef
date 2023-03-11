@@ -22,7 +22,7 @@
 */
 
 #import <XCTest/XCTest.h>
-#import "../../common.h"
+#import <deadbeef/common.h>
 #import "conf.h"
 #import "plugins.h"
 #import "playlist.h"

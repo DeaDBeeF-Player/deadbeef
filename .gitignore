@@ -65,7 +65,7 @@ po/quot.sed
 po/remove-potcdate.sin
 po/deadbeef.pot
 compile
-deadbeef
+src/deadbeef
 valgrind.out
 *.diff
 portable

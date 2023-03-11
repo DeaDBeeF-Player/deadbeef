@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include <portaudio.h>
 #include <dispatch/dispatch.h>
 

@@ -26,7 +26,7 @@
 #endif
 #include <string.h>
 #include <stdlib.h>
-#include "../../deadbeef.h"
+#include <deadbeef/deadbeef.h>
 #include <glib.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include "../gtkui/gtkui_api.h"
