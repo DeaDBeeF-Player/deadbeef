@@ -1375,6 +1375,13 @@
 		2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72047519DF2971000989C6 /* PlaylistViewController.m */; };
 		2D72F6FF277BA9D800868136 /* DdbVolumeBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D72F6FD277BA9D800868136 /* DdbVolumeBar.h */; };
 		2D72F700277BA9D800868136 /* DdbVolumeBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D72F6FE277BA9D800868136 /* DdbVolumeBar.m */; };
+		2D7387E929BE5DA2003E3126 /* undomanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D7387D429BE5DA1003E3126 /* undomanager.c */; };
+		2D7387EA29BE5DA2003E3126 /* undobuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D7387D529BE5DA1003E3126 /* undobuffer.c */; };
+		2D7387EB29BE5DA2003E3126 /* undo_playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D7387D629BE5DA1003E3126 /* undo_playlist.c */; };
+		2D7387EC29BE5DA2003E3126 /* undomanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7387D729BE5DA1003E3126 /* undomanager.h */; };
+		2D7387ED29BE5DA2003E3126 /* undobuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7387D829BE5DA1003E3126 /* undobuffer.h */; };
+		2D7387EE29BE5DA2003E3126 /* undo_playlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D7387D929BE5DA1003E3126 /* undo_playlist.h */; };
+		2D7387EF29BE5DF7003E3126 /* NSUndoManager+DdbUndoBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F720293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.m */; };
 		2D747E3824B64E7600BBB987 /* SidebarSplitViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D747E3424B64E7500BBB987 /* SidebarSplitViewItem.h */; };
 		2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D747E3524B64E7600BBB987 /* SidebarSplitViewItem.m */; };
 		2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D747E3624B64E7600BBB987 /* SidebarSplitViewController.m */; };
@@ -5991,6 +5998,12 @@
 		2D72AE5D1CFE1F7500103AAE /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		2D72F6FD277BA9D800868136 /* DdbVolumeBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbVolumeBar.h; sourceTree = "<group>"; };
 		2D72F6FE277BA9D800868136 /* DdbVolumeBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbVolumeBar.m; sourceTree = "<group>"; };
+		2D7387D429BE5DA1003E3126 /* undomanager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = undomanager.c; sourceTree = "<group>"; };
+		2D7387D529BE5DA1003E3126 /* undobuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = undobuffer.c; sourceTree = "<group>"; };
+		2D7387D629BE5DA1003E3126 /* undo_playlist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = undo_playlist.c; sourceTree = "<group>"; };
+		2D7387D729BE5DA1003E3126 /* undomanager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = undomanager.h; sourceTree = "<group>"; };
+		2D7387D829BE5DA1003E3126 /* undobuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = undobuffer.h; sourceTree = "<group>"; };
+		2D7387D929BE5DA1003E3126 /* undo_playlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = undo_playlist.h; sourceTree = "<group>"; };
 		2D747E3424B64E7500BBB987 /* SidebarSplitViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarSplitViewItem.h; sourceTree = "<group>"; };
 		2D747E3524B64E7600BBB987 /* SidebarSplitViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarSplitViewItem.m; sourceTree = "<group>"; };
 		2D747E3624B64E7600BBB987 /* SidebarSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarSplitViewController.m; sourceTree = "<group>"; };
@@ -10435,6 +10448,19 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		2D7387D329BE5DA1003E3126 /* undo */ = {
+			isa = PBXGroup;
+			children = (
+				2D7387D429BE5DA1003E3126 /* undomanager.c */,
+				2D7387D529BE5DA1003E3126 /* undobuffer.c */,
+				2D7387D629BE5DA1003E3126 /* undo_playlist.c */,
+				2D7387D729BE5DA1003E3126 /* undomanager.h */,
+				2D7387D829BE5DA1003E3126 /* undobuffer.h */,
+				2D7387D929BE5DA1003E3126 /* undo_playlist.h */,
+			);
+			path = undo;
+			sourceTree = "<group>";
+		};
 		2D747E2424B64E3400BBB987 /* SplitViewMainWindow */ = {
 			isa = PBXGroup;
 			children = (
@@ -10836,6 +10862,7 @@
 				4D1B3F861837EC44003E6066 /* md5 */,
 				2DDD764125E1506100FA6FE5 /* metadata */,
 				2D135EE6226E388E00BAAE84 /* scriptable */,
+				2D7387D329BE5DA1003E3126 /* undo */,
 				2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */,
 				2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */,
 				2DD9EF0419A5089F00189344 /* cocoautil.h */,
@@ -13303,13 +13330,16 @@
 				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
 				2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
+				2D7387ED29BE5DA2003E3126 /* undobuffer.h in Headers */,
 				2DC657C72748502F00583E14 /* SegmentedTabView.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
 				2DA8912225FFEB9B0084860D /* PlaylistGroup.h in Headers */,
 				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
 				2DC657E3274A5F6000583E14 /* PlaylistBrowserWidget.h in Headers */,
 				2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */,
+				2D7387EE29BE5DA2003E3126 /* undo_playlist.h in Headers */,
 				2DAA402E269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
+				2D7387EC29BE5DA2003E3126 /* undomanager.h in Headers */,
 				2DDD778F25E153D000FA6FE5 /* WidgetFactory.h in Headers */,
 				2DDD781725E1578C00FA6FE5 /* SplitterWidget.h in Headers */,
 				2DDD789D25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
@@ -16796,6 +16826,7 @@
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
 				2D92D33729B9320200218F1D /* eqpreset.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
+				2D7387E929BE5DA2003E3126 /* undomanager.c in Sources */,
 				2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
 				2D92D33829B9320500218F1D /* growableBuffer.c in Sources */,
@@ -16823,6 +16854,8 @@
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
+				2D7387EB29BE5DA2003E3126 /* undo_playlist.c in Sources */,
+				2D7387EA29BE5DA2003E3126 /* undobuffer.c in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2D92D33D29B9324A00218F1D /* tftintutil.c in Sources */,
@@ -18335,6 +18368,7 @@
 				2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */,
 				2DC657EC274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */,
 				2D98B681272B272300E655AE /* VisualizationShaders.metal in Sources */,
+				2D7387EF29BE5DF7003E3126 /* NSUndoManager+DdbUndoBuffer.m in Sources */,
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
 				0D56852A271DC35E0026F700 /* ScopeWidget.m in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,
