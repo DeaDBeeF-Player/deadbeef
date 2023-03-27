@@ -523,17 +523,16 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
         if (deadbeef->pl_is_selected (it)) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
             NSString *str = [NSString stringWithUTF8String:uri];
-            NSURL *url = [NSURL URLWithString:str];
-            if (!url) {
-                url = [NSURL fileURLWithPath:str];
-            }
+            NSURL *url = uri[0] == '/' ? [NSURL fileURLWithPath:str] : [NSURL URLWithString:str];
             if (url) {
                 [urls addObject:url];
             }
         }
         return YES;
     }];
-    [NSWorkspace.sharedWorkspace activateFileViewerSelectingURLs:urls];
+    if ([urls count] > 0) {
+        [NSWorkspace.sharedWorkspace activateFileViewerSelectingURLs:urls];
+    }
 }
 
 #pragma mark - Playback Queue
