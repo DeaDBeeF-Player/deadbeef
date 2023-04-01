@@ -1514,7 +1514,7 @@ streamer_seek_real (float seekpos) {
 }
 
 static void
-_update_buffering_state () {
+_update_buffering_state (void) {
     streamer_lock ();
     int blocks_ready = streamreader_num_blocks_ready ();
     streamer_unlock ();

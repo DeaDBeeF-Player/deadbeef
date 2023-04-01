@@ -1080,7 +1080,7 @@ cover_cache_remove (ddb_cover_info_t *cover) {
 #pragma mark - Utility
 
 static void
-_setup_tf_once() {
+_setup_tf_once(void) {
     dispatch_sync(sync_queue, ^{
         if (!album_tf) {
             album_tf = deadbeef->tf_compile ("%album%");

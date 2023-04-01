@@ -61,7 +61,7 @@ static int ca_play (void);
 static int ca_pause (void);
 
 static UInt32
-GetNumberAvailableNominalSampleRateRanges()
+GetNumberAvailableNominalSampleRateRanges(void)
 {
     UInt32 theAnswer = 0;
     AudioObjectPropertyAddress theAddress = {

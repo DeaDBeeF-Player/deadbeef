@@ -90,7 +90,7 @@ scriptableEncoderChainItemTypes (scriptableItem_t *item) {
     return s;
 }
 
-static scriptableItem_t *scriptableEncoderCreateBlankPreset() {
+static scriptableItem_t *scriptableEncoderCreateBlankPreset(void) {
     scriptableItem_t *item = scriptableItemAlloc();
     item->callbacks = &scriptableEncoderCallbacks;
     return item;

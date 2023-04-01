@@ -61,7 +61,7 @@ messagepump_init (void) {
 }
 
 void
-messagepump_free () {
+messagepump_free (void) {
     mutex_lock (mutex);
 
     // this helps catching any ref leaks caused by messages sent at exit
