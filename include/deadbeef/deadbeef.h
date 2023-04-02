@@ -2284,7 +2284,7 @@ typedef struct {
     const char *(*source_name) (void);
 
     /// Create a media source instance. It must be freed after use by calling the @c free_source
-    /// @param source_path: a unique name to identify the instance, this will be used to prefix individual instance configuration files, caches, etc.
+    /// @param source_path a unique name to identify the instance, this will be used to prefix individual instance configuration files, caches, etc.
     ddb_mediasource_source_t (*create_source) (const char *source_path);
 
     /// Free the @c source created by @c create_source

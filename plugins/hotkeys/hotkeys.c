@@ -406,7 +406,7 @@ hotkeys_load (DB_functions_t *api) {
 }
 
 static void
-cleanup () {
+cleanup (void) {
     command_count = 0;
 #ifndef NO_XLIB_H
     if (disp) {

@@ -37,7 +37,7 @@ action_jump_to_current_handler (DB_plugin_action_t *act, ddb_action_context_t ct
 }
 
 static DB_playItem_t*
-skip_to_get_track_helper () {
+skip_to_get_track_helper (void) {
     DB_playItem_t *current = deadbeef->streamer_get_playing_track_safe ();
     if (!current) {
         return NULL;
