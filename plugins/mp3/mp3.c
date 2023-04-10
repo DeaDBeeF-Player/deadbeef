@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <unistd.h>
 #include <sys/time.h>
@@ -116,7 +117,7 @@ cmp3_set_extra_properties (DB_playItem_t *it, mp3info_t *mp3info, int fake) {
     char s[100];
     int64_t size = mp3info->fsize;
     if (size >= 0) {
-        snprintf (s, sizeof (s), "%lld", size);
+        snprintf (s, sizeof (s), "%" PRId64 , size);
         deadbeef->pl_replace_meta (it, ":FILE_SIZE", s);
     }
     else {

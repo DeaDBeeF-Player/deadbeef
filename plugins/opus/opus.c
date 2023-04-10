@@ -226,7 +226,7 @@ static void
 set_meta_ll(DB_playItem_t *it, const char *key, const int64_t value)
 {
     char string[11];
-    sprintf(string, "%lld", value);
+    sprintf(string, "%" PRId64, value);
     deadbeef->pl_replace_meta(it, key, string);
 }
 

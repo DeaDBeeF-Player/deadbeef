@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include <math.h>
 #include "shorten.h"
 #include <deadbeef/deadbeef.h>
@@ -916,7 +917,7 @@ shn_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->junk_id3v1_read (it, tmp_file->vars.fd);
 
     char s[100];
-    snprintf (s, sizeof (s), "%lld", fsize);
+    snprintf (s, sizeof (s), "%" PRId64, fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     snprintf (s, sizeof (s), "%d", tmp_file->wave_header.bits_per_sample);
     deadbeef->pl_add_meta (it, ":BPS", s);

@@ -40,6 +40,7 @@
 #include <math.h>
 #include <FLAC/stream_decoder.h>
 #include <FLAC/metadata.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <deadbeef/deadbeef.h>
 #include "../liboggedit/oggedit.h"
@@ -924,7 +925,7 @@ cflac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, ":FILETYPE", isogg ? "OggFLAC" : "FLAC");
 
     char s[100];
-    snprintf (s, sizeof (s), "%lld", fsize);
+    snprintf (s, sizeof (s), "%" PRId64, fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     snprintf (s, sizeof (s), "%d", info.info.fmt.channels);
     deadbeef->pl_add_meta (it, ":CHANNELS", s);

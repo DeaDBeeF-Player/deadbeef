@@ -30,6 +30,7 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 #include <math.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -412,7 +413,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->fclose (fp);
 
     char s[100];
-    snprintf (s, sizeof (s), "%lld", fsize);
+    snprintf (s, sizeof (s), "%" PRId64, fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     deadbeef->pl_add_meta (it, ":BPS", "16");
     snprintf (s, sizeof (s), "%d", channels);

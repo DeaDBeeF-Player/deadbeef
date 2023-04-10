@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 #include <deadbeef/deadbeef.h>
 
 #include "ao.h"
@@ -80,7 +81,7 @@ int ao_get_lib(char *filename, uint8 **buffer, uint64 *length)
 	if (!filebuf)
 	{
 		deadbeef->fclose(auxfile);
-		printf("ERROR: could not allocate %lld bytes of memory\n", size);
+		printf("ERROR: could not allocate %" PRId64 " bytes of memory\n", size);
 		return AO_FAIL;
 	}
 

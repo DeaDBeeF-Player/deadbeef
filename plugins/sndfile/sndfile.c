@@ -24,6 +24,7 @@
 #endif
 #include <string.h>
 #include <sndfile.h>
+#include <inttypes.h>
 #include <math.h>
 #include <stdlib.h>
 #include <deadbeef/deadbeef.h>
@@ -407,7 +408,7 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("sndfile: totalsamples=%d, samplerate=%d, duration=%f\n", totalsamples, samplerate, duration);
 
     char s[100];
-    snprintf (s, sizeof (s), "%lld", fsize);
+    snprintf (s, sizeof (s), "%" PRId64, fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
 
     int bps = -1;
