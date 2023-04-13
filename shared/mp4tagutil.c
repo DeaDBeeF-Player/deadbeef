@@ -647,9 +647,9 @@ _file_seek (mp4p_file_callbacks_t *stream, off_t offset, int whence) {
     return deadbeef->fseek ((DB_FILE *)stream->ptrhandle, offset, whence);
 }
 
-static int64_t
+static off_t
 _file_tell (mp4p_file_callbacks_t *stream) {
-    return deadbeef->ftell ((DB_FILE *)stream->ptrhandle);
+    return (off_t)deadbeef->ftell ((DB_FILE *)stream->ptrhandle);
 }
 
 void
