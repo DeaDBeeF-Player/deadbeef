@@ -495,7 +495,7 @@ void binostream::writeFloat(Float f, FType ft)
 void binostream::float2ieee_single(Float num, Byte *bytes)
 {
   long		sign;
-  long		bits;
+  register long	bits;
 
   if (num < 0) {	/* Can't distinguish a negative zero */
     sign = 0x80000000;
