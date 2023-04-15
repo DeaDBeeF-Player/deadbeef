@@ -279,7 +279,7 @@ project "adplug_plugin"
   includedirs {"plugins/adplug/adplug", "plugins/adplug/libbinio"}
   links {"stdc++"}
 
-  filter "files:*.cpp"
+  filter "files:**.cpp"
     buildoptions {
         "-std=c++11"
     }
