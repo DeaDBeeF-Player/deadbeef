@@ -278,6 +278,11 @@ project "adplug_plugin"
   defines {"stricmp=strcasecmp"}
   includedirs {"plugins/adplug/adplug", "plugins/adplug/libbinio"}
   links {"stdc++"}
+
+  filter {file:*.cpp}
+    buildoptions {
+        "-std=c++11"
+    }
 end
 
 if option ("plugin-alac") then
