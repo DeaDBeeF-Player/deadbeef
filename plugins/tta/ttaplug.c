@@ -27,7 +27,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <inttypes.h>
 #include <limits.h>
 #include <unistd.h>
 #include <math.h>
@@ -222,7 +221,7 @@ tta_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     }
 
     char s[100];
-    snprintf (s, sizeof (s), "%" PRId64, fsize);
+    snprintf (s, sizeof (s), "%lld", (long long)fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     snprintf (s, sizeof (s), "%d", tta.BPS);
     deadbeef->pl_add_meta (it, ":BPS", s);

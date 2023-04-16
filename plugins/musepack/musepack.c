@@ -25,7 +25,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <inttypes.h>
 #include <limits.h>
 #include <unistd.h>
 #include <math.h>
@@ -312,7 +311,7 @@ musepack_seek (DB_fileinfo_t *_info, float time) {
 void
 mpc_set_trk_properties (DB_playItem_t *it, mpc_streaminfo *si, int64_t fsize) {
     char s[100];
-    snprintf (s, sizeof (s), "%" PRId64, fsize);
+    snprintf (s, sizeof (s), "%lld", (long long)fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     deadbeef->pl_add_meta (it, ":BPS", "32");
     snprintf (s, sizeof (s), "%d", si->channels);
@@ -329,7 +328,7 @@ mpc_set_trk_properties (DB_playItem_t *it, mpc_streaminfo *si, int64_t fsize) {
     deadbeef->pl_add_meta (it, ":MPC_ENCODER_VERSION", s);
     deadbeef->pl_add_meta (it, ":MPC_PNS_USED", si->pns ? "1" : "0");
     deadbeef->pl_add_meta (it, ":MPC_TRUE_GAPLESS", si->is_true_gapless ? "1" : "0");
-    snprintf (s, sizeof (s), "%" PRId64, (int64_t)si->beg_silence);
+    snprintf (s, sizeof (s), "%lld", (long long)si->beg_silence);
     deadbeef->pl_add_meta (it, ":MPC_BEG_SILENCE", s);
     snprintf (s, sizeof (s), "%d", si->stream_version);
     deadbeef->pl_add_meta (it, ":MPC_STREAM_VERSION", s);

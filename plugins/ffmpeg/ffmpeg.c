@@ -705,7 +705,7 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     if (fsize >= 0 && duration > 0) {
         char s[100];
-        snprintf (s, sizeof (s), "%" PRId64, fsize);
+        snprintf (s, sizeof (s), "%lld", (long long)fsize);
         deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
         snprintf (s, sizeof (s), "%d", bps);
         deadbeef->pl_add_meta (it, ":BPS", s);

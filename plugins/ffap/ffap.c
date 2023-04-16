@@ -32,7 +32,6 @@
 #endif
 #include <stdio.h>
 #include <string.h>
-#include <inttypes.h>
 #include <limits.h>
 #include <stdlib.h>
 //#include <alloca.h>
@@ -1672,7 +1671,7 @@ ffap_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     fp = NULL;
 
     char s[100];
-    snprintf (s, sizeof (s), "%" PRId64, fsize);
+    snprintf (s, sizeof (s), "%lld", (long long)fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     snprintf (s, sizeof (s), "%d", ape_ctx.bps);
     deadbeef->pl_add_meta (it, ":BPS", s);

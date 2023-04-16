@@ -28,7 +28,6 @@
 #include "../../config.h"
 #endif
 #include <stdlib.h>
-#include <inttypes.h>
 #include <math.h>
 #include <deadbeef/deadbeef.h>
 #include <deadbeef/strdupa.h>
@@ -969,7 +968,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     int64_t fsize = deadbeef->fgetlength (fp);
 
     char s[100];
-    snprintf (s, sizeof (s), "%" PRId64, fsize);
+    snprintf (s, sizeof (s), "%lld", (long long)fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     deadbeef->pl_add_meta (it, ":BPS", "16");
     snprintf (s, sizeof (s), "%d", channels);
@@ -1091,7 +1090,7 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     if (duration > 0) {
         char s[100];
-        snprintf (s, sizeof (s), "%" PRId64, fsize);
+        snprintf (s, sizeof (s), "%lld", (long long)fsize);
         deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
         deadbeef->pl_add_meta (it, ":BPS", "16");
         snprintf (s, sizeof (s), "%d", channels);
