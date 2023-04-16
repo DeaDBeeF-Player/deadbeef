@@ -412,7 +412,7 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->fclose (fp);
 
     char s[100];
-    snprintf (s, sizeof (s), "%lld", fsize);
+    snprintf (s, sizeof (s), "%lld", (long long)fsize);
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     deadbeef->pl_add_meta (it, ":BPS", "16");
     snprintf (s, sizeof (s), "%d", channels);

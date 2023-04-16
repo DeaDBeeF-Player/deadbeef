@@ -80,7 +80,7 @@ int ao_get_lib(char *filename, uint8 **buffer, uint64 *length)
 	if (!filebuf)
 	{
 		deadbeef->fclose(auxfile);
-		printf("ERROR: could not allocate %lld bytes of memory\n", size);
+		printf("ERROR: could not allocate %lld bytes of memory\n", (long long)size);
 		return AO_FAIL;
 	}
 

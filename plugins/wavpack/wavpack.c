@@ -360,7 +360,7 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     deadbeef->pl_add_meta (it, "title", NULL);
 
     char s[100];
-    snprintf (s, sizeof (s), "%lld", deadbeef->fgetlength (fp));
+    snprintf (s, sizeof (s), "%lld", (long long)deadbeef->fgetlength (fp));
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
     snprintf (s, sizeof (s), "%d", WavpackGetBytesPerSample (ctx) * 8);
     deadbeef->pl_add_meta (it, ":BPS", s);

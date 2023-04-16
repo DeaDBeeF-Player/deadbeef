@@ -304,7 +304,7 @@ pl_set_meta_int (playItem_t *it, const char *key, int value) {
 void
 pl_set_meta_int64 (playItem_t *it, const char *key, int64_t value) {
     char s[20];
-    snprintf (s, sizeof (s), "%lld", value);
+    snprintf (s, sizeof (s), "%lld", (long long)value);
     pl_replace_meta (it, key, s);
 }
 
