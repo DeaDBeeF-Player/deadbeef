@@ -1303,7 +1303,7 @@ plt_insert_dir_int (
                     void *user_data
                     ) {
     plt->follow_symlinks = (flags&DDB_INSERT_FILE_FLAG_FOLLOW_SYMLINKS) ? 1 : 0;
-    plt->ignore_archives = (flags&DDB_INSERT_FILE_FLAG_ENTER_ARCHIVES) ? 1 : 0;
+    plt->ignore_archives = (flags&DDB_INSERT_FILE_FLAG_ENTER_ARCHIVES) ? 0 : 1;
 
     if (!strncmp (dirname, "file://", 7)) {
         dirname += 7;
