@@ -117,6 +117,8 @@ int gtkui_groups_spacing;
 int gtkui_unicode_playstate = 0;
 int gtkui_disable_seekbar_overlay = 0;
 
+static gboolean _quitting_normally = FALSE;
+
 #define TRAY_ICON "deadbeef_tray_icon"
 
 const char *gtkui_default_titlebar_playing = "DeaDBeeF - %artist% - %title%";
@@ -1698,10 +1700,14 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
     gtk_widget_show (widget);
 }
 
-gboolean
-gtkui_quit_cb (void *ctx) {
-    w_save ();
+typedef enum {
+    SHUTDOWN_INHIBIT,
+    SHUTDOWN_NORMAL,
+    SHUTDOWN_FORCE
+} shutdown_type;
 
+static shutdown_type
+_should_allow_shutdown (void) {
     if (deadbeef->have_background_jobs ()) {
         GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (mainwin), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, _("The player is currently running background tasks. If you quit now, the tasks will be cancelled or interrupted. This may result in data loss."));
         gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
@@ -1711,15 +1717,41 @@ gtkui_quit_cb (void *ctx) {
         int response = gtk_dialog_run (GTK_DIALOG (dlg));
         gtk_widget_destroy (dlg);
         if (response != GTK_RESPONSE_YES) {
-            return FALSE;
+            return SHUTDOWN_INHIBIT;
         }
         else {
-            exit (0);
+            return SHUTDOWN_FORCE;
         }
     }
     else {
+        return SHUTDOWN_NORMAL;
+    }
+}
+
+static void
+_delete_running_marker(void) {
+    char crash_marker[PATH_MAX];
+    snprintf (crash_marker, sizeof (crash_marker), "%s/running", deadbeef->get_system_dir(DDB_SYS_DIR_CONFIG));
+    unlink(crash_marker);
+}
+
+gboolean
+gtkui_quit_cb (void *ctx) {
+    _quitting_normally = 1;
+    w_save ();
+
+    shutdown_type type = _should_allow_shutdown();
+
+    if (type == 2) {
+        _delete_running_marker();
+        exit(0);
+    }
+    else if (type == 1) {
         progress_abort ();
         deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
+    }
+    else {
+        _quitting_normally = 0;
     }
     return FALSE;
 }
@@ -1743,6 +1775,20 @@ import_legacy_tf (const char *key_from, const char *key_to) {
     deadbeef->conf_unlock ();
 }
 
+#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
+static void
+gapplication_shutdown_handler (GApplication *app, gpointer user_data) {
+    if (_quitting_normally) {
+        return;
+    }
+    printf ("gapplication_shutdown_handler\n");
+    shutdown_type type = _should_allow_shutdown();
+    if (type != SHUTDOWN_INHIBIT) {
+        _delete_running_marker();
+    }
+}
+#endif
+
 static int
 gtkui_start (void) {
     fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
@@ -1761,6 +1807,11 @@ gtkui_start (void) {
 
 #if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
     gapp = deadbeef_app_new ();
+    GValue val = G_VALUE_INIT;
+    g_value_init (&val, G_TYPE_BOOLEAN);
+    g_value_set_boolean (&val, TRUE);
+    g_object_set_property (G_OBJECT(gapp), "register-session", &val);
+    g_signal_connect (gapp, "window-removed", G_CALLBACK (gapplication_shutdown_handler), NULL);
     g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
     g_object_unref (gapp);
 #else
