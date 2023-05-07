@@ -1093,6 +1093,18 @@ mainloop_thread (void *ctx) {
     return;
 }
 
+static void
+sigterm_handler (int sig) {
+    pl_save_all ();
+    conf_save ();
+
+    char crash_marker[PATH_MAX];
+    snprintf (crash_marker, sizeof (crash_marker), "%s/running", dbconfdir);
+    unlink(crash_marker);
+
+    exit(0);
+}
+
 int
 main (int argc, char *argv[]) {
     ddb_logger_init ();
@@ -1537,6 +1549,8 @@ main (int argc, char *argv[]) {
     mainloop_tid = thread_start (mainloop_thread, NULL);
 
     messagepump_push (DB_EV_CONFIGCHANGED, 0, 0, 0);
+
+    signal (SIGTERM, sigterm_handler);
 
     DB_plugin_t *gui = plug_get_gui ();
     if (gui) {

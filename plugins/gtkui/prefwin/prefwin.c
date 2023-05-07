@@ -161,7 +161,7 @@ on_prefwin_response_cb (GtkDialog *dialog,
 }
 
 static void
-_init_prefwin() {
+_init_prefwin(void) {
     if (prefwin != NULL) {
         return;
     }

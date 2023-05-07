@@ -208,7 +208,7 @@ ddb_volumebar_class_init(DdbVolumeBarClass *class)
                 G_PARAM_READWRITE));
 }
 
-GtkWidget * ddb_volumebar_new() {
+GtkWidget * ddb_volumebar_new(void) {
     return g_object_new (DDB_TYPE_VOLUMEBAR, NULL);
 }
 

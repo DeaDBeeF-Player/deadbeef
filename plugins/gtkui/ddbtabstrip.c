@@ -350,7 +350,7 @@ on_tabstrip_drag_end                   (GtkWidget       *widget,
 {
 }
 
-GtkWidget * ddb_tabstrip_new() {
+GtkWidget * ddb_tabstrip_new(void) {
     return g_object_new (DDB_TYPE_TABSTRIP, NULL);
 }
 

@@ -630,21 +630,21 @@ gtkui_get_listview_cursor_color (GdkColor *clr) {
 }
 
 const char *
-gtkui_get_listview_text_font () {
+gtkui_get_listview_text_font (void) {
     return gtkui_listview_text_font;
 }
 
 const char *
-gtkui_get_listview_group_text_font () {
+gtkui_get_listview_group_text_font (void) {
     return gtkui_listview_group_text_font;
 }
 
 const char *
-gtkui_get_listview_column_text_font () {
+gtkui_get_listview_column_text_font (void) {
     return gtkui_listview_column_text_font;
 }
 
 const char *
-gtkui_get_tabstrip_text_font () {
+gtkui_get_tabstrip_text_font (void) {
     return gtkui_tabstrip_text_font;
 }

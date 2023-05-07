@@ -561,7 +561,7 @@ override_builtin_statusicon (int override) {
 }
 
 static void
-gtkui_hide_status_icon () {
+gtkui_hide_status_icon (void) {
     if (trayicon) {
         g_object_set (trayicon, "visible", FALSE, NULL);
     }
@@ -783,7 +783,7 @@ gtkui_add_new_playlist (void) {
 }
 
 int
-gtkui_get_gui_refresh_rate () {
+gtkui_get_gui_refresh_rate (void) {
     int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
     if (fps < 1) {
         fps = 1;
@@ -1775,20 +1775,6 @@ import_legacy_tf (const char *key_from, const char *key_to) {
     deadbeef->conf_unlock ();
 }
 
-#if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
-static void
-gapplication_shutdown_handler (GApplication *app, gpointer user_data) {
-    if (_quitting_normally) {
-        return;
-    }
-    printf ("gapplication_shutdown_handler\n");
-    shutdown_type type = _should_allow_shutdown();
-    if (type != SHUTDOWN_INHIBIT) {
-        _delete_running_marker();
-    }
-}
-#endif
-
 static int
 gtkui_start (void) {
     fprintf (stderr, "gtkui plugin compiled for gtk version: %d.%d.%d\n", GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
@@ -1807,11 +1793,6 @@ gtkui_start (void) {
 
 #if GTK_CHECK_VERSION(3,10,0) && USE_GTK_APPLICATION
     gapp = deadbeef_app_new ();
-    GValue val = G_VALUE_INIT;
-    g_value_init (&val, G_TYPE_BOOLEAN);
-    g_value_set_boolean (&val, TRUE);
-    g_object_set_property (G_OBJECT(gapp), "register-session", &val);
-    g_signal_connect (gapp, "window-removed", G_CALLBACK (gapplication_shutdown_handler), NULL);
     g_application_run ( G_APPLICATION (gapp), argc, (char**)argv);
     g_object_unref (gapp);
 #else
