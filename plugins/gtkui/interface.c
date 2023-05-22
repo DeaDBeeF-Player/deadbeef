@@ -1535,6 +1535,9 @@ create_prefwin (void)
   GtkWidget *pref_soundcard;
   GtkWidget *convert8to16;
   GtkWidget *convert16to24;
+  GtkWidget *hbox_bit_override;
+  GtkWidget *label_bit_override;
+  GtkWidget *combo_bit_override;
   GtkWidget *frame15;
   GtkWidget *alignment31;
   GtkWidget *vbox52;
@@ -1874,6 +1877,25 @@ create_prefwin (void)
   convert16to24 = gtk_check_button_new_with_mnemonic (_("Always convert 16 bit audio to 24 bit"));
   gtk_widget_show (convert16to24);
   gtk_box_pack_start (GTK_BOX (vbox10), convert16to24, FALSE, FALSE, 0);
+
+  hbox_bit_override = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox_bit_override);
+  gtk_box_pack_start (GTK_BOX (vbox10), hbox_bit_override, FALSE, FALSE, 0);
+
+  label_bit_override = gtk_label_new(_("Override bit depth:"));
+  gtk_widget_show (label_bit_override);
+  gtk_box_pack_start (GTK_BOX (hbox_bit_override), label_bit_override, FALSE, FALSE, 0);
+  gtk_misc_set_alignment (GTK_MISC (label_bit_override), 0, 0.5);
+
+  combo_bit_override = gtk_combo_box_text_new ();
+  gtk_widget_show (combo_bit_override);
+  gtk_box_pack_start (GTK_BOX (hbox_bit_override), combo_bit_override, TRUE, TRUE, 0);
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo_bit_override), "Disabled");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo_bit_override), "8-Bit");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo_bit_override), "16-Bit");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo_bit_override), "24-Bit");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo_bit_override), "32-Bit Fixed");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo_bit_override), "32-Bit Float");
 
   frame15 = gtk_frame_new (NULL);
   gtk_widget_show (frame15);
@@ -3326,6 +3348,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) convert16to24, "toggled",
                     G_CALLBACK (on_convert16to24_toggled),
                     NULL);
+  g_signal_connect ((gpointer) combo_bit_override, "changed",
+                    G_CALLBACK (on_combo_bit_override_changed),
+                    NULL);
   g_signal_connect ((gpointer) comboboxentry_direct_sr, "changed",
                     G_CALLBACK (on_comboboxentry_direct_sr_changed),
                     NULL);
@@ -3655,6 +3680,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, pref_soundcard, "pref_soundcard");
   GLADE_HOOKUP_OBJECT (prefwin, convert8to16, "convert8to16");
   GLADE_HOOKUP_OBJECT (prefwin, convert16to24, "convert16to24");
+  GLADE_HOOKUP_OBJECT (prefwin, combo_bit_override, "combo_bit_override");
   GLADE_HOOKUP_OBJECT (prefwin, frame15, "frame15");
   GLADE_HOOKUP_OBJECT (prefwin, alignment31, "alignment31");
   GLADE_HOOKUP_OBJECT (prefwin, vbox52, "vbox52");

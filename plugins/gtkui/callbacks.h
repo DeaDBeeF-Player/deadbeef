@@ -1049,6 +1049,10 @@ on_convert16to24_toggled                (GtkToggleButton *togglebutton,
                                          gpointer       user_data);
 
 void
+on_combo_bit_override_changed                (GtkToggleButton *togglebutton,
+                                         gpointer       user_data);
+
+void
 on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
