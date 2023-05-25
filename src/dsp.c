@@ -382,6 +382,14 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
 
     *out_dsp_ratio = 1;
 
+    if (input_fmt->is_dop) {
+        memcpy(out_fmt, input_fmt, sizeof(ddb_waveformat_t));
+        *out_bytes = (char*)malloc(inputsize);
+        *out_numbytes = inputsize;
+        memcpy(*out_bytes, input, inputsize);
+        return 1;
+    }
+
     ddb_waveformat_t dspfmt;
     memcpy (&dspfmt, input_fmt, sizeof (ddb_waveformat_t));
     dspfmt.bps = 32;

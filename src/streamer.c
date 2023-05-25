@@ -2093,6 +2093,10 @@ streamer_apply_soft_volume (char *bytes, int sz) {
         return;
     }
 
+    if (output->fmt.is_dop) {
+        return;
+    }
+
     float mod = 1.f;
 
     if (streamer_volume_modifier) {

@@ -657,6 +657,7 @@ typedef struct {
     uint32_t channelmask;
     int is_float; // bps must be 32 if this is true
     int is_bigendian;
+    int is_dop;
 } ddb_waveformat_t;
 
 // since 1.5

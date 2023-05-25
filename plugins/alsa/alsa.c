@@ -114,6 +114,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         // generic format
         plugin.fmt.bps = 16;
         plugin.fmt.is_float = 0;
+        plugin.fmt.is_dop = 0;
         plugin.fmt.channels = 2;
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
@@ -184,29 +185,44 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         int fmt_cnt[] = { 16, 24, 32, 32, 8 };
 #if WORDS_BIGENDIAN
         int fmt[] = { SND_PCM_FORMAT_S16_BE, SND_PCM_FORMAT_S24_3BE, SND_PCM_FORMAT_S32_BE, SND_PCM_FORMAT_FLOAT_BE, SND_PCM_FORMAT_S8, -1 };
+        int fmt_dop[] = { SND_PCM_FORMAT_S24_3BE, SND_PCM_FORMAT_S32_BE, -1 };
 #else
         int fmt[] = { SND_PCM_FORMAT_S16_LE, SND_PCM_FORMAT_S24_3LE, SND_PCM_FORMAT_S32_LE, SND_PCM_FORMAT_FLOAT_LE, SND_PCM_FORMAT_S8, -1 };
+        int fmt_dop[] = { SND_PCM_FORMAT_S24_3LE, SND_PCM_FORMAT_S32_LE, -1 };
 #endif
 
         // 1st try formats with higher bps
         int i = 0;
-        for (i = 0; fmt[i] != -1; i++) {
-            if (fmt[i] != sample_fmt && fmt_cnt[i] > plugin.fmt.bps) {
-                if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
-                    fprintf (stderr, "Found compatible format %d bps\n", fmt_cnt[i]);
-                    sample_fmt = fmt[i];
-                    break;
-                }
-            }
-        }
-        if (fmt[i] == -1) {
-            // next try formats with lower bps
-            i = 0;
+        if(!plugin.fmt.is_dop) {
             for (i = 0; fmt[i] != -1; i++) {
-                if (fmt[i] != sample_fmt && fmt_cnt[i] < plugin.fmt.bps) {
+                if (fmt[i] != sample_fmt && fmt_cnt[i] > plugin.fmt.bps) {
                     if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
                         fprintf (stderr, "Found compatible format %d bps\n", fmt_cnt[i]);
                         sample_fmt = fmt[i];
+                        break;
+                    }
+                }
+            }
+            if (fmt[i] == -1) {
+                // next try formats with lower bps
+                i = 0;
+                for (i = 0; fmt[i] != -1; i++) {
+                    if (fmt[i] != sample_fmt && fmt_cnt[i] < plugin.fmt.bps) {
+                        if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
+                            fprintf (stderr, "Found compatible format %d bps\n", fmt_cnt[i]);
+                            sample_fmt = fmt[i];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            for (i = 0; fmt_dop[i] != -1; i++) {
+                if (fmt_dop[i] != sample_fmt) {
+                    if (snd_pcm_hw_params_set_format (audio, hw_params, fmt_dop[i]) >= 0) {
+                        fprintf (stderr, "Found DoP compatible format\n");
+                        sample_fmt = fmt_dop[i];
                         break;
                     }
                 }
@@ -225,18 +241,27 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     unsigned val = (unsigned)plugin.fmt.samplerate;
     int ret = 0;
 
-    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample)) < 0) {
+    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample && !plugin.fmt.is_dop)) < 0) {
         fprintf (stderr, "cannot setup resampling (%s)\n",
                 snd_strerror (err));
         goto error;
     }
 
-    if ((err = snd_pcm_hw_params_set_rate_near (audio, hw_params, &val, &ret)) < 0) {
-        fprintf (stderr, "cannot set sample rate (%s)\n",
-                snd_strerror (err));
-        goto error;
+    if(plugin.fmt.is_dop) {
+        if ((err = snd_pcm_hw_params_set_rate (audio, hw_params, val, 0)) < 0) {
+            fprintf (stderr, "cannot set sample rate (%s)\n",
+                    snd_strerror (err));
+            goto error;
+        }
     }
-    plugin.fmt.samplerate = val;
+    else {
+        if ((err = snd_pcm_hw_params_set_rate_near (audio, hw_params, &val, &ret)) < 0) {
+            fprintf (stderr, "cannot set sample rate (%s)\n",
+                    snd_strerror (err));
+            goto error;
+        }
+        plugin.fmt.samplerate = val;
+    }
     trace ("chosen samplerate: %d Hz\n", val);
 
     unsigned chanmin, chanmax;

@@ -161,6 +161,10 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
             return;
         }
 
+        if (output->fmt.is_dop) {
+            return;
+        }
+
         char *bytes = _bytes;
 
         // convert to float
