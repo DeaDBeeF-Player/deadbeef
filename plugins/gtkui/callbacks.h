@@ -1049,10 +1049,6 @@ on_convert16to24_toggled                (GtkToggleButton *togglebutton,
                                          gpointer       user_data);
 
 void
-on_combo_bit_override_changed                (GtkToggleButton *togglebutton,
-                                         gpointer       user_data);
-
-void
 on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
@@ -1510,4 +1506,8 @@ on_use_visualization_background_color_toggled
 void
 on_visualization_custom_background_color_button_color_set
                                         (GtkColorButton  *colorbutton,
+                                        gpointer         user_data);
+
+void
+on_combo_bit_override_changed          (GtkComboBox     *combobox,
                                         gpointer         user_data);
