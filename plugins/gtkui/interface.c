@@ -1879,7 +1879,7 @@ create_prefwin (void)
   gtk_widget_show (convert16to24);
   gtk_box_pack_start (GTK_BOX (vbox10), convert16to24, FALSE, FALSE, 0);
 
-  hbox151 = gtk_hbox_new (FALSE, 0);
+  hbox151 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox151);
   gtk_box_pack_start (GTK_BOX (vbox10), hbox151, FALSE, TRUE, 0);
 
@@ -1891,11 +1891,11 @@ create_prefwin (void)
   gtk_widget_show (combo_bit_override);
   gtk_box_pack_start (GTK_BOX (hbox151), combo_bit_override, TRUE, TRUE, 0);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("Disabled"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("8-Bit"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("16-Bit"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("24-Bit"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("32-Bit Fixed"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("32-Bit Float"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("8 bit"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("16 bit"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("24 bit"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("32 bit"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_bit_override), _("32 bit float"));
 
   frame15 = gtk_frame_new (NULL);
   gtk_widget_show (frame15);

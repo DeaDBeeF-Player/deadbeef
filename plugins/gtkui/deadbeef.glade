@@ -2528,7 +2528,7 @@ Center</property>
 		<widget class="GtkHBox" id="hbox151">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">False</property>
-		  <property name="spacing">0</property>
+		  <property name="spacing">8</property>
 
 		  <child>
 		    <widget class="GtkLabel" id="label_bit_override">
@@ -2559,11 +2559,11 @@ Center</property>
 		    <widget class="GtkComboBox" id="combo_bit_override">
 		      <property name="visible">True</property>
 		      <property name="items" translatable="yes">Disabled
-8-Bit
-16-Bit
-24-Bit
-32-Bit Fixed
-32-Bit Float</property>
+8 bit
+16 bit
+24 bit
+32 bit
+32 bit float</property>
 		      <property name="add_tearoffs">False</property>
 		      <property name="focus_on_click">True</property>
 		      <signal name="changed" handler="on_combo_bit_override_changed" last_modification_time="Fri, 26 May 2023 09:50:38 GMT"/>
