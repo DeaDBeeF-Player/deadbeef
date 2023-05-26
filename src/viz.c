@@ -161,12 +161,11 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
             return;
         }
 
-        if (output->fmt.is_dop) {
-            return;
-        }
-
         char *bytes = _bytes;
-
+        if (output->fmt.is_dop) {
+            bytes = NULL;
+        }
+        
         // convert to float
         ddb_waveformat_t *out_fmt = calloc (1, sizeof (ddb_waveformat_t));
         out_fmt->bps = 32;
