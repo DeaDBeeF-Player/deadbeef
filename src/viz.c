@@ -162,7 +162,7 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         }
 
         char *bytes = _bytes;
-        if (output->fmt.is_dop) {
+        if (output->fmt.flags & DDB_WAVEFORMAT_FLAG_IS_DOP) {
             bytes = NULL;
         }
         
@@ -173,7 +173,6 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         out_fmt->samplerate = output->fmt.samplerate;
         out_fmt->channelmask = output->fmt.channelmask;
         out_fmt->is_float = 1;
-        out_fmt->is_bigendian = 0;
 
         const int fft_nframes = fft_size * 2;
 

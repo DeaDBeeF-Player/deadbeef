@@ -409,10 +409,6 @@ ca_setformat (ddb_waveformat_t *fmt) {
         req_format.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kLinearPCMFormatFlagIsPacked | kAudioFormatFlagsNativeEndian;
     }
 
-    if (fmt->is_bigendian) {
-        req_format.mFormatFlags |= kLinearPCMFormatFlagIsBigEndian;
-    }
-
     req_format.mBytesPerPacket = bps / 8 * fmt->channels;
     req_format.mFramesPerPacket = 1;
     req_format.mBytesPerFrame = bps / 8 * fmt->channels;

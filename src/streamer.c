@@ -2005,7 +2005,6 @@ process_output_block (streamblock_t *block, char *bytes, int bytes_available_siz
             .samplerate = block->fmt.samplerate,
             .channelmask = block->fmt.channelmask,
             .is_float = 0,
-            .is_bigendian = 0
         };
 
         pcm_convert (&block->fmt, (char *)input, &out_fmt, (char *)temp_audio_data, sz);
@@ -2093,7 +2092,7 @@ streamer_apply_soft_volume (char *bytes, int sz) {
         return;
     }
 
-    if (output->fmt.is_dop) {
+    if (output->fmt.flags & DDB_WAVEFORMAT_FLAG_IS_DOP) {
         return;
     }
 

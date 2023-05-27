@@ -257,9 +257,9 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (enable_dop && is_codec_dsd(info->codec_context->codec_id)) {
         _info->fmt.is_float = 0;
-        _info->fmt.is_dop = 1;
         _info->fmt.bps = 32;
         _info->fmt.samplerate =  info->codec_context->sample_rate / 2;
+        _info->fmt.flags |= DDB_WAVEFORMAT_FLAG_IS_DOP;
     }
 
     // FIXME: channel layout from ffmpeg
@@ -327,13 +327,13 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
     if (enable_dop && is_codec_dsd(info->codec_context->codec_id)) {
         _info->fmt.samplerate =  info->codec_context->sample_rate / 2;
         _info->fmt.bps = 32;
-        _info->fmt.is_dop = 1;
         _info->fmt.is_float = 0;
+        _info->fmt.flags |= DDB_WAVEFORMAT_FLAG_IS_DOP;
     } else {
         _info->fmt.samplerate = info->codec_context->sample_rate;
         _info->fmt.bps = av_get_bytes_per_sample (info->codec_context->sample_fmt) * 8;
-        _info->fmt.is_dop = 0;
         _info->fmt.is_float = (info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLT || info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLTP);
+        _info->fmt.flags &=~DDB_WAVEFORMAT_FLAG_IS_DOP;
     }
 
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;

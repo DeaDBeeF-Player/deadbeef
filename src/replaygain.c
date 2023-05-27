@@ -41,7 +41,7 @@ replaygain_apply_with_settings (ddb_replaygain_settings_t *settings, ddb_wavefor
     if (settings->processing_flags == 0) {
         return;
     }
-    if (fmt->is_dop) {
+    if (fmt->flags & DDB_WAVEFORMAT_FLAG_IS_DOP) {
         return;
     }
     if (fmt->bps == 16) {

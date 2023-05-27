@@ -114,10 +114,10 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         // generic format
         plugin.fmt.bps = 16;
         plugin.fmt.is_float = 0;
-        plugin.fmt.is_dop = 0;
         plugin.fmt.channels = 2;
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
+        plugin.fmt.flags &=~DDB_WAVEFORMAT_FLAG_IS_DOP;
     }
 
     snd_pcm_nonblock(audio, 0);
@@ -193,7 +193,18 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
 
         // 1st try formats with higher bps
         int i = 0;
-        if(!plugin.fmt.is_dop) {
+        if(plugin.fmt.flags & DDB_WAVEFORMAT_FLAG_IS_DOP) {
+            for (i = 0; fmt_dop[i] != -1; i++) {
+                if (fmt_dop[i] != sample_fmt) {
+                    if (snd_pcm_hw_params_set_format (audio, hw_params, fmt_dop[i]) >= 0) {
+                        fprintf (stderr, "Found DoP compatible format\n");
+                        sample_fmt = fmt_dop[i];
+                        break;
+                    }
+                }
+            }
+        }
+        else {
             for (i = 0; fmt[i] != -1; i++) {
                 if (fmt[i] != sample_fmt && fmt_cnt[i] > plugin.fmt.bps) {
                     if (snd_pcm_hw_params_set_format (audio, hw_params, fmt[i]) >= 0) {
@@ -217,17 +228,6 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
                 }
             }
         }
-        else {
-            for (i = 0; fmt_dop[i] != -1; i++) {
-                if (fmt_dop[i] != sample_fmt) {
-                    if (snd_pcm_hw_params_set_format (audio, hw_params, fmt_dop[i]) >= 0) {
-                        fprintf (stderr, "Found DoP compatible format\n");
-                        sample_fmt = fmt_dop[i];
-                        break;
-                    }
-                }
-            }
-        }
 
         if (fmt[i] == -1) {
             fprintf (stderr, "Fallback format could not be found\n");
@@ -241,13 +241,14 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
     unsigned val = (unsigned)plugin.fmt.samplerate;
     int ret = 0;
 
-    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, conf_alsa_resample && !plugin.fmt.is_dop)) < 0) {
+    int resample = conf_alsa_resample && !(plugin.fmt.flags & DDB_WAVEFORMAT_FLAG_IS_DOP);
+    if ((err = snd_pcm_hw_params_set_rate_resample (audio, hw_params, resample)) < 0) {
         fprintf (stderr, "cannot setup resampling (%s)\n",
                 snd_strerror (err));
         goto error;
     }
 
-    if(plugin.fmt.is_dop) {
+    if(plugin.fmt.flags & DDB_WAVEFORMAT_FLAG_IS_DOP) {
         if ((err = snd_pcm_hw_params_set_rate (audio, hw_params, val, 0)) < 0) {
             fprintf (stderr, "cannot set sample rate (%s)\n",
                     snd_strerror (err));
@@ -762,8 +763,10 @@ palsa_thread (void *context) {
     }
 
     LOCK;
-    snd_pcm_close(audio);
-    audio = NULL;
+    if (audio != NULL) {
+        snd_pcm_close(audio);
+        audio = NULL;
+    }
     alsa_terminate = 0;
     alsa_tid = 0;
     UNLOCK;

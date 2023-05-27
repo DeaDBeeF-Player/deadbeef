@@ -71,6 +71,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // API version history:
+// 1.17 -- deadbeef-1.9.6
 // 1.16 -- deadbeef-1.9.4
 // 1.15 -- deadbeef-1.9.0
 // 1.14 -- deadbeef-1.8.8
@@ -100,7 +101,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 16
+#define DB_API_VERSION_MINOR 17
 
 #if defined(__clang__)
 
@@ -135,6 +136,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 17)
+#define DEPRECATED_117 DDB_DEPRECATED("since deadbeef API 1.17")
+#else
+#define DEPRECATED_117
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 16)
@@ -656,9 +663,18 @@ typedef struct {
     int samplerate;
     uint32_t channelmask;
     int is_float; // bps must be 32 if this is true
+#if (DDB_API_LEVEL >= 17)
+    uint32_t flags;
+#else
     int is_bigendian;
-    int is_dop;
+#endif
 } ddb_waveformat_t;
+
+#if (DDB_API_LEVEL >= 17)
+enum {
+    DDB_WAVEFORMAT_FLAG_IS_DOP = 0x01,
+};
+#endif
 
 // since 1.5
 #if (DDB_API_LEVEL >= 5)

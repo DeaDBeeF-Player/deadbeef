@@ -382,7 +382,7 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
 
     *out_dsp_ratio = 1;
 
-    if (input_fmt->is_dop) {
+    if (input_fmt->flags & DDB_WAVEFORMAT_FLAG_IS_DOP) {
         memcpy(out_fmt, input_fmt, sizeof(ddb_waveformat_t));
         *out_bytes = (char*)malloc(inputsize);
         *out_numbytes = inputsize;
