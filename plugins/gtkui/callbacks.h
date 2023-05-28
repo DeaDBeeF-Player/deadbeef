@@ -1507,3 +1507,7 @@ void
 on_visualization_custom_background_color_button_color_set
                                         (GtkColorButton  *colorbutton,
                                         gpointer         user_data);
+
+void
+on_combo_bit_override_changed          (GtkComboBox     *combobox,
+                                        gpointer         user_data);

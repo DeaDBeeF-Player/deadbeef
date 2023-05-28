@@ -250,6 +250,10 @@ prefwin_init_sound_tab (GtkWidget *_prefwin) {
     // 16_to_24
     prefwin_set_toggle_button("convert16to24", deadbeef->conf_get_int ("streamer.16_to_24", 0));
 
+    // override bit depth
+    GtkComboBox *combo_bit_override = GTK_COMBO_BOX (lookup_widget (w, "combo_bit_override"));
+    gtk_combo_box_set_active(combo_bit_override, deadbeef->conf_get_int ("streamer.bit_override", 0));
+
     // override samplerate checkbox
     int override_sr = deadbeef->conf_get_int ("streamer.override_samplerate", 0);
     prefwin_set_toggle_button ("checkbutton_sr_override", override_sr);
@@ -282,3 +286,11 @@ on_convert16to24_toggled                (GtkToggleButton *togglebutton,
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
+void
+on_combo_bit_override_changed           (GtkComboBox     *combobox,
+                                         gpointer         user_data)
+{
+    int active = gtk_combo_box_get_active (combobox);
+    deadbeef->conf_set_int ("streamer.bit_override", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
