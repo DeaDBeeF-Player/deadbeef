@@ -561,7 +561,7 @@ override_builtin_statusicon (int override) {
 }
 
 static void
-gtkui_hide_status_icon () {
+gtkui_hide_status_icon (void) {
     if (trayicon) {
         g_object_set (trayicon, "visible", FALSE, NULL);
     }
@@ -783,7 +783,7 @@ gtkui_add_new_playlist (void) {
 }
 
 int
-gtkui_get_gui_refresh_rate () {
+gtkui_get_gui_refresh_rate (void) {
     int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
     if (fps < 1) {
         fps = 1;
