@@ -117,7 +117,7 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         plugin.fmt.channels = 2;
         plugin.fmt.samplerate = 44100;
         plugin.fmt.channelmask = 3;
-        plugin.fmt.flags &=~DDB_WAVEFORMAT_FLAG_IS_DOP;
+        plugin.fmt.flags &= ~DDB_WAVEFORMAT_FLAG_IS_DOP;
     }
 
     snd_pcm_nonblock(audio, 0);

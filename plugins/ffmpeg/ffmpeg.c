@@ -58,6 +58,7 @@ static DB_functions_t *deadbeef;
 #define EXT_MAX 1024
 
 static char * exts[EXT_MAX+1] = {NULL};
+static int enable_dop = 0;
 
 typedef struct {
     DB_fileinfo_t info;
@@ -73,8 +74,8 @@ typedef struct {
     int have_packet;
 
     char *buffer;
-    int left_in_buffer;
-    int buffer_size;
+    size_t left_in_buffer;
+    size_t buffer_size;
 
     int64_t startsample;
     int64_t endsample;
@@ -86,8 +87,6 @@ ffmpeg_open (uint32_t hints) {
     ffmpeg_info_t *info = calloc (1, sizeof (ffmpeg_info_t));
     return &info->info;
 }
-
-static int enable_dop = 0;
 
 static const uint8_t bit_reverse_table[256] =
 {
@@ -115,7 +114,7 @@ int is_codec_dsd(enum AVCodecID codec_id) {
 
 // ensure that the buffer can contain entire frame of frame_size bytes per channel
 static int
-ensure_buffer (ffmpeg_info_t *info, int frame_size) {
+ensure_buffer (ffmpeg_info_t *info, size_t frame_size) {
     if (!info->buffer || info->buffer_size < frame_size * info->codec_context->channels) {
         if (info->buffer) {
             free (info->buffer);
@@ -125,7 +124,7 @@ ensure_buffer (ffmpeg_info_t *info, int frame_size) {
         info->left_in_buffer = 0;
         int err = posix_memalign ((void **)&info->buffer, 16, info->buffer_size);
         if (err) {
-            fprintf (stderr, "ffmpeg: failed to allocate %d bytes of buffer memory\n", info->buffer_size);
+            fprintf (stderr, "ffmpeg: failed to allocate %ld bytes of buffer memory\n", (long)info->buffer_size);
             return -1;
         }
     }
@@ -258,7 +257,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     if (enable_dop && is_codec_dsd(info->codec_context->codec_id)) {
         _info->fmt.is_float = 0;
         _info->fmt.bps = 32;
-        _info->fmt.samplerate =  info->codec_context->sample_rate / 2;
+        _info->fmt.samplerate = info->codec_context->sample_rate / 2;
         _info->fmt.flags |= DDB_WAVEFORMAT_FLAG_IS_DOP;
     }
 
@@ -333,7 +332,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
         _info->fmt.samplerate = info->codec_context->sample_rate;
         _info->fmt.bps = av_get_bytes_per_sample (info->codec_context->sample_fmt) * 8;
         _info->fmt.is_float = (info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLT || info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLTP);
-        _info->fmt.flags &=~DDB_WAVEFORMAT_FLAG_IS_DOP;
+        _info->fmt.flags &= ~DDB_WAVEFORMAT_FLAG_IS_DOP;
     }
 
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
@@ -352,11 +351,10 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
     while (size > 0) {
 
         if (info->left_in_buffer > 0) {
-//            int sz = min (size, info->left_in_buffer);
-            int nsamples = size / samplesize;
-            int nsamples_buf = info->left_in_buffer / samplesize;
+            size_t nsamples = size / samplesize;
+            size_t nsamples_buf = info->left_in_buffer / samplesize;
             nsamples = min (nsamples, nsamples_buf);
-            int sz = nsamples * samplesize;
+            size_t sz = nsamples * samplesize;
             memcpy (bytes, info->buffer, nsamples*samplesize);
             bytes += nsamples * samplesize;
             size -= nsamples * samplesize;
@@ -367,7 +365,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
 
         while (info->left_in_packet > 0 && size > 0) {
-            int out_size = info->buffer_size;
+            size_t out_size = info->buffer_size;
             int len = 0;
             //trace ("in: out_size=%d(%d), size=%d\n", out_size, AVCODEC_MAX_AUDIO_FRAME_SIZE, size);
 
@@ -400,7 +398,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
                     int chCnt = info->codec_context->channels;
                     int chSize = info->pkt.size / chCnt;
-                    uint32_t* pOut = (uint32_t*)info->buffer;
+                    uint32_t *pOut = (uint32_t *)info->buffer;
                     uint8_t  marker = 0x05;
 
                     if (info->codec_context->codec_id == AV_CODEC_ID_DSD_LSBF_PLANAR ||
@@ -419,7 +417,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                                               bit_reverse_table[*(pIn[ch] + 1)] << 8;
                                     pIn[ch] += 2;
                                 }
-                                marker =~marker;
+                                marker = ~marker;
                             }
                         }
                         else {
@@ -430,7 +428,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                                               *(pIn[ch] + 1)    << 8;
                                     pIn[ch] += 2;
                                 }
-                                marker =~marker;
+                                marker = ~marker;
                             }
                         }
                     }
@@ -444,7 +442,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                                               bit_reverse_table[*(pIn + ch + chCnt)] << 8;
                                 }
                                 pIn += chCnt * 2;
-                                marker =~marker;
+                                marker = ~marker;
                             }
                         }
                         else {
@@ -455,7 +453,7 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                                               *(pIn + ch + chCnt) << 8;
                                 }
                                 pIn += chCnt * 2;
-                                marker =~marker;
+                                marker = ~marker;
                             }
                         }
                     }
@@ -893,7 +891,6 @@ add_new_exts (int n, const char* new_exts, char delim) {
 
 static void
 ffmpeg_init_exts (void) {
-    deadbeef->conf_lock ();
     const char *new_exts = deadbeef->conf_get_str_fast ("ffmpeg.extensions", DEFAULT_EXTS);
     int use_all_ext = deadbeef->conf_get_int ("ffmpeg.enable_all_exts", 0);
     for (int i = 0; exts[i]; i++) {
@@ -955,9 +952,13 @@ ffmpeg_init_exts (void) {
         n = add_new_exts (n, UNPOPULATED_EXTS_BY_FFMPEG, ',');
     }
     exts[n] = NULL;
+}
 
+static void
+_init_from_config(void) {
+    deadbeef->conf_lock ();
+    ffmpeg_init_exts ();
     enable_dop = deadbeef->conf_get_int ("ffmpeg.enable_dop", 0);
-
     deadbeef->conf_unlock ();
 }
 
@@ -965,7 +966,7 @@ static int
 ffmpeg_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_CONFIGCHANGED:
-        ffmpeg_init_exts ();
+        _init_from_config();
         break;
     }
     return 0;
@@ -973,7 +974,7 @@ ffmpeg_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 static int
 ffmpeg_start (void) {
-    ffmpeg_init_exts ();
+    _init_from_config();
 #if LIBAVFORMAT_VERSION_MAJOR < 58
     av_register_all ();
 #endif
