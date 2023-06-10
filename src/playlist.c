@@ -316,23 +316,19 @@ plt_get_for_idx (int idx) {
 
 void
 plt_ref (playlist_t *plt) {
-    LOCK;
-    plt->refc++;
-    UNLOCK;
+    __atomic_fetch_add(&plt->refc, 1, __ATOMIC_SEQ_CST);
 }
 
 void
 plt_unref (playlist_t *plt) {
-    LOCK;
-    assert (plt->refc > 0);
-    plt->refc--;
-    if (plt->refc < 0) {
+    int refc = __atomic_fetch_sub(&plt->refc, 1, __ATOMIC_SEQ_CST);
+    assert(refc > 0);
+    if (refc <= 0) {
         trace ("\033[0;31mplaylist: bad refcount on playlist %p (%s)\033[37;0m\n", plt, plt->title);
     }
-    if (plt->refc <= 0) {
+    if (refc <= 1) {
         plt_free (plt);
     }
-    UNLOCK;
 }
 
 int
@@ -1764,10 +1760,8 @@ pl_item_alloc_init (const char *fname, const char *decoder_id) {
 
 void
 pl_item_ref (playItem_t *it) {
-    LOCK;
-    it->_refc++;
+    __atomic_fetch_add(&it->_refc, 1, __ATOMIC_SEQ_CST);
     //fprintf (stderr, "\033[0;34m+it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, pl_find_meta_raw (it, ":URI"));
-    UNLOCK;
 }
 
 static void
@@ -1788,18 +1782,14 @@ pl_item_free (playItem_t *it) {
 
 void
 pl_item_unref (playItem_t *it) {
-    LOCK;
-    it->_refc--;
-    //trace ("\033[0;31m-it %p: refc=%d: %s\033[37;0m\n", it, it->_refc, pl_find_meta_raw (it, ":URI"));
-    if (it->_refc < 0) {
+    int refc = __atomic_fetch_sub(&it->_refc, 1, __ATOMIC_SEQ_CST);
+    if (refc <= 0) {
         trace ("\033[0;31mplaylist: bad refcount on item %p\033[37;0m\n", it);
         assert(0);
     }
-    if (it->_refc <= 0) {
-        //printf ("\033[0;31mdeleted %s\033[37;0m\n", pl_find_meta_raw (it, ":URI"));
+    if (refc <= 1) {
         pl_item_free (it);
     }
-    UNLOCK;
 }
 
 int
