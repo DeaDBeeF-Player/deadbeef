@@ -1318,8 +1318,9 @@ m3u_error:
         }
 
         trace ("\033[0;33minit decoder for %s (%s)\033[37;0m\n", pl_find_meta (it, ":URI"), dec->plugin.id);
+        DB_fileinfo_t *temp_fileinfo = dec_open (dec, STREAMER_HINTS, it);
         streamer_lock();
-        new_fileinfo = dec_open (dec, STREAMER_HINTS, it);
+        new_fileinfo = temp_fileinfo;
         if (new_fileinfo && new_fileinfo->file) {
             new_fileinfo_file_vfs = new_fileinfo->file->vfs;
             new_fileinfo_file_identifier = vfs_get_identifier(new_fileinfo->file);
