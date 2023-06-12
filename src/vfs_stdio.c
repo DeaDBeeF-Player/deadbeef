@@ -35,8 +35,6 @@
 #include <unistd.h>
 
 #ifndef __linux__
-#define off64_t off_t
-#define lseek64 lseek
 #define O_LARGEFILE 0
 #endif
 
@@ -169,7 +167,7 @@ stdio_seek (DB_FILE *stream, int64_t offset, int whence) {
         whence = SEEK_SET;
         offset = ((STDIO_FILE*)stream)->offs + offset;
     }
-    off64_t res = lseek64 (((STDIO_FILE *)stream)->stream, offset, whence);
+    off_t res = lseek (((STDIO_FILE *)stream)->stream, offset, whence);
     if (res == -1) {
         return -1;
     }
@@ -214,8 +212,8 @@ stdio_getlength (DB_FILE *stream) {
     return l;
 #else
     if (!f->have_size) {
-        int64_t size = lseek64 (f->stream, 0, SEEK_END);
-        lseek64 (f->stream, f->offs, SEEK_SET);
+        int64_t size = lseek (f->stream, 0, SEEK_END);
+        lseek (f->stream, f->offs, SEEK_SET);
 #ifdef USE_BUFFERING
         f->bufremaining = 0;
 #endif
