@@ -120,10 +120,6 @@ palsa_set_hw_params (ddb_waveformat_t *fmt) {
         plugin.fmt.flags &= ~DDB_WAVEFORMAT_FLAG_IS_DOP;
     }
 
-    snd_pcm_nonblock(audio, 0);
-    snd_pcm_drain (audio);
-    snd_pcm_nonblock(audio, 1);
-
     if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
         fprintf (stderr, "cannot allocate hardware parameter structure (%s)\n",
                 snd_strerror (err));
@@ -499,6 +495,9 @@ _setformat_apply (void) {
         }
     }
 
+    snd_pcm_nonblock (audio, 0);
+    snd_pcm_drain (audio);
+    snd_pcm_nonblock (audio, 1);
 
     int ret = palsa_set_hw_params (&requested_fmt);
     if (ret < 0) {
