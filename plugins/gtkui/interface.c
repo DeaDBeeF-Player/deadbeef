@@ -2272,7 +2272,7 @@ create_prefwin (void)
   gtk_widget_show (enable_shift_jis_recoding);
   gtk_box_pack_start (GTK_BOX (vbox9), enable_shift_jis_recoding, FALSE, FALSE, 0);
 
-  enable_cp1251_recoding = gtk_check_button_new_with_mnemonic (_("Enable Russian CP1251 detection and recoding"));
+  enable_cp1251_recoding = gtk_check_button_new_with_mnemonic (_("Enable cyrillic CP1251 detection and recoding"));
   gtk_widget_show (enable_cp1251_recoding);
   gtk_box_pack_start (GTK_BOX (vbox9), enable_cp1251_recoding, FALSE, FALSE, 0);
 

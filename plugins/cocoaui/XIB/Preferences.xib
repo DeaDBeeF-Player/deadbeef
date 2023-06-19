@@ -47,7 +47,7 @@
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="nXp-DV-5XR">
                                         <rect key="frame" x="18" y="144" width="401" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Enable Russian CP1251 detection and recoding" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="FIl-Oa-w27">
+                                        <buttonCell key="cell" type="check" title="Enable cyrillic CP1251 detection and recoding" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="FIl-Oa-w27">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
