@@ -56,6 +56,7 @@
 #include "decodedblock.h"
 #include "dsp.h"
 #include "playmodes.h"
+#include "tf.h"
 #include "viz.h"
 #include "fft.h"
 #ifdef __APPLE__
@@ -124,6 +125,9 @@ static playItem_t *last_played; // this is the last track that was played, shoul
 
 static ddb_waveformat_t prev_output_format; // last format that was sent to output via streamer_set_output_format
 static ddb_waveformat_t last_block_fmt; // input file format corresponding to the current output
+
+static char *_artist_tf;
+static char *_album_tf;
 
 static DB_fileinfo_t *fileinfo_curr;
 static uint64_t fileinfo_file_identifier;
@@ -1898,6 +1902,9 @@ streamer_init (void) {
     streamer_ctmap = NULL;
     streamer_ctmap = ddb_ctmap_init_from_string (conf_network_ctmapping);
 
+    _artist_tf = tf_compile("%album artist%");
+    _album_tf = tf_compile("%album%");
+
     streamer_tid = thread_start (streamer_thread, NULL);
     return 0;
 }
@@ -1911,6 +1918,11 @@ streamer_free (void) {
     streamer_abort_files ();
     streaming_terminate = 1;
     thread_join (streamer_tid);
+
+    tf_free(_album_tf);
+    _album_tf = NULL;
+    tf_free(_artist_tf);
+    _artist_tf = NULL;
 
     streamreader_free ();
     decoded_blocks_free ();
@@ -2813,12 +2825,38 @@ streamer_set_dsp_chain (ddb_dsp_context_t *chain) {
 static void
 _streamer_mark_album_played_up_to (playItem_t *item) {
     pl_lock ();
-    const char *alb = pl_find_meta_raw (item, "album");
-    const char *art = pl_find_meta_raw (item, "artist");
+
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_NO_DYNAMIC,
+    };
+
+    char album[100];
+    char artist[100];
+    char other_album[100];
+    char other_artist[100];
+
+    ctx.it = (ddb_playItem_t *)item;
+    tf_eval(&ctx, _album_tf, album, sizeof(album));
+    tf_eval(&ctx, _artist_tf, artist, sizeof(artist));
+
     pl_set_played(item, 1);
     playItem_t *next = item->prev[PL_MAIN];
     while (next) {
-        if (alb == pl_find_meta_raw (next, "album") && art == pl_find_meta_raw (next, "artist")) {
+        ctx.it = (ddb_playItem_t *)next;
+        tf_eval(&ctx, _album_tf, other_album, sizeof(other_album));
+        tf_eval(&ctx, _artist_tf, other_artist, sizeof(artist));
+
+        int same_album = 1;
+
+        if (*album == 0 || strcmp (album, other_album)) {
+            same_album = 0;
+        }
+        else if (*artist == 0 || strcmp (artist, other_artist)) {
+            same_album = 0;
+        }
+
+        if (same_album) {
             pl_set_played(next, 1);
             next = next->prev[PL_MAIN];
         }
