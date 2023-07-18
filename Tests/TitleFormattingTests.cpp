@@ -331,6 +331,29 @@ TEST_F(TitleFormattingTests, test_GreaterIsFalseEmptyArguments_EvalsToFalse) {
     EXPECT_TRUE(!strcmp ("isfalse", buffer));
 }
 
+TEST_F(TitleFormattingTests, test_Greater_CalculatedValueTrue_EvalsToTrue) {
+    pl_replace_meta (it, "album", "abcdefabcdefabcdefabcdef");
+    char *bc = tf_compile("$if($greater($len(%album%),20),GREATER $len(%album%) %album%,NOT GREATER $len(%album%) %album%)");
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    EXPECT_TRUE(!strcmp ("GREATER 24 abcdefabcdefabcdefabcdef", buffer));
+}
+
+TEST_F(TitleFormattingTests, test_Greater_CalculatedValueFalse_EvalsToFalse) {
+    pl_replace_meta (it, "album", "abcdef");
+    char *bc = tf_compile("$if($greater($len(%album%),20),GREATER $len(%album%) %album%,NOT GREATER $len(%album%) %album%)");
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    EXPECT_TRUE(!strcmp ("NOT GREATER 6 abcdef", buffer));
+}
+
+TEST_F(TitleFormattingTests, test_Greater_Largenumber_EvalsToTrue) {
+    char *bc = tf_compile("$if($greater(50,20),GREATER,NOT GREATER)");
+    tf_eval (&ctx, bc, buffer, sizeof (buffer));
+    tf_free (bc);
+    EXPECT_TRUE(!strcmp ("GREATER", buffer));
+}
+
 TEST_F(TitleFormattingTests, test_StrCmpEmptyArguments_EvalsToTrue) {
     char *bc = tf_compile("$if($strcmp(,),istrue,isfalse)");
     tf_eval (&ctx, bc, buffer, sizeof (buffer));

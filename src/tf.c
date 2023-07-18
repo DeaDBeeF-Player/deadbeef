@@ -73,6 +73,7 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
+#define TEMP_BUFFER_SIZE 1000
 #define TF_INTERNAL_FLAG_LOCKED (1<<16)
 
 typedef struct {
@@ -243,14 +244,14 @@ tf_func_greater (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
 
     int bool_out = 0;
 
-    char a[10];
+    char a[TEMP_BUFFER_SIZE];
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], a, sizeof (a) - 1, fail_on_undef);
 
     int aa = atoi (a);
 
     arg += arglens[0];
-    char b[10];
+    char b[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, arg, arglens[1], b, sizeof (b) - 1, fail_on_undef);
     int bb = atoi (b);
 
@@ -268,12 +269,12 @@ tf_func_strcmp (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
 
     int bool_out = 0;
 
-    char s1[1000];
+    char s1[TEMP_BUFFER_SIZE];
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], s1, sizeof (s1) - 1, fail_on_undef);
 
     arg += arglens[0];
-    char s2[1000];
+    char s2[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, arg, arglens[1], s2, sizeof (s2) - 1, fail_on_undef);
 
     int res = strcmp (s1, s2);
@@ -290,12 +291,12 @@ tf_func_stricmp (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
 
     int bool_out = 0;
 
-    char s1[1000];
+    char s1[TEMP_BUFFER_SIZE];
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], s1, sizeof (s1) - 1, fail_on_undef);
 
     arg += arglens[0];
-    char s2[1000];
+    char s2[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, arg, arglens[1], s2, sizeof (s2) - 1, fail_on_undef);
 
     int res = u8_strcasecmp (s1, s2);
@@ -313,7 +314,7 @@ tf_prefix_helper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
     int bool_out = 0;
     int i;
 
-    char str[1000];
+    char str[TEMP_BUFFER_SIZE];
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], str, sizeof (str) - 1, fail_on_undef);
     arg += arglens[0];
@@ -413,7 +414,7 @@ tf_func_upper (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
     int bool_out = 0;
 
     int len;
-    char temp_str[1000];
+    char temp_str[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
 
     char *pout = out;
@@ -443,7 +444,7 @@ tf_func_lower (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
     int bool_out = 0;
 
     int len;
-    char temp_str[1000];
+    char temp_str[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
 
     char *pout = out;
@@ -600,7 +601,7 @@ tf_func_abbr (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
 
     if (argc == 2) {
-        char num_chars_str[10];
+        char num_chars_str[TEMP_BUFFER_SIZE];
         arg += arglens[0];
         int l;
         TF_EVAL_CHECK(l, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
@@ -671,7 +672,7 @@ tf_func_ascii (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
     int bool_out = 0;
 
     int len;
-    char temp_str[1000];
+    char temp_str[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
 
     len = junk_iconv (temp_str, len, out, outlen, "utf-8", "ascii");
@@ -867,7 +868,7 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     int bool_out = 0;
 
     // get number of characters
-    char num_chars_str[10];
+    char num_chars_str[TEMP_BUFFER_SIZE];
     arg += arglens[0];
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
@@ -878,7 +879,7 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     }
 
     // get text
-    char text[1000];
+    char text[TEMP_BUFFER_SIZE];
     arg = args;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text) - 1, fail_on_undef);
 
@@ -900,7 +901,7 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     int bool_out = 0;
 
     // get repeat count
-    char num_chars_str[10];
+    char num_chars_str[TEMP_BUFFER_SIZE];
     arg += arglens[0];
     int len;
     TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
@@ -916,7 +917,7 @@ tf_func_repeat (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     }
 
     // get expr
-    char text[1000];
+    char text[TEMP_BUFFER_SIZE];
     arg = args;
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text) - 1, fail_on_undef);
 
@@ -944,18 +945,18 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     int len, str_len, insert_len;
 
     // get str
-    char str[1000];
+    char str[TEMP_BUFFER_SIZE];
     arg = args;
     TF_EVAL_CHECK(str_len, ctx, arg, arglens[0], str, sizeof (str) - 1, fail_on_undef);
     int str_chars = u8_strlen(str);
 
     // get insert
-    char insert[1000];
+    char insert[TEMP_BUFFER_SIZE];
     arg += arglens[0];
     TF_EVAL_CHECK(insert_len, ctx, arg, arglens[1], insert, sizeof (insert) - 1, fail_on_undef);
 
     // get insertion point
-    char num_chars_str[10];
+    char num_chars_str[TEMP_BUFFER_SIZE];
     arg += arglens[1];
     TF_EVAL_CHECK(len, ctx, arg, arglens[2], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
     int insertion_point = atoi (num_chars_str);
@@ -1086,7 +1087,7 @@ tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
     int bool_out = 0;
     int len, str_len;
     const char *arg = args;
-    char pad_char_str[10] = " ";
+    char pad_char_str[TEMP_BUFFER_SIZE] = " ";
     int nb_pad_char=1;
 
     // get expr
@@ -1094,7 +1095,7 @@ tf_func_pad_impl (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, cons
     TF_EVAL_CHECK(str_len, ctx, args, arglens[0], str, outlen, fail_on_undef);
 
     // get len
-    char num_chars_str[10];
+    char num_chars_str[TEMP_BUFFER_SIZE];
     arg += arglens[0];
     TF_EVAL_CHECK(len, ctx, arg, arglens[1], num_chars_str, sizeof (num_chars_str) - 1, fail_on_undef);
     int padlen_chars = atoi (num_chars_str);
@@ -1440,7 +1441,7 @@ tf_func_strrchr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
 
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
-    char str[10];
+    char str[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], str, sizeof(str) - 1, fail_on_undef);
     int dummy = 0;
     uint32_t needle = u8_nextchar(str, &dummy);
@@ -1481,7 +1482,7 @@ tf_func_strstr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
 
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
-    char needle[1000];
+    char needle[TEMP_BUFFER_SIZE];
 
     TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], needle, sizeof(needle) - 1, fail_on_undef);
 
@@ -1513,7 +1514,7 @@ tf_func_substr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
 
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
-    char str[10];
+    char str[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, args + arglens[0], arglens[1], str, sizeof(str) - 1, fail_on_undef);
     int from = atoi(str);
     if (from <= 0) {
@@ -1565,7 +1566,7 @@ tf_func_tab(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char
         int bool_out = 0;
         int len;
 
-        char str[10];
+        char str[TEMP_BUFFER_SIZE];
         TF_EVAL_CHECK(len, ctx, args, arglens[0], str, sizeof(str) - 1, fail_on_undef);
         amount = atoi(str);
         if (amount < 0) {
@@ -2324,7 +2325,7 @@ tf_func_fix_eol (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const
     char *p = out;
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
-    char ind[1000];
+    char ind[TEMP_BUFFER_SIZE];
     int indlen = sizeof (ind);
     if (argc == 2) {
         TF_EVAL_CHECK(indlen, ctx, args + arglens[0], arglens[1], ind, indlen - 1, fail_on_undef);
@@ -2464,7 +2465,7 @@ tf_func_year (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     int bool_out = 0;
 
     int len;
-    char temp_str[1000];
+    char temp_str[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
 
     // Shorter than 4 characters? return nothing
@@ -2492,7 +2493,7 @@ tf_func_itematindex (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, c
     int bool_out = 0;
 
     int len;
-    char temp_str[10];
+    char temp_str[TEMP_BUFFER_SIZE];
     TF_EVAL_CHECK(len, ctx, args, arglens[0], temp_str, sizeof (temp_str) - 1, fail_on_undef);
 
     ddb_tf_context_int_t *priv = (ddb_tf_context_int_t *)ctx;
