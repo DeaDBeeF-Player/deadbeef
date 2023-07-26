@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -657,8 +657,6 @@
 		2D00FC5F2435381F000FC130 /* event.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D00FBC32435381E000FC130 /* event.cpp */; };
 		2D00FC602435381F000FC130 /* reloc65.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D00FBC42435381E000FC130 /* reloc65.c */; };
 		2D00FE93243539AA000FC130 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D8C8D3F1C43116A008ACE29 /* libz.tbd */; };
-		2D00FE94243539CB000FC130 /* libzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; };
-		2D00FE95243539CB000FC130 /* libzip.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2D01D7CF1AB2219C00BCD3C4 /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3ED81837EC44003E6066 /* ConvertUTF.c */; };
 		2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F871837EC44003E6066 /* md5.c */; };
 		2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D713FFB1A5D7D5900EFF139 /* playqueue.c */; };
@@ -2415,6 +2413,9 @@
 		2DCB197C2515F9DF0054BD06 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB197B2515F9D90054BD06 /* ChangeLog */; };
 		2DCB281A19E86183008E9DF6 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DCB281D19E86194008E9DF6 /* m3u.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DCB281419E86162008E9DF6 /* m3u.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DCB5F392A71923200F20ABC /* libzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; };
+		2DCB5F3E2A71928600F20ABC /* libzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; };
+		2DCB5F3F2A71928600F20ABC /* libzip.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D00FE7F2435392E000FC130 /* libzip.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCCCF7C26C43D080034F4BB /* medialibwidget.h */; };
 		2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9EF0519A5089F00189344 /* cocoautil.m */; };
 		2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DCF73B21A952F8900495740 /* PreferencesWindowController.h */; };
@@ -4026,6 +4027,13 @@
 			remoteGlobalIDString = 2DCB281319E86162008E9DF6;
 			remoteInfo = m3u;
 		};
+		2DCB5F3C2A71923C00F20ABC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D4459D21C04F28800230939 /* libzip.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B01D68A15B2F3F1002D5007;
+			remoteInfo = libzip;
+		};
 		2DDF87E824027FC600CA8E91 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -4218,17 +4226,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2D00FE96243539CB000FC130 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				2D00FE95243539CB000FC130 /* libzip.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		2D7C1F7C2945EBB400163538 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4245,6 +4242,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				2DCB5F3F2A71928600F20ABC /* libzip.framework in Copy Frameworks */,
 				2D71F1B624AE7A1A00E753D3 /* mp4p.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -4356,6 +4354,16 @@
 				2DCB18782515F96A0054BD06 /* help.txt in CopyFiles */,
 				2DCB18FA2515F9B30054BD06 /* COPYING.GPLv2 in CopyFiles */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DCB5F3B2A71923300F20ABC /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2DD6C5CD279B277E00CABBE6 /* Copy Frameworks */ = {
@@ -7621,7 +7629,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D00FE94243539CB000FC130 /* libzip.framework in Frameworks */,
+				2DCB5F392A71923200F20ABC /* libzip.framework in Frameworks */,
 				2D00FE93243539AA000FC130 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7922,6 +7930,7 @@
 				2D01D7EA1AB221B200BCD3C4 /* libddbcore.a in Frameworks */,
 				4D1B51691837F669003E6066 /* CoreAudio.framework in Frameworks */,
 				4D1B51681837F655003E6066 /* AudioUnit.framework in Frameworks */,
+				2DCB5F3E2A71928600F20ABC /* libzip.framework in Frameworks */,
 				4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -14864,11 +14873,12 @@
 				2D4458D51C04F1C000230939 /* Sources */,
 				2D4458D61C04F1C000230939 /* Frameworks */,
 				2D4458D71C04F1C000230939 /* Headers */,
-				2D00FE96243539CB000FC130 /* Embed Frameworks */,
+				2DCB5F3B2A71923300F20ABC /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2DCB5F3D2A71923C00F20ABC /* PBXTargetDependency */,
 			);
 			name = vfs_zip;
 			productName = vfs_zip;
@@ -19045,6 +19055,11 @@
 			isa = PBXTargetDependency;
 			target = 2DCB281319E86162008E9DF6 /* m3u */;
 			targetProxy = 2DCB281B19E8618D008E9DF6 /* PBXContainerItemProxy */;
+		};
+		2DCB5F3D2A71923C00F20ABC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libzip;
+			targetProxy = 2DCB5F3C2A71923C00F20ABC /* PBXContainerItemProxy */;
 		};
 		2DDF87E924027FC600CA8E91 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
