@@ -108,10 +108,9 @@ spectrumFragmentShader(
     // grid
     float lineAlpha = params.lineColor.w;
     for (int i = 0; i < params.gridLineCount; i++) {
-        float yMin = params.size.y * (float)i / (float)params.gridLineCount;
-        float yMax = yMin + params.backingScaleFactor;
+        float lineY = params.size.y * (float)i / (float)params.gridLineCount;
 
-        float line = smoothstep(floor(yMin), ceil(yMin), y) * smoothstep(floor(-yMax), ceil(-yMax), -y);
+        float line = drawBar(x, y, 0, lineY, params.size.x, params.backingScaleFactor);
 
         if (((int)(x / params.backingScaleFactor)) % 3 > 0) {
             line = 0;
