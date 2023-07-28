@@ -110,10 +110,10 @@ spectrumFragmentShader(
     for (int i = 0; i < params.gridLineCount; i++) {
         float lineY = params.size.y * (float)i / (float)params.gridLineCount;
 
-        float line = drawBar(x, y, 0, lineY, params.size.x, params.backingScaleFactor);
+        float line = 0;
 
-        if (((int)(x / params.backingScaleFactor)) % 3 > 0) {
-            line = 0;
+        if (((int)(x / params.backingScaleFactor)) % 3 <= 0) {
+            line = drawBar(x, y, 0, lineY, params.size.x, params.backingScaleFactor);
         }
 
         out.xyz = params.lineColor.xyz * line * lineAlpha + out.xyz * (1 - line * lineAlpha);
