@@ -112,7 +112,7 @@ typedef struct {
 
     const uint8_t *p; // buffer ptr
     const char *charset; // detected charset
-    int have_track; // wheter track info has been found, before encountering the TRACK field
+    int have_track; // whether track info has been found, before encountering the TRACK field
     playItem_t *cuetracks[MAX_CUE_TRACKS]; // all loaded cue tracks after splitting
     int ntracks; // count of cuetracks
 

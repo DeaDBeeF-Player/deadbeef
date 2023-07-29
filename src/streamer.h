@@ -119,7 +119,7 @@ streamer_set_bitrate (int bitrate);
 int
 streamer_get_apx_bitrate (void);
 
-// returns -1 if theres no next song, or playlist finished
+// returns -1 if there's no next song, or playlist finished
 // reason 0 means "prev song finished", 1 means "interrupt"
 int
 streamer_move_to_nextsong (int r);

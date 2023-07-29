@@ -938,7 +938,7 @@ typedef struct {
     // It doesn't need to be called if you save the playlist via direct call to `plt_save_*`, or `pl_save_current`
     void (*plt_modified) (ddb_playlist_t *handle);
 
-    // returns modication index
+    // returns modification index
     // the index is incremented by 1 every time playlist changes
     int (*plt_get_modification_idx) (ddb_playlist_t *handle);
 
@@ -2333,7 +2333,7 @@ typedef struct {
     const char *(*selector_name) (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector);
 
     /// Add event listener. Your callback function will be called every time some event occurs. Such as state change, content update, and so on.
-    /// The callback funtion may be executed on background thread, so make sure to dispatch to main to update UI.
+    /// The callback function may be executed on background thread, so make sure to dispatch to main to update UI.
     int (*add_listener) (ddb_mediasource_source_t source, ddb_medialib_listener_t listener, void *user_data);
 
     /// Remove event listener
