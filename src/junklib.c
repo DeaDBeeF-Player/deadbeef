@@ -1781,7 +1781,7 @@ junk_apev2_read_full (playItem_t *it, DB_apev2_tag_t *tag_store, DB_FILE *fp) {
         pl_set_item_flags (it, f);
     }
 
-    // now seek to beginning of the tag (exluding header)
+    // now seek to beginning of the tag (excluding header)
     if (deadbeef->fseek (fp, -size, SEEK_CUR) == -1) {
         trace ("failed to seek to tag start (-%d)\n", size);
         return -1;

@@ -409,7 +409,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 continue;
             }
 
-            // get length until pend or next "--plugin" occurence
+            // get length until pend or next "--plugin" occurrence
             int parg_len = 0;
             while ((parg + parg_len) < pend) {
                 if (parg_len && !strncmp(parg + parg_len, "--plugin=", strlen("--plugin="))) {
@@ -1554,7 +1554,7 @@ main (int argc, char *argv[]) {
     main_cleanup_and_quit ();
 
     // main_cleanup_and_quit will call "exit" after async jobs finish, which may occur on another thread.
-    // Therefore inifinite wait here.
+    // Therefore infinite wait here.
     for (;;) {
         usleep(10000000);
     }

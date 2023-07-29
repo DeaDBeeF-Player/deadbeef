@@ -993,7 +993,7 @@ tf_func_insert (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     return res;
 }
 
-// $len(expr): returns lenght of `expr`
+// $len(expr): returns length of `expr`
 int
 tf_func_len (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
     if (argc != 1) {
