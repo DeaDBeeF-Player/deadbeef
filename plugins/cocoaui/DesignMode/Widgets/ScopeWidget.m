@@ -52,7 +52,6 @@ static void *kCustomBackgroundColorContext = &kCustomBackgroundColorContext;
     _deps = deps;
 
     _visualizationViewController = [ScopeVisualizationViewController new];
-    [_visualizationViewController awakeFromNib];
 
     [self.topLevelView addSubview:_visualizationViewController.view];
     [_visualizationViewController.view.leadingAnchor constraintEqualToAnchor:self.topLevelView.leadingAnchor].active = YES;

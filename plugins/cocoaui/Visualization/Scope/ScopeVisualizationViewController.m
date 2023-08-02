@@ -67,6 +67,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 - (void)loadView {
     self.view = [[AAPLNSView alloc] initWithFrame:NSZeroRect];
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
+    [super loadView];
 }
 
 - (void)setupMetalRenderer {
@@ -91,6 +92,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
     NSMenu *menu = [NSMenu new];
     NSMenuItem *renderModeMenuItem = [menu addItemWithTitle:@"Rendering Mode" action:nil keyEquivalent:@""];
     NSMenuItem *scaleModeMenuItem = [menu addItemWithTitle:@"Scale" action:nil keyEquivalent:@""];

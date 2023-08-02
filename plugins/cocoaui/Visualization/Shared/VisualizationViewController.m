@@ -29,9 +29,11 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     [self.tickTimer invalidate];
 }
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
-    // Do view setup here.
+- (void)loadView {
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
     [self addObserver:self forKeyPath:kWindowIsVisibleKey options:NSKeyValueObservingOptionInitial context:kIsVisibleContext];
 }
 

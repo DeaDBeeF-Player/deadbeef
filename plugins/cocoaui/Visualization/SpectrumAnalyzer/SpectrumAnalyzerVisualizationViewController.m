@@ -99,6 +99,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     ]];
 
     self.view = self.labelsView;
+    [super loadView];
 }
 
 - (void)updateVisListening {
@@ -143,6 +144,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
     NSMenu *menu = [NSMenu new];
     NSMenuItem *modeMenuItem = [menu addItemWithTitle:@"Mode" action:nil keyEquivalent:@""];
     NSMenuItem *gapSizeMenuItem = [menu addItemWithTitle:@"Gap Size" action:nil keyEquivalent:@""];

@@ -56,7 +56,6 @@ static void *kCustomBackgroundColor = &kCustomBackgroundColor;
     _deps = deps;
 
     _visualizationViewController = [SpectrumAnalyzerVisualizationViewController new];
-    [_visualizationViewController awakeFromNib];
 
     [self.topLevelView addSubview:_visualizationViewController.view];
     [_visualizationViewController.view.leadingAnchor constraintEqualToAnchor:self.topLevelView.leadingAnchor].active = YES;
