@@ -180,6 +180,24 @@ error:
     return res;
 }
 
+static float
+_get_duration (const gme_info_t *inf) {
+    if (inf->length != -1 && inf->length != 0) {
+        return (inf->length + conf_fadeout)/1000.f;
+    }
+
+    if (inf->loop_length <= 0 || conf_loopcount <= 0) {
+        return deadbeef->conf_get_float ("gme.songlength", 3) * 60.f;
+    }
+
+    float songlength = inf->intro_length / 1000.f;
+    if (songlength < 0) {
+        songlength = 0;
+    }
+    songlength += (inf->loop_length * conf_loopcount) / 1000.f;
+    return songlength;
+}
+
 static int
 cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     gme_fileinfo_t *info = (gme_fileinfo_t*)_info;
@@ -235,8 +253,8 @@ cgme_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channels = 2;
     _info->fmt.samplerate = samplerate;
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
-    info->duration = deadbeef->pl_get_item_duration (it);
-    info->reallength = inf->length; 
+    info->duration = _get_duration(inf);
+    info->reallength = inf->length;
     _info->readpos = 0;
     info->eof = 0;
     return 0;
@@ -423,25 +441,7 @@ cgme_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
                 deadbeef->pl_add_meta (it, ":GME_INTRO_LENGTH", str);
                 snprintf (str, sizeof(str), "%d", inf->loop_length);
                 deadbeef->pl_add_meta (it, ":GME_LOOP_LENGTH", str);
-                if (inf->length == -1 || inf->length == 0) {
-                    float songlength;
-                    
-                    if (inf->loop_length > 0 && conf_loopcount > 0) {
-                        songlength = inf->intro_length / 1000.f;
-                        if (songlength < 0) {
-                            songlength = 0;
-                        }
-                        songlength += (inf->loop_length * conf_loopcount) / 1000.f;
-                    }
-                    else {
-                        songlength = deadbeef->conf_get_float ("gme.songlength", 3) * 60.f;
-                    }
-                    deadbeef->plt_set_item_duration (plt, it, songlength);
-                }
-                else {
-                    inf->length += conf_fadeout*1000;
-                    deadbeef->plt_set_item_duration (plt, it, (float)inf->length/1000.f);
-                }
+                deadbeef->plt_set_item_duration (plt, it, _get_duration(inf));
                 const char *ext = fname + strlen (fname) - 1;
                 while (ext >= fname && *ext != '.') {
                     ext--;
