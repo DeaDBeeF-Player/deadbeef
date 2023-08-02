@@ -459,11 +459,12 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     return "cocoaui.playlist.pin_groups";
 }
 
-- (void)awakeFromNib {
-    [self setup];
+- (void)loadView {
+    self.view = [PlaylistView new];
 }
 
-- (void)setup {
+- (void)viewDidLoad {
+    [super viewDidLoad];
     _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     _artwork_plugin->add_listener (artwork_listener, (__bridge void *)self);
 

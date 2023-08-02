@@ -54,8 +54,6 @@ extern DB_functions_t *deadbeef;
     _viewController.delegate = self;
     _voices = deadbeef->conf_get_int ("chip.voices", 0xff);
 
-    [_viewController awakeFromNib];
-
     _viewController.view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.topLevelView addSubview:_viewController.view];
 

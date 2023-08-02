@@ -50,10 +50,6 @@ extern DB_functions_t *deadbeef;
     return PL_SEARCH;
 }
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
-}
-
 - (const char *)groupByConfStr {
     return "cocoaui.search.group_by";
 }

@@ -27,10 +27,8 @@
         return nil;
     }
 
-    _viewController = [[PlaylistViewController alloc] initWithNibName:nil bundle:nil];
-    PlaylistView *view = [PlaylistView new];
-    _viewController.view = view;
-    [_viewController setup];
+    _viewController = [PlaylistViewController new];
+    PlaylistView *view = (PlaylistView *)_viewController.view;
 
     view.translatesAutoresizingMaskIntoConstraints = NO;
     [self.topLevelView addSubview:view];
