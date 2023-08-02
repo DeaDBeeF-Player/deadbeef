@@ -7,11 +7,16 @@
 //
 
 #import "VisualizationViewController.h"
+#include <deadbeef/deadbeef.h>
+
+extern DB_functions_t *deadbeef;
 
 static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
 static void *kIsVisibleContext = &kIsVisibleContext;
 
-@interface VisualizationViewController ()
+@interface VisualizationViewController () {
+    int _coolDown;
+}
 
 @property (nonatomic) NSTimer *tickTimer;
 
@@ -41,7 +46,18 @@ static void *kIsVisibleContext = &kIsVisibleContext;
                     strongSelf.tickTimer = nil;
                 }
 
-                [strongSelf draw];
+                DB_output_t *output = deadbeef->get_output();
+                if (output->state() == DDB_PLAYBACK_STATE_PLAYING) {
+                    strongSelf->_coolDown = 60;
+                }
+                else if (strongSelf->_coolDown > 0) {
+                    strongSelf->_coolDown -= 1;
+                }
+
+
+                if (strongSelf->_coolDown > 0) {
+                    [strongSelf draw];
+                }
             }];
 
             // FIXME: this should not be called for the metal visualizations, since AAPLNSView handles it

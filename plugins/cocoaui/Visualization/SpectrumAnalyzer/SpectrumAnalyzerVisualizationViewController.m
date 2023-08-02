@@ -397,6 +397,10 @@ static inline vector_float4 vec4color (NSColor *color) {
 #pragma mark - AAPLViewDelegate
 
 - (void)drawableResize:(CGSize)size {
+    CGFloat scale = self.view.window.backingScaleFactor;
+    @synchronized (self) {
+        ddb_analyzer_get_draw_data(&_analyzer, self.visualizationView.bounds.size.width * scale, self.visualizationView.bounds.size.height * scale, &_draw_data);
+    }
     [_renderer drawableResize:size];
 }
 
