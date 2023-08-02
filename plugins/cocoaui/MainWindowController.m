@@ -38,7 +38,6 @@ extern DB_functions_t *deadbeef;
 
 @interface MainWindowController () <NSMenuDelegate,DeletePlaylistConfirmationControllerDelegate> {
     NSTimer *_updateTimer;
-    int _refreshCooldown;
     char *_titlebar_playing_script;
     char *_titlebar_playing_subtitle_script;
     char *_titlebar_stopped_script;
@@ -153,8 +152,10 @@ extern DB_functions_t *deadbeef;
     if (_updateTimer != nil) {
         return;
     }
+    if (deadbeef->get_output()->state() != DDB_PLAYBACK_STATE_PLAYING) {
+        return;
+    }
 
-    _refreshCooldown = 20;
     __weak MainWindowController *weakSelf = self;
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f repeats:YES block:^(NSTimer * _Nonnull timer) {
         MainWindowController *strongSelf = weakSelf;
@@ -162,19 +163,12 @@ extern DB_functions_t *deadbeef;
             return;
         }
 
-        if (deadbeef->get_output()->state() == DDB_PLAYBACK_STATE_PLAYING) {
-            strongSelf->_refreshCooldown = 20;
-        }
-        else if (strongSelf->_refreshCooldown > 0) {
-            strongSelf->_refreshCooldown -= 1;
+        [strongSelf frameUpdate];
 
-        }
-        if (strongSelf->_refreshCooldown <= 0) {
+        if (deadbeef->get_output()->state() != DDB_PLAYBACK_STATE_PLAYING) {
             [strongSelf->_updateTimer invalidate];
             strongSelf->_updateTimer = nil;
         }
-
-        [strongSelf frameUpdate];
     }];
 
     [[NSRunLoop currentRunLoop] addTimer:_updateTimer forMode:NSRunLoopCommonModes];
@@ -506,7 +500,7 @@ static char sb_text[512];
 }
 
 - (void)message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    if ((_id == DB_EV_PAUSED && p1 == 1) || _id == DB_EV_SONGSTARTED) {
+    if (_id == DB_EV_PLAYBACK_STATE_DID_CHANGE) {
         [self performSelectorOnMainThread:@selector(ensureRefresh) withObject:nil waitUntilDone:NO];
     }
 }

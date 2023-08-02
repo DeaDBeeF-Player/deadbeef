@@ -41,6 +41,11 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     if (!self.view.window.isVisible) {
         return;
     }
+
+    if (deadbeef->get_output()->state() != DDB_PLAYBACK_STATE_PLAYING) {
+        return;
+    }
+
     __weak VisualizationViewController *weakSelf = self;
     if (self.tickTimer != nil) {
         return;
@@ -88,7 +93,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 }
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    if ((_id == DB_EV_PAUSED && p1 == 1) || _id == DB_EV_SONGSTARTED) {
+    if (_id == DB_EV_PLAYBACK_STATE_DID_CHANGE) {
         [self performSelectorOnMainThread:@selector(visibilityDidChange) withObject:nil waitUntilDone:NO];
     }
 }
