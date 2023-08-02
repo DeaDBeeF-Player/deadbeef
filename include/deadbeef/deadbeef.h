@@ -521,6 +521,13 @@ enum {
     DB_EV_FOCUS_SELECTION = 24, 
 #endif
 
+#if (DDB_API_LEVEL >= 17)
+    // Notify about playback state change,
+    // which includes a switch to another output plugin.
+    // p1 contains the new state.
+    DB_EV_PLAYBACK_STATE_DID_CHANGE = 25,
+#endif
+
     // -----------------
     // structured events
 

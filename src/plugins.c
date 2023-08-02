@@ -1387,13 +1387,6 @@ plug_unload_all (void(^completion_block)(void)) {
 }
 
 void
-plug_set_output (DB_output_t *out) {
-    output_plugin = out;
-    conf_set_str ("output_plugin", output_plugin->plugin.id);
-    trace ("selected output plugin: %s\n", output_plugin->plugin.name);
-}
-
-void
 plug_cleanup (void) {
     plug_free_decoder_ids ();
 }
@@ -1433,9 +1426,119 @@ plug_get_gui_names (void) {
     return (const char **)g_gui_names;
 }
 
+#pragma mark - Output proxy
+
+// A proxy output plugin which helps to catch output state changes and convert them to events.
+
+static ddb_playback_state_t _curr_playback_state = (ddb_playback_state_t)-1;
+
+static void
+call_notify_state_change(void (^block)(void)) {
+    block();
+    ddb_playback_state_t state = output_plugin->state();
+    if (state != _curr_playback_state) {
+        _curr_playback_state = state;
+        deadbeef->sendmessage(DB_EV_PLAYBACK_STATE_DID_CHANGE, 0, state, 0);
+    }
+}
+
+static int _out_init (void) {
+    return output_plugin->init();
+}
+
+static int _out_free (void) {
+    return output_plugin->free();
+}
+
+static int _out_setformat (ddb_waveformat_t *fmt) {
+    __block ddb_playback_state_t result;
+    call_notify_state_change(^{
+        result = output_plugin->setformat(fmt);
+    });
+    return result;
+}
+
+static int _out_play (void) {
+    __block ddb_playback_state_t result;
+    call_notify_state_change(^{
+        result = output_plugin->play();
+    });
+    return result;
+}
+
+static int _out_stop (void) {
+    __block ddb_playback_state_t result;
+    call_notify_state_change(^{
+        result = output_plugin->stop();
+    });
+    return result;
+}
+
+static int _out_pause (void) {
+    __block ddb_playback_state_t result;
+    call_notify_state_change(^{
+        result = output_plugin->pause();
+    });
+    return result;
+}
+
+static int _out_unpause (void) {
+    __block ddb_playback_state_t result;
+    call_notify_state_change(^{
+        result = output_plugin->unpause();
+    });
+    return result;
+}
+
+static ddb_playback_state_t _out_state (void) {
+    __block ddb_playback_state_t result;
+    call_notify_state_change(^{
+        result = output_plugin->state();
+    });
+    return result;
+}
+
+static void _out_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata) {
+    if (output_plugin->enum_soundcards) {
+        call_notify_state_change(^{
+            output_plugin->enum_soundcards(callback, userdata);
+        });
+    }
+}
+
+static DB_output_t _output_proxy = {
+    DDB_PLUGIN_SET_API_VERSION
+    .init = _out_init,
+    .free = _out_free,
+    .setformat = _out_setformat,
+    .play = _out_play,
+    .stop = _out_stop,
+    .pause = _out_pause,
+    .unpause = _out_unpause,
+    .state = _out_state,
+    .enum_soundcards = _out_enum_soundcards
+};
+
+#pragma mark - Current output plugin
+
 DB_output_t *
 plug_get_output (void) {
-    return output_plugin;
+    if (output_plugin == NULL) {
+        return NULL;
+    }
+    memcpy (&_output_proxy.plugin, &output_plugin->plugin, sizeof (DB_plugin_t));
+    memcpy (&_output_proxy.fmt, &output_plugin->fmt, sizeof (ddb_waveformat_t));
+    _output_proxy.has_volume = output_plugin->has_volume;
+    return &_output_proxy;
+}
+
+void
+plug_set_output (DB_output_t *out) {
+    call_notify_state_change(^{
+        output_plugin = out;
+        conf_set_str ("output_plugin", output_plugin->plugin.id);
+        trace ("selected output plugin: %s\n", output_plugin->plugin.name);
+    });
 }
 
 static DB_output_t *
@@ -1468,6 +1571,8 @@ plug_reinit_sound (void) {
     streamer_set_output (new_out);
     return 0;
 }
+
+#pragma mark -
 
 // list of all unique decoder ids used in current session
 static char *decoder_ids[MAX_DECODER_PLUGINS];
