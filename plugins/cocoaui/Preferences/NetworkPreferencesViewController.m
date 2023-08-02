@@ -153,7 +153,7 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
 
 
 - (IBAction)segmentedControlAction:(NSSegmentedControl *)sender {
-    NSInteger selectedSegment = [sender selectedSegment];
+    NSInteger selectedSegment = sender.selectedSegment;
 
     switch (selectedSegment) {
     case 0:
@@ -180,11 +180,11 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
                 if (i != 0) {
                     plugins = [plugins stringByAppendingString:@" "];
                 }
-                plugins = [plugins stringByAppendingString:[NSString stringWithUTF8String:m->plugins[i]]];
+                plugins = [plugins stringByAppendingString:@(m->plugins[i])];
             }
 
 
-            ContentTypeMap *map = [[ContentTypeMap alloc] initWithContentType:[NSString stringWithUTF8String:m->ct] plugins:plugins];
+            ContentTypeMap *map = [[ContentTypeMap alloc] initWithContentType:@(m->ct) plugins:plugins];
             [self.contentTypeMappingArrayController addObject:map];
 
             m = m->next;

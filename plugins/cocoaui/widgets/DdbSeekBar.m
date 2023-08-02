@@ -75,7 +75,7 @@
 }
 
 - (void)setEnabled:(BOOL)enabled {
-    [super setEnabled:enabled];
+    super.enabled = enabled;
     [self updateThumbVisibility];
 }
 

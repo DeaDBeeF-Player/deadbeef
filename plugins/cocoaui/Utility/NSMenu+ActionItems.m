@@ -121,7 +121,7 @@ extern DB_functions_t *deadbeef;
 
                 // find menu item with the name
                 for (NSMenuItem *item in lastMenu.itemArray) {
-                    if ([item.title isEqualToString:[NSString stringWithUTF8String:name]]) {
+                    if ([item.title isEqualToString:@(name)]) {
                         if (item.menu == nil) {
                             item.submenu = [NSMenu new];
                         }
@@ -132,7 +132,7 @@ extern DB_functions_t *deadbeef;
 
                 // create
                 if (!newMenu) {
-                    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:name] action:@selector(pluginAction:) keyEquivalent:@""];
+                    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@(name) action:@selector(pluginAction:) keyEquivalent:@""];
                     newMenu = [NSMenu new];
                     item.submenu = newMenu;
                     [lastMenu addItem:item];
@@ -165,7 +165,7 @@ extern DB_functions_t *deadbeef;
             }
             *t = 0;
 
-            PluginActionMenuItem *actionitem = [[PluginActionMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:@selector(pluginAction:) keyEquivalent:@""];
+            PluginActionMenuItem *actionitem = [[PluginActionMenuItem alloc] initWithTitle:@(title) action:@selector(pluginAction:) keyEquivalent:@""];
             actionitem.target = self;
             actionitem.pluginAction = action;
             actionitem.pluginActionContext = actionContext;

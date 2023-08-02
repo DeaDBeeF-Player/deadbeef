@@ -27,17 +27,17 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
-    return _plugin->configdialog ? [NSString stringWithUTF8String:_plugin->configdialog] : nil;
+    return _plugin->configdialog ? @(_plugin->configdialog) : nil;
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc valueForKey:(NSString *)key def:(NSString *)def item:(id)item {
     char str[1000];
-    deadbeef->conf_get_str ([key UTF8String], [def UTF8String], str, sizeof (str));
-    return [NSString stringWithUTF8String:str];
+    deadbeef->conf_get_str (key.UTF8String, def.UTF8String, str, sizeof (str));
+    return @(str);
 }
 
 - (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
-    deadbeef->conf_set_str ([key UTF8String], [value UTF8String]);
+    deadbeef->conf_set_str (key.UTF8String, value.UTF8String);
     if (!_multipleChanges) {
         deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     }
@@ -132,8 +132,8 @@ extern DB_functions_t *deadbeef;
     int i;
     for (i = 0; plugins[i]; i++) {
         const char *path = deadbeef->plug_get_path_for_plugin_ptr (plugins[i]);
-        NSString *strPath = path ? [NSString stringWithUTF8String:path] : @"(builtin)";
-        NSString *name = [NSString stringWithUTF8String:plugins[i]->name];
+        NSString *strPath = path ? @(path) : @"(builtin)";
+        NSString *name = @(plugins[i]->name);
 
         report = [report stringByAppendingFormat:@"%@: %@ (%d.%d)\n", strPath, name, plugins[i]->version_major, plugins[i]->version_minor];
     }
@@ -175,7 +175,7 @@ extern DB_functions_t *deadbeef;
     if (p->website
         && (!strncmp (p->website, "http://", 7)
             || !strncmp (p->website, "https://", 8))) {
-        NSString *urlString = [NSString stringWithUTF8String:p->website];
+        NSString *urlString = @(p->website);
         self.wwwButton.toolTip = urlString;
         self.website = [NSURL URLWithString:urlString];
     }
@@ -192,10 +192,10 @@ extern DB_functions_t *deadbeef;
         DB_plugin_t *p = self.pluginList[idx].plugin;
         version = [NSString stringWithFormat:@"%d.%d", p->version_major, p->version_minor];
         if (p->descr) {
-            description = [NSString stringWithUTF8String:p->descr];
+            description = @(p->descr);
         }
         if (p->copyright) {
-            license = [NSString stringWithUTF8String:p->copyright];
+            license = @(p->copyright);
         }
 
         [self initPluginConfiguration:idx];
@@ -207,7 +207,7 @@ extern DB_functions_t *deadbeef;
 
     _pluginVersion.stringValue = version;
     NSAttributedString *str = [[NSAttributedString alloc] initWithString:description attributes:@{NSForegroundColorAttributeName:NSColor.controlTextColor}];
-    [_pluginDescription textStorage].attributedString = str;
+    _pluginDescription.textStorage.attributedString = str;
     _pluginDescription.string = description;
     _pluginLicense.string = license;
 }
@@ -219,7 +219,7 @@ extern DB_functions_t *deadbeef;
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     NSTableCellView *view = [tableView makeViewWithIdentifier:tableColumn.identifier owner:self];
-    NSString *pluginName = [NSString stringWithUTF8String: self.pluginList[row].plugin->name];
+    NSString *pluginName = @(self.pluginList[row].plugin->name);
 
     view.textField.stringValue = pluginName;
 
@@ -243,7 +243,7 @@ extern DB_functions_t *deadbeef;
 #pragma mark - NSTableViewDelegate
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
-    self.pluginInfo = [_pluginsTableView selectedRow];
+    self.pluginInfo = _pluginsTableView.selectedRow;
 }
 
 

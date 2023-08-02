@@ -24,8 +24,8 @@ class ScriptableTests: public ::testing::Test {
 protected:
     void SetUp() override {
         // FIXME: convert to C++ / make cross-platform
-        NSString *path = [[[NSBundle bundleForClass:ScriptableTestsDummyClass.class] resourcePath] stringByAppendingString:@"/PresetManagerData"];
-        strcpy (dbconfdir, [path UTF8String]);
+        NSString *path = [[NSBundle bundleForClass:ScriptableTestsDummyClass.class].resourcePath stringByAppendingString:@"/PresetManagerData"];
+        strcpy (dbconfdir, path.UTF8String);
         ddb_logger_init ();
         conf_init ();
         conf_enable_saving (0);

@@ -99,7 +99,7 @@ extern DB_functions_t *deadbeef;
     // populate the selector popup
     for (int i = 0; _selectors[i]; i++) {
         const char *name = self.medialibPlugin->selector_name (self.medialibSource, _selectors[i]);
-        [self.selectorPopup addItemWithTitle:[NSString stringWithUTF8String:name]];
+        [self.selectorPopup addItemWithTitle:@(name)];
     }
 
     [self.selectorPopup selectItemAtIndex:self.lastSelectedIndex];
@@ -462,7 +462,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
     NSImage *image;
     if (cover->image_filename) {
-        image = [[NSImage alloc] initByReferencingFile:[NSString stringWithUTF8String:cover->image_filename]];
+        image = [[NSImage alloc] initByReferencingFile:@(cover->image_filename)];
     }
 
     if (image) {
@@ -481,7 +481,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         if (size.width >= 1 && size.height >= 1) {
             NSImage *smallImage = [[NSImage alloc] initWithSize:size];
             [smallImage lockFocus];
-            [image setSize:size];
+            image.size = size;
             NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
             [image drawAtPoint:NSZeroPoint fromRect:CGRectMake(0, 0, size.width, size.height) operation:NSCompositingOperationCopy fraction:1.0];
             [smallImage unlockFocus];

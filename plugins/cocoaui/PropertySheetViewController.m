@@ -58,7 +58,7 @@
 }
 
 - (void)projectDataItemChanged:(NSNotification *)notification {
-    if ([notification.userInfo objectForKey:@"sender"] == self) {
+    if ((notification.userInfo)[@"sender"] == self) {
         return;
     }
     id obj = notification.object;
@@ -73,10 +73,10 @@
         // find binding with the same propname
         for (NSDictionary *binding in _bindings) {
             if (_settingsData.props[i].key
-                && [binding[@"propname"] isEqualToString:[NSString stringWithUTF8String:_settingsData.props[i].key]]) {
+                && [binding[@"propname"] isEqualToString:@(_settingsData.props[i].key)]) {
                 NSControl *ctl = binding[@"sender"];
-                NSString *key = [NSString stringWithUTF8String:_settingsData.props[i].key];
-                NSString *def = [NSString stringWithUTF8String:_settingsData.props[i].def];
+                NSString *key = @(_settingsData.props[i].key);
+                NSString *def = @(_settingsData.props[i].def);
                 NSString *value = [self.dataSource propertySheet:self valueForKey:key def:def item:self.item];
                 if ([ctl isKindOfClass:[NSPopUpButton class]]) {
                     NSPopUpButton *pb = (NSPopUpButton *)ctl;
@@ -84,10 +84,10 @@
                 }
                 else {
                     if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
-                        ctl.integerValue = [value integerValue];
+                        ctl.integerValue = value.integerValue;
                     }
                     else if (binding[@"isFloat"] && [binding[@"isFloat"] boolValue]) {
-                        ctl.floatValue = [value floatValue];
+                        ctl.floatValue = value.floatValue;
                     }
                     else {
                         ctl.stringValue = value;
@@ -308,7 +308,7 @@
                 }
 
                 NSTextField *lbl = [NSTextField new];
-                NSString *title = [NSString stringWithUTF8String:_settingsData.props[i].title];
+                NSString *title = @(_settingsData.props[i].title);
                 lbl.stringValue = title;
                 lbl.bezeled = NO;
                 lbl.drawsBackground = NO;
@@ -369,8 +369,8 @@
         }
 
         // set entry
-        NSString *propname = [NSString stringWithUTF8String:_settingsData.props[i].key];
-        NSString *def = [NSString stringWithUTF8String:_settingsData.props[i].def];
+        NSString *propname = @(_settingsData.props[i].key);
+        NSString *def = @(_settingsData.props[i].def);
         NSString *value = [self.dataSource propertySheet:self valueForKey:propname def:def item:self.item];
 
         NSControl *currentField;
@@ -388,7 +388,7 @@
                 [view addSubview:tf];
                 [_bindings addObject:@{@"sender":tf,
                                        @"propname":propname,
-                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
+                                       @"default":@(_settingsData.props[i].def)
                 }];
                 tf.target = self;
                 tf.delegate = self;
@@ -421,8 +421,8 @@
             {
                 NSButton *checkbox = [NSButton new];
                 checkbox.buttonType = NSButtonTypeSwitch;
-                checkbox.title = [NSString stringWithUTF8String:_settingsData.props[i].title];
-                checkbox.state = [value intValue] ? NSControlStateValueOn : NSControlStateValueOff;
+                checkbox.title = @(_settingsData.props[i].title);
+                checkbox.state = value.intValue ? NSControlStateValueOn : NSControlStateValueOff;
                 checkbox.font = self.fontContent;
 
                 [view addSubview:checkbox];
@@ -430,7 +430,7 @@
 
                 [_bindings addObject:@{@"sender":checkbox,
                                        @"propname":propname,
-                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
+                                       @"default":@(_settingsData.props[i].def)
                 }];
 
                 checkbox.target = self;
@@ -459,10 +459,10 @@
                 }
                 slider.continuous = YES;
                 if (step == 1) {
-                    slider.intValue = [value intValue];
+                    slider.intValue = value.intValue;
                 }
                 else {
-                    slider.floatValue = [value floatValue];
+                    slider.floatValue = value.floatValue;
                 }
 
                 NSTextField *valueedit = [NSTextField new];
@@ -496,7 +496,7 @@
                                        @"valueview":valueedit,
                                        @"isInteger":[NSNumber numberWithBool:step == 1 ? YES:NO],
                                        @"isFloat":[NSNumber numberWithBool:step != 1 ? YES:NO],
-                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
+                                       @"default":@(_settingsData.props[i].def)
                 }];
 
                 [_bindings addObject:@{@"sender":valueedit,
@@ -504,7 +504,7 @@
                                        @"valueview":slider,
                                        @"isInteger":[NSNumber numberWithBool:step == 1 ? YES:NO],
                                        @"isFloat":[NSNumber numberWithBool:step != 1 ? YES:NO],
-                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
+                                       @"default":@(_settingsData.props[i].def)
                 }];
 
                 slider.target = self;
@@ -553,18 +553,18 @@
                 char token[MAX_TOKEN];
                 const char *script = _settingsData.props[i].select_options;
 
-                int selectedIdx = [value intValue];
+                int selectedIdx = value.intValue;
 
                 while ((script = gettoken (script, token)) && strcmp (token, ";")) {
-                    [popUpButton addItemWithTitle:[NSString stringWithUTF8String:token]];
-                    if (selectedIdx == [popUpButton numberOfItems]-1) {
-                        [popUpButton selectItemAtIndex:[popUpButton numberOfItems]-1];
+                    [popUpButton addItemWithTitle:@(token)];
+                    if (selectedIdx == popUpButton.numberOfItems-1) {
+                        [popUpButton selectItemAtIndex:popUpButton.numberOfItems-1];
                     }
                 }
 
                 [_bindings addObject:@{@"sender":popUpButton,
                                        @"propname":propname,
-                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
+                                       @"default":@(_settingsData.props[i].def)
                 }];
 
                 popUpButton.target = self;
@@ -600,18 +600,18 @@
 
                 [popUpButton addItemWithTitle:@""];
 
-                [self.dataSource propertySheet:self enumerateItemsOfType:[NSString stringWithUTF8String:_settingsData.props[i].itemlist_type] block:^BOOL(id item) {
+                [self.dataSource propertySheet:self enumerateItemsOfType:@(_settingsData.props[i].itemlist_type) block:^BOOL(id item) {
                     NSString *name = [self.dataSource propertySheet:self valueForKey:@"name" def:@"Undefined" item:item];
                     [popUpButton addItemWithTitle:name];
                     if ([value isEqualToString:name]) {
-                        [popUpButton selectItemAtIndex:[popUpButton numberOfItems]-1];
+                        [popUpButton selectItemAtIndex:popUpButton.numberOfItems-1];
                     }
                     return NO;
                 }];
 
                 [_bindings addObject:@{@"sender":popUpButton,
                                        @"propname":propname,
-                                       @"default":[NSString stringWithUTF8String:_settingsData.props[i].def]
+                                       @"default":@(_settingsData.props[i].def)
                 }];
 
                 popUpButton.target = self;
@@ -700,7 +700,7 @@
     if ([dataSource respondsToSelector:@selector(propertySheet:itemIsReadonly:)]) {
         isReadonly = [dataSource propertySheet:self itemIsReadonly:self.item];
     }
-    if (!config || settings_data_init(&_settingsData, [config UTF8String]) < 0) {
+    if (!config || settings_data_init(&_settingsData, config.UTF8String) < 0) {
         have_settings = NO;
     }
 
@@ -783,13 +783,13 @@
             id sender = binding[@"sender"];
             NSString *value;
             if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
-                value = [@([sender integerValue]) stringValue];
+                value = (@([sender integerValue])).stringValue;
             }
             else if (binding[@"isFloat"] && [binding[@"isFloat"] boolValue]) {
-                value = [@([sender floatValue]) stringValue];
+                value = (@([sender floatValue])).stringValue;
             }
             else if ([sender isKindOfClass:[NSPopUpButton class]]) {
-                value = [@([sender indexOfSelectedItem]) stringValue];
+                value = (@([sender indexOfSelectedItem])).stringValue;
             }
             else {
                 value = [sender stringValue];
@@ -845,10 +845,10 @@
             // update config
             NSString *value;
             if (binding[@"isInteger"] && [binding[@"isInteger"] boolValue]) {
-                value = [@([sender integerValue]) stringValue];
+                value = (@([sender integerValue])).stringValue;
             }
             else if (binding[@"isFloat"] && [binding[@"isFloat"] boolValue]) {
-                value = [@([sender floatValue]) stringValue];
+                value = (@([sender floatValue])).stringValue;
             }
             else if ([sender isKindOfClass:[NSPopUpButton class]]) {
                 NSUInteger idx = [sender indexOfSelectedItem];

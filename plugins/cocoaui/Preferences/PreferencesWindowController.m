@@ -98,21 +98,19 @@
 }
 
 - (NSArray *)toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar {
-    return [NSArray arrayWithObjects:
-            @"Sound",
+    return @[@"Sound",
             @"Playback",
             @"DSP",
             @"GUI",
             @"Medialib",
             @"Network",
-            @"Plugins",
-            nil];
+            @"Plugins"];
 }
 
 - (void)switchToView:(NSView *)view {
     self.window.contentView = nil;
 
-    NSRect oldFrame = [self.window frame];
+    NSRect oldFrame = (self.window).frame;
     NSRect rc = [self.window frameRectForContentRect:view.frame];
     rc.origin.x = oldFrame.origin.x;
     rc.origin.y = oldFrame.origin.y + oldFrame.size.height - rc.size.height;

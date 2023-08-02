@@ -42,7 +42,7 @@
     CIFilter *blur = (CIFilter<CIGaussianBlur> *)[CIFilter filterWithName:@"CIGaussianBlur"];
     [blur setDefaults];
     [blur setValue:@(1) forKey:kCIInputRadiusKey];
-    _selectionOverlayView.layer.backgroundFilters = [NSArray arrayWithObject:blur];
+    _selectionOverlayView.layer.backgroundFilters = @[blur];
 
     NSColor *viewColor;
     if (@available(macOS 10.14, *)) {

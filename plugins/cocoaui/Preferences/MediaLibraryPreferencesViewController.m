@@ -99,7 +99,7 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
 }
 
 - (IBAction)addRemoveAction:(NSSegmentedControl *)sender {
-    NSInteger selectedSegment = [sender selectedSegment];
+    NSInteger selectedSegment = sender.selectedSegment;
 
     switch (selectedSegment) {
     case 0:
@@ -161,7 +161,7 @@ _listener (ddb_mediasource_event_type_t _event, void *user_data) {
     NSTableCellView *view = [tableView makeViewWithIdentifier:tableColumn.identifier owner:self];
     char folder[PATH_MAX];
     self.medialib->folder_at_index(self.medialibSource, (int)row, folder, sizeof (folder));
-    view.textField.stringValue = [NSString stringWithUTF8String:folder];
+    view.textField.stringValue = @(folder);
     return view;
 }
 

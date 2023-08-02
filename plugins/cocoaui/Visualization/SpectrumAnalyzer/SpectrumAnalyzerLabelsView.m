@@ -81,7 +81,7 @@
         if (_draw_data->label_freq_positions < 0) {
             continue;
         }
-        NSString *string = [NSString stringWithUTF8String:_draw_data->label_freq_texts[i]];
+        NSString *string = @(_draw_data->label_freq_texts[i]);
         CGFloat x = xOffset + _draw_data->label_freq_positions[i];
         [string drawAtPoint:NSMakePoint(x / self.window.backingScaleFactor, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
     }

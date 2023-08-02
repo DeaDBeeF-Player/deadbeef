@@ -200,7 +200,7 @@ static const int close_btn_left_offs = 8;
 
     [self scrollToTabInt:deadbeef->plt_get_curr_idx() redraw:NO];
 
-    [self registerForDraggedTypes:[NSArray arrayWithObjects:ddbPlaylistItemsUTIType, NSFilenamesPboardType, nil]];
+    [self registerForDraggedTypes:@[ddbPlaylistItemsUTIType, NSFilenamesPboardType]];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(windowDidBecomeKey:)
@@ -248,7 +248,7 @@ static const int close_btn_left_offs = 8;
         self.needScroll = YES;
     }
     if (origValue != self.needScroll) {
-        [self needsDisplay];
+        self.needsDisplay = YES;
     }
 }
 
@@ -329,7 +329,7 @@ static const int close_btn_left_offs = 8;
 
 
     // tab divider
-    NSColor *clr = [_hiddenVertLine borderColor];
+    NSColor *clr = _hiddenVertLine.borderColor;
     [[clr colorWithAlphaComponent:0.5] set];
     NSBezierPath *line = [NSBezierPath bezierPath];
     [line moveToPoint:NSMakePoint(tabRect.origin.x + tabRect.size.width-0.5, tabRect.origin.y+5)];
@@ -596,7 +596,7 @@ static const int close_btn_left_offs = 8;
 }
 
 - (void)mouseDown:(NSEvent *)event {
-    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSPoint coord = [self convertPoint:event.locationInWindow fromView:nil];
     _lastMouseCoord = coord;
     _clickedTabIndex = [self tabUnderCursor:coord.x];
     if (event.type == NSEventTypeLeftMouseDown) {
@@ -663,7 +663,7 @@ static const int close_btn_left_offs = 8;
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
-    NSPoint coord = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSPoint coord = [self convertPoint:theEvent.locationInWindow fromView:nil];
     _clickedTabIndex = [self tabUnderCursor:coord.x];
     if ((theEvent.type == NSEventTypeRightMouseDown || theEvent.type == NSEventTypeLeftMouseDown)
         && (theEvent.buttonNumber == 1
@@ -692,7 +692,7 @@ static const int close_btn_left_offs = 8;
         return;
     }
 
-    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSPoint coord = [self convertPoint:event.locationInWindow fromView:nil];
     _clickedTabIndex = [self tabUnderCursor:coord.x];
     if (event.type == NSEventTypeOtherMouseDown) {
         if (_clickedTabIndex == -1) {
@@ -748,7 +748,7 @@ static const int close_btn_left_offs = 8;
 }
 
 - (void)setFrame:(NSRect)frame {
-    [super setFrame:frame];
+    super.frame = frame;
     [self frameDidChange];
 }
 
@@ -759,7 +759,7 @@ static const int close_btn_left_offs = 8;
 }
 
 - (void)mouseDragged:(NSEvent *)event {
-    NSPoint coord = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSPoint coord = [self convertPoint:event.locationInWindow fromView:nil];
     _lastMouseCoord = coord;
 
     if (_closeTabCapture) {
@@ -834,7 +834,7 @@ static const int close_btn_left_offs = 8;
 }
 
 -(void)mouseMoved:(NSEvent *)event {
-    _lastMouseCoord = [self convertPoint:[event locationInWindow] fromView:nil];
+    _lastMouseCoord = [self convertPoint:event.locationInWindow fromView:nil];
     [self mouseMovedHandler];
 }
 
@@ -854,7 +854,7 @@ static const int close_btn_left_offs = 8;
 - (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender {
     [self.pickDragTimer invalidate];
 
-    NSPoint coord = [sender draggingLocation];
+    NSPoint coord = sender.draggingLocation;
     coord = [self convertPoint:coord fromView:nil];
     __weak DdbTabStrip *weakSelf = self;
     self.pickDragTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:NO block:^(NSTimer * _Nonnull timer) {
@@ -907,7 +907,7 @@ static const int close_btn_left_offs = 8;
     if (plt == NULL) {
         return;
     }
-    deadbeef->plt_set_title (plt, [name UTF8String]);
+    deadbeef->plt_set_title (plt, name.UTF8String);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     [self scrollToTab:_clickedTabIndex];

@@ -136,7 +136,7 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
     char path[PATH_MAX];
     _artwork_plugin->default_image_path(path, sizeof(path));
 
-    NSString *defaultCoverPath = [NSString stringWithUTF8String:path];
+    NSString *defaultCoverPath = @(path);
 
     if (![self.defaultCoverPath isEqualToString:defaultCoverPath]) {
         self.defaultCoverPath = defaultCoverPath;
@@ -160,14 +160,14 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
 
     char buffer[PATH_MAX];
     deadbeef->tf_eval (&ctx, self.name_tf, buffer, sizeof (buffer));
-    return [NSString stringWithUTF8String:buffer];
+    return @(buffer);
 }
 
 - (nullable NSImage *)loadImageFromCover:(nonnull ddb_cover_info_t *)cover {
     NSImage *img;
 
     if (cover && cover->image_filename) {
-        img = [[NSImage alloc] initWithContentsOfFile:[NSString stringWithUTF8String:cover->image_filename]];
+        img = [[NSImage alloc] initWithContentsOfFile:@(cover->image_filename)];
     }
 
     if (img != nil) {

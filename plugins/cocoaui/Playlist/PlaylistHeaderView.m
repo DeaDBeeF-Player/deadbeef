@@ -145,18 +145,18 @@
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
 
-    NSScrollView *sv = [self.listview.contentView enclosingScrollView];
-    NSRect rc = [sv documentVisibleRect];
+    NSScrollView *sv = (self.listview.contentView).enclosingScrollView;
+    NSRect rc = sv.documentVisibleRect;
 
     NSRect rect = self.bounds;
 
     [self.separatorColor set];
     [NSBezierPath fillRect:NSMakeRect(rect.origin.x, 0,rect.size.width,1)];
 
-    id <DdbListviewDelegate> delegate = [self.listview delegate];
+    id <DdbListviewDelegate> delegate = (self.listview).delegate;
 
     CGFloat x = -rc.origin.x;
-    for (DdbListviewCol_t col = [self.delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+    for (DdbListviewCol_t col = (self.delegate).firstColumn; col != delegate.invalidColumn; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
         NSRect colRect = NSMakeRect(x, 0, w, self.frame.size.height);
@@ -171,7 +171,7 @@
     }
 
     x = -rc.origin.x;
-    for (DdbListviewCol_t col = [self.delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+    for (DdbListviewCol_t col = (self.delegate).firstColumn; col != delegate.invalidColumn; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
         CGFloat cx = x;
@@ -198,13 +198,13 @@
 }
 
 - (void)cursorUpdate:(NSEvent *)event {
-    id <DdbListviewDelegate> delegate = [self.listview delegate];
-    NSScrollView *sv = [self.listview.contentView enclosingScrollView];
-    NSRect rc = [sv documentVisibleRect];
+    id <DdbListviewDelegate> delegate = (self.listview).delegate;
+    NSScrollView *sv = (self.listview.contentView).enclosingScrollView;
+    NSRect rc = sv.documentVisibleRect;
     CGFloat x = -rc.origin.x;
     int idx = 0;
-    NSPoint pt = [self convertPoint:[event locationInWindow] fromView:nil];
-    for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+    NSPoint pt = [self convertPoint:event.locationInWindow fromView:nil];
+    for (DdbListviewCol_t col = delegate.firstColumn; col != delegate.invalidColumn; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
         x += w;
         if (fabs(pt.x-x) < 5) {
@@ -223,21 +223,21 @@
 }
 
 - (void)mouseDown:(NSEvent *)theEvent {
-    NSScrollView *sv = [self.listview.contentView enclosingScrollView];
-    NSRect rc = [sv documentVisibleRect];
+    NSScrollView *sv = (self.listview.contentView).enclosingScrollView;
+    NSRect rc = sv.documentVisibleRect;
 
-    NSPoint convPt = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSPoint convPt = [self convertPoint:theEvent.locationInWindow fromView:nil];
 
     CGFloat x = -rc.origin.x;
-    id <DdbListviewDelegate> delegate = [self.listview delegate];
+    id <DdbListviewDelegate> delegate = (self.listview).delegate;
 
-    self.dragging = [delegate invalidColumn];
-    self.sizing = [delegate invalidColumn];
+    self.dragging = delegate.invalidColumn;
+    self.sizing = delegate.invalidColumn;
     self.prepare = YES;
     self.scrollFirstGroup = -1;
 
     int idx = 0;
-    for (DdbListviewCol_t col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+    for (DdbListviewCol_t col = delegate.firstColumn; col != delegate.invalidColumn; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
         if ((idx == 0 || convPt.x - x > 5) && convPt.x < x + w - 5) {
@@ -267,27 +267,27 @@
 }
 
 - (void)mouseUp:(NSEvent *)theEvent {
-    id <DdbListviewDelegate> delegate = [self.listview delegate];
+    id <DdbListviewDelegate> delegate = (self.listview).delegate;
 
     if (self.dragging != delegate.invalidColumn && self.prepare) { // clicked
         self.sortColumn = self.dragging;
         [delegate sortColumn:self.dragging];
     }
-    else if (self.dragging != [delegate invalidColumn] || self.sizing != [delegate invalidColumn]) {
+    else if (self.dragging != delegate.invalidColumn || self.sizing != delegate.invalidColumn) {
         [delegate columnsDidChange];
     }
-    self.dragging = [delegate invalidColumn];
-    self.sizing = [delegate invalidColumn];
+    self.dragging = delegate.invalidColumn;
+    self.sizing = delegate.invalidColumn;
     self.scrollFirstGroup = -1;
     self.listview.contentView.needsDisplay = YES;
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {
-    NSPoint convPt = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSPoint convPt = [self convertPoint:theEvent.locationInWindow fromView:nil];
     self.prepare = NO;
 
-    id <DdbListviewDelegate> delegate = [self.listview delegate];
-    if (self.sizing != [delegate invalidColumn]) {
+    id <DdbListviewDelegate> delegate = (self.listview).delegate;
+    if (self.sizing != delegate.invalidColumn) {
         CGFloat dx = convPt.x - self.dragPt.x;
 
         int w = self.origColWidth + (int)dx;
@@ -295,15 +295,15 @@
             w = 10;
         }
         if ([delegate columnWidth:self.sizing] != w) {
-            NSScrollView *sv = [self.listview.contentView enclosingScrollView];
-            NSRect rc = [sv documentVisibleRect];
+            NSScrollView *sv = (self.listview.contentView).enclosingScrollView;
+            NSRect rc = sv.documentVisibleRect;
 
             CGFloat scroll = -rc.origin.x;
 
             [delegate setColumnWidth:w forColumn:self.sizing];
             self.needsDisplay = YES;
 
-            rc = [sv documentVisibleRect];
+            rc = sv.documentVisibleRect;
             scroll += rc.origin.x;
             self.dragPt = NSMakePoint(self.dragPt.x - scroll, self.dragPt.y);
 
@@ -317,19 +317,19 @@
             }
         }
     }
-    else if (self.dragging != [delegate invalidColumn]) {
+    else if (self.dragging != delegate.invalidColumn) {
         self.dragDelta = convPt.x - self.dragPt.x;
 
-        NSScrollView *sv = [self.listview.contentView enclosingScrollView];
-        NSRect rc = [sv documentVisibleRect];
+        NSScrollView *sv = (self.listview.contentView).enclosingScrollView;
+        NSRect rc = sv.documentVisibleRect;
 
         CGFloat x = -rc.origin.x;
 
-        DdbListviewCol_t inspos = [delegate invalidColumn];
+        DdbListviewCol_t inspos = delegate.invalidColumn;
 
         // FIXME: DdbListviewCol_t is not always index -- account for this
         CGFloat cx = self.dragColPos + self.dragDelta;
-        for (DdbListviewCol_t cc = [delegate firstColumn]; cc != [delegate invalidColumn]; cc = [delegate nextColumn:cc]) {
+        for (DdbListviewCol_t cc = delegate.firstColumn; cc != delegate.invalidColumn; cc = [delegate nextColumn:cc]) {
             int cw = [delegate columnWidth:cc];
 
             if (cc < self.dragging && cx <= x + cw/2) {
@@ -343,10 +343,10 @@
             x += cw;
         }
 
-        if (inspos != [delegate invalidColumn] && inspos != self.dragging) {
+        if (inspos != delegate.invalidColumn && inspos != self.dragging) {
             [delegate moveColumn:self.dragging to:inspos];
             self.dragging = inspos;
-            self.sortColumn = [delegate invalidColumn];
+            self.sortColumn = delegate.invalidColumn;
             [self.listview.contentView reloadData];
         }
         else {
@@ -356,14 +356,14 @@
 }
 
 - (DdbListviewCol_t)columnIndexForCoord:(NSPoint)theCoord {
-    id <DdbListviewDelegate> delegate = [self.listview delegate];
-    NSScrollView *sv = [self.listview.contentView enclosingScrollView];
-    NSRect rc = [sv documentVisibleRect];
+    id <DdbListviewDelegate> delegate = (self.listview).delegate;
+    NSScrollView *sv = (self.listview.contentView).enclosingScrollView;
+    NSRect rc = sv.documentVisibleRect;
     NSPoint convPt = [self convertPoint:theCoord fromView:nil];
 
     CGFloat x = -rc.origin.x;
     DdbListviewCol_t col;
-    for (col = [delegate firstColumn]; col != [delegate invalidColumn]; col = [delegate nextColumn:col]) {
+    for (col = delegate.firstColumn; col != delegate.invalidColumn; col = [delegate nextColumn:col]) {
         int w = [delegate columnWidth:col];
 
         if (CGRectContainsPoint(NSMakeRect(x, 0, w, self.bounds.size.height), convPt)) {
@@ -379,8 +379,8 @@
     if ((event.type == NSEventTypeRightMouseDown || event.type == NSEventTypeLeftMouseDown)
         && (event.buttonNumber == 1
         || (event.buttonNumber == 0 && (event.modifierFlags & NSEventModifierFlagControl)))) {
-        id <DdbListviewDelegate> delegate = [self.listview delegate];
-        DdbListviewCol_t col = [self columnIndexForCoord:[event locationInWindow]];
+        id <DdbListviewDelegate> delegate = (self.listview).delegate;
+        DdbListviewCol_t col = [self columnIndexForCoord:event.locationInWindow];
         return [delegate contextMenuForColumn:col withEvent:event forView:self];
     }
     return nil;

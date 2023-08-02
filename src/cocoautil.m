@@ -68,7 +68,7 @@ cocoautil_get_application_support_path (char *s, size_t size) {
 void
 cocoautil_get_cache_path(char *buffer, size_t size) {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *cacheDirectory = [paths objectAtIndex:0];
+    NSString *cacheDirectory = paths[0];
     const char *cacheDirectoryCString = cacheDirectory.UTF8String;
     *buffer = 0;
     strncat (buffer, cacheDirectoryCString, size-1);

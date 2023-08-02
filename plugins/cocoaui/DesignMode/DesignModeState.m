@@ -68,7 +68,7 @@ static DesignModeState *_sharedInstance;
 
     char *layout = malloc (100000);
     deadbeef->conf_get_str ("cocoaui.layout", "", layout, 100000);
-    NSString *strLayout = [NSString stringWithUTF8String:layout];
+    NSString *strLayout = @(layout);
     free (layout);
 
     NSData *data = [strLayout dataUsingEncoding:NSUTF8StringEncoding];

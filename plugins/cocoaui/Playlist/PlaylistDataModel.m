@@ -39,19 +39,19 @@ extern DB_functions_t *deadbeef;
 }
 
 - (int)rowCount {
-    return deadbeef->pl_getcount ([self playlistIter]);
+    return deadbeef->pl_getcount (self.playlistIter);
 }
 
 - (int)cursor {
-    return deadbeef->pl_get_cursor([self playlistIter]);
+    return deadbeef->pl_get_cursor(self.playlistIter);
 }
 
 - (void)setCursor:(int)cursor {
-    int prev_cursor = deadbeef->pl_get_cursor([self playlistIter]);
+    int prev_cursor = deadbeef->pl_get_cursor(self.playlistIter);
     if (prev_cursor == cursor) {
         return;
     }
-    deadbeef->pl_set_cursor ([self playlistIter], cursor);
+    deadbeef->pl_set_cursor (self.playlistIter, cursor);
     DB_playItem_t *it = deadbeef->pl_get_for_idx (cursor);
     if (it) {
         ddb_event_track_t *event = (ddb_event_track_t *)deadbeef->event_alloc(DB_EV_CURSOR_MOVED);
@@ -61,7 +61,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)activate:(int)idx {
-    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (idx, [self playlistIter]);
+    DB_playItem_t *it = deadbeef->pl_get_for_idx_and_iter (idx, self.playlistIter);
     if (it) {
         int i = deadbeef->pl_get_idx_of (it);
         if (i != -1) {
@@ -72,11 +72,11 @@ extern DB_functions_t *deadbeef;
 }
 
 - (DdbListviewRow_t)firstRow {
-    return (DdbListviewRow_t)deadbeef->pl_get_first([self playlistIter]);
+    return (DdbListviewRow_t)deadbeef->pl_get_first(self.playlistIter);
 }
 
 - (DdbListviewRow_t)nextRow:(DdbListviewRow_t)row {
-    return (DdbListviewRow_t)deadbeef->pl_get_next((DB_playItem_t *)row, [self playlistIter]);
+    return (DdbListviewRow_t)deadbeef->pl_get_next((DB_playItem_t *)row, self.playlistIter);
 }
 
 - (DdbListviewRow_t)invalidRow {
@@ -84,7 +84,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (DdbListviewRow_t)rowForIndex:(int)idx {
-    return (DdbListviewRow_t)deadbeef->pl_get_for_idx_and_iter (idx, [self playlistIter]);
+    return (DdbListviewRow_t)deadbeef->pl_get_for_idx_and_iter (idx, self.playlistIter);
 }
 
 - (void)refRow:(DdbListviewRow_t)row {

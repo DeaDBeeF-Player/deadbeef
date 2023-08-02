@@ -378,7 +378,7 @@ static void _warningMessageForCtx (ddbDeleteFromDiskController_t ctl, ddb_action
 
 static int
 _deleteFile (ddbDeleteFromDiskController_t ctl, const char *uri) {
-    NSString *str = [NSString stringWithUTF8String:uri];
+    NSString *str = @(uri);
 
     NSURL *url;
 
@@ -522,7 +522,7 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
     [self forEachTrack:^(DB_playItem_t *it) {
         if (deadbeef->pl_is_selected (it)) {
             const char *uri = deadbeef->pl_find_meta (it, ":URI");
-            NSString *str = [NSString stringWithUTF8String:uri];
+            NSString *str = @(uri);
             NSURL *url = uri[0] == '/' ? [NSURL fileURLWithPath:str] : [NSURL URLWithString:str];
             if (url) {
                 [urls addObject:url];
@@ -530,7 +530,7 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
         }
         return YES;
     }];
-    if ([urls count] > 0) {
+    if (urls.count > 0) {
         [NSWorkspace.sharedWorkspace activateFileViewerSelectingURLs:urls];
     }
 }

@@ -68,7 +68,7 @@ extern DB_functions_t *deadbeef;
 - (void)appendText:(NSString *)text {
     NSAttributedString* attr = [[NSAttributedString alloc] initWithString:text attributes:self.attributes];
 
-    NSRect visibleRect = [_clipView documentVisibleRect];
+    NSRect visibleRect = _clipView.documentVisibleRect;
     NSRect docRect = _textView.frame;
 
     BOOL scroll = NO;
@@ -93,7 +93,7 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
 }
 
 - (void)appendLoggerText:(const char *)text forPlugin:(DB_plugin_t *)plugin onLayers:(uint32_t)layers {
-    NSString *str = [NSString stringWithUTF8String:text];
+    NSString *str = @(text);
     if (!str) {
         return; // may happen in case of invalid UTF8 and such
     }
@@ -102,7 +102,7 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
         [self appendText:str];
 
         if (layers == DDB_LOG_LAYER_DEFAULT) {
-            if (![self.window isVisible]) {
+            if (!(self.window).visible) {
                 [self showWindow:self];
             }
         }

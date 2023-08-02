@@ -44,7 +44,7 @@ static DB_mediasource_t *medialibPlugin;
 }
 
 - (MediaLibraryItem *)childAtIndex:(NSUInteger)index {
-    return [self.children objectAtIndex:index];
+    return (self.children)[index];
 }
 
 - (NSArray *)children {
@@ -92,10 +92,10 @@ static DB_mediasource_t *medialibPlugin;
         int count = plugin->tree_item_get_children_count(_item);
         const char *text = plugin->tree_item_get_text(_item);
         if (count) {
-            _stringValue = [NSString stringWithFormat:@"%@ (%d)", [NSString stringWithUTF8String:text], count];
+            _stringValue = [NSString stringWithFormat:@"%@ (%d)", @(text), count];
         }
         else {
-            _stringValue = [NSString stringWithFormat:@"%@", [NSString stringWithUTF8String:text]];
+            _stringValue = [NSString stringWithFormat:@"%@", @(text)];
         }
     }
     return _stringValue;

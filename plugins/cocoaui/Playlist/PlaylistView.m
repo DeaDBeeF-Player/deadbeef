@@ -68,7 +68,7 @@ static int headerheight = 23;
         [sv.topAnchor constraintEqualToAnchor:thv.bottomAnchor].active = YES;
         [sv.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
 
-        NSSize size = [sv contentSize];
+        NSSize size = sv.contentSize;
         NSRect lcvrect = NSMakeRect(0, 0, size.width, size.height-headerheight);
         PlaylistContentView *lcv = [[PlaylistContentView alloc] initWithFrame:lcvrect];
         self.contentView = lcv;
@@ -86,7 +86,7 @@ static int headerheight = 23;
         sv.autohidesScrollers = YES;
         sv.autoresizingMask = NSViewWidthSizable|NSViewMinYMargin|NSViewHeightSizable;
 
-        NSView *synchronizedContentView = [sv contentView];
+        NSView *synchronizedContentView = sv.contentView;
         synchronizedContentView.postsBoundsChangedNotifications = YES;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(scrollChanged:) name:NSViewBoundsDidChangeNotification object:synchronizedContentView];
 
@@ -97,8 +97,8 @@ static int headerheight = 23;
 - (void)scrollChanged:(id)notification {
     self.headerView.needsDisplay = YES;
 
-    NSScrollView *sv = [self.contentView enclosingScrollView];
-    NSRect rect = [sv documentVisibleRect];
+    NSScrollView *sv = (self.contentView).enclosingScrollView;
+    NSRect rect = sv.documentVisibleRect;
     [self.contentView scrollChanged:rect];
 }
 

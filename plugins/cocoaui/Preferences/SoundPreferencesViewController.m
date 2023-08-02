@@ -67,7 +67,7 @@ static void
 ca_enum_callback (const char *s, const char *d, void *userdata) {
     NSMutableArray<NSString *> *devices = (__bridge NSMutableArray<NSString *> *)userdata;
 
-    [devices addObject:[NSString stringWithUTF8String:s]];
+    [devices addObject:@(s)];
 }
 
 - (void)initAudioDeviceList {
@@ -81,14 +81,14 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
         output->enum_soundcards (ca_enum_callback, (__bridge void *)(self.audioDevices));
     }
 
-    NSString *conf_name = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
+    NSString *conf_name = [@(output->plugin.id) stringByAppendingString:@"_soundcard"];
     char curdev[200];
-    deadbeef->conf_get_str ([conf_name UTF8String], "", curdev, sizeof (curdev));
+    deadbeef->conf_get_str (conf_name.UTF8String, "", curdev, sizeof (curdev));
     _audioDevicesIndex = 0;
     NSUInteger index = 0;
     [self.audioDevicesPopupButton removeAllItems];
     for (NSString *dev in self.audioDevices) {
-        if (!strcmp ([dev UTF8String], curdev)) {
+        if (!strcmp (dev.UTF8String, curdev)) {
             _audioDevicesIndex = index;
         }
         index++;
@@ -107,7 +107,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     deadbeef->conf_get_str ("output_plugin", "coreaudio", curplug, sizeof (curplug));
     DB_output_t **o = deadbeef->plug_get_output_list ();
     for (index = 0; o[index]; index++) {
-        [self.outputPluginsPopupButton addItemWithTitle:[NSString stringWithUTF8String:o[index]->plugin.name]];
+        [self.outputPluginsPopupButton addItemWithTitle:@(o[index]->plugin.name)];
     }
 
     // audio devices
@@ -125,7 +125,7 @@ ca_enum_callback (const char *s, const char *d, void *userdata) {
     self.audioDevicesIndex = sender.indexOfSelectedItem;
     NSString *title = self.audioDevices[self.audioDevicesIndex];
     DB_output_t *output = deadbeef->get_output ();
-    NSString *dev = [[NSString stringWithUTF8String:output->plugin.id] stringByAppendingString:@"_soundcard"];
+    NSString *dev = [@(output->plugin.id) stringByAppendingString:@"_soundcard"];
     deadbeef->conf_set_str (dev.UTF8String, title.UTF8String);
     deadbeef->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
 }

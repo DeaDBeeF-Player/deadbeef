@@ -211,10 +211,10 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     uint8_t *c = self.columns[self.menuColumn].text_color;
     NSColor *color = [NSColor colorWithDeviceRed:c[0]/255.f green:c[1]/255.f blue:c[2]/255.f alpha:c[3]/255.f];
 
-    [self.editColumnWindowController initEditColumnSheetWithTitle:[NSString stringWithUTF8String:self.columns[self.menuColumn].title]
+    [self.editColumnWindowController initEditColumnSheetWithTitle:@(self.columns[self.menuColumn].title)
                                                              type:self.columns[self.menuColumn].type
-                                                           format:[NSString stringWithUTF8String:self.columns[self.menuColumn].format ?: ""]
-                                                       sortFormat:[NSString stringWithUTF8String:self.columns[self.menuColumn].sortFormat ?: ""]
+                                                           format:@(self.columns[self.menuColumn].format ?: "")
+                                                       sortFormat:@(self.columns[self.menuColumn].sortFormat ?: "")
                                                         alignment:self.columns[self.menuColumn].alignment
                                                      setTextColor:self.columns[self.menuColumn].set_text_color
                                                         textColor:color];
@@ -291,13 +291,13 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     char buf[1000];
     deadbeef->conf_get_str (self.groupByConfStr, "", buf, sizeof (buf));
-    [self.groupByCustomWindowController initWithFormat:[NSString stringWithUTF8String:buf]];
+    [self.groupByCustomWindowController initWithFormat:@(buf)];
 
     [self.view.window beginSheet:self.groupByCustomWindowController.window completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
             [self clearGrouping];
             self.groupStr = self.groupByCustomWindowController.formatTextField.stringValue;
-            deadbeef->conf_set_str([self groupByConfStr], self.groupStr.UTF8String);
+            deadbeef->conf_set_str(self.groupByConfStr, self.groupStr.UTF8String);
             PlaylistView *lv = (PlaylistView *)self.view;
             [lv.contentView reloadData];
             deadbeef->conf_save ();
@@ -313,16 +313,14 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     NSMutableArray *columns = [[NSMutableArray alloc] initWithCapacity:self.ncolumns];
     for (int i = 0; i < self.ncolumns; i++) {
         uint8_t *col = self.columns[i].text_color;
-        NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:
-                              [NSString stringWithUTF8String:self.columns[i].title], @"title"
-                              , [NSString stringWithFormat:@"%d", self.columns[i].type], @"id"
-                              , [NSString stringWithUTF8String:self.columns[i].format ?: ""], @"format"
-                              , [NSString stringWithUTF8String:self.columns[i].sortFormat ?: ""], @"sort_format"
-                              , [NSString stringWithFormat:@"%d", self.columns[i].size], @"size"
-                              , [NSNumber numberWithInteger:self.columns[i].alignment], @"alignment"
-                              , [NSNumber numberWithInt:self.columns[i].set_text_color], @"set_text_color"
-                              , [NSString stringWithFormat:@"#%02x%02x%02x%02x", col[3], col[0], col[1], col[2]], @"text_color"
-                              , nil];
+        NSDictionary *dict = @{@"title": @(self.columns[i].title)
+                              , @"id": [NSString stringWithFormat:@"%d", self.columns[i].type]
+                              , @"format": @(self.columns[i].format ?: "")
+                              , @"sort_format": @(self.columns[i].sortFormat ?: "")
+                              , @"size": [NSString stringWithFormat:@"%d", self.columns[i].size]
+                              , @"alignment": @(self.columns[i].alignment)
+                              , @"set_text_color": @(self.columns[i].set_text_color)
+                              , @"text_color": [NSString stringWithFormat:@"#%02x%02x%02x%02x", col[3], col[0], col[1], col[2]]};
         [columns addObject:dict];
     }
 
@@ -399,7 +397,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 }
 
 - (void)writeColumnConfig:(NSString *)config {
-    deadbeef->conf_set_str ("cocoaui.columns", [config UTF8String]);
+    deadbeef->conf_set_str ("cocoaui.columns", config.UTF8String);
 }
 
 - (void)initContent {
@@ -410,7 +408,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&err];
 
     if (!json) {
-        NSLog (@"error parsing column config, error: %@\n", [err localizedDescription]);
+        NSLog (@"error parsing column config, error: %@\n", err.localizedDescription);
     }
     else {
         [self loadColumns:json];
@@ -426,32 +424,27 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     int rowheight = 18;
 
-    self.groupTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                 [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
-                                 , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                 , NSColor.controlTextColor, NSForegroundColorAttributeName
-                                 , textStyle, NSParagraphStyleAttributeName
-                                 , nil];
+    self.groupTextAttrsDictionary = @{NSFontAttributeName: [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]]
+                                 , NSBaselineOffsetAttributeName: @0.0f
+                                 , NSForegroundColorAttributeName: NSColor.controlTextColor
+                                 , NSParagraphStyleAttributeName: textStyle};
 
-    self.cellTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
-                                , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                , NSColor.controlTextColor, NSForegroundColorAttributeName
-                                , textStyle, NSParagraphStyleAttributeName
-                                , nil];
+    self.cellTextAttrsDictionary = @{NSFontAttributeName: [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]]
+                                , NSBaselineOffsetAttributeName: @0.0f
+                                , NSForegroundColorAttributeName: NSColor.controlTextColor
+                                , NSParagraphStyleAttributeName: textStyle};
 
-    self.cellSelectedTextAttrsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]], NSFontAttributeName
-                                        , [NSNumber numberWithFloat:0], NSBaselineOffsetAttributeName
-                                        , NSColor.alternateSelectedControlTextColor, NSForegroundColorAttributeName
-                                        , textStyle, NSParagraphStyleAttributeName
-                                        , nil];
+    self.cellSelectedTextAttrsDictionary = @{NSFontAttributeName: [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]]
+                                        , NSBaselineOffsetAttributeName: @0.0f
+                                        , NSForegroundColorAttributeName: NSColor.alternateSelectedControlTextColor
+                                        , NSParagraphStyleAttributeName: textStyle};
 
 
     // initialize group by str
     deadbeef->conf_lock ();
     const char *group_by = deadbeef->conf_get_str_fast (self.groupByConfStr, NULL);
     if (group_by) {
-        self.groupStr = [NSString stringWithUTF8String:group_by];
+        self.groupStr = @(group_by);
     }
     deadbeef->conf_unlock ();
 
@@ -601,23 +594,23 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     [self freeColumns];
     [cols enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSDictionary *dict = obj;
-        NSString *title_s = [dict objectForKey:@"title"];
-        NSString *id_s = [dict objectForKey:@"id"];
-        NSString *format_s = [dict objectForKey:@"format"];
-        NSString *sortFormat_s = [dict objectForKey:@"sort_format"];
-        NSString *size_s = [dict objectForKey:@"size"];
-        NSNumber *alignment_n = [dict objectForKey:@"alignment"];
-        NSNumber *setcolor_n = [dict objectForKey:@"set_text_color"];
-        NSString *textcolor_s = [dict objectForKey:@"text_color"];
+        NSString *title_s = dict[@"title"];
+        NSString *id_s = dict[@"id"];
+        NSString *format_s = dict[@"format"];
+        NSString *sortFormat_s = dict[@"sort_format"];
+        NSString *size_s = dict[@"size"];
+        NSNumber *alignment_n = dict[@"alignment"];
+        NSNumber *setcolor_n = dict[@"set_text_color"];
+        NSString *textcolor_s = dict[@"text_color"];
 
         const char *title = "";
         if (title_s) {
-            title = [title_s UTF8String];
+            title = title_s.UTF8String;
         }
 
         int colId = -1;
         if (id_s) {
-            colId = (int)[id_s integerValue];
+            colId = (int)id_s.integerValue;
         }
 
         const char *fmt = NULL;
@@ -632,12 +625,12 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
         int size = 80;
         if (size_s) {
-            size = (int)[size_s integerValue];
+            size = (int)size_s.integerValue;
         }
 
         PlaylistColumnAlignment alignment = ColumnAlignmentLeft;
         if (alignment_n) {
-            alignment = (PlaylistColumnAlignment)[alignment_n intValue];
+            alignment = (PlaylistColumnAlignment)alignment_n.intValue;
             
             if (alignment != ColumnAlignmentLeft && alignment != ColumnAlignmentCenter && alignment != ColumnAlignmentRight) {
                 alignment = ColumnAlignmentLeft;
@@ -647,12 +640,12 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
         BOOL setcolor = NO;
         if (setcolor_n) {
-            setcolor = [setcolor_n intValue] ? YES : NO;
+            setcolor = setcolor_n.intValue ? YES : NO;
         }
 
         int r = 0, g = 0, b = 0, a = 0xff;
         if (textcolor_s) {
-            sscanf ([textcolor_s UTF8String], "#%02x%02x%02x%02x", &a, &r, &g, &b);
+            sscanf (textcolor_s.UTF8String, "#%02x%02x%02x%02x", &a, &r, &g, &b);
         }
 
         uint8_t rgba[4] = {
@@ -682,7 +675,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 }
 
 - (DdbListviewCol_t)nextColumn:(DdbListviewCol_t)col {
-    return col >= [self columnCount] - 1 ? [self invalidColumn] : col+1;
+    return col >= self.columnCount - 1 ? self.invalidColumn : col+1;
 }
 
 - (DdbListviewCol_t)invalidColumn {
@@ -747,7 +740,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     numTintStops = calculate_tint_stops_from_string (inputString, tintStops, maxTintStops, &plainString);
 
-    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithUTF8String:plainString] attributes:attributes];
+    NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@(plainString) attributes:attributes];
 
     NSColor *highlightColor = NSColor.alternateSelectedControlColor;
 
@@ -801,7 +794,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         }
     }
 
-    if (col == [self invalidColumn]) {
+    if (col == self.invalidColumn) {
         return;
     }
 
@@ -823,7 +816,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
         NSColor *imgColor = sel ? NSColor.alternateSelectedControlTextColor : NSColor.controlTextColor;
 
-        CGContextRef c = [[NSGraphicsContext currentContext] CGContext];
+        CGContextRef c = [NSGraphicsContext currentContext].CGContext;
         CGContextSaveGState(c);
 
         NSRect maskRect = rect;
@@ -893,7 +886,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 attrString = [self stringWithTintAttributesFromString:text initialAttributes:attributes                                                     foregroundColor:foreground backgroundColor:background];
             }
             else {
-                attrString = [[NSAttributedString alloc] initWithString:[NSString stringWithUTF8String:text] attributes:attributes];
+                attrString = [[NSAttributedString alloc] initWithString:@(text) attributes:attributes];
             }
             [attrString drawInRect:rect];
             textStyle.alignment = NSTextAlignmentLeft;
@@ -1367,10 +1360,10 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             DB_playItem_t *after = (DB_playItem_t *)_after;
             for(NSUInteger i = 0; i < paths.count; i++ )
             {
-                NSString* path = [paths objectAtIndex:i];
+                NSString* path = paths[i];
                 if (path) {
                     int abort = 0;
-                    const char *fname = [path UTF8String];
+                    const char *fname = path.UTF8String;
                     DB_playItem_t *inserted = deadbeef->plt_insert_dir2 (0, plt, after, fname, &abort, NULL, NULL);
                     if (!inserted && !abort) {
                         inserted = deadbeef->plt_insert_file2 (0, plt, after, fname, &abort, NULL, NULL);
@@ -1451,7 +1444,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 }
 
 - (NSString *)columnTitleAtIndex:(NSUInteger)index {
-    return [NSString stringWithUTF8String:self.columns[index].title];
+    return @(self.columns[index].title);
 }
 
 - (enum ddb_sort_order_t)columnSortOrderAtIndex:(NSUInteger)index {
@@ -1557,7 +1550,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     char buf[1024];
     NSString *ret = @"";
     if (deadbeef->tf_eval (&ctx, self.groupBytecode, buf, sizeof (buf)) > 0) {
-        ret = [NSString stringWithUTF8String:buf];
+        ret = @(buf);
         if (!ret) {
             ret = @"";
         }

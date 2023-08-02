@@ -210,7 +210,7 @@ static NSMutableArray *g_rgControllers;
             dispatch_async(dispatch_get_main_queue(), ^{
                 // progress
                 deadbeef->pl_lock ();
-                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (strongSelf->_rg_settings.tracks[i], ":URI")];
+                NSString *path = @(deadbeef->pl_find_meta_raw (strongSelf->_rg_settings.tracks[i], ":URI"));
                 deadbeef->pl_unlock ();
                 strongSelf.updateTagsProgressText.stringValue = path;
                 strongSelf.updateTagsProgressIndicator.doubleValue = (double)i/strongSelf->_rg_settings.num_tracks*100;
@@ -254,7 +254,7 @@ static NSMutableArray *g_rgControllers;
     deadbeef->pl_lock ();
     const char *uri = deadbeef->pl_find_meta (_rg_settings.tracks[current], ":URI");
 
-    _progressText.stringValue = [NSString stringWithUTF8String:uri];
+    _progressText.stringValue = @(uri);
     _progressIndicator.doubleValue = (double)current/_rg_settings.num_tracks*100;
 
     struct timeval tv;
@@ -313,7 +313,7 @@ static NSMutableArray *g_rgControllers;
 
             if (strongSelf->_rg_settings.results[i].scan_result == DDB_RG_SCAN_RESULT_SUCCESS) {
                 deadbeef->pl_lock ();
-                NSString *path = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (strongSelf->_rg_settings.tracks[i], ":URI")];
+                NSString *path = @(deadbeef->pl_find_meta_raw (strongSelf->_rg_settings.tracks[i], ":URI"));
                 deadbeef->pl_unlock ();
                 dispatch_async(dispatch_get_main_queue(), ^{
                     strongSelf.updateTagsProgressText.stringValue = path;
@@ -352,7 +352,7 @@ static NSMutableArray *g_rgControllers;
 
 - (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     DB_playItem_t *it = _rg_settings.tracks[rowIndex];
-    NSUInteger colIdx = [[aTableView tableColumns] indexOfObject:aTableColumn];
+    NSUInteger colIdx = [aTableView.tableColumns indexOfObject:aTableColumn];
 
     NSString *status_str[] = {
         @"Success",
@@ -369,7 +369,7 @@ static NSMutableArray *g_rgControllers;
 
             char buffer[100];
             deadbeef->tf_eval (&ctx, _title_tf, buffer, sizeof (buffer));
-            return [NSString stringWithUTF8String:buffer];
+            return @(buffer);
         }
         break;
     case 1:

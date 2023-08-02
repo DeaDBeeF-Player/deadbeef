@@ -16,7 +16,7 @@
 #include "playmodes.h"
 
 @implementation DDBTestInitializer
-- (id)init {
+- (instancetype)init {
     NSString *resPath = [NSBundle bundleForClass:self.class].resourcePath;
     const char *str = resPath.UTF8String;
     strcpy (dbplugindir, str);

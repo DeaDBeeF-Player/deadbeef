@@ -85,7 +85,7 @@ extern DB_functions_t *deadbeef;
             // song info
             char text[1000];
             deadbeef->pl_get_meta (it, "title", text, sizeof (text));
-            info[MPMediaItemPropertyTitle] = [NSString stringWithUTF8String:text];
+            info[MPMediaItemPropertyTitle] = @(text);
 
             ddb_tf_context_t ctx = {
                 ._size = sizeof (ddb_tf_context_t),
@@ -94,9 +94,9 @@ extern DB_functions_t *deadbeef;
             };
 
             deadbeef->tf_eval (&ctx, nowPlayable.artist_tf, text, sizeof (text));
-            info[MPMediaItemPropertyArtist] = [NSString stringWithUTF8String:text];
+            info[MPMediaItemPropertyArtist] = @(text);
             deadbeef->tf_eval (&ctx, nowPlayable.album_tf, text, sizeof (text));
-            info[MPMediaItemPropertyAlbumTitle] = [NSString stringWithUTF8String:text];
+            info[MPMediaItemPropertyAlbumTitle] = @(text);
 
             deadbeef->pl_item_unref (it);
         }

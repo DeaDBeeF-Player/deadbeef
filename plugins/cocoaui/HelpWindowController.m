@@ -25,7 +25,7 @@
 
 - (void)loadContent {
     NSURL *path = self.contentURL;
-    NSString *content = [NSString stringWithContentsOfFile:[path path] encoding:NSUTF8StringEncoding error:nil];
+    NSString *content = [NSString stringWithContentsOfFile:path.path encoding:NSUTF8StringEncoding error:nil];
     if (content) {
 
         NSFont *font;

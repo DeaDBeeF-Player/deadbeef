@@ -36,7 +36,7 @@
 static void
 copy_file(const char *from, const char *to) {
     // FIXME: make portable
-    [NSFileManager.defaultManager copyItemAtPath:[NSString stringWithUTF8String:from] toPath:[NSString stringWithUTF8String:to] error:nil];
+    [NSFileManager.defaultManager copyItemAtPath:@(from) toPath:@(to) error:nil];
 }
 
 class TaggingTests: public ::testing::Test {

@@ -68,7 +68,7 @@ NSString *
 conf_get_nsstr (const char *key, const char *def) {
     char value[4096];
     deadbeef->conf_get_str (key, def, value, sizeof (value));
-    return [NSString stringWithUTF8String:value];
+    return @(value);
 }
 
 void
@@ -86,6 +86,6 @@ plt_get_title_wrapper (int plt) {
     char buffer[1000];
     deadbeef->plt_get_title (p, buffer, sizeof (buffer));
     deadbeef->plt_unref (p);
-    return [NSString stringWithUTF8String:buffer];
+    return @(buffer);
 }
 

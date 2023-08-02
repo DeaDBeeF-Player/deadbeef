@@ -107,7 +107,7 @@ extern DB_functions_t *deadbeef;
 
 // NSPasteboardReading
 + (nonnull NSArray<NSPasteboardType> *)readableTypesForPasteboard:(nonnull NSPasteboard *)pasteboard {
-    return [NSArray arrayWithObjects:ddbMedialibItemUTIType, nil];
+    return @[ddbMedialibItemUTIType];
 }
 
 + (NSPasteboardReadingOptions)readingOptionsForType:(NSPasteboardType)type pasteboard:(NSPasteboard *)pasteboard {
@@ -116,7 +116,7 @@ extern DB_functions_t *deadbeef;
 
 // NSPasteboardWriting
 - (NSArray<NSString *> *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
-    return [NSArray arrayWithObjects:ddbMedialibItemUTIType, nil];
+    return @[ddbMedialibItemUTIType];
 }
 
 - (id)pasteboardPropertyListForType:(NSString *)type {

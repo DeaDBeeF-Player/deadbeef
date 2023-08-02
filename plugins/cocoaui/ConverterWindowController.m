@@ -163,8 +163,8 @@ static NSMutableArray *g_converterControllers;
         out_folder = getenv("HOME");
     }
 
-    self.outputFolder.stringValue = [NSString stringWithUTF8String:out_folder];
-    self.outputFileName.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("converter.output_file", "")];
+    self.outputFolder.stringValue = @(out_folder);
+    self.outputFileName.stringValue = @(deadbeef->conf_get_str_fast ("converter.output_file", ""));
     self.preserveFolderStructure.state = deadbeef->conf_get_int ("converter.preserve_folder_structure", 0) ? NSControlStateValueOn : NSControlStateValueOff;
     self.bypassSameFormat.state = deadbeef->conf_get_int ("converter.bypass_same_format", 0);
     self.retagAfterCopy.state = deadbeef->conf_get_int ("converter.retag_after_copy", 0);
@@ -183,15 +183,15 @@ static NSMutableArray *g_converterControllers;
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification {
-    NSTextField *textField = [notification object];
+    NSTextField *textField = notification.object;
     if (textField == self.outputFolder) {
         [self updateFilenamesPreview];
-        deadbeef->conf_set_str ("converter.output_folder", [[_outputFolder stringValue] UTF8String]);
+        deadbeef->conf_set_str ("converter.output_folder", _outputFolder.stringValue.UTF8String);
         deadbeef->conf_save ();
     }
     else if (textField == self.outputFileName) {
         [self updateFilenamesPreview];
-        deadbeef->conf_set_str ("converter.output_file", [[_outputFileName stringValue] UTF8String]);
+        deadbeef->conf_set_str ("converter.output_file", _outputFileName.stringValue.UTF8String);
         deadbeef->conf_save ();
     }
 }
@@ -226,7 +226,7 @@ static NSMutableArray *g_converterControllers;
     ddb_encoder_preset_t *encoder_preset = self.converter_plugin->encoder_preset_alloc();
     scriptableEncoderPresetToConverterEncoderPreset(preset, encoder_preset);
 
-    NSString *outfile = [_outputFileName stringValue];
+    NSString *outfile = _outputFileName.stringValue;
 
     if ([outfile isEqual:@""]) {
         outfile = default_format;
@@ -237,9 +237,9 @@ static NSMutableArray *g_converterControllers;
         if (it) {
             char outpath[PATH_MAX];
 
-            self.converter_plugin->get_output_path2 (it, self.convert_playlist, [[_outputFolder stringValue] UTF8String], [outfile UTF8String], encoder_preset, self.preserveFolderStructure.state == NSControlStateValueOn, "", self.writeToSourceFolder.state == NSControlStateValueOn, outpath, sizeof (outpath));
+            self.converter_plugin->get_output_path2 (it, self.convert_playlist, _outputFolder.stringValue.UTF8String, outfile.UTF8String, encoder_preset, self.preserveFolderStructure.state == NSControlStateValueOn, "", self.writeToSourceFolder.state == NSControlStateValueOn, outpath, sizeof (outpath));
 
-            [convert_items_preview addObject:[NSString stringWithUTF8String:outpath]];
+            [convert_items_preview addObject:@(outpath)];
         }
     }
 
@@ -257,12 +257,12 @@ static NSMutableArray *g_converterControllers;
 
 
 - (IBAction)overwritePromptChanged:(id)sender {
-    deadbeef->conf_set_int ("converter.overwrite_action", (int)[_fileExistsAction indexOfSelectedItem]);
+    deadbeef->conf_set_int ("converter.overwrite_action", (int)_fileExistsAction.indexOfSelectedItem);
     deadbeef->conf_save ();
 }
 
 - (IBAction)outputFormatChanged:(id)sender {
-    deadbeef->conf_set_int ("converter.output_format", (int)[_outputFormat indexOfSelectedItem]);
+    deadbeef->conf_set_int ("converter.output_format", (int)_outputFormat.indexOfSelectedItem);
     deadbeef->conf_save ();
 }
 
@@ -352,8 +352,8 @@ static NSMutableArray *g_converterControllers;
     // Display the panel attached to the document's window.
     [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result){
         if (result == NSModalResponseOK) {
-            NSURL * url = [panel URL];
-            self.outputFolder.stringValue =  [url path];
+            NSURL * url = panel.URL;
+            self.outputFolder.stringValue =  url.path;
         }
     }];
 }
@@ -373,9 +373,9 @@ static NSMutableArray *g_converterControllers;
 }
 
 - (IBAction)okAction:(id)sender {
-    self.outfolder = [_outputFolder stringValue];
+    self.outfolder = _outputFolder.stringValue;
 
-    self.outfile = [_outputFileName stringValue];
+    self.outfile = _outputFileName.stringValue;
 
     if ([self.outfile isEqual:@""]) {
         self.outfile = default_format;
@@ -385,9 +385,9 @@ static NSMutableArray *g_converterControllers;
 
     self.write_to_source_folder = self.writeToSourceFolder.state == NSControlStateValueOn;
 
-    self.overwrite_action = (int)[_fileExistsAction indexOfSelectedItem];
+    self.overwrite_action = (int)_fileExistsAction.indexOfSelectedItem;
 
-    int selected_format = (int)[_outputFormat indexOfSelectedItem];
+    int selected_format = (int)_outputFormat.indexOfSelectedItem;
     switch (selected_format) {
         case 1 ... 4:
             self.output_bps = selected_format * 8;
@@ -504,11 +504,11 @@ static NSMutableArray *g_converterControllers;
 
     for (int n = 0; n < self.convert_items_count; n++) {
         deadbeef->pl_lock ();
-        NSString *text = [NSString stringWithUTF8String:deadbeef->pl_find_meta (_convert_items[n], ":URI")];
+        NSString *text = @(deadbeef->pl_find_meta (_convert_items[n], ":URI"));
         deadbeef->pl_unlock ();
         char outpath[PATH_MAX];
-        self.converter_plugin->get_output_path2 (_convert_items[n], self.convert_playlist, [self.outfolder UTF8String], [self.outfile UTF8String], self.encoder_preset, self.preserve_folder_structure, root, self.write_to_source_folder, outpath, sizeof (outpath));
-        NSString *nsoutpath = [NSString stringWithUTF8String:outpath];
+        self.converter_plugin->get_output_path2 (_convert_items[n], self.convert_playlist, (self.outfolder).UTF8String, (self.outfile).UTF8String, self.encoder_preset, self.preserve_folder_structure, root, self.write_to_source_folder, outpath, sizeof (outpath));
+        NSString *nsoutpath = @(outpath);
 
         dispatch_async(dispatch_get_main_queue(), ^{
             self.progressBar.doubleValue = n;
@@ -535,7 +535,7 @@ static NSMutableArray *g_converterControllers;
                 skip = 0;
             }
             else {
-                NSInteger result = [self overwritePrompt:[NSString stringWithUTF8String:outpath]];
+                NSInteger result = [self overwritePrompt:@(outpath)];
                 if (result == NSAlertSecondButtonReturn) {
                     unlink (outpath);
                     skip = 0;

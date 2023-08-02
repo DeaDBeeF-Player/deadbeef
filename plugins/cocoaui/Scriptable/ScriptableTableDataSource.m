@@ -75,7 +75,7 @@ extern DB_functions_t *deadbeef;
 @implementation ScriptableReorerableTableDataSource
 
 - (NSString *)pasteboardItemIdentifier {
-    return [NSString stringWithUTF8String:self.scriptable->callbacks->pasteboardItemIdentifier];
+    return @(self.scriptable->callbacks->pasteboardItemIdentifier);
 }
 
 #pragma mark NSTableViewDataSource Drag & Drop
@@ -111,7 +111,7 @@ extern DB_functions_t *deadbeef;
 
 - (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id<NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation {
 
-    NSPasteboard *p = [info draggingPasteboard];
+    NSPasteboard *p = info.draggingPasteboard;
 
     NSDictionary *pboardPList = [p propertyListForType:self.pasteboardItemIdentifier];
     NSNumber *rowIndexNum = pboardPList[@"sourceRowIndex"];

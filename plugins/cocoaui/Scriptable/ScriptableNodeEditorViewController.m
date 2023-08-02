@@ -49,7 +49,7 @@
     }
 
     if (self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->isReorderable) {
-        [self.nodeList registerForDraggedTypes: [NSArray arrayWithObjects: _dataSource.pasteboardItemIdentifier, nil]];
+        [self.nodeList registerForDraggedTypes: @[_dataSource.pasteboardItemIdentifier]];
     }
 
     [self updateButtons];
@@ -73,7 +73,7 @@
     NSInteger index = 0;
     scriptableStringListItem_t *n = names;
     while (n) {
-        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:n->str] action:@selector(createNode:) keyEquivalent:@""];
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@(n->str) action:@selector(createNode:) keyEquivalent:@""];
         item.tag = index;
         [menu addItem:item];
         n = n->next;
@@ -87,7 +87,7 @@
 
 - (NSInteger)insertionIndex {
     NSInteger cnt = [_dataSource numberOfRowsInTableView:_nodeList];
-    NSInteger index = [_nodeList selectedRow];
+    NSInteger index = _nodeList.selectedRow;
     if (cnt == 0) {
         index = 0;
     }
@@ -164,12 +164,12 @@
 
     NSMenu *menu = [self getCreateItemMenu];
     if (menu) {
-        [NSMenu popUpContextMenu:menu withEvent:[NSApp currentEvent] forView:sender];
+        [NSMenu popUpContextMenu:menu withEvent:NSApp.currentEvent forView:sender];
     }
 }
 
 - (IBAction)removeAction:(id)sender {
-    NSInteger index = [_nodeList selectedRow];
+    NSInteger index = _nodeList.selectedRow;
     if (index < 0) {
         return;
     }
@@ -180,7 +180,7 @@
     [_nodeList endUpdates];
     [_dataSource removeItemAtIndex:(int)index];
 
-    if (index >= [_nodeList numberOfRows]) {
+    if (index >= _nodeList.numberOfRows) {
         index--;
     }
     if (index >= 0) {
@@ -191,7 +191,7 @@
 }
 
 - (IBAction)configureAction:(id)sender {
-    NSInteger index = [_nodeList selectedRow];
+    NSInteger index = _nodeList.selectedRow;
     if (index < 0) {
         return;
     }
@@ -203,7 +203,7 @@
         self.nodeDataSource = [ScriptableTableDataSource dataSourceWithScriptable:item];
         self.nodeEditorWindowController.dataSource = self.nodeDataSource;
         self.nodeEditorWindowController.delegate = self.delegate;
-        self.nodeEditorWindowController.window.title = [NSString stringWithUTF8String:scriptableItemPropertyValueForKey(item, "name")]; // preset name
+        self.nodeEditorWindowController.window.title = @(scriptableItemPropertyValueForKey(item, "name")); // preset name
         NSWindow *window = self.view.window;
         [window beginSheet:self.nodeEditorWindowController.window completionHandler:^(NSModalResponse returnCode) {
         }];
@@ -226,7 +226,7 @@
 }
 
 - (void)duplicateAction:(id)sender {
-    NSInteger selectedIndex = [_nodeList selectedRow];
+    NSInteger selectedIndex = _nodeList.selectedRow;
     if (selectedIndex == -1) {
         return;
     }
@@ -270,7 +270,7 @@
 }
 
 - (scriptableItem_t *)selectedItem {
-    NSInteger selectedIndex = [_nodeList selectedRow];
+    NSInteger selectedIndex = _nodeList.selectedRow;
     if (selectedIndex == -1) {
         return NULL;
     }
@@ -329,7 +329,7 @@
         view.textField.selectable = YES;
     }
 
-    view.textField.stringValue = [NSString stringWithUTF8String:name];
+    view.textField.stringValue = @(name);
 
     free (name);
 

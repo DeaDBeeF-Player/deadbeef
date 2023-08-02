@@ -153,7 +153,7 @@ static void fileadd_begin (ddb_fileadd_data_t *data, void *user_data) {
 static void fileadd_end (ddb_fileadd_data_t *data, void *user_data) {
     dispatch_async(dispatch_get_main_queue(), ^{
         [g_appDelegate.mainWindow.window endSheet:g_appDelegate.addFilesWindow returnCode:NSModalResponseOK];
-        [[[g_appDelegate mainWindow] window] makeKeyAndOrderFront:g_appDelegate];
+        [g_appDelegate.mainWindow.window makeKeyAndOrderFront:g_appDelegate];
     });
 }
 
@@ -165,7 +165,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         // HACK: we want to set the label asynchronously, to minimize delays,
         // but we also want to avoid sending multiple labels, becuase that's meaningless.
         // So we use a basic flag, to see if the label is being set already.
-        NSString *s = [NSString stringWithUTF8String:uri];
+        NSString *s = @(uri);
         _settingLabel = YES;
         dispatch_async(dispatch_get_main_queue(), ^{
             g_appDelegate.addFilesLabel.stringValue = s;
@@ -339,7 +339,7 @@ main_cleanup_and_quit (void);
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         char str[100];
-        add_paths([filename UTF8String], (int)[filename length], 0, str, 100);
+        add_paths(filename.UTF8String, (int)filename.length, 0, str, 100);
     });
     return YES; // assume that everything went ok
 }
@@ -352,13 +352,13 @@ main_cleanup_and_quit (void);
         NSArray *sortedFilenames = [filenames sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         // building single paths string for the deadbeef function, paths must be separated by '\0'
         NSString *paths =[sortedFilenames componentsJoinedByString:@"\0"];
-        add_paths([paths UTF8String], (int)[paths lengthOfBytesUsingEncoding:NSUTF8StringEncoding], 0, str, 100);
+        add_paths(paths.UTF8String, (int)[paths lengthOfBytesUsingEncoding:NSUTF8StringEncoding], 0, str, 100);
     });
 }
 
 
 - (IBAction)showMainWinAction:(id)sender {
-    BOOL vis = ![_mainWindow.window isVisible];
+    BOOL vis = !(_mainWindow.window).visible;
     _mainWindow.window.isVisible = vis;
     if (vis) {
         [_mainWindow.window makeKeyWindow];
@@ -366,7 +366,7 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)showLogWindowAction:(id)sender {
-    BOOL vis = ![_logWindow.window isVisible];
+    BOOL vis = !(_logWindow.window).visible;
     _logWindow.window.isVisible = vis;
     if (vis) {
         [_logWindow.window makeKeyWindow];
@@ -374,7 +374,7 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)showEqualizerWindowAction:(id)sender {
-    BOOL vis = ![_equalizerWindow.window isVisible];
+    BOOL vis = !(_equalizerWindow.window).visible;
     _equalizerWindow.window.isVisible = vis;
     if (vis) {
         [_equalizerWindow.window makeKeyWindow];
@@ -429,7 +429,7 @@ main_cleanup_and_quit (void);
     openDlg.canChooseDirectories = NO;
     if ( [openDlg runModal] == NSModalResponseOK )
     {
-        NSArray* files = [openDlg URLs];
+        NSArray* files = openDlg.URLs;
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (!deadbeef->plt_add_files_begin (plt, 0)) {
             if (clear) {
@@ -439,9 +439,9 @@ main_cleanup_and_quit (void);
             dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(aQueue, ^{
                 for (NSUInteger i = 0; i < files.count; i++) {
-                    NSString* fileName = [[files objectAtIndex:i] path];
+                    NSString* fileName = [files[i] path];
                     if (fileName) {
-                        deadbeef->plt_add_file2 (0, plt, [fileName UTF8String], NULL, NULL);
+                        deadbeef->plt_add_file2 (0, plt, fileName.UTF8String, NULL, NULL);
                     }
                 }
                 deadbeef->plt_add_files_end (plt, 0);
@@ -474,15 +474,15 @@ main_cleanup_and_quit (void);
     openDlg.canChooseDirectories = YES;
     if ( [openDlg runModal] == NSModalResponseOK )
     {
-        NSArray* files = [openDlg URLs];
+        NSArray* files = openDlg.URLs;
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         if (!deadbeef->plt_add_files_begin (plt, 0)) {
             dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(aQueue, ^{
                 for (NSUInteger i = 0; i < files.count; i++) {
-                    NSString *fileName = [[files objectAtIndex:i] path];
+                    NSString *fileName = [files[i] path];
                     if (fileName) {
-                        deadbeef->plt_add_dir2 (0, plt, [fileName UTF8String], NULL, NULL);
+                        deadbeef->plt_add_dir2 (0, plt, fileName.UTF8String, NULL, NULL);
                     }
                 }
                 deadbeef->plt_add_files_end (plt, 0);
@@ -576,14 +576,14 @@ main_cleanup_and_quit (void);
 
 - (IBAction)sortPlaylistCustom:(id)sender {
     deadbeef->pl_lock ();
-    _customSortEntry.stringValue = [NSString stringWithUTF8String:deadbeef->conf_get_str_fast ("cocoaui.custom_sort_tf", "")];
+    _customSortEntry.stringValue = @(deadbeef->conf_get_str_fast ("cocoaui.custom_sort_tf", ""));
     deadbeef->pl_unlock ();
     _customSortDescending.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSControlStateValueOn : NSControlStateValueOff;
     [_mainWindow.window beginSheet:_customSortPanel completionHandler:^(NSModalResponse returnCode) {
         NSInteger state = self.customSortDescending.state;
         self.descendingSortMode.state =  state;
         deadbeef->conf_set_int ("cocoaui.sort_desc", state == NSControlStateValueOn ? 1 : 0);
-        deadbeef->conf_set_str ("cocoaui.custom_sort_tf", [[self.customSortEntry stringValue] UTF8String]);
+        deadbeef->conf_set_str ("cocoaui.custom_sort_tf", (self.customSortEntry).stringValue.UTF8String);
 
         if (returnCode == NSModalResponseOK) {
             [self sortPlaylistByTF:self.customSortEntry.stringValue.UTF8String];
@@ -772,9 +772,9 @@ main_cleanup_and_quit (void);
     if (it) {
         deadbeef->pl_item_unref (it);
     }
-    _dockMenuNPTitle = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title] action:nil keyEquivalent:@""];
+    _dockMenuNPTitle = [[NSMenuItem alloc] initWithTitle:@(title) action:nil keyEquivalent:@""];
     _dockMenuNPTitle.enabled = NO;
-    _dockMenuNPArtistAlbum = [[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:artistAlbum] action:nil keyEquivalent:@""];
+    _dockMenuNPArtistAlbum = [[NSMenuItem alloc] initWithTitle:@(artistAlbum) action:nil keyEquivalent:@""];
     _dockMenuNPArtistAlbum.enabled = NO;
     [_dockMenu insertItem:_dockMenuNPTitle atIndex:1];
     [_dockMenu insertItem:_dockMenuNPArtistAlbum atIndex:2];
@@ -800,18 +800,18 @@ main_cleanup_and_quit (void);
     openDlg.canChooseDirectories = NO;
     if ([openDlg runModal] == NSModalResponseOK)
     {
-        NSArray* files = [openDlg URLs];
-        if ([files count] < 1) {
+        NSArray* files = openDlg.URLs;
+        if (files.count < 1) {
             return;
         }
-        NSString *fname = [[files firstObject] path];
+        NSString *fname = [files.firstObject path];
         dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
         dispatch_async(aQueue, ^{
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
                 deadbeef->plt_clear (plt);
                 int abort = 0;
-                deadbeef->plt_load2 (0, plt, NULL, [fname UTF8String], &abort, NULL, NULL);
+                deadbeef->plt_load2 (0, plt, NULL, fname.UTF8String, &abort, NULL, NULL);
                 deadbeef->plt_save_config (plt);
                 deadbeef->plt_add_files_end (plt, 0);
             }
@@ -838,7 +838,7 @@ main_cleanup_and_quit (void);
             const char **exts = plug[i]->extensions;
             if (exts && plug[i]->save) {
                 for (int e = 0; exts[e]; e++) {
-                    NSString *ext = [NSString stringWithUTF8String:exts[e]];
+                    NSString *ext = @(exts[e]);
                     [types addObject:ext];
 
                     message = [message stringByAppendingString:@", "];
@@ -853,11 +853,11 @@ main_cleanup_and_quit (void);
     panel.allowsOtherFileTypes = NO;
 
     if ([panel runModal] == NSModalResponseOK) {
-        NSString *fname = [[panel URL] path];
+        NSString *fname = panel.URL.path;
         if (fname) {
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (plt) {
-                deadbeef->plt_save (plt, NULL, NULL, [fname UTF8String], NULL, NULL, NULL);
+                deadbeef->plt_save (plt, NULL, NULL, fname.UTF8String, NULL, NULL, NULL);
                 deadbeef->plt_unref (plt);
             }
         }
@@ -889,7 +889,7 @@ main_cleanup_and_quit (void);
     }
     _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"help-cocoa" withExtension:@"txt"];
 
-    if (![_helpWindow.window isVisible]) {
+    if (!(_helpWindow.window).visible) {
         [_helpWindow showWindow:self];
     }
 }
@@ -900,7 +900,7 @@ main_cleanup_and_quit (void);
     }
     _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"ChangeLog" withExtension:@""];
 
-    if (![_helpWindow.window isVisible]) {
+    if (!(_helpWindow.window).visible) {
         [_helpWindow showWindow:self];
     }
 }
@@ -911,7 +911,7 @@ main_cleanup_and_quit (void);
     }
     _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"COPYING" withExtension:@"GPLv2"];
 
-    if (![_helpWindow.window isVisible]) {
+    if (!(_helpWindow.window).visible) {
         [_helpWindow showWindow:self];
     }
 }
@@ -922,7 +922,7 @@ main_cleanup_and_quit (void);
     }
     _helpWindow.contentURL = [NSBundle.mainBundle URLForResource:@"COPYING.LGPLv2" withExtension:@"1"];
 
-    if (![_helpWindow.window isVisible]) {
+    if (!(_helpWindow.window).visible) {
         [_helpWindow showWindow:self];
     }
 }

@@ -65,7 +65,7 @@ extern DB_functions_t *deadbeef;
 
     char str[200];
     eq->plugin->get_param (eq, key.intValue, str, sizeof (str));
-    return [NSString stringWithUTF8String:str];
+    return @(str);
 }
 
 - (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {

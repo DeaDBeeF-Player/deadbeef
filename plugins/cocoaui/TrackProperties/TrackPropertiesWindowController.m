@@ -41,7 +41,7 @@ extern DB_functions_t *deadbeef;
     if ([anObject isKindOfClass:[NSString class]]) {
         NSString *str = anObject;
         NSRange range = [str rangeOfString:@"\n"];
-        if ([str length] >= MAX_GUI_FIELD_LEN && (range.location == NSNotFound || range.location >= MAX_GUI_FIELD_LEN)) {
+        if (str.length >= MAX_GUI_FIELD_LEN && (range.location == NSNotFound || range.location >= MAX_GUI_FIELD_LEN)) {
             range.location = MAX_GUI_FIELD_LEN;
         }
         if (range.location != NSNotFound ) {
@@ -100,9 +100,9 @@ extern DB_functions_t *deadbeef;
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-    NSUserInterfaceItemIdentifier ident = [tableColumn identifier];
+    NSUserInterfaceItemIdentifier ident = tableColumn.identifier;
     NSTableCellView *view = [tableView makeViewWithIdentifier:ident owner:self];
-    NSTextField *textView = [view textField];
+    NSTextField *textView = view.textField;
     if ([ident isEqualToString:@"Index"]) {
         textView.stringValue = [NSString stringWithFormat:@"%d", (int)row+1];
     }
@@ -121,7 +121,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)fieldEditedAction:(NSTextField *)sender {
     NSString *value = sender.stringValue;
-    int row = [[sender identifier] intValue];
+    int row = sender.identifier.intValue;
     self.fields[row] = value;
     // FIXME: add modified flag
 }
@@ -216,7 +216,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             const char *end = p + meta->valuesize;
 
             while (p < end) {
-                value = [value stringByAppendingString:[NSString stringWithUTF8String:p]];
+                value = [value stringByAppendingString:@(p)];
                 p += strlen (p) + 1;
                 if (p < end) {
                     value = [value stringByAppendingString:p < end-1 ? @"; " : @";"];
@@ -227,7 +227,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
     deadbeef->pl_unlock ();
 
-    [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithUTF8String:title], @"title", [NSString stringWithUTF8String:key], @"key", values, @"values", nil]];
+    [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:@(title), @"title", @(key), @"key", values, @"values", nil]];
 }
 
 
@@ -333,7 +333,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
     if (self.numtracks == 1) {
         deadbeef->pl_lock ();
-        fname = [NSString stringWithUTF8String:deadbeef->pl_find_meta_raw (self.tracks[0], ":URI")];
+        fname = @(deadbeef->pl_find_meta_raw (self.tracks[0], ":URI"));
 
         deadbeef->pl_unlock ();
     }
@@ -384,7 +384,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         return;
     }
 
-    if([[aTableColumn identifier] isEqualToString:@"value"]){
+    if([aTableColumn.identifier isEqualToString:@"value"]){
         ((NSTextFieldCell *)aCell).formatter = [SingleLineFormatter new];
     }
 }
@@ -392,7 +392,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 - (NSString *)fieldValueForIndex:(NSInteger)rowIndex store:(NSMutableArray *)store isMult:(nullable BOOL *)isMult {
     NSMutableArray<NSString *> *values = store[rowIndex][@"values"];
     // get uniq values
-    NSArray *uniq = [[NSOrderedSet orderedSetWithArray:values] array];
+    NSArray *uniq = [NSOrderedSet orderedSetWithArray:values].array;
     NSInteger n = uniq.count;
 
     NSString *val = n > 1 ? @"[Multiple Values] " : @"";
@@ -416,11 +416,11 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         return nil;
     }
 
-    if ([[aTableColumn identifier] isEqualToString:@"name"]) {
+    if ([aTableColumn.identifier isEqualToString:@"name"]) {
         NSString *title = store[rowIndex][@"title"];
         return title;
     }
-    else if ([[aTableColumn identifier] isEqualToString:@"value"]) {
+    else if ([aTableColumn.identifier isEqualToString:@"value"]) {
         return [self fieldValueForIndex:rowIndex store:store isMult:NULL];
     }
     return nil;
@@ -481,7 +481,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
                 j++;
             }
             // whitespace-only?
-            if (j > 0 && j == [val length]-1) {
+            if (j > 0 && j == val.length-1) {
                 continue;
             }
             [transformedValues addObject: (j == 0 ? val : [val substringFromIndex:j])];
@@ -489,7 +489,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 
         deadbeef->pl_delete_meta (self.tracks[i], skey);
         for (NSString *val in transformedValues) {
-            if ([val length]) {
+            if (val.length) {
                 deadbeef->pl_append_meta (self.tracks[i], skey, val.UTF8String);
             }
         }
@@ -510,7 +510,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             strncpy (decoder_id, dec, sizeof (decoder_id));
         }
         int match = track && dec;
-        NSString *uri = [NSString stringWithUTF8String:deadbeef->pl_find_meta (track, ":URI")];
+        NSString *uri = @(deadbeef->pl_find_meta (track, ":URI"));
         deadbeef->pl_unlock ();
         if (match) {
             int is_subtrack = deadbeef->pl_get_item_flags (track) & DDB_IS_SUBTRACK;
@@ -667,7 +667,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     self.mp3StripID3v1.state = strip_id3v1;
     self.mp3StripAPEv2.state = strip_apev2;
     [self.mp3ID3v2Version selectItemAtIndex:id3v2_version-3];
-    self.mp3ID3v1Charset.stringValue = [NSString stringWithUTF8String:id3v1_encoding];
+    self.mp3ID3v1Charset.stringValue = @(id3v1_encoding);
     self.apeWriteID3v2.state = ape_write_id3v2;
     self.apeWriteAPEv2.state = ape_write_apev2;
     self.apeStripID3v2.state = ape_strip_id3v2;
@@ -829,7 +829,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             char item[1000];
             ctx.it = self.tracks[i];
             deadbeef->tf_eval(&ctx, item_tf, item, sizeof (item));
-            [items addObject:[NSString stringWithUTF8String:item]];
+            [items addObject:@(item)];
         }
         deadbeef->pl_unlock ();
         deadbeef->tf_free (item_tf);
@@ -841,8 +841,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         self.multiValueTableView.dataSource = self.multipleFieldsTableData;
         [self.window beginSheet:self.editMultipleValuesPanel completionHandler:^(NSModalResponse returnCode) {
             if (returnCode == NSModalResponseOK) {
-                if ([[[self.multiValueTabView selectedTabViewItem] identifier] isEqualToString:@"singleValue"]) {
-                    [self setSameValuesForIndex:(int)idx value:[[self.multiValueSingle textStorage] string]];
+                if ([(self.multiValueTabView).selectedTabViewItem.identifier isEqualToString:@"singleValue"]) {
+                    [self setSameValuesForIndex:(int)idx value:(self.multiValueSingle).textStorage.string];
                 }
                 else {
                     for (int i = 0; i < self.numtracks; i++) {
@@ -881,8 +881,8 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
 - (IBAction)okEditValuePanelAction:(id)sender {
     NSIndexSet *ind = self.metadataTableView.selectedRowIndexes;
     NSInteger idx = ind.firstIndex;
-    if (![self.store[idx][@"values"][0] isEqualToString:[self.fieldValue string]]) {
-        self.store[idx][@"values"][0] = [self.fieldValue string];
+    if (![self.store[idx][@"values"][0] isEqualToString:(self.fieldValue).string]) {
+        self.store[idx][@"values"][0] = (self.fieldValue).string;
         [self.metadataTableView reloadData];
         self.modified = YES;
     }

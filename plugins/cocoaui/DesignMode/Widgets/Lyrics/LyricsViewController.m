@@ -39,15 +39,15 @@ extern DB_functions_t *deadbeef;
         deadbeef->pl_lock();
         const char *str = deadbeef->pl_find_meta (self.track, "lyrics");
         if (str != NULL) {
-            lyrics = [NSString stringWithUTF8String:str];
+            lyrics = @(str);
         }
         str = deadbeef->pl_find_meta (self.track, "artist");
         if (str != NULL) {
-            artist = [NSString stringWithUTF8String:str];
+            artist = @(str);
         }
         str = deadbeef->pl_find_meta (self.track, "title");
         if (str != NULL) {
-            title = [NSString stringWithUTF8String:str];
+            title = @(str);
         }
 
         deadbeef->pl_unlock();

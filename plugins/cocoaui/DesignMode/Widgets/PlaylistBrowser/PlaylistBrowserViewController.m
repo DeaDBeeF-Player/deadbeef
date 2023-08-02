@@ -247,13 +247,13 @@ extern DB_functions_t *deadbeef;
         else {
             snprintf (title, sizeof (title), "%s", title_temp);
         }
-        view.textField.stringValue = [NSString stringWithUTF8String:title];
+        view.textField.stringValue = @(title);
     }
     else if ([tableColumn.identifier isEqualToString:@"Items"]) {
         char num_items_str[100];
         int num_items = deadbeef->plt_get_item_count (plt, PL_MAIN);
         snprintf (num_items_str, sizeof (num_items_str), "%d", num_items);
-        view.textField.stringValue = [NSString stringWithUTF8String:num_items_str];
+        view.textField.stringValue = @(num_items_str);
     }
     else if ([tableColumn.identifier isEqualToString:@"Duration"]) {
         float pl_totaltime = deadbeef->plt_get_totaltime (plt);
@@ -269,7 +269,7 @@ extern DB_functions_t *deadbeef;
         else {
             snprintf (totaltime_str, sizeof (totaltime_str), "%dd %d:%02d:%02d", daystotal, hourtotal, mintotal, sectotal);
         }
-        view.textField.stringValue = [NSString stringWithUTF8String:totaltime_str];
+        view.textField.stringValue = @(totaltime_str);
     }
     else {
         view.textField.stringValue = @"";
@@ -333,7 +333,7 @@ extern DB_functions_t *deadbeef;
     if (plt == NULL) {
         return;
     }
-    deadbeef->plt_set_title (plt, [name UTF8String]);
+    deadbeef->plt_set_title (plt, name.UTF8String);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
 }

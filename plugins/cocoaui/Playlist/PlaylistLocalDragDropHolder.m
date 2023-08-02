@@ -45,7 +45,7 @@ extern DB_functions_t *deadbeef;
 // NSPasteboardReading
 
 + (NSArray<NSString *> *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
-    return [NSArray arrayWithObjects:ddbPlaylistItemsUTIType, nil];
+    return @[ddbPlaylistItemsUTIType];
 }
 
 + (NSPasteboardReadingOptions)readingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
@@ -56,7 +56,7 @@ extern DB_functions_t *deadbeef;
 
 - (NSArray<NSString *> *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
 
-    return [NSArray arrayWithObjects:ddbPlaylistItemsUTIType, nil];
+    return @[ddbPlaylistItemsUTIType];
 }
 
 - (id)pasteboardPropertyListForType:(NSString *)type {
@@ -96,7 +96,7 @@ extern DB_functions_t *deadbeef;
         DB_playItem_t *it = deadbeef->plt_get_first (playlist, PL_MAIN);
         while (it) {
             if (deadbeef->pl_is_selected (it)) {
-                [indices addObject: [NSNumber numberWithInt: deadbeef->plt_get_item_idx(playlist, it, PL_MAIN)]];
+                [indices addObject: @(deadbeef->plt_get_item_idx(playlist, it, PL_MAIN))];
             }
             DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
             deadbeef->pl_item_unref (it);

@@ -58,7 +58,7 @@ extern DB_functions_t *deadbeef;
     char str[100];
     deadbeef->conf_get_str (key.UTF8String, "", str, sizeof (str));
     if (str[0]) {
-        NSString *colorString = [NSString stringWithUTF8String:str];
+        NSString *colorString = @(str);
         return [self colorForString:colorString];
     }
 

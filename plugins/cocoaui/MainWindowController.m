@@ -201,7 +201,7 @@ static char sb_text[512];
     
     if (strcmp (sbtext_new, sb_text)) {
         strcpy (sb_text, sbtext_new);
-        self.statusBar.stringValue = [NSString stringWithUTF8String:sb_text];
+        self.statusBar.stringValue = @(sb_text);
     }
     
     if (track) {
@@ -228,7 +228,7 @@ static char sb_text[512];
         }
     }
 
-    if (![_seekBar dragging]) {
+    if (!_seekBar.dragging) {
         int cmp =(int)(perc*4000);
         if (cmp != _prevSeekBarPos) {
             _prevSeekBarPos = cmp;
@@ -246,7 +246,7 @@ static char sb_text[512];
 }
 
 - (void)frameUpdate {
-    if (![self.window isVisible]) {
+    if (!(self.window).visible) {
         return;
     }
 
@@ -462,13 +462,13 @@ static char sb_text[512];
 
 #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600
     if (@available(macOS 10.16, *)) {
-        self.window.title = [NSString stringWithUTF8String:titleBuffer];
-        self.window.subtitle = [NSString stringWithUTF8String:subtitleBuffer];
+        self.window.title = @(titleBuffer);
+        self.window.subtitle = @(subtitleBuffer);
     } else
 #endif
     {
-        NSString *title = [NSString stringWithUTF8String:titleBuffer];
-        NSString *subTitle = [NSString stringWithUTF8String:subtitleBuffer];
+        NSString *title = @(titleBuffer);
+        NSString *subTitle = @(subtitleBuffer);
 
         self.window.title = [NSString stringWithFormat:@"%@%@%@", subTitle, (titleBuffer[0] && subtitleBuffer[0]) ? @" - " : @"", title];
     }
