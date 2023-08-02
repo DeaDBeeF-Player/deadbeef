@@ -283,7 +283,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     self.preferencesPopover = [NSPopover new];
     self.preferencesPopover.behavior = NSPopoverBehaviorTransient;
 
-    SpectrumAnalyzerPreferencesViewController *preferencesViewController = [[SpectrumAnalyzerPreferencesViewController alloc] initWithNibName:@"SpectrumAnalyzerPreferencesViewController" bundle:nil];
+    SpectrumAnalyzerPreferencesViewController *preferencesViewController = [SpectrumAnalyzerPreferencesViewController new];
     preferencesViewController.settings = self.settings;
     preferencesViewController.popover = self.preferencesPopover;
 

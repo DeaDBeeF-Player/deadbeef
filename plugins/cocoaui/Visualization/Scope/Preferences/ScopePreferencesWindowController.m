@@ -20,7 +20,7 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    self.viewController = [[ScopePreferencesViewController alloc] initWithNibName:@"ScopePreferencesViewController" bundle:nil];
+    self.viewController = [ScopePreferencesViewController new];
     self.viewController.settings = self.settings;
 
     self.contentViewController = self.viewController;

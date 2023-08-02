@@ -117,7 +117,7 @@ static NSMutableArray *g_converterControllers;
 
     self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot()];
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
-    self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
+    self.dspSelectViewController = [ScriptableSelectViewController new];
     self.dspSelectViewController.view.frame = self.dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
@@ -135,7 +135,7 @@ static NSMutableArray *g_converterControllers;
     self.encoderPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableEncoderRoot()];
     self.encoderSelectViewController.dataSource = self.dspPresetsDataSource;
 
-    self.encoderSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
+    self.encoderSelectViewController = [ScriptableSelectViewController new];
     self.encoderSelectViewController.view.frame = self.encoderPresetSelectorContainer.bounds;
     [self.encoderPresetSelectorContainer addSubview:self.encoderSelectViewController.view];
     self.encoderSelectViewController.dataSource = self.encoderPresetsDataSource;

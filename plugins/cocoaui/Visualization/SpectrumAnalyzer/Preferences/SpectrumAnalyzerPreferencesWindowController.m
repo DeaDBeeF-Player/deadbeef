@@ -20,7 +20,7 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    self.viewController = [[SpectrumAnalyzerPreferencesViewController alloc] initWithNibName:@"SpectrumAnalyzerPreferencesViewController" bundle:nil];
+    self.viewController = [SpectrumAnalyzerPreferencesViewController new];
     self.viewController.settings = self.settings;
 
     self.contentViewController = self.viewController;

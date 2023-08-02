@@ -125,7 +125,7 @@
     self.renameTabPopover = [NSPopover new];
     self.renameTabPopover.behavior = NSPopoverBehaviorTransient;
 
-    RenameTabViewController *viewController = [[RenameTabViewController alloc] initWithNibName:@"RenameTabViewController" bundle:nil];
+    RenameTabViewController *viewController = [RenameTabViewController new];
     viewController.name = self.clickedItem.label;
     viewController.popover = self.renameTabPopover;
     viewController.delegate = self;

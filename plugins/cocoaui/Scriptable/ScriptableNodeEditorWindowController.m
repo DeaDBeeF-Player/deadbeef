@@ -25,7 +25,7 @@
     
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
 
-    self.nodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
+    self.nodeEditorViewController = [ScriptableNodeEditorViewController new];
     self.nodeEditorViewController.dataSource = self.dataSource;
     self.nodeEditorViewController.delegate = self.delegate;
     self.nodeEditorViewController.errorViewer = self.errorViewer;

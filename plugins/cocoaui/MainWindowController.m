@@ -105,7 +105,7 @@ extern DB_functions_t *deadbeef;
     self.playlistWithTabsView = self.splitViewController.bodyViewController.wrapperView;
     self.designableContainerView = self.splitViewController.bodyViewController.designableView;
 #else
-    self.mainContentViewController = [[MainContentViewController alloc] initWithNibName:@"MainContentViewController" bundle:nil];
+    self.mainContentViewController = [MainContentViewController new];
     [self.designableContainerView addSubview:self.mainContentViewController.view];
     [NSLayoutConstraint activateConstraints:@[
         [self.designableContainerView.topAnchor constraintEqualToAnchor:self.mainContentViewController.view.topAnchor],

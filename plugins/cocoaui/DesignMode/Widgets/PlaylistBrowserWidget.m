@@ -27,7 +27,7 @@
         return nil;
     }
 
-    self.viewController = [[PlaylistBrowserViewController alloc] initWithNibName:@"PlaylistBrowserViewController" bundle:nil];
+    self.viewController = [PlaylistBrowserViewController new];
 
     NSView *view = self.viewController.view;
 

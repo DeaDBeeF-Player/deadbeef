@@ -1294,8 +1294,8 @@
 		2D651D07227227A000375AE2 /* ScriptableNodeEditorWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D651D06227227A000375AE2 /* ScriptableNodeEditorWindow.xib */; };
 		2D651D17227227C300375AE2 /* ScriptableNodeEditorWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D651D15227227C300375AE2 /* ScriptableNodeEditorWindowController.h */; };
 		2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D651D16227227C300375AE2 /* ScriptableNodeEditorWindowController.m */; };
-		2D651D1A227227FA00375AE2 /* ScriptableNodeEditorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D651D19227227FA00375AE2 /* ScriptableNodeEditorView.xib */; };
-		2D651D1C22722AD200375AE2 /* ScriptableSelectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D651D1B22722AD200375AE2 /* ScriptableSelectView.xib */; };
+		2D651D1A227227FA00375AE2 /* ScriptableNodeEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D651D19227227FA00375AE2 /* ScriptableNodeEditorViewController.xib */; };
+		2D651D1C22722AD200375AE2 /* ScriptableSelectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D651D1B22722AD200375AE2 /* ScriptableSelectViewController.xib */; };
 		2D6530D81CE79ED400163808 /* adplug-db.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D6530551CE79ED400163808 /* adplug-db.cpp */; };
 		2D6530D91CE79ED400163808 /* binfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D6530581CE79ED400163808 /* binfile.cpp */; };
 		2D6530DA1CE79ED400163808 /* binfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D6530591CE79ED400163808 /* binfile.h */; };
@@ -2426,7 +2426,7 @@
 		2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DD377012739B869007AD315 /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DD377432740420C007AD315 /* AppearancePreferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD377422740420C007AD315 /* AppearancePreferences.xib */; };
+		2DD377432740420C007AD315 /* AppearancePreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD377422740420C007AD315 /* AppearancePreferencesViewController.xib */; };
 		2DD3774627404401007AD315 /* AppearancePreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */; };
 		2DD3774727404401007AD315 /* AppearancePreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */; };
 		2DD3774A27404E11007AD315 /* VisualizationSettingsUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774827404E11007AD315 /* VisualizationSettingsUtil.h */; };
@@ -5684,8 +5684,8 @@
 		2D651D06227227A000375AE2 /* ScriptableNodeEditorWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScriptableNodeEditorWindow.xib; sourceTree = "<group>"; };
 		2D651D15227227C300375AE2 /* ScriptableNodeEditorWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScriptableNodeEditorWindowController.h; sourceTree = "<group>"; };
 		2D651D16227227C300375AE2 /* ScriptableNodeEditorWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableNodeEditorWindowController.m; sourceTree = "<group>"; };
-		2D651D19227227FA00375AE2 /* ScriptableNodeEditorView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScriptableNodeEditorView.xib; sourceTree = "<group>"; };
-		2D651D1B22722AD200375AE2 /* ScriptableSelectView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScriptableSelectView.xib; sourceTree = "<group>"; };
+		2D651D19227227FA00375AE2 /* ScriptableNodeEditorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScriptableNodeEditorViewController.xib; sourceTree = "<group>"; };
+		2D651D1B22722AD200375AE2 /* ScriptableSelectViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScriptableSelectViewController.xib; sourceTree = "<group>"; };
 		2D652FCB1CE79E8500163808 /* adplug.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = adplug.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D6530551CE79ED400163808 /* adplug-db.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "adplug-db.cpp"; sourceTree = "<group>"; };
 		2D6530581CE79ED400163808 /* binfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = binfile.cpp; sourceTree = "<group>"; };
@@ -6820,7 +6820,7 @@
 		2DD376FC2739B854007AD315 /* libavcodec.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.dylib; path = deps/ffmpeg/lib/libavcodec.58.dylib; sourceTree = "<group>"; };
 		2DD376FD2739B854007AD315 /* libavutil.56.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.dylib; path = deps/ffmpeg/lib/libavutil.56.dylib; sourceTree = "<group>"; };
 		2DD376FE2739B854007AD315 /* libavformat.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.dylib; path = deps/ffmpeg/lib/libavformat.58.dylib; sourceTree = "<group>"; };
-		2DD377422740420C007AD315 /* AppearancePreferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AppearancePreferences.xib; sourceTree = "<group>"; };
+		2DD377422740420C007AD315 /* AppearancePreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AppearancePreferencesViewController.xib; sourceTree = "<group>"; };
 		2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppearancePreferencesViewController.h; sourceTree = "<group>"; };
 		2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppearancePreferencesViewController.m; sourceTree = "<group>"; };
 		2DD3774827404E11007AD315 /* VisualizationSettingsUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VisualizationSettingsUtil.h; sourceTree = "<group>"; };
@@ -9617,7 +9617,7 @@
 		2D6202AF1B90800A00594746 /* XIB */ = {
 			isa = PBXGroup;
 			children = (
-				2DD377422740420C007AD315 /* AppearancePreferences.xib */,
+				2DD377422740420C007AD315 /* AppearancePreferencesViewController.xib */,
 				2D2351271B13922400A62936 /* Converter.xib */,
 				2DA5E330238DB0C4005832B7 /* EditColumnPanel.xib */,
 				2DEBA1D123E207A3000E4135 /* EqualizerWindowController.xib */,
@@ -9629,9 +9629,9 @@
 				2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */,
 				2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */,
 				2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */,
-				2D651D19227227FA00375AE2 /* ScriptableNodeEditorView.xib */,
+				2D651D19227227FA00375AE2 /* ScriptableNodeEditorViewController.xib */,
 				2D651D06227227A000375AE2 /* ScriptableNodeEditorWindow.xib */,
-				2D651D1B22722AD200375AE2 /* ScriptableSelectView.xib */,
+				2D651D1B22722AD200375AE2 /* ScriptableSelectViewController.xib */,
 				2D828E5319E5679800EE874F /* Search.xib */,
 				2D747E3C24B64E9300BBB987 /* SplitViewMainWindow.xib */,
 				2DC80A8E1A9222F800C9397F /* TrackProperties.xib */,
@@ -16314,7 +16314,7 @@
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
 				2DD3774E27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
-				2DD377432740420C007AD315 /* AppearancePreferences.xib in Resources */,
+				2DD377432740420C007AD315 /* AppearancePreferencesViewController.xib in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
 				2DB05FBC252E50FD0090635E /* iconDSPTemplate.pdf in Resources */,
 				2DB05F3A252E4DDB0090635E /* iconPlaybackTemplate.pdf in Resources */,
@@ -16353,11 +16353,11 @@
 				2D2351281B13922400A62936 /* Converter.xib in Resources */,
 				2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */,
 				2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */,
-				2D651D1A227227FA00375AE2 /* ScriptableNodeEditorView.xib in Resources */,
+				2D651D1A227227FA00375AE2 /* ScriptableNodeEditorViewController.xib in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,
 				2D651D07227227A000375AE2 /* ScriptableNodeEditorWindow.xib in Resources */,
 				2DBCA69A27944B2200D7432F /* COPYING.GPLv2 in Resources */,
-				2D651D1C22722AD200375AE2 /* ScriptableSelectView.xib in Resources */,
+				2D651D1C22722AD200375AE2 /* ScriptableSelectViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

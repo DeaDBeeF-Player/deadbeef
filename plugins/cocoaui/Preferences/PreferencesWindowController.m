@@ -77,7 +77,7 @@
         [self.toolbar removeItemAtIndex:4];
     }
 
-    self.appearancePreferencesViewController = [[AppearancePreferencesViewController alloc] initWithNibName:@"AppearancePreferences" bundle:nil];
+    self.appearancePreferencesViewController = [AppearancePreferencesViewController new];
     [self.appearancePaneContainerView addSubview:self.appearancePreferencesViewController.view];
 
     [self.appearancePreferencesViewController.view.leadingAnchor constraintEqualToAnchor:self.appearancePaneContainerView.leadingAnchor].active = YES;

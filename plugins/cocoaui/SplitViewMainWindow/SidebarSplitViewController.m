@@ -31,7 +31,7 @@
     [self insertSplitViewItem:sidebarItem atIndex:0];
     sidebarItem.holdingPriority = NSLayoutPriorityDefaultLow+10;
 
-    self.bodyViewController = [[MainContentViewController alloc] initWithNibName:@"MainContentViewController" bundle:nil];
+    self.bodyViewController = [MainContentViewController new];
 
     NSSplitViewItem* bodyItem = [NSSplitViewItem splitViewItemWithViewController:self.bodyViewController];
     bodyItem.canCollapse = NO;

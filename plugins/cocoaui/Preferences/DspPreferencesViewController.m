@@ -61,7 +61,7 @@ extern DB_functions_t *deadbeef;
     self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot()];
 
     // preset list and browse button
-    self.dspSelectViewController = [[ScriptableSelectViewController alloc] initWithNibName:@"ScriptableSelectView" bundle:nil];
+    self.dspSelectViewController = [ScriptableSelectViewController new];
     self.dspSelectViewController.scriptableItemDelegate = self;
     self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
@@ -70,7 +70,7 @@ extern DB_functions_t *deadbeef;
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
 
     // current dsp chain node list / editor
-    self.dspNodeEditorViewController = [[ScriptableNodeEditorViewController alloc] initWithNibName:@"ScriptableNodeEditorView" bundle:nil];
+    self.dspNodeEditorViewController = [ScriptableNodeEditorViewController new];
     self.dspNodeEditorViewController.scriptableNodeEditorDelegate = self;
     self.dspNodeEditorViewController.dataSource = self.dspChainDataSource;
     self.dspNodeEditorViewController.delegate = self;

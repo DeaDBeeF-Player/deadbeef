@@ -29,8 +29,7 @@ extern DB_functions_t *deadbeef;
         return nil;
     }
 
-    self.viewController = [[LyricsViewController alloc] initWithNibName:@"LyricsViewController" bundle:nil];
-
+    self.viewController = [LyricsViewController new]; 
     NSView *view = self.viewController.view;
 
     [self.topLevelView addSubview:view];

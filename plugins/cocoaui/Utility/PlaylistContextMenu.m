@@ -102,7 +102,7 @@ extern DB_functions_t *deadbeef;
     self.renamePlaylistPopover = [NSPopover new];
     self.renamePlaylistPopover.behavior = NSPopoverBehaviorTransient;
 
-    RenamePlaylistViewController *viewController = [[RenamePlaylistViewController alloc] initWithNibName:@"RenamePlaylistViewController" bundle:nil];
+    RenamePlaylistViewController *viewController = [RenamePlaylistViewController new];
     int l = deadbeef->plt_get_title (self.playlist, NULL, 0);
     char buf[l+1];
     deadbeef->plt_get_title (self.playlist, buf, (int)sizeof buf);
