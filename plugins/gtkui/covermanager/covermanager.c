@@ -176,8 +176,8 @@ _load_image_from_cover(covermanager_t *impl, ddb_cover_info_t *cover) {
         if (buf != NULL) {
             GdkPixbufLoader *loader = gdk_pixbuf_loader_new ();
             gdk_pixbuf_loader_write (loader, (const guchar *)buf, size, NULL);
-            img = gdk_pixbuf_loader_get_pixbuf (loader);
             gdk_pixbuf_loader_close(loader, NULL);
+            img = gdk_pixbuf_loader_get_pixbuf (loader);
             free (buf);
         }
     }
