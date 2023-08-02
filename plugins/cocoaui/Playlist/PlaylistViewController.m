@@ -903,21 +903,29 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             }
             self.playPosUpdateTrack = deadbeef->pl_get_for_idx_and_iter (ctx.idx, [self playlistIter]);
 
-            self.playPosUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:ctx.update/1000.0 repeats:NO block:^(NSTimer * _Nonnull timer) {
-                ddb_playlist_t *curr = deadbeef->plt_get_curr ();
-                DB_playItem_t *trk = deadbeef->pl_get_for_idx_and_iter (ctx.idx, [self playlistIter]);
+            if (self.view.window.isVisible
+                && deadbeef->get_output()->state() == DDB_PLAYBACK_STATE_PLAYING) {
+                __weak PlaylistViewController *weakSelf = self;
+                self.playPosUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:ctx.update/1000.0 repeats:NO block:^(NSTimer * _Nonnull timer) {
+                    PlaylistViewController *strongSelf = weakSelf;
+                    if (strongSelf == nil) {
+                        return;
+                    }
+                    ddb_playlist_t *curr = deadbeef->plt_get_curr ();
+                    DB_playItem_t *trk = deadbeef->pl_get_for_idx_and_iter (ctx.idx, [strongSelf playlistIter]);
 
-                if (ctx.plt == curr && trk == self.playPosUpdateTrack) {
-                    PlaylistView *lv = (PlaylistView *)self.view;
-                    [lv.contentView drawRow:(int)idx];
-                }
-                if (trk) {
-                    deadbeef->pl_item_unref (trk);
-                }
-                if (curr) {
-                    deadbeef->plt_unref (curr);
-                }
-            }];
+                    if (ctx.plt == curr && trk == strongSelf.playPosUpdateTrack) {
+                        PlaylistView *lv = (PlaylistView *)strongSelf.view;
+                        [lv.contentView drawRow:(int)idx];
+                    }
+                    if (trk) {
+                        deadbeef->pl_item_unref (trk);
+                    }
+                    if (curr) {
+                        deadbeef->plt_unref (curr);
+                    }
+                }];
+            }
         }
         if (ctx.plt) {
             deadbeef->plt_unref (ctx.plt);
