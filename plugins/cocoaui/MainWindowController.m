@@ -145,11 +145,26 @@ extern DB_functions_t *deadbeef;
     // seekbar value formatter
     self.seekBar.formatter = [TrackPositionFormatter new];
 
-    __weak MainWindowController *weakself = self;
+    [self ensureRefresh];
+}
+
+- (void)ensureRefresh {
+    if (_updateTimer != nil
+        || deadbeef->get_output()->state() != DDB_PLAYBACK_STATE_PLAYING) {
+        return;
+    }
+
+    __weak MainWindowController *weakSelf = self;
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f repeats:YES block:^(NSTimer * _Nonnull timer) {
-        MainWindowController *strongself = weakself;
-        if (strongself) {
-            [self frameUpdate];
+        MainWindowController *strongSelf = weakSelf;
+
+        if (strongSelf) {
+            [strongSelf frameUpdate];
+        }
+
+        if (deadbeef->get_output()->state() != DDB_PLAYBACK_STATE_PLAYING) {
+            [strongSelf->_updateTimer invalidate];
+            strongSelf->_updateTimer = nil;
         }
     }];
 
@@ -209,7 +224,7 @@ static char sb_text[512];
     }
 }
 
-- (void)advanceSeekBar:(DB_playItem_t *)trk {
+- (void)refreshSeekBar:(DB_playItem_t *)trk {
     float dur = -1;
     float perc = 0;
     if (trk) {
@@ -246,13 +261,9 @@ static char sb_text[512];
 }
 
 - (void)frameUpdate {
-    if (!(self.window).visible) {
-        return;
-    }
-
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track_safe ();
 
-    [self advanceSeekBar:trk];
+    [self refreshSeekBar:trk];
 
     [self updateSonginfo];
 
@@ -482,6 +493,12 @@ static char sb_text[512];
         self.volumeDbScaleItem.state = !strcmp (scale, "dB") ? NSControlStateValueOn : NSControlStateValueOff;
         self.volumeLinearScaleItem.state = !strcmp (scale, "linear") ? NSControlStateValueOn : NSControlStateValueOff;
         self.volumeCubicScaleItem.state = !strcmp (scale, "cubic") ? NSControlStateValueOn : NSControlStateValueOff;
+    }
+}
+
+- (void)message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    if (_id == DB_EV_PAUSED || _id == DB_EV_SONGSTARTED) {
+        [self performSelectorOnMainThread:@selector(ensureRefresh) withObject:nil waitUntilDone:NO];
     }
 }
 

@@ -45,32 +45,33 @@ static void *kIsVisibleContext = &kIsVisibleContext;
         return;
     }
     __weak VisualizationViewController *weakSelf = self;
-    if (self.tickTimer == nil) {
-        self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-            VisualizationViewController *strongSelf = weakSelf;
-            if (!strongSelf.view.window.isVisible) {
-                [strongSelf.tickTimer invalidate];
-                strongSelf.tickTimer = nil;
-            }
-
-            if (deadbeef->get_output()->state() == DDB_PLAYBACK_STATE_PLAYING) {
-                strongSelf->_coolDown = 60;
-            }
-            else if (strongSelf->_coolDown > 0) {
-                strongSelf->_coolDown -= 1;
-            }
-
-            if (strongSelf->_coolDown <= 0) {
-                [strongSelf.tickTimer invalidate];
-                strongSelf.tickTimer = nil;
-                return;
-            }
-
-            [strongSelf draw];
-        }];
-
-        [NSRunLoop.mainRunLoop addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
+    if (self.tickTimer != nil) {
+        return;
     }
+    self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+        VisualizationViewController *strongSelf = weakSelf;
+        if (!strongSelf.view.window.isVisible) {
+            [strongSelf.tickTimer invalidate];
+            strongSelf.tickTimer = nil;
+        }
+
+        if (deadbeef->get_output()->state() == DDB_PLAYBACK_STATE_PLAYING) {
+            strongSelf->_coolDown = 60;
+        }
+        else if (strongSelf->_coolDown > 0) {
+            strongSelf->_coolDown -= 1;
+        }
+
+        if (strongSelf->_coolDown <= 0) {
+            [strongSelf.tickTimer invalidate];
+            strongSelf.tickTimer = nil;
+            return;
+        }
+
+        [strongSelf draw];
+    }];
+
+    [NSRunLoop.mainRunLoop addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -88,7 +89,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     if (_id == DB_EV_PAUSED || _id == DB_EV_SONGSTARTED) {
-        [self visibilityDidChange];
+        [self performSelectorOnMainThread:@selector(visibilityDidChange) withObject:nil waitUntilDone:NO];
     }
 }
 

@@ -684,35 +684,35 @@ main_cleanup_and_quit (void);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-+ (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-    [g_appDelegate.mainWindow.sidebarOutlineViewController.mediaLibraryOutlineViewController  widgetMessage:_id ctx:ctx p1:p1 p2:p2];
+- (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    [self.mainWindow.sidebarOutlineViewController.mediaLibraryOutlineViewController  widgetMessage:_id ctx:ctx p1:p1 p2:p2];
 
-    if (g_appDelegate) {
         [DesignModeState.sharedInstance.rootWidget message:_id ctx:ctx p1:p1 p2:p2];
-        [g_appDelegate.searchWindow.viewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
-    }
+        [self.searchWindow.viewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
 
     if (_id == DB_EV_CONFIGCHANGED) {
-        [g_appDelegate performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];
     }
     else if (_id == DB_EV_SONGSTARTED) {
-        [g_appDelegate performSelectorOnMainThread:@selector(updateDockNowPlaying) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(updateDockNowPlaying) withObject:nil waitUntilDone:NO];
     }
     else if (_id == DB_EV_SONGFINISHED) {
-        [g_appDelegate performSelectorOnMainThread:@selector(clearDockNowPlaying) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(clearDockNowPlaying) withObject:nil waitUntilDone:NO];
     }
     else if (_id == DB_EV_SONGCHANGED || _id == DB_EV_TRACKINFOCHANGED || (_id == DB_EV_PLAYLISTCHANGED && p1 == DDB_PLAYLIST_CHANGE_CONTENT)) {
-        [g_appDelegate performSelectorOnMainThread:@selector(updateTitleBar) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(updateTitleBar) withObject:nil waitUntilDone:NO];
     }
     else if (_id == DB_EV_VOLUMECHANGED) {
-        [g_appDelegate performSelectorOnMainThread:@selector(volumeChanged) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(volumeChanged) withObject:nil waitUntilDone:NO];
     }
     else if (_id == DB_EV_OUTPUTCHANGED) {
-        [g_appDelegate performSelectorOnMainThread:@selector(outputDeviceChanged) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(outputDeviceChanged) withObject:nil waitUntilDone:NO];
     }
     else if (_id == DB_EV_TERMINATE) {
         [NSNotificationCenter.defaultCenter postNotificationName:@"ApplicationWillQuit" object:nil];
     }
+
+    [self.mainWindow message:_id ctx:ctx p1:p1 p2:p2];
 
     return 0;
 }

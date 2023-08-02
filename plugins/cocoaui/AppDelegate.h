@@ -32,7 +32,7 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-+ (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
+- (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @property (nonatomic) MainWindowController *mainWindow;
 

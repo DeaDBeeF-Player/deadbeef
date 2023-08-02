@@ -41,7 +41,8 @@ int cocoaui_stop(void) {
 }
 
 int cocoaui_message (uint32_t _id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
-    return [AppDelegate ddb_message:_id ctx:ctx p1:p1 p2:p2];
+    AppDelegate *appDelegate = NSApp.delegate;
+    return [appDelegate ddb_message:_id ctx:ctx p1:p1 p2:p2];
 }
 
 DB_gui_t plugin = {
