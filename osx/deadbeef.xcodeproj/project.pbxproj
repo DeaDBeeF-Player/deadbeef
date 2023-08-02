@@ -2455,6 +2455,8 @@
 		2DD81CFC25152DC3008C716C /* noartwork.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3125152D86008C716C /* noartwork.png */; };
 		2DD81CFD25152DC5008C716C /* buffering_16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3325152D86008C716C /* buffering_16.png */; };
 		2DD877A31C370C7100CC94FB /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD877A21C370C7100CC94FB /* ferror68.c */; };
+		2DD9F4E92A7A65FD00BC76DC /* TrackPropertiesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */; };
+		2DD9F4EA2A7A65FD00BC76DC /* TrackPropertiesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9F4E82A7A65FD00BC76DC /* TrackPropertiesManager.m */; };
 		2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */; };
 		2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDBA24C23E5E66D00051320 /* PlaylistContentView.m */; };
 		2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA25E23E5EA3800051320 /* PlaylistLocalDragDropHolder.h */; };
@@ -6843,6 +6845,8 @@
 		2DD877A21C370C7100CC94FB /* ferror68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ferror68.c; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
+		2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesManager.h; sourceTree = "<group>"; };
+		2DD9F4E82A7A65FD00BC76DC /* TrackPropertiesManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesManager.m; sourceTree = "<group>"; };
 		2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistContentView.h; sourceTree = "<group>"; };
 		2DDBA24C23E5E66D00051320 /* PlaylistContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistContentView.m; sourceTree = "<group>"; };
 		2DDBA25E23E5EA3800051320 /* PlaylistLocalDragDropHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistLocalDragDropHolder.h; sourceTree = "<group>"; };
@@ -11392,6 +11396,8 @@
 			children = (
 				2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */,
 				2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */,
+				2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */,
+				2DD9F4E82A7A65FD00BC76DC /* TrackPropertiesManager.m */,
 			);
 			path = TrackProperties;
 			sourceTree = "<group>";
@@ -14307,6 +14313,7 @@
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
+				2DD9F4E92A7A65FD00BC76DC /* TrackPropertiesManager.h in Headers */,
 				2DC657D42749581900583E14 /* DdbTabStripViewController.h in Headers */,
 				2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */,
 				2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
@@ -17956,6 +17963,7 @@
 				2DF55C2A2270F415002C44DC /* ScriptableSelectViewController.m in Sources */,
 				2DE1D3E719B11539009B5BC6 /* PlaceholderWidget.m in Sources */,
 				2D92D32A29B92FC800218F1D /* trkproperties_shared.c in Sources */,
+				2DD9F4EA2A7A65FD00BC76DC /* TrackPropertiesManager.m in Sources */,
 				2D92D33A29B9322700218F1D /* tftintutil.c in Sources */,
 				2DDE52A724F821630096EF80 /* MediaLibraryOutlineView.m in Sources */,
 				2DC657FA274A7C4600583E14 /* RenamePlaylistViewController.m in Sources */,

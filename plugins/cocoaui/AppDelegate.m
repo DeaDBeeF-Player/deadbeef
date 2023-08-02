@@ -38,6 +38,7 @@
 #import "NowPlayable.h"
 #import "NSMenu+ActionItems.h"
 #import "ReplayGainScannerController.h"
+#import "TrackPropertiesManager.h"
 #import "streamer.h"
 
 extern DB_functions_t *deadbeef;
@@ -106,27 +107,27 @@ AppDelegate *g_appDelegate;
         _orderShuffleAlbums,
         nil
     };
-    
+
     ddb_shuffle_t shuffle = deadbeef->streamer_get_shuffle ();
     for (ddb_shuffle_t i = 0; shuffle_items[i]; i++) {
         shuffle_items[i].state = i==shuffle?NSControlStateValueOn:NSControlStateValueOff;
     }
-    
+
     NSMenuItem *repeat_items[] = {
         _loopAll,
         _loopNone,
         _loopSingle,
         nil
     };
-    
+
     ddb_repeat_t repeat = deadbeef->streamer_get_repeat ();
     for (ddb_repeat_t i = 0; repeat_items[i]; i++) {
         repeat_items[i].state = i==repeat?NSControlStateValueOn:NSControlStateValueOff;
     }
-    
+
     _scrollFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSControlStateValueOn:NSControlStateValueOff;
     _cursorFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSControlStateValueOn:NSControlStateValueOff;
-    
+
     _stopAfterCurrent.state = deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSControlStateValueOn:NSControlStateValueOff;
     _stopAfterCurrentAlbum.state = deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSControlStateValueOn:NSControlStateValueOff;
 
@@ -272,6 +273,7 @@ main_cleanup_and_quit (void);
         [_mainWindow cleanup];
         [self.mainWindow.window close];
         self.mainWindow = nil;
+        [TrackPropertiesManager deinitializeSharedInstance];
 
         self.designModeState = nil;
         [DesignModeState freeSharedInstance];
@@ -807,11 +809,11 @@ main_cleanup_and_quit (void);
         dispatch_async(aQueue, ^{
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
-                    deadbeef->plt_clear (plt);
-                    int abort = 0;
-                    deadbeef->plt_load2 (0, plt, NULL, [fname UTF8String], &abort, NULL, NULL);
-                    deadbeef->plt_save_config (plt);
-                    deadbeef->plt_add_files_end (plt, 0);
+                deadbeef->plt_clear (plt);
+                int abort = 0;
+                deadbeef->plt_load2 (0, plt, NULL, [fname UTF8String], &abort, NULL, NULL);
+                deadbeef->plt_save_config (plt);
+                deadbeef->plt_add_files_end (plt, 0);
             }
             deadbeef->plt_unref (plt);
             deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
@@ -945,6 +947,10 @@ main_cleanup_and_quit (void);
 
     self.designModeState.enabled = !self.designModeState.enabled;
     self.designModeMenuItem.state = self.designModeState.enabled ? NSControlStateValueOn : NSControlStateValueOff;
+}
+
+- (IBAction)displayTrackProperties:(id)sender {
+    [TrackPropertiesManager.shared displayTrackProperties];
 }
 
 @end

@@ -29,12 +29,11 @@
 #import "PlaylistGroup.h"
 #import "PlaylistViewController.h"
 #import "PlaylistView.h"
-#import "TrackPropertiesWindowController.h"
 #import "TrackContextMenu.h"
+#import "TrackPropertiesManager.h"
 #import "tftintutil.h"
 
 #include <deadbeef/deadbeef.h>
-#include "medialib.h"
 #include "utf8.h"
 #include "artwork.h"
 
@@ -44,7 +43,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface PlaylistViewController() <DdbListviewDelegate,TrackContextMenuDelegate,TrackPropertiesWindowControllerDelegate>
+@interface PlaylistViewController() <DdbListviewDelegate,TrackContextMenuDelegate>
 
 @property (nonatomic) NSImage *playTpl;
 @property (nonatomic) NSImage *pauseTpl;
@@ -52,7 +51,6 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSDictionary *cellTextAttrsDictionary;
 @property (nonatomic) NSDictionary *cellSelectedTextAttrsDictionary;
 @property (nonatomic) NSDictionary *groupTextAttrsDictionary;
-@property (nonatomic) TrackPropertiesWindowController *trkProperties;
 @property (nonatomic) int menuColumn;
 
 @property (nonatomic) char *groupBytecode;
@@ -64,7 +62,6 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) EditColumnWindowController *editColumnWindowController;
 @property (nonatomic) GroupByCustomWindowController *groupByCustomWindowController;
 @property (nonatomic) int sortColumn;
-@property (nonatomic) DB_mediasource_t *medialibPlugin;
 @property (nonatomic,readonly) const char *groupByConfStr;
 @property (nonatomic) NSString *groupStr;
 
@@ -110,12 +107,6 @@ extern DB_functions_t *deadbeef;
     [lv.contentView cleanup];
 
     [self freeColumns];
-
-    // don't wait for an automatic autorelease,
-    // this would cause deadbeef's track refcount checker to run before the objects are really released
-    @autoreleasepool {
-        self.trkProperties = nil;
-    }
 }
 
 #pragma mark - Responder Chain
@@ -1533,15 +1524,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 #pragma mark - TrackContextMenuDelegate
 
 - (void)trackContextMenuShowTrackProperties:(TrackContextMenu *)trackContextMenu {
-    if (!self.trkProperties) {
-        self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
-        self.trkProperties.context = DDB_ACTION_CTX_SELECTION;
-        self.trkProperties.delegate = self;
-    }
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    self.trkProperties.playlist =  plt;
-    deadbeef->plt_unref (plt);
-    [self.trkProperties showWindow:self];
+    [TrackPropertiesManager.shared displayTrackProperties];
 }
 
 - (void)trackContextMenuDidReloadMetadata:(TrackContextMenu *)trackContextMenu {
@@ -1587,13 +1570,6 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
 - (int)playlistIter {
     return PL_MAIN;
-}
-
-#pragma mark - TrackPropertiesWindowControllerDelegate
-
-- (void)trackPropertiesWindowControllerDidUpdateTracks:(TrackPropertiesWindowController *)windowController {
-    deadbeef->pl_save_current();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 @end
