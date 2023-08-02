@@ -351,6 +351,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     if (_id == DB_EV_CONFIGCHANGED) {
         [self updateRendererSettings];
     }
+    [super message:_id ctx:ctx p1:p1 p2:p2];
 }
 
 - (NSColor *)baselor {

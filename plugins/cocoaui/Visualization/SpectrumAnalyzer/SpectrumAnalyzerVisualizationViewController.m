@@ -343,6 +343,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
             self.labelsView.needsDisplay = YES;
         });
     }
+    [super message:_id ctx:ctx p1:p1 p2:p2];
 }
 
 - (NSColor *)backgroundColor {

@@ -36,33 +36,38 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 }
 
 - (void)visibilityDidChange {
-    if (self.view.window.isVisible) {
-        __weak VisualizationViewController *weakSelf = self;
-        if (self.tickTimer == nil) {
-            self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-                VisualizationViewController *strongSelf = weakSelf;
-                if (!strongSelf.view.window.isVisible) {
-                    [strongSelf.tickTimer invalidate];
-                    strongSelf.tickTimer = nil;
-                }
+    if (!self.view.window.isVisible) {
+        return;
+    }
+    if (deadbeef->get_output()->state() != DDB_PLAYBACK_STATE_PLAYING) {
+        return;
+    }
+    __weak VisualizationViewController *weakSelf = self;
+    if (self.tickTimer == nil) {
+        self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+            VisualizationViewController *strongSelf = weakSelf;
+            if (!strongSelf.view.window.isVisible) {
+                [strongSelf.tickTimer invalidate];
+                strongSelf.tickTimer = nil;
+            }
 
-                DB_output_t *output = deadbeef->get_output();
-                if (output->state() == DDB_PLAYBACK_STATE_PLAYING) {
-                    strongSelf->_coolDown = 60;
-                }
-                else if (strongSelf->_coolDown > 0) {
-                    strongSelf->_coolDown -= 1;
-                }
+            if (deadbeef->get_output()->state() == DDB_PLAYBACK_STATE_PLAYING) {
+                strongSelf->_coolDown = 60;
+            }
+            else if (strongSelf->_coolDown > 0) {
+                strongSelf->_coolDown -= 1;
+            }
 
+            if (strongSelf->_coolDown <= 0) {
+                [strongSelf.tickTimer invalidate];
+                strongSelf.tickTimer = nil;
+                return;
+            }
 
-                if (strongSelf->_coolDown > 0) {
-                    [strongSelf draw];
-                }
-            }];
+            [strongSelf draw];
+        }];
 
-            // FIXME: this should not be called for the metal visualizations, since AAPLNSView handles it
-            [[NSRunLoop currentRunLoop] addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
-        }
+        [NSRunLoop.mainRunLoop addTimer:self.tickTimer forMode:NSRunLoopCommonModes];
     }
 }
 
@@ -77,6 +82,12 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 
 - (void)viewDidAppear {
     [self visibilityDidChange];
+}
+
+- (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    if (_id == DB_EV_PAUSED || _id == DB_EV_SONGSTARTED) {
+        [self visibilityDidChange];
+    }
 }
 
 - (void)draw {
