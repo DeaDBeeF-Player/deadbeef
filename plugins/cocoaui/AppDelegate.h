@@ -130,5 +130,3 @@
 - (IBAction)showLogWindowAction:(id)sender;
 
 @end
-
-extern AppDelegate *g_appDelegate;

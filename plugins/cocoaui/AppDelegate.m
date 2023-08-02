@@ -43,11 +43,11 @@
 
 extern DB_functions_t *deadbeef;
 
-AppDelegate *g_appDelegate;
-
 @interface AppDelegate () {
     char *_titleScript;
     char *_artistAlbumScript;
+    int _listenerFileAddBeginAddIdentifier;
+    int _listenerFileAddedIdentifier;
 }
 
 
@@ -142,24 +142,27 @@ AppDelegate *g_appDelegate;
 static int fileadd_cancelled = 0;
 
 static void fileadd_begin (ddb_fileadd_data_t *data, void *user_data) {
+    AppDelegate *appDelegate = (__bridge AppDelegate *)user_data;
     fileadd_cancelled = 0;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [g_appDelegate.mainWindow.window beginSheet:g_appDelegate.addFilesWindow completionHandler:^(NSModalResponse returnCode) {
+        [appDelegate.mainWindow.window beginSheet:appDelegate.addFilesWindow completionHandler:^(NSModalResponse returnCode) {
 
         }];
     });
 }
 
 static void fileadd_end (ddb_fileadd_data_t *data, void *user_data) {
+    AppDelegate *appDelegate = (__bridge AppDelegate *)user_data;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [g_appDelegate.mainWindow.window endSheet:g_appDelegate.addFilesWindow returnCode:NSModalResponseOK];
-        [g_appDelegate.mainWindow.window makeKeyAndOrderFront:g_appDelegate];
+        [appDelegate.mainWindow.window endSheet:appDelegate.addFilesWindow returnCode:NSModalResponseOK];
+        [appDelegate.mainWindow.window makeKeyAndOrderFront:appDelegate];
     });
 }
 
 static BOOL _settingLabel = NO;
 
 static int file_added (ddb_fileadd_data_t *data, void *user_data) {
+    AppDelegate *appDelegate = (__bridge AppDelegate *)user_data;
     const char *uri = deadbeef->pl_find_meta (data->track, ":URI");
     if (!_settingLabel) {
         // HACK: we want to set the label asynchronously, to minimize delays,
@@ -168,7 +171,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
         NSString *s = @(uri);
         _settingLabel = YES;
         dispatch_async(dispatch_get_main_queue(), ^{
-            g_appDelegate.addFilesLabel.stringValue = s;
+            appDelegate.addFilesLabel.stringValue = s;
             _settingLabel = NO;
         });
     }
@@ -277,6 +280,9 @@ main_cleanup_and_quit (void);
 
         self.designModeState = nil;
         [DesignModeState freeSharedInstance];
+
+        deadbeef->unlisten_file_add_beginend(_listenerFileAddBeginAddIdentifier);
+        deadbeef->unlisten_file_added(_listenerFileAddedIdentifier);
     }
     self.mediaLibraryManager = nil;
     main_cleanup_and_quit();
@@ -312,10 +318,8 @@ main_cleanup_and_quit (void);
     // initialize gui from settings
     [self configChanged];
 
-    deadbeef->listen_file_add_beginend (fileadd_begin, fileadd_end, NULL);
-    deadbeef->listen_file_added (file_added, NULL);
-
-    g_appDelegate = self;
+    _listenerFileAddBeginAddIdentifier = deadbeef->listen_file_add_beginend (fileadd_begin, fileadd_end, (__bridge void *)(self));
+    _listenerFileAddedIdentifier = deadbeef->listen_file_added (file_added, (__bridge void *)(self));
 
 #if !DISABLE_MM_KEY_GRABBER
     self.nowPlayable = [NowPlayable new];
