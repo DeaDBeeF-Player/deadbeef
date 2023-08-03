@@ -51,4 +51,6 @@
 
 - (void)message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
+- (BOOL)setupInitialFirstResponder:(id<WidgetProtocol>)widget;
+
 @end

@@ -327,12 +327,14 @@ main_cleanup_and_quit (void);
 
     [self updateDockNowPlaying];
 
-    [NSNotificationCenter.defaultCenter postNotificationName:@"applyWidgetGeometry" object:nil];
-
     id<DesignModeStateProtocol> state = DesignModeState.sharedInstance;
     [state.rootWidget configure];
 
+    [self.mainWindow.window recalculateKeyViewLoop];
+    [self.mainWindow setupInitialFirstResponder:state.rootWidget];
 }
+
+
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag{
     _mainWindow.window.isVisible = YES;

@@ -11486,8 +11486,6 @@
 		2DC657E6274A603A00583E14 /* PlaylistBrowser */ = {
 			isa = PBXGroup;
 			children = (
-				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
-				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
 				2DC657E7274A605E00583E14 /* PlaylistBrowserViewController.h */,
 				2DC657E8274A605E00583E14 /* PlaylistBrowserViewController.m */,
 				2DC657E9274A605E00583E14 /* PlaylistBrowserViewController.xib */,
@@ -11945,6 +11943,8 @@
 				2DE1D3E519B11539009B5BC6 /* PlaceholderWidget.m */,
 				2DC657E0274A5F6000583E14 /* PlaylistBrowserWidget.h */,
 				2DC657E1274A5F6000583E14 /* PlaylistBrowserWidget.m */,
+				2DDD796125E15ED200FA6FE5 /* PlaylistWidget.h */,
+				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
 				2DC657CA2749544000583E14 /* PlaylistWithTabsWidget.h */,
 				2DC657CB2749544000583E14 /* PlaylistWithTabsWidget.m */,
 				0D568526271DC35E0026F700 /* ScopeWidget.h */,

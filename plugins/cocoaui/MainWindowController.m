@@ -27,6 +27,7 @@
 #import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
 #import "PlaylistWidget.h"
+#import "PlaylistWithTabsWidget.h"
 #import "PreferencesWindowController.h"
 #import "TrackPositionFormatter.h"
 #include <deadbeef/deadbeef.h>
@@ -78,16 +79,25 @@ extern DB_functions_t *deadbeef;
     [self freeTitleBarConfig];
 }
 
-- (BOOL)setInitialFirstResponder:(id<WidgetProtocol>)widget {
-    if ([widget respondsToSelector:@selector(makeFirstResponder)]) {
+// Find and activate the first visible playlist widget
+- (BOOL)setupInitialFirstResponder:(id<WidgetProtocol>)widget {
+    BOOL visible = widget.view.window != nil; // inactive tab check within NSTabView
+    BOOL responder = [widget respondsToSelector:@selector(makeFirstResponder)];
+    BOOL isPlaylistWithTabs = [widget.widgetType isEqualToString:PlaylistWithTabsWidget.widgetType];
+    BOOL isPlaylist = [widget.widgetType isEqualToString:PlaylistWidget.widgetType];
+
+    if (visible && responder
+        && (isPlaylist || isPlaylistWithTabs)) {
         [widget makeFirstResponder];
         return YES;
     }
+
     for (id<WidgetProtocol> child in widget.childWidgets) {
-        if ([self setInitialFirstResponder:child]) {
+        if ([self setupInitialFirstResponder:child]) {
             return YES;
         }
     }
+
     return NO;
 }
 
@@ -127,8 +137,6 @@ extern DB_functions_t *deadbeef;
     [view.bottomAnchor constraintEqualToAnchor:self.designableContainerView.bottomAnchor].active = YES;
     [view.leadingAnchor constraintEqualToAnchor:self.designableContainerView.leadingAnchor].active = YES;
     [view.trailingAnchor constraintEqualToAnchor:self.designableContainerView.trailingAnchor].active = YES;
-
-    [self setInitialFirstResponder:rootWidget];
 
     NSLayoutYAxisAnchor *topAnchor;
     if (self.window.contentLayoutGuide && self.playlistWithTabsView) {
