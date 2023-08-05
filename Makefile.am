@@ -30,6 +30,6 @@ EXTRA_DIST = $(docs_DATA) $(desktop_DATA) $(INTLTOOL_FILES) translation/extra.c 
 	include/deadbeef/deadbeef.h include/deadbeef/common.h include/deadbeef/fastftoi.h include/deadbeef/strdupa.h\
 	gettext.h
 sdkdir = $(pkgincludedir)
-sdk_HEADERS = include/deadbeef/deadbeef.h
+sdk_HEADERS = include/deadbeef/deadbeef.h include/deadbeef/common.h
 
 ACLOCAL_AMFLAGS = -I m4
