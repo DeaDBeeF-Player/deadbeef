@@ -78,52 +78,42 @@
 
 typedef struct {
     // NULL-terminated C strings
-    char* key;
-    char* value;
+    char *key;
+    char *value;
 } ddb_tf_var_t;
 
 typedef struct ddb_tf_vars_s {
-    struct ddb_tf_vars_s* next;
+    struct ddb_tf_vars_s *next;
     ddb_tf_var_t var;
 } ddb_tf_vars_t;
 
-ddb_tf_var_t
-tf_var_new(const char* key, const char* value){
-    ddb_tf_var_t out;
-
-    out.key = malloc(strlen(key) + 1);
-    out.value = malloc(strlen(value) + 1);
-    strcpy(out.key, key);
-    strcpy(out.value, value);
-
-    return out;
+void
+tf_var_init(ddb_tf_var_t *var, const char *key, const char *value){
+    var->key    = strdup(key);
+    var->value = strdup(value);
 }
 
 void
-tf_var_free(ddb_tf_var_t var) {
-    free(var.key);
-    free(var.value);
+tf_var_deinit(ddb_tf_var_t *var) {
+    free(var->key);
+    free(var->value);
 }
 
-char*
-tf_vars_lookup(ddb_tf_vars_t* vars, const char* key) {
-    char* tmpkey = malloc(strlen(key)+1);
-    strcpy(tmpkey, key);
+const char*
+tf_vars_lookup(ddb_tf_vars_t *vars, const char *key) {
     while (vars != NULL) {
-        if (!u8_strcasecmp (tmpkey, vars->var.key)) {
+        if (!u8_strcasecmp (key, vars->var.key)) {
             return vars->var.value;
         }
         vars = vars->next;
     }
-    free(tmpkey);
     return NULL;
 }
 
 ddb_tf_vars_t*
-tf_vars_set(ddb_tf_vars_t* vars, const char* key, const char* value) {
-
-    // check if key is already defined
-    ddb_tf_vars_t* cur = vars;
+tf_vars_set(ddb_tf_vars_t *vars, const char *key, const char *value) {
+    // check if key is already defined, if so, overwrite it
+    ddb_tf_vars_t *cur = vars;
     while (cur != NULL) {
         if (!u8_strcasecmp (key, cur->var.key)) {
             cur->var.value = realloc(cur->var.value, strlen(value)+1);
@@ -133,19 +123,21 @@ tf_vars_set(ddb_tf_vars_t* vars, const char* key, const char* value) {
         cur = cur->next;
     }
 
-    ddb_tf_vars_t* out = malloc(sizeof(ddb_tf_var_t));
+    ddb_tf_vars_t *out = calloc(1, sizeof(ddb_tf_var_t));
     out->next = vars;
-    out->var = tf_var_new(key, value);
+    tf_var_init(&out->var, key, value);
 
     return out;
 }
 
 void
-tf_vars_free(ddb_tf_vars_t* vars) {
-    if (vars != NULL) {
-        tf_vars_free(vars->next);
-        tf_var_free(vars->var);
-        free(vars);
+tf_vars_free(ddb_tf_vars_t *vars) {
+    ddb_tf_vars_t *cur = vars, *prev;
+    while (cur != NULL) {
+        tf_var_deinit(&cur->var);
+        prev = cur;
+        cur = cur->next;
+        free(prev);
     }
 }
 
@@ -157,7 +149,7 @@ typedef struct {
     unsigned getting_item_at_index;
     /// the index parameter of $itematindex
     int item_at_index;
-    ddb_tf_vars_t* vars;
+    ddb_tf_vars_t *vars;
 } ddb_tf_context_int_t;
 
 typedef struct {
@@ -2600,7 +2592,7 @@ tf_func_get (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
 
     ddb_tf_context_int_t *priv = (ddb_tf_context_int_t *)ctx;
 
-    char* value = tf_vars_lookup(priv->vars, temp_key);
+    const char *value = tf_vars_lookup(priv->vars, temp_key);
     if (value == NULL) {
         *out = '\0';
         return 0;
@@ -2611,7 +2603,7 @@ tf_func_get (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const cha
 }
 
 int
-tf_func_put_ (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int should_return) {
+static _tf_func_put (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef, int should_return) {
     if (argc != 2) {
         return -1;
     }
@@ -2627,7 +2619,6 @@ tf_func_put_ (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     ddb_tf_context_int_t *priv = (ddb_tf_context_int_t *)ctx;
     priv->vars = tf_vars_set(priv->vars, temp_key, temp_value);
     if (should_return) {
-        char* value = tf_vars_lookup(priv->vars, temp_key);
         len = u8_strncpy(out, temp_value, outlen);
         return len;
     } else {
@@ -2637,12 +2628,12 @@ tf_func_put_ (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
 
 int
 tf_func_put (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
-    return tf_func_put_(ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
+    return _tf_func_put(ctx, argc, arglens, args, out, outlen, fail_on_undef, 1);
 }
 
 int
 tf_func_puts (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
-    return tf_func_put_(ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
+    return _tf_func_put(ctx, argc, arglens, args, out, outlen, fail_on_undef, 0);
 }
 
 tf_func_def tf_funcs[TF_MAX_FUNCS] = {
