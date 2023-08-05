@@ -2764,3 +2764,46 @@ TEST_F(TitleFormattingTests, test_meta_bufferTooShortWithMultibyteCharsInput_ret
     tf_free (bc);
     EXPECT_STREQ(buffer, "ΘΘΘ");
 }
+
+TEST_F(TitleFormattingTests, test_put_returnsValue) {
+    char *bc = tf_compile("$put(foo,bar)");
+    tf_eval (&ctx, bc, buffer, 8);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "bar");
+}
+
+TEST_F(TitleFormattingTests, test_puts_returnsNothing) {
+    char *bc = tf_compile("$puts(foo,bar)");
+    tf_eval (&ctx, bc, buffer, 8);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "");
+}
+
+
+TEST_F(TitleFormattingTests, test_get_returnsValue) {
+    char *bc = tf_compile("$puts(foo,bar)$get(foo)");
+    tf_eval (&ctx, bc, buffer, 8);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "bar");
+}
+
+TEST_F(TitleFormattingTests, test_getUndefined_returnsNothing) {
+    char *bc = tf_compile("$puts(foo,bar)$get(baz)");
+    tf_eval (&ctx, bc, buffer, 8);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "");
+}
+
+TEST_F(TitleFormattingTests, test_put_overwrites) {
+    char *bc = tf_compile("$puts(foo,bar)$puts(foo,baz)$get(foo)");
+    tf_eval (&ctx, bc, buffer, 8);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "baz");
+}
+
+TEST_F(TitleFormattingTests, test_get_multiple) {
+    char *bc = tf_compile("$puts(foo,alpha)$puts(bar,beta)$get(foo) $get(bar)");
+    tf_eval (&ctx, bc, buffer, 11);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "alpha beta");
+}
