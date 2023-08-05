@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -e
 shopt -s extglob
 
 BUILD=testbuild
@@ -34,23 +33,38 @@ mkdir -p "$BUILD"
 mkdir -p "$BUILD/cpplibs"
 mv $ORIGIN/$STATIC_DEPS/lib-x86-64/lib/*c++*.so* "$BUILD/cpplibs/"
 
-for file in $TEST_C_SOURCES; do
-    base=$(basename $file)
-    if [ "$base" = "main.c" ]; then
-        continue
-    fi
-    echo $CC -std=c99 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
-    $CC -std=c99 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
-done
+compile_tests() {
+    for file in $TEST_C_SOURCES; do
+        base=$(basename $file)
+        if [ "$base" = "main.c" ]; then
+            continue
+        fi
+        echo $CC -std=c99 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
+        $CC -std=c99 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o" || return $?
+    done
 
-for file in $GOOGLE_TEST_SOURCES $TEST_CPP_SOURCES; do
-    base=$(basename $file)
-    echo $CXX -std=c++14 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
-    $CXX -std=c++14 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
-done
+    for file in $GOOGLE_TEST_SOURCES $TEST_CPP_SOURCES; do
+        base=$(basename $file)
+        echo $CXX -std=c++14 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
+        $CXX -std=c++14 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o" || return $?
+    done
 
-$CXX $LDFLAGS $BUILD/*.o $LIBRARIES -o "$BUILD/runtests"
+    $CXX $LDFLAGS $BUILD/*.o $LIBRARIES -o "$BUILD/runtests" || return $?
+
+    return 0
+}
+
+restore_cpp_libs(){
+    mv "$BUILD"/cpplibs/* $ORIGIN/$STATIC_DEPS/lib-x86-64/lib/
+}
+
+compile_tests
+code=$?
+if [ $code -ne 0 ]; then
+    restore_cpp_libs
+    exit $code
+fi
+
 "$BUILD/runtests"
 
-# restore cpp libs
-mv "$BUILD"/cpplibs/* $ORIGIN/$STATIC_DEPS/lib-x86-64/lib/
+restore_cpp_libs
