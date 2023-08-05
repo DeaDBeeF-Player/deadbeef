@@ -5,7 +5,14 @@ shopt -s extglob
 
 BUILD=testbuild
 TEST_C_SOURCES="src/*.c shared/*.c src/scriptable/*.c plugins/libparser/*.c plugins/nullout/*.c src/ConvertUTF/*.c src/metadata/*.c plugins/m3u/*.c plugins/vfs_curl/*.c plugins/shellexec/*.c external/mp4p/src/*.c external/wcwidth/*.c src/md5/*.c plugins/mp3/*.c Tests/*.c"
-TEST_CPP_SOURCES="Tests/*.cpp"
+if [ $# -ne 0 ]; then
+    TEST_CPP_SOURCES="Tests/gtest-runner.cpp"
+    for t in "$@"; do
+        TEST_CPP_SOURCES="${TEST_CPP_SOURCES} Tests/${t}Tests.cpp"
+    done
+else
+    TEST_CPP_SOURCES="Tests/*.cpp"
+fi
 GOOGLE_TEST_SOURCES="external/googletest/googletest/src/gtest-all.cc"
 ORIGIN=$PWD
 STATIC_DEPS=static-deps
