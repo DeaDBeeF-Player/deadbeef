@@ -2807,3 +2807,15 @@ TEST_F(TitleFormattingTests, test_get_multiple) {
     tf_free (bc);
     EXPECT_STREQ(buffer, "alpha beta");
 }
+
+TEST_F(TitleFormattingTests, test_putMetaData) {
+    pl_add_meta (it, "album artist", "TheAlbumArtist");
+    pl_add_meta (it, "year", "12345678");
+    pl_add_meta (it, "album", "TheNameOfAlbum");
+
+
+    char *bc = tf_compile("$put($meta(year),%album artist%)");
+    tf_eval (&ctx, bc, buffer, 17);
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "TheAlbumArtist");
+}
