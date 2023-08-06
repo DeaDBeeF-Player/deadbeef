@@ -1358,6 +1358,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     deadbeef->plt_unref (from);
     deadbeef->pl_unlock ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    deadbeef->pl_save_all();
 }
 
 -(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)_after {
@@ -1414,6 +1415,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         }
         deadbeef->plt_unref (plt);
     }
+    deadbeef->pl_save_all();
 }
 
 - (void)dropPlayItems:(DdbListviewRow_t *)items before:(DdbListviewRow_t)before count:(int)count {
@@ -1438,6 +1440,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    deadbeef->pl_save_all();
 }
 
 - (void)scrollChanged:(CGFloat)pos {

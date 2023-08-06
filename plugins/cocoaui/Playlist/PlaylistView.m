@@ -109,6 +109,7 @@ static int headerheight = 23;
 
 - (void)setDataModel:(id<DdbListviewDataModelProtocol>)dataModel {
     _dataModel = dataModel;
+    _dataModel = dataModel;
     self.contentView.dataModel = dataModel;
 }
 
