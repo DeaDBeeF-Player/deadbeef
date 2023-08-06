@@ -2280,6 +2280,7 @@ _output_ringbuf_setup(const ddb_waveformat_t *fmt) {
         free (_int_output_buffer);
         _int_output_buffer = malloc (size);
         ringbuf_init(&_output_ringbuf, _int_output_buffer, size);
+        decoded_blocks_reset();
     }
 
     return latency;
