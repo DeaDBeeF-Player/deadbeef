@@ -320,6 +320,9 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
         deadbeef->pl_item_unref (prev);
     }
     prev = NULL;
+
+    deadbeef->pl_save_all();
+
     return count;
 }
 
