@@ -178,7 +178,7 @@ inline void CrixPlayer::set_new_int()
 /*----------------------------------------------------------*/
 inline void CrixPlayer::Pause()
 {
-  register uint16_t i;
+  uint16_t i;
   pause_flag = 1;
   for(i=0;i<11;i++)
     switch_ad_bd(i);
@@ -380,7 +380,7 @@ inline void CrixPlayer::ad_a0b0l_reg(uint16_t index,uint16_t p2,uint16_t p3)
 /*--------------------------------------------------------------*/
 inline void CrixPlayer::rix_B0_pro(uint16_t ctrl_l,uint16_t index)
 {
-  register int temp = 0;
+  int temp = 0;
   if(rhythm == 0 || ctrl_l < 6) temp = modify[ctrl_l*2+1];
   else
     {
@@ -393,7 +393,7 @@ inline void CrixPlayer::rix_B0_pro(uint16_t ctrl_l,uint16_t index)
 /*--------------------------------------------------------------*/
 inline void CrixPlayer::rix_C0_pro(uint16_t ctrl_l,uint16_t index)
 {
-  register uint16_t i = index>=12?index-12:0;
+  uint16_t i = index>=12?index-12:0;
   if(ctrl_l < 6 || rhythm == 0)
     {
       ad_a0b0l_reg(ctrl_l,i,1);
@@ -429,7 +429,7 @@ inline void CrixPlayer::switch_ad_bd(uint16_t index)
 /*--------------------------------------------------------------*/
 inline void CrixPlayer::ins_to_reg(uint16_t index,uint16_t* insb,uint16_t value)
 {
-  register uint16_t i;
+  uint16_t i;
   for(i=0;i<13;i++) reg_bufs[index].v[i] = insb[i];
   reg_bufs[index].v[13] = value&3;
   ad_bd_reg(),ad_08_reg(),
@@ -507,7 +507,7 @@ inline void CrixPlayer::ad_a0b0_reg(uint16_t index)
 /*--------------------------------------------------------------*/
 inline void CrixPlayer::music_ctrl()
 {
-  register int i;
+  int i;
   for(i=0;i<11;i++)
     switch_ad_bd(i);
 }
