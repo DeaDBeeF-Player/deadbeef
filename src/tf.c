@@ -171,6 +171,10 @@ tf_eval (ddb_tf_context_t *_ctx, const char *code, char *out, int outlen) {
     ctx._ctx.id = _ctx->id;
     ctx._ctx.iter = _ctx->iter;
     ctx._ctx.update = _ctx->update;
+    if (_ctx->_size >= (char *)&_ctx->metadata_transformer - (char *)_ctx + sizeof(_ctx->metadata_transformer)) {
+        ctx._ctx.metadata_transformer = _ctx->metadata_transformer;
+    }
+
 
     if (!code) {
         code = empty_code;
@@ -3339,6 +3343,11 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 // default case
                 if (!skip_out && val) {
                     int32_t l = u8_strnbcpy (out, val, outlen);
+
+                    if (ctx->metadata_transformer != NULL && outlen > 0) {
+                        ctx->metadata_transformer(ctx, out, l);
+                    }
+
                     out += l;
                     outlen -= l;
                 }

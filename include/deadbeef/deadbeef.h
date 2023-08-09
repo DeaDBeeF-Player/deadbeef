@@ -752,7 +752,7 @@ typedef struct ddb_file_found_data_s {
 #endif
 
 // context for title formatting interpreter
-typedef struct {
+typedef struct ddb_tf_context_s {
     int _size; // must be set to sizeof(tf_context_t)
     uint32_t flags; // DDB_TF_CONTEXT_ flags
     ddb_playItem_t *it; // track to get information from, or NULL
@@ -783,6 +783,9 @@ typedef struct {
     // Return value, is set to non-zero if text was <<<dimmed>>> or >>>brightened<<<
     // It's used to determine whether the text needs to be searched for the corresponding esc sequences
     int dimmed;
+#endif
+#if (DDB_API_LEVEL >= 17)
+    void (*metadata_transformer)(struct ddb_tf_context_s *ctx, char *data, size_t size);
 #endif
 } ddb_tf_context_t;
 #endif
