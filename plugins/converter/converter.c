@@ -660,10 +660,19 @@ get_output_field (DB_playItem_t *it, const char *field, char *out, int sz)
 }
 
 static void
-get_output_field2 (DB_playItem_t *it, ddb_playlist_t *plt, const char *field, char *out, int sz)
+_metadata_transform(ddb_tf_context_t *ctx, char *data, size_t size) {
+    const char *filter = "/\\:*?\"<>|";
+    for (int i = 0; i < size; i++) {
+        if (strchr (filter, data[i])) {
+            data[i] = '-';
+        }
+    }
+}
+
+static void
+get_output_path_tf (DB_playItem_t *it, ddb_playlist_t *plt, const char *field, char *out, int sz)
 {
     int idx = deadbeef->pl_get_idx_of (it);
-    char temp[PATH_MAX];
 
     char *tf = deadbeef->tf_compile (field);
     if (!tf) {
@@ -678,26 +687,11 @@ get_output_field2 (DB_playItem_t *it, ddb_playlist_t *plt, const char *field, ch
         .idx = idx,
         .iter = PL_MAIN,
         .plt = plt,
+        .metadata_transformer = _metadata_transform
     };
 
-    deadbeef->tf_eval (&ctx, tf, temp, sizeof (temp));
+    deadbeef->tf_eval (&ctx, tf, out, sz);
     deadbeef->tf_free (tf);
-
-    char *o = out;
-    for (char *p = temp; *p && sz > 0; p++) {
-        if (*p == '/') {
-            *o++ = '-';
-        }
-        else
-        {
-            *o++ = *p;
-        }
-        sz--;
-    }
-
-    *o = 0;
-
-    //trace ("field '%s' expanded to '%s'\n", field, out);
 }
 
 
@@ -737,42 +731,37 @@ get_output_path_int (DB_playItem_t *it, ddb_playlist_t *plt, const char *outfold
         outfolder = preserve_folder_structure ? outfolder_preserve : outfolder_user;
     }
 
-    size_t l;
     char fname[PATH_MAX];
-    char *pattern = strdupa (outfile);
 
     snprintf (out, sz, "%s/", outfolder);
 
-    // split path, and expand each path component using get_output_field
-    char *field = pattern;
-    char *s = pattern;
-    while (*s) {
-        if ((*s == '/') || (*s == '\\')) {
-            *s = '\0';
-            if (use_new_tf) {
-                get_output_field2(it, plt, field, fname, sizeof (fname));
-            }
-            else {
-                get_output_field (it, field, fname, sizeof (fname));
-            }
-
-            l = strlen (out);
-            snprintf (out+l, sz-l, "%s/", fname);
-
-            field = s+1;
-        }
-        s++;
-    }
-
-    // last part of outfile is the filename
     if (use_new_tf) {
-        get_output_field2(it, plt, field, fname, sizeof (fname));
+        get_output_path_tf(it, plt, outfile, fname, sizeof (fname));
     }
     else {
+        // split path, and expand each path component using get_output_field
+        size_t l;
+        char *pattern = strdupa (outfile);
+        char *field = pattern;
+        char *s = pattern;
+        while (*s) {
+            if ((*s == '/') || (*s == '\\')) {
+                *s = '\0';
+                get_output_field (it, field, fname, sizeof (fname));
+
+                l = strlen (out);
+                snprintf (out+l, sz-l, "%s/", fname);
+
+                field = s+1;
+            }
+            s++;
+        }
+
+        // last part of outfile is the filename
         get_output_field (it, field, fname, sizeof(fname));
     }
 
-    l = strlen (out);
+    size_t l = strlen (out);
     if (encoder_preset->ext && encoder_preset->ext[0]) {
         snprintf (out+l, sz-l, "%s.%s", fname, encoder_preset->ext);
     }
