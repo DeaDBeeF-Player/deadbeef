@@ -21,10 +21,13 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <assert.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include "medialibsource.h"
 #include "medialibtree.h"
+
+//#define DUMP_GENERATED_TREE 1
 
 static DB_functions_t *deadbeef;
 
@@ -321,6 +324,203 @@ get_subfolders_for_folder (ml_tree_item_t *folderitem, ml_collection_tree_node_t
     }
 }
 
+static ddb_playItem_t *
+_create_sorted_tree(
+    ddb_playlist_t *plt,
+    ml_tree_item_t *parent,
+    ddb_playItem_t *first,
+    char * const * const tfs,
+    char * const * const text_tfs,
+    size_t tfs_count,
+    int level,
+    int selected
+) {
+
+    ddb_tf_context_t ctx = {0};
+    ctx._size = sizeof (ddb_tf_context_t);
+    ctx.flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_NO_DYNAMIC;
+    ctx.plt = plt;
+    ctx.iter = PL_MAIN;
+
+    char group_text[1000] = "";
+    ddb_playItem_t *next = NULL;
+    if (first != NULL) {
+        next = first;
+        deadbeef->pl_item_ref(next);
+    }
+    else if (parent->track) {
+        next = parent->track;
+        deadbeef->pl_item_ref(next);
+    }
+    else {
+        next = deadbeef->plt_get_first(plt, PL_MAIN);
+    }
+
+    if (next == NULL) {
+        return NULL; // empty list
+    }
+
+    ddb_playItem_t *prev = NULL;
+    ml_tree_item_t *group = NULL;
+
+    ml_tree_item_t *tail = parent->children;
+    while (tail && tail->next) {
+        tail = tail->next;
+    }
+
+    do {
+        if (selected && !deadbeef->pl_is_selected(next)) {
+            ddb_playItem_t *it = deadbeef->pl_get_next(next, PL_MAIN);
+            deadbeef->pl_item_unref(next);
+            next = it;
+            continue; // filter
+        }
+        char next_text[1000];
+        ctx.it = next;
+
+        int group_level = level;
+        if (level == tfs_count - 1) {
+            group_level--;
+        }
+
+        int res = deadbeef->tf_eval(&ctx, tfs[group_level], next_text, sizeof (next_text));
+        if (res < 0) {
+            // FIXME: error
+        }
+
+        size_t len = strlen(next_text);
+
+        // Compare group text
+        int is_first_item = group_text[0] == 0;
+        int group_did_change = is_first_item || memcmp(group_text, next_text, len);
+        int is_leaf = level == tfs_count - 1;
+        if (is_first_item || group_did_change != is_leaf) {
+            // Create new item
+            memcpy(group_text, next_text, len+1);
+
+            group = _tree_item_alloc(0); // FIXME: rowid
+            deadbeef->tf_eval(&ctx, text_tfs[level], next_text, sizeof (next_text));
+            group->text = deadbeef->metacache_add_string(next_text);
+            deadbeef->pl_item_ref (next);
+            group->track = next;
+
+#if DUMP_GENERATED_TREE
+            for (int indent = 0; indent < level; indent++) {
+                printf ("    ");
+            }
+            printf("%s\n", next_text);
+#endif
+
+            if (tail == NULL) {
+                parent->children = group;
+            }
+            else {
+                tail->next = group;
+            }
+            tail = group;
+            parent->num_children++;
+        }
+
+        if (!is_leaf) {
+            // recurse into subgroups
+            ddb_playItem_t *new_next = _create_sorted_tree(plt, group, next, tfs, text_tfs, tfs_count, level+1, selected);
+            deadbeef->pl_item_unref(next);
+            next = new_next;
+        }
+
+        if (next == NULL) {
+            break;
+        }
+
+        if (is_leaf && (!group_did_change || is_first_item)) {
+            if (prev != NULL) {
+                deadbeef->pl_item_unref(prev);
+            }
+
+            ddb_playItem_t *it = next;
+            next = deadbeef->pl_get_next(it, PL_MAIN);
+            prev = it;
+        }
+
+        if (!is_leaf && level > 0) {
+            break;
+        }
+
+        if (is_leaf && group_did_change && !is_first_item) {
+            break;
+        }
+
+    } while (next != NULL);
+
+    if (prev != NULL) {
+        deadbeef->pl_item_unref(prev);
+    }
+    return next;
+}
+
+static void
+_create_genre_tree(medialib_source_t *source, ml_tree_item_t *root, int selected) {
+    const char *tfs[] = {
+        "%genre%",
+        "[%album artist% - ]%album%",
+        "[%tracknumber%. ]%title%"
+    };
+    int count = 3;
+
+    size_t tf_sort_size = 0;
+
+    char **bcs = calloc (count, sizeof (char *));
+    char **text_bcs = calloc (count, sizeof (char *));
+
+    for (int i = 0; i < count; i++) {
+        text_bcs[i] = deadbeef->tf_compile(tfs[i]);
+
+        // bcs should contain current + all "parent" bcs
+        size_t bc_len = 0;
+        for (int j = 0; j <= i; j++) {
+            bc_len += strlen(tfs[j]);
+        }
+        bc_len++;
+
+        char *bc = calloc (1, bc_len);
+        char *p = bc;
+        for (int j = 0; j <= i; j++) {
+            size_t len = strlen(tfs[j]);
+            memcpy(p, tfs[j], len);
+            p += len;
+        }
+        *p = 0;
+
+        bcs[i] = deadbeef->tf_compile(bc);
+        free (bc);
+
+        tf_sort_size += strlen(tfs[i]);
+    }
+    tf_sort_size++;
+
+    char *tf_sort = calloc (1, tf_sort_size);
+    char *curr = tf_sort;
+    for (int i = 0; i < count; i++) {
+        size_t len = strlen(tfs[i]);
+        memcpy(curr, tfs[i], len);
+        curr += len;
+    }
+    *curr = 0;
+
+    char *tf_sort_bc = deadbeef->tf_compile(tf_sort);
+
+    deadbeef->plt_sort_v2(source->ml_playlist, PL_MAIN, -1, tf_sort, DDB_SORT_ASCENDING);
+
+    _create_sorted_tree(source->ml_playlist, root, NULL, bcs, text_bcs, count, 0, selected);
+
+    for (int i = 0; i < count; i++) {
+        deadbeef->tf_free(bcs[i]);
+    }
+    free (bcs);
+    free (tf_sort);
+    deadbeef->tf_free(tf_sort_bc);
+}
+
 ml_tree_item_t *
 _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, medialibSelector_t index, medialib_source_t *source) {
     int selected = 0;
@@ -353,7 +553,8 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
     }
     else if (index == SEL_GENRES) {
         // list of albums for genre
-        get_albums_for_collection_group_by_field (source, root, coll, "genre", 0, "<?>", selected);
+//        get_albums_for_collection_group_by_field (source, root, coll, "genre", 0, "<?>", selected);
+        _create_genre_tree(source, root, selected);
     }
     else if (index == SEL_ALBUMS) {
         // list of tracks for album
