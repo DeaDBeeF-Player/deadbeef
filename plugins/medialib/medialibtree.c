@@ -304,14 +304,6 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
     ml_tree_item_t *root = _tree_item_alloc(0);
     root->text = deadbeef->metacache_add_string ("All Music");
 
-    // make sure no dangling pointers from the previous run
-    if (coll) {
-        for (ml_collection_tree_node_t *s = coll->root.children; s; s = s->next) {
-            s->coll_item = NULL;
-            s->coll_item_tail = NULL;
-        }
-    }
-
     if (source->ml_playlist == NULL) {
         return root;
     }
@@ -350,13 +342,6 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
     }
 
     // cleanup
-    if (coll) {
-        for (ml_collection_tree_node_t *s = coll->root.children; s; s = s->next) {
-            s->coll_item = NULL;
-            s->coll_item_tail = NULL;
-        }
-    }
-
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 

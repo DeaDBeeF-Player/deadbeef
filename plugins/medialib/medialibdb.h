@@ -56,10 +56,6 @@ typedef struct ml_collection_tree_node_s {
     // to support tree hierarchy
     struct ml_collection_tree_node_s *children;
     struct ml_collection_tree_node_s *children_tail;
-
-    // Note: this is "temporary state" stuff, used when processing a tree query
-    struct ml_tree_item_s *coll_item; // The item associated with collection string
-    struct ml_tree_item_s *coll_item_tail; // Tail of the children list of coll_item
 } ml_collection_tree_node_t;
 
 #define ML_HASH_SIZE 4096
