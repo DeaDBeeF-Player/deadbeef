@@ -41,74 +41,16 @@ _tree_item_alloc (uint64_t row_id) {
     return item;
 }
 
-static void
-get_subfolders_for_folder (ml_tree_item_t *folderitem, ml_collection_tree_node_t *folder, int selected) {
-    if (!folderitem->text) {
-        folderitem->text = deadbeef->metacache_add_string (folder->text);
-    }
-
-    ml_tree_item_t *tail = NULL;
-    if (folder->children) {
-        for (ml_collection_tree_node_t *c = folder->children; c; c = c->next) {
-            ml_tree_item_t *subfolder = _tree_item_alloc(c->row_id);
-            get_subfolders_for_folder (subfolder, c, selected);
-            if (subfolder->num_children > 0) {
-                if (tail) {
-                    tail->next = subfolder;
-                    tail = subfolder;
-                }
-                else {
-                    folderitem->children = subfolder;
-                    tail = subfolder;
-                }
-                folderitem->num_children++;
-            }
-            else {
-                ml_free_list (NULL, (ddb_medialib_item_t *)subfolder);
-            }
-        }
-    }
-    if (folder->items) {
-        for (ml_collection_track_ref_t *i = folder->items; i; i = i->next) {
-            if (selected && !deadbeef->pl_is_selected(i->it)) {
-                continue;
-            }
-            ml_tree_item_t *trackitem = _tree_item_alloc(i->row_id);
-            ddb_tf_context_t ctx = {
-                ._size = sizeof (ddb_tf_context_t),
-                .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
-                .it = i->it,
-            };
-            char text[1000];
-            deadbeef->tf_eval (&ctx, title_bc, text, sizeof (text));
-
-            trackitem->text = deadbeef->metacache_add_string (text);
-            trackitem->track = i->it;
-            deadbeef->pl_item_ref (i->it);
-
-            if (tail) {
-                tail->next = trackitem;
-                tail = trackitem;
-            }
-            else {
-                folderitem->children = trackitem;
-                tail = trackitem;
-            }
-            folderitem->num_children++;
-        }
-    }
-}
-
 static ddb_playItem_t *
 _create_sorted_tree(
     ddb_playlist_t *plt,
     ml_tree_item_t *parent,
+    int selected,
     ddb_playItem_t *first,
     char * const * const tfs,
     char * const * const text_tfs,
     size_t tfs_count,
-    int level,
-    int selected
+    int level
 ) {
 
     ddb_tf_context_t ctx = {0};
@@ -135,7 +77,6 @@ _create_sorted_tree(
         return NULL; // empty list
     }
 
-    ddb_playItem_t *prev = NULL;
     ml_tree_item_t *group = NULL;
 
     ml_tree_item_t *tail = parent->children;
@@ -198,7 +139,7 @@ _create_sorted_tree(
 
         if (!is_leaf) {
             // recurse into subgroups
-            ddb_playItem_t *new_next = _create_sorted_tree(plt, group, next, tfs, text_tfs, tfs_count, level+1, selected);
+            ddb_playItem_t *new_next = _create_sorted_tree(plt, group, selected, next, tfs, text_tfs, tfs_count, level+1);
             deadbeef->pl_item_unref(next);
             next = new_next;
         }
@@ -208,13 +149,9 @@ _create_sorted_tree(
         }
 
         if (is_leaf && (!group_did_change || is_first_item)) {
-            if (prev != NULL) {
-                deadbeef->pl_item_unref(prev);
-            }
-
             ddb_playItem_t *it = next;
             next = deadbeef->pl_get_next(it, PL_MAIN);
-            prev = it;
+            deadbeef->pl_item_unref(it);
         }
 
         if (!is_leaf && level > 0) {
@@ -227,14 +164,11 @@ _create_sorted_tree(
 
     } while (next != NULL);
 
-    if (prev != NULL) {
-        deadbeef->pl_item_unref(prev);
-    }
     return next;
 }
 
 static void
-_create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, const char **tfs, int tfs_count, int selected) {
+_create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, int selected, const char **tfs, int tfs_count) {
     size_t tf_sort_size = 0;
 
     char **bcs = calloc (tfs_count, sizeof (char *));
@@ -275,18 +209,207 @@ _create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, const char **tf
     }
     *curr = 0;
 
-    char *tf_sort_bc = deadbeef->tf_compile(tf_sort);
-
     deadbeef->plt_sort_v2(source->ml_playlist, PL_MAIN, -1, tf_sort, DDB_SORT_ASCENDING);
 
-    _create_sorted_tree(source->ml_playlist, root, NULL, bcs, text_bcs, tfs_count, 0, selected);
+    _create_sorted_tree(source->ml_playlist, root, selected, NULL, bcs, text_bcs, tfs_count, 0);
 
     for (int i = 0; i < tfs_count; i++) {
         deadbeef->tf_free(bcs[i]);
+        deadbeef->tf_free(text_bcs[i]);
     }
     free (bcs);
+    free (text_bcs);
     free (tf_sort);
-    deadbeef->tf_free(tf_sort_bc);
+}
+
+static bool
+_path_equal_to_depth(const char *path1, const char *path2, int depth) {
+    depth++;
+    while (*path1 == *path2) {
+        if (*path1 == '/') {
+            if (--depth < 0) {
+                return true;
+            }
+        }
+        path1++;
+        path2++;
+    }
+    return false;
+}
+
+static bool
+_is_last_path_component(const char *path, int depth) {
+    depth++;
+    while (*path) {
+        if (*path == '/') {
+            if (--depth < 0) {
+                path++;
+                break;
+            }
+        }
+        path++;
+    }
+
+    return *path == 0;
+}
+
+static bool
+_get_path_component(const char *path, int depth, char *output, size_t output_size) {
+    while (*path) {
+        if (*path == '/') {
+            if (--depth < 0) {
+                path++;
+                break;
+            }
+        }
+        path++;
+    }
+
+    if (*path == 0) {
+        return false;
+    }
+
+    while (*path && *path != '/' && output_size > 0) {
+        *output++ = *path++;
+        output_size--;
+    }
+
+    if (output_size == 0) {
+        return false;
+    }
+
+    *output = 0;
+
+    return true;
+}
+
+static ddb_playItem_t *
+_create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int selected, ddb_playItem_t *first, int level) {
+    // setup iteration
+    char group_path[1000] = "";
+    ddb_playItem_t *next = NULL;
+    if (first != NULL) {
+        next = first;
+        deadbeef->pl_item_ref(next);
+    }
+    else if (parent->track) {
+        next = parent->track;
+        deadbeef->pl_item_ref(next);
+    }
+    else {
+        next = deadbeef->plt_get_first(plt, PL_MAIN);
+    }
+
+    if (next == NULL) {
+        return NULL; // empty list
+    }
+
+    ml_tree_item_t *group = NULL;
+
+    ml_tree_item_t *tail = parent->children;
+    while (tail && tail->next) {
+        tail = tail->next;
+    }
+
+    do {
+        if (selected && !deadbeef->pl_is_selected(next)) {
+            ddb_playItem_t *it = deadbeef->pl_get_next(next, PL_MAIN);
+            deadbeef->pl_item_unref(next);
+            next = it;
+            continue; // filter
+        }
+
+        // get current path
+        const char *path = deadbeef->pl_find_meta_raw(next, ":URI");
+
+        bool is_leaf = _is_last_path_component(path, level);
+
+        int group_level = level;
+        if (is_leaf) {
+            group_level--;
+        }
+
+        int is_first_item = group_path[0] == 0;
+
+        // compare with previous path at level
+        int group_did_change = is_first_item || !_path_equal_to_depth(path, group_path, group_level);
+
+        if (is_first_item || group_did_change != is_leaf) {
+            // new group
+            strcpy (group_path, path);
+            group = _tree_item_alloc(0); // FIXME: rowid
+            char next_text[1000];
+
+            if (is_leaf) {
+                // FIXME: formatted title
+                _get_path_component(path, level, next_text, sizeof (next_text));
+            }
+            else {
+                bool res = _get_path_component(path, level, next_text, sizeof (next_text));
+                if (!res) {
+                    // FIXME: error
+                }
+            }
+            group->text = deadbeef->metacache_add_string(next_text);
+            deadbeef->pl_item_ref (next);
+            group->track = next;
+
+#if DUMP_GENERATED_TREE
+            for (int indent = 0; indent < level; indent++) {
+                printf ("    ");
+            }
+            printf("%s\n", next_text);
+#endif
+
+            if (tail == NULL) {
+                parent->children = group;
+            }
+            else {
+                tail->next = group;
+            }
+            tail = group;
+            parent->num_children++;
+
+        }
+
+        if (!is_leaf) {
+            // recurse into subgroups
+            ddb_playItem_t *new_next = _create_sorted_folder_tree(plt, group, selected, next, level+1);
+            deadbeef->pl_item_unref(next);
+            next = new_next;
+        }
+
+        if (next == NULL) {
+            break;
+        }
+
+        if (is_leaf && (!group_did_change || is_first_item)) {
+            ddb_playItem_t *it = next;
+            next = deadbeef->pl_get_next(it, PL_MAIN);
+            deadbeef->pl_item_unref(it);
+        }
+
+        if (!is_leaf && level > 0) {
+            break;
+        }
+
+        if (is_leaf && group_did_change && !is_first_item) {
+            break;
+        }
+
+    } while (next != NULL);
+
+    // if component at the same level is different: new folder
+
+    return next;
+}
+
+static void
+_create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, int selected) {
+    const char *sort_tf = "$directory_path(%path%)/[%album artist% - ]%album%/[%tracknumber%. ]%title%";
+    deadbeef->plt_sort_v2(source->ml_playlist, PL_MAIN, -1, sort_tf, DDB_SORT_ASCENDING);
+
+    _create_sorted_folder_tree(source->ml_playlist, root, selected, NULL, 0);
 }
 
 ml_tree_item_t *
@@ -309,7 +432,8 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
     }
 
     if (index == SEL_FOLDERS) {
-        get_subfolders_for_folder(root, &source->db.folders.root, selected);
+        _create_folder_tree(source, root, selected);
+//        get_subfolders_for_folder(root, &source->db.folders.root, selected);
     }
     else if (index == SEL_ARTISTS) {
         // list of albums for artist
@@ -319,7 +443,7 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
             "[%tracknumber%. ]%title%"
         };
 
-        _create_tf_tree(source, root, tfs, 3, selected);
+        _create_tf_tree(source, root, selected, tfs, 3);
     }
     else if (index == SEL_GENRES) {
         // list of albums for genre
@@ -329,7 +453,7 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
             "[%tracknumber%. ]%title%"
         };
 
-        _create_tf_tree(source, root, tfs, 3, selected);
+        _create_tf_tree(source, root, selected, tfs, 3);
     }
     else if (index == SEL_ALBUMS) {
         // list of tracks for album
@@ -338,7 +462,7 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
             "[%tracknumber%. ]%title%"
         };
 
-        _create_tf_tree(source, root, tfs, 2, selected);
+        _create_tf_tree(source, root, selected, tfs, 2);
     }
 
     // cleanup
