@@ -48,35 +48,10 @@ ml_index (scanner_state_t *scanner, const ml_scanner_configuration_t *conf, int 
     struct timeval tm1, tm2;
     gettimeofday (&tm1, NULL);
 
-    char folder[PATH_MAX];
-
-    int has_unknown_artist = 0;
-    int has_unknown_album = 0;
-    int has_unknown_genre = 0;
-
-    // NOTE: these are searched by content when creating item trees,
-    // so the values must be the same, as the ones that actually get to the collections.
-    const char *unknown_artist = deadbeef->metacache_add_string("<?>");
-    const char *unknown_album = deadbeef->metacache_add_string("<?>");
-    const char *unknown_genre = deadbeef->metacache_add_string("<?>");
-
     for (int i = 0; i < scanner->track_count && (!can_terminate || !scanner->source->scanner_terminate); i++) {
         ddb_playItem_t *it = scanner->tracks[i];
 
         const char *uri = deadbeef->pl_find_meta (it, ":URI");
-
-        const char *artist = deadbeef->pl_find_meta (it, "artist");
-
-        if (!artist) {
-            artist = unknown_artist;
-        }
-
-        // This is necessary to reference a single value from multivalue fields
-        artist = deadbeef->metacache_add_string(artist);
-
-        if (artist == unknown_artist) {
-            has_unknown_artist = 1;
-        }
 
         // find relative uri, or discard from library
         const char *reluri = NULL;
@@ -108,77 +83,7 @@ ml_index (scanner_state_t *scanner, const ml_scanner_configuration_t *conf, int 
             // uri doesn't match musicdir, skip
             continue;
         }
-        // Get a combined cached artist/album string
-        const char *album = deadbeef->pl_find_meta (it, "album");
-        if (!album) {
-            has_unknown_album = 1;
-        }
 
-        char artistalbum[1000] = "";
-        ddb_tf_context_t ctx = {
-            ._size = sizeof (ddb_tf_context_t),
-            .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK,
-            .it = it,
-        };
-
-        deadbeef->tf_eval (&ctx, artist_album_id_bc, artistalbum, sizeof (artistalbum));
-        album = deadbeef->metacache_add_string (artistalbum);
-
-        const char *genre = deadbeef->pl_find_meta (it, "genre");
-
-        if (!genre) {
-            genre = unknown_genre;
-        }
-
-        // This is necessary to reference a single value from multivalue fields
-        genre = deadbeef->metacache_add_string(genre);
-
-        if (genre == unknown_genre) {
-            has_unknown_genre = 1;
-        }
-
-        uint64_t coll_row_id, item_row_id;
-        ml_collection_reuse_row_ids(&scanner->source->db.albums, album, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_collection_add_item (&scanner->db, &scanner->db.albums, album, it, coll_row_id, item_row_id);
-
-        deadbeef->metacache_remove_string (album);
-        album = NULL;
-
-        ml_collection_reuse_row_ids(&scanner->source->db.artists, artist, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_collection_add_item (&scanner->db, &scanner->db.artists, artist, it, coll_row_id, item_row_id);
-
-        deadbeef->metacache_remove_string (artist);
-        artist = NULL;
-
-        ml_collection_reuse_row_ids(&scanner->source->db.genres, genre, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_collection_add_item (&scanner->db, &scanner->db.genres, genre, it, coll_row_id, item_row_id);
-
-        deadbeef->metacache_remove_string (genre);
-        genre = NULL;
-
-        const char *cached_string = deadbeef->metacache_add_string (uri);
-
-        ml_collection_reuse_row_ids(&scanner->source->db.track_uris, cached_string, it, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_collection_add_item (&scanner->db, &scanner->db.track_uris, cached_string, it, coll_row_id, item_row_id);
-
-        deadbeef->metacache_remove_string (cached_string);
-        cached_string = NULL;
-
-        char *fn = strrchr (reluri, '/');
-        if (fn) {
-            memcpy (folder, reluri, fn-reluri);
-            folder[fn-reluri] = 0;
-        }
-        else {
-            strcpy (folder, "/");
-        }
-        const char *s = deadbeef->metacache_add_string (folder);
-
-        // Add to folder tree
-        ml_collection_add_tree_item (&scanner->db, &scanner->source->db, &scanner->db.folders.root, s, 0, it, &scanner->db.state, &scanner->source->db.state);
-        // uri is not indexed, but referenced by the filename hash
-        // that's why they have an extra ref for each entry
-        deadbeef->metacache_add_string (uri);
         ml_filename_hash_item_t *en = calloc (1, sizeof (ml_filename_hash_item_t));
         en->file = uri;
 
@@ -192,38 +97,10 @@ ml_index (scanner_state_t *scanner, const ml_scanner_configuration_t *conf, int 
         it = next;
     }
 
-    // Add unknown artist / album / genre, if necessary
-    if (!has_unknown_artist) {
-        uint64_t coll_row_id, item_row_id;
-        ml_collection_reuse_row_ids(&scanner->source->db.artists, unknown_artist, NULL, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_collection_add_item (&scanner->db, &scanner->db.artists, unknown_artist, NULL, coll_row_id, item_row_id);
-    }
-    if (!has_unknown_album) {
-        uint64_t coll_row_id, item_row_id;
-        ml_collection_reuse_row_ids(&scanner->source->db.albums, unknown_album, NULL, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_collection_add_item (&scanner->db, &scanner->db.albums, unknown_album, NULL, coll_row_id, item_row_id);
-    }
-    if (!has_unknown_genre) {
-        uint64_t coll_row_id, item_row_id;
-        ml_collection_reuse_row_ids(&scanner->source->db.genres, unknown_genre, NULL, &scanner->db.state, &scanner->source->db.state, &coll_row_id, &item_row_id);
-        ml_collection_add_item (&scanner->db, &scanner->db.genres, unknown_genre, NULL, coll_row_id, item_row_id);
-    }
-
-    deadbeef->metacache_remove_string (unknown_artist);
-    deadbeef->metacache_remove_string (unknown_album);
-    deadbeef->metacache_remove_string (unknown_genre);
-
-    int nalb = 0;
-    int nart = 0;
-    int ngnr = 0;
-    ml_collection_tree_node_t *s;
-    for (s = scanner->db.albums.root.children; s; s = s->next, nalb++);
-    for (s = scanner->db.artists.root.children; s; s = s->next, nart++);
-    for (s = scanner->db.genres.root.children; s; s = s->next, ngnr++);
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
-    fprintf (stderr, "index build time: %f seconds (%d albums, %d artists, %d genres)\n", ms / 1000.f, nalb, nart, ngnr);
+    fprintf (stderr, "index build time: %f seconds\n", ms / 1000.f);
 }
 
 static int
@@ -249,6 +126,9 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
         return 0;
     }
 
+    // FIXME: this check assumes a quick implementation of "find ml track by filename",
+    // which is getting stripped
+#if 0
     ml_filename_hash_item_t *en = state->source->db.filename_hash[hash];
     while (en) {
         if (en->file == s) {
@@ -299,6 +179,7 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
         }
         en = en->bucket_next;
     }
+#endif
 
 #if FILTER_PERF
     gettimeofday (&tm2, NULL);

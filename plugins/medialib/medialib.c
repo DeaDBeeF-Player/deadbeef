@@ -103,27 +103,9 @@ ml_create_item_tree (ddb_mediasource_source_t _source, ddb_mediasource_list_sele
             return;
         }
 
-        ml_collection_t *coll = NULL;
-
         medialibSelector_t index = (medialibSelector_t)selector;
 
-        switch (index) {
-        case SEL_ALBUMS:
-            coll = &source->db.albums;
-            break;
-        case SEL_ARTISTS:
-            coll = &source->db.artists;
-            break;
-        case SEL_GENRES:
-            coll = &source->db.genres;
-            break;
-        case SEL_FOLDERS:
-            break;
-        default:
-            return;
-        }
-
-        root = _create_item_tree_from_collection(coll, filter, index, source);
+        root = _create_item_tree_from_collection(filter, index, source);
     });
 
     return (ddb_medialib_item_t *)root;

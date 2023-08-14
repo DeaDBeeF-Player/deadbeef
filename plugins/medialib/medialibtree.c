@@ -413,7 +413,7 @@ _create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, int selecte
 }
 
 ml_tree_item_t *
-_create_item_tree_from_collection(ml_collection_t *coll, const char *filter, medialibSelector_t index, medialib_source_t *source) {
+_create_item_tree_from_collection(const char *filter, medialibSelector_t index, medialib_source_t *source) {
     int selected = 0;
     if (filter && source->ml_playlist) {
         deadbeef->plt_search_reset (source->ml_playlist);
@@ -433,7 +433,6 @@ _create_item_tree_from_collection(ml_collection_t *coll, const char *filter, med
 
     if (index == SEL_FOLDERS) {
         _create_folder_tree(source, root, selected);
-//        get_subfolders_for_folder(root, &source->db.folders.root, selected);
     }
     else if (index == SEL_ARTISTS) {
         // list of albums for artist
