@@ -311,7 +311,9 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
         tail = tail->next;
     }
 
-    do {
+    int group_did_change = 1;
+
+    for (;;) {
         if (selected && !deadbeef->pl_is_selected(next)) {
             ddb_playItem_t *it = deadbeef->pl_get_next(next, PL_MAIN);
             deadbeef->pl_item_unref(next);
@@ -321,34 +323,30 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
 
         // get current path
         const char *path = deadbeef->pl_find_meta_raw(next, ":URI");
+        char next_text[1000];
 
-        bool is_leaf = _is_last_path_component(path, level);
+        bool should_create_node = false;
+        bool is_leaf = false;
 
-        int group_level = level;
-        if (is_leaf) {
-            group_level--;
+        if (_is_last_path_component(path, level)) {
+            // create node, next, return
+            should_create_node = true;
+            is_leaf = true;
+        }
+        else {
+            should_create_node = group_did_change;
         }
 
-        int is_first_item = group_path[0] == 0;
-
-        // compare with previous path at level
-        int group_did_change = is_first_item || !_path_equal_to_depth(path, group_path, group_level);
-
-        if (is_first_item || group_did_change != is_leaf) {
+        if (should_create_node) {
             // new group
             strcpy (group_path, path);
             group = _tree_item_alloc(0); // FIXME: rowid
-            char next_text[1000];
 
-            if (is_leaf) {
-                // FIXME: formatted title
-                _get_path_component(path, level, next_text, sizeof (next_text));
-            }
-            else {
-                bool res = _get_path_component(path, level, next_text, sizeof (next_text));
-                if (!res) {
-                    // FIXME: error
-                }
+            // FIXME: is_leaf handling to format track title / number
+
+            bool res = _get_path_component(path, level, next_text, sizeof (next_text));
+            if (!res) {
+                // FIXME: error
             }
             group->text = deadbeef->metacache_add_string(next_text);
             deadbeef->pl_item_ref (next);
@@ -369,10 +367,14 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
             }
             tail = group;
             parent->num_children++;
-
         }
 
-        if (!is_leaf) {
+        if (is_leaf) {
+            ddb_playItem_t *it = next;
+            next = deadbeef->pl_get_next(it, PL_MAIN);
+            deadbeef->pl_item_unref(it);
+        }
+        else {
             // recurse into subgroups
             ddb_playItem_t *new_next = _create_sorted_folder_tree(plt, group, selected, next, level+1);
             deadbeef->pl_item_unref(next);
@@ -383,23 +385,14 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
             break;
         }
 
-        if (is_leaf && (!group_did_change || is_first_item)) {
-            ddb_playItem_t *it = next;
-            next = deadbeef->pl_get_next(it, PL_MAIN);
-            deadbeef->pl_item_unref(it);
-        }
+        // compare with previous path at level
+        path = deadbeef->pl_find_meta_raw(next, ":URI");
+        group_did_change = !_path_equal_to_depth(path, group_path, level);
 
-        if (!is_leaf && level > 0) {
+        if (group_did_change) {
             break;
         }
-
-        if (is_leaf && group_did_change && !is_first_item) {
-            break;
-        }
-
-    } while (next != NULL);
-
-    // if component at the same level is different: new folder
+    }
 
     return next;
 }
