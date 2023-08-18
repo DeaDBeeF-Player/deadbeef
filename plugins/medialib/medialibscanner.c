@@ -53,48 +53,28 @@ ml_index (scanner_state_t *scanner, const ml_scanner_configuration_t *conf, int 
 
         const char *uri = deadbeef->pl_find_meta (it, ":URI");
 
-        // find relative uri, or discard from library
-        const char *reluri = NULL;
-        for (int i = 0; i < conf->medialib_paths_count; i++) {
-            const char *musicdir = conf->medialib_paths[i];
-            if (!strncmp (musicdir, uri, strlen (musicdir))) {
-                reluri = uri + strlen (musicdir);
-                if (*reluri == '/') {
-                    reluri += 1;
-                }
+        uint32_t hash = ml_collection_hash_for_ptr ((void *)uri);
 
-                // ensure at least one parent folder
-                if (!strchr (reluri, '/')) {
-                    if (reluri > uri+1) {
-                        reluri -= 2;
-                    }
-                    while (reluri > uri && *reluri != '/') {
-                        reluri -= 1;
-                    }
-                    if (*reluri == '/') {
-                        reluri += 1;
-                    }
-                }
-
+        ml_filename_hash_item_t *en = scanner->db.filename_hash[hash];
+        while (en) {
+            if (en->file == uri) {
                 break;
             }
+            en = en->bucket_next;
         }
-        if (!reluri) {
-            // uri doesn't match musicdir, skip
-            continue;
-        }
-
-        ml_filename_hash_item_t *en = calloc (1, sizeof (ml_filename_hash_item_t));
-        en->file = uri;
 
         // add to the hash table
         // at this point, we only have unique pointers, and don't need a duplicate check
-        uint32_t hash = ml_collection_hash_for_ptr ((void *)en->file);
-        en->bucket_next = scanner->db.filename_hash[hash];
-        scanner->db.filename_hash[hash] = en;
-
-        ddb_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
-        it = next;
+        if (en == NULL) {
+            en = calloc (1, sizeof (ml_filename_hash_item_t));
+            deadbeef->metacache_add_string(uri);
+            en->file = uri;
+            en->bucket_next = scanner->db.filename_hash[hash];
+            scanner->db.filename_hash[hash] = en;
+        }
+        en->tracks = realloc(en->tracks, (en->track_count + 1) * sizeof (ddb_playItem_t *));
+        en->tracks[en->track_count++] = it;
+        deadbeef->pl_item_ref(it);
     }
 
     gettimeofday (&tm2, NULL);
@@ -106,6 +86,27 @@ ml_index (scanner_state_t *scanner, const ml_scanner_configuration_t *conf, int 
 static int
 _status_callback (ddb_insert_file_result_t result, const char *fname, void *user_data) {
     return 0;
+}
+
+static int
+_should_update_track(ddb_playItem_t *track, time_t mtime) {
+    // NOTE: seemingly thread-unsafe, but really it is, since only the scanner thread is allowed to change this field
+    const char *stimestamp = deadbeef->pl_find_meta (track, ":MEDIALIB_SCAN_TIME");
+
+    if (!stimestamp) {
+        // no scan time - add the file
+        return 0;
+    }
+    int64_t timestamp;
+    if (sscanf (stimestamp, "%lld", &timestamp) != 1) {
+        // parse error
+        return 0;
+    }
+    if (timestamp < mtime) {
+        return 0;
+    }
+
+    return -1;
 }
 
 // NOTE: make sure to run on sync_queue
@@ -126,74 +127,57 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
         return 0;
     }
 
-    // FIXME: this check assumes a quick implementation of "find ml track by filename",
-    // which is getting stripped
-#if 0
+    // Check if the file needs to be reloaded or reused
     ml_filename_hash_item_t *en = state->source->db.filename_hash[hash];
     while (en) {
         if (en->file == s) {
-            res = -1;
-
-            // Copy from medialib playlist into scanner state
-            ml_collection_tree_node_t *node = ml_collection_hash_find (state->source->db.track_uris.hash, s);
-            if (node) {
-                for (ml_collection_track_ref_t *item = node->items; item; item = item->next) {
-                    const char *stimestamp = deadbeef->pl_find_meta (item->it, ":MEDIALIB_SCAN_TIME");
-                    if (!stimestamp) {
-                        // no scan time
-                        return 0;
-                    }
-                    int64_t timestamp;
-                    if (sscanf (stimestamp, "%lld", &timestamp) != 1) {
-                        // parse error
-                        return 0;
-                    }
-                    if (timestamp < mtime) {
-                        return 0;
-                    }
-                }
-
-                for (ml_collection_track_ref_t *item = node->items; item; item = item->next) {
-                    // Because of cuesheets, the same track may get added multiple times,
-                    // since all items reference the same filename.
-                    // Check if this track is still in ml_playlist
-                    int track_found = 0;
-                    for (int i = state->track_count-1; i >= 0; i--) {
-                        if (state->tracks[i] == item->it) {
-                            track_found = 1;
-                            break;
-                        }
-                    }
-
-                    if (track_found) {
-                        continue;
-                    }
-
-                    deadbeef->pl_item_ref (item->it);
-
-                    // Allocated space precisely matches playlist count, so no check is necessary
-                    state->tracks[state->track_count++] = item->it;
-                }
-            }
             break;
         }
         en = en->bucket_next;
     }
-#endif
+
+    if (en) {
+        res = _should_update_track(en->tracks[0], mtime);
+
+        if (res != 0) {
+            // File is reused.
+
+            // Because of cuesheets, the same track may get added multiple times,
+            // since all items reference the same filename.
+            // Check if this track is still in ml_playlist.
+
+            for (size_t hi = 0; hi < en->track_count; hi++) {
+                int track_found = 0;
+                for (int i = state->track_count-1; i >= 0; i--) {
+                    if (state->tracks[i] == en->tracks[hi]) {
+                        track_found = 1;
+                        break;
+                    }
+                }
+                if (track_found) {
+                    continue;
+                }
+                deadbeef->pl_item_ref (en->tracks[hi]);
+                // Allocated space precisely matches playlist count, so no check is necessary
+                state->tracks[state->track_count++] = en->tracks[hi];
+            }
+        }
+    }
 
 #if FILTER_PERF
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);
 
     if (!res) {
-        fprintf (stderr, "ADD %s: file presence check took %f sec\n", s, ms / 1000.f);
+        fprintf (stderr, "ADD %s: file presence check took %f sec\n", data->filename, ms / 1000.f);
     }
     else {
-        fprintf (stderr, "SKIP %s: file presence check took %f sec\n", s, ms / 1000.f);
+        fprintf (stderr, "SKIP %s: file presence check took %f sec\n", data->filename, ms / 1000.f);
     }
 #endif
 
     deadbeef->metacache_remove_string (s);
+
     return res;
 }
 

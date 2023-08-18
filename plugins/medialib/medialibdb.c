@@ -48,6 +48,10 @@ ml_db_free (ml_db_t *db) {
             if (en->file) {
                 deadbeef->metacache_remove_string (en->file);
             }
+            for (size_t hi = 0; hi < en->track_count; hi++) {
+                deadbeef->pl_item_unref(en->tracks[hi]);
+            }
+            free (en->tracks);
             free (en);
             en = next;
         }

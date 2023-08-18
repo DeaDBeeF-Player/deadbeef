@@ -31,6 +31,8 @@
 #define ML_HASH_SIZE 4096
 typedef struct ml_entry_s {
     const char *file;
+    ddb_playItem_t **tracks;
+    size_t track_count;
     struct ml_entry_s *bucket_next;
 } ml_filename_hash_item_t;
 
