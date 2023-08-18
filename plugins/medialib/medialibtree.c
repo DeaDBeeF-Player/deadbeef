@@ -403,6 +403,26 @@ _create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, int selecte
     deadbeef->plt_sort_v2(source->ml_playlist, PL_MAIN, -1, sort_tf, DDB_SORT_ASCENDING);
 
     _create_sorted_folder_tree(source->ml_playlist, root, selected, NULL, 0);
+
+    // squash single-item tree nodes
+    ml_tree_item_t *prev = NULL;
+    for (ml_tree_item_t *head = root->children; head != NULL; prev = head, head = head->next) {
+        while (head->num_children == 1) {
+            ml_tree_item_t *new_head = head->children;
+            new_head->next = head->next;
+
+            deadbeef->pl_item_unref(head->track);
+            deadbeef->metacache_remove_string(head->text);
+            free (head);
+            head = new_head;
+            if (prev != NULL) {
+                prev->next = head;
+            }
+            else {
+                root->children = head;
+            }
+        }
+    }
 }
 
 ml_tree_item_t *
