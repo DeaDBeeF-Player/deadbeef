@@ -2764,3 +2764,58 @@ TEST_F(TitleFormattingTests, test_meta_bufferTooShortWithMultibyteCharsInput_ret
     tf_free (bc);
     EXPECT_STREQ(buffer, "ΘΘΘ");
 }
+
+TEST_F(TitleFormattingTests, test_put_any_returnsValue) {
+    char *bc = tf_compile("$put(foo,bar)");
+    tf_eval (&ctx, bc, buffer, sizeof(buffer));
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "bar");
+}
+
+TEST_F(TitleFormattingTests, test_puts_any_returnsEmpty) {
+    char *bc = tf_compile("$puts(foo,bar)");
+    tf_eval (&ctx, bc, buffer, sizeof(buffer));
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "");
+}
+
+
+TEST_F(TitleFormattingTests, test_get_any_returnsValue) {
+    char *bc = tf_compile("$puts(foo,bar)$get(foo)");
+    tf_eval (&ctx, bc, buffer, sizeof(buffer));
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "bar");
+}
+
+TEST_F(TitleFormattingTests, test_get_Undefined_returnsNothing) {
+    char *bc = tf_compile("$get(baz)");
+    tf_eval (&ctx, bc, buffer, sizeof(buffer));
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "");
+}
+
+TEST_F(TitleFormattingTests, test_put_overwrite_returnsNewValue) {
+    char *bc = tf_compile("$puts(foo,bar)$puts(foo,baz)$get(foo)");
+    tf_eval (&ctx, bc, buffer, sizeof(buffer));
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "baz");
+}
+
+TEST_F(TitleFormattingTests, test_get_multiple_returnsMultiple) {
+    char *bc = tf_compile("$puts(foo,alpha)$puts(bar,beta)$get(foo) $get(bar)");
+    tf_eval (&ctx, bc, buffer, sizeof(buffer));
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "alpha beta");
+}
+
+TEST_F(TitleFormattingTests, test_putMetaData) {
+    pl_add_meta (it, "album artist", "TheAlbumArtist");
+    pl_add_meta (it, "year", "12345678");
+    pl_add_meta (it, "album", "TheNameOfAlbum");
+
+
+    char *bc = tf_compile("$put($meta(year),%album artist%)");
+    tf_eval (&ctx, bc, buffer, sizeof(buffer));
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "TheAlbumArtist");
+}
