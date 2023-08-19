@@ -44,7 +44,7 @@ typedef struct medialib_source_s {
 
     /// Whether the source is enabled.
     /// Disabled means that the scanner should never run, and that queries should return empty tree.
-    /// Only access on sync_queue.
+    /// Only access on @c sync_queue.
     int enabled;
 
     ddb_playlist_t *ml_playlist; // this playlist contains the actual data of the media library in plain list

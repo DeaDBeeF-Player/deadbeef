@@ -26,23 +26,13 @@
 
 #include <deadbeef/deadbeef.h>
 
-// Medialibrary owns the following items with `row_id` in the same namespace:
-//   ml_collection_item_t: leaf item, pointing to a track
-//   ml_tree_item_t: a folder node when using Folders selector
-//   ml_string_t: a string identifying a unique Album, Artist or Genre
+// Medialibrary owns the tree items with the `path` in the same namespace.
 
-// How row_id works:
-// A basic autoincrement.
-// The IDs should never be reused.
-// The IDs are not persisted on disk.
-// TODO: when wrap-around occurs, need to clear the state, and reassign row_ids to the whole library.
-// TODO: The client also needs to be notified that the existing row_ids in the ddb_medialib_item_t are invalid.
-
-/// This structure owns the selected/expanded state of an item identified by a row_id.
+/// This structure owns the selected/expanded state of an item identified by @c path
 /// When item is unselected / unexpanded -- the state object is deleted
-/// When an item with row_id is destroyed -- the state object is deleted
+/// When an item with a path is destroyed -- the state object is deleted
 typedef struct ml_collection_item_state_s {
-    // a unique ID of the associated ml_collection_item_t
+    // The path is used as a pointer-comparable unique identifier.
     const char *path;
     unsigned selected: 1;
     unsigned expanded: 1;
