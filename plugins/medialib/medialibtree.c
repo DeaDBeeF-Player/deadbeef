@@ -191,13 +191,15 @@ _create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, int selected, c
     char **bcs = calloc (tfs_count, sizeof (char *));
     char **text_bcs = calloc (tfs_count, sizeof (char *));
 
+    // create combined titleformat strings for each level of depth,
+    // separate levels with '/' character
     for (int i = 0; i < tfs_count; i++) {
         text_bcs[i] = deadbeef->tf_compile(tfs[i]);
 
         // bcs should contain current + all "parent" bcs
         size_t bc_len = 0;
         for (int j = 0; j <= i; j++) {
-            bc_len += strlen(tfs[j]);
+            bc_len += strlen(tfs[j]) + 1;
         }
         bc_len++;
 
@@ -207,6 +209,9 @@ _create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, int selected, c
             size_t len = strlen(tfs[j]);
             memcpy(p, tfs[j], len);
             p += len;
+            if (j != i) {
+                *p++ = '/';
+            }
         }
         *p = 0;
 
