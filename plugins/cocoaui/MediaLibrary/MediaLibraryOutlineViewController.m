@@ -29,7 +29,6 @@ extern DB_functions_t *deadbeef;
 @property (nullable, nonatomic) NSString *searchString;
 
 @property (nonatomic) NSArray *topLevelItems;
-@property (nonatomic) BOOL outlineViewInitialized;
 
 @property (nonatomic) int listenerId;
 
@@ -142,14 +141,6 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (void)initializeTreeView:(int)index {
-    NSInteger itemIndex = NSNotFound;
-    if (self.outlineViewInitialized) {
-        itemIndex = [self.topLevelItems indexOfObject:self.medialibRootItem];
-        [self.outlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:itemIndex] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
-        self.medialibRootItem = nil;
-        self.topLevelItems = nil;
-    }
-
     if (self.medialibItemTree) {
         self.medialibPlugin->free_item_tree (self.medialibSource, self.medialibItemTree);
         self.medialibItemTree = NULL;
@@ -161,12 +152,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
         self.medialibRootItem,
     ];
 
-    if (self.outlineViewInitialized) {
-        [self.outlineView insertItemsAtIndexes:[NSIndexSet indexSetWithIndex:itemIndex] inParent:nil withAnimation:NSTableViewAnimationEffectNone];
-    }
-    if (!self.outlineViewInitialized) {
-        [self.outlineView reloadData];
-    }
+    [self.outlineView reloadData];
 
     // Restore selected/expanded state
     // Defer one frame, since the row indexes are unavailable immediately.
@@ -177,8 +163,6 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
         [self.outlineView selectRowIndexes:selectedRowIndexes byExtendingSelection:NO];
         [self.outlineView endUpdates];
     });
-
-    self.outlineViewInitialized = YES;
 }
 
 - (void)saveSelectionStateWithItem:(MediaLibraryItem *)item {
