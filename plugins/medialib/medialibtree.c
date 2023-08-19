@@ -86,33 +86,41 @@ _create_sorted_tree(
         tail = tail->next;
     }
 
-    do {
+    int group_did_change = 1;
+
+    while (next) {
         if (selected && !deadbeef->pl_is_selected(next)) {
             ddb_playItem_t *it = deadbeef->pl_get_next(next, PL_MAIN);
             deadbeef->pl_item_unref(next);
             next = it;
-            if (next == NULL) {
-                break;
-            }
             continue; // filter
         }
-        char next_text[1000];
-        ctx.it = next;
+
+        bool should_create_node = false;
+        bool is_leaf = false;
+
+        if (level == tfs_count - 1) {
+            // create node, next, return
+            should_create_node = true;
+            is_leaf = true;
+        }
+        else {
+            should_create_node = group_did_change;
+        }
 
         int group_level = level;
         if (level == tfs_count - 1) {
             group_level--;
         }
 
-        deadbeef->tf_eval(&ctx, tfs[group_level], next_text, sizeof (next_text));
-
-        size_t len = strlen(next_text);
-
         // Compare group text
-        int is_first_item = group_text[0] == 0;
-        int group_did_change = is_first_item || memcmp(group_text, next_text, len);
-        int is_leaf = level == tfs_count - 1;
-        if (is_first_item || group_did_change != is_leaf) {
+        if (should_create_node) {
+            char next_text[1000];
+            ctx.it = next;
+            deadbeef->tf_eval(&ctx, tfs[group_level], next_text, sizeof (next_text));
+
+            size_t len = strlen(next_text);
+
             // Create new item
             memcpy(group_text, next_text, len+1);
 
@@ -147,7 +155,12 @@ _create_sorted_tree(
             parent->num_children++;
         }
 
-        if (!is_leaf) {
+        if (is_leaf) {
+            ddb_playItem_t *it = next;
+            next = deadbeef->pl_get_next(it, PL_MAIN);
+            deadbeef->pl_item_unref(it);
+        }
+        else {
             // recurse into subgroups
             ddb_playItem_t *new_next = _create_sorted_tree(plt, group, selected, next, tfs, text_tfs, tfs_count, level+1);
             deadbeef->pl_item_unref(next);
@@ -158,21 +171,15 @@ _create_sorted_tree(
             break;
         }
 
-        if (is_leaf && (!group_did_change || is_first_item)) {
-            ddb_playItem_t *it = next;
-            next = deadbeef->pl_get_next(it, PL_MAIN);
-            deadbeef->pl_item_unref(it);
-        }
+        char next_text[1000];
+        ctx.it = next;
+        deadbeef->tf_eval(&ctx, tfs[group_level], next_text, sizeof (next_text));
+        group_did_change = strcmp(group_text, next_text);
 
-        if (!is_leaf && level > 0) {
+        if (group_did_change && level > 0) {
             break;
         }
-
-        if (is_leaf && group_did_change && !is_first_item) {
-            break;
-        }
-
-    } while (next != NULL);
+    }
 
     return next;
 }
@@ -488,7 +495,7 @@ _create_item_tree_from_collection(const char *filter, medialibSelector_t index, 
         // list of albums for artist
         const char *tfs[] = {
             "$if2(%album artist%,\\<?\\>)",
-            "[%album artist% - ]%album%",
+            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
             "[%tracknumber%. ]%title%"
         };
 
@@ -498,7 +505,7 @@ _create_item_tree_from_collection(const char *filter, medialibSelector_t index, 
         // list of albums for genre
         const char *tfs[] = {
             "$if2(%genre%,\\<?\\>)",
-            "[%album artist% - ]%album%",
+            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
             "[%tracknumber%. ]%title%"
         };
 
@@ -507,7 +514,7 @@ _create_item_tree_from_collection(const char *filter, medialibSelector_t index, 
     else if (index == SEL_ALBUMS) {
         // list of tracks for album
         const char *tfs[] = {
-            "[%album artist% - ]%album%",
+            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
             "[%tracknumber%. ]%title%"
         };
 
