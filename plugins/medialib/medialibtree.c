@@ -135,8 +135,10 @@ _create_sorted_tree(
 
             deadbeef->tf_eval(&ctx, text_tfs[level], next_text, sizeof (next_text));
             group->text = deadbeef->metacache_add_string(next_text);
-            deadbeef->pl_item_ref (next);
-            group->track = next;
+            if (is_leaf) {
+                deadbeef->pl_item_ref (next);
+                group->track = next;
+            }
 
 #if DUMP_GENERATED_TREE
             for (int indent = 0; indent < level; indent++) {
@@ -390,8 +392,10 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
             free (tree_path);
 
             group->text = deadbeef->metacache_add_string(next_text);
-            deadbeef->pl_item_ref (next);
-            group->track = next;
+            if (is_leaf) {
+                deadbeef->pl_item_ref (next);
+                group->track = next;
+            }
 
 #if DUMP_GENERATED_TREE
             for (int indent = 0; indent < level; indent++) {
@@ -456,8 +460,12 @@ _create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, int selecte
             ml_tree_item_t *new_head = head->children;
             new_head->next = head->next;
 
-            deadbeef->pl_item_unref(head->track);
-            deadbeef->metacache_remove_string(head->text);
+            if (head->track) {
+                deadbeef->pl_item_unref(head->track);
+            }
+            if (head->text) {
+                deadbeef->metacache_remove_string(head->text);
+            }
             if (head->path) {
                 deadbeef->metacache_remove_string(head->path);
             }
