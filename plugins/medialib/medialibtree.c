@@ -91,6 +91,9 @@ _create_sorted_tree(
             ddb_playItem_t *it = deadbeef->pl_get_next(next, PL_MAIN);
             deadbeef->pl_item_unref(next);
             next = it;
+            if (next == NULL) {
+                break;
+            }
             continue; // filter
         }
         char next_text[1000];
@@ -232,7 +235,7 @@ _create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, int selected, c
 static bool
 _path_equal_to_depth(const char *path1, const char *path2, int depth) {
     depth++;
-    while (*path1 == *path2) {
+    while (*path1 && *path2 && *path1 == *path2) {
         if (*path1 == '/') {
             if (--depth < 0) {
                 return true;
@@ -326,7 +329,7 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
     ctx.plt = plt;
     ctx.iter = PL_MAIN;
 
-    for (;;) {
+    while (next) {
         if (selected && !deadbeef->pl_is_selected(next)) {
             ddb_playItem_t *it = deadbeef->pl_get_next(next, PL_MAIN);
             deadbeef->pl_item_unref(next);
