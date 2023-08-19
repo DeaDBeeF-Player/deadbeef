@@ -35,9 +35,11 @@ static char *artist_album_bc;
 static char *title_bc;
 
 static ml_tree_item_t *
-_tree_item_alloc (uint64_t row_id) {
+_tree_item_alloc (const char *path) {
     ml_tree_item_t *item = calloc (1, sizeof (ml_tree_item_t));
-    item->row_id = row_id;
+    if (path != NULL) {
+        item->path = deadbeef->metacache_add_string(path);
+    }
     return item;
 }
 
@@ -111,7 +113,15 @@ _create_sorted_tree(
             // Create new item
             memcpy(group_text, next_text, len+1);
 
-            group = _tree_item_alloc(0); // FIXME: rowid
+            size_t parent_len = parent->path ? strlen(parent->path) : 0;
+            size_t node_len = strlen(next_text);
+            size_t buffer_len = parent_len + node_len + 2;
+            char *tree_path = malloc(buffer_len);
+            snprintf(tree_path, buffer_len, "%s/%s", parent->path ?: "", next_text);
+
+            group = _tree_item_alloc(tree_path);
+            free (tree_path);
+
             deadbeef->tf_eval(&ctx, text_tfs[level], next_text, sizeof (next_text));
             group->text = deadbeef->metacache_add_string(next_text);
             deadbeef->pl_item_ref (next);
@@ -343,7 +353,6 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
         if (should_create_node) {
             // new group
             strcpy (group_path, path);
-            group = _tree_item_alloc(0); // FIXME: rowid
 
             if (is_leaf) {
                 ctx.it = next;
@@ -355,6 +364,15 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
                     strcpy(next_text, "<?>");
                 }
             }
+
+            size_t parent_len = parent->path ? strlen(parent->path) : 0;
+            size_t node_len = strlen(next_text);
+            size_t buffer_len = parent_len + node_len + 2;
+            char *tree_path = malloc(buffer_len);
+            snprintf(tree_path, buffer_len, "%s/%s", parent->path ?: "", next_text);
+
+            group = _tree_item_alloc(tree_path);
+            free (tree_path);
 
             group->text = deadbeef->metacache_add_string(next_text);
             deadbeef->pl_item_ref (next);
@@ -425,6 +443,9 @@ _create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, int selecte
 
             deadbeef->pl_item_unref(head->track);
             deadbeef->metacache_remove_string(head->text);
+            if (head->path) {
+                deadbeef->metacache_remove_string(head->path);
+            }
             free (head);
             head = new_head;
             if (prev != NULL) {
@@ -451,6 +472,7 @@ _create_item_tree_from_collection(const char *filter, medialibSelector_t index, 
 
     ml_tree_item_t *root = _tree_item_alloc(0);
     root->text = deadbeef->metacache_add_string ("All Music");
+    root->path = deadbeef->metacache_add_string(root->text);
 
     if (source->ml_playlist == NULL) {
         return root;
@@ -511,6 +533,9 @@ ml_free_list (ddb_mediasource_source_t source, ddb_medialib_item_t *_list) {
         }
         if (list->text) {
             deadbeef->metacache_remove_string (list->text);
+        }
+        if (list->path) {
+            deadbeef->metacache_remove_string (list->path);
         }
 
         free (list);

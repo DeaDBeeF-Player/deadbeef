@@ -49,6 +49,7 @@ ml_start (void) {
     ml_db_init(deadbeef);
     ml_scanner_init(&plugin, deadbeef);
     ml_tree_init(deadbeef);
+    ml_item_state_init(deadbeef);
 
     return 0;
 }
@@ -117,10 +118,10 @@ static int
 ml_is_tree_item_selected (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
-    uint64_t row_id = item->row_id;
+    const char *path = item->path;
     __block ml_collection_item_state_t state;
     dispatch_sync(source->sync_queue, ^{
-        state = ml_item_state_get (&source->db.state, row_id);
+        state = ml_item_state_get (&source->db.state, path);
     });
     return state.selected;
 }
@@ -129,15 +130,15 @@ static void
 ml_set_tree_item_selected (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item, int selected) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
-    uint64_t row_id = item->row_id;
+    const char *path = item->path;
     dispatch_sync(source->sync_queue, ^{
         ml_collection_item_state_t *prev = NULL;
-        ml_collection_item_state_t *state = ml_item_state_find (&source->db.state, row_id, &prev);
+        ml_collection_item_state_t *state = ml_item_state_find (&source->db.state, path, &prev);
         int expanded = 0;
         if (state != NULL) {
             expanded = state->expanded;
         }
-        ml_item_state_update (&source->db.state, row_id, state, prev, selected, expanded);
+        ml_item_state_update (&source->db.state, path, state, prev, selected, expanded);
     });
 }
 
@@ -145,10 +146,10 @@ static int
 ml_is_tree_item_expanded (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
-    uint64_t row_id = item->row_id;
+    const char *path = item->path;
     __block ml_collection_item_state_t state;
     dispatch_sync(source->sync_queue, ^{
-        state = ml_item_state_get (&source->db.state, row_id);
+        state = ml_item_state_get (&source->db.state, path);
     });
     return state.expanded;
 }
@@ -157,15 +158,18 @@ static void
 ml_set_tree_item_expanded (ddb_mediasource_source_t _source, const ddb_medialib_item_t *_item, int expanded) {
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
-    uint64_t row_id = item->row_id;
+    const char *path = item->path;
+    if (path == NULL) {
+        return;
+    }
     dispatch_sync(source->sync_queue, ^{
         ml_collection_item_state_t *prev = NULL;
-        ml_collection_item_state_t *state = ml_item_state_find (&source->db.state, row_id, &prev);
+        ml_collection_item_state_t *state = ml_item_state_find (&source->db.state, path, &prev);
         int selected = 0;
         if (state != NULL) {
             selected = state->selected;
         }
-        ml_item_state_update (&source->db.state, row_id, state, prev, selected, expanded);
+        ml_item_state_update (&source->db.state, path, state, prev, selected, expanded);
     });
 }
 

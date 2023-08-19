@@ -25,13 +25,23 @@
 #include <stdlib.h>
 #include "medialibstate.h"
 
+static DB_functions_t *deadbeef;
+
 #pragma mark - ml_collection_item_state_t
 
+static uint32_t
+_hash_for_ptr (const void *ptr) {
+    // scrambling multiplier from http://vigna.di.unimi.it/ftp/papers/xorshift.pdf
+    uint64_t scrambled = 1181783497276652981ULL * (uintptr_t)ptr;
+    return (uint32_t)(scrambled & (ML_COLLECTION_STATE_HASH_SIZE-1));
+}
+
 ml_collection_item_state_t
-ml_item_state_get (ml_collection_state_t *coll_state, uint64_t row_id) {
+ml_item_state_get (ml_collection_state_t *coll_state, const char *path) {
     __block ml_collection_item_state_t result = {0};
-    for (ml_collection_item_state_t *state = coll_state->hash[row_id&(ML_COLLECTION_STATE_HASH_SIZE-1)]; state; state = state->next) {
-        if (state->row_id == row_id) {
+    uint32_t hash = _hash_for_ptr (path);
+    for (ml_collection_item_state_t *state = coll_state->hash[hash]; state; state = state->next) {
+        if (state->path == path) {
             result = *state;
             break;
         }
@@ -41,21 +51,24 @@ ml_item_state_get (ml_collection_state_t *coll_state, uint64_t row_id) {
 
 void
 ml_item_state_remove_with_prev (ml_collection_state_t *coll_state, ml_collection_item_state_t *prev, ml_collection_item_state_t *state) {
-    uint64_t row_id = state->row_id;
     if (prev == NULL) {
-        coll_state->hash[row_id&(ML_COLLECTION_STATE_HASH_SIZE-1)] = state->next;
+        const char *path = state->path;
+        uint32_t hash = _hash_for_ptr (path);
+        coll_state->hash[hash] = state->next;
     }
     else {
         prev->next = state->next;
     }
+    deadbeef->metacache_remove_string(state->path);
     free (state);
 }
 
 ml_collection_item_state_t *
-ml_item_state_find (ml_collection_state_t *coll_state, uint64_t row_id, ml_collection_item_state_t **pprev) {
+ml_item_state_find (ml_collection_state_t *coll_state, const char *path, ml_collection_item_state_t **pprev) {
     ml_collection_item_state_t *prev = NULL;
-    for (ml_collection_item_state_t *state = coll_state->hash[row_id&(ML_COLLECTION_STATE_HASH_SIZE-1)]; state; prev = state, state = state->next) {
-        if (state->row_id == row_id) {
+    uint32_t hash = _hash_for_ptr (path);
+    for (ml_collection_item_state_t *state = coll_state->hash[hash]; state; prev = state, state = state->next) {
+        if (state->path == path) {
             if (pprev != NULL) {
                 *pprev = prev;
             }
@@ -66,16 +79,19 @@ ml_item_state_find (ml_collection_state_t *coll_state, uint64_t row_id, ml_colle
 }
 
 void
-ml_item_state_remove(ml_collection_state_t *coll_state, uint64_t row_id) {
+ml_item_state_remove(ml_collection_state_t *coll_state, const char *path) {
     ml_collection_item_state_t *prev = NULL;
-    ml_collection_item_state_t *state = ml_item_state_find(coll_state, row_id, &prev);
+    ml_collection_item_state_t *state = ml_item_state_find(coll_state, path, &prev);
     if (state != NULL) {
         ml_item_state_remove_with_prev (coll_state, prev, state);
     }
 }
 
 void
-ml_item_state_update (ml_collection_state_t *coll_state, uint64_t row_id, ml_collection_item_state_t *state, ml_collection_item_state_t *prev, int selected, int expanded) {
+ml_item_state_update (ml_collection_state_t *coll_state, const char *path, ml_collection_item_state_t *state, ml_collection_item_state_t *prev, int selected, int expanded) {
+    if (path == NULL) {
+        return;
+    }
     if (state != NULL) {
         if (!selected && !expanded) {
             ml_item_state_remove_with_prev (coll_state, prev, state);
@@ -88,10 +104,11 @@ ml_item_state_update (ml_collection_state_t *coll_state, uint64_t row_id, ml_col
         state = calloc (1, sizeof (ml_collection_item_state_t));
         state->selected = selected;
         state->expanded = expanded;
-        state->row_id = row_id;
+        state->path = deadbeef->metacache_add_string(path);
 
-        state->next = coll_state->hash[row_id&(ML_COLLECTION_STATE_HASH_SIZE-1)];
-        coll_state->hash[row_id&(ML_COLLECTION_STATE_HASH_SIZE-1)] = state;
+        uint32_t hash = _hash_for_ptr (path);
+        state->next = coll_state->hash[hash];
+        coll_state->hash[hash] = state;
     }
 }
 
@@ -100,8 +117,14 @@ ml_item_state_free (ml_collection_state_t *coll_state) {
     for (int i = 0; i < ML_COLLECTION_STATE_HASH_SIZE; i++) {
         for (ml_collection_item_state_t *s = coll_state->hash[i]; s; ) {
             ml_collection_item_state_t *next = s->next;
+            deadbeef->metacache_remove_string(s->path);
             free (s);
             s = next;
         }
     }
+}
+
+void
+ml_item_state_init(DB_functions_t *_deadbeef) {
+    deadbeef = _deadbeef;
 }

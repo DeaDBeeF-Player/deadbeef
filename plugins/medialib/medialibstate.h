@@ -24,6 +24,8 @@
 #ifndef medialibstate_h
 #define medialibstate_h
 
+#include <deadbeef/deadbeef.h>
+
 // Medialibrary owns the following items with `row_id` in the same namespace:
 //   ml_collection_item_t: leaf item, pointing to a track
 //   ml_tree_item_t: a folder node when using Folders selector
@@ -40,7 +42,8 @@
 /// When item is unselected / unexpanded -- the state object is deleted
 /// When an item with row_id is destroyed -- the state object is deleted
 typedef struct ml_collection_item_state_s {
-    uint64_t row_id; // a unique ID of the associated ml_collection_item_t
+    // a unique ID of the associated ml_collection_item_t
+    const char *path;
     unsigned selected: 1;
     unsigned expanded: 1;
     struct ml_collection_item_state_s *next;
@@ -55,7 +58,7 @@ typedef struct ml_collection_state_s {
 /// Get item state by value.
 /// Default is unselected/unexpanded.
 ml_collection_item_state_t
-ml_item_state_get (ml_collection_state_t *coll_state, uint64_t row_id);
+ml_item_state_get (ml_collection_state_t *coll_state, const char *path);
 
 /// Remove item state, accelerated by previously known prev pointer
 void
@@ -63,18 +66,21 @@ ml_item_state_remove_with_prev (ml_collection_state_t *coll_state, ml_collection
 
 /// Find item state pointer and it's previous neighbour in the list.
 ml_collection_item_state_t *
-ml_item_state_find (ml_collection_state_t *coll_state, uint64_t row_id, ml_collection_item_state_t **pprev);
+ml_item_state_find (ml_collection_state_t *coll_state, const char *path, ml_collection_item_state_t **pprev);
 
-/// Remove item state with specified @c row_id
+/// Remove item state with specified @c path
 void
-ml_item_state_remove(ml_collection_state_t *coll_state, uint64_t row_id);
+ml_item_state_remove(ml_collection_state_t *coll_state, const char *path);
 
 /// Update item state.
 /// Will create or delete the state as necessary.
 void
-ml_item_state_update (ml_collection_state_t *coll_state, uint64_t row_id, ml_collection_item_state_t *state, ml_collection_item_state_t *prev, int selected, int expanded);
+ml_item_state_update (ml_collection_state_t *coll_state, const char *path, ml_collection_item_state_t *state, ml_collection_item_state_t *prev, int selected, int expanded);
 
 void
 ml_item_state_free (ml_collection_state_t *coll_state);
+
+void
+ml_item_state_init(DB_functions_t *deadbeef);
 
 #endif /* medialibstate_h */
