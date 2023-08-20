@@ -277,6 +277,7 @@ main_cleanup_and_quit (void);
         [self.mainWindow.window close];
         self.mainWindow = nil;
         [TrackPropertiesManager deinitializeSharedInstance];
+        self.mediaLibraryManager = nil;
 
         self.designModeState = nil;
         [DesignModeState freeSharedInstance];
@@ -284,7 +285,6 @@ main_cleanup_and_quit (void);
         deadbeef->unlisten_file_add_beginend(_listenerFileAddBeginAddIdentifier);
         deadbeef->unlisten_file_added(_listenerFileAddedIdentifier);
     }
-    self.mediaLibraryManager = nil;
     main_cleanup_and_quit();
     // main_cleanup_and_quit will call "exit" after async jobs finish, which may occur on another thread.
     // Therefore inifinite wait here.

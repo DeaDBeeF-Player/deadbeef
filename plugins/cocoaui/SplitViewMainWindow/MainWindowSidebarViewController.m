@@ -19,6 +19,11 @@
 
 @implementation MainWindowSidebarViewController
 
+- (void)close {
+    self.mediaLibraryOutlineViewController = nil;
+    self.outlineView = nil;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 

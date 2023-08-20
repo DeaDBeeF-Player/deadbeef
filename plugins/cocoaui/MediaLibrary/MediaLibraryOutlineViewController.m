@@ -119,18 +119,29 @@ extern DB_functions_t *deadbeef;
     return self;
 }
 
-- (void)applicationWillQuit:(NSNotification *)notification {
+- (void)disconnect {
+    if (self.medialibPlugin == NULL) {
+        return;
+    }
+    if (self.listenerId != -1) {
+        self.medialibPlugin->remove_listener (self.medialibSource, self.listenerId);
+        self.listenerId = -1;
+    }
+    if (_selectors != NULL) {
+        self.medialibPlugin->free_selectors_list (self.medialibSource, _selectors);
+        _selectors = NULL;
+    }
     self.medialibPlugin = NULL;
     self.artworkPlugin = NULL;
+}
+
+- (void)applicationWillQuit:(NSNotification *)notification {
+    [self disconnect];
     NSLog(@"MediaLibraryOutlineViewController: received applicationWillQuit notification");
 }
 
 - (void)dealloc {
-    self.medialibPlugin->remove_listener (self.medialibSource, self.listenerId);
-    self.medialibPlugin->free_selectors_list (self.medialibSource, _selectors);
-    _selectors = NULL;
-    self.listenerId = -1;
-    self.medialibPlugin = NULL;
+    [self disconnect];
 }
 
 static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
@@ -156,13 +167,22 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 
     // Restore selected/expanded state
     // Defer one frame, since the row indexes are unavailable immediately.
+    __weak MediaLibraryOutlineViewController *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSMutableIndexSet *selectedRowIndexes = [NSMutableIndexSet new];
-        [self.outlineView beginUpdates];
-        [self restoreSelectedExpandedStateForItem:self.medialibRootItem selectedRows:selectedRowIndexes];
-        [self.outlineView selectRowIndexes:selectedRowIndexes byExtendingSelection:NO];
-        [self.outlineView endUpdates];
+        MediaLibraryOutlineViewController *strongSelf = weakSelf;
+        if (strongSelf == nil) {
+            return;
+        }
+        [self applyStoredState];
     });
+}
+
+- (void)applyStoredState {
+    NSMutableIndexSet *selectedRowIndexes = [NSMutableIndexSet new];
+    [self.outlineView beginUpdates];
+    [self restoreSelectedExpandedStateForItem:self.medialibRootItem selectedRows:selectedRowIndexes];
+    [self.outlineView selectRowIndexes:selectedRowIndexes byExtendingSelection:NO];
+    [self.outlineView endUpdates];
 }
 
 - (void)saveSelectionStateWithItem:(MediaLibraryItem *)item {

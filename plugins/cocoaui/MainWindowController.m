@@ -71,6 +71,7 @@ extern DB_functions_t *deadbeef;
         [_updateTimer invalidate];
         _updateTimer = nil;
     }
+    [self.sidebarOutlineViewController close];
     [DesignModeDeps cleanup];
 }
 
