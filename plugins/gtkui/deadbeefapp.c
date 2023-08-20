@@ -121,7 +121,6 @@ deadbeef_app_get_log_action(DeadbeefApp *application) {
 
 static void
 deadbeef_app_shutdown (GApplication *application) {
-    gtkui_mainwin_free ();
     G_APPLICATION_CLASS (deadbeef_app_parent_class)->shutdown (application);
 }
 

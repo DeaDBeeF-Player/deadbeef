@@ -1825,21 +1825,13 @@ gtkui_start (void) {
     return 0;
 }
 
-static int
-gtkui_connect (void) {
-    return 0;
-}
-
-static int
-gtkui_disconnect (void) {
-    supereq_plugin = NULL;
-    return 0;
-}
-
-
 static gboolean
 quit_gtk_cb (gpointer nothing) {
     extern int trkproperties_modified;
+
+    gtkui_mainwin_free();
+
+    supereq_plugin = NULL;
     trkproperties_modified = 0;
     trkproperties_destroy ();
     search_destroy ();
@@ -2363,8 +2355,6 @@ ddb_gtkui_t plugin = {
     .gui.plugin.website = "http://deadbeef.sf.net",
     .gui.plugin.start = gtkui_start,
     .gui.plugin.stop = gtkui_stop,
-    .gui.plugin.connect = gtkui_connect,
-    .gui.plugin.disconnect = gtkui_disconnect,
     .gui.plugin.configdialog = settings_dlg,
     .gui.plugin.message = gtkui_message,
     .gui.run_dialog = gtkui_run_dialog_root,
