@@ -475,9 +475,6 @@ typedef struct DB_conf_item_s {
     struct DB_conf_item_s *next;
 } DB_conf_item_t;
 
-// event callback type
-typedef int (*DB_callback_t)(ddb_event_t *, uintptr_t data);
-
 // events
 enum {
     DB_EV_NEXT = 1, // switch to next track
@@ -650,7 +647,6 @@ enum ddb_sys_directory_t {
 
 // typecasting macros
 #define DB_PLUGIN(x) ((DB_plugin_t *)(x))
-#define DB_CALLBACK(x) ((DB_callback_t)(x))
 #define DB_EVENT(x) ((ddb_event_t *)(x))
 #define DB_PLAYITEM(x) ((DB_playItem_t *)(x))
 

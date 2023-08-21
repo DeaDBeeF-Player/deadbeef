@@ -52,12 +52,6 @@ void
 plug_cleanup (void);
 
 void
-plug_ev_subscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data);
-
-void
-plug_ev_unsubscribe (DB_plugin_t *plugin, int ev, DB_callback_t callback, uintptr_t data);
-
-void
 plug_md5 (uint8_t sig[16], const char *in, int len);
 
 void
