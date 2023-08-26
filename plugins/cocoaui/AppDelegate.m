@@ -73,6 +73,8 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSMenuItem *designModeMenuItem;
 @property DesignModeState *designModeState;
 
+
+
 @end
 
 @implementation AppDelegate

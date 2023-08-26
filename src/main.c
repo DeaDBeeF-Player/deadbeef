@@ -27,6 +27,7 @@
 #ifdef HAVE_CONFIG_H
 #  include <config.h>
 #endif
+#include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -92,6 +93,7 @@
 #include "scriptable/scriptable.h"
 #include "scriptable/scriptable_dsp.h"
 #include "scriptable/scriptable_encoder.h"
+#include "scriptable/scriptable_tfquery.h"
 #endif
 
 #ifndef PREFIX
@@ -1520,6 +1522,8 @@ main (int argc, char *argv[]) {
     scriptableInit();
     scriptableDspLoadPresets();
     scriptableEncoderLoadPresets();
+    int tf_query_result = scriptableTFQueryLoadPresets();
+    assert (tf_query_result != -1);
 #endif
 
     streamer_init ();

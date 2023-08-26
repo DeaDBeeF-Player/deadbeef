@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22152" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22152"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -13,6 +13,7 @@
                 <outlet property="sidebarOutlineViewController" destination="CYL-XF-y3k" id="9lc-kM-a0E"/>
                 <outlet property="splitViewController" destination="xuH-au-Yba" id="31g-bm-90R"/>
                 <outlet property="statusBar" destination="Yc4-pv-Wup" id="K9B-e5-BXc"/>
+                <outlet property="tfQueryContainer" destination="bx2-Y7-PbO" id="9iM-gO-pFE"/>
                 <outlet property="volumeBar" destination="GfK-FT-xmA" id="l7u-hZ-dzR"/>
                 <outlet property="volumeCubicScaleItem" destination="ndN-Hq-xWh" id="UK5-D1-Axa"/>
                 <outlet property="volumeDbScaleItem" destination="90b-Hd-KHk" id="Ji9-3D-Pzf"/>
@@ -49,7 +50,7 @@
                             <real value="250"/>
                         </holdingPriorities>
                     </splitView>
-                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yc4-pv-Wup">
+                    <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Yc4-pv-Wup">
                         <rect key="frame" x="6" y="2" width="968" height="11"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" title="Label" usesSingleLineMode="YES" id="3lp-hz-ToZ">
                             <font key="font" metaFont="label" size="9"/>
@@ -172,8 +173,8 @@
             </connections>
             <point key="canvasLocation" x="-587" y="23"/>
         </menu>
-        <customView id="v3y-Wv-fY1">
-            <rect key="frame" x="0.0" y="0.0" width="285" height="334"/>
+        <customView misplaced="YES" id="v3y-Wv-fY1">
+            <rect key="frame" x="0.0" y="0.0" width="285" height="362"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <popUpButton horizontalHuggingPriority="249" verticalHuggingPriority="750" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="HiC-Av-HZt">
@@ -200,7 +201,7 @@
                         <action selector="openMedialibPrefs:" target="-1" id="sRo-Uk-a95"/>
                     </connections>
                 </button>
-                <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KyF-ei-PTn">
+                <searchField wantsLayer="YES" focusRingType="none" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KyF-ei-PTn">
                     <rect key="frame" x="20" y="224" width="245" height="22"/>
                     <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsSearchStringImmediately="YES" id="GoA-F3-oJI">
                         <font key="font" metaFont="system"/>
@@ -208,13 +209,13 @@
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </searchFieldCell>
                 </searchField>
-                <scrollView autoresizesSubviews="NO" wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
+                <scrollView autoresizesSubviews="NO" wantsLayer="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="28" horizontalPageScroll="10" verticalLineScroll="28" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJY-8N-XhM" userLabel="Sidebar View">
                     <rect key="frame" x="0.0" y="0.0" width="285" height="216"/>
                     <clipView key="contentView" wantsLayer="YES" drawsBackground="NO" id="Eiv-XJ-7B1">
                         <rect key="frame" x="0.0" y="0.0" width="285" height="216"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <outlineView wantsLayer="YES" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG" customClass="MediaLibraryOutlineView">
+                            <outlineView wantsLayer="YES" verticalHuggingPriority="750" allowsExpansionToolTips="YES" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" rowHeight="28" rowSizeStyle="automatic" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="hGa-Fg-yZI" id="Ffb-Ma-ZiG" customClass="MediaLibraryOutlineView">
                                 <rect key="frame" x="0.0" y="0.0" width="285" height="216"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="3" height="0.0"/>
@@ -237,7 +238,7 @@
                                                 <rect key="frame" x="11" y="0.0" width="262" height="24"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMO-Cn-w8T">
+                                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMO-Cn-w8T">
                                                         <rect key="frame" x="0.0" y="4" width="262" height="16"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="ziT-k4-oha">
@@ -262,7 +263,7 @@
                                                         </constraints>
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="pYd-An-Pr7"/>
                                                     </imageView>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7jZ-WS-Ehz">
+                                                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7jZ-WS-Ehz">
                                                         <rect key="frame" x="36" y="6" width="228" height="16"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="PZA-yM-DYX">
                                                             <font key="font" metaFont="system"/>
@@ -304,19 +305,28 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="bx2-Y7-PbO">
+                    <rect key="frame" x="20" y="282" width="245" height="20"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="WNM-f0-mqS"/>
+                    </constraints>
+                </customView>
             </subviews>
             <constraints>
                 <constraint firstItem="KyF-ei-PTn" firstAttribute="leading" secondItem="HiC-Av-HZt" secondAttribute="leading" id="0em-Ef-ddl"/>
                 <constraint firstItem="g73-tS-yMi" firstAttribute="leading" secondItem="HiC-Av-HZt" secondAttribute="trailing" constant="8" symbolic="YES" id="5zV-zC-vSA"/>
+                <constraint firstItem="bx2-Y7-PbO" firstAttribute="top" secondItem="v3y-Wv-fY1" secondAttribute="top" constant="60" id="Abv-jY-4OA"/>
                 <constraint firstItem="KyF-ei-PTn" firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" id="Byr-jY-QSB"/>
                 <constraint firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" constant="20" symbolic="YES" id="IUr-En-aze"/>
                 <constraint firstItem="g73-tS-yMi" firstAttribute="top" secondItem="HiC-Av-HZt" secondAttribute="top" id="SCG-3U-ToF"/>
                 <constraint firstAttribute="bottom" secondItem="VJY-8N-XhM" secondAttribute="bottom" id="UUG-BW-jzV"/>
+                <constraint firstItem="bx2-Y7-PbO" firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" id="XkY-mZ-jqN"/>
                 <constraint firstItem="KyF-ei-PTn" firstAttribute="top" secondItem="HiC-Av-HZt" secondAttribute="bottom" constant="8" symbolic="YES" id="Zky-7E-jVP"/>
                 <constraint firstItem="HiC-Av-HZt" firstAttribute="leading" secondItem="v3y-Wv-fY1" secondAttribute="leading" constant="20" symbolic="YES" id="Zzd-QH-a5b"/>
-                <constraint firstItem="HiC-Av-HZt" firstAttribute="top" secondItem="v3y-Wv-fY1" secondAttribute="top" constant="60" id="ecW-Db-mWk"/>
+                <constraint firstItem="g73-tS-yMi" firstAttribute="top" secondItem="bx2-Y7-PbO" secondAttribute="bottom" constant="8" id="btH-6L-1nd"/>
                 <constraint firstAttribute="trailing" secondItem="VJY-8N-XhM" secondAttribute="trailing" id="jUc-sO-BRH"/>
                 <constraint firstItem="VJY-8N-XhM" firstAttribute="top" secondItem="KyF-ei-PTn" secondAttribute="bottom" constant="8" symbolic="YES" id="nQQ-50-wgo"/>
+                <constraint firstItem="bx2-Y7-PbO" firstAttribute="leading" secondItem="HiC-Av-HZt" secondAttribute="leading" id="siw-oa-wID"/>
                 <constraint firstItem="VJY-8N-XhM" firstAttribute="leading" secondItem="v3y-Wv-fY1" secondAttribute="leading" id="uIQ-CV-mDn"/>
             </constraints>
             <point key="canvasLocation" x="-796.5" y="-267"/>

@@ -19,11 +19,6 @@
 
 @implementation ScriptableSelectViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do view setup here.
-}
-
 - (void)setDataSource:(ScriptableTableDataSource *)dataSource {
     _dataSource = dataSource;
     [self reloadData];

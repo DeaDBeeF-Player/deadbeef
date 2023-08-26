@@ -11,10 +11,10 @@
 extern DB_functions_t *deadbeef;
 
 static scriptableStringListItem_t *
-scriptableEncoderChainItemNames (scriptableItem_t *item);
+scriptableEncoderItemNames (scriptableItem_t *item);
 
 static scriptableStringListItem_t *
-scriptableEncoderChainItemTypes (scriptableItem_t *item);
+scriptableEncoderItemTypes (scriptableItem_t *item);
 
 static scriptableItem_t *
 scriptableEncoderCreatePreset (scriptableItem_t *root, const char *type);
@@ -43,8 +43,8 @@ static scriptableCallbacks_t scriptableEncoderCallbacks = {
 
 static scriptableCallbacks_t scriptableRootCallbacks = {
     .allowRenaming = 1,
-    .factoryItemNames = scriptableEncoderChainItemNames,
-    .factoryItemTypes = scriptableEncoderChainItemTypes,
+    .factoryItemNames = scriptableEncoderItemNames,
+    .factoryItemTypes = scriptableEncoderItemTypes,
     .createItemOfType = scriptableEncoderCreatePreset,
     .removeSubItem = scriptableEncoderRootRemoveSubItem,
 };
@@ -77,14 +77,14 @@ static const char *configdialog =
 ;
 
 static scriptableStringListItem_t *
-scriptableEncoderChainItemNames (scriptableItem_t *item) {
+scriptableEncoderItemNames (scriptableItem_t *item) {
     scriptableStringListItem_t *s = scriptableStringListItemAlloc();
     s->str = strdup("EncoderPreset");
     return s;
 }
 
 static scriptableStringListItem_t *
-scriptableEncoderChainItemTypes (scriptableItem_t *item) {
+scriptableEncoderItemTypes (scriptableItem_t *item) {
     scriptableStringListItem_t *s = scriptableStringListItemAlloc();
     s->str = strdup("EncoderPreset");
     return s;

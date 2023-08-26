@@ -21,23 +21,26 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "DdbShared.h"
 #import "DeletePlaylistConfirmationController.h"
-#import "DesignModeState.h"
 #import "DesignModeDeps.h"
+#import "DesignModeState.h"
 #import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
 #import "PlaylistWidget.h"
 #import "PlaylistWithTabsWidget.h"
 #import "PreferencesWindowController.h"
+#import "ScriptableErrorViewer.h"
+#import "ScriptableSelectViewController.h"
+#import "SidebarSplitViewController.h"
 #import "TrackPositionFormatter.h"
 #include <deadbeef/deadbeef.h>
-#import "DdbShared.h"
+#include <scriptable/scriptable_tfquery.h>
 #include <sys/time.h>
-#import "SidebarSplitViewController.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface MainWindowController () <NSMenuDelegate,DeletePlaylistConfirmationControllerDelegate> {
+@interface MainWindowController () <NSMenuDelegate,DeletePlaylistConfirmationControllerDelegate,ScriptableSelectDelegate,ScriptableItemDelegate> {
     NSTimer *_updateTimer;
     char *_titlebar_playing_script;
     char *_titlebar_playing_subtitle_script;
@@ -47,6 +50,9 @@ extern DB_functions_t *deadbeef;
     int _prevSeekBarPos;
     int _deletePlaylistIndex;
 }
+
+@property (nonatomic) ScriptableTableDataSource *tfQueriesDataSource;
+@property (nonatomic) ScriptableSelectViewController *tfQuerySelectViewController;
 
 @property (nonatomic,weak) IBOutlet NSView *designableContainerView;
 @property (nonatomic,weak) IBOutlet NSView *playlistWithTabsView;
@@ -59,6 +65,7 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSMenuItem *volumeDbScaleItem;
 @property (weak) IBOutlet NSMenuItem *volumeLinearScaleItem;
 @property (weak) IBOutlet NSMenuItem *volumeCubicScaleItem;
+@property (weak) IBOutlet NSView *tfQueryContainer;
 
 @end
 
@@ -115,6 +122,18 @@ extern DB_functions_t *deadbeef;
 #if ENABLE_MEDIALIB
     self.playlistWithTabsView = self.splitViewController.bodyViewController.wrapperView;
     self.designableContainerView = self.splitViewController.bodyViewController.designableView;
+
+    self.tfQueriesDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableTFQueryRoot()];
+
+    // preset list and browse button
+    self.tfQuerySelectViewController = [ScriptableSelectViewController new];
+    self.tfQuerySelectViewController.scriptableItemDelegate = self;
+    self.tfQuerySelectViewController.view.frame = _tfQueryContainer.bounds;
+    [_tfQueryContainer addSubview:self.tfQuerySelectViewController.view];
+    self.tfQuerySelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
+    self.tfQuerySelectViewController.dataSource = self.tfQueriesDataSource;
+
+
 #else
     self.mainContentViewController = [MainContentViewController new];
     [self.designableContainerView addSubview:self.mainContentViewController.view];
@@ -521,6 +540,22 @@ static char sb_text[512];
         deadbeef->plt_remove (_deletePlaylistIndex);
         _deletePlaylistIndex = -1;
     }
+}
+
+#pragma mark - ScriptableSelectDelegate
+
+- (void)scriptableSelectItemSelected:(scriptableItem_t *)item {
+}
+
+#pragma mark - ScriptableItemDelegate
+
+- (void)scriptableItemChanged:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.tfQuerySelectViewController reloadData];
+
+        // FIXME: save only when the dialog is closed
+        scriptableTFQuerySavePresets();
+    });
 }
 
 @end
