@@ -963,8 +963,6 @@ _edit_field_multiple_tracks (void) {
 
     // Initialize the single value tab
 
-    GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
-
     // Allow editing the value if it's the same on all tracks
     GValue mult = {};
     gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 3, &mult);
@@ -974,6 +972,8 @@ _edit_field_multiple_tracks (void) {
         GValue value = {};
         gtk_tree_model_get_value (GTK_TREE_MODEL (store), &iter, 4, &value);
         const char *svalue = g_value_get_string (&value);
+
+        GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
         gtk_text_buffer_set_text (buffer, svalue, (gint)strlen (svalue));
         g_value_unset (&value);
         gtk_text_view_set_buffer (GTK_TEXT_VIEW (lookup_widget (dlg, "textview_single_value")), buffer);
@@ -1040,6 +1040,7 @@ _edit_field_multiple_tracks (void) {
         gint tab = gtk_notebook_get_current_page(GTK_NOTEBOOK(tabs));
 
         if (tab == 0) {
+            GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW(lookup_widget (dlg, "textview_single_value")));
             _update_single_value(buffer, &iter, skey, stitle);
         }
         else if (tab == 1) {
