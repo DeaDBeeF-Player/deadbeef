@@ -21,7 +21,6 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <jansson.h>
 #include <limits.h>
 #include <sys/stat.h>
 #include <sys/time.h>

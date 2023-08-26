@@ -32,9 +32,6 @@
 
 static DB_functions_t *deadbeef;
 
-static char *artist_album_bc;
-static char *title_bc;
-
 static ml_tree_item_t *
 _tree_item_alloc (const char *path) {
     ml_tree_item_t *item = calloc (1, sizeof (ml_tree_item_t));
@@ -570,19 +567,8 @@ ml_free_list (ddb_mediasource_source_t source, ddb_medialib_item_t *_list) {
 void
 ml_tree_init (DB_functions_t *_deadbeef) {
     deadbeef = _deadbeef;
-    artist_album_bc = deadbeef->tf_compile ("[%album artist% - ]%album%");
-    title_bc = deadbeef->tf_compile ("[%tracknumber%. ]%title%");
 }
 
 void
 ml_tree_free (void) {
-    if (artist_album_bc) {
-        deadbeef->tf_free (artist_album_bc);
-        artist_album_bc = NULL;
-    }
-
-    if (title_bc) {
-        deadbeef->tf_free (title_bc);
-        title_bc = NULL;
-    }
 }
