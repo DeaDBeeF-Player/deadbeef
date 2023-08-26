@@ -392,17 +392,6 @@ conf_set_float (const char *key, float val) {
     snprintf (s, sizeof (s), "%0.7f", val);
     conf_set_str (key, s);
 }
-
-int
-conf_ischanged (void) {
-    return changed;
-}
-
-void
-conf_setchanged (int c) {
-    changed = c;
-}
-
 void
 conf_remove_items (const char *key) {
     size_t l = strlen (key);

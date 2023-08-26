@@ -51,12 +51,6 @@ conf_lock (void);
 void
 conf_unlock (void);
 
-int
-conf_ischanged (void);
-
-void
-conf_setchanged (int c);
-
 void
 conf_get_str (const char *key, const char *def, char *buffer, int buffer_size);
 
