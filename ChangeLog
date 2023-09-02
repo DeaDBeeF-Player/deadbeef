@@ -1,3 +1,18 @@
+version 1.9.6
+	Fixed: Drawing spectrum analyzer in discrete frequencies mode
+	Fixed: Handling the option to enter archives when scanning folders (fudanchii)
+	Fixed: Playback performance issue when searching in large playlist
+	Fixed: Possible crash when starting playback with ALSA plugin
+	Fixed: Shuffle albums was not using Album Artist
+	Fixed: Title formatting failure with large calculated values
+	Fixed: Loading of small album art image files
+	Fixed: MP4 parser failing to read/write certain tags correctly
+	Fixed: Handling of title-formatted paths
+	Fixed: A bug when editing metadata in multiple selected tracks
+	Added: Bit depth override option (HiFiPhile)
+	Added: DSD DoP support for ALSA/FFMPEG plugins (HiFiPhile)
+	Added: $put, $puts, $get title formatting functions (Robin Ekman)
+
 version 1.9.5
 	Fixed: GME chiptune voice muting was affecting converter / replaygain scanner
 	Fixed: SID  chiptune voice muting was affecting converter / replaygain scanner
