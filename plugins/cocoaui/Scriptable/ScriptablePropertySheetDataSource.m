@@ -23,12 +23,12 @@
 }
 
 - (NSString *)propertySheet:(PropertySheetViewController *)vc configForItem:(id)item {
-    const char *config = _scriptable->configDialog;
+    const char *config = scriptableItemConfigDialog(_scriptable);
     return config ? @(config) : nil;
 }
 
 - (BOOL)propertySheet:(PropertySheetViewController *)vc itemIsReadonly:(id)item {
-    return _scriptable->isReadonly;
+    return scriptableItemIsReadOnly(_scriptable);
 }
 
 

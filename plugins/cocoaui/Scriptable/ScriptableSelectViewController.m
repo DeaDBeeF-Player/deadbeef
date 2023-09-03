@@ -47,7 +47,7 @@
     NSInteger index = self.indexOfSelectedItem;
 
     [self.nameList removeAllItems];
-    for (scriptableItem_t *c = self.dataSource.scriptable->children; c; c = c->next) {
+    for (scriptableItem_t *c = scriptableItemChildren(self.dataSource.scriptable); c; c = scriptableItemNext(c)) {
         const char *name = scriptableItemPropertyValueForKey(c, "name");
         if (name) {
             [self.nameList addItemWithTitle:@(name)];

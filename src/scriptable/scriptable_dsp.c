@@ -48,10 +48,10 @@ static char *
 scriptableDspPresetNodeSaveToString (scriptableItem_t *item);
 
 static void
-scriptableDspPropertyValueWillChangeForKey (struct scriptableItem_s *item, const char *key);
+scriptableDspPropertyValueWillChangeForKey (scriptableItem_t *item, const char *key);
 
 static void
-scriptableDspPresetNodePropertyValueDidChangeForKey (struct scriptableItem_s *item, const char *key);
+scriptableDspPresetNodePropertyValueDidChangeForKey (scriptableItem_t *item, const char *key);
 
 static int
 scriptableDspPresetSave(scriptableItem_t *item);
@@ -188,15 +188,14 @@ dspPluginForId (const char *pluginId) {
 static scriptableItem_t *
 scriptableDspCreateItemOfType (scriptableItem_t *root, const char *type) {
     scriptableItem_t *item = scriptableItemAlloc();
-    item->type = "DSPNode";
 
     scriptableItemSetPropertyValueForKey(item, type, "pluginId");
-    item->callbacks = &scriptableDspNodeCallbacks;
+    scriptableItemSetCallbacks(item, &scriptableDspNodeCallbacks);
 
     DB_dsp_t *dsp = dspPluginForId(type);
     if (dsp) {
         const char *name = dsp->plugin.name;
-        item->configDialog = dsp->configdialog;
+        scriptableItemSetConfigDialog(item, dsp->configdialog);
         scriptableItemSetPropertyValueForKey(item, name, "name");
     }
     else {
@@ -209,12 +208,13 @@ scriptableDspCreateItemOfType (scriptableItem_t *root, const char *type) {
 }
 
 static void
-scriptableDspPresetNodePropertyValueDidChangeForKey (struct scriptableItem_s *item, const char *key) {
-    if (!item->parent) {
+scriptableDspPresetNodePropertyValueDidChangeForKey (scriptableItem_t *item, const char *key) {
+    scriptableItem_t *parent = scriptableItemParent(item);
+    if (parent == NULL) {
         return;
     }
 
-    const char *parentName = scriptableItemPropertyValueForKey(item->parent, "name");
+    const char *parentName = scriptableItemPropertyValueForKey(parent, "name");
     if (parentName) {
         return; // ignore actual presets
     }
@@ -223,7 +223,7 @@ scriptableDspPresetNodePropertyValueDidChangeForKey (struct scriptableItem_s *it
 
     ddb_dsp_context_t *chain = deadbeef->streamer_get_dsp_chain ();
 
-    for (scriptableItem_t *node = item->parent->children; node; node = node->next) {
+    for (scriptableItem_t *node = scriptableItemChildren(parent); node; node = scriptableItemNext(node)) {
         if (node == item) {
             int param = atoi (key);
             const char *value = scriptableItemPropertyValueForKey(item, key);
@@ -235,8 +235,8 @@ scriptableDspPresetNodePropertyValueDidChangeForKey (struct scriptableItem_s *it
 }
 
 static void
-scriptableDspPropertyValueWillChangeForKey (struct scriptableItem_s *item, const char *key) {
-    if (item->isReadonly) {
+scriptableDspPropertyValueWillChangeForKey (scriptableItem_t *item, const char *key) {
+    if (scriptableItemIsReadOnly(item)) {
         return;
     }
     if (!strcmp (key, "name")) {
@@ -261,7 +261,7 @@ scriptableDspPresetNodeSaveToString (scriptableItem_t *node) {
     DB_dsp_t *dsp = dspPluginForId(pluginId);
     if (!dsp) {
         // when a plugin is missing: write out all numeric-name properties, in their original order
-        for (scriptableKeyValue_t *kv = node->properties; kv; kv = kv->next) {
+        for (scriptableKeyValue_t *kv = scriptableItemProperties(node); kv; kv = kv->next) {
             int intKey = atoi (kv->key);
             char stringKey[10];
             snprintf (stringKey, sizeof (stringKey), "%d", intKey);
@@ -301,7 +301,7 @@ scriptableDspPresetSaveAtPath(scriptableItem_t *item, char *path) {
         return -1;
     }
 
-    for (scriptableItem_t *node = item->children; node; node = node->next) {
+    for (scriptableItem_t *node = scriptableItemChildren(item); node; node = scriptableItemNext(node)) {
         const char *pluginId = scriptableItemPropertyValueForKey (node, "pluginId");
         if (!pluginId) {
             continue;
@@ -380,7 +380,7 @@ scriptableDspPresetItemTypes (scriptableItem_t *item) {
 
 static scriptableItem_t *scriptableDspCreateBlankPreset (void) {
     scriptableItem_t *item = scriptableItemAlloc();
-    item->callbacks = &scriptableDspPresetCallbacks;
+    scriptableItemSetCallbacks (item, &scriptableDspPresetCallbacks);
     return item;
 }
 
@@ -448,13 +448,13 @@ scriptableDspRoot (void) {
         scriptableItemAddSubItem(scriptableRoot(), dspRoot);
 
         scriptableItem_t *passThroughDspPreset = scriptableDspCreateBlankPreset();
-        passThroughDspPreset->isLoading = 1;
-        passThroughDspPreset->isReadonly = 1;
+        scriptableItemSetIsLoading(passThroughDspPreset, 1);
+        scriptableItemSetIsReadOnly(passThroughDspPreset, 1);
         scriptableItemSetPropertyValueForKey(passThroughDspPreset, "Pass-through", "name");
         scriptableItemAddSubItem(dspRoot, passThroughDspPreset);
-        passThroughDspPreset->isLoading = 0;
+        scriptableItemSetIsLoading(passThroughDspPreset, 0);
 
-        dspRoot->callbacks = &scriptableDspPresetListCallbacks;
+        scriptableItemSetCallbacks(dspRoot, &scriptableDspPresetListCallbacks);
     }
     return dspRoot;
 }
@@ -462,7 +462,7 @@ scriptableDspRoot (void) {
 void
 scriptableDspLoadPresets (void) {
     scriptableItem_t *root = scriptableDspRoot();
-    root->isLoading = 1;
+    scriptableItemSetIsLoading(root, 1);
 
     struct dirent **namelist = NULL;
     char path[1024];
@@ -479,7 +479,7 @@ scriptableDspLoadPresets (void) {
             strncat(name, namelist[i]->d_name, end-namelist[i]->d_name);
 
             scriptableItem_t *preset = scriptableDspCreateBlankPreset();
-            preset->isLoading = 1;
+            scriptableItemSetIsLoading(preset, 1);
             scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, root);
 
             if (scriptableItemLoadDspPreset (preset, namelist[i]->d_name)) {
@@ -488,21 +488,21 @@ scriptableDspLoadPresets (void) {
             else {
                 scriptableItemAddSubItem(root, preset);
             }
-            preset->isLoading = 0;
+            scriptableItemSetIsLoading(preset, 0);
 
             free (namelist[i]);
         }
         free (namelist);
     }
-    root->isLoading = 0;
+    scriptableItemSetIsLoading(root, 0);
 }
 
 static scriptableItem_t *scriptableDspCreateNodeFromContext (ddb_dsp_context_t *context) {
     scriptableItem_t *node = scriptableItemAlloc();
-    node->callbacks = &scriptableDspNodeCallbacks;
+    scriptableItemSetCallbacks(node, &scriptableDspNodeCallbacks);
     scriptableItemSetPropertyValueForKey(node, context->plugin->plugin.id, "pluginId");
     scriptableItemSetPropertyValueForKey(node, context->plugin->plugin.name, "name");
-    node->configDialog = context->plugin->configdialog;
+    scriptableItemSetConfigDialog(node, context->plugin->configdialog);
     return node;
 }
 
@@ -566,8 +566,8 @@ ddb_dsp_context_t *
 scriptableDspConfigToDspChain (scriptableItem_t *item) {
     ddb_dsp_context_t *head = NULL;
     ddb_dsp_context_t *tail = NULL;
-    scriptableItem_t *c;
-    for (c = item->children; c; c = c->next) {
+    scriptableItem_t *c = NULL;
+    for (c = scriptableItemChildren(item); c != NULL; c = scriptableItemNext(c)) {
         const char *pluginId = scriptableItemPropertyValueForKey(c, "pluginId");
         DB_plugin_t *plugin = deadbeef->plug_get_for_id (pluginId);
         if (plugin->type != DB_PLUGIN_DSP) {

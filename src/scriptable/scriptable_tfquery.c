@@ -58,7 +58,7 @@ _presetSave(scriptableItem_t *item) {
 }
 
 static int
-_presetUpdateItem (struct scriptableItem_s *item) {
+_presetUpdateItem (scriptableItem_t *item) {
     return scriptableItemSave (item);
 }
 
@@ -95,13 +95,12 @@ static scriptableCallbacks_t _presetCallbacks = {
     .factoryItemNames = _presetItemNames,
     .factoryItemTypes = _presetItemTypes,
     .createItemOfType = _presetCreateItemOfType,
-//    .save = _presetSave,
 };
 
 static scriptableItem_t *
 _createBlankPreset(void) {
     scriptableItem_t *item = scriptableItemAlloc();
-    item->callbacks = &_presetCallbacks;
+    scriptableItemSetCallbacks(item, &_presetCallbacks);
     return item;
 }
 
@@ -128,7 +127,7 @@ scriptableTFQueryRoot (void) {
     scriptableItem_t *root = scriptableItemSubItemForName (scriptableRoot(), "TFQueryPresets");
     if (!root) {
         root = scriptableItemAlloc();
-        root->callbacks = &_rootCallbacks;
+        scriptableItemSetCallbacks(root, &_rootCallbacks);
         scriptableItemSetPropertyValueForKey(root, "TFQueryPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), root);
     }
@@ -187,7 +186,7 @@ scriptableTFQueryLoadPresets (void) {
         goto error;
     }
 
-    root->isLoading = 1;
+    scriptableItemSetIsLoading(root, 1);
 
     size_t count = json_array_size(queries);
 
@@ -219,7 +218,7 @@ scriptableTFQueryLoadPresets (void) {
 
         // create
         scriptableItem_t *scriptableQuery = _createBlankPreset();
-        scriptableQuery->isLoading = 1;
+        scriptableItemSetIsLoading(scriptableQuery, 1);
         scriptableItemSetPropertyValueForKey(scriptableQuery, json_string_value(name), "name");
 
         for (size_t item_index = 0; item_index < item_count; item_index++) {
@@ -231,12 +230,12 @@ scriptableTFQueryLoadPresets (void) {
         }
 
         scriptableItemAddSubItem(root, scriptableQuery);
-        scriptableQuery->isLoading = 0;
+        scriptableItemSetIsLoading(scriptableQuery, 0);
     }
 
     res = 0;
 error:
-    root->isLoading = 0;
+    scriptableItemSetIsLoading(root, 0);
 
     if (json != NULL) {
         json_delete(json);
@@ -254,14 +253,13 @@ scriptableTFQuerySavePresets (void) {
     json_t *json = json_object();
 
     json_t *queries = json_array();
-    for (scriptableItem_t *query = root->children; query != NULL; query = query->next) {
-
+    for (scriptableItem_t *query = scriptableItemChildren(root); query; query = scriptableItemNext(query)) {
         json_t *jsonQuery = json_object();
         const char *name = scriptableItemPropertyValueForKey(query, "name");
         json_object_set(jsonQuery, "name", json_string(name));
 
         json_t *jsonItems = json_array();
-        for (scriptableItem_t *item = query->children; item != NULL; item = item->next) {
+        for (scriptableItem_t *item = scriptableItemChildren(query); item; item = scriptableItemNext(item)) {
             const char *itemName = scriptableItemPropertyValueForKey(item, "name");
             json_array_append(jsonItems, json_string(itemName));
         }

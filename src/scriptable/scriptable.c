@@ -4,14 +4,35 @@
 #include <string.h>
 #include "scriptable/scriptable.h"
 
+struct scriptableItem_s {
+    struct scriptableItem_s *next;
+    scriptableKeyValue_t *properties;
+
+    struct scriptableItem_s *parent;
+    struct scriptableItem_s *children;
+    struct scriptableItem_s *childrenTail;
+
+    int isLoading; // prevent calling hooks while loading data
+    int isReadonly;
+
+    /// the type name, as set by scriptableItemCreateItemOfType
+    /// This property is for debug only, not really used by the code.
+    /// Is nullable;
+    char *type;
+
+    char *configDialog;
+
+    scriptableCallbacks_t *callbacks;
+};
+
 static scriptableItem_t *rootNode;
 
-scriptableKeyValue_t *
+static scriptableKeyValue_t *
 keyValuePairAlloc (void) {
     return calloc (1, sizeof (scriptableKeyValue_t));
 }
 
-void
+static void
 keyValuePairFree (scriptableKeyValue_t *p) {
     free (p->key);
     free (p->value);
@@ -21,6 +42,11 @@ keyValuePairFree (scriptableKeyValue_t *p) {
 scriptableItem_t *
 scriptableItemAlloc (void) {
     return calloc (1, sizeof (scriptableItem_t));
+}
+
+void
+scriptableItemSetCallbacks(scriptableItem_t *item, scriptableCallbacks_t *callbacks) {
+    item->callbacks = callbacks;
 }
 
 int
@@ -82,6 +108,9 @@ scriptableItemFree (scriptableItem_t *item) {
     }
     item->children = NULL;
 
+    free (item->type);
+    free (item->configDialog);
+
     free (item);
 }
 
@@ -130,7 +159,9 @@ scriptableItemSubItemForName (scriptableItem_t *item, const char *name) {
 scriptableItem_t *
 scriptableItemCreateItemOfType (scriptableItem_t *item, const char *type) {
     if (item->callbacks && item->callbacks->createItemOfType) {
-        return item->callbacks->createItemOfType (item, type);
+        scriptableItem_t *result = item->callbacks->createItemOfType (item, type);
+        result->type = strdup(type);
+        return result;
     }
     return NULL;
 }
@@ -161,11 +192,92 @@ scriptableItemClone (scriptableItem_t *item) {
         scriptableItemAddSubItem(cloned, clonedChild);
     }
     cloned->callbacks = item->callbacks;
-    cloned->configDialog = item->configDialog;
+    cloned->type = item->type ? strdup(item->type) : NULL;
+    cloned->configDialog = item->configDialog ? strdup(item->configDialog) : NULL;
 
     return cloned;
 }
 
+scriptableItem_t *
+scriptableItemParent(scriptableItem_t *item) {
+    return item->parent;
+}
+
+scriptableKeyValue_t *
+scriptableItemProperties(scriptableItem_t *item) {
+    return item->properties;
+}
+
+int
+scriptableItemIsList(scriptableItem_t *item) {
+    return item->callbacks != NULL && item->callbacks->isList;
+}
+
+int
+scriptableItemIsReorderable(scriptableItem_t *item) {
+    return item->callbacks != NULL && item->callbacks->isReorderable;
+}
+
+int
+scriptableItemIsRenamable(scriptableItem_t *item) {
+    return item->callbacks != NULL && item->callbacks->allowRenaming;
+}
+
+int
+scriptableItemIsLoading(scriptableItem_t *item) {
+    return item->isLoading;
+}
+
+void
+scriptableItemSetIsLoading(scriptableItem_t *item, int isLoading) {
+    item->isLoading = isLoading;
+}
+
+int
+scriptableItemIsReadOnly(scriptableItem_t *item) {
+    return item->isReadonly;
+}
+
+void
+scriptableItemSetIsReadOnly(scriptableItem_t *item, int isReadOnly) {
+    item->isReadonly = isReadOnly;
+}
+
+const char *
+scriptableItemConfigDialog(scriptableItem_t *item) {
+    return item->configDialog;
+}
+
+void
+scriptableItemSetConfigDialog(scriptableItem_t *item, const char *configDialog) {
+    if (item->configDialog != NULL) {
+        free (item->configDialog);
+        item->configDialog = NULL;
+    }
+    if (configDialog != NULL) {
+        item->configDialog = strdup(configDialog);
+    }
+}
+
+
+const char *
+scriptableItemPasteboardIdentifier(scriptableItem_t *item) {
+    if (item->callbacks == NULL) {
+        return NULL;
+    }
+
+    return item->callbacks->pasteboardItemIdentifier;
+}
+
+scriptableItem_t *
+scriptableItemChildren(scriptableItem_t *item) {
+    return item->children;
+}
+
+scriptableItem_t *
+scriptableItemNext(scriptableItem_t *item) {
+    return item->next;
+}
 
 void
 scriptableItemInsertSubItemAtIndex (scriptableItem_t *item, scriptableItem_t *subItem, unsigned int insertPosition) {

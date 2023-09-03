@@ -606,12 +606,12 @@ static NSMutableArray *g_converterControllers;
 #pragma mark - ScriptableSelectDelegate
 
 - (void)scriptableSelectItemSelected:(nonnull scriptableItem_t *)item {
-    if (item->parent == scriptableEncoderRoot()) {
+    if (scriptableItemParent(item) == scriptableEncoderRoot()) {
         const char *name = scriptableItemPropertyValueForKey(item, "name");
         deadbeef->conf_set_str ("converter.encoder_preset_name", name);
         [self updateFilenamesPreview];
     }
-    else if (item->parent == scriptableDspRoot()) {
+    else if (scriptableItemParent(item) == scriptableDspRoot()) {
         const char *name = scriptableItemPropertyValueForKey(item, "name");
         deadbeef->conf_set_str ("converter.dsp_preset_name", name);
     }

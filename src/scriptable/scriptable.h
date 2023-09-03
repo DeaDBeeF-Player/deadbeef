@@ -17,60 +17,54 @@ typedef struct stringListItem_s {
 } scriptableStringListItem_t;
 
 struct scriptableItem_s;
+typedef struct scriptableItem_s scriptableItem_t;
 
+// FIXME: this is not extensible (needs size property)
 typedef struct {
+    /// FIXME: convert everything to function pointers
+
     int isList; // for example, dsp preset, or dsp chain
     int isReorderable; // whether items can be reordered by the user
     int allowRenaming; // whether the names can be changed by the user
-    const char *pasteboardItemIdentifier; // for drag drop on mac
+
+    /// for drag drop on mac
+    const char *pasteboardItemIdentifier;
+
+    /// A text to display in UI when the item is read-only
     const char *readonlyPrefix;
 
-    scriptableStringListItem_t *(*factoryItemNames)(struct scriptableItem_s *item);
+    scriptableStringListItem_t *(*factoryItemNames)(scriptableItem_t *item);
 
-    scriptableStringListItem_t *(*factoryItemTypes)(struct scriptableItem_s *item);
+    scriptableStringListItem_t *(*factoryItemTypes)(scriptableItem_t *item);
 
-    struct scriptableItem_s *(*createItemOfType)(struct scriptableItem_s *item, const char *type);
+    scriptableItem_t *(*createItemOfType)(scriptableItem_t *item, const char *type);
 
-    int (*isSubItemNameAllowed)(struct scriptableItem_s *item, const char *name);
+    int (*isSubItemNameAllowed)(scriptableItem_t *item, const char *name);
 
     // additional update logic, such as save the item data to disk
-    int (*updateItem)(struct scriptableItem_s *item);
+    int (*updateItem)(scriptableItem_t *item);
 
     // additional update logic, such as save all subItems data to disk, if it's stored in a single file
-    int (*updateItemForSubItem)(struct scriptableItem_s *item, struct scriptableItem_s *subItem);
+    int (*updateItemForSubItem)(scriptableItem_t *item, scriptableItem_t *subItem);
 
     // additional remove logic, such as delete subItem data from disk
-    int (*removeSubItem)(struct scriptableItem_s *item, struct scriptableItem_s *subItem);
+    int (*removeSubItem)(scriptableItem_t *item, scriptableItem_t *subItem);
 
-    void (*free)(struct scriptableItem_s *item);
+    void (*free)(scriptableItem_t *item);
 
-    int (*save)(struct scriptableItem_s *item);
+    int (*save)(scriptableItem_t *item);
 
-    char * (*saveToString)(struct scriptableItem_s *item);
+    char * (*saveToString)(scriptableItem_t *item);
 
-    void (*propertyValueWillChangeForKey) (struct scriptableItem_s *item, const char *key);
-    void (*propertyValueDidChangeForKey) (struct scriptableItem_s *item, const char *key);
+    void (*propertyValueWillChangeForKey) (scriptableItem_t *item, const char *key);
+    void (*propertyValueDidChangeForKey) (scriptableItem_t *item, const char *key);
 } scriptableCallbacks_t;
-
-typedef struct scriptableItem_s {
-    struct scriptableItem_s *next;
-    scriptableKeyValue_t *properties;
-
-    struct scriptableItem_s *parent;
-    struct scriptableItem_s *children;
-    struct scriptableItem_s *childrenTail;
-
-    int isLoading; // prevent calling hooks while loading data
-    int isReadonly;
-
-    const char *type; // the type name, as used by scriptableItemCreateItemOfType
-    const char *configDialog;
-
-    scriptableCallbacks_t *callbacks;
-} scriptableItem_t;
 
 scriptableItem_t *
 scriptableItemAlloc (void);
+
+void
+scriptableItemSetCallbacks(scriptableItem_t *item, scriptableCallbacks_t *callbacks);
 
 void
 scriptableItemFree (scriptableItem_t *item);
@@ -110,6 +104,48 @@ scriptableItemAddSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
 
 scriptableItem_t *
 scriptableItemClone (scriptableItem_t *item);
+
+scriptableItem_t *
+scriptableItemParent(scriptableItem_t *item);
+
+scriptableKeyValue_t *
+scriptableItemProperties(scriptableItem_t *item);
+
+int
+scriptableItemIsList(scriptableItem_t *item);
+
+int
+scriptableItemIsReorderable(scriptableItem_t *item);
+
+int
+scriptableItemIsRenamable(scriptableItem_t *item);
+
+int
+scriptableItemIsLoading(scriptableItem_t *item);
+
+void
+scriptableItemSetIsLoading(scriptableItem_t *item, int isLoading);
+
+int
+scriptableItemIsReadOnly(scriptableItem_t *item);
+
+void
+scriptableItemSetIsReadOnly(scriptableItem_t *item, int isReadOnly);
+
+const char *
+scriptableItemConfigDialog(scriptableItem_t *item);
+
+void
+scriptableItemSetConfigDialog(scriptableItem_t *item, const char *configDialog);
+
+const char *
+scriptableItemPasteboardIdentifier(scriptableItem_t *item);
+
+scriptableItem_t *
+scriptableItemChildren(scriptableItem_t *item);
+
+scriptableItem_t *
+scriptableItemNext(scriptableItem_t *item);
 
 // - CRUD
 

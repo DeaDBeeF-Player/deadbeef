@@ -48,7 +48,7 @@
         self.customButtonsSegmentedControl.hidden = NO;
     }
 
-    if (self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->isReorderable) {
+    if (scriptableItemIsReorderable(self.dataSource.scriptable)) {
         [self.nodeList registerForDraggedTypes: @[_dataSource.pasteboardItemIdentifier]];
     }
 
@@ -197,7 +197,7 @@
     }
     scriptableItem_t *item = scriptableItemChildAtIndex(_dataSource.scriptable, (unsigned int)index);
 
-    if (item->callbacks && item->callbacks->isList) {
+    if (scriptableItemIsList(item)) {
         // recurse!
         self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
         self.nodeDataSource = [ScriptableTableDataSource dataSourceWithScriptable:item];
@@ -219,7 +219,7 @@
         self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
 
         self.propertiesViewController.dataSource = self.propertiesDataSource;
-        self.propertiesPanelResetButton.enabled = !item->isReadonly;
+        self.propertiesPanelResetButton.enabled = !scriptableItemIsReadOnly(item);
         [self.view.window beginSheet:_propertiesPanel completionHandler:^(NSModalResponse returnCode) {
         }];
     }
@@ -278,7 +278,7 @@
 }
 
 - (BOOL)addEnabled {
-    return !self.dataSource.scriptable->isReadonly;
+    return !scriptableItemIsReadOnly(self.dataSource.scriptable);
 }
 
 - (BOOL)removeEnabled {
@@ -286,7 +286,7 @@
     if (!item) {
         return NO;
     }
-    return !item->isReadonly;
+    return !scriptableItemIsReadOnly(item);
 }
 
 - (BOOL)configureEnabled {
@@ -319,8 +319,8 @@
     scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
     char *name = scriptableItemFormattedName(item);
 
-    view.textField.enabled = !item->isReadonly;
-    if (self.dataSource.scriptable->callbacks && self.dataSource.scriptable->callbacks->allowRenaming) {
+    view.textField.enabled = !scriptableItemIsReadOnly(item);
+    if (scriptableItemIsRenamable(self.dataSource.scriptable)) {
         view.textField.selectable = NO;
         view.textField.editable = YES;
     }
@@ -353,11 +353,11 @@
             return; // name unchanged
         }
 
-        if (scriptableItemContainsSubItemWithName (item->parent, value)) {
+        if (scriptableItemContainsSubItemWithName (scriptableItemParent(item), value)) {
             [self.errorViewer scriptableErrorViewer:self duplicateNameErrorForItem:item];
             [textField becomeFirstResponder];
         }
-        else if (!scriptableItemIsSubItemNameAllowed (item->parent, value)) {
+        else if (!scriptableItemIsSubItemNameAllowed (scriptableItemParent(item), value)) {
             [self.errorViewer scriptableErrorViewer:self invalidNameErrorForItem:item];
             [textField becomeFirstResponder];
         }

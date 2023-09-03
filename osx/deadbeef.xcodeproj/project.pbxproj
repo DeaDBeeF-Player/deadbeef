@@ -749,8 +749,6 @@
 		2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */; };
 		2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */; };
-		2D20924E2A9A077800CDBB2B /* scriptable_tfquery.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20924C2A9A077800CDBB2B /* scriptable_tfquery.h */; };
-		2D20924F2A9A077800CDBB2B /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
 		2D2092502A9A82E600CDBB2B /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
 		2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D20D12323F099F4008ACBE6 /* NSImage+Additions.m */; };
@@ -1997,6 +1995,7 @@
 		2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */; };
 		2DAF900426A4533600C1CA25 /* coverinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF900226A4533600C1CA25 /* coverinfo.h */; };
 		2DAF900526A4533600C1CA25 /* coverinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF900326A4533600C1CA25 /* coverinfo.c */; };
+		2DB0193E2AA50E81003D4328 /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
 		2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */; };
 		2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05E76252E3F3E0090635E /* iconPluginsTemplate.pdf */; };
 		2DB05EB8252E47A00090635E /* iconNetworkTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05EB7252E47A00090635E /* iconNetworkTemplate.pdf */; };
@@ -14396,7 +14395,6 @@
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
-				2D20924E2A9A077800CDBB2B /* scriptable_tfquery.h in Headers */,
 				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
 				2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
@@ -16505,6 +16503,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DB0193E2AA50E81003D4328 /* scriptable_tfquery.c in Sources */,
 				2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */,
 				2D92D33E29B9324A00218F1D /* pluginsettings.c in Sources */,
 				2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */,
@@ -17949,7 +17948,6 @@
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */,
 				2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */,
-				2D20924F2A9A077800CDBB2B /* scriptable_tfquery.c in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
 				2DD3774B27404E11007AD315 /* VisualizationSettingsUtil.m in Sources */,
 				2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
@@ -19824,6 +19822,7 @@
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -19872,6 +19871,7 @@
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
+					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";

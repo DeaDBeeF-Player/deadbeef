@@ -10,7 +10,7 @@ extern DB_functions_t *deadbeef;
 @implementation ScriptableTableDataSource
 
 + (ScriptableTableDataSource *)dataSourceWithScriptable:(scriptableItem_t *)scriptable {
-    if (scriptable->callbacks && scriptable->callbacks->isReorderable) {
+    if (scriptableItemIsReorderable(scriptable)) {
         return [[ScriptableReorerableTableDataSource alloc] initWithScriptable:scriptable];
     }
     else {
@@ -75,13 +75,17 @@ extern DB_functions_t *deadbeef;
 @implementation ScriptableReorerableTableDataSource
 
 - (NSString *)pasteboardItemIdentifier {
-    return @(self.scriptable->callbacks->pasteboardItemIdentifier);
+    const char *identifier = scriptableItemPasteboardIdentifier(self.scriptable);
+    if (identifier == NULL) {
+        return nil;
+    }
+    return @(identifier);
 }
 
 #pragma mark NSTableViewDataSource Drag & Drop
 
 - (id <NSPasteboardWriting>)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
-    if (!self.scriptable->callbacks || !self.scriptable->callbacks->isReorderable) {
+    if (!scriptableItemIsReorderable(self.scriptable)) {
         return nil;
     }
     scriptableItem_t *item = scriptableItemChildAtIndex(self.scriptable, (unsigned int)row);

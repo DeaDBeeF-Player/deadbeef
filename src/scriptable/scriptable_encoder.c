@@ -23,10 +23,10 @@ static int
 scriptableEncoderPresetSave(scriptableItem_t *item);
 
 static int
-scriptableEncoderUpdateItem (struct scriptableItem_s *item);
+scriptableEncoderUpdateItem (scriptableItem_t *item);
 
 static void
-scriptableEncoderPropertyValueWillChangeForKey (struct scriptableItem_s *item, const char *key);
+scriptableEncoderPropertyValueWillChangeForKey (scriptableItem_t *item, const char *key);
 
 static int
 scriptableEncoderDelete (scriptableItem_t *item);
@@ -92,7 +92,7 @@ scriptableEncoderItemTypes (scriptableItem_t *item) {
 
 static scriptableItem_t *scriptableEncoderCreateBlankPreset(void) {
     scriptableItem_t *item = scriptableItemAlloc();
-    item->callbacks = &scriptableEncoderCallbacks;
+    scriptableItemSetCallbacks (item, &scriptableEncoderCallbacks);
     return item;
 }
 
@@ -255,12 +255,12 @@ scriptableEncoderPresetSave(scriptableItem_t *item) {
 }
 
 static int
-scriptableEncoderUpdateItem (struct scriptableItem_s *item) {
+scriptableEncoderUpdateItem (scriptableItem_t *item) {
     return scriptableItemSave (item);
 }
 
 static void
-scriptableEncoderPropertyValueWillChangeForKey (struct scriptableItem_s *item, const char *key) {
+scriptableEncoderPropertyValueWillChangeForKey (scriptableItem_t *item, const char *key) {
     if (!strcmp (key, "name")) {
         // FIXME: this deletes the preset during rename.
         // If the next save operation fails - data loss will occur.
@@ -273,7 +273,7 @@ scriptableEncoderRoot (void) {
     scriptableItem_t *encoderRoot = scriptableItemSubItemForName (scriptableRoot(), "EncoderPresets");
     if (!encoderRoot) {
         encoderRoot = scriptableItemAlloc();
-        encoderRoot->callbacks = &scriptableRootCallbacks;
+        scriptableItemSetCallbacks(encoderRoot, &scriptableRootCallbacks);
         scriptableItemSetPropertyValueForKey(encoderRoot, "EncoderPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), encoderRoot);
     }
@@ -308,7 +308,7 @@ scriptableEncoderRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *su
 void
 scriptableEncoderLoadPresets (void) {
     scriptableItem_t *root = scriptableEncoderRoot();
-    root->isLoading = 1;
+    scriptableItemSetIsLoading(root, 1);
 
     char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/presets/encoders", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG)) < 0) {
@@ -334,18 +334,18 @@ scriptableEncoderLoadPresets (void) {
             if (snprintf (s, sizeof (s), "%s/%s", presetspath, namelist[i]->d_name) > 0){
 
                 scriptableItem_t *preset = scriptableEncoderCreateBlankPreset ();
-                preset->isLoading = 1;
-                preset->configDialog = configdialog;
+                scriptableItemSetIsLoading(preset, 1);
+                scriptableItemSetConfigDialog(preset, configdialog);
                 if (scriptableItemLoadEncoderPreset (preset, namelist[i]->d_name, s)) {
                     scriptableItemFree (preset);
                 }
                 else {
                     if (di == 0) {
-                        preset->isReadonly = 1;
+                        scriptableItemSetIsReadOnly(preset, 1);
                     }
                     scriptableItemAddSubItem(root, preset);
                 }
-                preset->isLoading = 0;
+                scriptableItemSetIsLoading(preset, 0);
             }
         }
         for (i = 0; i < n; i++) {
@@ -355,7 +355,7 @@ scriptableEncoderLoadPresets (void) {
         namelist = NULL;
     }
 
-    root->isLoading = 0;
+    scriptableItemSetIsLoading(root, 0);
 }
 
 static const char *
