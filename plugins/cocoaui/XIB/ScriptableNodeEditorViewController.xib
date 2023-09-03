@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -46,15 +46,14 @@
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
-                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="x1p-KS-Z9V">
-                                                <rect key="frame" x="1" y="1" width="313" height="17"/>
+                                                <rect key="frame" x="1" y="1" width="304" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Ge-Os-yYF">
-                                                        <rect key="frame" x="0.0" y="0.0" width="313" height="17"/>
-                                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="6Ge-Os-yYF">
+                                                        <rect key="frame" x="-2" y="1" width="308" height="16"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Table View Cell" id="kLt-6y-leh">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -66,6 +65,11 @@
                                                         </connections>
                                                     </textField>
                                                 </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="6Ge-Os-yYF" firstAttribute="width" secondItem="x1p-KS-Z9V" secondAttribute="width" id="Ivk-XM-iKf"/>
+                                                    <constraint firstItem="6Ge-Os-yYF" firstAttribute="top" secondItem="x1p-KS-Z9V" secondAttribute="top" id="ut6-gz-Acu"/>
+                                                    <constraint firstItem="6Ge-Os-yYF" firstAttribute="leading" secondItem="x1p-KS-Z9V" secondAttribute="leading" id="vqV-b4-9jv"/>
+                                                </constraints>
                                                 <connections>
                                                     <outlet property="textField" destination="6Ge-Os-yYF" id="peS-vQ-jL6"/>
                                                 </connections>
@@ -153,7 +157,7 @@
                         <rect key="frame" x="20" y="48" width="551" height="230"/>
                         <clipView key="contentView" id="zcI-Og-GmQ" customClass="FlippedClipView">
                             <rect key="frame" x="1" y="1" width="549" height="228"/>
-                            <autoresizingMask key="autoresizingMask"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TeJ-pI-xP9" customClass="PropertySheetContentView">
                                     <rect key="frame" x="0.0" y="0.0" width="549" height="228"/>
@@ -218,9 +222,9 @@ Gw
         </viewController>
     </objects>
     <resources>
-        <image name="NSActionTemplate" width="15" height="15"/>
-        <image name="NSAddTemplate" width="14" height="13"/>
-        <image name="NSRemoveTemplate" width="14" height="4"/>
+        <image name="NSActionTemplate" width="20" height="20"/>
+        <image name="NSAddTemplate" width="18" height="17"/>
+        <image name="NSRemoveTemplate" width="18" height="5"/>
         <image name="btnduplicateTemplate" width="26" height="26"/>
     </resources>
 </document>
