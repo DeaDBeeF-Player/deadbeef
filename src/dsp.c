@@ -384,7 +384,7 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
 
     if (input_fmt->flags & DDB_WAVEFORMAT_FLAG_IS_DOP) {
         memcpy(out_fmt, input_fmt, sizeof(ddb_waveformat_t));
-        *out_bytes = (char*)malloc(inputsize);
+        *out_bytes = ensure_dsp_temp_buffer (inputsize);
         *out_numbytes = inputsize;
         memcpy(*out_bytes, input, inputsize);
         return 1;
@@ -571,4 +571,3 @@ dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, i
     
     return inputsize;
 }
-
