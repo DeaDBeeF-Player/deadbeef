@@ -29,17 +29,24 @@
 
 @protocol WidgetProtocol;
 
+#ifdef ENABLE_MEDIALIB
+@class MediaLibraryManager;
+#endif
+
 @interface MainWindowController : NSWindowController
 
 @property (unsafe_unretained) IBOutlet NSTextField *statusBar;
 @property (unsafe_unretained) IBOutlet DdbSeekBar *seekBar;
 @property (unsafe_unretained) IBOutlet NSSlider *volumeBar;
 @property (strong) IBOutlet MainWindowSidebarViewController *sidebarOutlineViewController;
+@property (unsafe_unretained) IBOutlet NSSegmentedControl *buttonBar;
 
+#ifdef ENABLE_MEDIALIB
+@property (nonatomic) MediaLibraryManager *mediaLibraryManager;
+#endif
 
 - (IBAction)seekBarAction:(id)sender;
 - (IBAction)volumeBarAction:(id)sender;
-@property (unsafe_unretained) IBOutlet NSSegmentedControl *buttonBar;
 
 - (IBAction)tbClicked:(id)sender;
 

@@ -93,7 +93,7 @@
 #include "scriptable/scriptable.h"
 #include "scriptable/scriptable_dsp.h"
 #include "scriptable/scriptable_encoder.h"
-#include "scriptable/scriptable_tfquery.h"
+//#include "scriptable/scriptable_tfquery.h"
 #endif
 
 #ifndef PREFIX
@@ -1493,6 +1493,10 @@ main (int argc, char *argv[]) {
     }
 
     messagepump_init (); // required to push messages while handling commandline
+
+#ifdef OSX_APPBUNDLE
+    scriptableInitShared();
+#endif
     if (plug_load_all ()) { // required to add files to playlist from commandline
         exit (-1);
     }
@@ -1521,11 +1525,8 @@ main (int argc, char *argv[]) {
 
 
 #ifdef OSX_APPBUNDLE
-    scriptableInitShared();
     scriptableDspLoadPresets(scriptableRootShared());
     scriptableEncoderLoadPresets(scriptableRootShared());
-    int tf_query_result = scriptableTFQueryLoadPresets(scriptableRootShared());
-    assert (tf_query_result != -1);
 #endif
 
     streamer_init ();

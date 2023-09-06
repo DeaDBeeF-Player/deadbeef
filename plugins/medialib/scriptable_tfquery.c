@@ -26,7 +26,6 @@
 #include <string.h>
 #include <jansson.h>
 #include "scriptable_tfquery.h"
-#include "../conf.h"
 
 // structure:
 // - presetRoot
@@ -36,6 +35,7 @@
 //             tfStrings: List<String>
 //       }
 
+static DB_functions_t *deadbeef;
 
 static scriptableStringListItem_t *
 _itemNames (scriptableItem_t *item) {
@@ -181,7 +181,7 @@ int
 scriptableTFQueryLoadPresets (scriptableItem_t *scriptableRoot) {
     int res = -1;
     char *buffer = calloc(1, 20000);
-    conf_get_str("medialib.tfqueries", NULL, buffer, 20000);
+    deadbeef->conf_get_str("medialib.tfqueries", NULL, buffer, 20000);
 
     json_error_t error;
     json_t *json = json_loads (buffer, 0, &error);
@@ -295,8 +295,8 @@ scriptableTFQuerySavePresets (scriptableItem_t *scriptableRoot) {
     if (data == NULL) {
         goto error;
     }
-    conf_set_str("medialib.tfqueries", data);
-    conf_save();
+    deadbeef->conf_set_str("medialib.tfqueries", data);
+    deadbeef->conf_save();
     free (data);
 
     res = 0;
@@ -305,4 +305,11 @@ error:
     json_delete(json);
 
     return res;
+}
+
+void
+ml_scriptable_init(DB_functions_t *_deadbeef) {
+    deadbeef = _deadbeef;
+    int tf_query_result = scriptableTFQueryLoadPresets(scriptableRootShared());
+    assert (tf_query_result != -1);
 }

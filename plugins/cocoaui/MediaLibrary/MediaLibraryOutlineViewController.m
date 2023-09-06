@@ -37,7 +37,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSPopUpButton *selectorPopup;
 
 @property (atomic) DB_mediasource_t *medialibPlugin;
-@property (atomic,readonly) ddb_mediasource_source_t medialibSource;
+@property (atomic,readonly) ddb_mediasource_source_t *medialibSource;
 @property (atomic) ddb_artwork_plugin_t *artworkPlugin;
 
 @property (nonatomic) ddb_medialib_item_t *medialibItemTree;
@@ -54,7 +54,7 @@ extern DB_functions_t *deadbeef;
 
 @implementation MediaLibraryOutlineViewController
 
-- (ddb_mediasource_source_t)medialibSource {
+- (ddb_mediasource_source_t *)medialibSource {
     AppDelegate *appDelegate = NSApplication.sharedApplication.delegate;
     return appDelegate.mediaLibraryManager.source;
 }

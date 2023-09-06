@@ -141,7 +141,7 @@ _ml_source_get_music_paths (medialib_source_t *source, size_t *medialib_paths_co
 
     return medialib_paths;
 }
-ddb_mediasource_source_t
+ddb_mediasource_source_t *
 ml_create_source (const char *source_path) {
     medialib_source_t *source = calloc (1, sizeof (medialib_source_t));
     snprintf (source->source_conf_prefix, sizeof (source->source_conf_prefix), "medialib.%s.", source_path);
@@ -166,11 +166,11 @@ ml_create_source (const char *source_path) {
         });
     });
 
-    return (ddb_mediasource_source_t)source;
+    return (ddb_mediasource_source_t *)source;
 }
 
 void
-ml_free_source (ddb_mediasource_source_t _source) {
+ml_free_source (ddb_mediasource_source_t *_source) {
     medialib_source_t *source = (medialib_source_t *)_source;
 
     dispatch_sync(source->sync_queue, ^{
@@ -199,7 +199,7 @@ ml_free_source (ddb_mediasource_source_t _source) {
 }
 
 ddb_mediasource_list_selector_t *
-ml_get_selectors (ddb_mediasource_source_t source) {
+ml_get_selectors (ddb_mediasource_source_t *source) {
     static ddb_mediasource_list_selector_t selectors[] = {
         (ddb_mediasource_list_selector_t)SEL_ALBUMS,
         (ddb_mediasource_list_selector_t)SEL_ARTISTS,
@@ -211,12 +211,12 @@ ml_get_selectors (ddb_mediasource_source_t source) {
 }
 
 void
-ml_free_selectors (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t *selectors) {
+ml_free_selectors (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t *selectors) {
     // the list is predefined, nothing to free
 }
 
 const char *
-ml_get_name_for_selector (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector) {
+ml_get_name_for_selector (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t selector) {
     medialibSelector_t index = (medialibSelector_t)selector;
     switch (index) {
     case SEL_ALBUMS:
@@ -234,7 +234,7 @@ ml_get_name_for_selector (ddb_mediasource_source_t source, ddb_mediasource_list_
 }
 
 void
-ml_set_source_enabled (ddb_mediasource_source_t _source, int enabled) {
+ml_set_source_enabled (ddb_mediasource_source_t *_source, int enabled) {
     __block int notify = 0;
     medialib_source_t *source = (medialib_source_t *)_source;
     dispatch_sync(source->sync_queue, ^{
@@ -257,7 +257,7 @@ ml_set_source_enabled (ddb_mediasource_source_t _source, int enabled) {
 }
 
 int
-ml_is_source_enabled (ddb_mediasource_source_t _source) {
+ml_is_source_enabled (ddb_mediasource_source_t *_source) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block int enabled = 0;
     dispatch_sync(source->sync_queue, ^{
@@ -267,7 +267,7 @@ ml_is_source_enabled (ddb_mediasource_source_t _source) {
 }
 
 void
-ml_refresh (ddb_mediasource_source_t _source) {
+ml_refresh (ddb_mediasource_source_t *_source) {
     medialib_source_t *source = (medialib_source_t *)_source;
 
     __block int64_t scanner_current_index = -1;

@@ -541,7 +541,7 @@ _create_item_tree_from_collection(const char *filter, medialibSelector_t index, 
 }
 
 void
-ml_free_list (ddb_mediasource_source_t source, ddb_medialib_item_t *_list) {
+ml_free_list (ddb_mediasource_source_t *source, ddb_medialib_item_t *_list) {
     ml_tree_item_t *list = (ml_tree_item_t *)_list;
     while (list) {
         ml_tree_item_t *next = list->next;

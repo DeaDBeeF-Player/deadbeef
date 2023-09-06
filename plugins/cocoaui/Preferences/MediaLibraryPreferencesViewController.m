@@ -22,7 +22,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) DB_mediasource_t *medialibPlugin;
 @property (nonatomic) ddb_medialib_plugin_api_t *medialib;
-@property (nonatomic) ddb_mediasource_source_t medialibSource;
+@property (nonatomic) ddb_mediasource_source_t *medialibSource;
 @property (nonatomic) BOOL enabled;
 
 @property (nonatomic) int listenerId;

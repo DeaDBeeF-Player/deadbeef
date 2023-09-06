@@ -1995,7 +1995,6 @@
 		2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */; };
 		2DAF900426A4533600C1CA25 /* coverinfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DAF900226A4533600C1CA25 /* coverinfo.h */; };
 		2DAF900526A4533600C1CA25 /* coverinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DAF900326A4533600C1CA25 /* coverinfo.c */; };
-		2DB0193E2AA50E81003D4328 /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
 		2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */; };
 		2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05E76252E3F3E0090635E /* iconPluginsTemplate.pdf */; };
 		2DB05EB8252E47A00090635E /* iconNetworkTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DB05EB7252E47A00090635E /* iconNetworkTemplate.pdf */; };
@@ -2013,6 +2012,7 @@
 		2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */; };
 		2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */; };
 		2DB520E62AA8FADB00B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
+		2DB520E72AA8FF0800B6250A /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
 		2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */; };
 		2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */; };
 		2DB86E4F295CFFBA0011014C /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB86E3F295CFFB90011014C /* config.h */; };
@@ -9312,8 +9312,6 @@
 				2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */,
 				2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */,
 				2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */,
-				2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */,
-				2D20924C2A9A077800CDBB2B /* scriptable_tfquery.h */,
 			);
 			path = scriptable;
 			sourceTree = "<group>";
@@ -10307,6 +10305,8 @@
 		2D887BC524B1C82A0078392F /* medialib */ = {
 			isa = PBXGroup;
 			children = (
+				2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */,
+				2D20924C2A9A077800CDBB2B /* scriptable_tfquery.h */,
 				2D887BC724B1C82A0078392F /* medialib.c */,
 				2D887BCD24B1C82A0078392F /* medialib.h */,
 				2D78C54327568A4D00F96F9D /* medialibcommon.c */,
@@ -16512,7 +16512,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DB0193E2AA50E81003D4328 /* scriptable_tfquery.c in Sources */,
 				2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */,
 				2D92D33E29B9324A00218F1D /* pluginsettings.c in Sources */,
 				2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */,
@@ -17003,6 +17002,7 @@
 				2D78C56127568FFB00F96F9D /* medialibscanner.c in Sources */,
 				2DB520E62AA8FADB00B6250A /* scriptable.c in Sources */,
 				2D78C5622756915900F96F9D /* medialibtree.c in Sources */,
+				2DB520E72AA8FF0800B6250A /* scriptable_tfquery.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

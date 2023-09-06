@@ -24,7 +24,8 @@
 #ifndef scriptable_tfquery_h
 #define scriptable_tfquery_h
 
-#include "scriptable.h"
+#include <deadbeef/deadbeef.h>
+#include "scriptable/scriptable.h"
 
 scriptableItem_t *
 scriptableTFQueryRoot (scriptableItem_t *scriptableRoot);
@@ -34,5 +35,8 @@ scriptableTFQueryLoadPresets (scriptableItem_t *scriptableRoot);
 
 int
 scriptableTFQuerySavePresets (scriptableItem_t *scriptableRoot);
+
+void
+ml_scriptable_init(DB_functions_t *_deadbeef);
 
 #endif /* scriptable_tfquery_h */

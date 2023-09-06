@@ -55,29 +55,29 @@ typedef struct medialib_source_s {
     char source_conf_prefix[100];
 } medialib_source_t;
 
-ddb_mediasource_source_t
+ddb_mediasource_source_t *
 ml_create_source (const char *source_path);
 
 void
-ml_free_source (ddb_mediasource_source_t _source);
+ml_free_source (ddb_mediasource_source_t *_source);
 
 ddb_mediasource_list_selector_t *
-ml_get_selectors (ddb_mediasource_source_t source);
+ml_get_selectors (ddb_mediasource_source_t *source);
 
 void
-ml_free_selectors (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t *selectors);
+ml_free_selectors (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t *selectors);
 
 const char *
-ml_get_name_for_selector (ddb_mediasource_source_t source, ddb_mediasource_list_selector_t selector);
+ml_get_name_for_selector (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t selector);
 
 void
-ml_set_source_enabled (ddb_mediasource_source_t _source, int enabled);
+ml_set_source_enabled (ddb_mediasource_source_t *_source, int enabled);
 
 int
-ml_is_source_enabled (ddb_mediasource_source_t _source);
+ml_is_source_enabled (ddb_mediasource_source_t *_source);
 
 void
-ml_refresh (ddb_mediasource_source_t _source);
+ml_refresh (ddb_mediasource_source_t *_source);
 
 struct json_t *
 _ml_get_music_paths (medialib_source_t *source);

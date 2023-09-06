@@ -27,6 +27,9 @@
 #import "DesignModeState.h"
 #import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
+#ifdef ENABLE_MEDIALIB
+#import "MediaLibraryManager.h"
+#endif
 #import "PlaylistWidget.h"
 #import "PlaylistWithTabsWidget.h"
 #import "PreferencesWindowController.h"
@@ -35,7 +38,6 @@
 #import "SidebarSplitViewController.h"
 #import "TrackPositionFormatter.h"
 #include <deadbeef/deadbeef.h>
-#include <scriptable/scriptable_tfquery.h>
 #include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
@@ -51,7 +53,7 @@ extern DB_functions_t *deadbeef;
     int _deletePlaylistIndex;
 }
 
-@property (nonatomic) ScriptableTableDataSource *tfQueriesDataSource;
+@property (nonatomic) ScriptableTableDataSource *mlQueriesDataSource;
 @property (nonatomic) ScriptableSelectViewController *tfQuerySelectViewController;
 
 @property (nonatomic,weak) IBOutlet NSView *designableContainerView;
@@ -123,7 +125,11 @@ extern DB_functions_t *deadbeef;
     self.playlistWithTabsView = self.splitViewController.bodyViewController.wrapperView;
     self.designableContainerView = self.splitViewController.bodyViewController.designableView;
 
-    self.tfQueriesDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableTFQueryRoot(scriptableRootShared())];
+
+    if (self.mediaLibraryManager.medialibPlugin && self.mediaLibraryManager.source) {
+        scriptableItem_t *tfQueryRoot =  self.mediaLibraryManager.medialibPlugin->get_queries_scriptable(self.mediaLibraryManager.source);
+        self.mlQueriesDataSource = [ScriptableTableDataSource dataSourceWithScriptable:tfQueryRoot];
+    }
 
     // preset list and browse button
     self.tfQuerySelectViewController = [ScriptableSelectViewController new];
@@ -131,7 +137,7 @@ extern DB_functions_t *deadbeef;
     self.tfQuerySelectViewController.view.frame = _tfQueryContainer.bounds;
     [_tfQueryContainer addSubview:self.tfQuerySelectViewController.view];
     self.tfQuerySelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
-    self.tfQuerySelectViewController.dataSource = self.tfQueriesDataSource;
+    self.tfQuerySelectViewController.dataSource = self.mlQueriesDataSource;
 
 
 #else
@@ -554,7 +560,8 @@ static char sb_text[512];
         [self.tfQuerySelectViewController reloadData];
 
         // FIXME: save only when the dialog is closed
-        scriptableTFQuerySavePresets(scriptableRootShared());
+        // FIXME: commented during transition of the code into medialib plugin
+//        scriptableTFQuerySavePresets(scriptableRootShared());
     });
 }
 

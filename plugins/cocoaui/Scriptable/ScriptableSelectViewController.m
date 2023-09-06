@@ -44,6 +44,9 @@
 }
 
 - (void)reloadData {
+    if (self.dataSource == nil) {
+        return;
+    }
     NSInteger index = self.indexOfSelectedItem;
 
     [self.nameList removeAllItems];
