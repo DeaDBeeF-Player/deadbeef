@@ -33,9 +33,6 @@ scriptableTFQueryRoot (scriptableItem_t *scriptableRoot);
 int
 scriptableTFQueryLoadPresets (scriptableItem_t *scriptableRoot);
 
-int
-scriptableTFQuerySavePresets (scriptableItem_t *scriptableRoot);
-
 void
 ml_scriptable_init(DB_functions_t *_deadbeef);
 

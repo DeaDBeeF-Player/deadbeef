@@ -560,8 +560,13 @@ static char sb_text[512];
         [self.tfQuerySelectViewController reloadData];
 
         // FIXME: save only when the dialog is closed
-        // FIXME: commented during transition of the code into medialib plugin
-//        scriptableTFQuerySavePresets(scriptableRootShared());
+        if (self.mediaLibraryManager.medialibPlugin && self.mediaLibraryManager.source) {
+            scriptableItem_t *tfQueryRoot =  self.mediaLibraryManager.medialibPlugin->get_queries_scriptable(self.mediaLibraryManager.source);
+            if (tfQueryRoot != NULL) {
+                scriptableItemSave(tfQueryRoot);
+            }
+
+        }
     });
 }
 

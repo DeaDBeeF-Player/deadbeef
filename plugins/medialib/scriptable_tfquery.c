@@ -132,6 +132,49 @@ _rootPbIdentifier(scriptableItem_t *item) {
     return "deadbeef.medialib.tfquery";
 }
 
+static int
+_saveRoot (scriptableItem_t *scriptableRoot) {
+    int res = -1;
+
+    scriptableItem_t *root = scriptableTFQueryRoot(scriptableRoot);
+
+    json_t *json = json_object();
+
+    json_t *queries = json_array();
+    for (scriptableItem_t *query = scriptableItemChildren(root); query; query = scriptableItemNext(query)) {
+        json_t *jsonQuery = json_object();
+        const char *name = scriptableItemPropertyValueForKey(query, "name");
+        json_object_set(jsonQuery, "name", json_string(name));
+
+        json_t *jsonItems = json_array();
+        for (scriptableItem_t *item = scriptableItemChildren(query); item; item = scriptableItemNext(item)) {
+            const char *itemName = scriptableItemPropertyValueForKey(item, "name");
+            json_array_append(jsonItems, json_string(itemName));
+        }
+
+        json_object_set(jsonQuery, "items", jsonItems);
+        json_array_append(queries, jsonQuery);
+    }
+
+
+    json_object_set(json, "queries", queries);
+
+    char *data = json_dumps(json, JSON_COMPACT);
+    if (data == NULL) {
+        goto error;
+    }
+    deadbeef->conf_set_str("medialib.tfqueries", data);
+    deadbeef->conf_save();
+    free (data);
+
+    res = 0;
+error:
+
+    json_delete(json);
+
+    return res;
+}
+
 static scriptableOverrides_t _rootCallbacks = {
     .isReorderable = _returnTrue,
     .allowRenaming = _returnTrue,
@@ -139,6 +182,7 @@ static scriptableOverrides_t _rootCallbacks = {
     .factoryItemNames = _itemNames,
     .factoryItemTypes = _itemTypes,
     .createItemOfType = _createPreset,
+    .save = _saveRoot,
 };
 
 scriptableItem_t *
@@ -260,49 +304,6 @@ error:
     if (json != NULL) {
         json_delete(json);
     }
-
-    return res;
-}
-
-int
-scriptableTFQuerySavePresets (scriptableItem_t *scriptableRoot) {
-    int res = -1;
-
-    scriptableItem_t *root = scriptableTFQueryRoot(scriptableRoot);
-
-    json_t *json = json_object();
-
-    json_t *queries = json_array();
-    for (scriptableItem_t *query = scriptableItemChildren(root); query; query = scriptableItemNext(query)) {
-        json_t *jsonQuery = json_object();
-        const char *name = scriptableItemPropertyValueForKey(query, "name");
-        json_object_set(jsonQuery, "name", json_string(name));
-
-        json_t *jsonItems = json_array();
-        for (scriptableItem_t *item = scriptableItemChildren(query); item; item = scriptableItemNext(item)) {
-            const char *itemName = scriptableItemPropertyValueForKey(item, "name");
-            json_array_append(jsonItems, json_string(itemName));
-        }
-
-        json_object_set(jsonQuery, "items", jsonItems);
-        json_array_append(queries, jsonQuery);
-    }
-
-
-    json_object_set(json, "queries", queries);
-
-    char *data = json_dumps(json, JSON_COMPACT);
-    if (data == NULL) {
-        goto error;
-    }
-    deadbeef->conf_set_str("medialib.tfqueries", data);
-    deadbeef->conf_save();
-    free (data);
-
-    res = 0;
-error:
-
-    json_delete(json);
 
     return res;
 }
