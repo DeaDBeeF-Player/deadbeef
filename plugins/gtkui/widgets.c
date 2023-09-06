@@ -3019,6 +3019,8 @@ static gboolean
 spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     w_spectrum_t *w = user_data;
 
+    _spectrum_update_preferences (w);
+
     _spectrum_update_listening (w);
 
     cairo_set_source_rgb (cr, w->background_color[0], w->background_color[1], w->background_color[2]);
@@ -3027,8 +3029,6 @@ spectrum_draw (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     if (w->input_data.nframes == 0) {
         return FALSE;
     }
-
-    _spectrum_update_preferences (w);
 
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
