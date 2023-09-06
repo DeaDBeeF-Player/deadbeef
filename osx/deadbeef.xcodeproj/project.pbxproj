@@ -2012,6 +2012,7 @@
 		2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB1641924FAB13400034E11 /* MediaLibraryManager.m */; };
 		2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */; };
 		2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */; };
+		2DB520E62AA8FADB00B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
 		2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */; };
 		2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */; };
 		2DB86E4F295CFFBA0011014C /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB86E3F295CFFB90011014C /* config.h */; };
@@ -9313,8 +9314,6 @@
 				2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */,
 				2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */,
 				2D20924C2A9A077800CDBB2B /* scriptable_tfquery.h */,
-				2D135EE8226E38AF00BAAE84 /* scriptable.c */,
-				2D135EE7226E38AF00BAAE84 /* scriptable.h */,
 			);
 			path = scriptable;
 			sourceTree = "<group>";
@@ -10755,6 +10754,7 @@
 		2D92D1ED29B92DF900218F1D /* shared */ = {
 			isa = PBXGroup;
 			children = (
+				2DB520E52AA8FA4C00B6250A /* scriptable */,
 				2D92D21929B92DF900218F1D /* analyzer */,
 				2D92D1F629B92DF900218F1D /* scope */,
 				2D92D1FB29B92DF900218F1D /* README */,
@@ -11396,6 +11396,15 @@
 				2DAA4C0B1AAF88DE00519559 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2DB520E52AA8FA4C00B6250A /* scriptable */ = {
+			isa = PBXGroup;
+			children = (
+				2D135EE8226E38AF00BAAE84 /* scriptable.c */,
+				2D135EE7226E38AF00BAAE84 /* scriptable.h */,
+			);
+			path = scriptable;
 			sourceTree = "<group>";
 		};
 		2DB52F6A24CF7CB50046D516 /* TrackProperties */ = {
@@ -16992,6 +17001,7 @@
 				2D78C54A27568AC500F96F9D /* medialibcommon.c in Sources */,
 				2D78C54927568AC500F96F9D /* medialibfilesystem_mac.c in Sources */,
 				2D78C56127568FFB00F96F9D /* medialibscanner.c in Sources */,
+				2DB520E62AA8FADB00B6250A /* scriptable.c in Sources */,
 				2D78C5622756915900F96F9D /* medialibtree.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -19823,6 +19833,7 @@
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -19872,6 +19883,7 @@
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20874,6 +20886,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20900,6 +20913,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -20998,6 +21012,7 @@
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/DeaDBeeF GTK3.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -21043,6 +21058,7 @@
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/DeaDBeeF GTK3.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22612,6 +22628,7 @@
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = "DeaDBeeF GTK2.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22658,6 +22675,7 @@
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = "DeaDBeeF GTK2.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -23556,6 +23574,7 @@
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
@@ -23613,6 +23632,7 @@
 					"\"$(SRCROOT)/..\"",
 					"\"$(SRCROOT)/../src\"",
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = "../plugins/cocoaui/deadbeef-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
