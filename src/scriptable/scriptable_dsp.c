@@ -450,12 +450,12 @@ isPresetNameAllowed (scriptableItem_t *preset, const char *name) {
 }
 
 scriptableItem_t *
-scriptableDspRoot (void) {
-    scriptableItem_t *dspRoot = scriptableItemSubItemForName (scriptableRoot(), "DSPPresets");
+scriptableDspRoot (scriptableItem_t *scriptableRoot) {
+    scriptableItem_t *dspRoot = scriptableItemSubItemForName (scriptableRoot, "DSPPresets");
     if (!dspRoot) {
         dspRoot = scriptableItemAlloc();
         scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
-        scriptableItemAddSubItem(scriptableRoot(), dspRoot);
+        scriptableItemAddSubItem(scriptableRoot, dspRoot);
 
         scriptableItem_t *passThroughDspPreset = scriptableDspCreateBlankPreset();
         scriptableItemSetIsLoading(passThroughDspPreset, 1);
@@ -470,8 +470,8 @@ scriptableDspRoot (void) {
 }
 
 void
-scriptableDspLoadPresets (void) {
-    scriptableItem_t *root = scriptableDspRoot();
+scriptableDspLoadPresets (scriptableItem_t *scriptableRoot) {
+    scriptableItem_t *root = scriptableDspRoot(scriptableRoot);
     scriptableItemSetIsLoading(root, 1);
 
     struct dirent **namelist = NULL;

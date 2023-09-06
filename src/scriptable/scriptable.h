@@ -195,13 +195,13 @@ char *
 scriptableItemFormattedName (scriptableItem_t *item);
 
 void
-scriptableInit (void);
+scriptableInitShared (void);
 
 void
-scriptableFree (void);
+scriptableDeinitShared (void);
 
 scriptableItem_t *
-scriptableRoot (void);
+scriptableRootShared(void);
 
 #ifdef __cplusplus
 }

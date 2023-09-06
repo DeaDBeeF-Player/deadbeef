@@ -58,7 +58,7 @@ extern DB_functions_t *deadbeef;
     _currentDspChain = scriptableDspPresetFromDspChain (deadbeef->streamer_get_dsp_chain ());
     self.dspChainDataSource = [ScriptableTableDataSource dataSourceWithScriptable:_currentDspChain];
 
-    self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot()];
+    self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot(scriptableRootShared())];
 
     // preset list and browse button
     self.dspSelectViewController = [ScriptableSelectViewController new];
@@ -102,7 +102,7 @@ extern DB_functions_t *deadbeef;
         if (returnCode == NSModalResponseOK) {
             const char *name = self.dspPresetNameTextField.stringValue.UTF8String;
             scriptableItem_t *preset = scriptableItemClone (self.dspChainDataSource.scriptable);
-            scriptableItem_t *presets = scriptableDspRoot();
+            scriptableItem_t *presets = scriptableDspRoot(scriptableRootShared());
             scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, presets);
             scriptableItemAddSubItem(presets, preset);
             [self.dspSelectViewController reloadData];
@@ -112,11 +112,11 @@ extern DB_functions_t *deadbeef;
 
 - (IBAction)presetNameOK:(id)sender {
     const char *name = self.dspPresetNameTextField.stringValue.UTF8String;
-    if (scriptableItemContainsSubItemWithName(scriptableDspRoot(), name)) {
+    if (scriptableItemContainsSubItemWithName(scriptableDspRoot(scriptableRootShared()), name)) {
         [ScriptableErrorViewer.sharedInstance displayDuplicateNameError];
         return;
     }
-    if (!scriptableItemIsSubItemNameAllowed(scriptableDspRoot(), name)) {
+    if (!scriptableItemIsSubItemNameAllowed(scriptableDspRoot(scriptableRootShared()), name)) {
         [ScriptableErrorViewer.sharedInstance displayInvalidNameError];
         return;
     }

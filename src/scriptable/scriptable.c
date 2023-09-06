@@ -25,8 +25,6 @@ struct scriptableItem_s {
     scriptableOverrides_t *overrides;
 };
 
-static scriptableItem_t *rootNode;
-
 static scriptableKeyValue_t *
 keyValuePairAlloc (void) {
     return calloc (1, sizeof (scriptableKeyValue_t));
@@ -497,23 +495,25 @@ scriptableItemFormattedName (scriptableItem_t *item) {
     return buffer;
 }
 
+
+static scriptableItem_t *_sharedRoot;
+
 void
-scriptableInit (void) {
-    rootNode = scriptableItemAlloc ();
+scriptableInitShared (void) {
+    if (_sharedRoot == NULL) {
+        _sharedRoot = scriptableItemAlloc();
+    }
 }
 
 void
-scriptableFree (void) {
-    if (rootNode) {
-        scriptableItemFree (rootNode);
-        rootNode = NULL;
+scriptableDeinitShared (void) {
+    if (_sharedRoot != NULL) {
+        scriptableItemFree(_sharedRoot);
+        _sharedRoot = NULL;
     }
 }
 
 scriptableItem_t *
-scriptableRoot (void) {
-    if (!rootNode) {
-        rootNode = scriptableItemAlloc();
-    }
-    return rootNode;
+scriptableRootShared(void) {
+    return _sharedRoot;
 }

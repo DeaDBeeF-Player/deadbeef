@@ -9,10 +9,10 @@ extern "C" {
 #endif
 
 scriptableItem_t *
-scriptableDspRoot (void);
+scriptableDspRoot (scriptableItem_t *scriptableRoot);
 
 void
-scriptableDspLoadPresets (void);
+scriptableDspLoadPresets (scriptableItem_t *scriptableRoot);
 
 scriptableItem_t *
 scriptableDspNodeItemFromDspContext (ddb_dsp_context_t *context);

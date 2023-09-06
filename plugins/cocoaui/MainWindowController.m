@@ -123,7 +123,7 @@ extern DB_functions_t *deadbeef;
     self.playlistWithTabsView = self.splitViewController.bodyViewController.wrapperView;
     self.designableContainerView = self.splitViewController.bodyViewController.designableView;
 
-    self.tfQueriesDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableTFQueryRoot()];
+    self.tfQueriesDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableTFQueryRoot(scriptableRootShared())];
 
     // preset list and browse button
     self.tfQuerySelectViewController = [ScriptableSelectViewController new];
@@ -554,7 +554,7 @@ static char sb_text[512];
         [self.tfQuerySelectViewController reloadData];
 
         // FIXME: save only when the dialog is closed
-        scriptableTFQuerySavePresets();
+        scriptableTFQuerySavePresets(scriptableRootShared());
     });
 }
 

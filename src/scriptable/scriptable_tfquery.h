@@ -27,12 +27,12 @@
 #include "scriptable.h"
 
 scriptableItem_t *
-scriptableTFQueryRoot (void);
+scriptableTFQueryRoot (scriptableItem_t *scriptableRoot);
 
 int
-scriptableTFQueryLoadPresets (void);
+scriptableTFQueryLoadPresets (scriptableItem_t *scriptableRoot);
 
 int
-scriptableTFQuerySavePresets (void);
+scriptableTFQuerySavePresets (scriptableItem_t *scriptableRoot);
 
 #endif /* scriptable_tfquery_h */

@@ -1061,6 +1061,8 @@ main_cleanup_and_quit (void) {
     plug_disconnect_all ();
     plug_unload_all (^{
         // at this point we can simply do exit(0), but let's clean up for debugging
+        scriptableDeinitShared();
+
         pl_free (); // may access conf_*
         conf_free ();
 
@@ -1519,10 +1521,10 @@ main (int argc, char *argv[]) {
 
 
 #ifdef OSX_APPBUNDLE
-    scriptableInit();
-    scriptableDspLoadPresets();
-    scriptableEncoderLoadPresets();
-    int tf_query_result = scriptableTFQueryLoadPresets();
+    scriptableInitShared();
+    scriptableDspLoadPresets(scriptableRootShared());
+    scriptableEncoderLoadPresets(scriptableRootShared());
+    int tf_query_result = scriptableTFQueryLoadPresets(scriptableRootShared());
     assert (tf_query_result != -1);
 #endif
 

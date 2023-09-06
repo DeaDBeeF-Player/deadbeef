@@ -22,6 +22,9 @@
 
 class ScriptableTests: public ::testing::Test {
 protected:
+
+    scriptableItem_t *root;
+
     void SetUp() override {
         // FIXME: convert to C++ / make cross-platform
         NSString *path = [[NSBundle bundleForClass:ScriptableTestsDummyClass.class].resourcePath stringByAppendingString:@"/PresetManagerData"];
@@ -29,77 +32,73 @@ protected:
         ddb_logger_init ();
         conf_init ();
         conf_enable_saving (0);
+        root = scriptableItemAlloc();
+    }
+
+    void TearDown() override {
+        scriptableItemFree(root);
     }
 };
 
 TEST_F(ScriptableTests, test_LoadDSPPreset_ReturnsExpectedData) {
-    scriptableDspLoadPresets ();
-    scriptableItem_t *dspRoot = scriptableDspRoot ();
+    scriptableDspLoadPresets (root);
+    scriptableItem_t *dspRoot = scriptableDspRoot (root);
     EXPECT_EQ(2, scriptableItemNumChildren (dspRoot));
-    scriptableFree();
 }
 
 TEST_F(ScriptableTests, test_DSPPreset_Has3Plugins) {
-    scriptableDspLoadPresets ();
-    scriptableItem_t *dspRoot = scriptableDspRoot ();
+    scriptableDspLoadPresets (root);
+    scriptableItem_t *dspRoot = scriptableDspRoot (root);
 
-    scriptableItem_t *preset = dspRoot->children->next;
+    scriptableItem_t *preset = scriptableItemNext(scriptableItemChildren(dspRoot));
     EXPECT_EQ(3, scriptableItemNumChildren (preset));
-    scriptableFree();
 }
 
 TEST_F(ScriptableTests, test_DSPPreset_HasExpectedPluginIds) {
-    scriptableDspLoadPresets ();
-    scriptableItem_t *dspRoot = scriptableDspRoot ();
+    scriptableDspLoadPresets (root);
+    scriptableItem_t *dspRoot = scriptableDspRoot (root);
 
-    scriptableItem_t *preset = dspRoot->children->next;
-    scriptableItem_t *plugin = preset->children;
+    scriptableItem_t *preset = scriptableItemNext(scriptableItemChildren(dspRoot));
+    scriptableItem_t *plugin = scriptableItemChildren(preset);
 
     const char *pluginId = scriptableItemPropertyValueForKey(plugin, "pluginId");
     EXPECT_TRUE(pluginId);
     EXPECT_STREQ(pluginId, "supereq");
 
-    plugin = plugin->next;
+    plugin = scriptableItemNext(plugin);
     pluginId = scriptableItemPropertyValueForKey(plugin, "pluginId");
     EXPECT_TRUE(pluginId);
     EXPECT_STREQ(pluginId, "SRC");
 
-    plugin = plugin->next;
+    plugin = scriptableItemNext(plugin);
     pluginId = scriptableItemPropertyValueForKey(plugin, "pluginId");
     EXPECT_TRUE(pluginId);
     EXPECT_STREQ(pluginId, "m2s");
-
-    scriptableFree();
 }
 
 TEST_F(ScriptableTests, test_LoadEncoderPreset_ReturnsExpectedData) {
-    scriptableEncoderLoadPresets ();
-    scriptableItem_t *encoderRoot = scriptableEncoderRoot ();
+    scriptableEncoderLoadPresets (root);
+    scriptableItem_t *encoderRoot = scriptableEncoderRoot (root);
     EXPECT_EQ(1, scriptableItemNumChildren (encoderRoot));
-    scriptableFree();
 }
 
 TEST_F(ScriptableTests, test_EncoderPreset_HasNoChildren) {
-    scriptableEncoderLoadPresets ();
-    scriptableItem_t *encoderRoot = scriptableEncoderRoot ();
+    scriptableEncoderLoadPresets (root);
+    scriptableItem_t *encoderRoot = scriptableEncoderRoot (root);
 
-    scriptableItem_t *preset = encoderRoot->children;
-    EXPECT_TRUE(preset->children == NULL);
-
-    scriptableFree();
+    scriptableItem_t *preset = scriptableItemChildren(encoderRoot);
+    EXPECT_EQ(scriptableItemChildren(preset), nullptr);
 }
 
 TEST_F(ScriptableTests, test_EncoderPreset_HasEncoderProperty) {
-    scriptableEncoderLoadPresets ();
-    scriptableItem_t *encoderRoot = scriptableEncoderRoot ();
+    scriptableEncoderLoadPresets (root);
+    scriptableItem_t *encoderRoot = scriptableEncoderRoot (root);
 
-    scriptableItem_t *preset = encoderRoot->children;
+    scriptableItem_t *preset = scriptableItemChildren(encoderRoot);
 
     const char *val = scriptableItemPropertyValueForKey(preset, "encoder");
     EXPECT_TRUE(val);
     EXPECT_STREQ(val, "cp %i %o");
-
-    scriptableFree();
 }
 
 TEST_F(ScriptableTests, test_ScriptableToConverterEncPreset_EmptyData_CreatesDefault) {
@@ -122,16 +121,14 @@ TEST_F(ScriptableTests, test_ScriptableToConverterEncPreset_EmptyData_CreatesDef
 }
 
 TEST_F(ScriptableTests, test_DSPPreset_HasPassThrough) {
-    scriptableDspLoadPresets ();
-    scriptableItem_t *dspRoot = scriptableDspRoot ();
+    scriptableDspLoadPresets (root);
+    scriptableItem_t *dspRoot = scriptableDspRoot (root);
     int numPresets = scriptableItemNumChildren (dspRoot);
     EXPECT_EQ(numPresets, 2);
 
-    scriptableItem_t *preset = dspRoot->children;
+    scriptableItem_t *preset = scriptableItemChildren(dspRoot);
     EXPECT_EQ(0, scriptableItemNumChildren (preset));
 
     const char *name = scriptableItemPropertyValueForKey(preset, "name");
     EXPECT_TRUE(!strcmp (name, "Pass-through"));
-
-    scriptableFree();
 }

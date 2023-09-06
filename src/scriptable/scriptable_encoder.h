@@ -9,10 +9,10 @@ extern "C" {
 #endif
 
 scriptableItem_t *
-scriptableEncoderRoot (void);
+scriptableEncoderRoot (scriptableItem_t *scriptableRoot);
 
 void
-scriptableEncoderLoadPresets (void);
+scriptableEncoderLoadPresets (scriptableItem_t *scriptableRoot);
 
 void
 scriptableEncoderPresetToConverterEncoderPreset (scriptableItem_t *item, ddb_encoder_preset_t *encoder_preset);

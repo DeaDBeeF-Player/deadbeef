@@ -142,14 +142,14 @@ static scriptableOverrides_t _rootCallbacks = {
 };
 
 scriptableItem_t *
-scriptableTFQueryRoot (void) {
+scriptableTFQueryRoot (scriptableItem_t *scriptableRoot) {
     // top level node: list of presets
-    scriptableItem_t *root = scriptableItemSubItemForName (scriptableRoot(), "TFQueryPresets");
+    scriptableItem_t *root = scriptableItemSubItemForName (scriptableRoot, "TFQueryPresets");
     if (!root) {
         root = scriptableItemAlloc();
         scriptableItemSetOverrides(root, &_rootCallbacks);
         scriptableItemSetPropertyValueForKey(root, "TFQueryPresets", "name");
-        scriptableItemAddSubItem(scriptableRoot(), root);
+        scriptableItemAddSubItem(scriptableRoot, root);
     }
     return root;
 }
@@ -178,7 +178,7 @@ static const char _default_config[] =
 ;
 
 int
-scriptableTFQueryLoadPresets (void) {
+scriptableTFQueryLoadPresets (scriptableItem_t *scriptableRoot) {
     int res = -1;
     char *buffer = calloc(1, 20000);
     conf_get_str("medialib.tfqueries", NULL, buffer, 20000);
@@ -187,7 +187,7 @@ scriptableTFQueryLoadPresets (void) {
     json_t *json = json_loads (buffer, 0, &error);
     free (buffer);
 
-    scriptableItem_t *root = scriptableTFQueryRoot();
+    scriptableItem_t *root = scriptableTFQueryRoot(scriptableRoot);
 
     if (json == NULL) {
         json = json_loads (_default_config, 0, &error);
@@ -265,10 +265,10 @@ error:
 }
 
 int
-scriptableTFQuerySavePresets (void) {
+scriptableTFQuerySavePresets (scriptableItem_t *scriptableRoot) {
     int res = -1;
 
-    scriptableItem_t *root = scriptableTFQueryRoot();
+    scriptableItem_t *root = scriptableTFQueryRoot(scriptableRoot);
 
     json_t *json = json_object();
 

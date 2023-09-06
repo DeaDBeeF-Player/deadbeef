@@ -279,13 +279,13 @@ scriptableEncoderPropertyValueWillChangeForKey (scriptableItem_t *item, const ch
 }
 
 scriptableItem_t *
-scriptableEncoderRoot (void) {
-    scriptableItem_t *encoderRoot = scriptableItemSubItemForName (scriptableRoot(), "EncoderPresets");
+scriptableEncoderRoot (scriptableItem_t *scriptableRoot) {
+    scriptableItem_t *encoderRoot = scriptableItemSubItemForName (scriptableRoot, "EncoderPresets");
     if (!encoderRoot) {
         encoderRoot = scriptableItemAlloc();
         scriptableItemSetOverrides(encoderRoot, &scriptableRootCallbacks);
         scriptableItemSetPropertyValueForKey(encoderRoot, "EncoderPresets", "name");
-        scriptableItemAddSubItem(scriptableRoot(), encoderRoot);
+        scriptableItemAddSubItem(scriptableRoot, encoderRoot);
     }
     return encoderRoot;
 }
@@ -316,8 +316,8 @@ scriptableEncoderRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *su
 }
 
 void
-scriptableEncoderLoadPresets (void) {
-    scriptableItem_t *root = scriptableEncoderRoot();
+scriptableEncoderLoadPresets (scriptableItem_t *scriptableRoot) {
+    scriptableItem_t *root = scriptableEncoderRoot(scriptableRoot);
     scriptableItemSetIsLoading(root, 1);
 
     char path[PATH_MAX];
