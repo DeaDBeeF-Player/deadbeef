@@ -28,12 +28,15 @@
 #include "scriptable/scriptable.h"
 
 scriptableItem_t *
-scriptableTFQueryRoot (scriptableItem_t *scriptableRoot);
+scriptableTFQueryRootCreate (void);
 
 int
-scriptableTFQueryLoadPresets (scriptableItem_t *scriptableRoot);
+scriptableTFQueryLoadPresets (scriptableItem_t *root);
 
 void
-ml_scriptable_init(DB_functions_t *_deadbeef);
+ml_scriptable_init(DB_functions_t *_deadbeef, scriptableItem_t *root);
+
+void
+ml_scriptable_deinit(void);
 
 #endif /* scriptable_tfquery_h */

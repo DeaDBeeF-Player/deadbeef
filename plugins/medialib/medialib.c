@@ -44,6 +44,13 @@ ml_connect (void) {
     return 0;
 }
 
+static scriptableItem_t *_scriptableRoot;
+
+static scriptableItem_t *
+scriptableTFQueryRoot(void) {
+    return _scriptableRoot;
+}
+
 static int
 ml_start (void) {
     ml_source_init(deadbeef);
@@ -52,8 +59,8 @@ ml_start (void) {
     ml_tree_init(deadbeef);
     ml_item_state_init(deadbeef);
 
-    scriptableInitShared(); // FIXME: stop using shared
-    ml_scriptable_init(deadbeef);
+    _scriptableRoot = scriptableTFQueryRootCreate();
+    ml_scriptable_init(deadbeef, _scriptableRoot);
 
     return 0;
 }
@@ -62,8 +69,12 @@ static int
 ml_stop (void) {
     ml_scanner_free();
     ml_tree_free();
+    ml_scriptable_deinit();
+    if (_scriptableRoot != NULL) {
+        scriptableItemFree(_scriptableRoot);
+        _scriptableRoot = NULL;
+    }
 
-    scriptableDeinitShared();
     printf ("medialib cleanup done\n");
 
     return 0;
@@ -230,7 +241,7 @@ ml_find_track (medialib_source_t *source, ddb_playItem_t *it) {
 
 static void *
 ml_get_queries_scriptable(ddb_mediasource_source_t *_source) {
-    return scriptableTFQueryRoot(scriptableRootShared());
+    return scriptableTFQueryRoot();
 }
 
 static ddb_mediasource_state_t

@@ -133,10 +133,8 @@ _rootPbIdentifier(scriptableItem_t *item) {
 }
 
 static int
-_saveRoot (scriptableItem_t *scriptableRoot) {
+_saveRoot (scriptableItem_t *root) {
     int res = -1;
-
-    scriptableItem_t *root = scriptableTFQueryRoot(scriptableRoot);
 
     json_t *json = json_object();
 
@@ -186,15 +184,11 @@ static scriptableOverrides_t _rootCallbacks = {
 };
 
 scriptableItem_t *
-scriptableTFQueryRoot (scriptableItem_t *scriptableRoot) {
+scriptableTFQueryRootCreate (void) {
     // top level node: list of presets
-    scriptableItem_t *root = scriptableItemSubItemForName (scriptableRoot, "TFQueryPresets");
-    if (!root) {
-        root = scriptableItemAlloc();
-        scriptableItemSetOverrides(root, &_rootCallbacks);
-        scriptableItemSetPropertyValueForKey(root, "TFQueryPresets", "name");
-        scriptableItemAddSubItem(scriptableRoot, root);
-    }
+    scriptableItem_t *root = scriptableItemAlloc();
+    scriptableItemSetOverrides(root, &_rootCallbacks);
+    scriptableItemSetPropertyValueForKey(root, "TFQueryPresets", "name");
     return root;
 }
 
@@ -222,7 +216,7 @@ static const char _default_config[] =
 ;
 
 int
-scriptableTFQueryLoadPresets (scriptableItem_t *scriptableRoot) {
+scriptableTFQueryLoadPresets (scriptableItem_t *root) {
     int res = -1;
     char *buffer = calloc(1, 20000);
     deadbeef->conf_get_str("medialib.tfqueries", NULL, buffer, 20000);
@@ -230,8 +224,6 @@ scriptableTFQueryLoadPresets (scriptableItem_t *scriptableRoot) {
     json_error_t error;
     json_t *json = json_loads (buffer, 0, &error);
     free (buffer);
-
-    scriptableItem_t *root = scriptableTFQueryRoot(scriptableRoot);
 
     if (json == NULL) {
         json = json_loads (_default_config, 0, &error);
@@ -309,8 +301,12 @@ error:
 }
 
 void
-ml_scriptable_init(DB_functions_t *_deadbeef) {
+ml_scriptable_init(DB_functions_t *_deadbeef, scriptableItem_t *root) {
     deadbeef = _deadbeef;
-    int tf_query_result = scriptableTFQueryLoadPresets(scriptableRootShared());
+    int tf_query_result = scriptableTFQueryLoadPresets(root);
     assert (tf_query_result != -1);
+}
+
+void
+ml_scriptable_deinit(void) {
 }
