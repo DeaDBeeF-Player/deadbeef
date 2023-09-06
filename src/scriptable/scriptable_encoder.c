@@ -34,19 +34,29 @@ scriptableEncoderDelete (scriptableItem_t *item);
 static int
 scriptableEncoderRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
 
-static scriptableCallbacks_t scriptableEncoderCallbacks = {
-    .readonlyPrefix = "[Built-in] ",
+static const char *
+_readonlyPrefix(scriptableItem_t *item) {
+    return "[Built-in] ";
+}
+
+static scriptableOverrides_t scriptableEncoderCallbacks = {
+    .readonlyPrefix = _readonlyPrefix,
     .save = scriptableEncoderPresetSave,
-    .updateItem = scriptableEncoderUpdateItem,
+    .didUpdateItem = scriptableEncoderUpdateItem,
     .propertyValueWillChangeForKey = scriptableEncoderPropertyValueWillChangeForKey,
 };
 
-static scriptableCallbacks_t scriptableRootCallbacks = {
-    .allowRenaming = 1,
+static
+int _returnTrue(scriptableItem_t *item) {
+    return 1;
+}
+
+static scriptableOverrides_t scriptableRootCallbacks = {
+    .allowRenaming = _returnTrue,
     .factoryItemNames = scriptableEncoderItemNames,
     .factoryItemTypes = scriptableEncoderItemTypes,
     .createItemOfType = scriptableEncoderCreatePreset,
-    .removeSubItem = scriptableEncoderRootRemoveSubItem,
+    .willRemoveChildItem = scriptableEncoderRootRemoveSubItem,
 };
 
 static int
@@ -92,7 +102,7 @@ scriptableEncoderItemTypes (scriptableItem_t *item) {
 
 static scriptableItem_t *scriptableEncoderCreateBlankPreset(void) {
     scriptableItem_t *item = scriptableItemAlloc();
-    scriptableItemSetCallbacks (item, &scriptableEncoderCallbacks);
+    scriptableItemSetOverrides (item, &scriptableEncoderCallbacks);
     return item;
 }
 
@@ -273,7 +283,7 @@ scriptableEncoderRoot (void) {
     scriptableItem_t *encoderRoot = scriptableItemSubItemForName (scriptableRoot(), "EncoderPresets");
     if (!encoderRoot) {
         encoderRoot = scriptableItemAlloc();
-        scriptableItemSetCallbacks(encoderRoot, &scriptableRootCallbacks);
+        scriptableItemSetOverrides(encoderRoot, &scriptableRootCallbacks);
         scriptableItemSetPropertyValueForKey(encoderRoot, "EncoderPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), encoderRoot);
     }

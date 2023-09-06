@@ -59,33 +59,43 @@ scriptableDspPresetSave(scriptableItem_t *item);
 static int
 scriptableDspPresetDelete(scriptableItem_t *subItem);
 
-static scriptableCallbacks_t
+static scriptableOverrides_t
 scriptableDspNodeCallbacks = {
     .saveToString = scriptableDspPresetNodeSaveToString,
     .propertyValueDidChangeForKey = scriptableDspPresetNodePropertyValueDidChangeForKey,
 };
 
-static scriptableCallbacks_t
+static
+int _returnTrue(scriptableItem_t *item) {
+    return 1;
+}
+
+static const char *
+_pbIdentifier(scriptableItem_t *item) {
+    return "deadbeef.dspnode";
+}
+
+static scriptableOverrides_t
 scriptableDspPresetCallbacks = {
-    .isList = 1,
-    .isReorderable = 1,
-    .pasteboardItemIdentifier = "deadbeef.dspnode",
+    .isList = _returnTrue,
+    .isReorderable = _returnTrue,
+    .pasteboardItemIdentifier = _pbIdentifier,
     .factoryItemNames = scriptableDspChainItemNames,
     .factoryItemTypes = scriptableDspChainItemTypes,
     .createItemOfType = scriptableDspCreateItemOfType,
-    .updateItem = scriptableDspPresetUpdateItem,
-    .updateItemForSubItem = scriptableDspPresetUpdateItemForSubItem,
+    .didUpdateItem = scriptableDspPresetUpdateItem,
+    .didUpdateChildItem = scriptableDspPresetUpdateItemForSubItem,
     .save = scriptableDspPresetSave,
     .propertyValueWillChangeForKey = scriptableDspPropertyValueWillChangeForKey,
 };
 
-static scriptableCallbacks_t scriptableDspPresetListCallbacks = {
-    .isList = 1,
-    .allowRenaming = 1,
+static scriptableOverrides_t scriptableDspPresetListCallbacks = {
+    .isList = _returnTrue,
+    .allowRenaming = _returnTrue,
     .createItemOfType = scriptableDspCreatePresetWithType,
     .factoryItemNames = scriptableDspPresetItemNames,
     .factoryItemTypes = scriptableDspPresetItemTypes,
-    .removeSubItem = scriptableDspRootRemoveSubItem,
+    .willRemoveChildItem = scriptableDspRootRemoveSubItem,
     .isSubItemNameAllowed = isPresetNameAllowed,
 };
 
@@ -190,7 +200,7 @@ scriptableDspCreateItemOfType (scriptableItem_t *root, const char *type) {
     scriptableItem_t *item = scriptableItemAlloc();
 
     scriptableItemSetPropertyValueForKey(item, type, "pluginId");
-    scriptableItemSetCallbacks(item, &scriptableDspNodeCallbacks);
+    scriptableItemSetOverrides(item, &scriptableDspNodeCallbacks);
 
     DB_dsp_t *dsp = dspPluginForId(type);
     if (dsp) {
@@ -380,7 +390,7 @@ scriptableDspPresetItemTypes (scriptableItem_t *item) {
 
 static scriptableItem_t *scriptableDspCreateBlankPreset (void) {
     scriptableItem_t *item = scriptableItemAlloc();
-    scriptableItemSetCallbacks (item, &scriptableDspPresetCallbacks);
+    scriptableItemSetOverrides (item, &scriptableDspPresetCallbacks);
     return item;
 }
 
@@ -454,7 +464,7 @@ scriptableDspRoot (void) {
         scriptableItemAddSubItem(dspRoot, passThroughDspPreset);
         scriptableItemSetIsLoading(passThroughDspPreset, 0);
 
-        scriptableItemSetCallbacks(dspRoot, &scriptableDspPresetListCallbacks);
+        scriptableItemSetOverrides(dspRoot, &scriptableDspPresetListCallbacks);
     }
     return dspRoot;
 }
@@ -499,7 +509,7 @@ scriptableDspLoadPresets (void) {
 
 static scriptableItem_t *scriptableDspCreateNodeFromContext (ddb_dsp_context_t *context) {
     scriptableItem_t *node = scriptableItemAlloc();
-    scriptableItemSetCallbacks(node, &scriptableDspNodeCallbacks);
+    scriptableItemSetOverrides(node, &scriptableDspNodeCallbacks);
     scriptableItemSetPropertyValueForKey(node, context->plugin->plugin.id, "pluginId");
     scriptableItemSetPropertyValueForKey(node, context->plugin->plugin.name, "name");
     scriptableItemSetConfigDialog(node, context->plugin->configdialog);

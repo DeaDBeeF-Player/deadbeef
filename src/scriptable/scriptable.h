@@ -19,19 +19,25 @@ typedef struct stringListItem_s {
 struct scriptableItem_s;
 typedef struct scriptableItem_s scriptableItem_t;
 
-// FIXME: this is not extensible (needs size property)
-typedef struct {
-    /// FIXME: convert everything to function pointers
+struct scriptableOverrides_t {
+    /// Must be set to @c sizeof(scriptableOverrides_t)
+    /// If 0 will assume the v1 size.
+    int _size;
 
-    int isList; // for example, dsp preset, or dsp chain
-    int isReorderable; // whether items can be reordered by the user
-    int allowRenaming; // whether the names can be changed by the user
+    /// for example, dsp preset, or dsp chain
+    int (*isList)(scriptableItem_t *item);
+
+    /// whether items can be reordered by the user
+    int (*isReorderable)(scriptableItem_t *item);
+
+    /// whether the names can be changed by the user
+    int (*allowRenaming)(scriptableItem_t *item);
 
     /// for drag drop on mac
-    const char *pasteboardItemIdentifier;
+    const char *(*pasteboardItemIdentifier)(scriptableItem_t *item);
 
     /// A text to display in UI when the item is read-only
-    const char *readonlyPrefix;
+    const char *(*readonlyPrefix)(scriptableItem_t *item);
 
     scriptableStringListItem_t *(*factoryItemNames)(scriptableItem_t *item);
 
@@ -41,16 +47,18 @@ typedef struct {
 
     int (*isSubItemNameAllowed)(scriptableItem_t *item, const char *name);
 
-    // additional update logic, such as save the item data to disk
-    int (*updateItem)(scriptableItem_t *item);
+    /// Called after the child list or properties are modified
+    /// (add/remove/insert child or property)
+    int (*didUpdateItem)(scriptableItem_t *item);
 
-    // additional update logic, such as save all subItems data to disk, if it's stored in a single file
-    int (*updateItemForSubItem)(scriptableItem_t *item, scriptableItem_t *subItem);
+    /// Called right after @c didUpdateItem, but for the parent
+    int (*didUpdateChildItem)(scriptableItem_t *item, scriptableItem_t *subItem);
 
-    // additional remove logic, such as delete subItem data from disk
-    int (*removeSubItem)(scriptableItem_t *item, scriptableItem_t *subItem);
+    /// Called right before the child item is removed
+    int (*willRemoveChildItem)(scriptableItem_t *item, scriptableItem_t *subItem);
 
-    void (*free)(scriptableItem_t *item);
+    /// Called before the item is destroyed to perform additional cleanup
+    void (*willDestroyItem)(scriptableItem_t *item);
 
     int (*save)(scriptableItem_t *item);
 
@@ -58,13 +66,15 @@ typedef struct {
 
     void (*propertyValueWillChangeForKey) (scriptableItem_t *item, const char *key);
     void (*propertyValueDidChangeForKey) (scriptableItem_t *item, const char *key);
-} scriptableCallbacks_t;
+};
+
+typedef struct scriptableOverrides_t scriptableOverrides_t;
 
 scriptableItem_t *
 scriptableItemAlloc (void);
 
 void
-scriptableItemSetCallbacks(scriptableItem_t *item, scriptableCallbacks_t *callbacks);
+scriptableItemSetOverrides(scriptableItem_t *item, scriptableOverrides_t *overrides);
 
 void
 scriptableItemFree (scriptableItem_t *item);
@@ -157,9 +167,6 @@ scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
 
 void
 scriptableItemUpdate (scriptableItem_t *item);
-
-void
-scriptableItemUpdateForSubItem (scriptableItem_t *item, scriptableItem_t *subItem);
 
 // -
 

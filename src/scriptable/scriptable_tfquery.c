@@ -84,14 +84,29 @@ _presetCreateItemOfType (scriptableItem_t *root, const char *type) {
     return item;
 }
 
-static scriptableCallbacks_t _presetCallbacks = {
-    .readonlyPrefix = "[Built-in] ",
+static
+int _returnTrue(scriptableItem_t *item) {
+    return 1;
+}
+
+static const char *
+_readonlyPrefix(scriptableItem_t *item) {
+    return "[Built-in] ";
+}
+
+static const char *
+_presetPbIdentifier(scriptableItem_t *item) {
+    return "deadbeef.medialib.tfstring";
+}
+
+static scriptableOverrides_t _presetCallbacks = {
+    .readonlyPrefix = _readonlyPrefix,
     .save = _presetSave,
-    .updateItem = _presetUpdateItem,
-    .isList = 1,
-    .isReorderable = 1,
-    .allowRenaming = 1,
-    .pasteboardItemIdentifier = "deadbeef.medialib.tfstring",
+    .didUpdateItem = _presetUpdateItem,
+    .isList = _returnTrue,
+    .isReorderable = _returnTrue,
+    .allowRenaming = _returnTrue,
+    .pasteboardItemIdentifier = _presetPbIdentifier,
     .factoryItemNames = _presetItemNames,
     .factoryItemTypes = _presetItemTypes,
     .createItemOfType = _presetCreateItemOfType,
@@ -100,7 +115,7 @@ static scriptableCallbacks_t _presetCallbacks = {
 static scriptableItem_t *
 _createBlankPreset(void) {
     scriptableItem_t *item = scriptableItemAlloc();
-    scriptableItemSetCallbacks(item, &_presetCallbacks);
+    scriptableItemSetOverrides(item, &_presetCallbacks);
     return item;
 }
 
@@ -112,10 +127,15 @@ _createPreset (scriptableItem_t *root, const char *type) {
     return item;
 }
 
-static scriptableCallbacks_t _rootCallbacks = {
-    .isReorderable = 1,
-    .allowRenaming = 1,
-    .pasteboardItemIdentifier = "deadbeef.medialib.tfquery",
+static const char *
+_rootPbIdentifier(scriptableItem_t *item) {
+    return "deadbeef.medialib.tfquery";
+}
+
+static scriptableOverrides_t _rootCallbacks = {
+    .isReorderable = _returnTrue,
+    .allowRenaming = _returnTrue,
+    .pasteboardItemIdentifier = _rootPbIdentifier,
     .factoryItemNames = _itemNames,
     .factoryItemTypes = _itemTypes,
     .createItemOfType = _createPreset,
@@ -127,7 +147,7 @@ scriptableTFQueryRoot (void) {
     scriptableItem_t *root = scriptableItemSubItemForName (scriptableRoot(), "TFQueryPresets");
     if (!root) {
         root = scriptableItemAlloc();
-        scriptableItemSetCallbacks(root, &_rootCallbacks);
+        scriptableItemSetOverrides(root, &_rootCallbacks);
         scriptableItemSetPropertyValueForKey(root, "TFQueryPresets", "name");
         scriptableItemAddSubItem(scriptableRoot(), root);
     }
