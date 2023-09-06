@@ -21,6 +21,8 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include "conf.h"
+#include "logger.h"
 #include "messagepump.h"
 #include "plmeta.h"
 #include "playqueue.h"
@@ -46,6 +48,10 @@ static DB_output_t fake_out = {
 class TitleFormattingTests: public ::testing::Test {
 protected:
     void SetUp() override {
+        ddb_logger_init ();
+        conf_init ();
+        conf_enable_saving (0);
+
         it = pl_item_alloc_init ("testfile.flac", "stdflac");
 
         memset (&ctx, 0, sizeof (ctx));
@@ -81,6 +87,8 @@ protected:
         }
 
         messagepump_free();
+        conf_free();
+        ddb_logger_free();
     }
 
     playItem_t *it;

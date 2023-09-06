@@ -1,12 +1,11 @@
 //
-//  SciptableTests.m
+//  SciptableTests.cpp
 //  Tests
 //
 //  Created by Oleksiy Yakovenko on 4/22/19.
 //  Copyright © 2019 Oleksiy Yakovenko. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #include "conf.h"
 #include <deadbeef/common.h>
 #include "logger.h"
@@ -15,20 +14,13 @@
 #include "scriptable_encoder.h"
 #include <gtest/gtest.h>
 
-@interface ScriptableTestsDummyClass: NSObject
-@end
-@implementation ScriptableTestsDummyClass
-@end
-
 class ScriptableTests: public ::testing::Test {
 protected:
 
     scriptableItem_t *root;
 
     void SetUp() override {
-        // FIXME: convert to C++ / make cross-platform
-        NSString *path = [[NSBundle bundleForClass:ScriptableTestsDummyClass.class].resourcePath stringByAppendingString:@"/PresetManagerData"];
-        strcpy (dbconfdir, path.UTF8String);
+        snprintf(dbconfdir, sizeof (dbconfdir), "%s/PresetManagerData", dbplugindir);
         ddb_logger_init ();
         conf_init ();
         conf_enable_saving (0);
@@ -37,6 +29,8 @@ protected:
 
     void TearDown() override {
         scriptableItemFree(root);
+        conf_free();
+        ddb_logger_free();
     }
 };
 

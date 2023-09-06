@@ -730,7 +730,7 @@
 		2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
 		2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */; };
 		2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */; };
-		2D135EF4226E47CE00BAAE84 /* SciptableTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EF3226E47CE00BAAE84 /* SciptableTests.mm */; };
+		2D135EF4226E47CE00BAAE84 /* ScriptableTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EF3226E47CE00BAAE84 /* ScriptableTests.cpp */; };
 		2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */; };
 		2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */; };
 		2D15721623785BD900985E47 /* VfsCurlTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D15721523785BD900985E47 /* VfsCurlTests.cpp */; };
@@ -5295,7 +5295,7 @@
 		2D135EE8226E38AF00BAAE84 /* scriptable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable.c; sourceTree = "<group>"; };
 		2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_dsp.h; sourceTree = "<group>"; };
 		2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_dsp.c; sourceTree = "<group>"; };
-		2D135EF3226E47CE00BAAE84 /* SciptableTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SciptableTests.mm; sourceTree = "<group>"; };
+		2D135EF3226E47CE00BAAE84 /* ScriptableTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptableTests.cpp; sourceTree = "<group>"; };
 		2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_encoder.h; sourceTree = "<group>"; };
 		2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_encoder.c; sourceTree = "<group>"; };
 		2D15721523785BD900985E47 /* VfsCurlTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VfsCurlTests.cpp; sourceTree = "<group>"; };
@@ -11375,7 +11375,7 @@
 				4DC416FD2180919D0056133E /* PlaylistTests.cpp */,
 				4D31BECD1E9FB194001D1B89 /* ResamplerTests.cpp */,
 				2DA21F4C298680990077BD4C /* RingBufTests.cpp */,
-				2D135EF3226E47CE00BAAE84 /* SciptableTests.mm */,
+				2D135EF3226E47CE00BAAE84 /* ScriptableTests.cpp */,
 				2DA04EF123B6A81A0070AC01 /* ShellexecTests.cpp */,
 				2DA66EC71EDF4EF800E20989 /* StreamerTests.cpp */,
 				2D0F90C11CCFF094003FA197 /* TaggingTests.mm */,
@@ -17613,7 +17613,7 @@
 				2D78C55F27568F8600F96F9D /* medialibtree.c in Sources */,
 				2D78C55527568B0800F96F9D /* medialibsource.c in Sources */,
 				2DA66EC81EDF4EF800E20989 /* StreamerTests.cpp in Sources */,
-				2D135EF4226E47CE00BAAE84 /* SciptableTests.mm in Sources */,
+				2D135EF4226E47CE00BAAE84 /* ScriptableTests.cpp in Sources */,
 				2DA80C7426C0708200E8EC7F /* CuesheetTests.cpp in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.cpp in Sources */,
 				2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */,

@@ -8,6 +8,8 @@
 
 #import <XCTest/XCTest.h>
 #include <deadbeef/common.h>
+#include "conf.h"
+#include "logger.h"
 #include "medialib.h"
 #include "plugins.h"
 
@@ -23,7 +25,9 @@
 @implementation MediaLibTests
 
 - (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+    ddb_logger_init ();
+    conf_init ();
+    conf_enable_saving (0);
     self.plugin = (DB_mediasource_t *)plug_get_for_id("medialib");
     self.medialib = (ddb_medialib_plugin_api_t *)self.plugin->get_extended_api();
     self.scanCompletedExpectation = [[XCTestExpectation alloc] initWithDescription:@"Scan completed"];
@@ -31,7 +35,8 @@
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    conf_free();
+    ddb_logger_free();
 }
 
 static void

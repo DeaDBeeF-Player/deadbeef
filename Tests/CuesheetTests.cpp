@@ -21,11 +21,29 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include "conf.h"
+#include "logger.h"
 #include "plmeta.h"
 #include <deadbeef/common.h>
 #include <gtest/gtest.h>
 
-TEST(CuesheetTests, testCueWithoutTitles) {
+class CuesheetTests: public ::testing::Test {
+protected:
+
+    void SetUp() override {
+        ddb_logger_init ();
+        conf_init ();
+        conf_enable_saving (0);
+    }
+
+    void TearDown() override {
+        conf_free();
+        ddb_logger_free();
+    }
+};
+
+
+TEST_F(CuesheetTests, testCueWithoutTitles) {
     const char cue[] =
         "FILE \"file.wav\" WAVE\n"
         "TRACK 01 AUDIO\n"
@@ -48,7 +66,7 @@ TEST(CuesheetTests, testCueWithoutTitles) {
     plt_free (plt);
 }
 
-TEST(CuesheetTests, test_BogusEmbeddedImageCueInSingleTrack_ReturnsSingleTrackWithCorrectMeta) {
+TEST_F(CuesheetTests, test_BogusEmbeddedImageCueInSingleTrack_ReturnsSingleTrackWithCorrectMeta) {
     playlist_t *plt = plt_alloc("test");
 
     char path[PATH_MAX];
@@ -64,7 +82,7 @@ TEST(CuesheetTests, test_BogusEmbeddedImageCueInSingleTrack_ReturnsSingleTrackWi
     plt_free (plt);
 }
 
-TEST(CuesheetTests, test_ImageAndCue_Adds2TracksWithCorrectTitles) {
+TEST_F(CuesheetTests, test_ImageAndCue_Adds2TracksWithCorrectTitles) {
     playlist_t *plt = plt_alloc("test");
 
     char path[PATH_MAX];
@@ -79,7 +97,7 @@ TEST(CuesheetTests, test_ImageAndCue_Adds2TracksWithCorrectTitles) {
     plt_free (plt);
 }
 
-TEST(CuesheetTests, test_CueWithTrackComposer_SetsCueComposerForOneTrack) {
+TEST_F(CuesheetTests, test_CueWithTrackComposer_SetsCueComposerForOneTrack) {
     const char cue[] =
     "FILE \"file.wav\" WAVE\n"
     "TRACK 01 AUDIO\n"
@@ -111,7 +129,7 @@ TEST(CuesheetTests, test_CueWithTrackComposer_SetsCueComposerForOneTrack) {
     plt_free (plt);
 }
 
-TEST(CuesheetTests, test_CueWithTrackGain_SetsCueTrackGainForOneTrack) {
+TEST_F(CuesheetTests, test_CueWithTrackGain_SetsCueTrackGainForOneTrack) {
     const char cue[] =
     "FILE \"file.wav\" WAVE\n"
     "TRACK 01 AUDIO\n"
