@@ -30,9 +30,8 @@
 #include <dirent.h>
 #include <stdarg.h>
 
-#if DDB_ENABLE_SCRIPTABLE
-#include <scriptable/scriptable.h>
-#endif
+struct scriptableItem_s;
+typedef struct scriptableItem_s ddb_scriptable_item_t;
 
 #ifdef __cplusplus
 extern "C" {
@@ -2289,7 +2288,7 @@ typedef struct ddb_mediasource_source_t ddb_mediasource_source_t;
 /// Abstract type representing a selector for media source query (e.g. Albums, Artists, Genres)
 /// Use @c get_selectors_list method to get the list of available selectors.
 /// Use the values to specify the selector when calling @c create_item_tree.
-typedef struct ddb_mediasource_list_selector_s *ddb_mediasource_list_selector_t;
+//typedef struct ddb_mediasource_list_selector_s *ddb_mediasource_list_selector_t;
 
 /// Opaque struct representing the extended API of the underlying plugin. Use @c get_extended_api method to get it.
 typedef struct ddb_mediasource_api_s ddb_mediasource_api_t;
@@ -2331,17 +2330,6 @@ typedef struct {
     /// However, when the source is created - it's may load its initial state.
     void (*refresh) (ddb_mediasource_source_t *source);
 
-    /// A selector is a token, which can be used to find out all top level items that can be queried from the library.
-    /// For example - Folders, Albums, Artists, Genres.
-    /// @return the list of selectors. The caller must free the list after use, by calling @c free_selectors
-    ddb_mediasource_list_selector_t *(*get_selectors_list) (ddb_mediasource_source_t *source);
-
-    /// Free the selector list
-    void (*free_selectors_list) (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t *selectors);
-
-    /// Get selector name
-    const char *(*selector_name) (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t selector);
-
     /// Add event listener. Your callback function will be called every time some event occurs. Such as state change, content update, and so on.
     /// The callback function may be executed on background thread, so make sure to dispatch to main to update UI.
     int (*add_listener) (ddb_mediasource_source_t *source, ddb_medialib_listener_t listener, void *user_data);
@@ -2352,7 +2340,7 @@ typedef struct {
     /// Create a tree of items for the given @c selector.
     /// The tree is immutable, and can be used by the caller in any way it needs.
     /// The caller must free the returned object by calling the @c free_list
-    ddb_medialib_item_t * (*create_item_tree) (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t selector, const char *filter);
+    ddb_medialib_item_t * (*create_item_tree) (ddb_mediasource_source_t *source, ddb_scriptable_item_t *preset, const char *filter);
 
     /// Free the tree created by the @c create_list
     void (*free_item_tree) (ddb_mediasource_source_t *source, ddb_medialib_item_t *list);
@@ -2360,11 +2348,7 @@ typedef struct {
     /// Whether the scanner/indexer is active
     ddb_mediasource_state_t (*scanner_state) (ddb_mediasource_source_t *source);
 
-#if DDB_ENABLE_SCRIPTABLE
-    scriptableItem_t *(*get_queries_scriptable)(ddb_mediasource_source_t *source);
-#else
-    void *(*get_queries_scriptable)(ddb_mediasource_source_t *source);
-#endif
+    ddb_scriptable_item_t *(*get_queries_scriptable)(ddb_mediasource_source_t *source);
 
     // It is recommended to use the select/expand methods below
     // to preserve selected/expanded state across medialib refreshes.

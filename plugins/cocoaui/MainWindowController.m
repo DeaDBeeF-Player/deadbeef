@@ -134,6 +134,7 @@ extern DB_functions_t *deadbeef;
     // preset list and browse button
     self.tfQuerySelectViewController = [ScriptableSelectViewController new];
     self.tfQuerySelectViewController.scriptableItemDelegate = self;
+    self.tfQuerySelectViewController.scriptableSelectDelegate = self;
     self.tfQuerySelectViewController.view.frame = _tfQueryContainer.bounds;
     [_tfQueryContainer addSubview:self.tfQuerySelectViewController.view];
     self.tfQuerySelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
@@ -551,6 +552,8 @@ static char sb_text[512];
 #pragma mark - ScriptableSelectDelegate
 
 - (void)scriptableSelectItemSelected:(scriptableItem_t *)item {
+    const char *name = scriptableItemPropertyValueForKey(item, "name");
+    [NSUserDefaults.standardUserDefaults setObject:@(name) forKey:@"medialib.preset"];
 }
 
 #pragma mark - ScriptableItemDelegate

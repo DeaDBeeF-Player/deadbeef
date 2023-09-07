@@ -110,7 +110,7 @@ ml_remove_listener (ddb_mediasource_source_t *_source, int listener_id) {
 
 
 static ddb_medialib_item_t *
-ml_create_item_tree (ddb_mediasource_source_t *_source, ddb_mediasource_list_selector_t selector, const char *filter) {
+ml_create_item_tree (ddb_mediasource_source_t *_source, scriptableItem_t *preset, const char *filter) {
     medialib_source_t *source = (medialib_source_t *)_source;
 
     __block ml_tree_item_t *root = NULL;
@@ -120,9 +120,7 @@ ml_create_item_tree (ddb_mediasource_source_t *_source, ddb_mediasource_list_sel
             return;
         }
 
-        medialibSelector_t index = (medialibSelector_t)selector;
-
-        root = _create_item_tree_from_collection(filter, index, source);
+        root = _create_item_tree_from_collection(filter, preset, source);
     });
 
     return (ddb_medialib_item_t *)root;
@@ -498,9 +496,6 @@ static DB_mediasource_t plugin = {
     .set_source_enabled = ml_set_source_enabled,
     .is_source_enabled = ml_is_source_enabled,
     .refresh = ml_refresh,
-    .get_selectors_list = ml_get_selectors,
-    .free_selectors_list = ml_free_selectors,
-    .selector_name = ml_get_name_for_selector,
     .add_listener = ml_add_listener,
     .remove_listener = ml_remove_listener,
     .create_item_tree = ml_create_item_tree,

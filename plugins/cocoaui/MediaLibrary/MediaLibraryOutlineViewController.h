@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MediaLibraryOutlineViewController : NSObject
 
-- (instancetype)initWithOutlineView:(NSOutlineView *)outlineView searchField:(NSSearchField *)searchField selectorPopup:(NSPopUpButton *)selectorPopup NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithOutlineView:(NSOutlineView *)outlineView searchField:(NSSearchField *)searchField NS_DESIGNATED_INITIALIZER;
 - (int)widgetMessage:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2;
 
 @end

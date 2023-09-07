@@ -27,6 +27,7 @@
 #include <sys/time.h>
 #include "medialibsource.h"
 #include "medialibtree.h"
+#include "scriptable/scriptable.h"
 
 //#define DUMP_GENERATED_TREE 1
 
@@ -441,11 +442,11 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
 }
 
 static void
-_create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, int selected) {
+_create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, const char *track_tf, int selected) {
     const char *sort_tf = "$directory_path(%path%)/[%album artist% - ]%album%/[%tracknumber%. ]%title%";
     deadbeef->plt_sort_v2(source->ml_playlist, PL_MAIN, -1, sort_tf, DDB_SORT_ASCENDING);
 
-    char *track_tf_bc = deadbeef->tf_compile("[%tracknumber%. ]%title%");
+    char *track_tf_bc = deadbeef->tf_compile(track_tf);
 
     _create_sorted_folder_tree(source->ml_playlist, root, selected, track_tf_bc, NULL, 0);
 
@@ -480,7 +481,7 @@ _create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, int selecte
 }
 
 ml_tree_item_t *
-_create_item_tree_from_collection(const char *filter, medialibSelector_t index, medialib_source_t *source) {
+_create_item_tree_from_collection(const char *filter, scriptableItem_t *preset, medialib_source_t *source) {
     int selected = 0;
     if (filter && source->ml_playlist) {
         deadbeef->plt_search_reset (source->ml_playlist);
@@ -499,38 +500,71 @@ _create_item_tree_from_collection(const char *filter, medialibSelector_t index, 
         return root;
     }
 
-    if (index == SEL_FOLDERS) {
-        _create_folder_tree(source, root, selected);
-    }
-    else if (index == SEL_ARTISTS) {
-        // list of albums for artist
-        const char *tfs[] = {
-            "$if2(%album artist%,\\<?\\>)",
-            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
-            "[%tracknumber%. ]%title%"
-        };
+    int count = scriptableItemNumChildren(preset);
 
-        _create_tf_tree(source, root, selected, tfs, 3);
+    scriptableItem_t *item = scriptableItemChildren(preset);
+    if (item == NULL) {
+        return root;
     }
-    else if (index == SEL_GENRES) {
-        // list of albums for genre
-        const char *tfs[] = {
-            "$if2(%genre%,\\<?\\>)",
-            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
-            "[%tracknumber%. ]%title%"
-        };
 
-        _create_tf_tree(source, root, selected, tfs, 3);
-    }
-    else if (index == SEL_ALBUMS) {
-        // list of tracks for album
-        const char *tfs[] = {
-            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
-            "[%tracknumber%. ]%title%"
-        };
+    const char *tf = scriptableItemPropertyValueForKey(item, "name");
+    if (!strcmp (tf, "%folder_tree%")) {
+        const char *track_tf = NULL;
 
-        _create_tf_tree(source, root, selected, tfs, 2);
+        if (count < 2) {
+            track_tf = "[%tracknumber%. ]%title%";
+        }
+        else {
+            item = scriptableItemNext(item);
+            track_tf = scriptableItemPropertyValueForKey(item, "name");
+        }
+        _create_folder_tree(source, root, track_tf, selected);
     }
+    else {
+        const char **tfs = calloc(count, sizeof (char *));
+        tfs[0] = tf;
+        int index = 1;
+        while (index < count) {
+            item = scriptableItemNext(item);
+            tfs[index] = scriptableItemPropertyValueForKey(item, "name");
+            index++;
+        }
+        _create_tf_tree(source, root, selected, tfs, count);
+    }
+
+
+//    if (index == SEL_FOLDERS) {
+//        _create_folder_tree(source, root, selected);
+//    }
+//    else if (index == SEL_ARTISTS) {
+//        // list of albums for artist
+//        const char *tfs[] = {
+//            "$if2(%album artist%,\\<?\\>)",
+//            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
+//            "[%tracknumber%. ]%title%"
+//        };
+//
+//        _create_tf_tree(source, root, selected, tfs, 3);
+//    }
+//    else if (index == SEL_GENRES) {
+//        // list of albums for genre
+//        const char *tfs[] = {
+//            "$if2(%genre%,\\<?\\>)",
+//            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
+//            "[%tracknumber%. ]%title%"
+//        };
+//
+//        _create_tf_tree(source, root, selected, tfs, 3);
+//    }
+//    else if (index == SEL_ALBUMS) {
+//        // list of tracks for album
+//        const char *tfs[] = {
+//            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
+//            "[%tracknumber%. ]%title%"
+//        };
+//
+//        _create_tf_tree(source, root, selected, tfs, 2);
+//    }
 
     // cleanup
     gettimeofday (&tm2, NULL);

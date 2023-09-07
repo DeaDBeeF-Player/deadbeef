@@ -198,41 +198,6 @@ ml_free_source (ddb_mediasource_source_t *_source) {
     }
 }
 
-ddb_mediasource_list_selector_t *
-ml_get_selectors (ddb_mediasource_source_t *source) {
-    static ddb_mediasource_list_selector_t selectors[] = {
-        (ddb_mediasource_list_selector_t)SEL_ALBUMS,
-        (ddb_mediasource_list_selector_t)SEL_ARTISTS,
-        (ddb_mediasource_list_selector_t)SEL_GENRES,
-        (ddb_mediasource_list_selector_t)SEL_FOLDERS,
-        0
-    };
-    return selectors;
-}
-
-void
-ml_free_selectors (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t *selectors) {
-    // the list is predefined, nothing to free
-}
-
-const char *
-ml_get_name_for_selector (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t selector) {
-    medialibSelector_t index = (medialibSelector_t)selector;
-    switch (index) {
-    case SEL_ALBUMS:
-        return "Albums";
-    case SEL_ARTISTS:
-        return "Artists";
-    case SEL_GENRES:
-        return "Genres";
-    case SEL_FOLDERS:
-        return "Folders";
-    default:
-        break;
-    }
-    return NULL;
-}
-
 void
 ml_set_source_enabled (ddb_mediasource_source_t *_source, int enabled) {
     __block int notify = 0;

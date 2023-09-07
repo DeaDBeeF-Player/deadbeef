@@ -28,7 +28,7 @@
     [super viewDidLoad];
 
 #if ENABLE_MEDIALIB
-    self.mediaLibraryOutlineViewController = [[MediaLibraryOutlineViewController alloc] initWithOutlineView:self.outlineView searchField:self.searchField selectorPopup:self.selectorPopup];
+    self.mediaLibraryOutlineViewController = [[MediaLibraryOutlineViewController alloc] initWithOutlineView:self.outlineView searchField:self.searchField];
 #endif
 }
 

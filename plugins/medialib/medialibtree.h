@@ -26,15 +26,8 @@
 
 #include <stdint.h>
 #include <deadbeef/deadbeef.h>
+#include "scriptable/scriptable.h"
 #include "medialibdb.h"
-
-typedef enum {
-    SEL_ALBUMS = 1,
-    SEL_ARTISTS = 2,
-    SEL_GENRES = 3,
-    SEL_FOLDERS = 4,
-    SEL_FILLER = -1UL,
-} medialibSelector_t;
 
 typedef struct ml_tree_item_s {
     /// Path to the node in the tree
@@ -61,7 +54,7 @@ void
 ml_tree_free (void);
 
 ml_tree_item_t *
-_create_item_tree_from_collection(const char *filter, medialibSelector_t index, medialib_source_t *source);
+_create_item_tree_from_collection(const char *filter, scriptableItem_t *preset, medialib_source_t *source);
 
 void
 ml_free_list (ddb_mediasource_source_t *source, ddb_medialib_item_t *list);

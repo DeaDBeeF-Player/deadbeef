@@ -61,15 +61,6 @@ ml_create_source (const char *source_path);
 void
 ml_free_source (ddb_mediasource_source_t *_source);
 
-ddb_mediasource_list_selector_t *
-ml_get_selectors (ddb_mediasource_source_t *source);
-
-void
-ml_free_selectors (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t *selectors);
-
-const char *
-ml_get_name_for_selector (ddb_mediasource_source_t *source, ddb_mediasource_list_selector_t selector);
-
 void
 ml_set_source_enabled (ddb_mediasource_source_t *_source, int enabled);
 
