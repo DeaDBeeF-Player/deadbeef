@@ -239,7 +239,7 @@ ml_find_track (medialib_source_t *source, ddb_playItem_t *it) {
 }
 #endif
 
-static void *
+static scriptableItem_t *
 ml_get_queries_scriptable(ddb_mediasource_source_t *_source) {
     return scriptableTFQueryRoot();
 }

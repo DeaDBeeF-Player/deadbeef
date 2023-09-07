@@ -21,7 +21,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-
 #ifndef __DEADBEEF_H
 #define __DEADBEEF_H
 
@@ -30,6 +29,10 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <stdarg.h>
+
+#if DDB_ENABLE_SCRIPTABLE
+#include <scriptable/scriptable.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -2357,8 +2360,11 @@ typedef struct {
     /// Whether the scanner/indexer is active
     ddb_mediasource_state_t (*scanner_state) (ddb_mediasource_source_t *source);
 
-    // HACK: access to scriptable
+#if DDB_ENABLE_SCRIPTABLE
+    scriptableItem_t *(*get_queries_scriptable)(ddb_mediasource_source_t *source);
+#else
     void *(*get_queries_scriptable)(ddb_mediasource_source_t *source);
+#endif
 
     // It is recommended to use the select/expand methods below
     // to preserve selected/expanded state across medialib refreshes.

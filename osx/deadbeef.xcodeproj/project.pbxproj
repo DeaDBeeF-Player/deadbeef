@@ -2013,6 +2013,7 @@
 		2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */; };
 		2DB520E62AA8FADB00B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
 		2DB520E72AA8FF0800B6250A /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
+		2DB520FC2AAA5E9900B6250A /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
 		2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */; };
 		2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */; };
 		2DB86E4F295CFFBA0011014C /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB86E3F295CFFB90011014C /* config.h */; };
@@ -17616,6 +17617,7 @@
 				4D6CF18B20EB783900811034 /* MP3ParserTests.cpp in Sources */,
 				2D78C5682756990B00F96F9D /* medialibfilesystem_stub.c in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
+				2DB520FC2AAA5E9900B6250A /* scriptable_tfquery.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* TaggingTests.mm in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
 				2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */,
@@ -20879,6 +20881,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"DEBUG=1",
+					"DDB_ENABLE_SCRIPTABLE=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -20907,6 +20910,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_PREFIX = "";
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "DDB_ENABLE_SCRIPTABLE=1";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -22308,6 +22312,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"OSX_APPBUNDLE=1",
 					"XCTEST=1",
+					"DDB_ENABLE_SCRIPTABLE=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
@@ -22318,6 +22323,7 @@
 					"$(SRCROOT)/../external/googletest/googletest/include",
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = ../Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22353,6 +22359,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"OSX_APPBUNDLE=1",
 					"XCTEST=1",
+					"DDB_ENABLE_SCRIPTABLE=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
@@ -22363,6 +22370,7 @@
 					"$(SRCROOT)/../external/googletest/googletest/include",
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = ../Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -23556,6 +23564,7 @@
 					"OSX_APPBUNDLE=1",
 					"DISABLE_MM_KEY_GRABBER=1",
 					"_DEBUG=1",
+					"DDB_ENABLE_SCRIPTABLE=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -23614,6 +23623,7 @@
 					"DOCDIR=\\\"donotuse\\\"",
 					"HAVE_LOG2=1",
 					"OSX_APPBUNDLE=1",
+					"DDB_ENABLE_SCRIPTABLE=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;

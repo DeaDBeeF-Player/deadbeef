@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <deadbeef/deadbeef.h>
 #import "DdbShared.h"
 #import "DeletePlaylistConfirmationController.h"
 #import "DesignModeDeps.h"
@@ -37,7 +38,6 @@
 #import "ScriptableSelectViewController.h"
 #import "SidebarSplitViewController.h"
 #import "TrackPositionFormatter.h"
-#include <deadbeef/deadbeef.h>
 #include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
