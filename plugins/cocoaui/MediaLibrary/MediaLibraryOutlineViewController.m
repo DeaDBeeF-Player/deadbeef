@@ -21,8 +21,6 @@
 
 extern DB_functions_t *deadbeef;
 
-static void *kPresetContext = &kPresetContext;
-
 @interface MediaLibraryOutlineViewController() <NSOutlineViewDataSource,MediaLibraryOutlineViewDelegate,TrackContextMenuDelegate,TrackPropertiesWindowControllerDelegate> {
 }
 
@@ -51,13 +49,19 @@ static void *kPresetContext = &kPresetContext;
 
 @property (nonatomic) NSMutableDictionary<NSString *,NSImage *> *albumArtCache;
 
+@property (nonatomic) NSString *currentPreset;
+
 @end
 
 @implementation MediaLibraryOutlineViewController
 
-- (ddb_mediasource_source_t *)medialibSource {
+- (MediaLibraryManager *)mediaLibraryManager {
     AppDelegate *appDelegate = NSApplication.sharedApplication.delegate;
-    return appDelegate.mediaLibraryManager.source;
+    return appDelegate.mediaLibraryManager;
+}
+
+- (ddb_mediasource_source_t *)medialibSource {
+    return self.mediaLibraryManager.source;
 }
 
 - (instancetype)init {
@@ -72,8 +76,7 @@ static void *kPresetContext = &kPresetContext;
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(applicationWillQuit:) name:@"ApplicationWillQuit" object:nil];
 
-    // FIXME: doesn't work
-    [NSUserDefaults.standardUserDefaults addObserver:self forKeyPath:@"medialib.preset" options:0 context:kPresetContext];
+    self.currentPreset = self.mediaLibraryManager.preset;
 
     self.outlineView = outlineView;
     self.outlineView.dataSource = self;
@@ -108,20 +111,10 @@ static void *kPresetContext = &kPresetContext;
     return self;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if (context == kPresetContext) {
-        [self filterChanged];
-    } else {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
-}
-
 - (void)disconnect {
     if (self.medialibPlugin == NULL) {
         return;
     }
-    [NSUserDefaults.standardUserDefaults removeObserver:self forKeyPath:@"medialib.preset" context:kPresetContext];
     if (self.listenerId != -1) {
         self.medialibPlugin->remove_listener (self.medialibSource, self.listenerId);
         self.listenerId = -1;
@@ -154,13 +147,13 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 
     scriptableItem_t *tfQueryRoot =  self.medialibPlugin->get_queries_scriptable(self.medialibSource);
 
-    NSString *presetName = [NSUserDefaults.standardUserDefaults stringForKey:@"medialib.preset"];
+    NSString *presetName = self.mediaLibraryManager.preset;
     scriptableItem_t *preset = NULL;
-    if (presetName == nil) {
-        preset = scriptableItemChildren(tfQueryRoot);
-    }
-    else {
+    if (presetName != nil) {
         preset = scriptableItemSubItemForName(tfQueryRoot, presetName.UTF8String);
+    }
+    if (preset == NULL) {
+        preset = scriptableItemChildren(tfQueryRoot);
     }
 
     self.medialibItemTree = self.medialibPlugin->create_item_tree (self.medialibSource, preset, self.searchString ? self.searchString.UTF8String : NULL);
@@ -377,6 +370,16 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (int)widgetMessage:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+
+    if (_id == DB_EV_CONFIGCHANGED) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *preset = self.mediaLibraryManager.preset;
+            if (![preset isEqualToString:self.currentPreset]) {
+                self.currentPreset = preset;
+                [self filterChanged];
+            }
+        });
+    }
     return 0;
 }
 

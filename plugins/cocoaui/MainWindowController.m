@@ -140,6 +140,13 @@ extern DB_functions_t *deadbeef;
     self.tfQuerySelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
     self.tfQuerySelectViewController.dataSource = self.mlQueriesDataSource;
 
+    if (self.mlQueriesDataSource.scriptable != NULL) {
+        NSString *preset = self.mediaLibraryManager.preset;
+        scriptableItem_t *currentPreset = scriptableItemSubItemForName(self.mlQueriesDataSource.scriptable, preset.UTF8String);
+        if (currentPreset != NULL) {
+            [self.tfQuerySelectViewController selectItem:currentPreset];
+        }
+    }
 
 #else
     self.mainContentViewController = [MainContentViewController new];
@@ -553,7 +560,7 @@ static char sb_text[512];
 
 - (void)scriptableSelectItemSelected:(scriptableItem_t *)item {
     const char *name = scriptableItemPropertyValueForKey(item, "name");
-    [NSUserDefaults.standardUserDefaults setObject:@(name) forKey:@"medialib.preset"];
+    self.mediaLibraryManager.preset = @(name);
 }
 
 #pragma mark - ScriptableItemDelegate

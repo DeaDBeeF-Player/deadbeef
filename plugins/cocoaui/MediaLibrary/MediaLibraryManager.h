@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly) DB_mediasource_t *medialibPlugin;
 @property (nonatomic,readonly) ddb_mediasource_source_t *source;
 
+@property (nonatomic) NSString *preset;
+
 @end
 
 NS_ASSUME_NONNULL_END
