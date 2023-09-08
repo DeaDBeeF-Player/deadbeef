@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22152" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22152"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -142,7 +142,6 @@
             <connections>
                 <outlet property="outlineView" destination="Ffb-Ma-ZiG" id="hIF-Ov-h6c"/>
                 <outlet property="searchField" destination="KyF-ei-PTn" id="s7g-X2-gzu"/>
-                <outlet property="selectorPopup" destination="HiC-Av-HZt" id="aCH-ek-hgZ"/>
                 <outlet property="view" destination="v3y-Wv-fY1" id="wU3-Qy-ern"/>
             </connections>
         </viewController>
@@ -173,24 +172,10 @@
             </connections>
             <point key="canvasLocation" x="-587" y="23"/>
         </menu>
-        <customView misplaced="YES" id="v3y-Wv-fY1">
-            <rect key="frame" x="0.0" y="0.0" width="285" height="362"/>
+        <customView id="v3y-Wv-fY1">
+            <rect key="frame" x="0.0" y="0.0" width="285" height="334"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <popUpButton horizontalHuggingPriority="249" verticalHuggingPriority="750" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="HiC-Av-HZt">
-                    <rect key="frame" x="17" y="250" width="164" height="25"/>
-                    <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="0P5-9Y-HNY" id="bVL-L2-hUa">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="menu"/>
-                        <menu key="menu" id="kyb-s0-uJm">
-                            <items>
-                                <menuItem title="Item 1" state="on" id="0P5-9Y-HNY"/>
-                                <menuItem title="Item 2" id="gfq-5K-62D"/>
-                                <menuItem title="Item 3" id="yRg-Hu-vY2"/>
-                            </items>
-                        </menu>
-                    </popUpButtonCell>
-                </popUpButton>
                 <button toolTip="Configure" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g73-tS-yMi">
                     <rect key="frame" x="178" y="247" width="94" height="32"/>
                     <buttonCell key="cell" type="push" title="Configure" bezelStyle="rounded" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BXp-on-KAq">
@@ -306,27 +291,24 @@
                     </scroller>
                 </scrollView>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="bx2-Y7-PbO">
-                    <rect key="frame" x="20" y="282" width="245" height="20"/>
+                    <rect key="frame" x="20" y="254" width="157" height="20"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="20" id="WNM-f0-mqS"/>
                     </constraints>
                 </customView>
             </subviews>
             <constraints>
-                <constraint firstItem="KyF-ei-PTn" firstAttribute="leading" secondItem="HiC-Av-HZt" secondAttribute="leading" id="0em-Ef-ddl"/>
-                <constraint firstItem="g73-tS-yMi" firstAttribute="leading" secondItem="HiC-Av-HZt" secondAttribute="trailing" constant="8" symbolic="YES" id="5zV-zC-vSA"/>
                 <constraint firstItem="bx2-Y7-PbO" firstAttribute="top" secondItem="v3y-Wv-fY1" secondAttribute="top" constant="60" id="Abv-jY-4OA"/>
                 <constraint firstItem="KyF-ei-PTn" firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" id="Byr-jY-QSB"/>
+                <constraint firstItem="g73-tS-yMi" firstAttribute="top" secondItem="bx2-Y7-PbO" secondAttribute="top" id="GgH-yZ-RNV"/>
                 <constraint firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" constant="20" symbolic="YES" id="IUr-En-aze"/>
-                <constraint firstItem="g73-tS-yMi" firstAttribute="top" secondItem="HiC-Av-HZt" secondAttribute="top" id="SCG-3U-ToF"/>
+                <constraint firstItem="g73-tS-yMi" firstAttribute="leading" secondItem="bx2-Y7-PbO" secondAttribute="trailing" constant="8" symbolic="YES" id="LAq-2m-P1g"/>
+                <constraint firstItem="KyF-ei-PTn" firstAttribute="top" secondItem="g73-tS-yMi" secondAttribute="bottom" constant="8" id="ORZ-kK-HOV"/>
                 <constraint firstAttribute="bottom" secondItem="VJY-8N-XhM" secondAttribute="bottom" id="UUG-BW-jzV"/>
-                <constraint firstItem="bx2-Y7-PbO" firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" id="XkY-mZ-jqN"/>
-                <constraint firstItem="KyF-ei-PTn" firstAttribute="top" secondItem="HiC-Av-HZt" secondAttribute="bottom" constant="8" symbolic="YES" id="Zky-7E-jVP"/>
-                <constraint firstItem="HiC-Av-HZt" firstAttribute="leading" secondItem="v3y-Wv-fY1" secondAttribute="leading" constant="20" symbolic="YES" id="Zzd-QH-a5b"/>
-                <constraint firstItem="g73-tS-yMi" firstAttribute="top" secondItem="bx2-Y7-PbO" secondAttribute="bottom" constant="8" id="btH-6L-1nd"/>
+                <constraint firstItem="bx2-Y7-PbO" firstAttribute="leading" secondItem="v3y-Wv-fY1" secondAttribute="leading" constant="20" symbolic="YES" id="giY-GL-IPr"/>
                 <constraint firstAttribute="trailing" secondItem="VJY-8N-XhM" secondAttribute="trailing" id="jUc-sO-BRH"/>
                 <constraint firstItem="VJY-8N-XhM" firstAttribute="top" secondItem="KyF-ei-PTn" secondAttribute="bottom" constant="8" symbolic="YES" id="nQQ-50-wgo"/>
-                <constraint firstItem="bx2-Y7-PbO" firstAttribute="leading" secondItem="HiC-Av-HZt" secondAttribute="leading" id="siw-oa-wID"/>
+                <constraint firstItem="bx2-Y7-PbO" firstAttribute="leading" secondItem="KyF-ei-PTn" secondAttribute="leading" id="p0e-SI-wkT"/>
                 <constraint firstItem="VJY-8N-XhM" firstAttribute="leading" secondItem="v3y-Wv-fY1" secondAttribute="leading" id="uIQ-CV-mDn"/>
             </constraints>
             <point key="canvasLocation" x="-796.5" y="-267"/>
