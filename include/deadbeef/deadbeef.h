@@ -2285,11 +2285,6 @@ typedef void (* ddb_medialib_listener_t)(ddb_mediasource_event_type_t event, voi
 struct ddb_mediasource_source_t;
 typedef struct ddb_mediasource_source_t ddb_mediasource_source_t;
 
-/// Abstract type representing a selector for media source query (e.g. Albums, Artists, Genres)
-/// Use @c get_selectors_list method to get the list of available selectors.
-/// Use the values to specify the selector when calling @c create_item_tree.
-//typedef struct ddb_mediasource_list_selector_s *ddb_mediasource_list_selector_t;
-
 /// Opaque struct representing the extended API of the underlying plugin. Use @c get_extended_api method to get it.
 typedef struct ddb_mediasource_api_s ddb_mediasource_api_t;
 
@@ -2337,7 +2332,7 @@ typedef struct {
     /// Remove event listener
     void (*remove_listener) (ddb_mediasource_source_t *source, int listener_id);
 
-    /// Create a tree of items for the given @c selector.
+    /// Create a tree of items for the given @c preset.
     /// The tree is immutable, and can be used by the caller in any way it needs.
     /// The caller must free the returned object by calling the @c free_list
     ddb_medialib_item_t * (*create_item_tree) (ddb_mediasource_source_t *source, ddb_scriptable_item_t *preset, const char *filter);
