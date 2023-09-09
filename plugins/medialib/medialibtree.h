@@ -30,6 +30,8 @@
 #include "medialibdb.h"
 
 typedef struct ml_tree_item_s {
+    struct ml_tree_item_s *parent;
+
     /// Path to the node in the tree
     /// Can be NULL
     /// Used as a unique identifier
@@ -52,6 +54,9 @@ ml_tree_init (DB_functions_t *deadbeef);
 
 void
 ml_tree_free (void);
+
+ddb_medialib_item_t *
+ml_get_tree_item_parent(ddb_medialib_item_t *item);
 
 ml_tree_item_t *
 _create_item_tree_from_collection(const char *filter, scriptableItem_t *preset, medialib_source_t *source);

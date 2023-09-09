@@ -499,6 +499,7 @@ static DB_mediasource_t plugin = {
     .add_listener = ml_add_listener,
     .remove_listener = ml_remove_listener,
     .create_item_tree = ml_create_item_tree,
+    .get_tree_item_parent = ml_get_tree_item_parent,
     .is_tree_item_selected = ml_is_tree_item_selected,
     .set_tree_item_selected = ml_set_tree_item_selected,
     .is_tree_item_expanded = ml_is_tree_item_expanded,

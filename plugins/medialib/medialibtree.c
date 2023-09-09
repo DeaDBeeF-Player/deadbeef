@@ -480,6 +480,20 @@ _create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, const char 
     }
 }
 
+static void
+_assign_parents(ml_tree_item_t *item) {
+    for (ml_tree_item_t *child = item->children; child != NULL; child = child->next) {
+        child->parent = item;
+        _assign_parents(child);
+    }
+}
+
+ddb_medialib_item_t *
+ml_get_tree_item_parent(ddb_medialib_item_t *_item) {
+    ml_tree_item_t *item = (ml_tree_item_t *)_item;
+    return (ddb_medialib_item_t *)item->parent;
+}
+
 ml_tree_item_t *
 _create_item_tree_from_collection(const char *filter, scriptableItem_t *preset, medialib_source_t *source) {
     int selected = 0;
@@ -531,6 +545,8 @@ _create_item_tree_from_collection(const char *filter, scriptableItem_t *preset, 
         }
         _create_tf_tree(source, root, selected, tfs, count);
     }
+
+    _assign_parents(root);
 
     // cleanup
     gettimeofday (&tm2, NULL);

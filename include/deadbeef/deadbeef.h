@@ -2345,6 +2345,8 @@ typedef struct {
 
     ddb_scriptable_item_t *(*get_queries_scriptable)(ddb_mediasource_source_t *source);
 
+    ddb_medialib_item_t *(*get_tree_item_parent)(ddb_medialib_item_t *item);
+
     // It is recommended to use the select/expand methods below
     // to preserve selected/expanded state across medialib refreshes.
 

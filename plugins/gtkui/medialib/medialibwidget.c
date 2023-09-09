@@ -689,10 +689,8 @@ _treeview_row_mousedown (GtkWidget* self, GdkEventButton *event, gpointer user_d
         list_context_menu_with_dynamic_track_list (plt, &_trkproperties_delegate);
 
         deadbeef->plt_unref(plt);
-
-
-
     }
+
     // append to playlist
     else if (event->button == 2 && count > 0) {
         ddb_playlist_t *curr_plt = _get_target_playlist ();
