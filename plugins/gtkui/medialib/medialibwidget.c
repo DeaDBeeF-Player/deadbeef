@@ -19,14 +19,16 @@
 #include "medialibmanager.h"
 #include "plmenu.h"
 #include "../../../shared/scriptable/scriptable.h"
+#include "../scriptable/gtkScriptableSelectViewController.h"
 
 extern DB_functions_t *deadbeef;
 static DB_mediasource_t *plugin;
 
 typedef struct {
     ddb_gtkui_widget_t base;
+    gtkScriptableSelectViewController_t *selectViewController;
+    gtkScriptableSelectViewControllerDelegate_t scriptableSelectDelegate;
     GtkTreeView *tree;
-    GtkComboBoxText *selector;
     GtkEntry *search_entry;
     ddb_mediasource_source_t *source;
     char *preset;
@@ -346,6 +348,19 @@ _row_did_collapse_expand (GtkTreeView* self, GtkTreeIter* iter, GtkTreePath* pat
 }
 
 static void
+_scriptableSelectSelectionDidChange(gtkScriptableSelectViewController_t *vc, scriptableItem_t *item, void *context) {
+    w_medialib_viewer_t *mlv = context;
+
+    const char *name = scriptableItemPropertyValueForKey(item, "name");
+
+    if (mlv->preset == NULL || strcmp(mlv->preset, name)) {
+        free (mlv->preset);
+        mlv->preset = strdup(name);
+        _reload_content (mlv);
+    }
+}
+
+static void
 w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     // observe medialib source
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
@@ -361,14 +376,10 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
 
     scriptableItem_t *presets = plugin->get_queries_scriptable(mlv->source);
 
-    scriptableItem_t *preset = scriptableItemChildren(presets);
-
-    while (preset != NULL) {
-        const char *name = scriptableItemPropertyValueForKey(preset, "name");
-        gtk_combo_box_text_append_text (mlv->selector, name);
-        preset = scriptableItemNext(preset);
-    }
-    gtk_combo_box_set_active (GTK_COMBO_BOX (mlv->selector), 0);
+    mlv->scriptableSelectDelegate.selectionDidChange = _scriptableSelectSelectionDidChange;
+    gtkScriptableSelectViewControllerSetScriptable(mlv->selectViewController, presets);
+    gtkScriptableSelectViewControllerSetDelegate(mlv->selectViewController, &mlv->scriptableSelectDelegate, mlv);
+    gtkScriptableSelectViewControllerSelectItem(mlv->selectViewController, scriptableItemChildren(presets));
 
     // Root node
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
@@ -386,6 +397,9 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
 static void
 w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
+    if (mlv->selectViewController != NULL) {
+        gtkScriptableSelectViewControllerFree(mlv->selectViewController);
+    }
     if (mlv->source != NULL) {
         plugin->remove_listener (mlv->source, mlv->listener_id);
     }
@@ -427,33 +441,6 @@ add_treeview_column (w_medialib_viewer_t *w, GtkTreeView *tree, int pos, int exp
     gtk_tree_view_column_set_widget (col, label);
     gtk_widget_show (label);
     return col;
-}
-
-static void
-_active_preset_did_change (GtkComboBox* self, gpointer user_data) {
-    w_medialib_viewer_t *mlv = user_data;
-    int preset_index = gtk_combo_box_get_active (self);
-
-    scriptableItem_t *presets = plugin->get_queries_scriptable(mlv->source);
-
-    scriptableItem_t *preset = scriptableItemChildren(presets);
-    for (int i = 0; i < preset_index && preset; i++) {
-        preset = scriptableItemNext(preset);
-    }
-
-    const char *name;
-    if (preset == NULL) {
-        name = "";
-    }
-    else {
-        name = scriptableItemPropertyValueForKey(preset, "name");
-    }
-
-    if (mlv->preset == NULL || strcmp(mlv->preset, name)) {
-        free (mlv->preset);
-        mlv->preset = strdup(name);
-        _reload_content (mlv);
-    }
 }
 
 static void
@@ -765,21 +752,17 @@ w_medialib_viewer_create (void) {
     gtk_widget_show (vbox);
     gtk_container_add (GTK_CONTAINER (w->base.widget), vbox);
 
-    GtkWidget *configure_wrap_hbox = gtk_hbox_new (FALSE, 8);
-    gtk_widget_show (configure_wrap_hbox);
-    gtk_box_pack_start (GTK_BOX (vbox), configure_wrap_hbox, FALSE, TRUE, 0);
+    w->selectViewController = gtkScriptableSelectViewControllerNew();
+    GtkWidget *selectViewControllerWidget = gtkScriptableSelectViewControllerGetView(w->selectViewController);
 
-    GtkWidget *configure_hbox = gtk_hbox_new (FALSE, 8);
-    gtk_widget_show (configure_hbox);
-    gtk_box_pack_start (GTK_BOX (configure_wrap_hbox), configure_hbox, TRUE, TRUE, 20);
-
-    w->selector = GTK_COMBO_BOX_TEXT (gtk_combo_box_text_new ());
-    gtk_widget_show (GTK_WIDGET (w->selector));
-    gtk_box_pack_start (GTK_BOX (configure_hbox), GTK_WIDGET (w->selector), TRUE, TRUE, 0);
+    GtkWidget *select_view_wrap_hbox = gtk_hbox_new (FALSE, 8);
+    gtk_widget_show (select_view_wrap_hbox);
+    gtk_box_pack_start (GTK_BOX (vbox), select_view_wrap_hbox, FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (select_view_wrap_hbox), selectViewControllerWidget, TRUE, TRUE, 20);
 
     GtkWidget *configure_button = gtk_button_new_with_label (_("Configure"));
     gtk_widget_show (configure_button);
-    gtk_box_pack_start (GTK_BOX (configure_hbox), configure_button, FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (select_view_wrap_hbox), configure_button, TRUE, TRUE, 0);
 
     GtkWidget *search_hbox = gtk_hbox_new (FALSE, 8);
     gtk_widget_show (search_hbox);
@@ -825,7 +808,6 @@ w_medialib_viewer_create (void) {
     GtkTreeSelection *selection = gtk_tree_view_get_selection (w->tree);
     gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 
-    g_signal_connect ((gpointer)w->selector, "changed", G_CALLBACK (_active_preset_did_change), w);
     g_signal_connect ((gpointer)w->search_entry, "changed", G_CALLBACK (_search_text_did_change), w);
     g_signal_connect ((gpointer)w->tree, "row-activated", G_CALLBACK (_treeview_row_did_activate), w);
     g_signal_connect ((gpointer)w->tree, "button_press_event", G_CALLBACK (_treeview_row_mousedown), w);

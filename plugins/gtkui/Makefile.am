@@ -55,6 +55,7 @@ GTKUI_SOURCES = \
 	prefwin/prefwinplayback.c prefwin/prefwinplayback.h\
 	prefwin/prefwinplugins.c prefwin/prefwinplugins.h\
 	prefwin/prefwinsound.c prefwin/prefwinsound.h\
+	scriptable/gtkScriptableSelectViewController.c scriptable/gtkScriptableSelectViewController.h\
 	$(SM_SOURCES) $(OSXSRC)
 
 sdkdir = $(pkgincludedir)

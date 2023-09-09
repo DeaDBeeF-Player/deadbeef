@@ -2019,6 +2019,8 @@
 		2DB521182AAC692200B6250A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51631837F60A003E6066 /* CoreAudio.framework */; };
 		2DB521192AAC694700B6250A /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
 		2DB5211A2AAC697100B6250A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D76DD3B24F6D693000EDA3E /* IOKit.framework */; };
+		2DB522FB2AACF14500B6250A /* gtkScriptableSelectViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */; };
+		2DB522FC2AACF14500B6250A /* gtkScriptableSelectViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */; };
 		2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */; };
 		2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */; };
 		2DB86E4F295CFFBA0011014C /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB86E3F295CFFB90011014C /* config.h */; };
@@ -6578,6 +6580,8 @@
 		2DB1641924FAB13400034E11 /* MediaLibraryManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryManager.m; sourceTree = "<group>"; };
 		2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginsPreferencesViewController.h; sourceTree = "<group>"; };
 		2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginsPreferencesViewController.m; sourceTree = "<group>"; };
+		2DB522F72AACF09600B6250A /* gtkScriptableSelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptableSelectViewController.h; sourceTree = "<group>"; };
+		2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptableSelectViewController.c; sourceTree = "<group>"; };
 		2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackContextMenu.h; sourceTree = "<group>"; };
 		2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackContextMenu.m; sourceTree = "<group>"; };
 		2DB86E3F295CFFB90011014C /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = "deps/mpg123-1.31.1/ports/Xcode/config.h"; sourceTree = SOURCE_ROOT; };
@@ -11415,6 +11419,15 @@
 			path = scriptable;
 			sourceTree = "<group>";
 		};
+		2DB522F62AACF08300B6250A /* scriptable */ = {
+			isa = PBXGroup;
+			children = (
+				2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */,
+				2DB522F72AACF09600B6250A /* gtkScriptableSelectViewController.h */,
+			);
+			path = scriptable;
+			sourceTree = "<group>";
+		};
 		2DB52F6A24CF7CB50046D516 /* TrackProperties */ = {
 			isa = PBXGroup;
 			children = (
@@ -11844,6 +11857,7 @@
 		2DE3B5772269BB4300AFF9AE /* gtkui */ = {
 			isa = PBXGroup;
 			children = (
+				2DB522F62AACF08300B6250A /* scriptable */,
 				2D9793E0276E853E0062585E /* covermanager */,
 				2DCCCF7B26C43CE80034F4BB /* medialib */,
 				2DD81C2D25152D86008C716C /* pixmaps */,
@@ -17691,6 +17705,7 @@
 				2DC656AB2744289C00583E14 /* prefwin.c in Sources */,
 				2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */,
 				2DC656AE2744289C00583E14 /* support.c in Sources */,
+				2DB522FB2AACF14500B6250A /* gtkScriptableSelectViewController.c in Sources */,
 				2DC656AF2744289C00583E14 /* ddbtabstrip.c in Sources */,
 				2DC656B12744289C00583E14 /* clipboard.c in Sources */,
 				2DC656B22744289C00583E14 /* prefwinmisc.c in Sources */,
@@ -17788,6 +17803,7 @@
 				2DE3B7D72269BF1700AFF9AE /* prefwin.c in Sources */,
 				2DE3B7DC2269BF1700AFF9AE /* ddbseekbar.c in Sources */,
 				2DE3B7E12269BF3100AFF9AE /* support.c in Sources */,
+				2DB522FC2AACF14500B6250A /* gtkScriptableSelectViewController.c in Sources */,
 				2DE3B7C62269BF1300AFF9AE /* ddbtabstrip.c in Sources */,
 				2DE3B7D22269BF1700AFF9AE /* clipboard.c in Sources */,
 				2D715C1326C836FE0022A8F0 /* prefwinmisc.c in Sources */,
