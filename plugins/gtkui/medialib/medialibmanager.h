@@ -11,7 +11,7 @@
 
 #include <deadbeef/deadbeef.h>
 
-ddb_mediasource_source_t
+ddb_mediasource_source_t *
 gtkui_medialib_get_source (void);
 
 void

@@ -18,6 +18,7 @@
 #include "medialibwidget.h"
 #include "medialibmanager.h"
 #include "plmenu.h"
+#include "scriptable/scriptable.h"
 
 extern DB_functions_t *deadbeef;
 static DB_mediasource_t *plugin;
@@ -27,9 +28,8 @@ typedef struct {
     GtkTreeView *tree;
     GtkComboBoxText *selector;
     GtkEntry *search_entry;
-    ddb_mediasource_source_t source;
-    ddb_mediasource_list_selector_t *selectors;
-    int active_selector;
+    ddb_mediasource_source_t *source;
+    char *preset;
     char *search_text;
     int listener_id;
     GtkTreeIter root_iter;
@@ -168,7 +168,19 @@ _reload_content (w_medialib_viewer_t *mlv) {
         plugin->free_item_tree (mlv->source, mlv->item_tree);
         mlv->item_tree = NULL;
     }
-    mlv->item_tree = plugin->create_item_tree (mlv->source, mlv->selectors[mlv->active_selector], mlv->search_text);
+
+    scriptableItem_t *preset = NULL;
+
+    scriptableItem_t *presets = plugin->get_queries_scriptable(mlv->source);
+    if (presets) {
+        if (mlv->preset) {
+            preset = scriptableItemSubItemForName(presets, mlv->preset);
+        }
+        if (preset == NULL) {
+            preset = scriptableItemChildren(presets);
+        }
+        mlv->item_tree = plugin->create_item_tree (mlv->source, preset, mlv->search_text);
+    }
 
     mlv->is_reloading = 1;
     // clear
@@ -343,15 +355,20 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     if (plugin == NULL) {
         return;
     }
+
     mlv->source = gtkui_medialib_get_source ();
-    mlv->selectors = plugin->get_selectors_list (mlv->source);
     mlv->listener_id =  plugin->add_listener (mlv->source, _medialib_listener, mlv);
 
-    for (int i = 0; mlv->selectors[i]; i++) {
-        gtk_combo_box_text_append_text (mlv->selector, plugin->selector_name (mlv->source, mlv->selectors[i]));
+    scriptableItem_t *presets = plugin->get_queries_scriptable(mlv->source);
+
+    scriptableItem_t *preset = scriptableItemChildren(presets);
+
+    while (preset != NULL) {
+        const char *name = scriptableItemPropertyValueForKey(preset, "name");
+        gtk_combo_box_text_append_text (mlv->selector, name);
+        preset = scriptableItemNext(preset);
     }
     gtk_combo_box_set_active (GTK_COMBO_BOX (mlv->selector), 0);
-    mlv->active_selector = 0;
 
     // Root node
     GtkTreeStore *store = GTK_TREE_STORE (gtk_tree_view_get_model (mlv->tree));
@@ -376,10 +393,7 @@ w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
         plugin->free_item_tree (mlv->source, mlv->item_tree);
         mlv->item_tree = NULL;
     }
-    if (mlv->selectors != NULL) {
-        plugin->free_selectors_list (mlv->source, mlv->selectors);
-        mlv->selectors = NULL;
-    }
+    free (mlv->preset);
     free (mlv->search_text);
     mlv->search_text = NULL;
 }
@@ -416,11 +430,28 @@ add_treeview_column (w_medialib_viewer_t *w, GtkTreeView *tree, int pos, int exp
 }
 
 static void
-_active_selector_did_change (GtkComboBox* self, gpointer user_data) {
+_active_preset_did_change (GtkComboBox* self, gpointer user_data) {
     w_medialib_viewer_t *mlv = user_data;
-    int active_selector = gtk_combo_box_get_active (self);
-    if (mlv->active_selector != active_selector) {
-        mlv->active_selector = active_selector;
+    int preset_index = gtk_combo_box_get_active (self);
+
+    scriptableItem_t *presets = plugin->get_queries_scriptable(mlv->source);
+
+    scriptableItem_t *preset = scriptableItemChildren(presets);
+    for (int i = 0; i < preset_index && preset; i++) {
+        preset = scriptableItemNext(preset);
+    }
+
+    const char *name;
+    if (preset == NULL) {
+        name = "";
+    }
+    else {
+        name = scriptableItemPropertyValueForKey(preset, "name");
+    }
+
+    if (mlv->preset == NULL || strcmp(mlv->preset, name)) {
+        free (mlv->preset);
+        mlv->preset = strdup(name);
         _reload_content (mlv);
     }
 }
@@ -796,7 +827,7 @@ w_medialib_viewer_create (void) {
     GtkTreeSelection *selection = gtk_tree_view_get_selection (w->tree);
     gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 
-    g_signal_connect ((gpointer)w->selector, "changed", G_CALLBACK (_active_selector_did_change), w);
+    g_signal_connect ((gpointer)w->selector, "changed", G_CALLBACK (_active_preset_did_change), w);
     g_signal_connect ((gpointer)w->search_entry, "changed", G_CALLBACK (_search_text_did_change), w);
     g_signal_connect ((gpointer)w->tree, "row-activated", G_CALLBACK (_treeview_row_did_activate), w);
     g_signal_connect ((gpointer)w->tree, "button_press_event", G_CALLBACK (_treeview_row_mousedown), w);

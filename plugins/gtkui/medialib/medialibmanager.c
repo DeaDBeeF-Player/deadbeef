@@ -15,9 +15,9 @@
 extern DB_functions_t *deadbeef;
 
 static DB_mediasource_t *_plugin;
-static ddb_mediasource_source_t _source;
+static ddb_mediasource_source_t *_source;
 
-ddb_mediasource_source_t
+ddb_mediasource_source_t *
 gtkui_medialib_get_source (void) {
     if (_source != NULL) {
         return _source;

@@ -2013,6 +2013,8 @@
 		2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */; };
 		2DB520E62AA8FADB00B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
 		2DB520E72AA8FF0800B6250A /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
+		2DB521152AAC51F000B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
+		2DB521162AAC51F000B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
 		2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */; };
 		2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */; };
 		2DB86E4F295CFFBA0011014C /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB86E3F295CFFB90011014C /* config.h */; };
@@ -17666,6 +17668,7 @@
 				2D5C6AD62752B6930073632B /* plmenu.c in Sources */,
 				2DC6569E2744289C00583E14 /* rg.c in Sources */,
 				2DC6569F2744289C00583E14 /* utf8.c in Sources */,
+				2DB521162AAC51F000B6250A /* scriptable.c in Sources */,
 				2DC656A02744289C00583E14 /* gtkui_deletefromdisk.c in Sources */,
 				2D92D31E29B92F8D00218F1D /* deletefromdisk.c in Sources */,
 				2DC656A12744289C00583E14 /* fileman.c in Sources */,
@@ -17762,6 +17765,7 @@
 				2D5C6AD72752B6930073632B /* plmenu.c in Sources */,
 				2DE3B7DF2269BF3100AFF9AE /* rg.c in Sources */,
 				2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */,
+				2DB521152AAC51F000B6250A /* scriptable.c in Sources */,
 				2DA62BA626F3C8A800ED449A /* gtkui_deletefromdisk.c in Sources */,
 				2D92D32029B92F8D00218F1D /* deletefromdisk.c in Sources */,
 				2DE3B7FA2269BF3100AFF9AE /* fileman.c in Sources */,
@@ -22514,6 +22518,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -22577,6 +22582,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -22837,6 +22843,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -22900,6 +22907,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/deps/jansson-2.13.1/src\"",
 					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
