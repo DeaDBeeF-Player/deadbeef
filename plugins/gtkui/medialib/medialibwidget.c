@@ -18,7 +18,7 @@
 #include "medialibwidget.h"
 #include "medialibmanager.h"
 #include "plmenu.h"
-#include "scriptable/scriptable.h"
+#include "../../../shared/scriptable/scriptable.h"
 
 extern DB_functions_t *deadbeef;
 static DB_mediasource_t *plugin;

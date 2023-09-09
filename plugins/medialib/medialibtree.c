@@ -532,40 +532,6 @@ _create_item_tree_from_collection(const char *filter, scriptableItem_t *preset, 
         _create_tf_tree(source, root, selected, tfs, count);
     }
 
-
-//    if (index == SEL_FOLDERS) {
-//        _create_folder_tree(source, root, selected);
-//    }
-//    else if (index == SEL_ARTISTS) {
-//        // list of albums for artist
-//        const char *tfs[] = {
-//            "$if2(%album artist%,\\<?\\>)",
-//            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
-//            "[%tracknumber%. ]%title%"
-//        };
-//
-//        _create_tf_tree(source, root, selected, tfs, 3);
-//    }
-//    else if (index == SEL_GENRES) {
-//        // list of albums for genre
-//        const char *tfs[] = {
-//            "$if2(%genre%,\\<?\\>)",
-//            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
-//            "[%tracknumber%. ]%title%"
-//        };
-//
-//        _create_tf_tree(source, root, selected, tfs, 3);
-//    }
-//    else if (index == SEL_ALBUMS) {
-//        // list of tracks for album
-//        const char *tfs[] = {
-//            "$if2(%album artist%,\\<?\\>) - $if2(%album%,\\<?\\>)",
-//            "[%tracknumber%. ]%title%"
-//        };
-//
-//        _create_tf_tree(source, root, selected, tfs, 2);
-//    }
-
     // cleanup
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec*1000+tm2.tv_usec/1000) - (tm1.tv_sec*1000+tm1.tv_usec/1000);

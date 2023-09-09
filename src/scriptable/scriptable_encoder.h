@@ -1,7 +1,7 @@
 #ifndef scriptable_encoder_h
 #define scriptable_encoder_h
 
-#include "scriptable.h"
+#include "scriptable/scriptable.h"
 #include "../../plugins/converter/converter.h"
 
 #ifdef __cplusplus

@@ -1,5 +1,5 @@
 //
-//  SciptableTests.cpp
+//  ScriptableTests.cpp
 //  Tests
 //
 //  Created by Oleksiy Yakovenko on 4/22/19.
@@ -9,7 +9,7 @@
 #include "conf.h"
 #include <deadbeef/common.h>
 #include "logger.h"
-#include "scriptable.h"
+#include "scriptable/scriptable.h"
 #include "scriptable_dsp.h"
 #include "scriptable_encoder.h"
 #include <gtest/gtest.h>

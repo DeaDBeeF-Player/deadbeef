@@ -2015,6 +2015,10 @@
 		2DB520E72AA8FF0800B6250A /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
 		2DB521152AAC51F000B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
 		2DB521162AAC51F000B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
+		2DB521172AAC68C200B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
+		2DB521182AAC692200B6250A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B51631837F60A003E6066 /* CoreAudio.framework */; };
+		2DB521192AAC694700B6250A /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
+		2DB5211A2AAC697100B6250A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D76DD3B24F6D693000EDA3E /* IOKit.framework */; };
 		2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */; };
 		2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */; };
 		2DB86E4F295CFFBA0011014C /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB86E3F295CFFB90011014C /* config.h */; };
@@ -7806,6 +7810,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DB5211A2AAC697100B6250A /* IOKit.framework in Frameworks */,
+				2DB521182AAC692200B6250A /* CoreAudio.framework in Frameworks */,
 				2DC6C624294DE72D00A63CEB /* libgoogletest.dylib in Frameworks */,
 				2D6E2CFC26AC1617008FCD4B /* Accelerate.framework in Frameworks */,
 				2DAA4071269B63B5006D2754 /* libjansson.dylib in Frameworks */,
@@ -17628,8 +17634,10 @@
 				2D135EF4226E47CE00BAAE84 /* ScriptableTests.cpp in Sources */,
 				2DA80C7426C0708200E8EC7F /* CuesheetTests.cpp in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.cpp in Sources */,
+				2DB521192AAC694700B6250A /* scriptable_tfquery.c in Sources */,
 				2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTests.cpp in Sources */,
+				2DB521172AAC68C200B6250A /* scriptable.c in Sources */,
 				2DBF3DC5270A101400023138 /* medialibstate.c in Sources */,
 				2D7F38031B2858AC00692A7B /* JunklibTests.cpp in Sources */,
 				4D0B0CEE20162D95004162DA /* FormatConversionTests.cpp in Sources */,
@@ -22301,6 +22309,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_MODULES_AUTOLINK = NO;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
@@ -22322,6 +22331,7 @@
 					"$(SRCROOT)/../external/googletest/googletest/include",
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = ../Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -22346,6 +22356,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_CODE_COVERAGE = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_MODULES_AUTOLINK = NO;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEAD_CODE_STRIPPING = YES;
@@ -22367,6 +22378,7 @@
 					"$(SRCROOT)/../external/googletest/googletest/include",
 					"\"$(SRCROOT)/../include\"",
 					"\"$(SRCROOT)/..\"",
+					"\"$(SRCROOT)/../shared\"",
 				);
 				INFOPLIST_FILE = ../Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

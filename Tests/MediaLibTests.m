@@ -12,6 +12,8 @@
 #include "logger.h"
 #include "medialib.h"
 #include "plugins.h"
+#include "scriptable/scriptable.h"
+#include "scriptable_tfquery.h"
 
 @interface MediaLibTests : XCTestCase
 
@@ -67,7 +69,10 @@ _listener(ddb_mediasource_event_type_t event, void *user_data) {
 
     [self waitForExpectations:@[self.scanCompletedExpectation] timeout:5];
 
-    ddb_medialib_item_t *tree = self.plugin->create_item_tree(source, (ddb_mediasource_list_selector_t)2, NULL); // FIXME: hardcoded selector
+    scriptableItem_t *root = scriptableTFQueryRootCreate ();
+    ml_scriptable_init(deadbeef, root);
+
+    ddb_medialib_item_t *tree = self.plugin->create_item_tree(source, scriptableItemSubItemForName(root, "Genres"), NULL);
 
     int count = 0;
     const ddb_medialib_item_t *children = self.plugin->tree_item_get_children(tree);
@@ -75,6 +80,8 @@ _listener(ddb_mediasource_event_type_t event, void *user_data) {
     self.plugin->free_item_tree(source, tree);
 
     self.plugin->free_source(source);
+
+    scriptableItemFree(root);
 
     XCTAssertEqual(count, 1);
 }

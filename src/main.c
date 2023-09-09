@@ -1061,7 +1061,9 @@ main_cleanup_and_quit (void) {
     plug_disconnect_all ();
     plug_unload_all (^{
         // at this point we can simply do exit(0), but let's clean up for debugging
+#ifdef OSX_APPBUNDLE
         scriptableDeinitShared();
+#endif
 
         pl_free (); // may access conf_*
         conf_free ();

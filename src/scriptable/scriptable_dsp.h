@@ -1,7 +1,7 @@
 #ifndef scriptable_dsp_h
 #define scriptable_dsp_h
 
-#include "scriptable.h"
+#include "scriptable/scriptable.h"
 #include <deadbeef/deadbeef.h>
 
 #ifdef __cplusplus

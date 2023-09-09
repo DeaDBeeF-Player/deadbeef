@@ -21,8 +21,8 @@ medialib_la_SOURCES =\
 
 medialib_la_LDFLAGS = -module -avoid-version
 
-medialib_la_LIBADD = $(LDADD) $(JANSSON_LIBS) $(DISPATCH_LIBS)
-medialib_la_CFLAGS = $(CFLAGS) -std=c99 -fPIC $(JANSSON_CFLAGS) $(DISPATCH_CFLAGS) -I@top_srcdir@/include
+medialib_la_LIBADD = $(LDADD) ../../shared/scriptable/libscriptable.la $(JANSSON_LIBS) $(DISPATCH_LIBS)
+medialib_la_CFLAGS = $(CFLAGS) -std=c99 -fPIC $(JANSSON_CFLAGS) $(DISPATCH_CFLAGS) -I@top_srcdir@/include -I@top_srcdir@/shared
 
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = medialib.h

@@ -823,6 +823,7 @@ project "ddb_gui_GTK2"
     "shared/trkproperties_shared.c",
     "shared/analyzer/analyzer.c",
     "shared/scope/scope.c",
+    "shared/scriptable/scriptable.c",
     "plugins/libparser/parser.c",
     "src/utf8.c"
   }
@@ -832,7 +833,8 @@ project "ddb_gui_GTK2"
   }
   includedirs {
     "plugins/gtkui",
-    "plugins/libparser"
+    "plugins/libparser",
+    "shared"
   }
   buildoptions {"-fblocks"}
   pkgconfig ("gtk+-2.0 jansson")
@@ -853,12 +855,14 @@ project "ddb_gui_GTK3"
     "shared/trkproperties_shared.c",
     "shared/analyzer/analyzer.c",
     "shared/scope/scope.c",
+    "shared/scriptable/scriptable.c",
     "plugins/libparser/parser.c",
     "src/utf8.c"
   }
   includedirs {
     "plugins/gtkui",
-    "plugins/libparser"
+    "plugins/libparser",
+    "shared"
   }
 
   prebuildcommands {

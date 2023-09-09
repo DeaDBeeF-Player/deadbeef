@@ -24,6 +24,7 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <stdlib.h>
 #include "medialib.h"
 #include "medialibcommon.h"
 #include "medialibdb.h"
