@@ -559,13 +559,16 @@ static char sb_text[512];
 #pragma mark - ScriptableSelectDelegate
 
 - (void)scriptableSelectItemSelected:(scriptableItem_t *)item {
+#if ENABLE_MEDIALIB
     const char *name = scriptableItemPropertyValueForKey(item, "name");
     self.mediaLibraryManager.preset = @(name);
+#endif
 }
 
 #pragma mark - ScriptableItemDelegate
 
 - (void)scriptableItemChanged:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
+#if ENABLE_MEDIALIB
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.tfQuerySelectViewController reloadData];
 
@@ -578,6 +581,7 @@ static char sb_text[512];
 
         }
     });
+#endif
 }
 
 @end
