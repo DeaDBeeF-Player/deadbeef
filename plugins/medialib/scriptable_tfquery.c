@@ -189,7 +189,7 @@ scriptableTFQueryRootCreate (void) {
     scriptableItemSetOverrides(root, &_rootCallbacks);
     scriptableItemFlagsSet(root, SCRIPTABLE_FLAG_IS_REORDABLE | SCRIPTABLE_FLAG_CAN_RENAME | SCRIPTABLE_FLAG_CAN_RESET);
 
-    scriptableItemSetPropertyValueForKey(root, "TFQueryPresets", "name");
+    scriptableItemSetPropertyValueForKey(root, "Medialib Query Presets", "name");
     return root;
 }
 

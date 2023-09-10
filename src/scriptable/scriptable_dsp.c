@@ -443,10 +443,10 @@ isPresetNameAllowed (scriptableItem_t *preset, const char *name) {
 
 scriptableItem_t *
 scriptableDspRoot (scriptableItem_t *scriptableRoot) {
-    scriptableItem_t *dspRoot = scriptableItemSubItemForName (scriptableRoot, "DSPPresets");
+    scriptableItem_t *dspRoot = scriptableItemSubItemForName (scriptableRoot, "DSP Presets");
     if (!dspRoot) {
         dspRoot = scriptableItemAlloc();
-        scriptableItemSetPropertyValueForKey(dspRoot, "DSPPresets", "name");
+        scriptableItemSetPropertyValueForKey(dspRoot, "DSP Presets", "name");
         scriptableItemAddSubItem(scriptableRoot, dspRoot);
 
         scriptableItem_t *passThroughDspPreset = scriptableDspCreateBlankPreset();

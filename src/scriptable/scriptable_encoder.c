@@ -274,12 +274,12 @@ scriptableEncoderPropertyValueWillChangeForKey (scriptableItem_t *item, const ch
 
 scriptableItem_t *
 scriptableEncoderRoot (scriptableItem_t *scriptableRoot) {
-    scriptableItem_t *encoderRoot = scriptableItemSubItemForName (scriptableRoot, "EncoderPresets");
+    scriptableItem_t *encoderRoot = scriptableItemSubItemForName (scriptableRoot, "Encoder Presets");
     if (!encoderRoot) {
         encoderRoot = scriptableItemAlloc();
         scriptableItemFlagsSet(encoderRoot, SCRIPTABLE_FLAG_CAN_RENAME);
         scriptableItemSetOverrides(encoderRoot, &scriptableRootCallbacks);
-        scriptableItemSetPropertyValueForKey(encoderRoot, "EncoderPresets", "name");
+        scriptableItemSetPropertyValueForKey(encoderRoot, "Encoder Presets", "name");
         scriptableItemAddSubItem(scriptableRoot, encoderRoot);
     }
     return encoderRoot;
