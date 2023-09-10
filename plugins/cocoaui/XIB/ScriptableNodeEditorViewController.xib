@@ -19,18 +19,18 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="qcl-7l-m6v" userLabel="Scriptable Node Editor">
-            <rect key="frame" x="0.0" y="0.0" width="347" height="181"/>
+        <customView misplaced="YES" id="qcl-7l-m6v" userLabel="Scriptable Node Editor">
+            <rect key="frame" x="0.0" y="0.0" width="338" height="181"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mAN-ij-kos">
-                    <rect key="frame" x="0.0" y="20" width="347" height="161"/>
+                    <rect key="frame" x="0.0" y="20" width="318" height="161"/>
                     <clipView key="contentView" id="TSk-Ch-Vfg">
-                        <rect key="frame" x="1" y="1" width="345" height="159"/>
+                        <rect key="frame" x="1" y="1" width="316" height="159"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" id="6kF-fI-yim">
-                                <rect key="frame" x="0.0" y="0.0" width="345" height="159"/>
+                                <rect key="frame" x="0.0" y="0.0" width="316" height="159"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="3" height="2"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -49,11 +49,11 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="x1p-KS-Z9V">
-                                                <rect key="frame" x="1" y="1" width="304" height="17"/>
+                                                <rect key="frame" x="1" y="1" width="313" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="6Ge-Os-yYF">
-                                                        <rect key="frame" x="-2" y="1" width="308" height="16"/>
+                                                        <rect key="frame" x="-2" y="1" width="317" height="16"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Table View Cell" id="kLt-6y-leh">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -93,7 +93,7 @@
                     </scroller>
                 </scrollView>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="iJH-de-0tb">
-                    <rect key="frame" x="0.0" y="-1" width="347" height="23"/>
+                    <rect key="frame" x="0.0" y="-1" width="318" height="23"/>
                     <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" refusesFirstResponder="YES" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Ech-18-nqt">
                         <behavior key="behavior" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -115,7 +115,7 @@
                     </connections>
                 </segmentedControl>
                 <segmentedControl hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="66e-Rv-oF4">
-                    <rect key="frame" x="331" y="-1" width="16" height="23"/>
+                    <rect key="frame" x="302" y="-1" width="16" height="23"/>
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="smallSquare" trackingMode="momentary" id="NbT-BH-MNL">
                         <font key="font" metaFont="system"/>
                         <segments>

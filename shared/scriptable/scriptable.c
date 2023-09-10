@@ -6,14 +6,12 @@
 
 struct scriptableItem_s {
     struct scriptableItem_s *next;
+    uint64_t flags;
     scriptableKeyValue_t *properties;
 
     struct scriptableItem_s *parent;
     struct scriptableItem_s *children;
     struct scriptableItem_s *childrenTail;
-
-    int isLoading; // prevent calling hooks while loading data
-    int isReadonly;
 
     /// the type name, as set by scriptableItemCreateItemOfType
     /// This property is for debug only, not really used by the code.
@@ -49,10 +47,18 @@ scriptableItemSetOverrides(scriptableItem_t *item, scriptableOverrides_t *overri
 
 int
 scriptableItemSave (scriptableItem_t *item) {
-    if (!item->isReadonly && item->overrides && item->overrides->save) {
+    if (!(scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_READONLY) && item->overrides && item->overrides->save) {
         return item->overrides->save (item);
     }
     return 0;
+}
+
+int
+scriptableItemReset (scriptableItem_t *item) {
+    if (item->overrides && item->overrides->reset) {
+        return item->overrides->reset(item);
+    }
+    return -1;
 }
 
 char *
@@ -206,39 +212,18 @@ scriptableItemProperties(scriptableItem_t *item) {
     return item->properties;
 }
 
-int
-scriptableItemIsList(scriptableItem_t *item) {
-    return item->overrides != NULL && item->overrides->isList;
+uint64_t scriptableItemFlags(scriptableItem_t *item) {
+    return item->flags;
+}
+void scriptableItemFlagsSet(scriptableItem_t *item, uint64_t flags) {
+    item->flags = flags;
 }
 
-int
-scriptableItemIsReorderable(scriptableItem_t *item) {
-    return item->overrides != NULL && item->overrides->isReorderable;
+void scriptableItemFlagsAdd(scriptableItem_t *item, uint64_t flags) {
+    item->flags |= flags;
 }
-
-int
-scriptableItemIsRenamable(scriptableItem_t *item) {
-    return item->overrides != NULL && item->overrides->allowRenaming;
-}
-
-int
-scriptableItemIsLoading(scriptableItem_t *item) {
-    return item->isLoading;
-}
-
-void
-scriptableItemSetIsLoading(scriptableItem_t *item, int isLoading) {
-    item->isLoading = isLoading;
-}
-
-int
-scriptableItemIsReadOnly(scriptableItem_t *item) {
-    return item->isReadonly;
-}
-
-void
-scriptableItemSetIsReadOnly(scriptableItem_t *item, int isReadOnly) {
-    item->isReadonly = isReadOnly;
+void scriptableItemFlagsRemove(scriptableItem_t *item, uint64_t flags) {
+    item->flags &= ~flags;
 }
 
 const char *
@@ -333,7 +318,7 @@ scriptableItemRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subItem) 
 
 static void
 scriptableItemDidUpdateChildItem (scriptableItem_t *item, scriptableItem_t *subItem) {
-    if (item->isLoading) {
+    if (scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_LOADING) {
         return;
     }
     if (item->overrides && item->overrides->didUpdateChildItem) {
@@ -343,7 +328,7 @@ scriptableItemDidUpdateChildItem (scriptableItem_t *item, scriptableItem_t *subI
 
 void
 scriptableItemUpdate (scriptableItem_t *item) {
-    if (item->isLoading) {
+    if (scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_LOADING) {
         return;
     }
     if (item->overrides && item->overrides->didUpdateItem) {
@@ -366,14 +351,14 @@ scriptableItemPropertyValueForKey (scriptableItem_t *item, const char *key) {
 
 static void
 scriptableItemPropertyValueWillChangeForKey (scriptableItem_t *item, const char *key) {
-    if (!item->isLoading && item->overrides && item->overrides->propertyValueWillChangeForKey) {
+    if (!(scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_LOADING) && item->overrides && item->overrides->propertyValueWillChangeForKey) {
         item->overrides->propertyValueWillChangeForKey (item, key);
     }
 }
 
 static void
 scriptableItemPropertyValueDidChangeForKey (scriptableItem_t *item, const char *key) {
-    if (!item->isLoading && item->overrides && item->overrides->propertyValueDidChangeForKey) {
+    if (!(scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_LOADING) && item->overrides && item->overrides->propertyValueDidChangeForKey) {
         item->overrides->propertyValueDidChangeForKey (item, key);
     }
 }
@@ -479,7 +464,7 @@ scriptableItemFormattedName (scriptableItem_t *item) {
         return NULL;
     }
 
-    if (!item->isReadonly || !item->overrides || !item->overrides->readonlyPrefix) {
+    if (!(scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_READONLY) || !item->overrides || !item->overrides->readonlyPrefix) {
         return strdup (name);
     }
 

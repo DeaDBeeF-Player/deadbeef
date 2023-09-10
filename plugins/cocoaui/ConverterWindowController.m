@@ -619,7 +619,7 @@ static NSMutableArray *g_converterControllers;
 
 #pragma mark - ScriptableItemDelegate
 
-- (void)scriptableItemChanged:(scriptableItem_t * _Nonnull)scriptable change:(ScriptableItemChange)change {
+- (void)scriptableItemDidChange:(scriptableItem_t * _Nonnull)scriptable change:(ScriptableItemChange)change {
     if (scriptable == scriptableEncoderRoot(scriptableRootShared())) {
         NSInteger selectedEncPresetIndex = self.encoderSelectViewController.indexOfSelectedItem;
         scriptableItem_t *selectedEncPreset = scriptableItemChildAtIndex(scriptableEncoderRoot(scriptableRootShared()), (unsigned int)selectedEncPresetIndex);

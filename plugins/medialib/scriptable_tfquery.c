@@ -84,11 +84,6 @@ _presetCreateItemOfType (scriptableItem_t *root, const char *type) {
     return item;
 }
 
-static
-int _returnTrue(scriptableItem_t *item) {
-    return 1;
-}
-
 static const char *
 _readonlyPrefix(scriptableItem_t *item) {
     return "[Built-in] ";
@@ -103,9 +98,6 @@ static scriptableOverrides_t _presetCallbacks = {
     .readonlyPrefix = _readonlyPrefix,
     .save = _presetSave,
     .didUpdateItem = _presetUpdateItem,
-    .isList = _returnTrue,
-    .isReorderable = _returnTrue,
-    .allowRenaming = _returnTrue,
     .pasteboardItemIdentifier = _presetPbIdentifier,
     .factoryItemNames = _presetItemNames,
     .factoryItemTypes = _presetItemTypes,
@@ -115,6 +107,7 @@ static scriptableOverrides_t _presetCallbacks = {
 static scriptableItem_t *
 _createBlankPreset(void) {
     scriptableItem_t *item = scriptableItemAlloc();
+    scriptableItemFlagsSet(item, SCRIPTABLE_FLAG_IS_LIST | SCRIPTABLE_FLAG_IS_REORDABLE | SCRIPTABLE_FLAG_CAN_RENAME);
     scriptableItemSetOverrides(item, &_presetCallbacks);
     return item;
 }
@@ -173,14 +166,20 @@ error:
     return res;
 }
 
+static int
+_resetRoot (scriptableItem_t *root) {
+    deadbeef->conf_remove_items("medialib.tfqueries");
+    scriptableTFQueryLoadPresets(root);
+    return 0;
+}
+
 static scriptableOverrides_t _rootCallbacks = {
-    .isReorderable = _returnTrue,
-    .allowRenaming = _returnTrue,
     .pasteboardItemIdentifier = _rootPbIdentifier,
     .factoryItemNames = _itemNames,
     .factoryItemTypes = _itemTypes,
     .createItemOfType = _createPreset,
     .save = _saveRoot,
+    .reset = _resetRoot,
 };
 
 scriptableItem_t *
@@ -188,6 +187,8 @@ scriptableTFQueryRootCreate (void) {
     // top level node: list of presets
     scriptableItem_t *root = scriptableItemAlloc();
     scriptableItemSetOverrides(root, &_rootCallbacks);
+    scriptableItemFlagsSet(root, SCRIPTABLE_FLAG_IS_REORDABLE | SCRIPTABLE_FLAG_CAN_RENAME | SCRIPTABLE_FLAG_CAN_RESET);
+
     scriptableItemSetPropertyValueForKey(root, "TFQueryPresets", "name");
     return root;
 }
@@ -242,7 +243,12 @@ scriptableTFQueryLoadPresets (scriptableItem_t *root) {
         goto error;
     }
 
-    scriptableItemSetIsLoading(root, 1);
+    scriptableItemFlagsAdd(root, SCRIPTABLE_FLAG_IS_LOADING);
+
+    scriptableItem_t *item;
+    while ((item = scriptableItemChildren(root))) {
+        scriptableItemRemoveSubItem(root, item);
+    }
 
     size_t count = json_array_size(queries);
 
@@ -274,7 +280,7 @@ scriptableTFQueryLoadPresets (scriptableItem_t *root) {
 
         // create
         scriptableItem_t *scriptableQuery = _createBlankPreset();
-        scriptableItemSetIsLoading(scriptableQuery, 1);
+        scriptableItemFlagsAdd(scriptableQuery, SCRIPTABLE_FLAG_IS_LOADING);
         scriptableItemSetPropertyValueForKey(scriptableQuery, json_string_value(name), "name");
 
         for (size_t item_index = 0; item_index < item_count; item_index++) {
@@ -286,12 +292,12 @@ scriptableTFQueryLoadPresets (scriptableItem_t *root) {
         }
 
         scriptableItemAddSubItem(root, scriptableQuery);
-        scriptableItemSetIsLoading(scriptableQuery, 0);
+        scriptableItemFlagsRemove(scriptableQuery, SCRIPTABLE_FLAG_IS_LOADING);
     }
 
     res = 0;
 error:
-    scriptableItemSetIsLoading(root, 0);
+    scriptableItemFlagsRemove(root, SCRIPTABLE_FLAG_IS_LOADING);
 
     if (json != NULL) {
         json_delete(json);

@@ -13,6 +13,7 @@
 
 @property (weak) IBOutlet NSView *nodeEditorViewContainer;
 @property (weak) IBOutlet NSTextField *title;
+@property (weak) IBOutlet NSButton *resetButton;
 
 @property ScriptableNodeEditorViewController *nodeEditorViewController;
 
@@ -22,8 +23,6 @@
 
 - (void)windowDidLoad {
     [super windowDidLoad];
-    
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
 
     self.nodeEditorViewController = [ScriptableNodeEditorViewController new];
     self.nodeEditorViewController.dataSource = self.dataSource;
@@ -31,6 +30,8 @@
     self.nodeEditorViewController.errorViewer = self.errorViewer;
     self.nodeEditorViewController.view.frame = self.nodeEditorViewContainer.bounds;
     [self.nodeEditorViewContainer addSubview:self.nodeEditorViewController.view];
+
+    self.resetButton.hidden = !self.nodeEditorViewController.canReset;
 
     const char *title = scriptableItemPropertyValueForKey(self.dataSource.scriptable, "name");
 
@@ -44,6 +45,21 @@
     else {
         [self.window close];
     }
+}
+
+- (IBAction)resetAction:(id)sender {
+    NSAlert *alert = [NSAlert new];
+    [alert addButtonWithTitle:@"Yes"];
+    [alert addButtonWithTitle:@"Cancel"];
+    alert.messageText = @"Reset to default settings?";
+    alert.informativeText = @"Selecting Yes will discard your local changes.";
+    alert.alertStyle = NSAlertStyleWarning;
+
+    [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if (returnCode == NSAlertFirstButtonReturn) {
+            [self.nodeEditorViewController reset];
+        }
+    }];
 }
 
 @end

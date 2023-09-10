@@ -46,13 +46,7 @@ static scriptableOverrides_t scriptableEncoderCallbacks = {
     .propertyValueWillChangeForKey = scriptableEncoderPropertyValueWillChangeForKey,
 };
 
-static
-int _returnTrue(scriptableItem_t *item) {
-    return 1;
-}
-
 static scriptableOverrides_t scriptableRootCallbacks = {
-    .allowRenaming = _returnTrue,
     .factoryItemNames = scriptableEncoderItemNames,
     .factoryItemTypes = scriptableEncoderItemTypes,
     .createItemOfType = scriptableEncoderCreatePreset,
@@ -283,6 +277,7 @@ scriptableEncoderRoot (scriptableItem_t *scriptableRoot) {
     scriptableItem_t *encoderRoot = scriptableItemSubItemForName (scriptableRoot, "EncoderPresets");
     if (!encoderRoot) {
         encoderRoot = scriptableItemAlloc();
+        scriptableItemFlagsSet(encoderRoot, SCRIPTABLE_FLAG_CAN_RENAME);
         scriptableItemSetOverrides(encoderRoot, &scriptableRootCallbacks);
         scriptableItemSetPropertyValueForKey(encoderRoot, "EncoderPresets", "name");
         scriptableItemAddSubItem(scriptableRoot, encoderRoot);
@@ -318,7 +313,7 @@ scriptableEncoderRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *su
 void
 scriptableEncoderLoadPresets (scriptableItem_t *scriptableRoot) {
     scriptableItem_t *root = scriptableEncoderRoot(scriptableRoot);
-    scriptableItemSetIsLoading(root, 1);
+    scriptableItemFlagsAdd(root, SCRIPTABLE_FLAG_IS_LOADING);
 
     char path[PATH_MAX];
     if (snprintf (path, sizeof (path), "%s/presets/encoders", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG)) < 0) {
@@ -344,18 +339,18 @@ scriptableEncoderLoadPresets (scriptableItem_t *scriptableRoot) {
             if (snprintf (s, sizeof (s), "%s/%s", presetspath, namelist[i]->d_name) > 0){
 
                 scriptableItem_t *preset = scriptableEncoderCreateBlankPreset ();
-                scriptableItemSetIsLoading(preset, 1);
+                scriptableItemFlagsAdd(preset, SCRIPTABLE_FLAG_IS_LOADING);
                 scriptableItemSetConfigDialog(preset, configdialog);
                 if (scriptableItemLoadEncoderPreset (preset, namelist[i]->d_name, s)) {
                     scriptableItemFree (preset);
                 }
                 else {
                     if (di == 0) {
-                        scriptableItemSetIsReadOnly(preset, 1);
+                        scriptableItemFlagsAdd(preset, SCRIPTABLE_FLAG_IS_READONLY);
                     }
                     scriptableItemAddSubItem(root, preset);
                 }
-                scriptableItemSetIsLoading(preset, 0);
+                scriptableItemFlagsRemove(preset, SCRIPTABLE_FLAG_IS_LOADING);
             }
         }
         for (i = 0; i < n; i++) {
@@ -365,7 +360,7 @@ scriptableEncoderLoadPresets (scriptableItem_t *scriptableRoot) {
         namelist = NULL;
     }
 
-    scriptableItemSetIsLoading(root, 0);
+    scriptableItemFlagsRemove(root, SCRIPTABLE_FLAG_IS_LOADING);
 }
 
 static const char *

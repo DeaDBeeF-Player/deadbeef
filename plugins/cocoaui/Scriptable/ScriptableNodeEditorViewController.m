@@ -39,7 +39,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // Do view setup here.
     self.dataSource.delegate = self;
     self.nodeList.dataSource = self.dataSource;
 
@@ -48,7 +47,7 @@
         self.customButtonsSegmentedControl.hidden = NO;
     }
 
-    if (scriptableItemIsReorderable(self.dataSource.scriptable)) {
+    if (scriptableItemFlags(self.dataSource.scriptable) & SCRIPTABLE_FLAG_IS_REORDABLE) {
         [self.nodeList registerForDraggedTypes: @[_dataSource.pasteboardItemIdentifier]];
     }
 
@@ -187,7 +186,7 @@
         [_nodeList selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     }
     [self updateButtons];
-    [self.delegate scriptableItemChanged:self.dataSource.scriptable change:ScriptableItemChangeUpdate];
+    [self.delegate scriptableItemDidChange:self.dataSource.scriptable change:ScriptableItemChangeUpdate];
 }
 
 - (IBAction)configureAction:(id)sender {
@@ -197,7 +196,7 @@
     }
     scriptableItem_t *item = scriptableItemChildAtIndex(_dataSource.scriptable, (unsigned int)index);
 
-    if (scriptableItemIsList(item)) {
+    if (scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_LIST) {
         // recurse!
         self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
         self.nodeDataSource = [ScriptableTableDataSource dataSourceWithScriptable:item];
@@ -219,7 +218,7 @@
         self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
 
         self.propertiesViewController.dataSource = self.propertiesDataSource;
-        self.propertiesPanelResetButton.enabled = !scriptableItemIsReadOnly(item);
+        self.propertiesPanelResetButton.enabled = !(scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_READONLY);
         [self.view.window beginSheet:_propertiesPanel completionHandler:^(NSModalResponse returnCode) {
         }];
     }
@@ -278,7 +277,7 @@
 }
 
 - (BOOL)addEnabled {
-    return !scriptableItemIsReadOnly(self.dataSource.scriptable);
+    return !(scriptableItemFlags(self.dataSource.scriptable) & SCRIPTABLE_FLAG_IS_READONLY);
 }
 
 - (BOOL)removeEnabled {
@@ -286,7 +285,7 @@
     if (!item) {
         return NO;
     }
-    return !scriptableItemIsReadOnly(item);
+    return !(scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_READONLY);
 }
 
 - (BOOL)configureEnabled {
@@ -306,8 +305,8 @@
 
 #pragma mark - ScriptableItemDelegate
 
-- (void)scriptableItemChanged:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
-    [self.delegate scriptableItemChanged:scriptable change:change];
+- (void)scriptableItemDidChange:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
+    [self.delegate scriptableItemDidChange:scriptable change:change];
 }
 
 #pragma mark - NSTableViewDelegate
@@ -319,8 +318,8 @@
     scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)row);
     char *name = scriptableItemFormattedName(item);
 
-    view.textField.enabled = !scriptableItemIsReadOnly(item);
-    if (scriptableItemIsRenamable(self.dataSource.scriptable)) {
+    view.textField.enabled = !(scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_READONLY);
+    if (scriptableItemFlags(self.dataSource.scriptable) & SCRIPTABLE_FLAG_CAN_RENAME) {
         view.textField.selectable = NO;
         view.textField.editable = YES;
     }
@@ -363,10 +362,19 @@
         }
         else {
             scriptableItemSetPropertyValueForKey(item, value, "name");
-            [self.delegate scriptableItemChanged:self.dataSource.scriptable change:ScriptableItemChangeUpdate];
+            [self.delegate scriptableItemDidChange:self.dataSource.scriptable change:ScriptableItemChangeUpdate];
         }
     }
 }
 
+- (BOOL)canReset {
+    return scriptableItemFlags(self.dataSource.scriptable) & SCRIPTABLE_FLAG_CAN_RESET;
+}
+
+- (void)reset {
+    scriptableItemReset(self.dataSource.scriptable);
+    [self reloadData];
+    [self.delegate scriptableItemDidChange:self.dataSource.scriptable  change:ScriptableItemChangeUpdate];
+}
 
 @end

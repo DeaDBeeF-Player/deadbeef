@@ -19,19 +19,23 @@ typedef struct stringListItem_s {
 struct scriptableItem_s;
 typedef struct scriptableItem_s scriptableItem_t;
 
+enum scriptableFlags_t {
+    /// prevent calling hooks while loading data
+    SCRIPTABLE_FLAG_IS_LOADING = 1<<0,
+    SCRIPTABLE_FLAG_IS_READONLY = 1<<1,
+    /// for example, dsp preset, or dsp chain
+    SCRIPTABLE_FLAG_IS_LIST = 1<<2,
+    /// whether items can be reordered by the user
+    SCRIPTABLE_FLAG_IS_REORDABLE = 1<<3,
+    /// whether the names can be changed by the user
+    SCRIPTABLE_FLAG_CAN_RENAME = 1<<4,
+    SCRIPTABLE_FLAG_CAN_RESET = 1<<5,
+};
+
 struct scriptableOverrides_t {
     /// Must be set to @c sizeof(scriptableOverrides_t)
     /// If 0 will assume the v1 size.
     int _size;
-
-    /// for example, dsp preset, or dsp chain
-    int (*isList)(scriptableItem_t *item);
-
-    /// whether items can be reordered by the user
-    int (*isReorderable)(scriptableItem_t *item);
-
-    /// whether the names can be changed by the user
-    int (*allowRenaming)(scriptableItem_t *item);
 
     /// for drag drop on mac
     const char *(*pasteboardItemIdentifier)(scriptableItem_t *item);
@@ -62,6 +66,8 @@ struct scriptableOverrides_t {
 
     int (*save)(scriptableItem_t *item);
 
+    int (*reset)(scriptableItem_t *item);
+
     char * (*saveToString)(scriptableItem_t *item);
 
     void (*propertyValueWillChangeForKey) (scriptableItem_t *item, const char *key);
@@ -85,11 +91,19 @@ scriptableStringListItemAlloc (void);
 void
 scriptableStringListItemFree (scriptableStringListItem_t *item);
 
+uint64_t scriptableItemFlags(scriptableItem_t *item);
+void scriptableItemFlagsSet(scriptableItem_t *item, uint64_t flags);
+void scriptableItemFlagsAdd(scriptableItem_t *item, uint64_t flags);
+void scriptableItemFlagsRemove(scriptableItem_t *item, uint64_t flags);
+
 void
 scriptableStringListFree (scriptableStringListItem_t *list);
 
 int
 scriptableItemSave (scriptableItem_t *item);
+
+int
+scriptableItemReset (scriptableItem_t *item);
 
 char *
 scriptableItemSaveToString (scriptableItem_t *item);
@@ -120,27 +134,6 @@ scriptableItemParent(scriptableItem_t *item);
 
 scriptableKeyValue_t *
 scriptableItemProperties(scriptableItem_t *item);
-
-int
-scriptableItemIsList(scriptableItem_t *item);
-
-int
-scriptableItemIsReorderable(scriptableItem_t *item);
-
-int
-scriptableItemIsRenamable(scriptableItem_t *item);
-
-int
-scriptableItemIsLoading(scriptableItem_t *item);
-
-void
-scriptableItemSetIsLoading(scriptableItem_t *item, int isLoading);
-
-int
-scriptableItemIsReadOnly(scriptableItem_t *item);
-
-void
-scriptableItemSetIsReadOnly(scriptableItem_t *item, int isReadOnly);
 
 const char *
 scriptableItemConfigDialog(scriptableItem_t *item);

@@ -65,11 +65,6 @@ scriptableDspNodeCallbacks = {
     .propertyValueDidChangeForKey = scriptableDspPresetNodePropertyValueDidChangeForKey,
 };
 
-static
-int _returnTrue(scriptableItem_t *item) {
-    return 1;
-}
-
 static const char *
 _pbIdentifier(scriptableItem_t *item) {
     return "deadbeef.dspnode";
@@ -77,8 +72,6 @@ _pbIdentifier(scriptableItem_t *item) {
 
 static scriptableOverrides_t
 scriptableDspPresetCallbacks = {
-    .isList = _returnTrue,
-    .isReorderable = _returnTrue,
     .pasteboardItemIdentifier = _pbIdentifier,
     .factoryItemNames = scriptableDspChainItemNames,
     .factoryItemTypes = scriptableDspChainItemTypes,
@@ -90,8 +83,6 @@ scriptableDspPresetCallbacks = {
 };
 
 static scriptableOverrides_t scriptableDspPresetListCallbacks = {
-    .isList = _returnTrue,
-    .allowRenaming = _returnTrue,
     .createItemOfType = scriptableDspCreatePresetWithType,
     .factoryItemNames = scriptableDspPresetItemNames,
     .factoryItemTypes = scriptableDspPresetItemTypes,
@@ -246,7 +237,7 @@ scriptableDspPresetNodePropertyValueDidChangeForKey (scriptableItem_t *item, con
 
 static void
 scriptableDspPropertyValueWillChangeForKey (scriptableItem_t *item, const char *key) {
-    if (scriptableItemIsReadOnly(item)) {
+    if (scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_LOADING) {
         return;
     }
     if (!strcmp (key, "name")) {
@@ -390,6 +381,7 @@ scriptableDspPresetItemTypes (scriptableItem_t *item) {
 
 static scriptableItem_t *scriptableDspCreateBlankPreset (void) {
     scriptableItem_t *item = scriptableItemAlloc();
+    scriptableItemFlagsSet(item, SCRIPTABLE_FLAG_IS_LIST | SCRIPTABLE_FLAG_IS_REORDABLE);
     scriptableItemSetOverrides (item, &scriptableDspPresetCallbacks);
     return item;
 }
@@ -458,12 +450,12 @@ scriptableDspRoot (scriptableItem_t *scriptableRoot) {
         scriptableItemAddSubItem(scriptableRoot, dspRoot);
 
         scriptableItem_t *passThroughDspPreset = scriptableDspCreateBlankPreset();
-        scriptableItemSetIsLoading(passThroughDspPreset, 1);
-        scriptableItemSetIsReadOnly(passThroughDspPreset, 1);
+        scriptableItemFlagsAdd(passThroughDspPreset, SCRIPTABLE_FLAG_IS_LOADING | DDB_IS_READONLY);
         scriptableItemSetPropertyValueForKey(passThroughDspPreset, "Pass-through", "name");
         scriptableItemAddSubItem(dspRoot, passThroughDspPreset);
-        scriptableItemSetIsLoading(passThroughDspPreset, 0);
+        scriptableItemFlagsRemove(passThroughDspPreset, SCRIPTABLE_FLAG_IS_LOADING);
 
+        scriptableItemFlagsSet(dspRoot, SCRIPTABLE_FLAG_IS_LIST | SCRIPTABLE_FLAG_CAN_RENAME);
         scriptableItemSetOverrides(dspRoot, &scriptableDspPresetListCallbacks);
     }
     return dspRoot;
@@ -472,7 +464,7 @@ scriptableDspRoot (scriptableItem_t *scriptableRoot) {
 void
 scriptableDspLoadPresets (scriptableItem_t *scriptableRoot) {
     scriptableItem_t *root = scriptableDspRoot(scriptableRoot);
-    scriptableItemSetIsLoading(root, 1);
+    scriptableItemFlagsAdd(root, SCRIPTABLE_FLAG_IS_LOADING);
 
     struct dirent **namelist = NULL;
     char path[1024];
@@ -489,7 +481,7 @@ scriptableDspLoadPresets (scriptableItem_t *scriptableRoot) {
             strncat(name, namelist[i]->d_name, end-namelist[i]->d_name);
 
             scriptableItem_t *preset = scriptableDspCreateBlankPreset();
-            scriptableItemSetIsLoading(preset, 1);
+            scriptableItemFlagsAdd(preset, SCRIPTABLE_FLAG_IS_LOADING);
             scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, root);
 
             if (scriptableItemLoadDspPreset (preset, namelist[i]->d_name)) {
@@ -498,13 +490,13 @@ scriptableDspLoadPresets (scriptableItem_t *scriptableRoot) {
             else {
                 scriptableItemAddSubItem(root, preset);
             }
-            scriptableItemSetIsLoading(preset, 0);
+            scriptableItemFlagsRemove(preset, SCRIPTABLE_FLAG_IS_LOADING);
 
             free (namelist[i]);
         }
         free (namelist);
     }
-    scriptableItemSetIsLoading(root, 0);
+    scriptableItemFlagsRemove(root, SCRIPTABLE_FLAG_IS_LOADING);
 }
 
 static scriptableItem_t *scriptableDspCreateNodeFromContext (ddb_dsp_context_t *context) {

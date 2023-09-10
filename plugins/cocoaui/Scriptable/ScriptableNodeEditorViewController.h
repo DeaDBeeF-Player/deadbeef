@@ -29,7 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) NSObject<ScriptableNodeEditorCustomButtonsInitializer> *scriptableNodeEditorDelegate;
 @property (weak) NSObject<ScriptableErrorViewer> *errorViewer;
 
+@property (nonatomic) BOOL canReset;
+
 - (void)reloadData;
+- (void)reset;
 
 @end
 

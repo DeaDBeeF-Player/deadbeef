@@ -28,7 +28,7 @@
 }
 
 - (BOOL)propertySheet:(PropertySheetViewController *)vc itemIsReadonly:(id)item {
-    return scriptableItemIsReadOnly(_scriptable);
+    return scriptableItemFlags(_scriptable) & SCRIPTABLE_FLAG_IS_READONLY;
 }
 
 
@@ -40,7 +40,7 @@
 - (void)propertySheet:(PropertySheetViewController *)vc setValue:(NSString *)value forKey:(NSString *)key item:(id)item {
     scriptableItemSetPropertyValueForKey(_scriptable, value.UTF8String, key.UTF8String);
     if (!_multipleChanges) {
-        [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeUpdate];
+        [self.delegate scriptableItemDidChange:_scriptable change:ScriptableItemChangeUpdate];
     }
 }
 
@@ -49,7 +49,7 @@
 }
 
 - (void)propertySheetCommitChanges {
-    [self.delegate scriptableItemChanged:_scriptable change:ScriptableItemChangeUpdate];
+    [self.delegate scriptableItemDidChange:_scriptable change:ScriptableItemChangeUpdate];
     _multipleChanges = NO;
 }
 @end

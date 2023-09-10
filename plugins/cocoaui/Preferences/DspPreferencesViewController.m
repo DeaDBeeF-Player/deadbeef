@@ -130,7 +130,7 @@ extern DB_functions_t *deadbeef;
 
 #pragma mark - ScriptableItemDelegate
 
-- (void)scriptableItemChanged:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
+- (void)scriptableItemDidChange:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
     if (scriptable == self.dspChainDataSource.scriptable
         || scriptableItemIndexOfChild(self.dspChainDataSource.scriptable, scriptable) >= 0) {
         // create dsp chain from the new state

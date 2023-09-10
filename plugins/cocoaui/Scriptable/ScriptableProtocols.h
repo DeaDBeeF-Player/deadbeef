@@ -12,12 +12,12 @@
 typedef NS_ENUM(NSUInteger, ScriptableItemChange) {
     ScriptableItemChangeCreate,
     ScriptableItemChangeUpdate,
-    ScriptableItemChangeDelete,
+    scriptableItemDidChangeelete,
 };
 
 @protocol ScriptableItemDelegate
 
-- (void)scriptableItemChanged:(scriptableItem_t *_Nonnull)scriptable change:(ScriptableItemChange)change;
+- (void)scriptableItemDidChange:(scriptableItem_t *_Nonnull)scriptable change:(ScriptableItemChange)change;
 
 @end
 

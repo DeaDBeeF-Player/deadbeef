@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="15705" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="15705"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="ScriptableNodeEditorWindowController">
             <connections>
                 <outlet property="nodeEditorViewContainer" destination="dNu-zN-5QY" id="ZfP-eb-7vU"/>
+                <outlet property="resetButton" destination="pPp-EZ-gLN" id="Mmt-Wb-DLH"/>
                 <outlet property="title" destination="npJ-7D-3TZ" id="hNZ-kl-fgE"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="kXv-WI-ogc"/>
             </connections>
@@ -19,17 +20,17 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="364" height="220"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="922"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
             <value key="minSize" type="size" width="364" height="182"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="364" height="220"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="dNu-zN-5QY">
-                        <rect key="frame" x="20" y="49" width="324" height="127"/>
+                        <rect key="frame" x="20" y="48" width="324" height="128"/>
                     </customView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M4g-Rv-fuN">
-                        <rect key="frame" x="275" y="13" width="75" height="32"/>
+                        <rect key="frame" x="282" y="13" width="69" height="32"/>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ANR-6Y-s2B">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -41,7 +42,7 @@ Gw
                             <action selector="closeAction:" target="-2" id="0RJ-aJ-xvW"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="npJ-7D-3TZ">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="npJ-7D-3TZ">
                         <rect key="frame" x="18" y="184" width="328" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="baN-Zy-MW1">
                             <font key="font" metaFont="system"/>
@@ -49,6 +50,17 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pPp-EZ-gLN">
+                        <rect key="frame" x="16" y="13" width="69" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rKM-Ja-Qty">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="resetAction:" target="-2" id="lHm-XX-RdL"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="dNu-zN-5QY" secondAttribute="trailing" constant="20" id="CHg-xW-A4t"/>
