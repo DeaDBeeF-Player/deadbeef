@@ -510,7 +510,7 @@ _create_item_tree_from_collection(const char *filter, scriptableItem_t *preset, 
     root->text = deadbeef->metacache_add_string ("All Music");
     root->path = deadbeef->metacache_add_string(root->text);
 
-    if (source->ml_playlist == NULL) {
+    if (source->ml_playlist == NULL || preset == NULL) {
         return root;
     }
 
