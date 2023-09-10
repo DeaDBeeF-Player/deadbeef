@@ -4,6 +4,12 @@
 #include <string.h>
 #include "scriptable/scriptable.h"
 
+typedef struct scriptableKeyValue_s {
+    struct scriptableKeyValue_s *next;
+    char *key;
+    char *value;
+} scriptableKeyValue_t;
+
 struct scriptableItem_s {
     struct scriptableItem_s *next;
     uint64_t flags;
@@ -207,9 +213,12 @@ scriptableItemParent(scriptableItem_t *item) {
     return item->parent;
 }
 
-scriptableKeyValue_t *
-scriptableItemProperties(scriptableItem_t *item) {
-    return item->properties;
+void scriptableItemPropertiesForEach(scriptableItem_t *item, int(^block)(const char *key, const char *value)) {
+    for (scriptableKeyValue_t *kv = item->properties; kv != NULL; kv = kv->next) {
+        if (!block(kv->key, kv->value)) {
+            break;
+        }
+    }
 }
 
 uint64_t scriptableItemFlags(scriptableItem_t *item) {

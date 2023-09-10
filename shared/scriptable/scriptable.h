@@ -5,17 +5,16 @@
 extern "C" {
 #endif
 
-typedef struct scriptableKeyValue_s {
-    struct scriptableKeyValue_s *next;
-    char *key;
-    char *value;
-} scriptableKeyValue_t;
-
+// TODO: this seems to be only used by factories,
+// could be refactored to return string arrays.
 typedef struct stringListItem_s {
     struct stringListItem_s *next;
     char *str;
 } scriptableStringListItem_t;
 
+// Please note that the "name" property key is used internally by a lot of systems,
+// including UI.
+// Any other keys are allowed for any use (so far).
 struct scriptableItem_s;
 typedef struct scriptableItem_s scriptableItem_t;
 
@@ -132,8 +131,7 @@ scriptableItemClone (scriptableItem_t *item);
 scriptableItem_t *
 scriptableItemParent(scriptableItem_t *item);
 
-scriptableKeyValue_t *
-scriptableItemProperties(scriptableItem_t *item);
+void scriptableItemPropertiesForEach(scriptableItem_t *item, int(^block)(const char *key, const char *value));
 
 const char *
 scriptableItemConfigDialog(scriptableItem_t *item);

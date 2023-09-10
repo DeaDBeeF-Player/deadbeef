@@ -256,20 +256,21 @@ scriptableDspPresetNodeSaveToString (scriptableItem_t *node) {
         return NULL;
     }
 
-    growableBuffer_t buffer;
+    __block growableBuffer_t buffer;
     growableBufferInitWithSize(&buffer, 1000);
 
     DB_dsp_t *dsp = dspPluginForId(pluginId);
     if (!dsp) {
         // when a plugin is missing: write out all numeric-name properties, in their original order
-        for (scriptableKeyValue_t *kv = scriptableItemProperties(node); kv; kv = kv->next) {
-            int intKey = atoi (kv->key);
+        scriptableItemPropertiesForEach(node, ^int(const char *key, const char *value) {
+            int intKey = atoi (key);
             char stringKey[10];
             snprintf (stringKey, sizeof (stringKey), "%d", intKey);
-            if (!strcmp (stringKey, kv->key)) {
-                growableBufferPrintf(&buffer, "\t%s\n", kv->value);
+            if (!strcmp (stringKey, key)) {
+                growableBufferPrintf(&buffer, "\t%s\n", value);
             }
-        }
+            return 1;
+        });
     }
     else {
         // when a plugin is present, create a context, and get the values from plugin
