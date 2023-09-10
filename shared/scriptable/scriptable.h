@@ -19,15 +19,17 @@ struct scriptableItem_s;
 typedef struct scriptableItem_s scriptableItem_t;
 
 enum scriptableFlags_t {
-    /// prevent calling hooks while loading data
+    /// suppress calling hooks/delegates while loading data
     SCRIPTABLE_FLAG_IS_LOADING = 1<<0,
+    /// don't allow editing item (renaming etc) -- e.g. for built-in presets
     SCRIPTABLE_FLAG_IS_READONLY = 1<<1,
-    /// for example, dsp preset, or dsp chain
+    /// a list of presets, or items in a preset (e.g. nodes in dsp preset)
     SCRIPTABLE_FLAG_IS_LIST = 1<<2,
     /// whether items can be reordered by the user
     SCRIPTABLE_FLAG_IS_REORDABLE = 1<<3,
     /// whether the names can be changed by the user
     SCRIPTABLE_FLAG_CAN_RENAME = 1<<4,
+    /// whether to show Reset button / let the user reset the item to defaults
     SCRIPTABLE_FLAG_CAN_RESET = 1<<5,
 };
 
