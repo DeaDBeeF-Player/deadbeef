@@ -1,6 +1,8 @@
 #ifndef scriptable_h
 #define scriptable_h
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
