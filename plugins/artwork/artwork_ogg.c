@@ -121,7 +121,7 @@ ogg_extract_art (ddb_cover_info_t *cover) {
         char *descr = NULL;
         int size = vc->comment_lengths[i];
         if (vc->comment_lengths[i] <= sizeof(key)-1
-            || memcmp (vc->user_comments[i], key, sizeof (key)-1)) {
+            || strncasecmp(vc->user_comments[i], key, sizeof (key)-1)) {
             continue;
         }
         trace ("ogg_extract_art: found cover art of %d bytes\n", size);
