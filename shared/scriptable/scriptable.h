@@ -3,6 +3,16 @@
 
 #include <stdint.h>
 
+// Scriptable module implements a tree of items
+// representing an observable hierarchical model object.
+// Each item contains a property list and additional configuration.
+// All objects represented with Scriptable types can be edited
+// with reusable UI.
+// The objects support traversal, observation, serialization, and more.
+// The objects can optionally provide type factory,
+// allowing to determine the available types,
+// and create child objects of those types, at runtime.
+
 #ifdef __cplusplus
 extern "C" {
 #endif
