@@ -1,6 +1,6 @@
 /*
     shared/windows/fopen.c
-    Copyright (C) 2018 Jakub Wasylków
+    Copyright (C) 2018-2023 Jakub Wasylków
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -35,7 +35,7 @@ FILE * fopen (const char *filename, const char *mode) {
     // convert any '/' characters to '\\'
     {
         char * slash;
-        while (slash = strrchr(filename_c, '/'))
+        while ((slash = strrchr(filename_c, '/')))
             *slash = '\\';
     }
     // convert filename to wchar_t
