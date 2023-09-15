@@ -170,7 +170,7 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     __weak MediaLibraryOutlineViewController *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         MediaLibraryOutlineViewController *strongSelf = weakSelf;
-        if (strongSelf == nil) {
+        if (strongSelf == nil || strongSelf.medialibPlugin == NULL) {
             return;
         }
         [self applyStoredState];
