@@ -1,6 +1,6 @@
 /*
     shared/windows/utils.c
-    Copyright (C) 2018-2020 Jakub Wasylków
+    Copyright (C) 2018-2023 Jakub Wasylków
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -88,7 +88,7 @@ int path_short(const char * path_in, char * path_out, int len) {
     strcpy (in_c, path_in);
     {
         char * slash = in_c;
-        while (slash = strchr(slash, '/'))
+        while ((slash = strchr(slash, '/')))
             *slash = '\\';
     }
     // convert to wchar_t
@@ -111,7 +111,7 @@ int path_long(const char * path_in, char * path_out, int len) {
     strcpy (in_c, path_in);
     {
         char * slash = in_c;
-        while (slash = strchr(slash, '/'))
+        while ((slash = strchr(slash, '/')))
             *slash = '\\';
     }
     // convert to wchar_t
@@ -229,7 +229,7 @@ char *realpath (const char *path, char *resolved_path) {
     // replace backslashes with normal slashes
     {
         char *slash_p = out_p;
-        while (slash_p = strchr(slash_p, '\\')) {
+        while ((slash_p = strchr(slash_p, '\\'))) {
             *slash_p = '/';
         }
     }
