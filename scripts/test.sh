@@ -66,5 +66,7 @@ if [ $code -ne 0 ]; then
 fi
 
 "$BUILD/runtests"
+code=$?
 
 restore_cpp_libs
+exit $code
