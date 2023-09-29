@@ -2,71 +2,20 @@
 
 shopt -s extglob
 
-BUILD=testbuild
-TEST_C_SOURCES="src/*.c shared/*.c src/scriptable/*.c shared/scriptable/*.c plugins/libparser/*.c plugins/nullout/*.c src/ConvertUTF/*.c src/metadata/*.c plugins/m3u/*.c plugins/vfs_curl/*.c plugins/shellexec/*.c external/mp4p/src/*.c external/wcwidth/*.c src/md5/*.c plugins/mp3/*.c Tests/*.c"
-if [ $# -ne 0 ]; then
-    TEST_CPP_SOURCES="Tests/gtest-runner.cpp"
-    for t in "$@"; do
-        TEST_CPP_SOURCES="${TEST_CPP_SOURCES} Tests/${t}Tests.cpp"
-    done
-else
-    TEST_CPP_SOURCES="Tests/*.cpp"
-fi
-GOOGLE_TEST_SOURCES="external/googletest/googletest/src/gtest-all.cc"
 ORIGIN=$PWD
-STATIC_DEPS=static-deps
-INCLUDE="-I external/googletest/googletest -I external/googletest/googletest/include -I external/mp4p/include -I plugins/libparser -I shared -I . -I src -I include -I src/ConvertUTF -I src/scriptable -I plugins/coreaudio -I$ORIGIN/$STATIC_DEPS/lib-x86-64/include"
-LDFLAGS="-L$ORIGIN/$STATIC_DEPS/lib-x86-64/lib -L$ORIGIN/$STATIC_DEPS/lib-x86-64/lib/x86_64-linux-gnu"
-LIBRARIES="-lmad -lmpg123 -lcurl -ldispatch -lpthread -lBlocksRuntime -lm -ljansson -ldl"
-export LD_LIBRARY_PATH="$ORIGIN/$STATIC_DEPS/lib-x86-64/lib"
+STATIC_DEPS=$ORIGIN/static-deps/lib-x86-64/lib
+BUILD=testbuild
 
-CC="${CC:-clang}"
-CXX="${CXX:-clang++}"
+BAKDIR=$STATIC_DEPS/bak
+mkdir -p $BAKDIR
+mv -vt $BAKDIR $STATIC_DEPS/*c++*.so*
 
-CFLAGS="-fblocks -fcommon -O3 -D_FORTIFY_SOURCE=0 -D_GNU_SOURCE $INCLUDE -DHAVE_LOG2=1 -DDOCDIR=\"\" -DPREFIX=\"\" -DLIBDIR=\"\" -DVERSION=\"\" -DUSE_LIBMAD -DUSE_LIBMPG123 -DXCTEST -DGOOGLETEST_STATIC"
-
-# hack: move c++ runtime out of the lib folder, to allow linking test runner to
-# the newer c++ runtime
-rm -rf "$BUILD"
-mkdir -p "$BUILD"
-
-mkdir -p "$BUILD/cpplibs"
-mv $ORIGIN/$STATIC_DEPS/lib-x86-64/lib/*c++*.so* "$BUILD/cpplibs/"
-
-compile_tests() {
-    for file in $TEST_C_SOURCES; do
-        base=$(basename $file)
-        if [ "$base" = "main.c" ]; then
-            continue
-        fi
-        echo $CC -std=c99 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
-        $CC -std=c99 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o" || return $?
-    done
-
-    for file in $GOOGLE_TEST_SOURCES $TEST_CPP_SOURCES; do
-        base=$(basename $file)
-        echo $CXX -std=c++14 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o"
-        $CXX -std=c++14 $CFLAGS -c "$file" -o "$BUILD/${base%.@(c|cc|cpp)}.o" || return $?
-    done
-
-    $CXX $LDFLAGS $BUILD/*.o $LIBRARIES -o "$BUILD/runtests" || return $?
-
-    return 0
-}
-
-restore_cpp_libs(){
-    mv "$BUILD"/cpplibs/* $ORIGIN/$STATIC_DEPS/lib-x86-64/lib/
-}
-
-compile_tests
-code=$?
-if [ $code -ne 0 ]; then
-    restore_cpp_libs
-    exit $code
-fi
-
-"$BUILD/runtests"
+export DDB_TEST_SUITES=${@}
+mkdir -p $BUILD
+export LD_LIBRARY_PATH=$STATIC_DEPS
+make -j --file=Tests.mk
 code=$?
 
-restore_cpp_libs
+mv -vt $STATIC_DEPS $BAKDIR/*c++*.so*
+
 exit $code
