@@ -6,12 +6,28 @@
 //  Copyright © 2018 Oleksiy Yakovenko. All rights reserved.
 //
 
+#include "conf.h"
+#include "logger.h"
 #include <deadbeef/deadbeef.h>
 #include <deadbeef/common.h>
 #include "playlist.h"
 #include <gtest/gtest.h>
 
 extern DB_functions_t *deadbeef;
+
+class MP3DecoderTests: public ::testing::Test {
+protected:
+    void SetUp() override {
+        ddb_logger_init ();
+        conf_init ();
+        conf_enable_saving (0);
+    }
+    void TearDown() override {
+        conf_free();
+        ddb_logger_free();
+    }
+};
+
 
 static void runMp3TwoPieceTestWithBackend(int backend) {
     deadbeef->conf_set_int ("mp3.backend", backend);
@@ -76,15 +92,15 @@ static void runMp3TwoPieceTestWithBackend(int backend) {
     EXPECT_TRUE(cmp==0);
 }
 
-TEST(MP3DecoderTests, test_DecodeMP3As2PiecesMPG123_SameAs1Piece) {
+TEST_F(MP3DecoderTests, test_DecodeMP3As2PiecesMPG123_SameAs1Piece) {
     runMp3TwoPieceTestWithBackend(0); // mpg123
 }
 
-TEST(MP3DecoderTests, test_DecodeMP3As2PiecesLibMAD_SameAs1Piece) {
+TEST_F(MP3DecoderTests, test_DecodeMP3As2PiecesLibMAD_SameAs1Piece) {
     runMp3TwoPieceTestWithBackend(1); // libmad
 }
 
-TEST(MP3DecoderTests, test_FiniteVBRNetworkStream_DecodesFullAmountOfSamples) {
+TEST_F(MP3DecoderTests, test_FiniteVBRNetworkStream_DecodesFullAmountOfSamples) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/mp3parser/vbr_rhytm_30sec.mp3", dbplugindir);
 

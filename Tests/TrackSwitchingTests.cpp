@@ -6,6 +6,8 @@
 //  Copyright © 2019 Oleksiy Yakovenko. All rights reserved.
 //
 
+#include "conf.h"
+#include "logger.h"
 #include <deadbeef/common.h>
 #include <deadbeef/deadbeef.h>
 #include "conf.h"
@@ -99,6 +101,10 @@ mainloop (void *ctx) {
 class TrackSwitchingTests: public ::testing::Test {
 protected:
     void SetUp() override {
+        ddb_logger_init ();
+        conf_init ();
+        conf_enable_saving (0);
+
         messagepump_init();
 
         plug_init_plugin (fakeout_load, NULL);
@@ -139,6 +145,8 @@ protected:
         deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
         thread_join (_mainloop_tid);
         messagepump_free();
+        conf_free();
+        ddb_logger_free();
     }
     DB_output_t *_fakeout;
     uintptr_t _mainloop_tid;

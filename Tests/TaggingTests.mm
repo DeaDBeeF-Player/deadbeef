@@ -22,6 +22,8 @@
 */
 
 #import <Foundation/Foundation.h>
+#include "conf.h"
+#include "logger.h"
 #include "plmeta.h"
 #include "junklib.h"
 #include "vfs.h"
@@ -42,10 +44,15 @@ copy_file(const char *from, const char *to) {
 class TaggingTests: public ::testing::Test {
 protected:
     void SetUp() override {
+        ddb_logger_init ();
+        conf_init ();
+        conf_enable_saving (0);
         it = pl_item_alloc_init (TESTFILE, "stdmpg");
     }
     void TearDown() override {
         pl_item_unref (it);
+        conf_free();
+        ddb_logger_free();
     }
     playItem_t *it;
 };

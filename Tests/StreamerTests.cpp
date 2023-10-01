@@ -21,6 +21,8 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include "conf.h"
+#include "logger.h"
 #include <deadbeef/deadbeef.h>
 #include "playlist.h"
 #include "plugins.h"
@@ -43,6 +45,9 @@ class StreamerTests: public ::testing::Test {
 protected:
 
     void SetUp() override {
+        ddb_logger_init ();
+        conf_init ();
+        conf_enable_saving (0);
         messagepump_init ();
 
         // register fakein and fakeout plugin
@@ -70,6 +75,8 @@ protected:
 
         _fakeout->stop ();
         streamer_free ();
+        conf_free();
+        ddb_logger_free();
     }
 
 protected:

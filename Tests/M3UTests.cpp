@@ -6,6 +6,8 @@
 //  Copyright © 2021 Oleksiy Yakovenko. All rights reserved.
 //
 
+#include "conf.h"
+#include "logger.h"
 #import "../plugins/m3u/m3u.h"
 #include <deadbeef/common.h>
 #include <gtest/gtest.h>
@@ -15,7 +17,15 @@ extern DB_functions_t *deadbeef;
 class M3UTests: public ::testing::Test {
 protected:
     void SetUp() override {
+        ddb_logger_init ();
+        conf_init ();
+        conf_enable_saving (0);
+
         m3u_load(deadbeef);
+    }
+    void TearDown() override {
+        conf_free();
+        ddb_logger_free();
     }
 };
 
