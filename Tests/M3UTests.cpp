@@ -20,9 +20,6 @@ protected:
 };
 
 TEST_F(M3UTests, test_loadM3UFromBuffer_SimplePlaylist_Loads2Items) {
-    char path[PATH_MAX];
-    snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
-
     char m3u[1000];
     snprintf (m3u, sizeof (m3u),
               "#EXTM3U\n"
@@ -42,9 +39,6 @@ TEST_F(M3UTests, test_loadM3UFromBuffer_SimplePlaylist_Loads2Items) {
 }
 
 TEST_F(M3UTests, test_loadM3UFromBuffer_UnicodeCharactersNoDash_LoadsItemWithCorrectArtistTitle) {
-    char path[PATH_MAX];
-    snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
-
     char m3u[1000];
     snprintf (m3u, sizeof (m3u),
               "#EXTM3U\n"
@@ -70,9 +64,6 @@ TEST_F(M3UTests, test_loadM3UFromBuffer_UnicodeCharactersNoDash_LoadsItemWithCor
 }
 
 TEST_F(M3UTests, test_loadM3UFromBuffer_TrailingExtinf_LoadsItemWithCorrectArtistTitle) {
-    char path[PATH_MAX];
-    snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
-
     char m3u[1000];
     snprintf (m3u, sizeof (m3u),
               "#EXTM3U\n"
@@ -100,9 +91,6 @@ TEST_F(M3UTests, test_loadM3UFromBuffer_TrailingExtinf_LoadsItemWithCorrectArtis
 
 
 TEST_F(M3UTests, test_loadM3UFromBuffer_UnicodeCharactersWithDash_LoadsItemWithCorrectArtistTitle) {
-    char path[PATH_MAX];
-    snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
-
     char m3u[1000];
     snprintf (m3u, sizeof (m3u),
               "#EXTM3U\n"
@@ -128,9 +116,6 @@ TEST_F(M3UTests, test_loadM3UFromBuffer_UnicodeCharactersWithDash_LoadsItemWithC
 }
 
 TEST_F(M3UTests, test_loadM3UFromBuffer_UnicodeBom_LoadsCorrectly) {
-    char path[PATH_MAX];
-    snprintf (path, sizeof (path), "%s/TestData/chirp-1sec.mp3", dbplugindir);
-
     char m3u[1000];
     snprintf (m3u, sizeof (m3u),
               "\xef\xbb\xbf#EXTM3U\n"
