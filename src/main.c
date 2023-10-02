@@ -106,6 +106,10 @@
 #define SYS_CONFIG_DIR ".config"
 #endif
 
+#ifdef __MINGW32__
+#include "../shared/windows/utils.h"
+#endif
+
 // some common global variables
 char sys_install_path[PATH_MAX]; // see deadbeef->get_prefix
 char confdir[PATH_MAX]; // $HOME/.config
@@ -710,7 +714,7 @@ read_entire_message (int sockfd, int *size) {
 
         ssize_t rd = recv(sockfd, buf + rdp, bufsize - rdp, 0);
         if (rd < 0) {
-            if (errno == EAGAIN) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 usleep (50000);
                 continue;
             }
@@ -1095,6 +1099,9 @@ mainloop_thread (void *ctx) {
 
 int
 main (int argc, char *argv[]) {
+#if __MINGW32__
+    windows_arg_fix(&argc, argv);
+#endif
     ddb_logger_init ();
     int portable = 0;
     int staticlink = 0;
