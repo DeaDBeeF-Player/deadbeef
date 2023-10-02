@@ -573,9 +573,6 @@ int db_socket_init_inet () {
         trace_err ("Error with WSAStartup(), WinSock startup failed.\n");
         return -1;
     }
-    else {
-        trace ("WinSock init ok, library version %d.%d\n", HIBYTE(wsaData.wVersion), LOBYTE(wsaData.wVersion));
-    }
 #endif
 
     return 0;
