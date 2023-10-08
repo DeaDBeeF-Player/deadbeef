@@ -41,6 +41,9 @@ enum {
     STR_EV_NEXT, // streamer_move_to_nextsong
     STR_EV_PREV, // streamer_move_to_prevsong
     STR_EV_RAND, // streamer_move_to_randomsong
+    STR_EV_NEXT_ALBUM, // streamer_move_to_nextalbum
+    STR_EV_PREV_ALBUM, // streamer_move_to_prevalbum
+    STR_EV_RAND_ALBUM, // streamer_move_to_randomalbum
     STR_EV_SEEK, // streamer_set_seek; p1: float pos
     STR_EV_SET_CURR_PLT, // streamer_set_current_playlist
     STR_EV_DSP_RELOAD, // reload dsp settings
@@ -76,6 +79,14 @@ streamer_get_current_track_to_play (playlist_t *plt);
 // returns next track according to repeat and shuffle settings, with specified direction
 playItem_t *
 streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat);
+
+// returns the first track of the next album according to repeat and shuffle settings, with specified direction
+// if direction is -1 returns
+// - the first track of the current album, if the current track is not the first of the album
+// - the first track of the previous album, if the current track is the first of the album
+// this mimics pressing back once to go to the beginning of the track and twice to go to the previous track
+playItem_t *
+streamer_get_next_album_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat);
 
 void
 streamer_set_last_played (playItem_t *track);
@@ -129,6 +140,15 @@ streamer_move_to_prevsong (int r);
 
 int
 streamer_move_to_randomsong (int r);
+
+int
+streamer_move_to_nextalbum (int r);
+
+int
+streamer_move_to_prevalbum (int r);
+
+int
+streamer_move_to_randomalbum (int r);
 
 struct DB_fileinfo_s *
 streamer_get_current_fileinfo (void);

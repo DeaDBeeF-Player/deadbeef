@@ -192,6 +192,10 @@ static void
 play_next (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat);
 
 static void
+play_next_album (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat);
+
+
+static void
 streamer_set_current_playlist_real (int plt);
 
 static int
@@ -533,6 +537,47 @@ get_random_track (void) {
 }
 
 static playItem_t *
+get_random_album (void) {
+    if (!streamer_playlist) {
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
+    }
+    playlist_t *plt = streamer_playlist;
+    int cnt = plt->count[PL_MAIN];
+    if (!cnt) {
+        return NULL;
+    }
+    playItem_t *prev = NULL;
+
+    int album_cnt = 0;
+    int album_buf_size = 1024;
+    playItem_t** album_buf = malloc(sizeof(playItem_t*) * album_buf_size);
+    playItem_t** album_buf2 = NULL;
+
+    for (playItem_t *it = plt->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        if (!prev || !pl_items_from_same_album(prev, it) ) {
+            album_buf[album_cnt] = it;
+            album_cnt++;
+            if (album_cnt == album_buf_size ) {
+                album_buf2 = malloc( sizeof(playItem_t*) * album_buf_size * 2);
+                memcpy(album_buf2, album_buf, album_buf_size * sizeof(playItem_t*) );
+                album_buf_size *= 2;
+                free(album_buf);
+                album_buf = album_buf2;
+            }
+
+        }
+        prev = it;
+    }
+    int r = (int)(rand () / (double)RAND_MAX * album_cnt);
+    playItem_t* ret = album_buf[r];
+    free(album_buf);
+    pl_item_ref( ret );
+    return ret;
+}
+
+static playItem_t *
 _streamer_find_minimal_notplayed_imp (playlist_t *plt, unsigned int check_floor, int floor) {
     // if check_floor is truthy, such that shufflerating > floor
     playItem_t *pmin = NULL;
@@ -864,6 +909,34 @@ streamer_set_prev_track_to_play(playItem_t *prev) {
     if (prev_track_to_play) {
         pl_item_ref(prev_track_to_play);
     }
+}
+
+int
+streamer_move_to_nextalbum (int r) {
+    if (r) {
+        streamer_abort_files ();
+    }
+    handler_push (handler, STR_EV_NEXT_ALBUM, 0, r, 0);
+    return 0;
+}
+
+int
+streamer_move_to_prevalbum (int r) {
+    if (r) {
+        streamer_abort_files ();
+    }
+    handler_push (handler, STR_EV_PREV_ALBUM, 0, r, 0);
+    return 0;
+}
+
+
+int
+streamer_move_to_randomalbum (int r) {
+    if (r) {
+        streamer_abort_files ();
+    }
+    handler_push (handler, STR_EV_RAND_ALBUM, 0, r, 0);
+    return 0;
 }
 
 // playlist must call that whenever item was removed
@@ -1736,6 +1809,15 @@ streamer_thread (void *unused) {
                 break;
             case STR_EV_RAND:
                 play_next (0, shuffle, repeat);
+                break;
+            case STR_EV_RAND_ALBUM:
+                play_next_album (0, shuffle, repeat);
+                break;
+            case STR_EV_NEXT_ALBUM:
+                play_next_album (1, shuffle, repeat);
+                break;
+            case STR_EV_PREV_ALBUM:
+                play_next_album (-1, shuffle, repeat);
                 break;
             case STR_EV_SEEK:
                 streamer_seek_real(*((float *)&p1));
@@ -2751,6 +2833,179 @@ streamer_get_next_track_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repe
     return next;
 }
 
+void set_album_played(playItem_t *curr, int played) {
+    for(playItem_t *it = curr; it && pl_items_from_same_album(curr, it); it = it->next[PL_MAIN]) {
+        pl_set_played(it, played);
+    }
+}
+
+playItem_t *
+get_next_album (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
+    // next album is only distinct from next track if shuffle is ALBUMS or OFF
+    if (shuffle == DDB_SHUFFLE_TRACKS || shuffle == DDB_SHUFFLE_RANDOM) {
+        return get_next_track(curr, shuffle, repeat);
+    }
+
+    pl_lock ();
+
+    if (next_track_to_play != NULL && !pl_items_from_same_album(next_track_to_play, curr)) {
+        pl_item_ref(next_track_to_play);
+        pl_unlock();
+        return next_track_to_play;
+    }
+
+    if (!streamer_playlist) {
+        playlist_t *plt = plt_get_curr ();
+        streamer_set_streamer_playlist (plt);
+        plt_unref (plt);
+    }
+
+    while (playqueue_getcount ()) {
+        trace ("playqueue_getnext\n");
+        playItem_t *it = playqueue_getnext ();
+        if (it && !pl_items_from_same_album(it, curr)) {
+            pl_unlock ();
+            return it; // from playqueue
+        }
+    }
+
+    playlist_t *plt = streamer_playlist;
+    if (!plt->head[PL_MAIN]) {
+        pl_unlock ();
+        return NULL; // empty playlist
+    }
+
+    if (plt_get_item_idx (streamer_playlist, curr, PL_MAIN) == -1) {
+        playlist_t *item_plt = pl_get_playlist(curr);
+        if (!item_plt) {
+            curr = NULL;
+        } else {
+            plt_unref (item_plt);
+        }
+    }
+
+    playItem_t *it = NULL;
+    if (shuffle == DDB_SHUFFLE_OFF) {
+        it = curr;
+        if (curr) {
+            do {
+                pl_set_played(it, 1);
+                it = it->next[PL_MAIN];
+            } while (it != NULL && pl_items_from_same_album(curr, it));
+        } else {
+            it = plt->head[PL_MAIN];
+        }
+        if (!it) {
+            trace ("streamer_move_nextalbum: reached end of playlist\n");
+            if (repeat == DDB_REPEAT_ALL) {
+                it = plt->head[PL_MAIN];
+            }
+        }
+    } else if (shuffle == DDB_SHUFFLE_ALBUMS) {
+        // find the first not played playlist item with minimal shufflerating > curr's shufflerating
+        // since tracks from the same album have the same shufflerating strict inequality guarantees this is a different album
+        if (!curr) {
+            it = _streamer_find_minimal_notplayed(plt);
+        } else {
+            set_album_played(curr, 1);
+            it = _streamer_find_minimal_notplayed_with_floor(plt, pl_get_shufflerating(curr));
+        }
+        if (!it) {
+            // all songs played, reshuffle
+            if (repeat == DDB_REPEAT_ALL) {
+                plt_reshuffle (streamer_playlist, &it, NULL);
+            }
+        }
+    }
+
+    if (it) {
+        pl_item_ref (it);
+    }
+    pl_unlock ();
+    return it;
+}
+
+playItem_t *
+get_prev_album (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
+    // prev album is only distinct from prev track if shuffle is ALBUMS or OFF
+    if (shuffle == DDB_SHUFFLE_TRACKS || shuffle == DDB_SHUFFLE_RANDOM) {
+        return get_prev_track(curr, shuffle, repeat);
+    }
+
+    pl_lock ();
+
+    playlist_t *plt = streamer_playlist;
+    if (!plt->head[PL_MAIN]) {
+        pl_unlock ();
+        return NULL; // empty playlist
+    }
+
+    if (plt_get_item_idx (streamer_playlist, curr, PL_MAIN) == -1) {
+        playlist_t *item_plt = pl_get_playlist(curr);
+        if (!item_plt) {
+            curr = NULL;
+        } else {
+            plt_unref (item_plt);
+        }
+    }
+
+    playItem_t *it = NULL;
+    if (shuffle == DDB_SHUFFLE_OFF) {
+        it = curr->prev[PL_MAIN];
+        if (!it) {
+            it = plt->tail[PL_MAIN];
+        }
+        while (it->prev[PL_MAIN] && pl_items_from_same_album(it, it->prev[PL_MAIN])) {
+            it = it->prev[PL_MAIN];
+        }
+    } else if (shuffle == DDB_SHUFFLE_ALBUMS) {
+        if (!curr) {
+            it = _streamer_find_maximal_played(plt);
+        } else if (curr->prev[PL_MAIN] && pl_items_from_same_album(curr, curr->prev[PL_MAIN])) {
+            it = curr;
+            while (it->prev[PL_MAIN] && pl_items_from_same_album(it, it->prev[PL_MAIN])) {
+                it = it->prev[PL_MAIN];
+            }
+        } else {
+            it = _streamer_find_maximal_played_with_ceil(plt, pl_get_shufflerating(curr));
+        }
+    }
+    if (curr) {
+        set_album_played(curr, 0);
+    }
+    if (it) {
+        set_album_played(it, 0);
+        pl_item_ref (it);
+    }
+
+    pl_unlock ();
+    return it;
+}
+
+playItem_t *
+streamer_get_next_album_with_direction (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
+    playItem_t *origin = NULL;
+    playItem_t *next = NULL;
+    if (dir == 0) {
+        return get_random_album();
+    } else if (buffering_track) {
+        origin = buffering_track;
+    }
+    else {
+        origin = last_played;
+    }
+    if (!origin) {
+        return streamer_get_next_track_with_direction(dir, shuffle, repeat);
+    }
+    if (dir > 0) {
+        next = get_next_album (origin, shuffle, repeat);
+    } else {
+        next = get_prev_album (origin, shuffle, repeat);
+    }
+
+    return next;
+}
+
 static void
 play_next (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     DB_output_t *output = plug_get_output ();
@@ -2770,6 +3025,30 @@ play_next (int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
         _rebuild_shuffle_albums_after_manual_trigger (streamer_playlist, next);
     }
     _play_track(next, 0);
+    pl_item_unref(next);
+}
+
+static void
+play_next_album(int dir, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
+    DB_output_t *output = plug_get_output ();
+
+    playItem_t *next = streamer_get_next_album_with_direction (dir, shuffle, repeat);
+
+    if (!next) {
+        streamer_set_last_played (NULL);
+        output->stop ();
+        streamer_reset(1);
+        _handle_playback_stopped ();
+        return;
+    }
+
+    if (dir == 0) {
+        // rebuild shuffle order
+        _rebuild_shuffle_albums_after_manual_trigger (streamer_playlist, next);
+    }
+    streamer_lock();
+    _play_track(next, 0);
+    streamer_unlock();
     pl_item_unref(next);
 }
 
