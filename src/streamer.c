@@ -533,6 +533,62 @@ get_random_track (void) {
 }
 
 static playItem_t *
+_streamer_find_minimal_notplayed_imp (playlist_t *plt, unsigned int check_floor, int floor) {
+    // if check_floor is truthy, such that shufflerating > floor
+    playItem_t *pmin = NULL;
+    for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
+        if (
+            !pl_get_played(i)
+            &&
+            (!pmin || pl_get_shufflerating(i) < pl_get_shufflerating(pmin))
+            &&
+            (!check_floor || floor < pl_get_shufflerating(i))
+        ) {
+            pmin = i;
+        }
+    }
+    return pmin;
+}
+
+static playItem_t *
+_streamer_find_minimal_notplayed (playlist_t *plt) {
+    return _streamer_find_minimal_notplayed_imp (plt, 0, 0);
+}
+
+static playItem_t *
+_streamer_find_minimal_notplayed_with_floor (playlist_t *plt, int floor) {
+    return _streamer_find_minimal_notplayed_imp (plt, 1, floor);
+}
+
+static playItem_t *
+_streamer_find_maximal_played_imp (playlist_t *plt, unsigned int check_ceil, int ceil) {
+    // if check_ceil is truthy, such that shufflerating < ceil
+    playItem_t *pmax = NULL;
+    for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
+        if (
+            pl_get_played(i)
+            &&
+            (!pmax || pl_get_shufflerating(i) > pl_get_shufflerating(pmax))
+            &&
+            (!check_ceil || pl_get_shufflerating(i) < ceil)
+        ) {
+            pmax = i;
+        }
+    }
+    return pmax;
+}
+
+static playItem_t *
+_streamer_find_maximal_played (playlist_t *plt) {
+    return _streamer_find_maximal_played_imp (plt, 0, 0);
+}
+
+static playItem_t *
+_streamer_find_maximal_played_with_ceil (playlist_t *plt, int ceil) {
+    return _streamer_find_maximal_played_imp (plt, 1, ceil);
+}
+
+static playItem_t *
 get_next_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     pl_lock ();
 
@@ -577,16 +633,7 @@ get_next_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
         playItem_t *it = NULL;
         if (!curr || shuffle == DDB_SHUFFLE_TRACKS) {
             // find minimal notplayed
-            playItem_t *pmin = NULL; // notplayed minimum
-            for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
-                if (pl_get_played (i)) {
-                    continue;
-                }
-                if (!pmin || pl_get_shufflerating(i) < pl_get_shufflerating(pmin)) {
-                    pmin = i;
-                }
-            }
-            it = pmin;
+            it = _streamer_find_minimal_notplayed(plt);
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (repeat == DDB_REPEAT_ALL) { // loop
@@ -599,18 +646,9 @@ get_next_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
             }
         }
         else {
-            // find minimal notplayed above current
             int rating = pl_get_shufflerating(curr);
-            playItem_t *pmin = NULL; // notplayed minimum
-            for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
-                if (pl_get_played(i) || pl_get_shufflerating (i) < rating) {
-                    continue;
-                }
-                if (!pmin || pl_get_shufflerating (i) < pl_get_shufflerating (pmin)) {
-                    pmin = i;
-                }
-            }
-            it = pmin;
+            // find minimal notplayed above *or equal to* (hence the -1) current
+            it = _streamer_find_minimal_notplayed_with_floor(plt, rating - 1);
             if (!it) {
                 // all songs played, reshuffle and try again
                 if (repeat == DDB_REPEAT_ALL) { // loop
