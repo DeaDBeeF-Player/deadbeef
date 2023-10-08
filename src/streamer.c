@@ -760,7 +760,7 @@ get_next_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
 static playItem_t *
 get_prev_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
     pl_lock ();
-    
+
     if (prev_track_to_play != NULL) {
         pl_item_ref(prev_track_to_play);
         pl_unlock();
@@ -777,7 +777,7 @@ get_prev_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
         streamer_set_streamer_playlist (plt);
         plt_unref (plt);
     }
-    
+
     playlist_t *plt = streamer_playlist;
 
     if (!plt->head[PL_MAIN]) {
