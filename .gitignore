@@ -94,3 +94,6 @@ Makefile
 docker-artifacts
 compile_commands.json
 plugins/gtkui/gtkui-gresources.c
+build/
+dist/
+testbuild/
