@@ -525,8 +525,11 @@ enum {
     // which includes a switch to another output plugin.
     // p1 contains the new state.
     DB_EV_PLAYBACK_STATE_DID_CHANGE = 25,
-#endif
 
+    DB_EV_PLAY_NEXT_ALBUM = 26, // switch to next album
+    DB_EV_PLAY_PREV_ALBUM = 27, // switch to prev album
+    DB_EV_PLAY_RANDOM_ALBUM = 28, // play random album
+#endif
     // -----------------
     // structured events
 

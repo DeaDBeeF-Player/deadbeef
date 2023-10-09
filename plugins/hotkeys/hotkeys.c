@@ -676,6 +676,24 @@ action_play_random_cb (struct DB_plugin_action_s *action, ddb_action_context_t c
 }
 
 int
+action_play_random_album_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
+    deadbeef->sendmessage (DB_EV_PLAY_RANDOM_ALBUM, 0, 0, 0);
+    return 0;
+}
+
+int
+action_play_next_album_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
+    deadbeef->sendmessage (DB_EV_PLAY_NEXT_ALBUM, 0, 0, 0);
+    return 0;
+}
+
+int
+action_play_prev_album_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
+    deadbeef->sendmessage (DB_EV_PLAY_PREV_ALBUM, 0, 0, 0);
+    return 0;
+}
+
+int
 action_seek_5p_forward_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
@@ -1189,12 +1207,36 @@ static DB_plugin_action_t action_play_pause = {
     .next = &action_toggle_pause
 };
 
+static DB_plugin_action_t action_play_next_album = {
+    .title = "Playback/Play Next Album",
+    .name = "playback_next_album",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_play_next_album_cb,
+    .next = &action_play_pause
+};
+
+static DB_plugin_action_t action_play_prev_album = {
+    .title = "Playback/Play Previous Album",
+    .name = "playback_prev_album",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_play_prev_album_cb,
+    .next = &action_play_next_album
+};
+
+static DB_plugin_action_t action_play_random_album = {
+    .title = "Playback/Play Random Album",
+    .name = "playback_random_album",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_play_random_album_cb,
+    .next = &action_play_prev_album
+};
+
 static DB_plugin_action_t action_play_random = {
     .title = "Playback/Play Random",
     .name = "playback_random",
     .flags = DB_ACTION_COMMON,
     .callback2 = action_play_random_cb,
-    .next = &action_play_pause
+    .next = &action_play_random_album
 };
 
 static DB_plugin_action_t action_seek_1s_forward = {

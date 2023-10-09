@@ -871,6 +871,12 @@ player_mainloop (void) {
                 case DB_EV_PREV:
                     streamer_move_to_prevsong (1);
                     break;
+                case DB_EV_PLAY_NEXT_ALBUM:
+                    streamer_move_to_nextalbum (1);
+                    break;
+                case DB_EV_PLAY_PREV_ALBUM:
+                    streamer_move_to_prevalbum (1);
+                    break;
                 case DB_EV_PAUSE:
                     if (output->state () != DDB_PLAYBACK_STATE_PAUSED) {
                         output->pause ();
@@ -888,6 +894,9 @@ player_mainloop (void) {
                     break;
                 case DB_EV_PLAY_RANDOM:
                     streamer_move_to_randomsong (1);
+                    break;
+                case DB_EV_PLAY_RANDOM_ALBUM:
+                    streamer_move_to_randomalbum (1);
                     break;
                 case DB_EV_CONFIGCHANGED:
                     conf_save ();
