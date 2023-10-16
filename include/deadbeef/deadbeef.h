@@ -73,6 +73,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // API version history:
+// 1.18 -- deadbeef-1.9.7
 // 1.17 -- deadbeef-1.9.6
 // 1.16 -- deadbeef-1.9.4
 // 1.15 -- deadbeef-1.9.0
@@ -103,7 +104,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 17
+#define DB_API_VERSION_MINOR 18
 
 #if defined(__clang__)
 
@@ -525,7 +526,9 @@ enum {
     // which includes a switch to another output plugin.
     // p1 contains the new state.
     DB_EV_PLAYBACK_STATE_DID_CHANGE = 25,
+#endif
 
+#if (DDB_API_LEVEL >= 18)
     DB_EV_PLAY_NEXT_ALBUM = 26, // switch to next album
     DB_EV_PLAY_PREV_ALBUM = 27, // switch to prev album
     DB_EV_PLAY_RANDOM_ALBUM = 28, // play random album
