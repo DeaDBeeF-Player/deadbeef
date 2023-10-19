@@ -141,6 +141,19 @@ _ml_source_get_music_paths (medialib_source_t *source, size_t *medialib_paths_co
 
     return medialib_paths;
 }
+
+static void
+_fs_watch_callback (void *userdata) {
+    medialib_source_t *source = userdata;
+    ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_OUT_OF_SYNC);
+}
+
+void
+ml_source_update_fs_watch(medialib_source_t *source) {
+    ml_watch_fs_stop(source->fs_watcher);
+    source->fs_watcher = ml_watch_fs_start(source->musicpaths_json, _fs_watch_callback, source);
+}
+
 ddb_mediasource_source_t *
 ml_create_source (const char *source_path) {
     medialib_source_t *source = calloc (1, sizeof (medialib_source_t));
@@ -162,7 +175,7 @@ ml_create_source (const char *source_path) {
         snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
         _ml_load_playlist(source, plpath);
         dispatch_sync(source->sync_queue, ^{
-            ml_watch_fs_start(source);
+            ml_source_update_fs_watch(source);
         });
     });
 
@@ -174,7 +187,7 @@ ml_free_source (ddb_mediasource_source_t *_source) {
     medialib_source_t *source = (medialib_source_t *)_source;
 
     dispatch_sync(source->sync_queue, ^{
-        ml_watch_fs_stop(source);
+        ml_watch_fs_stop(source->fs_watcher);
         source->scanner_terminate = 1;
     });
 

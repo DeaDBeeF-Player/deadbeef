@@ -1401,7 +1401,6 @@
 		2D7492871CCFFE7700D3A59E /* TestData in Resources */ = {isa = PBXBuildFile; fileRef = 2D7492861CCFFE7700D3A59E /* TestData */; };
 		2D76DD4B24F6D693000EDA3E /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D76DD3B24F6D693000EDA3E /* IOKit.framework */; };
 		2D78C535275583E900F96F9D /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D78C525275583E900F96F9D /* CoreServices.framework */; platformFilter = maccatalyst; };
-		2D78C54927568AC500F96F9D /* medialibfilesystem_mac.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C53F27568A1300F96F9D /* medialibfilesystem_mac.c */; };
 		2D78C54A27568AC500F96F9D /* medialibcommon.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C54327568A4D00F96F9D /* medialibcommon.c */; };
 		2D78C54B27568AC500F96F9D /* medialib.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D887BCD24B1C82A0078392F /* medialib.h */; };
 		2D78C54C27568AC500F96F9D /* medialibsource.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D78C5372756891400F96F9D /* medialibsource.c */; };
@@ -2011,6 +2010,7 @@
 		2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB1641924FAB13400034E11 /* MediaLibraryManager.m */; };
 		2DB2F73F240466AF00F7C000 /* PluginsPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */; };
 		2DB2F740240466AF00F7C000 /* PluginsPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */; };
+		2DB4E0692AE18ECA00028624 /* medialibfilesystem_mac.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DB4E0682AE18ECA00028624 /* medialibfilesystem_mac.m */; };
 		2DB520E62AA8FADB00B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
 		2DB520E72AA8FF0800B6250A /* scriptable_tfquery.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */; };
 		2DB521152AAC51F000B6250A /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
@@ -5939,7 +5939,6 @@
 		2D78C53A2756892300F96F9D /* medialibdb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibdb.h; sourceTree = "<group>"; };
 		2D78C53B2756892300F96F9D /* medialibdb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibdb.c; sourceTree = "<group>"; };
 		2D78C53E27568A1300F96F9D /* medialibfilesystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibfilesystem.h; sourceTree = "<group>"; };
-		2D78C53F27568A1300F96F9D /* medialibfilesystem_mac.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem_mac.c; sourceTree = "<group>"; };
 		2D78C54227568A4D00F96F9D /* medialibcommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibcommon.h; sourceTree = "<group>"; };
 		2D78C54327568A4D00F96F9D /* medialibcommon.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibcommon.c; sourceTree = "<group>"; };
 		2D78C55727568B4A00F96F9D /* medialibscanner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibscanner.h; sourceTree = "<group>"; };
@@ -6580,6 +6579,7 @@
 		2DB1641924FAB13400034E11 /* MediaLibraryManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryManager.m; sourceTree = "<group>"; };
 		2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginsPreferencesViewController.h; sourceTree = "<group>"; };
 		2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginsPreferencesViewController.m; sourceTree = "<group>"; };
+		2DB4E0682AE18ECA00028624 /* medialibfilesystem_mac.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = medialibfilesystem_mac.m; sourceTree = "<group>"; };
 		2DB522F72AACF09600B6250A /* gtkScriptableSelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptableSelectViewController.h; sourceTree = "<group>"; };
 		2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptableSelectViewController.c; sourceTree = "<group>"; };
 		2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackContextMenu.h; sourceTree = "<group>"; };
@@ -10326,7 +10326,7 @@
 				2D78C53B2756892300F96F9D /* medialibdb.c */,
 				2D78C53A2756892300F96F9D /* medialibdb.h */,
 				2D78C565275698D400F96F9D /* medialibfilesystem_inotify.c */,
-				2D78C53F27568A1300F96F9D /* medialibfilesystem_mac.c */,
+				2DB4E0682AE18ECA00028624 /* medialibfilesystem_mac.m */,
 				2D78C5672756990B00F96F9D /* medialibfilesystem_stub.c */,
 				2D78C53E27568A1300F96F9D /* medialibfilesystem.h */,
 				2D78C55827568B4A00F96F9D /* medialibscanner.c */,
@@ -12114,10 +12114,10 @@
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
-				2D92D19C29B9044300218F1D /* include */,
-				2D92D1ED29B92DF900218F1D /* shared */,
-				2D92D18C29B9039A00218F1D /* src */,
 				2DA9777324C5EC26002405DA /* xcodeconfig */,
+				2D92D19C29B9044300218F1D /* include */,
+				2D92D18C29B9039A00218F1D /* src */,
+				2D92D1ED29B92DF900218F1D /* shared */,
 				2D9E5BFE24AE6AAD0099B108 /* external */,
 				2DCD78AD19A6658C00EA50FA /* icons */,
 				4D1B514C1837EF7C003E6066 /* plugins */,
@@ -17020,9 +17020,9 @@
 				2D78C5642756919500F96F9D /* medialib.c in Sources */,
 				2D78C54C27568AC500F96F9D /* medialibsource.c in Sources */,
 				2D78C54A27568AC500F96F9D /* medialibcommon.c in Sources */,
-				2D78C54927568AC500F96F9D /* medialibfilesystem_mac.c in Sources */,
 				2D78C56127568FFB00F96F9D /* medialibscanner.c in Sources */,
 				2DB520E62AA8FADB00B6250A /* scriptable.c in Sources */,
+				2DB4E0692AE18ECA00028624 /* medialibfilesystem_mac.m in Sources */,
 				2D78C5622756915900F96F9D /* medialibtree.c in Sources */,
 				2DB520E72AA8FF0800B6250A /* scriptable_tfquery.c in Sources */,
 			);

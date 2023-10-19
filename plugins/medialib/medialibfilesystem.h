@@ -26,10 +26,15 @@
 
 #include "medialibsource.h"
 
-void
-ml_watch_fs_start (medialib_source_t *source);
+struct ml_watch_s;
+typedef struct ml_watch_s ml_watch_t;
+
+struct json_t;
+
+ml_watch_t *
+ml_watch_fs_start (struct json_t *musicpathsJson, void (*eventCallback)(void *), void *userdata);
 
 void
-ml_watch_fs_stop (medialib_source_t *source);
+ml_watch_fs_stop (ml_watch_t *watch);
 
 #endif /* medialibfilesystem_h */

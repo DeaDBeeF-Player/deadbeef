@@ -26,6 +26,7 @@
 
 #include <dispatch/dispatch.h>
 #include "medialibdb.h"
+#include "medialibfilesystem.h"
 
 #define MAX_LISTENERS 10
 
@@ -34,7 +35,7 @@ typedef struct medialib_source_s {
     dispatch_queue_t scanner_queue;
     dispatch_queue_t sync_queue;
 
-    void *fs_watcher;
+    ml_watch_t *fs_watcher;
 
     // The following properties should only be accessed / changed on the sync_queue
     int64_t scanner_current_index;
@@ -75,5 +76,8 @@ _ml_get_music_paths (medialib_source_t *source);
 
 void
 ml_source_init (DB_functions_t *_deadbeef);
+
+void
+ml_source_update_fs_watch(medialib_source_t *source);
 
 #endif /* medialibsource_h */

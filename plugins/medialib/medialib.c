@@ -361,7 +361,7 @@ ml_insert_folder_at_index (ddb_mediasource_source_t *_source, const char *folder
         }
         json_decref(value);
         _save_folders_config(source);
-        ml_watch_fs_start(source);
+        ml_source_update_fs_watch(source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
@@ -377,7 +377,7 @@ ml_remove_folder_at_index (ddb_mediasource_source_t *_source, int index) {
             notify = 1;
         }
         _save_folders_config(source);
-        ml_watch_fs_start(source);
+        ml_source_update_fs_watch(source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
@@ -395,7 +395,7 @@ ml_append_folder (ddb_mediasource_source_t *_source, const char *folder) {
         }
         json_decref(value);
         _save_folders_config(source);
-        ml_watch_fs_start(source);
+        ml_source_update_fs_watch(source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
