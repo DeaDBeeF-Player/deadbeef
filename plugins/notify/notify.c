@@ -35,6 +35,7 @@ static DB_misc_t plugin;
 static ddb_artwork_plugin_t *artwork_plugin;
 static dispatch_queue_t queue;
 static DB_playItem_t *last_track = NULL;
+static dbus_uint32_t _replaces_id;
 static time_t request_timer = 0;
 static int terminate;
 
@@ -44,7 +45,8 @@ static int terminate;
 static char *tf_title;
 static char *tf_content;
 
-static void
+// @return new replaces_id
+static dbus_uint32_t
 show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t replaces_id, int force);
 
 static dbus_uint32_t
@@ -158,7 +160,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
     Block_release(completion_block);
 }
 
-static void
+static dbus_uint32_t
 show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t replaces_id, int force) {
     char title[1024];
     char content[1024];
@@ -180,7 +182,7 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
         time_t new_time = time(NULL);
         if (last_track == track && !force) {
             if (new_time - request_timer < 1) {
-                return;
+                return replaces_id; // same track, less than 1 sec after previous notification -- pass
             }
         }
         else {
@@ -195,11 +197,42 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
     }
 
     const char *v_appname = "DeaDBeeF";
-    dbus_uint32_t v_id = 0;
-    char *v_iconname = image_filename;
-    __block dbus_uint32_t new_replaces_id = replaces_id;
-    if (!v_iconname && deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin) {
 
+    bool should_wait_for_cover = !image_filename && deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin;
+    bool should_apply_kde_fix = deadbeef->conf_get_int ("notify.fix_kde_5_23_5", 0) ? true : false;
+
+    // KDE won't re-display notification via reuse,
+    // so don't show it now and wait for cover callback.
+    if (!(should_wait_for_cover && should_apply_kde_fix)) {
+        char *v_iconname = image_filename ?: "deadbeef";
+        const char *v_summary = title;
+        const char *v_body = esc_content;
+        dbus_int32_t v_timeout = -1;
+
+        dbus_message_append_args (msg
+                                  , DBUS_TYPE_STRING, &v_appname
+                                  , DBUS_TYPE_UINT32, &replaces_id
+                                  , DBUS_TYPE_STRING, &v_iconname
+                                  , DBUS_TYPE_STRING, &v_summary
+                                  , DBUS_TYPE_STRING, &v_body
+                                  , DBUS_TYPE_INVALID
+                                  );
+
+        DBusMessageIter iter, sub;
+        // actions
+        dbus_message_iter_init_append(msg, &iter);
+        dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "s", &sub);
+        dbus_message_iter_close_container(&iter, &sub);
+        // hints
+        dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "{sv}", &sub);
+        dbus_message_iter_close_container(&iter, &sub);
+
+        dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &v_timeout);
+
+        replaces_id = notify_send (msg, replaces_id);
+    }
+
+    if (should_wait_for_cover) {
         ddb_cover_query_t *query = calloc (sizeof (ddb_cover_query_t), 1);
         query->_size = sizeof (ddb_cover_query_t);
         query->track = track;
@@ -219,7 +252,7 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
                 ddb_playItem_t *track = query->track;
                 deadbeef->pl_item_ref (track);
                 dispatch_async (queue, ^{
-                    show_notification (track, image_filename, new_replaces_id, 1);
+                    _replaces_id = show_notification (track, image_filename, replaces_id, 1);
                     free (image_filename);
                     deadbeef->pl_item_unref (track);
                 });
@@ -233,40 +266,9 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
 
         query->user_data = (dispatch_block_t)Block_copy(completion_block);
         artwork_plugin->cover_get (query, _cover_loaded_callback);
-
-        if (deadbeef->conf_get_int ("notify.fix_kde_5_23_5", 0)) {
-            return;
-        }
     }
 
-    if (!v_iconname) {
-        v_iconname = "deadbeef";
-    }
-    const char *v_summary = title;
-    const char *v_body = esc_content;
-    dbus_int32_t v_timeout = -1;
-
-    dbus_message_append_args (msg
-            , DBUS_TYPE_STRING, &v_appname
-            , DBUS_TYPE_UINT32, &replaces_id
-            , DBUS_TYPE_STRING, &v_iconname
-            , DBUS_TYPE_STRING, &v_summary
-            , DBUS_TYPE_STRING, &v_body
-            , DBUS_TYPE_INVALID
-            );
-
-    DBusMessageIter iter, sub;
-    // actions
-    dbus_message_iter_init_append(msg, &iter);
-    dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "s", &sub);
-    dbus_message_iter_close_container(&iter, &sub);
-    // hints
-    dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "{sv}", &sub);
-    dbus_message_iter_close_container(&iter, &sub);
-
-    dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &v_timeout);
-
-    new_replaces_id = notify_send (msg, replaces_id);
+    return replaces_id;
 }
 
 static int
@@ -278,7 +280,12 @@ on_songstarted (DB_playItem_t *track) {
             }
             deadbeef->pl_item_ref (track);
             dispatch_async (queue, ^{
-                show_notification (track, NULL, 0, 0);
+                bool should_apply_kde_fix = deadbeef->conf_get_int ("notify.fix_kde_5_23_5", 0) ? true : false;
+
+                // KDE fix: don't reuse notifications;
+                // Other environments: need to reuse
+
+                _replaces_id = show_notification (track, NULL, should_apply_kde_fix ? 0 : _replaces_id, 0);
                 deadbeef->pl_item_unref (track);
             });
         }
@@ -371,7 +378,7 @@ static const char settings_dlg[] =
     "property \"Notification content format\" entry notify.format_content_tf \"" NOTIFY_DEFAULT_CONTENT "\";\n"
     "property \"Show album art\" checkbox notify.albumart 1;\n"
     "property \"Album art size (px)\" entry notify.albumart_size 64;\n"
-    "property \"Fix for KDE 5.23.5\" checkbox notify.fix_kde_5_23_5 0;\n"
+    "property \"Don't reuse notifications (KDE quirk)\" checkbox notify.fix_kde_5_23_5 0;\n"
 ;
 
 static DB_misc_t plugin = {
