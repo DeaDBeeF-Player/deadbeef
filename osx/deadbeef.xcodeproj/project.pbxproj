@@ -6581,6 +6581,24 @@
 		2DB2F73E240466AF00F7C000 /* PluginsPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginsPreferencesViewController.m; sourceTree = "<group>"; };
 		2DB4E0682AE18ECA00028624 /* medialibfilesystem_mac.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = medialibfilesystem_mac.m; sourceTree = "<group>"; };
 		2DB4E0D52AE197B600028624 /* notify.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = notify.c; sourceTree = "<group>"; };
+		2DB4E1392AE2D4FA00028624 /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		2DB4E13A2AE2D4FA00028624 /* rename.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rename.c; sourceTree = "<group>"; };
+		2DB4E13B2AE2D4FA00028624 /* fopen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fopen.c; sourceTree = "<group>"; };
+		2DB4E13C2AE2D4FA00028624 /* mmap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mmap.c; sourceTree = "<group>"; };
+		2DB4E13D2AE2D4FA00028624 /* Resources.rc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Resources.rc; sourceTree = "<group>"; };
+		2DB4E13F2AE2D4FA00028624 /* fnmatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fnmatch.h; sourceTree = "<group>"; };
+		2DB4E1412AE2D4FA00028624 /* features.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = features.h; sourceTree = "<group>"; };
+		2DB4E1422AE2D4FA00028624 /* socket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = socket.h; sourceTree = "<group>"; };
+		2DB4E1432AE2D4FA00028624 /* queue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = queue.h; sourceTree = "<group>"; };
+		2DB4E1442AE2D4FA00028624 /* scandir.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scandir.c; sourceTree = "<group>"; };
+		2DB4E1452AE2D4FA00028624 /* mkdir.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mkdir.c; sourceTree = "<group>"; };
+		2DB4E1462AE2D4FA00028624 /* utils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = utils.c; sourceTree = "<group>"; };
+		2DB4E1472AE2D4FA00028624 /* strndup.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = strndup.c; sourceTree = "<group>"; };
+		2DB4E1482AE2D4FA00028624 /* mkstemp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mkstemp.c; sourceTree = "<group>"; };
+		2DB4E1492AE2D4FA00028624 /* strcasestr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = strcasestr.c; sourceTree = "<group>"; };
+		2DB4E14A2AE2D4FA00028624 /* stat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stat.c; sourceTree = "<group>"; };
+		2DB4E14B2AE2D4FA00028624 /* mingw32_layer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mingw32_layer.h; sourceTree = "<group>"; };
+		2DB4E14C2AE2D4FA00028624 /* rmdir.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rmdir.c; sourceTree = "<group>"; };
 		2DB522F72AACF09600B6250A /* gtkScriptableSelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptableSelectViewController.h; sourceTree = "<group>"; };
 		2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptableSelectViewController.c; sourceTree = "<group>"; };
 		2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackContextMenu.h; sourceTree = "<group>"; };
@@ -10770,6 +10788,7 @@
 				2DB520E52AA8FA4C00B6250A /* scriptable */,
 				2D92D21929B92DF900218F1D /* analyzer */,
 				2D92D1F629B92DF900218F1D /* scope */,
+				2DB4E1382AE2D4FA00028624 /* windows */,
 				2D92D1FB29B92DF900218F1D /* README */,
 				2D92D21E29B92DF900218F1D /* ctmap.c */,
 				2D92D1F429B92DF900218F1D /* ctmap.h */,
@@ -11418,6 +11437,47 @@
 			);
 			name = notify;
 			path = plugins/notify;
+			sourceTree = "<group>";
+		};
+		2DB4E1382AE2D4FA00028624 /* windows */ = {
+			isa = PBXGroup;
+			children = (
+				2DB4E1392AE2D4FA00028624 /* utils.h */,
+				2DB4E13A2AE2D4FA00028624 /* rename.c */,
+				2DB4E13B2AE2D4FA00028624 /* fopen.c */,
+				2DB4E13C2AE2D4FA00028624 /* mmap.c */,
+				2DB4E13D2AE2D4FA00028624 /* Resources.rc */,
+				2DB4E13E2AE2D4FA00028624 /* include */,
+				2DB4E1442AE2D4FA00028624 /* scandir.c */,
+				2DB4E1452AE2D4FA00028624 /* mkdir.c */,
+				2DB4E1462AE2D4FA00028624 /* utils.c */,
+				2DB4E1472AE2D4FA00028624 /* strndup.c */,
+				2DB4E1482AE2D4FA00028624 /* mkstemp.c */,
+				2DB4E1492AE2D4FA00028624 /* strcasestr.c */,
+				2DB4E14A2AE2D4FA00028624 /* stat.c */,
+				2DB4E14B2AE2D4FA00028624 /* mingw32_layer.h */,
+				2DB4E14C2AE2D4FA00028624 /* rmdir.c */,
+			);
+			path = windows;
+			sourceTree = "<group>";
+		};
+		2DB4E13E2AE2D4FA00028624 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				2DB4E13F2AE2D4FA00028624 /* fnmatch.h */,
+				2DB4E1402AE2D4FA00028624 /* sys */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		2DB4E1402AE2D4FA00028624 /* sys */ = {
+			isa = PBXGroup;
+			children = (
+				2DB4E1412AE2D4FA00028624 /* features.h */,
+				2DB4E1422AE2D4FA00028624 /* socket.h */,
+				2DB4E1432AE2D4FA00028624 /* queue.h */,
+			);
+			path = sys;
 			sourceTree = "<group>";
 		};
 		2DB520E52AA8FA4C00B6250A /* scriptable */ = {

@@ -33,6 +33,11 @@
 #include <iconv.h>
 #endif
 
+static wchar_t *default_working_dir = NULL;
+static wchar_t *deadbeef_working_dir = NULL;
+static unsigned char path_long_last_path_exists;
+static unsigned char first_call = 1;
+
 #ifdef WIN_CHARSET_CONV_WIN
 int
 win_charset_conv (const void *in, int inlen, void *out, int outlen, const char *cs_in, const char *cs_out) {
@@ -102,8 +107,6 @@ int path_short(const char * path_in, char * path_out, int len) {
     return iconv2_ret;
 }
 
-unsigned char path_long_last_path_exists;
-
 // path_long expands given path
 int path_long(const char * path_in, char * path_out, int len) {
     // ensure correct slashes
@@ -143,10 +146,7 @@ int path_long(const char * path_in, char * path_out, int len) {
     return iconv2_ret;
 }
 
-wchar_t *default_working_dir = NULL;
-wchar_t *deadbeef_working_dir = NULL;
-
-void set_deadbeef_working_dir() {
+static void set_deadbeef_working_dir() {
     wchar_t deadbeef_filepath[PATH_MAX];
     GetModuleFileNameW(NULL, deadbeef_filepath, PATH_MAX);
     // remove '\deadbeef.exe' from the end
@@ -204,15 +204,13 @@ void windows_arg_fix(int *argc, char **argv) {
     }
 }
 
-unsigned char first_call = 1;
-
 // realpath windows implementation
 char *realpath (const char *path, char *resolved_path) {
     // HACK: save current working dir and deadbeef dir
-    // Explaination: working dir has to be deadbeef's dir to enable finding
+    // Explanation: working dir has to be deadbeef's dir to enable finding
     //     lib*.dll, current working dir is used only during realpath
     // HACK2: first realpath call uses path_short (8.3 naming)
-    // Explaination: first call is for deadbeef directory location, if the
+    // Explanation: first call is for deadbeef directory location, if the
     //     path includes non-ascii characters all plugins will fail to load
     if (first_call) {
         set_default_working_dir();
