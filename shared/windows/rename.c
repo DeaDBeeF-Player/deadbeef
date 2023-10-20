@@ -1,6 +1,6 @@
 /*
     shared/windows/rename.c
-    Copyright (C) 2018-2020 Jakub Wasylków
+    Copyright (C) 2018-2023 Jakub Wasylków
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -35,7 +35,7 @@ int rename_windows(const char * oldfile_c, const char * newfile_c){
     // convert any '/' characters to '\\'
     {
         char * slash = oldfile;
-        while (slash = strchr(slash, '/'))
+        while ((slash = strchr(slash, '/')))
             *slash = '\\';
     }
     char newfile[strlen(newfile_c)+1];
@@ -43,7 +43,7 @@ int rename_windows(const char * oldfile_c, const char * newfile_c){
     // convert any '/' characters to '\\'
     {
         char * slash = newfile;
-        while (slash = strchr(slash, '/'))
+        while ((slash = strchr(slash, '/')))
             *slash = '\\';
     }
 

@@ -1,6 +1,6 @@
 /*
     shared/windows/utils.c
-    Copyright (C) 2018-2020 Jakub Wasylków
+    Copyright (C) 2018-2023 Jakub Wasylków
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -88,7 +88,7 @@ int path_short(const char * path_in, char * path_out, int len) {
     strcpy (in_c, path_in);
     {
         char * slash = in_c;
-        while (slash = strchr(slash, '/'))
+        while ((slash = strchr(slash, '/')))
             *slash = '\\';
     }
     // convert to wchar_t
@@ -111,7 +111,7 @@ int path_long(const char * path_in, char * path_out, int len) {
     strcpy (in_c, path_in);
     {
         char * slash = in_c;
-        while (slash = strchr(slash, '/'))
+        while ((slash = strchr(slash, '/')))
             *slash = '\\';
     }
     // convert to wchar_t
@@ -143,32 +143,28 @@ int path_long(const char * path_in, char * path_out, int len) {
     return iconv2_ret;
 }
 
-int startup_fixes(char *out_p) {
-    // FIX 1: realpath to return ASCII-only string
-    // ensures that plugins can be dlopened even when they are located in non-ASCII path
-    // uses char *out_p variable and returns ret variable (this function is called from realpath implementation)
+wchar_t *default_working_dir = NULL;
+wchar_t *deadbeef_working_dir = NULL;
 
-    // load file path
-    wchar_t argv_win[PATH_MAX];
-    GetModuleFileNameW(NULL,argv_win,PATH_MAX);
-    int argv_win_len = wcslen(argv_win);
-    // convert to utf8
-    int ret = win_charset_conv ((char *) argv_win, (wcslen(argv_win)+1)*2, out_p, PATH_MAX, "WCHAR_T", "UTF-8");
-
-    // Set current directory, so that windows can find libraries needed to load plugins
-    {
-        char out_scd[strlen(out_p)];
-        strcpy (out_scd, out_p);
-        char *ll = strrchr (out_scd, '\\');
-        if (ll) {
-            *ll = 0;
-        }
-        SetCurrentDirectory(out_scd);
+void set_deadbeef_working_dir() {
+    wchar_t deadbeef_filepath[PATH_MAX];
+    GetModuleFileNameW(NULL, deadbeef_filepath, PATH_MAX);
+    // remove '\deadbeef.exe' from the end
+    wchar_t *ll = wcsrchr (deadbeef_filepath, '\\');
+    if (ll) {
+        *ll = 0;
     }
+    deadbeef_working_dir = wcsdup(deadbeef_filepath);
+}
 
-    // convert to DOS path
-    path_short (out_p, out_p, PATH_MAX);
-    path_long_last_path_exists = 1;
+void set_default_working_dir() {
+    wchar_t current_dir[PATH_MAX];
+    GetCurrentDirectoryW(PATH_MAX, current_dir);
+    default_working_dir = wcsdup(current_dir);
+}
+
+void startup_fixes() {
+    // FIX 1 moved to realpath
 
     // FIX 2: GTK to disable client-side decorations
     // since gtk 3.24.12 on windows (msys) client-side decorations are not forced, we need to disable them
@@ -179,20 +175,51 @@ int startup_fixes(char *out_p) {
     if (getenv("CURL_CA_BUNDLE") == NULL) {
         char capath[PATH_MAX + strlen("CURL_CA_BUNDLE=\\share\\ssl\\certs\\ca-bundle.crt")];
         strcpy (capath,"CURL_CA_BUNDLE=");
-        strcat (capath, out_p);
-        *(strrchr(capath,'\\')+1) = 0;
+        // append deadbeef path location
+        {
+            size_t deadbeef_working_dir_byte_len = wcslen(deadbeef_working_dir)*2+1;
+            size_t ddb_path_utf_byte_len =  wcslen(deadbeef_working_dir)*4+1;
+            char deadbeef_filepath[ddb_path_utf_byte_len];
+            win_charset_conv(deadbeef_working_dir, deadbeef_working_dir_byte_len, deadbeef_filepath, ddb_path_utf_byte_len, "WCHAR_T", "UTF-8");
+            strcat(capath, deadbeef_filepath);
+        }
         strcat (capath, "share\\ssl\\certs\\ca-bundle.crt");
         putenv (capath);
     }
 
     // End of fixes
-    return ret;
+}
+
+void windows_arg_fix(int *argc, char **argv) {
+    wchar_t *wcmd = GetCommandLineW();
+    wchar_t **wargv = CommandLineToArgvW(wcmd, argc);
+    for(int i = 0; i < *argc; i++) {
+        size_t warg_byte_len = wcslen(wargv[i])*2+2;
+        size_t arg_byte_len = wcslen(wargv[i])*4+1;
+        char *arg_str = malloc(arg_byte_len);
+        if (arg_str) {
+            win_charset_conv(wargv[i], warg_byte_len, arg_str, arg_byte_len, "WCHAR_T", "UTF-8");
+            argv[i] = arg_str;
+        }
+    }
 }
 
 unsigned char first_call = 1;
 
 // realpath windows implementation
 char *realpath (const char *path, char *resolved_path) {
+    // HACK: save current working dir and deadbeef dir
+    // Explaination: working dir has to be deadbeef's dir to enable finding
+    //     lib*.dll, current working dir is used only during realpath
+    // HACK2: first realpath call uses path_short (8.3 naming)
+    // Explaination: first call is for deadbeef directory location, if the
+    //     path includes non-ascii characters all plugins will fail to load
+    if (first_call) {
+        set_default_working_dir();
+        set_deadbeef_working_dir();
+        startup_fixes();
+    }
+
     char *out_p;
 
     // documentation states that we have to alloc memory if resolved_path is NULL
@@ -209,16 +236,34 @@ char *realpath (const char *path, char *resolved_path) {
     // This function is called first in main() to get main dir path.
     // To ensure that plugins will load sucessfully, we need to return DOS path (as it is ASCII-only)
     if (first_call) {
-        ret = startup_fixes (out_p);
-        first_call = 0;
+        SetCurrentDirectoryW(deadbeef_working_dir);
     }
     else {
-        // use path_long which will use GetLongPathName to resolve path
-        ret = path_long (path, out_p, PATH_MAX);
+        SetCurrentDirectoryW(default_working_dir);
     }
 
+    // standard realpath implementation
+
+    // convert path to WCHAR_T
+    wchar_t wpath[strlen(path)+1];
+    win_charset_conv(path, strlen(path)+1, wpath, strlen(path)*2+2, "UTF-8", "WCHAR_T");
+    // find resolved path
+    wchar_t wresolved_path[PATH_MAX];
+    GetFullPathNameW(wpath, PATH_MAX, wresolved_path, NULL);
+    // convert resolved path to UTF-8
+    ret = win_charset_conv(wresolved_path, wcslen(wresolved_path)*2+2, out_p, PATH_MAX, "WCHAR_T", "UTF-8");
+
+    if (first_call) {
+        first_call = 0;
+        // HACK for deadbeef.exe realpath: use short path for dlopen compatibility
+        path_short(out_p, out_p, strlen(out_p));
+    }
+
+    // Always keep deadbeef path as working dir to allow lib*.dll files to be found
+    SetCurrentDirectoryW(deadbeef_working_dir);
+
     // fail if getting resolved path fails or if the path does not exist
-    if (ret <= 0 || path_long_last_path_exists == 0) {
+    if (ret <= 0 || GetFileAttributesW(wresolved_path) == INVALID_FILE_ATTRIBUTES) {
         // free if we allocated memory
         if (!resolved_path) {
             free (out_p);
@@ -229,7 +274,7 @@ char *realpath (const char *path, char *resolved_path) {
     // replace backslashes with normal slashes
     {
         char *slash_p = out_p;
-        while (slash_p = strchr(slash_p, '\\')) {
+        while ((slash_p = strchr(slash_p, '\\'))) {
             *slash_p = '/';
         }
     }

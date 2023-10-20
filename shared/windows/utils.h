@@ -1,6 +1,6 @@
 /*
     shared/windows/utils.h
-    Copyright (C) 2018-2020 Jakub Wasylków
+    Copyright (C) 2018-2023 Jakub Wasylków
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -30,3 +30,6 @@ int path_short(const char * path_in, char * path_out, int len);
 
 // path_long expands given path
 int path_long(const char * path_in, char * path_out, int len);
+
+// replace arguments with UTF-8 formatted arguments from win32 api
+void windows_arg_fix(int *argc, char **argv);

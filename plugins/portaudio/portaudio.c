@@ -1,6 +1,6 @@
 /*
     Portaudio output plugin for DeaDBeeF Player
-    Copyright (C) 2017 Jakub Wasylków
+    Copyright (C) 2017-2023 Jakub Wasylków
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -331,7 +331,7 @@ portaudio_play (void) {
 static PaSampleFormat pa_GSFerr () { warn ("portaudio: Sample format wrong? Using Int16.\n"); return paInt16; }
 static PaSampleFormat
 pa_GetSampleFormat (int bps, int is_float) {
-    return bps ==  8 ?  paUInt8   :
+    return bps ==  8 ?  paInt8    :
            bps == 16 ?  paInt16   :
            bps == 24 ?  paInt24   :
            bps == 32 && is_float  ? paFloat32 :
@@ -592,12 +592,14 @@ static DB_output_t plugin = {
     .plugin.api_vmajor = 1,
     .plugin.api_vminor = 10,
     .plugin.version_major = 1,
-    .plugin.version_minor = 7,
+    .plugin.version_minor = 8,
     .plugin.type = DB_PLUGIN_OUTPUT,
     .plugin.id = "portaudio",
     .plugin.name = "PortAudio output plugin",
     .plugin.descr = "This plugin plays audio using PortAudio library.\n"
     "\n"
+    "Changes in version 1.8:\n"
+    "    * Fix for 8 bit depth audio.\n"
     "Changes in version 1.7:\n"
     "    * Converted plugin to use libdispatch.\n"
     "Changes in version 1.6:\n"
@@ -615,7 +617,7 @@ static DB_output_t plugin = {
     "    * Better format handling, less possibility of playing static",
     .plugin.copyright =
     "PortAudio output plugin for DeaDBeeF Player\n"
-    "Copyright (C) 2017 Jakub Wasylków\n"
+    "Copyright (C) 2017-2023 Jakub Wasylków\n"
     "\n"
     "This software is provided 'as-is', without any express or implied\n"
     "warranty.  In no event will the authors be held liable for any damages\n"
