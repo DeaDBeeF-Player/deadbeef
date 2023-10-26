@@ -23,6 +23,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include "medialibstate.h"
 
 static DB_functions_t *deadbeef;
@@ -122,6 +123,7 @@ ml_item_state_free (ml_collection_state_t *coll_state) {
             s = next;
         }
     }
+    memset (coll_state, 0, sizeof (ml_collection_state_t));
 }
 
 void

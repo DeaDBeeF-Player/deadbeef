@@ -41,10 +41,6 @@ typedef struct {
     // This hash purpose is to quickly check whether the filename is in the library already.
     // Doesn't contain subtracks.
     ml_filename_hash_item_t *filename_hash[ML_HASH_SIZE];
-
-    /// Selected / expanded state.
-    /// State is associated with IDs, therefore it survives updates/scans, as long as IDs are reused correctly.
-    ml_collection_state_t state;
 } ml_db_t;
 
 uint32_t

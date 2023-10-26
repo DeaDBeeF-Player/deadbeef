@@ -205,6 +205,8 @@ ml_free_source (ddb_mediasource_source_t *_source) {
         ml_db_free(&source->db);
     }
 
+    ml_item_state_free(&source->state);
+
     if (source->musicpaths_json) {
         json_decref(source->musicpaths_json);
         source->musicpaths_json = NULL;

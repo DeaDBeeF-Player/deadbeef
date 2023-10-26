@@ -49,7 +49,14 @@ typedef struct medialib_source_s {
     int enabled;
 
     ddb_playlist_t *ml_playlist; // this playlist contains the actual data of the media library in plain list
-    ml_db_t db; // this is the index, which can be rebuilt from the playlist at any given time
+
+    // this is the index, which can be rebuilt from the playlist at any given time
+    ml_db_t db;
+
+    /// Selected / expanded state.
+    /// State is associated with IDs, therefore it survives updates/scans, as long as IDs are reused correctly.
+    ml_collection_state_t state;
+
     ddb_medialib_listener_t ml_listeners[MAX_LISTENERS];
     void *ml_listeners_userdatas[MAX_LISTENERS];
     int _ml_state;
