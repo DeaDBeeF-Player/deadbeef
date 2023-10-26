@@ -132,6 +132,8 @@ typedef struct ddb_analyzer_s {
     /// Tempered scale data, precalculated from fft pins
     ddb_analyzer_band_t *tempered_scale_bands;
 
+    /// Cached value for lower bound of log10 argument
+    float exp_lower_bound;
 } ddb_analyzer_t;
 
 ddb_analyzer_t *ddb_analyzer_alloc (void);

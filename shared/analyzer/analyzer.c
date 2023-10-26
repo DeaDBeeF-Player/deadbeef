@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 #include "analyzer.h"
+#include <float.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -135,12 +136,19 @@ ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
     if (analyzer->mode_did_change) {
         return; // avoid ticks until the next data update
     }
+    float exp_lower_bound = analyzer->exp_lower_bound;
     // frequency lines
     for (int ch = 0; ch < analyzer->channels; ch++) {
         float *fft_data = analyzer->fft_data + ch * analyzer->fft_size;
         ddb_analyzer_bar_t *bar = analyzer->bars;
         for (int i = 0; i < analyzer->bar_count; i++, bar++) {
             float norm_h = _interpolate_bin_with_ratio (fft_data, bar->bin, bar->ratio);
+
+
+            if (norm_h < exp_lower_bound) {
+                norm_h = exp_lower_bound;
+            }
+
 
             // if the bar spans more than one bin, find the max value
             for (int b = bar->bin+1; b <= bar->last_bin; b++) {
@@ -362,6 +370,7 @@ _generate_frequency_bars (ddb_analyzer_t *analyzer) {
 static void
 _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
     analyzer->bar_count = 0;
+    analyzer->exp_lower_bound = powf(10, analyzer->db_lower_bound / 20.f) + FLT_EPSILON;
 
     _tempered_scale_bands_precalc (analyzer);
 
@@ -473,11 +482,6 @@ _interpolate_bin_with_ratio (float *fft_data, int bin, float ratio) {
     }
     else {
         result = a + (b - a) * ratio;
-    }
-
-    // 10^-4 is the lower bound
-    if (result < 0.0001) {
-        return 0.0001;
     }
     return result;
 }
