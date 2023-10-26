@@ -460,13 +460,24 @@ static float
 _interpolate_bin_with_ratio (float *fft_data, int bin, float ratio) {
     float a = fft_data[bin];
     float b = fft_data[bin + 1];
-    float result = a + (b - a) * ratio;
 
-    // Don't allow to go lower than 0,
-    // since log10(x<0) returns NaN,
-    // which may result in visual glitches
-    if (result < 0.f) {
-        return 0.f;
+    float result;
+
+    // workaround for interpolator bug:
+    // ratio calculation can generate numbers higher than 1.
+    if (ratio > 1) {
+        result = b;
+    }
+    else if (ratio < 0) {
+        result = a;
+    }
+    else {
+        result = a + (b - a) * ratio;
+    }
+
+    // 10^-4 is the lower bound
+    if (result < 0.0001) {
+        return 0.0001;
     }
     return result;
 }
