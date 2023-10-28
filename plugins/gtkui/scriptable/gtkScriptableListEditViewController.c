@@ -30,14 +30,24 @@ struct gtkScriptableListEditViewController_t {
     GtkWidget *view;
     GtkTreeView *tree_view;
     GtkListStore *list_store;
+
+    GtkWidget *add_button;
+    GtkWidget *remove_button;
+    GtkWidget *config_button;
+    GtkWidget *duplicate_button;
+
     gtkScriptableListEditViewControllerDelegate_t *delegate;
     void *context;
 
     gtkScriptableListEditWindowController_t *list_editor_window_controller;
+    gtkScriptableListEditWindowControllerDelegate_t list_editor_window_delegate;
 };
 
 static void
 _reload_data(gtkScriptableListEditViewController_t *self);
+
+static int
+_get_selected_index(gtkScriptableListEditViewController_t *self);
 
 static void
 _add_did_activate (GtkButton* button, gpointer user_data);
@@ -50,6 +60,9 @@ _config_did_activate (GtkButton* button, gpointer user_data);
 
 static void
 _duplicate_did_activate (GtkButton* button, gpointer user_data);
+
+static void
+_selection_did_change (GtkTreeSelection *treeselection, gpointer user_data);
 
 static GtkWidget *
 _create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name) {
@@ -64,9 +77,21 @@ _create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_na
     return GTK_WIDGET(button);
 }
 
+static void
+_list_editor_window_did_close(gtkScriptableListEditWindowController_t *controller, void *context) {
+    gtkScriptableListEditViewController_t *self = context;
+
+    if (self->list_editor_window_controller != NULL) {
+        gtkScriptableListEditWindowControllerFree(self->list_editor_window_controller);
+        self->list_editor_window_controller = NULL;
+    }
+}
+
 gtkScriptableListEditViewController_t *
 gtkScriptableListEditViewControllerNew (void) {
     gtkScriptableListEditViewController_t *self = calloc (1, sizeof  (gtkScriptableListEditViewController_t));
+
+    self->list_editor_window_delegate.window_did_close = _list_editor_window_did_close;
 
     return self;
 }
@@ -140,18 +165,22 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
     GtkWidget *add_button = _create_tool_button_with_image_name(icon_size, add_icon);
     gtk_widget_show (add_button);
     gtk_container_add (GTK_CONTAINER (toolbar), add_button);
+    self->add_button = add_button;
 
     GtkWidget *remove_button = _create_tool_button_with_image_name(icon_size, remove_icon);
     gtk_widget_show (remove_button);
     gtk_container_add (GTK_CONTAINER (toolbar), remove_button);
+    self->remove_button = remove_button;
 
     GtkWidget *config_button = _create_tool_button_with_image_name(icon_size, preferences_icon);
     gtk_widget_show (config_button);
     gtk_container_add (GTK_CONTAINER (toolbar), config_button);
+    self->config_button = config_button;
 
     GtkWidget *duplicate_button = _create_tool_button_with_image_name(icon_size, copy_icon);
     gtk_widget_show (duplicate_button);
     gtk_container_add (GTK_CONTAINER (toolbar), duplicate_button);
+    self->duplicate_button = duplicate_button;
 
     if (self->delegate != NULL && self->delegate->add_buttons != NULL) {
         self->delegate->add_buttons(self, GTK_BOX(button_box));
@@ -165,6 +194,8 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
 
     g_signal_connect ((gpointer)duplicate_button, "clicked", G_CALLBACK (_duplicate_did_activate), self);
 
+    GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list_view));
+    g_signal_connect ((gpointer)selection, "changed", G_CALLBACK (_selection_did_change), self);
 
     _reload_data(self);
 }
@@ -182,7 +213,11 @@ gtkScriptableListEditViewControllerSetScriptable(gtkScriptableListEditViewContro
 
 static void
 _update_buttons(gtkScriptableListEditViewController_t *self) {
-    // FIXME: impl
+    gboolean enable = _get_selected_index(self) != -1;
+
+    gtk_widget_set_sensitive(self->remove_button, enable);
+    gtk_widget_set_sensitive(self->config_button, enable);
+    gtk_widget_set_sensitive(self->duplicate_button, enable);
 }
 
 static void
@@ -413,7 +448,6 @@ _remove_did_activate (GtkButton* button, gpointer user_data) {
     _update_buttons(self);
 }
 
-// FIXME: the implementation of this function should be shared across Select and Edit
 static void
 _config_did_activate (GtkButton* button, gpointer user_data) {
     gtkScriptableListEditViewController_t *self = user_data;
@@ -429,9 +463,11 @@ _config_did_activate (GtkButton* button, gpointer user_data) {
         // recurse!
         self->list_editor_window_controller = gtkScriptableListEditWindowControllerNew();
         gtkScriptableListEditWindowControllerSetScriptable(self->list_editor_window_controller, item);
-        // FIXME: delegate (lifecycle management) and title
-        //        self.nodeEditorWindowController.delegate = self.delegate;
-        //        self.nodeEditorWindowController.window.title = @(scriptableItemPropertyValueForKey(item, "name")); // preset name
+
+        gtkScriptableListEditWindowControllerSetTitle(self->list_editor_window_controller, scriptableItemPropertyValueForKey(item, "name"));
+
+        gtkScriptableListEditWindowControllerSetDelegate(self->list_editor_window_controller, &self->list_editor_window_delegate, self);
+
         gtkScriptableListEditWindowControllerRunModal(self->list_editor_window_controller, GTK_WINDOW(gtk_widget_get_toplevel(self->view)));
     }
     else {
@@ -466,4 +502,10 @@ _duplicate_did_activate (GtkButton* button, gpointer user_data) {
     scriptableItemSetUniqueNameUsingPrefixAndRoot(duplicate, name, self->scriptable);
 
     _insert_node_at_selection(self, duplicate);
+}
+
+static void
+_selection_did_change (GtkTreeSelection *treeselection, gpointer user_data) {
+    gtkScriptableListEditViewController_t *self = user_data;
+    _update_buttons(self);
 }
