@@ -28,6 +28,7 @@
 struct gtkScriptableListEditWindowController_t {
     scriptableItem_t *scriptable;
     GtkWidget *window;
+    GtkWidget *reset_button;
     gtkScriptableListEditViewController_t *content_view_controller;
     gtkScriptableListEditViewControllerDelegate_t content_view_controller_delegate;
 
@@ -97,6 +98,7 @@ gtkScriptableListEditWindowControllerNew (void) {
     GtkWidget *reset_button = gtk_button_new_with_label(_("Reset"));
     gtk_widget_show (reset_button);
     gtk_box_pack_start(GTK_BOX(button_box), reset_button, FALSE, FALSE, 0);
+    self->reset_button = reset_button;
 
     GtkWidget *close_button = gtk_button_new_with_label(_("Close"));
     gtk_widget_show (close_button);
@@ -128,6 +130,20 @@ gtkScriptableListEditWindowControllerRunModal(gtkScriptableListEditWindowControl
 void
 gtkScriptableListEditWindowControllerSetScriptable(gtkScriptableListEditWindowController_t *self, scriptableItem_t *scriptable) {
     self->scriptable = scriptable;
+
+    gboolean resettable = FALSE;
+
+    if (scriptable != NULL) {
+        resettable = 0 != (scriptableItemFlags(scriptable) & SCRIPTABLE_FLAG_CAN_RESET);
+    }
+
+    if (resettable) {
+        gtk_widget_show(self->reset_button);
+    }
+    else {
+        gtk_widget_hide(self->reset_button);
+    }
+
     gtkScriptableListEditViewControllerSetScriptable(self->content_view_controller, scriptable);
 }
 

@@ -214,10 +214,20 @@ gtkScriptableListEditViewControllerSetScriptable(gtkScriptableListEditViewContro
 
 static void
 _update_buttons(gtkScriptableListEditViewController_t *self) {
-    gboolean enable = _get_selected_index(self) != -1;
+    int selected_index = _get_selected_index(self);
+    gboolean enable = selected_index != -1;
+    gboolean editable = FALSE;
+
+    if (selected_index != -1) {
+        scriptableItem_t *item = scriptableItemChildAtIndex(self->scriptable, selected_index);
+        uint64_t flag = scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_LIST;
+        const char *dlg = scriptableItemConfigDialog(item);
+
+        editable = flag != 0 || dlg != NULL;
+    }
 
     gtk_widget_set_sensitive(self->remove_button, enable);
-    gtk_widget_set_sensitive(self->config_button, enable);
+    gtk_widget_set_sensitive(self->config_button, enable && editable);
     gtk_widget_set_sensitive(self->duplicate_button, enable);
 }
 
