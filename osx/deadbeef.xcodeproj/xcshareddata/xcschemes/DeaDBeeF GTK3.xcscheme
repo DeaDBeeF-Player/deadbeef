@@ -59,6 +59,11 @@
             value = "/Users/waker/ddbhome"
             isEnabled = "YES">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "GTK_DEBUG"
+            value = "interactive"
+            isEnabled = "NO">
+         </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction

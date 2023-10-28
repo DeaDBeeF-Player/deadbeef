@@ -755,14 +755,18 @@ w_medialib_viewer_create (void) {
     w->selectViewController = gtkScriptableSelectViewControllerNew();
     GtkWidget *selectViewControllerWidget = gtkScriptableSelectViewControllerGetView(w->selectViewController);
 
-    GtkWidget *select_view_wrap_hbox = gtk_hbox_new (FALSE, 8);
-    gtk_widget_show (select_view_wrap_hbox);
-    gtk_box_pack_start (GTK_BOX (vbox), select_view_wrap_hbox, FALSE, TRUE, 0);
-    gtk_box_pack_start (GTK_BOX (select_view_wrap_hbox), selectViewControllerWidget, TRUE, TRUE, 20);
+    GtkWidget *buttons_padding_hbox = gtk_hbox_new (FALSE, 0);
+    gtk_widget_show (buttons_padding_hbox);
+    gtk_box_pack_start (GTK_BOX (vbox), buttons_padding_hbox, FALSE, TRUE, 0);
+
+    GtkWidget *buttons_container_hbox = gtk_hbox_new (FALSE, 8);
+    gtk_widget_show (buttons_container_hbox);
+    gtk_box_pack_start (GTK_BOX (buttons_padding_hbox), buttons_container_hbox, TRUE, TRUE, 20);
+    gtk_box_pack_start (GTK_BOX (buttons_container_hbox), selectViewControllerWidget, TRUE, TRUE, 0);
 
     GtkWidget *configure_button = gtk_button_new_with_label (_("Configure"));
     gtk_widget_show (configure_button);
-    gtk_box_pack_start (GTK_BOX (select_view_wrap_hbox), configure_button, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (buttons_container_hbox), configure_button, FALSE, FALSE, 0);
 
     GtkWidget *search_hbox = gtk_hbox_new (FALSE, 8);
     gtk_widget_show (search_hbox);
