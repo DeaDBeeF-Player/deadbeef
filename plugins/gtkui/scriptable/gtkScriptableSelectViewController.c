@@ -25,12 +25,15 @@
 #include <stdlib.h>
 #include "support.h"
 #include "gtkScriptableSelectViewController.h"
+#include "gtkScriptableListEditWindowController.h"
 
 struct gtkScriptableSelectViewController_t {
     scriptableItem_t *scriptable;
     GtkWidget *view;
     GtkWidget *comboBox;
     GtkWidget *editButton;
+
+    gtkScriptableListEditWindowController_t *editListWindowController;
 
     gtkScriptableSelectViewControllerDelegate_t *delegate;
     void *context;
@@ -135,5 +138,7 @@ _selection_did_change (GtkComboBox* comboBox, gpointer user_data) {
 
 static void
 _edit_did_activate (GtkButton* button, gpointer user_data) {
-    // TODO: open editor
+    gtkScriptableSelectViewController_t *self = user_data;
+    self->editListWindowController = gtkScriptableListEditWindowControllerNew();
+    gtkScriptableListEditWindowControllerRunModal(self->editListWindowController, GTK_WINDOW(gtk_widget_get_toplevel(self->view)));
 }
