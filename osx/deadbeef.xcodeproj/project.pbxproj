@@ -962,6 +962,9 @@
 		2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */; };
 		2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D54915522B1711E000FE7E3 /* HelpWindowController.h */; };
 		2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D54915622B1711E000FE7E3 /* HelpWindowController.m */; };
+		2D5656FF2AED13EC0014443E /* gtkScriptableListEditViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5656FD2AED13EC0014443E /* gtkScriptableListEditViewController.h */; };
+		2D5657012AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */; };
+		2D5657022AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */; };
 		2D565B0C1A40BCE200CE1F5D /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A831A40BCE200CE1F5D /* abi_align.h */; };
 		2D565B161A40BCE200CE1F5D /* dct36_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */; };
 		2D565B251A40BCE200CE1F5D /* dct64_x86_64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */; };
@@ -5486,6 +5489,8 @@
 		2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbTitleFormattingHelpButton.m; sourceTree = "<group>"; };
 		2D54915522B1711E000FE7E3 /* HelpWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelpWindowController.h; sourceTree = "<group>"; };
 		2D54915622B1711E000FE7E3 /* HelpWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelpWindowController.m; sourceTree = "<group>"; };
+		2D5656FD2AED13EC0014443E /* gtkScriptableListEditViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptableListEditViewController.h; sourceTree = "<group>"; };
+		2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptableListEditViewController.c; sourceTree = "<group>"; };
 		2D565A831A40BCE200CE1F5D /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = abi_align.h; path = "../../osx/deps/mpg123-1.31.1/src/libmpg123/abi_align.h"; sourceTree = "<group>"; };
 		2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_x86_64.S; path = "../../osx/deps/mpg123-1.31.1/src/libmpg123/dct36_x86_64.S"; sourceTree = "<group>"; };
 		2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_x86_64_float.S; path = "../../osx/deps/mpg123-1.31.1/src/libmpg123/dct64_x86_64_float.S"; sourceTree = "<group>"; };
@@ -11492,6 +11497,8 @@
 		2DB522F62AACF08300B6250A /* scriptable */ = {
 			isa = PBXGroup;
 			children = (
+				2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */,
+				2D5656FD2AED13EC0014443E /* gtkScriptableListEditViewController.h */,
 				2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */,
 				2DB522F72AACF09600B6250A /* gtkScriptableSelectViewController.h */,
 			);
@@ -14426,6 +14433,7 @@
 				2DC657D42749581900583E14 /* DdbTabStripViewController.h in Headers */,
 				2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */,
 				2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
+				2D5656FF2AED13EC0014443E /* gtkScriptableListEditViewController.h in Headers */,
 				2D98B69E273482F700E655AE /* AAPLView.h in Headers */,
 				2D04701525E2D97D00F68459 /* WidgetMenuBuilder.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
@@ -17773,6 +17781,7 @@
 				2DC656A62744289C00583E14 /* interface.c in Sources */,
 				2DC656A72744289C00583E14 /* namedicons.c in Sources */,
 				2DC656A82744289C00583E14 /* prefwinplugins.c in Sources */,
+				2D5657012AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */,
 				2DC656AB2744289C00583E14 /* prefwin.c in Sources */,
 				2DC656AC2744289C00583E14 /* ddbseekbar.c in Sources */,
 				2DC656AE2744289C00583E14 /* support.c in Sources */,
@@ -17871,6 +17880,7 @@
 				2DE3B7C92269BF1300AFF9AE /* interface.c in Sources */,
 				2DE3B8092269BF3100AFF9AE /* namedicons.c in Sources */,
 				2D715C1F26C83A010022A8F0 /* prefwinplugins.c in Sources */,
+				2D5657022AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */,
 				2DE3B7D72269BF1700AFF9AE /* prefwin.c in Sources */,
 				2DE3B7DC2269BF1700AFF9AE /* ddbseekbar.c in Sources */,
 				2DE3B7E12269BF3100AFF9AE /* support.c in Sources */,
