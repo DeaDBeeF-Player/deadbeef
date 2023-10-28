@@ -32,10 +32,19 @@
 // button bar: add, remove, duplicate, configure,
 // optionally "Save as preset" button.
 
+// Lifecycle:
+// New
+// [optional] SetDelegate
+// Load
+// Free
+
+// SetScriptable can be called at any point after New
+
 struct gtkScriptableListEditViewController_t;
 typedef struct gtkScriptableListEditViewController_t gtkScriptableListEditViewController_t;
 
 typedef struct {
+    void (*add_buttons)(gtkScriptableListEditViewController_t *view_controller, GtkBox *button_box);
 } gtkScriptableListEditViewControllerDelegate_t;
 
 gtkScriptableListEditViewController_t *
@@ -43,6 +52,12 @@ gtkScriptableListEditViewControllerNew (void);
 
 void
 gtkScriptableListEditViewControllerFree (gtkScriptableListEditViewController_t *self);
+
+void
+gtkScriptableListEditViewControllerSetDelegate(gtkScriptableListEditViewController_t *self, gtkScriptableListEditViewControllerDelegate_t *delegate);
+
+void
+gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *self);
 
 GtkWidget *
 gtkScriptableListEditViewControllerGetView(gtkScriptableListEditViewController_t *self);

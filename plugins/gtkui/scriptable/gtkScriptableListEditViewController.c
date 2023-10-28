@@ -32,6 +32,9 @@ struct gtkScriptableListEditViewController_t {
     void *context;
 };
 
+static void
+_reload_data(gtkScriptableListEditViewController_t *self);
+
 static GtkWidget *
 _create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name) {
     GtkToolItem *button = gtk_toggle_tool_button_new ();
@@ -50,6 +53,22 @@ gtkScriptableListEditViewController_t *
 gtkScriptableListEditViewControllerNew (void) {
     gtkScriptableListEditViewController_t *self = calloc (1, sizeof  (gtkScriptableListEditViewController_t));
 
+    return self;
+}
+
+void
+gtkScriptableListEditViewControllerFree (gtkScriptableListEditViewController_t *self) {
+    g_object_unref (self->view);
+    free (self);
+}
+
+void
+gtkScriptableListEditViewControllerSetDelegate(gtkScriptableListEditViewController_t *self, gtkScriptableListEditViewControllerDelegate_t *delegate) {
+    self->delegate = delegate;
+}
+
+void
+gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *self) {
     GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox);
     self->view = vbox;
@@ -58,11 +77,12 @@ gtkScriptableListEditViewControllerNew (void) {
     gtk_widget_show (scroll_view);
     gtk_box_pack_start (GTK_BOX (vbox), scroll_view, TRUE, TRUE, 0);
     gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll_view), GTK_SHADOW_IN);
-
+    gtk_widget_set_size_request(scroll_view, 300, 100);
 
     GtkWidget *list_view = gtk_tree_view_new ();
     gtk_widget_show (list_view);
     gtk_container_add(GTK_CONTAINER(scroll_view), list_view);
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list_view), FALSE);
 
     GtkListStore *store = gtk_list_store_new(1, G_TYPE_STRING);
     self->list_store = store;
@@ -116,22 +136,22 @@ gtkScriptableListEditViewControllerNew (void) {
     gtk_widget_show (duplicate_button);
     gtk_container_add (GTK_CONTAINER (toolbar), duplicate_button);
 
-    GtkWidget *savepreset_button = gtk_button_new_with_label (_("Save as preset"));
-    gtk_widget_show (savepreset_button);
-    gtk_box_pack_end (GTK_BOX (button_box), savepreset_button, FALSE, FALSE, 0);
+    if (self->delegate != NULL && self->delegate->add_buttons != NULL) {
+        self->delegate->add_buttons(self, GTK_BOX(button_box));
+    }
 
-    return self;
-}
-
-void
-gtkScriptableListEditViewControllerFree (gtkScriptableListEditViewController_t *self) {
-    g_object_unref (self->view);
-    free (self);
+    _reload_data(self);
 }
 
 GtkWidget *
 gtkScriptableListEditViewControllerGetView(gtkScriptableListEditViewController_t *self) {
     return self->view;
+}
+
+void
+gtkScriptableListEditViewControllerSetScriptable(gtkScriptableListEditViewController_t *self, scriptableItem_t *scriptable) {
+    self->scriptable = scriptable;
+    _reload_data(self);
 }
 
 static void
@@ -157,8 +177,3 @@ _reload_data(gtkScriptableListEditViewController_t *self) {
     }
 }
 
-void
-gtkScriptableListEditViewControllerSetScriptable(gtkScriptableListEditViewController_t *self, scriptableItem_t *scriptable) {
-    self->scriptable = scriptable;
-    _reload_data(self);
-}

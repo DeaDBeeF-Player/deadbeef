@@ -51,12 +51,16 @@ gtkScriptableListEditWindowControllerNew (void) {
     gtk_window_set_skip_taskbar_hint (GTK_WINDOW (window), TRUE);
     gtk_window_set_skip_pager_hint (GTK_WINDOW (window), TRUE);
 
-    GtkWidget *vbox = gtk_vbox_new (FALSE, 8);
+    GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox);
     gtk_container_add (GTK_CONTAINER (window), vbox);
     gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
 
     gtkScriptableListEditViewController_t *content_view_controller = gtkScriptableListEditViewControllerNew();
+
+    // view delegate needs to be set here, if necessary
+
+    gtkScriptableListEditViewControllerLoad(content_view_controller);
     self->content_view_controller = content_view_controller;
 
     GtkWidget *content_view =
