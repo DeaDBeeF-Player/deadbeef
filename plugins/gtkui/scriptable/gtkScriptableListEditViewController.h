@@ -26,6 +26,7 @@
 
 #include <gtk/gtk.h>
 #include "scriptable/scriptable.h"
+#include "gtkScriptable.h"
 
 // Represents an editor view for a list of scriptables:
 // list of presets,
@@ -44,7 +45,8 @@ struct gtkScriptableListEditViewController_t;
 typedef struct gtkScriptableListEditViewController_t gtkScriptableListEditViewController_t;
 
 typedef struct {
-    void (*add_buttons)(gtkScriptableListEditViewController_t *view_controller, GtkBox *button_box);
+    void (*add_buttons)(gtkScriptableListEditViewController_t *view_controller, GtkBox *button_box, void *context);
+    void (*scriptable_did_change)(gtkScriptableListEditViewController_t *view_controller, gtkScriptableChange_t change_type, void *context);
 } gtkScriptableListEditViewControllerDelegate_t;
 
 gtkScriptableListEditViewController_t *
@@ -54,7 +56,7 @@ void
 gtkScriptableListEditViewControllerFree (gtkScriptableListEditViewController_t *self);
 
 void
-gtkScriptableListEditViewControllerSetDelegate(gtkScriptableListEditViewController_t *self, gtkScriptableListEditViewControllerDelegate_t *delegate);
+gtkScriptableListEditViewControllerSetDelegate(gtkScriptableListEditViewController_t *self, gtkScriptableListEditViewControllerDelegate_t *delegate, void *context);
 
 void
 gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *self);

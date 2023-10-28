@@ -26,6 +26,7 @@
 
 #include <gtk/gtk.h>
 #include "scriptable/scriptable.h"
+#include "gtkScriptable.h"
 
 // A window displaying a list of items from a scriptable.
 // Titlebar,
@@ -38,6 +39,7 @@ typedef struct gtkScriptableListEditWindowController_t gtkScriptableListEditWind
 
 typedef struct {
     void (*window_did_close)(gtkScriptableListEditWindowController_t *controller, void *context);
+    void (*scriptable_did_change)(gtkScriptableListEditWindowController_t *view_controller, gtkScriptableChange_t change_type, void *context);
 } gtkScriptableListEditWindowControllerDelegate_t;
 
 gtkScriptableListEditWindowController_t *

@@ -33,6 +33,8 @@ struct gtkScriptableSelectViewController_t {
     GtkWidget *comboBox;
     GtkWidget *editButton;
 
+    gboolean is_reloading;
+
     gtkScriptableListEditWindowController_t *editListWindowController;
     gtkScriptableListEditWindowControllerDelegate_t list_edit_window_delegate;
 
@@ -48,6 +50,20 @@ _edit_did_activate (GtkButton* self, gpointer user_data);
 
 static void
 _list_edit_window_did_close (gtkScriptableListEditWindowController_t *controller, void *context);
+
+static void
+_reload_data(gtkScriptableSelectViewController_t *self);
+
+static void
+_scriptable_did_change (gtkScriptableListEditWindowController_t *view_controller, gtkScriptableChange_t change_type, void *context) {
+    gtkScriptableSelectViewController_t *self = context;
+
+    _reload_data(self);
+
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change(self, change_type, context);
+    }
+}
 
 gtkScriptableSelectViewController_t *
 gtkScriptableSelectViewControllerNew(void) {
@@ -82,6 +98,7 @@ gtkScriptableSelectViewControllerNew(void) {
     g_object_ref(hbox);
 
     self->list_edit_window_delegate.window_did_close = _list_edit_window_did_close;
+    self->list_edit_window_delegate.scriptable_did_change = _scriptable_did_change;
 
     return self;
 }
@@ -104,12 +121,17 @@ gtkScriptableSelectViewControllerSetDelegate(gtkScriptableSelectViewController_t
     self->context = context;
 }
 
-void
-gtkScriptableSelectViewControllerLoad(gtkScriptableSelectViewController_t *self) {
-    // FIXME: delete all items
-//    gtk_combo_box_text_remove_all(GTK_COMBO_BOX_TEXT(self->comboBox));
+static void
+_reload_data(gtkScriptableSelectViewController_t *self) {
+    int active = gtk_combo_box_get_active(GTK_COMBO_BOX(self->comboBox));
+
+    self->is_reloading = TRUE;
+
+    GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(self->comboBox));
+    gtk_list_store_clear(GTK_LIST_STORE(model));
 
     if (self->scriptable == NULL) {
+        self->is_reloading = FALSE;
         return;
     }
 
@@ -118,6 +140,18 @@ gtkScriptableSelectViewControllerLoad(gtkScriptableSelectViewController_t *self)
          ; item = scriptableItemNext(item)) {
         gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(self->comboBox), scriptableItemPropertyValueForKey(item, "name"));
     }
+    self->is_reloading = FALSE;
+
+    // FIXME: don't use index (name should be enough)
+    if (active == -1) {
+        active = 0;
+    }
+    gtk_combo_box_set_active(GTK_COMBO_BOX(self->comboBox), active);
+}
+
+void
+gtkScriptableSelectViewControllerLoad(gtkScriptableSelectViewController_t *self) {
+    _reload_data(self);
 }
 
 GtkWidget *
@@ -136,11 +170,14 @@ gtkScriptableSelectViewControllerSelectItem(gtkScriptableSelectViewController_t 
 static void
 _selection_did_change (GtkComboBox* comboBox, gpointer user_data) {
     gtkScriptableSelectViewController_t *self = user_data;
-    if (self->delegate == NULL) {
+    if (self->delegate == NULL || self->is_reloading) {
         return;
     }
 
     int active = gtk_combo_box_get_active(GTK_COMBO_BOX(self->comboBox));
+    if (active < 0) {
+        return;
+    }
     scriptableItem_t *item = scriptableItemChildAtIndex(self->scriptable, active);
 
     self->delegate->selectionDidChange(self, item, self->context);

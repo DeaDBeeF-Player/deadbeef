@@ -103,8 +103,9 @@ gtkScriptableListEditViewControllerFree (gtkScriptableListEditViewController_t *
 }
 
 void
-gtkScriptableListEditViewControllerSetDelegate(gtkScriptableListEditViewController_t *self, gtkScriptableListEditViewControllerDelegate_t *delegate) {
+gtkScriptableListEditViewControllerSetDelegate(gtkScriptableListEditViewController_t *self, gtkScriptableListEditViewControllerDelegate_t *delegate, void *context) {
     self->delegate = delegate;
+    self->context = context;
 }
 
 void
@@ -183,7 +184,7 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
     self->duplicate_button = duplicate_button;
 
     if (self->delegate != NULL && self->delegate->add_buttons != NULL) {
-        self->delegate->add_buttons(self, GTK_BOX(button_box));
+        self->delegate->add_buttons(self, GTK_BOX(button_box), self->context);
     }
 
     g_signal_connect ((gpointer)add_button, "clicked", G_CALLBACK (_add_did_activate), self);
@@ -305,7 +306,9 @@ _insert_node_at_selection (gtkScriptableListEditViewController_t *self, scriptab
 
     scriptableItemInsertSubItemAtIndex(self->scriptable, node, (unsigned int)index);
 
-    // FIXME: notify delegate
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change(self, ScriptableItemChangeUpdate, self->context);
+    }
 
     GtkTreeSelection *selection = gtk_tree_view_get_selection (self->tree_view);
     gtk_tree_selection_select_iter(selection, &iter);
@@ -443,7 +446,9 @@ _remove_did_activate (GtkButton* button, gpointer user_data) {
     // select the same row
     _select_item_at_index(self, index);
 
-    // FIXME: notify delegate: scriptableItemDidChange -> ScriptableItemChangeUpdate
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change(self, ScriptableItemChangeUpdate, self->context);
+    }
 
     _update_buttons(self);
 }

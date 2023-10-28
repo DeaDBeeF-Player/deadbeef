@@ -26,6 +26,7 @@
 
 #include <gtk/gtk.h>
 #include "scriptable/scriptable.h"
+#include "gtkScriptable.h"
 
 // ViewController representing a Dropdown box + edit button
 // (E.g. choose from a list of presets / edit the list)
@@ -35,6 +36,7 @@ typedef struct gtkScriptableSelectViewController_t gtkScriptableSelectViewContro
 
 typedef struct {
     void (*selectionDidChange)(gtkScriptableSelectViewController_t *vc, scriptableItem_t *item, void *context);
+    void (*scriptable_did_change)(gtkScriptableSelectViewController_t *view_controller, gtkScriptableChange_t change_type, void *context);
 } gtkScriptableSelectViewControllerDelegate_t;
 
 gtkScriptableSelectViewController_t *

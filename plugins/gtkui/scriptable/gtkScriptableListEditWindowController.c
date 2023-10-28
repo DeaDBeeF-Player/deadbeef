@@ -29,6 +29,8 @@ struct gtkScriptableListEditWindowController_t {
     scriptableItem_t *scriptable;
     GtkWidget *window;
     gtkScriptableListEditViewController_t *content_view_controller;
+    gtkScriptableListEditViewControllerDelegate_t content_view_controller_delegate;
+
     gtkScriptableListEditWindowControllerDelegate_t *delegate;
     void *context;
 };
@@ -39,8 +41,16 @@ _reset_did_activate (GtkButton* button, gpointer user_data);
 static void
 _close_did_activate (GtkButton* button, gpointer user_data);
 
-void
+static void
 _window_did_close (GObject *object, gpointer user_data);
+
+static void
+_scriptable_did_change (gtkScriptableListEditViewController_t *view_controller, gtkScriptableChange_t change_type, void *context) {
+    gtkScriptableListEditWindowController_t *self = context;
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change(self, change_type, self->context);
+    }
+}
 
 gtkScriptableListEditWindowController_t *
 gtkScriptableListEditWindowControllerNew (void) {
@@ -61,7 +71,8 @@ gtkScriptableListEditWindowControllerNew (void) {
 
     gtkScriptableListEditViewController_t *content_view_controller = gtkScriptableListEditViewControllerNew();
 
-    // view delegate needs to be set here, if necessary
+    self->content_view_controller_delegate.scriptable_did_change = _scriptable_did_change;
+    gtkScriptableListEditViewControllerSetDelegate(content_view_controller, &self->content_view_controller_delegate, self);
 
     gtkScriptableListEditViewControllerLoad(content_view_controller);
     self->content_view_controller = content_view_controller;
@@ -136,7 +147,7 @@ _reset_did_activate (GtkButton* button, gpointer user_data) {
     // FIXME: impl
 }
 
-void
+static void
 _window_did_close (GObject *object, gpointer user_data) {
     gtkScriptableListEditWindowController_t *self = user_data;
     if (self->delegate != NULL && self->delegate->window_did_close != NULL) {

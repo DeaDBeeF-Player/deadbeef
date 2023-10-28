@@ -39,7 +39,7 @@ extern DB_functions_t *deadbeef;
 - (void)removeItemAtIndex:(NSInteger)index {
     scriptableItem_t *item = scriptableItemChildAtIndex(_scriptable, (unsigned int)index);
     if (item) {
-        [self.delegate scriptableItemDidChange:_scriptable change:scriptableItemDidChangeelete];
+        [self.delegate scriptableItemDidChange:_scriptable change:ScriptableItemChangeDelete];
         scriptableItemRemoveSubItem(_scriptable, item);
         scriptableItemFree (item);
     }
