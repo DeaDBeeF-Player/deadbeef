@@ -48,6 +48,7 @@ gtkScriptableListEditWindowControllerNew (void) {
 
     GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     self->window = window;
+    g_object_ref (window);
 
     gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
     gtk_window_set_skip_taskbar_hint (GTK_WINDOW (window), TRUE);

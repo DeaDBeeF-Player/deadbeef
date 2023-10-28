@@ -53,8 +53,7 @@ _duplicate_did_activate (GtkButton* button, gpointer user_data);
 
 static GtkWidget *
 _create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name) {
-    GtkToolItem *button = gtk_toggle_tool_button_new ();
-    gtk_tool_button_set_label (GTK_TOOL_BUTTON (button), "");
+    GtkToolItem *button = gtk_tool_button_new (NULL, "");
 #if GTK_CHECK_VERSION(3,0,0)
     gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON (button), image_name);
 #else
@@ -87,6 +86,7 @@ void
 gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *self) {
     GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox);
+    g_object_ref(vbox);
     self->view = vbox;
 
     GtkWidget *scroll_view = gtk_scrolled_window_new (NULL, NULL);
