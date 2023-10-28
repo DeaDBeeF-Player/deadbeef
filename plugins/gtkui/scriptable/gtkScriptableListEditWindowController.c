@@ -28,7 +28,7 @@
 struct gtkScriptableListEditWindowController_t {
     scriptableItem_t *scriptable;
     GtkWidget *window;
-    gtkScriptableListEditViewController_t *contentViewController;
+    gtkScriptableListEditViewController_t *content_view_controller;
     gtkScriptableListEditWindowControllerDelegate_t *delegate;
     void *context;
 };
@@ -55,13 +55,22 @@ gtkScriptableListEditWindowControllerNew (void) {
     gtk_widget_show (vbox);
     gtk_container_add (GTK_CONTAINER (window), vbox);
 
-    GtkWidget *placeholder = gtk_label_new ("Placeholder");
-    gtk_widget_show (placeholder);
-    gtk_box_pack_start( GTK_BOX(vbox), placeholder, TRUE, TRUE, 0);
+    gtkScriptableListEditViewController_t *content_view_controller = gtkScriptableListEditViewControllerNew();
+    self->content_view_controller = content_view_controller;
+
+    GtkWidget *content_view =
+    gtkScriptableListEditViewControllerGetView(content_view_controller);
+
+    gtk_box_pack_start (GTK_BOX(vbox), content_view, TRUE, TRUE, 0);
+
+
+    GtkWidget *separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+    gtk_widget_show (separator);
+    gtk_box_pack_start(GTK_BOX(vbox), separator, FALSE, FALSE, 0);
 
     GtkWidget *button_padding_box = gtk_hbox_new(FALSE, 0);
     gtk_widget_show (button_padding_box);
-    gtk_box_pack_start(GTK_BOX(vbox), button_padding_box, FALSE, FALSE, 8);
+    gtk_box_pack_start (GTK_BOX (vbox), button_padding_box, FALSE, FALSE, 8);
 
     GtkWidget *button_box = gtk_hbox_new (FALSE, 8);
     gtk_widget_show (button_box);
@@ -85,7 +94,7 @@ gtkScriptableListEditWindowControllerNew (void) {
 
 void
 gtkScriptableListEditWindowControllerFree (gtkScriptableListEditWindowController_t *self) {
-    gtkScriptableListEditViewControllerFree(self->contentViewController);
+    gtkScriptableListEditViewControllerFree (self->content_view_controller);
     g_object_unref (self->window);
     free (self);
 }

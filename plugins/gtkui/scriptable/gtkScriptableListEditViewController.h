@@ -44,4 +44,7 @@ gtkScriptableListEditViewControllerNew (void);
 void
 gtkScriptableListEditViewControllerFree (gtkScriptableListEditViewController_t *self);
 
+GtkWidget *
+gtkScriptableListEditViewControllerGetView(gtkScriptableListEditViewController_t *self);
+
 #endif /* gtkScriptableListEditViewController_h */
