@@ -35,10 +35,13 @@ static GtkWidget *
 _create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name) {
     GtkToolItem *button = gtk_toggle_tool_button_new ();
     gtk_tool_button_set_label (GTK_TOOL_BUTTON (button), "");
+#if GTK_CHECK_VERSION(3,0,0)
     gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON (button), image_name);
-//    GtkWidget *image = gtk_image_new_from_stock (image_name, icon_size);
-//    gtk_widget_show (image);
-//    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON(button), image);
+#else
+    GtkWidget *image = gtk_image_new_from_stock (image_name, icon_size);
+    gtk_widget_show (image);
+    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON(button), image);
+#endif
     return GTK_WIDGET(button);
 }
 

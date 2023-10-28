@@ -64,7 +64,8 @@ gtkScriptableListEditWindowControllerNew (void) {
     gtk_box_pack_start (GTK_BOX(vbox), content_view, TRUE, TRUE, 0);
 
 
-    GtkWidget *separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
+
+    GtkWidget *separator = gtk_hseparator_new ();
     gtk_widget_show (separator);
     gtk_box_pack_start(GTK_BOX(vbox), separator, FALSE, FALSE, 0);
 
