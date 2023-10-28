@@ -30,6 +30,7 @@ struct gtkScriptableListEditViewController_t {
     GtkWidget *view;
     GtkTreeView *tree_view;
     GtkListStore *list_store;
+    GtkCellRenderer *cell_renderer;
 
     GtkWidget *add_button;
     GtkWidget *remove_button;
@@ -76,6 +77,59 @@ _create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_na
 #endif
     return GTK_WIDGET(button);
 }
+
+static void
+_did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
+    gtkScriptableListEditViewController_t *self = user_data;
+
+    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
+
+    if (!treepath) {
+        return;
+    }
+
+
+    gint *indices = gtk_tree_path_get_indices(treepath);
+    int index = indices[0];
+
+    GtkTreeIter iter;
+    gboolean valid = gtk_tree_model_get_iter (GTK_TREE_MODEL (self->list_store), &iter, treepath);
+    gtk_tree_path_free (treepath);
+
+    if (!valid) {
+        return;
+    }
+
+    scriptableItem_t *item = scriptableItemChildAtIndex(self->scriptable, index);
+    if (item == NULL) {
+        return;
+    }
+
+    const char *name = scriptableItemPropertyValueForKey(item, "name");
+    if (!strcmp (name, new_text)) {
+        return; // name unchanged
+    }
+
+    // FIXME: error handling
+    if (scriptableItemContainsSubItemWithName (scriptableItemParent(item), new_text)) {
+//        [self.errorViewer scriptableErrorViewer:self duplicateNameErrorForItem:item];
+//        [textField becomeFirstResponder];
+    }
+    else if (!scriptableItemIsSubItemNameAllowed (scriptableItemParent(item), new_text)) {
+//        [self.errorViewer scriptableErrorViewer:self invalidNameErrorForItem:item];
+//        [textField becomeFirstResponder];
+    }
+    else {
+        scriptableItemSetPropertyValueForKey(item, new_text, "name");
+
+        gtk_list_store_set (self->list_store, &iter, 0, new_text, -1);
+
+        if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+            self->delegate->scriptable_did_change(self, ScriptableItemChangeUpdate, self->context);
+        }
+    }
+}
+
 
 static void
 _list_editor_window_did_close(gtkScriptableListEditWindowController_t *controller, void *context) {
@@ -127,11 +181,17 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list_view), FALSE);
     self->tree_view = GTK_TREE_VIEW(list_view);
 
+    // FIXME: setup drag-drop
+
     GtkListStore *store = gtk_list_store_new(1, G_TYPE_STRING);
     self->list_store = store;
     gtk_tree_view_set_model(GTK_TREE_VIEW(list_view), GTK_TREE_MODEL(store));
 
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+    self->cell_renderer = renderer;
+
+    g_signal_connect ((gpointer)renderer, "edited", G_CALLBACK (_did_edit_name), self);
+
     GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes ("Name", renderer, "text", 0, NULL);
     gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_column_set_expand (column, TRUE);
@@ -209,6 +269,15 @@ gtkScriptableListEditViewControllerGetView(gtkScriptableListEditViewController_t
 void
 gtkScriptableListEditViewControllerSetScriptable(gtkScriptableListEditViewController_t *self, scriptableItem_t *scriptable) {
     self->scriptable = scriptable;
+
+    gboolean editable = 0 != (scriptableItemFlags(self->scriptable) & SCRIPTABLE_FLAG_CAN_RENAME);
+
+    GValue val = G_VALUE_INIT;
+    g_value_init(&val, G_TYPE_BOOLEAN);
+    g_value_set_boolean(&val, editable);
+    g_object_set_property(G_OBJECT(self->cell_renderer), "editable", &val);
+    g_value_unset(&val);
+
     _reload_data(self);
 }
 
@@ -487,6 +556,7 @@ _config_did_activate (GtkButton* button, gpointer user_data) {
     }
     else {
         // FIXME: impl
+        // kept unimplemented for the time being since it's not used by medialib widget
 //        self.propertiesViewController.labelFontSize = 10;
 //        self.propertiesViewController.contentFontSize = 11;
 //        self.propertiesViewController.unitSpacing = 4;
