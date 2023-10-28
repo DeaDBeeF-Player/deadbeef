@@ -25,9 +25,7 @@
 #define gtkScriptable_h
 
 typedef enum gtkScriptableChange_t {
-    ScriptableItemChangeCreate,
     ScriptableItemChangeUpdate,
-    ScriptableItemDidChangeDelete,
 } gtkScriptableChange_t;
 
 #endif /* gtkScriptable_h */

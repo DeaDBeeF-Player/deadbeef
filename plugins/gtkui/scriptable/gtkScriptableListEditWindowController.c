@@ -144,7 +144,12 @@ gtkScriptableListEditWindowControllerSetDelegate(gtkScriptableListEditWindowCont
 
 static void
 _reset_did_activate (GtkButton* button, gpointer user_data) {
-    // FIXME: impl
+    gtkScriptableListEditWindowController_t *self = user_data;
+    scriptableItemReset(self->scriptable);
+    gtkScriptableListEditViewControllerSetScriptable(self->content_view_controller, self->scriptable);
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change(self, ScriptableItemChangeUpdate, self->context);
+    }
 }
 
 static void
