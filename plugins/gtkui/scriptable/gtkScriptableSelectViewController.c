@@ -34,6 +34,7 @@ struct gtkScriptableSelectViewController_t {
     GtkWidget *editButton;
 
     gtkScriptableListEditWindowController_t *editListWindowController;
+    gtkScriptableListEditWindowControllerDelegate_t list_edit_window_delegate;
 
     gtkScriptableSelectViewControllerDelegate_t *delegate;
     void *context;
@@ -45,11 +46,12 @@ _selection_did_change (GtkComboBox* self, gpointer user_data);
 static void
 _edit_did_activate (GtkButton* self, gpointer user_data);
 
+static void
+_list_edit_window_did_close (gtkScriptableListEditWindowController_t *controller, void *context);
 
 gtkScriptableSelectViewController_t *
 gtkScriptableSelectViewControllerNew(void) {
     gtkScriptableSelectViewController_t *self = calloc (1, sizeof (gtkScriptableSelectViewController_t));
-
 
     GtkWidget *hbox = gtk_hbox_new(FALSE, 8);
     gtk_widget_show(hbox);
@@ -72,6 +74,8 @@ gtkScriptableSelectViewControllerNew(void) {
     g_signal_connect ((gpointer)button, "clicked", G_CALLBACK (_edit_did_activate), self);
 
     g_object_ref(hbox);
+
+    self->list_edit_window_delegate.window_did_close = _list_edit_window_did_close;
 
     return self;
 }
@@ -137,9 +141,34 @@ _selection_did_change (GtkComboBox* comboBox, gpointer user_data) {
 }
 
 static void
+_list_edit_window_did_close (gtkScriptableListEditWindowController_t *controller, void *context) {
+    gtkScriptableSelectViewController_t *self = context;
+
+    if (self->editListWindowController != NULL) {
+        gtkScriptableListEditWindowControllerFree(self->editListWindowController);
+        self->editListWindowController = NULL;
+    }
+}
+
+static void
 _edit_did_activate (GtkButton* button, gpointer user_data) {
     gtkScriptableSelectViewController_t *self = user_data;
+
+    if (self->editListWindowController != NULL) {
+        gtkScriptableListEditWindowControllerFree(self->editListWindowController);
+        self->editListWindowController = NULL;
+    }
+
+    if (!(scriptableItemFlags(self->scriptable) & SCRIPTABLE_FLAG_IS_LIST)) {
+        // This item can't be anything else than a list
+        return;
+    }
+
     self->editListWindowController = gtkScriptableListEditWindowControllerNew();
     gtkScriptableListEditWindowControllerSetScriptable(self->editListWindowController, self->scriptable);
+
+    gtkScriptableListEditWindowControllerSetTitle(self->editListWindowController, scriptableItemPropertyValueForKey(self->scriptable, "name"));
+    gtkScriptableListEditWindowControllerSetDelegate(self->editListWindowController, &self->list_edit_window_delegate, self);
+
     gtkScriptableListEditWindowControllerRunModal(self->editListWindowController, GTK_WINDOW(gtk_widget_get_toplevel(self->view)));
 }

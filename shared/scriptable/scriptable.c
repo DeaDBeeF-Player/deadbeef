@@ -203,6 +203,7 @@ scriptableItemClone (scriptableItem_t *item) {
     }
     cloned->overrides = item->overrides;
     cloned->type = item->type ? strdup(item->type) : NULL;
+    cloned->flags = item->flags;
     cloned->configDialog = item->configDialog ? strdup(item->configDialog) : NULL;
 
     return cloned;

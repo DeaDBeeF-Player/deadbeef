@@ -37,6 +37,7 @@ struct gtkScriptableListEditWindowController_t;
 typedef struct gtkScriptableListEditWindowController_t gtkScriptableListEditWindowController_t;
 
 typedef struct {
+    void (*window_did_close)(gtkScriptableListEditWindowController_t *controller, void *context);
 } gtkScriptableListEditWindowControllerDelegate_t;
 
 gtkScriptableListEditWindowController_t *
@@ -50,5 +51,11 @@ gtkScriptableListEditWindowControllerRunModal(gtkScriptableListEditWindowControl
 
 void
 gtkScriptableListEditWindowControllerSetScriptable(gtkScriptableListEditWindowController_t *self, scriptableItem_t *scriptable);
+
+void
+gtkScriptableListEditWindowControllerSetTitle(gtkScriptableListEditWindowController_t *self, const char *title);
+
+void
+gtkScriptableListEditWindowControllerSetDelegate(gtkScriptableListEditWindowController_t *self, gtkScriptableListEditWindowControllerDelegate_t *delegate, void *context);
 
 #endif /* gtkScriptableListEditWindowController_h */

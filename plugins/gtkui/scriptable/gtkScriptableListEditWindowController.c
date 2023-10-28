@@ -39,6 +39,9 @@ _reset_did_activate (GtkButton* button, gpointer user_data);
 static void
 _close_did_activate (GtkButton* button, gpointer user_data);
 
+void
+_window_did_close (GObject *object, gpointer user_data);
+
 gtkScriptableListEditWindowController_t *
 gtkScriptableListEditWindowControllerNew (void) {
     gtkScriptableListEditWindowController_t *self = calloc (1, sizeof  (gtkScriptableListEditWindowController_t));
@@ -46,7 +49,6 @@ gtkScriptableListEditWindowControllerNew (void) {
     GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     self->window = window;
 
-    gtk_window_set_title (GTK_WINDOW (window), "Scriptable list edit");
     gtk_window_set_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
     gtk_window_set_skip_taskbar_hint (GTK_WINDOW (window), TRUE);
     gtk_window_set_skip_pager_hint (GTK_WINDOW (window), TRUE);
@@ -88,10 +90,11 @@ gtkScriptableListEditWindowControllerNew (void) {
     gtk_widget_show (close_button);
     gtk_box_pack_end(GTK_BOX(button_box), close_button, FALSE, FALSE, 0);
 
-
     g_signal_connect ((gpointer)reset_button, "clicked", G_CALLBACK (_reset_did_activate), self);
 
     g_signal_connect ((gpointer)close_button, "clicked", G_CALLBACK (_close_did_activate), self);
+
+    g_signal_connect ((gpointer)window, "destroy", G_CALLBACK (_window_did_close), self);
 
     return self;
 }
@@ -116,14 +119,32 @@ gtkScriptableListEditWindowControllerSetScriptable(gtkScriptableListEditWindowCo
     gtkScriptableListEditViewControllerSetScriptable(self->content_view_controller, scriptable);
 }
 
+void
+gtkScriptableListEditWindowControllerSetTitle(gtkScriptableListEditWindowController_t *self, const char *title) {
+    gtk_window_set_title(GTK_WINDOW(self->window), title);
+}
+
+void
+gtkScriptableListEditWindowControllerSetDelegate(gtkScriptableListEditWindowController_t *self, gtkScriptableListEditWindowControllerDelegate_t *delegate, void *context) {
+    self->delegate = delegate;
+    self->context = context;
+}
 
 static void
 _reset_did_activate (GtkButton* button, gpointer user_data) {
-//    gtkScriptableListEditWindowController_t *self = user_data;
+    // FIXME: impl
+}
+
+void
+_window_did_close (GObject *object, gpointer user_data) {
+    gtkScriptableListEditWindowController_t *self = user_data;
+    if (self->delegate != NULL && self->delegate->window_did_close != NULL) {
+        self->delegate->window_did_close(self, self->context);
+    }
 }
 
 static void
 _close_did_activate (GtkButton* button, gpointer user_data) {
     gtkScriptableListEditWindowController_t *self = user_data;
-    gtk_widget_hide(self->window);
+    gtk_window_close(GTK_WINDOW(self->window));
 }

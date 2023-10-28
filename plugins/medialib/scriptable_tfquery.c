@@ -187,7 +187,7 @@ scriptableTFQueryRootCreate (void) {
     // top level node: list of presets
     scriptableItem_t *root = scriptableItemAlloc();
     scriptableItemSetOverrides(root, &_rootCallbacks);
-    scriptableItemFlagsSet(root, SCRIPTABLE_FLAG_IS_REORDABLE | SCRIPTABLE_FLAG_CAN_RENAME | SCRIPTABLE_FLAG_CAN_RESET);
+    scriptableItemFlagsSet(root, SCRIPTABLE_FLAG_IS_REORDABLE | SCRIPTABLE_FLAG_CAN_RENAME | SCRIPTABLE_FLAG_CAN_RESET | SCRIPTABLE_FLAG_IS_LIST);
 
     scriptableItemSetPropertyValueForKey(root, "Medialib Query Presets", "name");
     return root;
