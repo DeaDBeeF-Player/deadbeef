@@ -749,16 +749,20 @@ w_medialib_viewer_create (void) {
         return (ddb_gtkui_widget_t *)w;
     }
 
-    GtkWidget *vbox = gtk_vbox_new (FALSE, 8);
+    GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox);
     gtk_container_add (GTK_CONTAINER (w->base.widget), vbox);
+
+    GtkWidget *headerbox = gtk_vbox_new(FALSE, 8);
+    gtk_widget_show (headerbox);
+    gtk_box_pack_start(GTK_BOX(vbox), headerbox, FALSE, FALSE, 8);
 
     w->selectViewController = gtkScriptableSelectViewControllerNew();
     GtkWidget *selectViewControllerWidget = gtkScriptableSelectViewControllerGetView(w->selectViewController);
 
     GtkWidget *buttons_padding_hbox = gtk_hbox_new (FALSE, 0);
     gtk_widget_show (buttons_padding_hbox);
-    gtk_box_pack_start (GTK_BOX (vbox), buttons_padding_hbox, FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (headerbox), buttons_padding_hbox, FALSE, TRUE, 0);
 
     GtkWidget *buttons_container_hbox = gtk_hbox_new (FALSE, 8);
     gtk_widget_show (buttons_container_hbox);
@@ -769,9 +773,9 @@ w_medialib_viewer_create (void) {
     gtk_widget_show (configure_button);
     gtk_box_pack_start (GTK_BOX (buttons_container_hbox), configure_button, FALSE, FALSE, 0);
 
-    GtkWidget *search_hbox = gtk_hbox_new (FALSE, 8);
+    GtkWidget *search_hbox = gtk_hbox_new (FALSE, 0);
     gtk_widget_show (search_hbox);
-    gtk_box_pack_start (GTK_BOX (vbox), search_hbox, FALSE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX (headerbox), search_hbox, FALSE, TRUE, 0);
 
     w->search_entry = GTK_ENTRY (gtk_entry_new ());
 #if GTK_CHECK_VERSION (3,2,0)

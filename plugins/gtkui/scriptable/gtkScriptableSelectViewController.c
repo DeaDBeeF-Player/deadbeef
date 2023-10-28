@@ -59,7 +59,13 @@ gtkScriptableSelectViewControllerNew(void) {
     gtk_widget_show(comboBox);
     GtkWidget *button = gtk_button_new();
     gtk_widget_show(button);
-    GtkWidget *image = gtk_image_new_from_icon_name(GTK_STOCK_EDIT, GTK_ICON_SIZE_BUTTON);
+
+#if GTK_CHECK_VERSION(3,0,0)
+    const char *edit_image = "text-editor-symbolic";
+#else
+    const char *edit_image = "gtk-edit";
+#endif
+    GtkWidget *image = gtk_image_new_from_icon_name(edit_image, GTK_ICON_SIZE_BUTTON);
     gtk_button_set_image(GTK_BUTTON(button), image);
 
     gtk_box_pack_start(GTK_BOX(hbox), comboBox, TRUE, TRUE, 0);
