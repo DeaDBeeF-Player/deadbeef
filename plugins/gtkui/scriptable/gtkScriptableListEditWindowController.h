@@ -48,4 +48,7 @@ gtkScriptableListEditWindowControllerFree (gtkScriptableListEditWindowController
 void
 gtkScriptableListEditWindowControllerRunModal(gtkScriptableListEditWindowController_t *self, GtkWindow *modal_parent);
 
+void
+gtkScriptableListEditWindowControllerSetScriptable(gtkScriptableListEditWindowController_t *self, scriptableItem_t *scriptable);
+
 #endif /* gtkScriptableListEditWindowController_h */

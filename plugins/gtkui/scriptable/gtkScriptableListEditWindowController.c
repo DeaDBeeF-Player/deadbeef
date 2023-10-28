@@ -54,6 +54,7 @@ gtkScriptableListEditWindowControllerNew (void) {
     GtkWidget *vbox = gtk_vbox_new (FALSE, 8);
     gtk_widget_show (vbox);
     gtk_container_add (GTK_CONTAINER (window), vbox);
+    gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
 
     gtkScriptableListEditViewController_t *content_view_controller = gtkScriptableListEditViewControllerNew();
     self->content_view_controller = content_view_controller;
@@ -62,8 +63,6 @@ gtkScriptableListEditWindowControllerNew (void) {
     gtkScriptableListEditViewControllerGetView(content_view_controller);
 
     gtk_box_pack_start (GTK_BOX(vbox), content_view, TRUE, TRUE, 0);
-
-
 
     GtkWidget *separator = gtk_hseparator_new ();
     gtk_widget_show (separator);
@@ -106,6 +105,13 @@ gtkScriptableListEditWindowControllerRunModal(gtkScriptableListEditWindowControl
     gtk_widget_show(self->window);
     gtk_window_set_modal(GTK_WINDOW(self->window), TRUE);
 }
+
+void
+gtkScriptableListEditWindowControllerSetScriptable(gtkScriptableListEditWindowController_t *self, scriptableItem_t *scriptable) {
+    self->scriptable = scriptable;
+    gtkScriptableListEditViewControllerSetScriptable(self->content_view_controller, scriptable);
+}
+
 
 static void
 _reset_did_activate (GtkButton* button, gpointer user_data) {

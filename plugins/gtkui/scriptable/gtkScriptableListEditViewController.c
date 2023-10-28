@@ -27,6 +27,7 @@
 struct gtkScriptableListEditViewController_t {
     scriptableItem_t *scriptable;
     GtkWidget *view;
+    GtkListStore *list_store;
     gtkScriptableListEditViewControllerDelegate_t *delegate;
     void *context;
 };
@@ -49,13 +50,29 @@ gtkScriptableListEditViewController_t *
 gtkScriptableListEditViewControllerNew (void) {
     gtkScriptableListEditViewController_t *self = calloc (1, sizeof  (gtkScriptableListEditViewController_t));
 
-    GtkWidget *vbox = gtk_vbox_new (FALSE, 8);
+    GtkWidget *vbox = gtk_vbox_new (FALSE, 0);
     gtk_widget_show (vbox);
     self->view = vbox;
 
+    GtkWidget *scroll_view = gtk_scrolled_window_new (NULL, NULL);
+    gtk_widget_show (scroll_view);
+    gtk_box_pack_start (GTK_BOX (vbox), scroll_view, TRUE, TRUE, 0);
+    gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scroll_view), GTK_SHADOW_IN);
+
+
     GtkWidget *list_view = gtk_tree_view_new ();
     gtk_widget_show (list_view);
-    gtk_box_pack_start(GTK_BOX(vbox), list_view, TRUE, TRUE, 0);
+    gtk_container_add(GTK_CONTAINER(scroll_view), list_view);
+
+    GtkListStore *store = gtk_list_store_new(1, G_TYPE_STRING);
+    self->list_store = store;
+    gtk_tree_view_set_model(GTK_TREE_VIEW(list_view), GTK_TREE_MODEL(store));
+
+    GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
+    GtkTreeViewColumn *column = gtk_tree_view_column_new_with_attributes ("Name", renderer, "text", 0, NULL);
+    gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+    gtk_tree_view_column_set_expand (column, TRUE);
+    gtk_tree_view_insert_column (GTK_TREE_VIEW (list_view), column, 0);
 
     GtkWidget *button_box = gtk_hbox_new (FALSE, 0);
     gtk_widget_show (button_box);
@@ -115,4 +132,33 @@ gtkScriptableListEditViewControllerFree (gtkScriptableListEditViewController_t *
 GtkWidget *
 gtkScriptableListEditViewControllerGetView(gtkScriptableListEditViewController_t *self) {
     return self->view;
+}
+
+static void
+_reload_data(gtkScriptableListEditViewController_t *self) {
+    gtk_list_store_clear(self->list_store);
+
+    if (self->scriptable == NULL) {
+        return;
+    }
+
+    scriptableItem_t *item = scriptableItemChildren(self->scriptable);
+    while (item != NULL) {
+        GtkTreeIter iter;
+        gtk_list_store_append (self->list_store, &iter);
+
+        char *text = scriptableItemFormattedName(item);
+
+        gtk_list_store_set (self->list_store, &iter, 0, text, -1);
+
+        free (text);
+
+        item = scriptableItemNext(item);
+    }
+}
+
+void
+gtkScriptableListEditViewControllerSetScriptable(gtkScriptableListEditViewController_t *self, scriptableItem_t *scriptable) {
+    self->scriptable = scriptable;
+    _reload_data(self);
 }

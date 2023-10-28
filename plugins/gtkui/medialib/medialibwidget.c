@@ -49,6 +49,7 @@ enum {
 static void
 _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStore *store, GtkTreeIter *iter);
 
+// FIXME: this should not be necessary
 static int
 _item_comparator (const void *a, const void *b) {
     const ddb_medialib_item_t *item1 = *((ddb_medialib_item_t **)a);
