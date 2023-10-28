@@ -967,6 +967,7 @@
 		2D5657022AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */; };
 		2D5657052AED1A820014443E /* gtkScriptableListEditWindowController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */; };
 		2D56570C2AED36840014443E /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D56575D2AED38870014443E /* gtkScriptableListEditWindowController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */; };
 		2D565B0C1A40BCE200CE1F5D /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A831A40BCE200CE1F5D /* abi_align.h */; };
 		2D565B161A40BCE200CE1F5D /* dct36_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */; };
 		2D565B251A40BCE200CE1F5D /* dct64_x86_64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */; };
@@ -17925,6 +17926,7 @@
 				2DE3B7E62269BF3100AFF9AE /* tfimport.c in Sources */,
 				2DE3B7F42269BF3100AFF9AE /* mainplaylist.c in Sources */,
 				2DE3B86F2269CAEA00AFF9AE /* parser.c in Sources */,
+				2D56575D2AED38870014443E /* gtkScriptableListEditWindowController.c in Sources */,
 				2DE3B7F32269BF3100AFF9AE /* progress.c in Sources */,
 				2DE3B7DD2269BF3100AFF9AE /* dspconfig.c in Sources */,
 				2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */,
