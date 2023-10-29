@@ -179,5 +179,5 @@ _window_did_close (GObject *object, gpointer user_data) {
 static void
 _close_did_activate (GtkButton* button, gpointer user_data) {
     gtkScriptableListEditWindowController_t *self = user_data;
-    gtk_window_close(GTK_WINDOW(self->window));
+    gtk_widget_destroy(GTK_WIDGET(self->window));
 }

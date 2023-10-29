@@ -30,6 +30,8 @@ struct gtkScriptableListEditViewController_t {
     GtkWidget *view;
     GtkTreeView *tree_view;
     GtkListStore *list_store;
+    gboolean is_reloading;
+
     GtkCellRenderer *cell_renderer;
 
     GtkWidget *add_button;
@@ -65,81 +67,20 @@ _duplicate_did_activate (GtkButton* button, gpointer user_data);
 static void
 _selection_did_change (GtkTreeSelection *treeselection, gpointer user_data);
 
+static void
+_init_treeview_cell_from_scriptable_item(gtkScriptableListEditViewController_t *self, GtkTreeIter *iter, scriptableItem_t *item);
+
 static GtkWidget *
-_create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name) {
-    GtkToolItem *button = gtk_tool_button_new (NULL, "");
-#if GTK_CHECK_VERSION(3,0,0)
-    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON (button), image_name);
-#else
-    GtkWidget *image = gtk_image_new_from_stock (image_name, icon_size);
-    gtk_widget_show (image);
-    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON(button), image);
-#endif
-    return GTK_WIDGET(button);
-}
+_create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name);
 
 static void
-_did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
-    gtkScriptableListEditViewController_t *self = user_data;
-
-    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
-
-    if (!treepath) {
-        return;
-    }
-
-
-    gint *indices = gtk_tree_path_get_indices(treepath);
-    int index = indices[0];
-
-    GtkTreeIter iter;
-    gboolean valid = gtk_tree_model_get_iter (GTK_TREE_MODEL (self->list_store), &iter, treepath);
-    gtk_tree_path_free (treepath);
-
-    if (!valid) {
-        return;
-    }
-
-    scriptableItem_t *item = scriptableItemChildAtIndex(self->scriptable, index);
-    if (item == NULL) {
-        return;
-    }
-
-    const char *name = scriptableItemPropertyValueForKey(item, "name");
-    if (!strcmp (name, new_text)) {
-        return; // name unchanged
-    }
-
-    // FIXME: error handling
-    if (scriptableItemContainsSubItemWithName (scriptableItemParent(item), new_text)) {
-//        [self.errorViewer scriptableErrorViewer:self duplicateNameErrorForItem:item];
-//        [textField becomeFirstResponder];
-    }
-    else if (!scriptableItemIsSubItemNameAllowed (scriptableItemParent(item), new_text)) {
-//        [self.errorViewer scriptableErrorViewer:self invalidNameErrorForItem:item];
-//        [textField becomeFirstResponder];
-    }
-    else {
-        scriptableItemSetPropertyValueForKey(item, new_text, "name");
-
-        gtk_list_store_set (self->list_store, &iter, 0, new_text, -1);
-
-        if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
-            self->delegate->scriptable_did_change(self, ScriptableItemChangeUpdate, self->context);
-        }
-    }
-}
-
+_did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data);
 
 static void
-_list_editor_window_did_close(gtkScriptableListEditWindowController_t *controller, void *context) {
-    gtkScriptableListEditViewController_t *self = context;
+_list_editor_window_did_close(gtkScriptableListEditWindowController_t *controller, void *context);
 
-    if (self->list_editor_window_controller != NULL) {
-        gtkScriptableListEditWindowControllerFree(self->list_editor_window_controller);
-        self->list_editor_window_controller = NULL;
-    }
-}
+static void
+_did_reorder_items (GtkWidget* widget, GdkDragContext* context, gpointer user_data);
 
 gtkScriptableListEditViewController_t *
 gtkScriptableListEditViewControllerNew (void) {
@@ -181,11 +122,10 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
     gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(list_view), FALSE);
     self->tree_view = GTK_TREE_VIEW(list_view);
 
-    // FIXME: setup drag-drop
-
-    GtkListStore *store = gtk_list_store_new(1, G_TYPE_STRING);
+    GtkListStore *store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
     self->list_store = store;
     gtk_tree_view_set_model(GTK_TREE_VIEW(list_view), GTK_TREE_MODEL(store));
+    g_signal_connect ((gpointer)list_view, "drag_end", G_CALLBACK (_did_reorder_items), self);
 
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new ();
     self->cell_renderer = renderer;
@@ -270,13 +210,17 @@ void
 gtkScriptableListEditViewControllerSetScriptable(gtkScriptableListEditViewController_t *self, scriptableItem_t *scriptable) {
     self->scriptable = scriptable;
 
-    gboolean editable = 0 != (scriptableItemFlags(self->scriptable) & SCRIPTABLE_FLAG_CAN_RENAME);
+    gboolean editable = 0 != (scriptableItemFlags(scriptable) & SCRIPTABLE_FLAG_CAN_RENAME);
 
     GValue val = G_VALUE_INIT;
     g_value_init(&val, G_TYPE_BOOLEAN);
     g_value_set_boolean(&val, editable);
     g_object_set_property(G_OBJECT(self->cell_renderer), "editable", &val);
     g_value_unset(&val);
+
+    gboolean reorderable = 0 != (scriptableItemFlags(scriptable) & SCRIPTABLE_FLAG_IS_REORDABLE);
+
+    gtk_tree_view_set_reorderable(self->tree_view, reorderable);
 
     _reload_data(self);
 }
@@ -308,19 +252,19 @@ _reload_data(gtkScriptableListEditViewController_t *self) {
         return;
     }
 
+    self->is_reloading = TRUE;
+
     scriptableItem_t *item = scriptableItemChildren(self->scriptable);
     while (item != NULL) {
         GtkTreeIter iter;
         gtk_list_store_append (self->list_store, &iter);
 
-        char *text = scriptableItemFormattedName(item);
-
-        gtk_list_store_set (self->list_store, &iter, 0, text, -1);
-
-        free (text);
+        _init_treeview_cell_from_scriptable_item(self, &iter, item);
 
         item = scriptableItemNext(item);
     }
+
+    self->is_reloading = FALSE;
 
     _update_buttons(self);
 }
@@ -360,6 +304,17 @@ _insertion_index(gtkScriptableListEditViewController_t *self) {
 }
 
 static void
+_init_treeview_cell_from_scriptable_item(gtkScriptableListEditViewController_t *self, GtkTreeIter *iter, scriptableItem_t *item) {
+    char *text = scriptableItemFormattedName(item);
+    gtk_list_store_set (self->list_store, iter, 0, text, 1, item, -1);
+
+    scriptableItem_t *ppp;
+    gtk_tree_model_get(GTK_TREE_MODEL(self->list_store), iter, 1, &ppp, -1);
+
+    free (text);
+}
+
+static void
 _insert_node_at_selection (gtkScriptableListEditViewController_t *self, scriptableItem_t *node) {
     int index = _insertion_index(self);
 
@@ -379,9 +334,7 @@ _insert_node_at_selection (gtkScriptableListEditViewController_t *self, scriptab
         gtk_list_store_append(self->list_store, &iter);
     }
 
-    char *text = scriptableItemFormattedName(node);
-    gtk_list_store_set (self->list_store, &iter, 0, text, -1);
-    free (text);
+    _init_treeview_cell_from_scriptable_item(self, &iter, node);
 
     scriptableItemInsertSubItemAtIndex(self->scriptable, node, (unsigned int)index);
 
@@ -593,4 +546,111 @@ static void
 _selection_did_change (GtkTreeSelection *treeselection, gpointer user_data) {
     gtkScriptableListEditViewController_t *self = user_data;
     _update_buttons(self);
+}
+
+static GtkWidget *
+_create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name) {
+    GtkToolItem *button = gtk_tool_button_new (NULL, "");
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON (button), image_name);
+#else
+    GtkWidget *image = gtk_image_new_from_stock (image_name, icon_size);
+    gtk_widget_show (image);
+    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON(button), image);
+#endif
+    return GTK_WIDGET(button);
+}
+
+static void
+_did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data) {
+    gtkScriptableListEditViewController_t *self = user_data;
+
+    GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
+
+    if (!treepath) {
+        return;
+    }
+
+
+    gint *indices = gtk_tree_path_get_indices(treepath);
+    int index = indices[0];
+
+    GtkTreeIter iter;
+    gboolean valid = gtk_tree_model_get_iter (GTK_TREE_MODEL (self->list_store), &iter, treepath);
+    gtk_tree_path_free (treepath);
+
+    if (!valid) {
+        return;
+    }
+
+    scriptableItem_t *item = scriptableItemChildAtIndex(self->scriptable, index);
+    if (item == NULL) {
+        return;
+    }
+
+    const char *name = scriptableItemPropertyValueForKey(item, "name");
+    if (!strcmp (name, new_text)) {
+        return; // name unchanged
+    }
+
+    // FIXME: error handling
+    if (scriptableItemContainsSubItemWithName (scriptableItemParent(item), new_text)) {
+        //        [self.errorViewer scriptableErrorViewer:self duplicateNameErrorForItem:item];
+        //        [textField becomeFirstResponder];
+    }
+    else if (!scriptableItemIsSubItemNameAllowed (scriptableItemParent(item), new_text)) {
+        //        [self.errorViewer scriptableErrorViewer:self invalidNameErrorForItem:item];
+        //        [textField becomeFirstResponder];
+    }
+    else {
+        scriptableItemSetPropertyValueForKey(item, new_text, "name");
+        _init_treeview_cell_from_scriptable_item(self, &iter, item);
+
+        if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+            self->delegate->scriptable_did_change(self, ScriptableItemChangeUpdate, self->context);
+        }
+    }
+}
+
+
+static void
+_list_editor_window_did_close(gtkScriptableListEditWindowController_t *controller, void *context) {
+    gtkScriptableListEditViewController_t *self = context;
+
+    if (self->list_editor_window_controller != NULL) {
+        gtkScriptableListEditWindowControllerFree(self->list_editor_window_controller);
+        self->list_editor_window_controller = NULL;
+    }
+}
+
+static void
+_did_reorder_items (GtkWidget* widget, GdkDragContext* context, gpointer user_data) {
+    gtkScriptableListEditViewController_t *self = user_data;
+    if (self->is_reloading) {
+        return;
+    }
+
+    int position = 0;
+
+    GtkTreeIter iter;
+    gboolean res = gtk_tree_model_iter_children (GTK_TREE_MODEL(self->list_store), &iter, NULL);
+    while (res) {
+        char *str;
+        scriptableItem_t *item = NULL;
+        gtk_tree_model_get (GTK_TREE_MODEL(self->list_store), &iter, 0, &str, 1, &item, -1);
+
+        if (item == NULL) {
+            return;
+        }
+
+        scriptableItemRemoveSubItem(self->scriptable, item);
+        scriptableItemInsertSubItemAtIndex(self->scriptable, item, position);
+
+        position++;
+        res = gtk_tree_model_iter_next(GTK_TREE_MODEL(self->list_store), &iter);
+    }
+
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change(self, ScriptableItemChangeUpdate, self->context);
+    }
 }
