@@ -35,7 +35,7 @@ struct gtkScriptableSelectViewController_t;
 typedef struct gtkScriptableSelectViewController_t gtkScriptableSelectViewController_t;
 
 typedef struct {
-    void (*selectionDidChange)(gtkScriptableSelectViewController_t *vc, scriptableItem_t *item, void *context);
+    void (*selection_did_change)(gtkScriptableSelectViewController_t *vc, scriptableItem_t *item, void *context);
     void (*scriptable_did_change)(gtkScriptableSelectViewController_t *view_controller, gtkScriptableChange_t change_type, void *context);
 } gtkScriptableSelectViewControllerDelegate_t;
 

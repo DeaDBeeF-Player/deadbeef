@@ -147,7 +147,7 @@ _selection_did_change (GtkComboBox* comboBox, gpointer user_data) {
     }
     scriptableItem_t *item = scriptableItemChildAtIndex(self->scriptable, active);
 
-    self->delegate->selectionDidChange(self, item, self->context);
+    self->delegate->selection_did_change(self, item, self->context);
 }
 
 static void

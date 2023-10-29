@@ -362,6 +362,13 @@ _scriptableSelectSelectionDidChange(gtkScriptableSelectViewController_t *vc, scr
 }
 
 static void
+_scriptableSelectScriptableDidChange(gtkScriptableSelectViewController_t *view_controller, gtkScriptableChange_t change_type, void *context) {
+    w_medialib_viewer_t *mlv = context;
+    scriptableItem_t *presets = plugin->get_queries_scriptable(mlv->source);
+    scriptableItemSave(presets);
+}
+
+static void
 w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     // observe medialib source
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
@@ -377,7 +384,8 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
 
     scriptableItem_t *presets = plugin->get_queries_scriptable(mlv->source);
 
-    mlv->scriptableSelectDelegate.selectionDidChange = _scriptableSelectSelectionDidChange;
+    mlv->scriptableSelectDelegate.selection_did_change = _scriptableSelectSelectionDidChange;
+    mlv->scriptableSelectDelegate.scriptable_did_change = _scriptableSelectScriptableDidChange;
     gtkScriptableSelectViewControllerSetScriptable(mlv->selectViewController, presets);
     gtkScriptableSelectViewControllerSetDelegate(mlv->selectViewController, &mlv->scriptableSelectDelegate, mlv);
     gtkScriptableSelectViewControllerSelectItem(mlv->selectViewController, scriptableItemChildren(presets));
