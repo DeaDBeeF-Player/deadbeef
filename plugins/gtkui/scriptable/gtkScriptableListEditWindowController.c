@@ -24,6 +24,7 @@
 #include "gtkScriptableListEditWindowController.h"
 #include "gtkScriptableListEditViewController.h"
 #include "../../../gettext.h"
+#include "../support.h"
 
 struct gtkScriptableListEditWindowController_t {
     scriptableItem_t *scriptable;
@@ -45,13 +46,11 @@ _close_did_activate (GtkButton* button, gpointer user_data);
 static void
 _window_did_close (GObject *object, gpointer user_data);
 
+static gboolean
+_did_press_key (GtkWidget* window, GdkEventKey *event, gpointer user_data);
+
 static void
-_scriptable_did_change (gtkScriptableListEditViewController_t *view_controller, gtkScriptableChange_t change_type, void *context) {
-    gtkScriptableListEditWindowController_t *self = context;
-    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
-        self->delegate->scriptable_did_change(self, change_type, self->context);
-    }
-}
+_scriptable_did_change (gtkScriptableListEditViewController_t *view_controller, gtkScriptableChange_t change_type, void *context);
 
 gtkScriptableListEditWindowController_t *
 gtkScriptableListEditWindowControllerNew (void) {
@@ -109,6 +108,8 @@ gtkScriptableListEditWindowControllerNew (void) {
     g_signal_connect ((gpointer)close_button, "clicked", G_CALLBACK (_close_did_activate), self);
 
     g_signal_connect ((gpointer)window, "destroy", G_CALLBACK (_window_did_close), self);
+
+    g_signal_connect((gpointer)window, "key_press_event", G_CALLBACK(_did_press_key), self);
 
     return self;
 }
@@ -181,3 +182,22 @@ _close_did_activate (GtkButton* button, gpointer user_data) {
     gtkScriptableListEditWindowController_t *self = user_data;
     gtk_widget_destroy(GTK_WIDGET(self->window));
 }
+
+static gboolean
+_did_press_key (GtkWidget* window, GdkEventKey *event, gpointer user_data) {
+    gtkScriptableListEditWindowController_t *self = user_data;
+    if (event->keyval == GDK_Escape) {
+        gtk_widget_destroy(GTK_WIDGET(self->window));
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void
+_scriptable_did_change (gtkScriptableListEditViewController_t *view_controller, gtkScriptableChange_t change_type, void *context) {
+    gtkScriptableListEditWindowController_t *self = context;
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change(self, change_type, self->context);
+    }
+}
+
