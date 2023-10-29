@@ -55,15 +55,10 @@ static void
 _reload_data(gtkScriptableSelectViewController_t *self);
 
 static void
-_scriptable_did_change (gtkScriptableListEditWindowController_t *view_controller, gtkScriptableChange_t change_type, void *context) {
-    gtkScriptableSelectViewController_t *self = context;
+_scriptable_did_change (gtkScriptableListEditWindowController_t *view_controller, gtkScriptableChange_t change_type, void *context);
 
-    _reload_data(self);
-
-    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
-        self->delegate->scriptable_did_change(self, change_type, context);
-    }
-}
+static void
+_reload_data(gtkScriptableSelectViewController_t *self);
 
 gtkScriptableSelectViewController_t *
 gtkScriptableSelectViewControllerNew(void) {
@@ -119,34 +114,6 @@ void
 gtkScriptableSelectViewControllerSetDelegate(gtkScriptableSelectViewController_t *self, gtkScriptableSelectViewControllerDelegate_t *delegate, void *context) {
     self->delegate = delegate;
     self->context = context;
-}
-
-static void
-_reload_data(gtkScriptableSelectViewController_t *self) {
-    int active = gtk_combo_box_get_active(GTK_COMBO_BOX(self->comboBox));
-
-    self->is_reloading = TRUE;
-
-    GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(self->comboBox));
-    gtk_list_store_clear(GTK_LIST_STORE(model));
-
-    if (self->scriptable == NULL) {
-        self->is_reloading = FALSE;
-        return;
-    }
-
-    for (scriptableItem_t *item = scriptableItemChildren(self->scriptable)
-         ; item != NULL
-         ; item = scriptableItemNext(item)) {
-        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(self->comboBox), scriptableItemPropertyValueForKey(item, "name"));
-    }
-    self->is_reloading = FALSE;
-
-    // FIXME: don't use index (name should be enough)
-    if (active == -1) {
-        active = 0;
-    }
-    gtk_combo_box_set_active(GTK_COMBO_BOX(self->comboBox), active);
 }
 
 void
@@ -215,3 +182,66 @@ _edit_did_activate (GtkButton* button, gpointer user_data) {
 
     gtkScriptableListEditWindowControllerRunModal(self->editListWindowController, GTK_WINDOW(gtk_widget_get_toplevel(self->view)));
 }
+
+static void
+_scriptable_did_change (gtkScriptableListEditWindowController_t *view_controller, gtkScriptableChange_t change_type, void *context) {
+    gtkScriptableSelectViewController_t *self = context;
+
+    _reload_data(self);
+
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change(self, change_type, context);
+    }
+}
+
+static void
+_reload_data(gtkScriptableSelectViewController_t *self) {
+    self->is_reloading = TRUE;
+
+    GtkTreeModel *model = gtk_combo_box_get_model(GTK_COMBO_BOX(self->comboBox));
+
+    char *selected_text = NULL;
+
+    GtkTreeIter iter;
+    gboolean res = gtk_combo_box_get_active_iter(GTK_COMBO_BOX(self->comboBox), &iter);
+    if (res) {
+        gtk_tree_model_get(model, &iter, 0, &selected_text, -1);
+        if (selected_text != NULL) {
+            selected_text = strdup (selected_text);
+        }
+    }
+
+    gtk_list_store_clear(GTK_LIST_STORE(model));
+
+    if (self->scriptable == NULL) {
+        self->is_reloading = FALSE;
+        free (selected_text);
+        return;
+    }
+
+    int active = -1;
+
+    int index = 0;
+    for (scriptableItem_t *item = scriptableItemChildren(self->scriptable)
+         ; item != NULL
+         ; item = scriptableItemNext(item), index++) {
+        char *name = scriptableItemFormattedName(item);
+        gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(self->comboBox), name);
+        free (name);
+
+        if (selected_text != NULL && !strcmp(selected_text, name)) {
+            active = index;
+        }
+    }
+    self->is_reloading = FALSE;
+
+    // Selected item was deleted, select the first one
+    if (active == -1 && index != 0) {
+        active = 0;
+    }
+
+    if (active != -1) {
+        gtk_combo_box_set_active(GTK_COMBO_BOX(self->comboBox), active);
+    }
+}
+
