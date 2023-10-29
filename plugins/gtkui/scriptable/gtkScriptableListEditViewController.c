@@ -82,6 +82,9 @@ _list_editor_window_did_close(gtkScriptableListEditWindowController_t *controlle
 static void
 _did_reorder_items (GtkWidget* widget, GdkDragContext* context, gpointer user_data);
 
+static void
+_display_alert(const char *title, const char *message, const char *secondary_message, GtkWindow *modalForWindow);
+
 gtkScriptableListEditViewController_t *
 gtkScriptableListEditViewControllerNew (void) {
     gtkScriptableListEditViewController_t *self = calloc (1, sizeof  (gtkScriptableListEditViewController_t));
@@ -569,10 +572,9 @@ _did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpo
 
     GtkTreePath *treepath = gtk_tree_path_new_from_string (path);
 
-    if (!treepath) {
+    if (treepath == NULL) {
         return;
     }
-
 
     gint *indices = gtk_tree_path_get_indices(treepath);
     int index = indices[0];
@@ -580,6 +582,7 @@ _did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpo
     GtkTreeIter iter;
     gboolean valid = gtk_tree_model_get_iter (GTK_TREE_MODEL (self->list_store), &iter, treepath);
     gtk_tree_path_free (treepath);
+    treepath = NULL;
 
     if (!valid) {
         return;
@@ -595,14 +598,15 @@ _did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpo
         return; // name unchanged
     }
 
-    // FIXME: error handling
+    // NOTE: there's no guaranteed way to prevent GTK from exiting edit mode,
+    // so when error occurs -- reset the text back to unedited variant,
+    // and don't attempt to re-enter edit mode.
+
     if (scriptableItemContainsSubItemWithName (scriptableItemParent(item), new_text)) {
-        //        [self.errorViewer scriptableErrorViewer:self duplicateNameErrorForItem:item];
-        //        [textField becomeFirstResponder];
+        _display_alert(_("Can't do that"), _("Preset with this name already exists."), _("Try a different name."), GTK_WINDOW(gtk_widget_get_toplevel(self->view)));
     }
     else if (!scriptableItemIsSubItemNameAllowed (scriptableItemParent(item), new_text)) {
-        //        [self.errorViewer scriptableErrorViewer:self invalidNameErrorForItem:item];
-        //        [textField becomeFirstResponder];
+        _display_alert(_("Can't do that"), _("This name is not allowed."), _("Try a different name."), GTK_WINDOW(gtk_widget_get_toplevel(self->view)));
     }
     else {
         scriptableItemSetPropertyValueForKey(item, new_text, "name");
@@ -655,4 +659,15 @@ _did_reorder_items (GtkWidget* widget, GdkDragContext* context, gpointer user_da
     if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
         self->delegate->scriptable_did_change(self, ScriptableItemChangeUpdate, self->context);
     }
+}
+
+
+static void
+_display_alert(const char *title, const char *message, const char *secondary_message, GtkWindow *modalForWindow) {
+    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (modalForWindow), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", message);
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), modalForWindow);
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "%s", secondary_message);
+    gtk_window_set_title (GTK_WINDOW (dlg), title);
+    (void)gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
 }
