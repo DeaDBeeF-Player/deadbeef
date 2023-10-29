@@ -177,7 +177,9 @@ _edit_did_activate (GtkButton* button, gpointer user_data) {
     self->editListWindowController = gtkScriptableListEditWindowControllerNew();
     gtkScriptableListEditWindowControllerSetScriptable(self->editListWindowController, self->scriptable);
 
-    gtkScriptableListEditWindowControllerSetTitle(self->editListWindowController, scriptableItemPropertyValueForKey(self->scriptable, "name"));
+    char *title = gtkScriptableEditDialogTitleForItem (self->scriptable);
+    gtkScriptableListEditWindowControllerSetTitle(self->editListWindowController, title);
+    free (title);
     gtkScriptableListEditWindowControllerSetDelegate(self->editListWindowController, &self->list_edit_window_delegate, self);
 
     gtkScriptableListEditWindowControllerRunModal(self->editListWindowController, GTK_WINDOW(gtk_widget_get_toplevel(self->view)));

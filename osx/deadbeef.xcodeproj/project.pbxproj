@@ -967,6 +967,8 @@
 		2D5657022AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */; };
 		2D5657052AED1A820014443E /* gtkScriptableListEditWindowController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */; };
 		2D56575D2AED38870014443E /* gtkScriptableListEditWindowController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */; };
+		2D56580D2AEE64200014443E /* gtkScriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D56580A2AEE63430014443E /* gtkScriptable.c */; };
+		2D56580E2AEE64210014443E /* gtkScriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D56580A2AEE63430014443E /* gtkScriptable.c */; };
 		2D565B0C1A40BCE200CE1F5D /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A831A40BCE200CE1F5D /* abi_align.h */; };
 		2D565B161A40BCE200CE1F5D /* dct36_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */; };
 		2D565B251A40BCE200CE1F5D /* dct64_x86_64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */; };
@@ -5496,6 +5498,7 @@
 		2D5657032AED1A7E0014443E /* gtkScriptableListEditWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptableListEditWindowController.h; sourceTree = "<group>"; };
 		2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptableListEditWindowController.c; sourceTree = "<group>"; };
 		2D56579A2AED73A30014443E /* gtkScriptable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptable.h; sourceTree = "<group>"; };
+		2D56580A2AEE63430014443E /* gtkScriptable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptable.c; sourceTree = "<group>"; };
 		2D565A831A40BCE200CE1F5D /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = abi_align.h; path = "../../osx/deps/mpg123-1.31.1/src/libmpg123/abi_align.h"; sourceTree = "<group>"; };
 		2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_x86_64.S; path = "../../osx/deps/mpg123-1.31.1/src/libmpg123/dct36_x86_64.S"; sourceTree = "<group>"; };
 		2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_x86_64_float.S; path = "../../osx/deps/mpg123-1.31.1/src/libmpg123/dct64_x86_64_float.S"; sourceTree = "<group>"; };
@@ -11508,6 +11511,7 @@
 				2D5657032AED1A7E0014443E /* gtkScriptableListEditWindowController.h */,
 				2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */,
 				2DB522F72AACF09600B6250A /* gtkScriptableSelectViewController.h */,
+				2D56580A2AEE63430014443E /* gtkScriptable.c */,
 				2D56579A2AED73A30014443E /* gtkScriptable.h */,
 			);
 			path = scriptable;
@@ -17831,6 +17835,7 @@
 				2DC656CD2744289C00583E14 /* progress.c in Sources */,
 				2DC656CE2744289C00583E14 /* dspconfig.c in Sources */,
 				2DC656CF2744289C00583E14 /* widgets.c in Sources */,
+				2D56580D2AEE64200014443E /* gtkScriptable.c in Sources */,
 				2DC656D02744289C00583E14 /* pluginconf.c in Sources */,
 				2DC656D12744289C00583E14 /* trkproperties.c in Sources */,
 				2DC656D22744289C00583E14 /* ctmapping.c in Sources */,
@@ -17931,6 +17936,7 @@
 				2DE3B7F32269BF3100AFF9AE /* progress.c in Sources */,
 				2DE3B7DD2269BF3100AFF9AE /* dspconfig.c in Sources */,
 				2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */,
+				2D56580E2AEE64210014443E /* gtkScriptable.c in Sources */,
 				2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */,
 				2DE3B7EA2269BF3100AFF9AE /* trkproperties.c in Sources */,
 				2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */,

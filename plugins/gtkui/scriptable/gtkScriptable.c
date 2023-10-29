@@ -21,17 +21,16 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef gtkScriptable_h
-#define gtkScriptable_h
+#include <stdio.h>
+#include <stdlib.h>
+#include "../../../gettext.h"
+#include "gtkScriptable.h"
 
-#include "scriptable/scriptable.h"
-
-typedef enum gtkScriptableChange_t {
-    ScriptableItemChangeUpdate,
-} gtkScriptableChange_t;
-
-/// Need to call free on the returned value
 char *
-gtkScriptableEditDialogTitleForItem(scriptableItem_t *item);
-
-#endif /* gtkScriptable_h */
+gtkScriptableEditDialogTitleForItem(scriptableItem_t *item) {
+    char *name = scriptableItemFormattedName(item);
+    char *title = calloc (1, 1000);
+    snprintf (title, 1000, _("Edit %s"), name);
+    free (name);
+    return title;
+}

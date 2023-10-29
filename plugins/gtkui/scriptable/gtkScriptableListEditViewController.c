@@ -501,7 +501,9 @@ _config_did_activate (GtkButton* button, gpointer user_data) {
         self->list_editor_window_controller = gtkScriptableListEditWindowControllerNew();
         gtkScriptableListEditWindowControllerSetScriptable(self->list_editor_window_controller, item);
 
-        gtkScriptableListEditWindowControllerSetTitle(self->list_editor_window_controller, scriptableItemPropertyValueForKey(item, "name"));
+        char *title = gtkScriptableEditDialogTitleForItem(item);
+        gtkScriptableListEditWindowControllerSetTitle(self->list_editor_window_controller, title);
+        free (title);
 
         gtkScriptableListEditWindowControllerSetDelegate(self->list_editor_window_controller, &self->list_editor_window_delegate, self);
 
