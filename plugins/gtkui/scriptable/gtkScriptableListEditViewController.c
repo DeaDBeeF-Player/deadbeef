@@ -217,7 +217,7 @@ gtkScriptableListEditViewControllerSetScriptable(gtkScriptableListEditViewContro
 
     gboolean editable = 0 != (scriptableItemFlags(scriptable) & SCRIPTABLE_FLAG_CAN_RENAME);
 
-    GValue val = G_VALUE_INIT;
+    GValue val = {0};
     g_value_init(&val, G_TYPE_BOOLEAN);
     g_value_set_boolean(&val, editable);
     g_object_set_property(G_OBJECT(self->cell_renderer), "editable", &val);
