@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <stdlib.h>
 #include "gtkScriptableListEditWindowController.h"
 #include "gtkScriptableListEditViewController.h"
 #include "../../../gettext.h"
