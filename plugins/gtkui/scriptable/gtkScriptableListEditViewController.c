@@ -638,8 +638,14 @@ _did_reorder_items (GtkWidget* widget, GdkDragContext* context, gpointer user_da
 
     int position = 0;
 
+    int count = scriptableItemNumChildren(self->scriptable);
+
     GtkTreeIter iter;
     gboolean res = gtk_tree_model_iter_children (GTK_TREE_MODEL(self->list_store), &iter, NULL);
+
+    gboolean reload_needed = FALSE;
+
+    // Resinsert all items into the model in the new order
     while (res) {
         char *str;
         scriptableItem_t *item = NULL;
@@ -649,6 +655,15 @@ _did_reorder_items (GtkWidget* widget, GdkDragContext* context, gpointer user_da
             return;
         }
 
+        // NOTE: GTK has a bug in drag-drop impl, especially on Mac,
+        // which may result in copying items instead of moving.
+        // This would run our model out of sync, and cause a crash.
+        // So ensure no duplicates are made while updating the model,
+        // and then reload the UI.
+        if (position >= count) {
+            position = count - 1;
+            reload_needed = TRUE;
+        }
         scriptableItemRemoveSubItem(self->scriptable, item);
         scriptableItemInsertSubItemAtIndex(self->scriptable, item, position);
 
@@ -658,6 +673,10 @@ _did_reorder_items (GtkWidget* widget, GdkDragContext* context, gpointer user_da
 
     if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
         self->delegate->scriptable_did_change(self, ScriptableItemChangeUpdate, self->context);
+    }
+
+    if (reload_needed) {
+        _reload_data(self);
     }
 }
 
