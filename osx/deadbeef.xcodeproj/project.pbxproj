@@ -8119,9 +8119,7 @@
 		07021F8A1C27462000FC9AF9 /* tta */ = {
 			isa = PBXGroup;
 			children = (
-				07021F8B1C27464000FC9AF9 /* filter.h */,
-				07021F8C1C27464000FC9AF9 /* ttadec.c */,
-				07021F8D1C27464000FC9AF9 /* ttadec.h */,
+				2D5659372AF6E1720014443E /* libtta */,
 				07021F8E1C27464000FC9AF9 /* ttaplug.c */,
 			);
 			name = tta;
@@ -9686,6 +9684,16 @@
 				2DF16CBA1DCB6335007D7F05 /* paramlist.hpp */,
 			);
 			path = libsupereq;
+			sourceTree = "<group>";
+		};
+		2D5659372AF6E1720014443E /* libtta */ = {
+			isa = PBXGroup;
+			children = (
+				07021F8B1C27464000FC9AF9 /* filter.h */,
+				07021F8C1C27464000FC9AF9 /* ttadec.c */,
+				07021F8D1C27464000FC9AF9 /* ttadec.h */,
+			);
+			path = libtta;
 			sourceTree = "<group>";
 		};
 		2D5D21441A4033D3001D5A79 /* lastfm */ = {

@@ -1193,8 +1193,9 @@ if option ("plugin-tta") then
 project "tta"
   files {
     "plugins/tta/ttaplug.c",
-    "plugins/tta/ttadec.c"
+    "plugins/tta/libtta/ttadec.c"
   }
+  includedirs { "plugins/tta/libtta" }
 end
 
 if option ("plugin-libretro") then
