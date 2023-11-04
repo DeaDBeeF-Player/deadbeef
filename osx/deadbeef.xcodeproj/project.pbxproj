@@ -9658,6 +9658,17 @@
 			path = aosdk;
 			sourceTree = "<group>";
 		};
+		2D5658F82AF6D6EE0014443E /* libsc68 */ = {
+			isa = PBXGroup;
+			children = (
+				2D65FE191AA7881A00E82A9E /* desa68 */,
+				2D65FE231AA7881A00E82A9E /* file68 */,
+				2D65FF551AA7881B00E82A9E /* libsc68 */,
+				2D65FFE91AA7881B00E82A9E /* unice68 */,
+			);
+			path = libsc68;
+			sourceTree = "<group>";
+		};
 		2D5D21441A4033D3001D5A79 /* lastfm */ = {
 			isa = PBXGroup;
 			children = (
@@ -9858,10 +9869,7 @@
 		2D6501CC1AA7882900E82A9E /* sc68 */ = {
 			isa = PBXGroup;
 			children = (
-				2D65FE191AA7881A00E82A9E /* desa68 */,
-				2D65FE231AA7881A00E82A9E /* file68 */,
-				2D65FF551AA7881B00E82A9E /* libsc68 */,
-				2D65FFE91AA7881B00E82A9E /* unice68 */,
+				2D5658F82AF6D6EE0014443E /* libsc68 */,
 				2DA0ACEA1AA7162C007EDD43 /* in_sc68.c */,
 			);
 			name = sc68;
@@ -22114,8 +22122,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../plugins/sc68/libsc68",
-					"$(SRCROOT)/../plugins/sc68/file68",
+					"$(SRCROOT)/../plugins/sc68/libsc68/libsc68",
+					"$(SRCROOT)/../plugins/sc68/libsc68/file68",
 					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -22183,8 +22191,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../plugins/sc68/libsc68",
-					"$(SRCROOT)/../plugins/sc68/file68",
+					"$(SRCROOT)/../plugins/sc68/libsc68/libsc68",
+					"$(SRCROOT)/../plugins/sc68/libsc68/file68",
 					"\"$(SRCROOT)/../include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;

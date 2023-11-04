@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 OSTYPE=`uname -s`
 if [[ "$ARCH" == "i686" ]]; then
@@ -94,7 +95,7 @@ cp -r plugins/converter/convpresets $OUTDIR/plugins/
 # sc68data
 cp -r plugins/sc68/.libs/in_sc68.so $OUTDIR/plugins/
 mkdir -p  $OUTDIR/plugins/data68/Replay
-cp -r plugins/sc68/file68/data68/Replay/*.bin $OUTDIR/plugins/data68/Replay/
+cp -r plugins/sc68/libsc68/file68/data68/Replay/*.bin $OUTDIR/plugins/data68/Replay/
 
 # dynamic libs
 mkdir -p $OUTDIR/lib

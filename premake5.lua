@@ -585,36 +585,36 @@ project "sc68_plugin"
   targetname "in_sc68"
   files {
     "plugins/sc68/in_sc68.c",
-    "plugins/sc68/file68/src/*.c",
-    "plugins/sc68/libsc68/dial68/*.c",
-    "plugins/sc68/unice68/unice68_unpack.c",
-    "plugins/sc68/unice68/unice68_pack.c",
-    "plugins/sc68/unice68/unice68_version.c",
-    "plugins/sc68/libsc68/conf68.c",
-    "plugins/sc68/libsc68/api68.c",
-    "plugins/sc68/libsc68/mixer68.c",
-    "plugins/sc68/libsc68/io68/*.c",
-    "plugins/sc68/libsc68/libsc68.c",
-    "plugins/sc68/libsc68/emu68/lines68.c",
-    "plugins/sc68/libsc68/emu68/ioplug68.c",
-    "plugins/sc68/libsc68/emu68/mem68.c",
-    "plugins/sc68/libsc68/emu68/getea68.c",
-    "plugins/sc68/libsc68/emu68/inst68.c",
-    "plugins/sc68/libsc68/emu68/emu68.c",
-    "plugins/sc68/libsc68/emu68/error68.c",
-    "plugins/sc68/desa68/desa68.c"
+    "plugins/sc68/libsc68/file68/src/*.c",
+    "plugins/sc68/libsc68/libsc68/dial68/*.c",
+    "plugins/sc68/libsc68/unice68/unice68_unpack.c",
+    "plugins/sc68/libsc68/unice68/unice68_pack.c",
+    "plugins/sc68/libsc68/unice68/unice68_version.c",
+    "plugins/sc68/libsc68/libsc68/conf68.c",
+    "plugins/sc68/libsc68/libsc68/api68.c",
+    "plugins/sc68/libsc68/libsc68/mixer68.c",
+    "plugins/sc68/libsc68/libsc68/io68/*.c",
+    "plugins/sc68/libsc68/libsc68/libsc68.c",
+    "plugins/sc68/libsc68/libsc68/emu68/lines68.c",
+    "plugins/sc68/libsc68/libsc68/emu68/ioplug68.c",
+    "plugins/sc68/libsc68/libsc68/emu68/mem68.c",
+    "plugins/sc68/libsc68/libsc68/emu68/getea68.c",
+    "plugins/sc68/libsc68/libsc68/emu68/inst68.c",
+    "plugins/sc68/libsc68/libsc68/emu68/emu68.c",
+    "plugins/sc68/libsc68/libsc68/emu68/error68.c",
+    "plugins/sc68/libsc68/desa68/desa68.c"
   }
   excludes {
-    "plugins/sc68/libsc68/io68/ym_atarist_table.c",
-    "plugins/sc68/libsc68/io68/ym_linear_table.c"
+    "plugins/sc68/libsc68/libsc68/io68/ym_atarist_table.c",
+    "plugins/sc68/libsc68/libsc68/io68/ym_linear_table.c"
   }
   includedirs {
-    "plugins/sc68/file68",
-    "plugins/sc68/file68/sc68",
-    "plugins/sc68/unice68",
-    "plugins/sc68/libsc68",
-    "plugins/sc68/libsc68/sc68",
-    "plugins/sc68/libsc68/emu68"
+    "plugins/sc68/libsc68/file68",
+    "plugins/sc68/libsc68/file68/sc68",
+    "plugins/sc68/libsc68/unice68",
+    "plugins/sc68/libsc68/libsc68",
+    "plugins/sc68/libsc68/libsc68/sc68",
+    "plugins/sc68/libsc68/libsc68/emu68"
   }
   buildoptions {"-include stdint.h"}
   defines {
