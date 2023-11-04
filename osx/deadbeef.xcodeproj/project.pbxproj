@@ -9639,6 +9639,25 @@
 			path = libdca;
 			sourceTree = "<group>";
 		};
+		2D5658F72AF6D5270014443E /* aosdk */ = {
+			isa = PBXGroup;
+			children = (
+				2D8DA08D1C9718C10044CC15 /* eng_dsf */,
+				2D8DA09E1C9718C10044CC15 /* eng_psf */,
+				2D8DA0C81C9718C10044CC15 /* eng_qsf */,
+				2D8DA0D11C9718C10044CC15 /* eng_ssf */,
+				2D8DA0881C9718C10044CC15 /* ao.h */,
+				2D8DA08A1C9718C10044CC15 /* corlett.c */,
+				2D8DA08B1C9718C10044CC15 /* corlett.h */,
+				2D8DA08C1C9718C10044CC15 /* cpuintrf.h */,
+				2D8DA09D1C9718C10044CC15 /* eng_protos.h */,
+				2D8DA0E91C9718C10044CC15 /* mem.h */,
+				2D8DA0EA1C9718C10044CC15 /* osd_cpu.h */,
+				2D4739B11F10ECBF008B95A3 /* psfmain.c */,
+			);
+			path = aosdk;
+			sourceTree = "<group>";
+		};
 		2D5D21441A4033D3001D5A79 /* lastfm */ = {
 			isa = PBXGroup;
 			children = (
@@ -12188,19 +12207,8 @@
 		2DFD50A61C9715C200961D19 /* psf */ = {
 			isa = PBXGroup;
 			children = (
-				2D8DA0881C9718C10044CC15 /* ao.h */,
-				2D8DA08A1C9718C10044CC15 /* corlett.c */,
-				2D8DA08B1C9718C10044CC15 /* corlett.h */,
-				2D8DA08C1C9718C10044CC15 /* cpuintrf.h */,
-				2D8DA08D1C9718C10044CC15 /* eng_dsf */,
-				2D8DA09D1C9718C10044CC15 /* eng_protos.h */,
-				2D8DA09E1C9718C10044CC15 /* eng_psf */,
-				2D8DA0C81C9718C10044CC15 /* eng_qsf */,
-				2D8DA0D11C9718C10044CC15 /* eng_ssf */,
-				2D8DA0E91C9718C10044CC15 /* mem.h */,
-				2D8DA0EA1C9718C10044CC15 /* osd_cpu.h */,
+				2D5658F72AF6D5270014443E /* aosdk */,
 				2D8DA0EB1C9718C10044CC15 /* plugin.c */,
-				2D4739B11F10ECBF008B95A3 /* psfmain.c */,
 			);
 			name = psf;
 			path = plugins/psf;
