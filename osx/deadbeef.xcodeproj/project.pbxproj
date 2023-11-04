@@ -716,13 +716,7 @@
 		2D0AC9AD2864E12700F6D56A /* selpropertieswidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0AC9A92864E12600F6D56A /* selpropertieswidget.h */; };
 		2D0E02EA1E26706300D3D8E6 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D0F90C21CCFF094003FA197 /* TaggingTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D0F90C11CCFF094003FA197 /* TaggingTests.mm */; };
-		2D11D3C41B9DC69C00C7C731 /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3BD1B9DC69C00C7C731 /* ay8912.c */; };
-		2D11D3C51B9DC69C00C7C731 /* ayemu_8912.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3BE1B9DC69C00C7C731 /* ayemu_8912.h */; };
-		2D11D3C61B9DC69C00C7C731 /* ayemu_vtxfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3BF1B9DC69C00C7C731 /* ayemu_vtxfile.h */; };
-		2D11D3C71B9DC69C00C7C731 /* ayemu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3C01B9DC69C00C7C731 /* ayemu.h */; };
-		2D11D3C81B9DC69C00C7C731 /* lh5dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3C11B9DC69C00C7C731 /* lh5dec.c */; };
 		2D11D3C91B9DC69C00C7C731 /* vtx.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3C21B9DC69C00C7C731 /* vtx.c */; };
-		2D11D3CA1B9DC69C00C7C731 /* vtxfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3C31B9DC69C00C7C731 /* vtxfile.c */; };
 		2D11D3CD1B9DC6B500C7C731 /* vtx.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D11D3B91B9DC67100C7C731 /* vtx.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */; };
 		2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */; };
@@ -969,6 +963,12 @@
 		2D56575D2AED38870014443E /* gtkScriptableListEditWindowController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */; };
 		2D56580D2AEE64200014443E /* gtkScriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D56580A2AEE63430014443E /* gtkScriptable.c */; };
 		2D56580E2AEE64210014443E /* gtkScriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D56580A2AEE63430014443E /* gtkScriptable.c */; };
+		2D5659392AF6E2680014443E /* ayemu_8912.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3BE1B9DC69C00C7C731 /* ayemu_8912.h */; };
+		2D56593A2AF6E2680014443E /* ayemu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3C01B9DC69C00C7C731 /* ayemu.h */; };
+		2D56593B2AF6E2680014443E /* ay8912.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3BD1B9DC69C00C7C731 /* ay8912.c */; };
+		2D56593C2AF6E2680014443E /* ayemu_vtxfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3BF1B9DC69C00C7C731 /* ayemu_vtxfile.h */; };
+		2D56593D2AF6E2680014443E /* lh5dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3C11B9DC69C00C7C731 /* lh5dec.c */; };
+		2D56593E2AF6E2680014443E /* vtxfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3C31B9DC69C00C7C731 /* vtxfile.c */; };
 		2D565B0C1A40BCE200CE1F5D /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A831A40BCE200CE1F5D /* abi_align.h */; };
 		2D565B161A40BCE200CE1F5D /* dct36_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */; };
 		2D565B251A40BCE200CE1F5D /* dct64_x86_64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */; };
@@ -9305,13 +9305,8 @@
 		2D11D3B41B9DC66500C7C731 /* vtx */ = {
 			isa = PBXGroup;
 			children = (
-				2D11D3BD1B9DC69C00C7C731 /* ay8912.c */,
-				2D11D3BE1B9DC69C00C7C731 /* ayemu_8912.h */,
-				2D11D3BF1B9DC69C00C7C731 /* ayemu_vtxfile.h */,
-				2D11D3C01B9DC69C00C7C731 /* ayemu.h */,
-				2D11D3C11B9DC69C00C7C731 /* lh5dec.c */,
+				2D5659382AF6E1E90014443E /* libayemu */,
 				2D11D3C21B9DC69C00C7C731 /* vtx.c */,
-				2D11D3C31B9DC69C00C7C731 /* vtxfile.c */,
 			);
 			name = vtx;
 			path = plugins/vtx;
@@ -9694,6 +9689,19 @@
 				07021F8D1C27464000FC9AF9 /* ttadec.h */,
 			);
 			path = libtta;
+			sourceTree = "<group>";
+		};
+		2D5659382AF6E1E90014443E /* libayemu */ = {
+			isa = PBXGroup;
+			children = (
+				2D11D3BD1B9DC69C00C7C731 /* ay8912.c */,
+				2D11D3BE1B9DC69C00C7C731 /* ayemu_8912.h */,
+				2D11D3BF1B9DC69C00C7C731 /* ayemu_vtxfile.h */,
+				2D11D3C01B9DC69C00C7C731 /* ayemu.h */,
+				2D11D3C11B9DC69C00C7C731 /* lh5dec.c */,
+				2D11D3C31B9DC69C00C7C731 /* vtxfile.c */,
+			);
+			path = libayemu;
 			sourceTree = "<group>";
 		};
 		2D5D21441A4033D3001D5A79 /* lastfm */ = {
@@ -13279,9 +13287,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D11D3C71B9DC69C00C7C731 /* ayemu.h in Headers */,
-				2D11D3C51B9DC69C00C7C731 /* ayemu_8912.h in Headers */,
-				2D11D3C61B9DC69C00C7C731 /* ayemu_vtxfile.h in Headers */,
+				2D56593A2AF6E2680014443E /* ayemu.h in Headers */,
+				2D5659392AF6E2680014443E /* ayemu_8912.h in Headers */,
+				2D56593C2AF6E2680014443E /* ayemu_vtxfile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16846,10 +16854,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D11D3CA1B9DC69C00C7C731 /* vtxfile.c in Sources */,
+				2D56593E2AF6E2680014443E /* vtxfile.c in Sources */,
 				2D11D3C91B9DC69C00C7C731 /* vtx.c in Sources */,
-				2D11D3C81B9DC69C00C7C731 /* lh5dec.c in Sources */,
-				2D11D3C41B9DC69C00C7C731 /* ay8912.c in Sources */,
+				2D56593D2AF6E2680014443E /* lh5dec.c in Sources */,
+				2D56593B2AF6E2680014443E /* ay8912.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

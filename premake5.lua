@@ -685,10 +685,11 @@ if option ("plugin-vtx") then
 project "vtx"
   files {
     "plugins/vtx/vtx.c",
-    "plugins/vtx/ay8912.c",
-    "plugins/vtx/lh5dec.c",
-    "plugins/vtx/vtxfile.c"
+    "plugins/vtx/libayemu/ay8912.c",
+    "plugins/vtx/libayemu/lh5dec.c",
+    "plugins/vtx/libayemu/vtxfile.c"
   }
+  includedirs {"plugins/vtx/libayemu"}
   undefines {"VERSION"}
 end
 
