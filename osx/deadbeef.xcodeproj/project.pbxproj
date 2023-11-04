@@ -4627,7 +4627,6 @@
 		070220B51C275DAE00FC9AF9 /* extract_dca.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = extract_dca.c; sourceTree = "<group>"; };
 		070220B61C275DAE00FC9AF9 /* gettimeofday.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gettimeofday.c; sourceTree = "<group>"; };
 		070220B71C275DAE00FC9AF9 /* gettimeofday.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gettimeofday.h; sourceTree = "<group>"; };
-		070220B81C275DAE00FC9AF9 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		070220B91C275DAE00FC9AF9 /* parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parse.c; sourceTree = "<group>"; };
 		070220BA1C275DAE00FC9AF9 /* tables_adpcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tables_adpcm.h; sourceTree = "<group>"; };
 		070220BB1C275DAE00FC9AF9 /* tables_fir.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tables_fir.h; sourceTree = "<group>"; };
@@ -8169,26 +8168,8 @@
 		070220AB1C275D6100FC9AF9 /* dca */ = {
 			isa = PBXGroup;
 			children = (
-				070220AC1C275DAE00FC9AF9 /* audio_out.h */,
-				070220AD1C275DAE00FC9AF9 /* bitstream.c */,
-				070220AE1C275DAE00FC9AF9 /* bitstream.h */,
-				070220AF1C275DAE00FC9AF9 /* dca_internal.h */,
-				070220B01C275DAE00FC9AF9 /* dca.h */,
+				2D5658F62AF6D4540014443E /* libdca */,
 				070220B21C275DAE00FC9AF9 /* dcaplug.c */,
-				070220B31C275DAE00FC9AF9 /* downmix.c */,
-				070220B41C275DAE00FC9AF9 /* dts.h */,
-				070220B51C275DAE00FC9AF9 /* extract_dca.c */,
-				070220B61C275DAE00FC9AF9 /* gettimeofday.c */,
-				070220B71C275DAE00FC9AF9 /* gettimeofday.h */,
-				070220B81C275DAE00FC9AF9 /* Makefile.am */,
-				070220B91C275DAE00FC9AF9 /* parse.c */,
-				070220BA1C275DAE00FC9AF9 /* tables_adpcm.h */,
-				070220BB1C275DAE00FC9AF9 /* tables_fir.h */,
-				070220BC1C275DAE00FC9AF9 /* tables_huffman.h */,
-				070220BD1C275DAE00FC9AF9 /* tables_quantization.h */,
-				070220BE1C275DAE00FC9AF9 /* tables_vq.h */,
-				070220BF1C275DAE00FC9AF9 /* tables.h */,
-				070220C01C275DAE00FC9AF9 /* tendra.h */,
 			);
 			name = dca;
 			path = plugins/dca;
@@ -9631,6 +9612,31 @@
 			);
 			name = mono2stereo;
 			path = plugins/mono2stereo;
+			sourceTree = "<group>";
+		};
+		2D5658F62AF6D4540014443E /* libdca */ = {
+			isa = PBXGroup;
+			children = (
+				070220AC1C275DAE00FC9AF9 /* audio_out.h */,
+				070220AD1C275DAE00FC9AF9 /* bitstream.c */,
+				070220AE1C275DAE00FC9AF9 /* bitstream.h */,
+				070220AF1C275DAE00FC9AF9 /* dca_internal.h */,
+				070220B01C275DAE00FC9AF9 /* dca.h */,
+				070220B31C275DAE00FC9AF9 /* downmix.c */,
+				070220B41C275DAE00FC9AF9 /* dts.h */,
+				070220B51C275DAE00FC9AF9 /* extract_dca.c */,
+				070220B61C275DAE00FC9AF9 /* gettimeofday.c */,
+				070220B71C275DAE00FC9AF9 /* gettimeofday.h */,
+				070220B91C275DAE00FC9AF9 /* parse.c */,
+				070220BA1C275DAE00FC9AF9 /* tables_adpcm.h */,
+				070220BB1C275DAE00FC9AF9 /* tables_fir.h */,
+				070220BC1C275DAE00FC9AF9 /* tables_huffman.h */,
+				070220BD1C275DAE00FC9AF9 /* tables_quantization.h */,
+				070220BE1C275DAE00FC9AF9 /* tables_vq.h */,
+				070220BF1C275DAE00FC9AF9 /* tables.h */,
+				070220C01C275DAE00FC9AF9 /* tendra.h */,
+			);
+			path = libdca;
 			sourceTree = "<group>";
 		};
 		2D5D21441A4033D3001D5A79 /* lastfm */ = {

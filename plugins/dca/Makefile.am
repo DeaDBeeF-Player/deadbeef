@@ -3,28 +3,28 @@ if HAVE_DCA
 pkglib_LTLIBRARIES = dca.la
 
 dca_la_SOURCES = dcaplug.c\
-extract_dca.c\
-gettimeofday.c\
-parse.c\
-bitstream.c\
-downmix.c\
-audio_out.h\
-dca.h\
-dts.h\
-gettimeofday.h\
-tendra.h\
-dca_internal.h\
-tables_adpcm.h\
-tables_fir.h\
-tables.h\
-tables_huffman.h\
-tables_quantization.h\
-tables_vq.h\
-bitstream.h
+	libdca/audio_out.h\
+	libdca/bitstream.c\
+	libdca/bitstream.h
+	libdca/dca.h\
+	libdca/dca_internal.h\
+	libdca/downmix.c\
+	libdca/dts.h\
+	libdca/extract_dca.c\
+	libdca/gettimeofday.c\
+	libdca/gettimeofday.h\
+	libdca/parse.c\
+	libdca/tables.h\
+	libdca/tables_adpcm.h\
+	libdca/tables_fir.h\
+	libdca/tables_huffman.h\
+	libdca/tables_quantization.h\
+	libdca/tables_vq.h\
+	libdca/tendra.h
 
 dca_la_LDFLAGS = -module -avoid-version
 dca_la_LIBADD = $(LDADD) -lm
 
-dca_la_CFLAGS = $(CFLAGS) -fPIC -std=c99 -I@top_srcdir@/include
+dca_la_CFLAGS = $(CFLAGS) -fPIC -std=c99 -I@top_srcdir@/include -Ilibdca
 
 endif

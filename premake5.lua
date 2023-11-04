@@ -327,11 +327,14 @@ project "dca_plugin"
   targetname "dca"
   files {
     "plugins/dca/dcaplug.c",
-    "plugins/dca/extract_dca.c",
-    "plugins/dca/gettimeofday.c",
-    "plugins/dca/parse.c",
-    "plugins/dca/bitstream.c",
-    "plugins/dca/downmix.c"
+    "plugins/dca/libdca/extract_dca.c",
+    "plugins/dca/libdca/gettimeofday.c",
+    "plugins/dca/libdca/parse.c",
+    "plugins/dca/libdca/bitstream.c",
+    "plugins/dca/libdca/downmix.c"
+  }
+  includedirs {
+    "plugins/dca/libdca"
   }
 end
 
