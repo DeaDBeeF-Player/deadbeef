@@ -1147,8 +1147,10 @@ project "supereq_plugin"
   targetname "supereq"
   files {
     "plugins/supereq/*.c",
-    "plugins/supereq/*.cpp"
+    "plugins/supereq/libsupereq/*.cpp",
+    "plugins/supereq/libsupereq/*.c"
   }
+  includedirs {"plugins/supereq/libsupereq"}
   defines {"USE_OOURA"}
   links {"m", "stdc++"}
 end

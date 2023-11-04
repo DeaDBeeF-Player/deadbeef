@@ -9677,6 +9677,17 @@
 			path = libshn;
 			sourceTree = "<group>";
 		};
+		2D5659362AF6E0CF0014443E /* libsupereq */ = {
+			isa = PBXGroup;
+			children = (
+				2DF16CB71DCB6335007D7F05 /* Equ.cpp */,
+				2DF16CB81DCB6335007D7F05 /* Equ.h */,
+				2DF16CB91DCB6335007D7F05 /* Fftsg_fl.c */,
+				2DF16CBA1DCB6335007D7F05 /* paramlist.hpp */,
+			);
+			path = libsupereq;
+			sourceTree = "<group>";
+		};
 		2D5D21441A4033D3001D5A79 /* lastfm */ = {
 			isa = PBXGroup;
 			children = (
@@ -12182,10 +12193,7 @@
 		2DF16CAB1DCB62B6007D7F05 /* supereq */ = {
 			isa = PBXGroup;
 			children = (
-				2DF16CB71DCB6335007D7F05 /* Equ.cpp */,
-				2DF16CB81DCB6335007D7F05 /* Equ.h */,
-				2DF16CB91DCB6335007D7F05 /* Fftsg_fl.c */,
-				2DF16CBA1DCB6335007D7F05 /* paramlist.hpp */,
+				2D5659362AF6E0CF0014443E /* libsupereq */,
 				2DF16CBB1DCB6335007D7F05 /* supereq.c */,
 			);
 			name = supereq;
