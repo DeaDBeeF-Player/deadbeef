@@ -656,19 +656,20 @@ if option ("plugin-shn") then
 project "shn_plugin"
   targetname "ddb_shn"
   files {
-    "plugins/shn/array.c",
-    "plugins/shn/convert.c",
-    "plugins/shn/misc.c",
-    "plugins/shn/output.c",
-    "plugins/shn/seek.c",
-    "plugins/shn/shn.c",
-    "plugins/shn/shn.h",
-    "plugins/shn/shorten.c",
-    "plugins/shn/sulawalaw.c",
-    "plugins/shn/vario.c",
-    "plugins/shn/wave.c"
+    "plugins/shn/shnplugin.c",
+    "plugins/shn/libshn/array.c",
+    "plugins/shn/libshn/convert.c",
+    "plugins/shn/libshn/misc.c",
+    "plugins/shn/libshn/output.c",
+    "plugins/shn/libshn/seek.c",
+    "plugins/shn/libshn/shn.h",
+    "plugins/shn/libshn/shorten.c",
+    "plugins/shn/libshn/sulawalaw.c",
+    "plugins/shn/libshn/vario.c",
+    "plugins/shn/libshn/wave.c"
   }
   buildoptions {"-include stdint.h"}
+  includedirs {"plugins/shn/libshn"}
   links {"m"}
 end
 

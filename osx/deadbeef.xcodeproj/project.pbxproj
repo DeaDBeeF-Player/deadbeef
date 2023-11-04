@@ -87,7 +87,7 @@
 		07765D801C279BFC00F5F4BC /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D731C279BFC00F5F4BC /* misc.c */; };
 		07765D811C279BFC00F5F4BC /* output.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D741C279BFC00F5F4BC /* output.c */; };
 		07765D821C279BFC00F5F4BC /* seek.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D751C279BFC00F5F4BC /* seek.c */; };
-		07765D831C279BFC00F5F4BC /* shn.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D761C279BFC00F5F4BC /* shn.c */; };
+		07765D831C279BFC00F5F4BC /* shnplugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D761C279BFC00F5F4BC /* shnplugin.c */; };
 		07765D841C279BFC00F5F4BC /* shn.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765D771C279BFC00F5F4BC /* shn.h */; };
 		07765D851C279BFC00F5F4BC /* shorten.c in Sources */ = {isa = PBXBuildFile; fileRef = 07765D781C279BFC00F5F4BC /* shorten.c */; };
 		07765D861C279BFC00F5F4BC /* shorten.h in Headers */ = {isa = PBXBuildFile; fileRef = 07765D791C279BFC00F5F4BC /* shorten.h */; };
@@ -4642,7 +4642,7 @@
 		07765D731C279BFC00F5F4BC /* misc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
 		07765D741C279BFC00F5F4BC /* output.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = output.c; sourceTree = "<group>"; };
 		07765D751C279BFC00F5F4BC /* seek.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = seek.c; sourceTree = "<group>"; };
-		07765D761C279BFC00F5F4BC /* shn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shn.c; sourceTree = "<group>"; };
+		07765D761C279BFC00F5F4BC /* shnplugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shnplugin.c; sourceTree = "<group>"; };
 		07765D771C279BFC00F5F4BC /* shn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shn.h; sourceTree = "<group>"; };
 		07765D781C279BFC00F5F4BC /* shorten.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shorten.c; sourceTree = "<group>"; };
 		07765D791C279BFC00F5F4BC /* shorten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shorten.h; sourceTree = "<group>"; };
@@ -8178,19 +8178,8 @@
 		07765D8D1C27A13A00F5F4BC /* shn */ = {
 			isa = PBXGroup;
 			children = (
-				07765D701C279BFC00F5F4BC /* array.c */,
-				07765D711C279BFC00F5F4BC /* bitshift.h */,
-				07765D721C279BFC00F5F4BC /* convert.c */,
-				07765D731C279BFC00F5F4BC /* misc.c */,
-				07765D741C279BFC00F5F4BC /* output.c */,
-				07765D751C279BFC00F5F4BC /* seek.c */,
-				07765D761C279BFC00F5F4BC /* shn.c */,
-				07765D771C279BFC00F5F4BC /* shn.h */,
-				07765D781C279BFC00F5F4BC /* shorten.c */,
-				07765D791C279BFC00F5F4BC /* shorten.h */,
-				07765D7A1C279BFC00F5F4BC /* sulawalaw.c */,
-				07765D7B1C279BFC00F5F4BC /* vario.c */,
-				07765D7C1C279BFC00F5F4BC /* wave.c */,
+				2D56590D2AF6DC060014443E /* libshn */,
+				07765D761C279BFC00F5F4BC /* shnplugin.c */,
 			);
 			name = shn;
 			path = plugins/shn;
@@ -9667,6 +9656,25 @@
 				2D65FFE91AA7881B00E82A9E /* unice68 */,
 			);
 			path = libsc68;
+			sourceTree = "<group>";
+		};
+		2D56590D2AF6DC060014443E /* libshn */ = {
+			isa = PBXGroup;
+			children = (
+				07765D701C279BFC00F5F4BC /* array.c */,
+				07765D711C279BFC00F5F4BC /* bitshift.h */,
+				07765D721C279BFC00F5F4BC /* convert.c */,
+				07765D731C279BFC00F5F4BC /* misc.c */,
+				07765D741C279BFC00F5F4BC /* output.c */,
+				07765D751C279BFC00F5F4BC /* seek.c */,
+				07765D771C279BFC00F5F4BC /* shn.h */,
+				07765D781C279BFC00F5F4BC /* shorten.c */,
+				07765D791C279BFC00F5F4BC /* shorten.h */,
+				07765D7A1C279BFC00F5F4BC /* sulawalaw.c */,
+				07765D7B1C279BFC00F5F4BC /* vario.c */,
+				07765D7C1C279BFC00F5F4BC /* wave.c */,
+			);
+			path = libshn;
 			sourceTree = "<group>";
 		};
 		2D5D21441A4033D3001D5A79 /* lastfm */ = {
@@ -16593,7 +16601,7 @@
 				07765D801C279BFC00F5F4BC /* misc.c in Sources */,
 				07765D7D1C279BFC00F5F4BC /* array.c in Sources */,
 				07765D851C279BFC00F5F4BC /* shorten.c in Sources */,
-				07765D831C279BFC00F5F4BC /* shn.c in Sources */,
+				07765D831C279BFC00F5F4BC /* shnplugin.c in Sources */,
 				07765D871C279BFC00F5F4BC /* sulawalaw.c in Sources */,
 				07765D881C279BFC00F5F4BC /* vario.c in Sources */,
 				07765D811C279BFC00F5F4BC /* output.c in Sources */,
