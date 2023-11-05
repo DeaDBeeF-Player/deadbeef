@@ -73,7 +73,6 @@ export DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION
 make DESTDIR=$DESTDIR install || exit 1
 mkdir -p $LIBRARY_PATH
 cp -r $LIBRARY_PATH/libBlocksRuntime.so* $DESTDIR/opt/deadbeef/lib/
-cp -r $LIBRARY_PATH/libkqueue.so* $DESTDIR/opt/deadbeef/lib/
 cp -r $LIBRARY_PATH/libdispatch.so* $DESTDIR/opt/deadbeef/lib/
 cp -r $LIBRARY_PATH/libcurl.so* $DESTDIR/opt/deadbeef/lib/
 cp -r $LIBRARY_PATH/libmbed*.so* $DESTDIR/opt/deadbeef/lib/
