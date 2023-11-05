@@ -969,6 +969,7 @@
 		2D56593C2AF6E2680014443E /* ayemu_vtxfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11D3BF1B9DC69C00C7C731 /* ayemu_vtxfile.h */; };
 		2D56593D2AF6E2680014443E /* lh5dec.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3C11B9DC69C00C7C731 /* lh5dec.c */; };
 		2D56593E2AF6E2680014443E /* vtxfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D11D3C31B9DC69C00C7C731 /* vtxfile.c */; };
+		2D5659C22AF7ACC10014443E /* AlbumNavigationTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D5659C12AF7ACC10014443E /* AlbumNavigationTests.cpp */; };
 		2D565B0C1A40BCE200CE1F5D /* abi_align.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D565A831A40BCE200CE1F5D /* abi_align.h */; };
 		2D565B161A40BCE200CE1F5D /* dct36_x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */; };
 		2D565B251A40BCE200CE1F5D /* dct64_x86_64_float.S in Sources */ = {isa = PBXBuildFile; fileRef = 2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */; };
@@ -5498,6 +5499,7 @@
 		2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptableListEditWindowController.c; sourceTree = "<group>"; };
 		2D56579A2AED73A30014443E /* gtkScriptable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptable.h; sourceTree = "<group>"; };
 		2D56580A2AEE63430014443E /* gtkScriptable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptable.c; sourceTree = "<group>"; };
+		2D5659C12AF7ACC10014443E /* AlbumNavigationTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlbumNavigationTests.cpp; sourceTree = "<group>"; };
 		2D565A831A40BCE200CE1F5D /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = abi_align.h; path = "../../osx/deps/mpg123-1.31.1/src/libmpg123/abi_align.h"; sourceTree = "<group>"; };
 		2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_x86_64.S; path = "../../osx/deps/mpg123-1.31.1/src/libmpg123/dct36_x86_64.S"; sourceTree = "<group>"; };
 		2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_x86_64_float.S; path = "../../osx/deps/mpg123-1.31.1/src/libmpg123/dct64_x86_64_float.S"; sourceTree = "<group>"; };
@@ -11472,6 +11474,7 @@
 				4D9272CF214156E300E7B4D0 /* PresetManagerData */,
 				2DAA4C0A1AAF88DE00519559 /* Supporting Files */,
 				2D7492861CCFFE7700D3A59E /* TestData */,
+				2D5659C12AF7ACC10014443E /* AlbumNavigationTests.cpp */,
 				2D4A9467223EFC6700199551 /* CoreAudioTests.m */,
 				2DE7A8FA1CA493CE00318A9F /* CuesheetTests.cpp */,
 				2DA66ECC1EDF501000E20989 /* fakein.c */,
@@ -17793,6 +17796,7 @@
 				2D135EF4226E47CE00BAAE84 /* ScriptableTests.cpp in Sources */,
 				2DA80C7426C0708200E8EC7F /* CuesheetTests.cpp in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.cpp in Sources */,
+				2D5659C22AF7ACC10014443E /* AlbumNavigationTests.cpp in Sources */,
 				2DB521192AAC694700B6250A /* scriptable_tfquery.c in Sources */,
 				2D4A9468223EFC6700199551 /* CoreAudioTests.m in Sources */,
 				4D31BECE1E9FB194001D1B89 /* ResamplerTests.cpp in Sources */,
