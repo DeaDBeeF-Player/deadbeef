@@ -9,6 +9,7 @@ version 1.9.6
 	Fixed: MP4 parser failing to read/write certain tags correctly
 	Fixed: Handling of title-formatted paths
 	Fixed: A bug when editing metadata in multiple selected tracks
+	Fixed: OSD notification reuse by default, with an option to disable
 	Added: Bit depth override option (HiFiPhile)
 	Added: DSD DoP support for ALSA/FFMPEG plugins (HiFiPhile)
 	Added: $put, $puts, $get title formatting functions (Robin Ekman)

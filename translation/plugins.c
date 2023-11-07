@@ -123,6 +123,8 @@ _("8-bit output");
 _("Use all extensions supported by ffmpeg");
 // xgettext:no-c-format
 _("File Extensions (separate with ';')");
+// xgettext:no-c-format
+_("Enable DoP output");
 // plugins/flac/flac.c
 // xgettext:no-c-format
 _("Ignore bad header errors");
@@ -418,7 +420,7 @@ _("Show album art");
 // xgettext:no-c-format
 _("Album art size (px)");
 // xgettext:no-c-format
-_("Fix for KDE 5.23.5");
+_("Don't reuse notifications (KDE quirk)");
 // plugins/oss/oss.c
 // xgettext:no-c-format
 _("Device file");
@@ -500,7 +502,7 @@ _("20K");
 // plugins/wildmidi/wildmidiplug.c
 // xgettext:no-c-format
 _("Timidity++ bank configuration file");
-// scriptable/scriptable_encoder.c
+// src/scriptable/scriptable_encoder.c
 // xgettext:no-c-format
 _("File extension");
 // xgettext:no-c-format
