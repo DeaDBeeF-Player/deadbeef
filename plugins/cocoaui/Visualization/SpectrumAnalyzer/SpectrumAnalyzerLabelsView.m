@@ -74,16 +74,18 @@
 }
 
 - (void)drawFrequencyLabels {
-    CGFloat xOffset = self.subviews[0].frame.origin.x;
+    NSRect spectrumFrame = self.subviews[0].frame;
+    CGFloat xOffset = spectrumFrame.origin.x;
 
     // octaves text
     for (int i = 0; i < _draw_data->label_freq_count; i++) {
-        if (_draw_data->label_freq_positions < 0) {
+        if (_draw_data->label_freq_positions[i] < 0
+            || _draw_data->label_freq_positions[i] / self.window.backingScaleFactor >= spectrumFrame.size.width) {
             continue;
         }
         NSString *string = @(_draw_data->label_freq_texts[i]);
-        CGFloat x = xOffset + _draw_data->label_freq_positions[i];
-        [string drawAtPoint:NSMakePoint(x / self.window.backingScaleFactor, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
+        CGFloat x = xOffset + _draw_data->label_freq_positions[i] / self.window.backingScaleFactor;
+        [string drawAtPoint:NSMakePoint(x, NSHeight(self.bounds)-12) withAttributes:self.textAttrs];
     }
 }
 
