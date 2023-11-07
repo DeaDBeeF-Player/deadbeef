@@ -31,7 +31,7 @@
 
 ddb_scope_t *
 ddb_scope_alloc (void) {
-    return calloc(1, sizeof (ddb_scope_t));
+    return calloc (1, sizeof (ddb_scope_t));
 }
 
 ddb_scope_t *
@@ -51,16 +51,14 @@ ddb_scope_free (ddb_scope_t *scope) {
 }
 
 void
-ddb_scope_process (ddb_scope_t * restrict scope, int samplerate, int channels, const float * restrict samples, int sample_count) {
+ddb_scope_process (ddb_scope_t *restrict scope, int samplerate, int channels, const float *restrict samples, int sample_count) {
 
     if (scope->fragment_duration == 0) {
         scope->fragment_duration = 50;
     }
 
     int fragment_sample_count = (float)scope->fragment_duration / 1000.f * samplerate;
-    if (channels != scope->channels
-        || samplerate != scope->samplerate
-        || fragment_sample_count != scope->sample_count) {
+    if (channels != scope->channels || samplerate != scope->samplerate || fragment_sample_count != scope->sample_count) {
         scope->channels = channels;
         scope->sample_count = fragment_sample_count;
         scope->samplerate = samplerate;
@@ -78,19 +76,18 @@ ddb_scope_process (ddb_scope_t * restrict scope, int samplerate, int channels, c
     // otherwise append
     else {
         int move_samples = scope->sample_count - sample_count;
-        memmove (scope->samples, scope->samples + (scope->sample_count - move_samples) * channels, move_samples * channels * sizeof(float));
+        memmove (scope->samples, scope->samples + (scope->sample_count - move_samples) * channels, move_samples * channels * sizeof (float));
         memcpy (scope->samples + move_samples * channels, samples, sample_count * channels * sizeof (float));
     }
 }
 
 void
-ddb_scope_tick (ddb_scope_t * restrict scope) {
+ddb_scope_tick (ddb_scope_t *restrict scope) {
 }
 
 void
-ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_height, int y_axis_flip, ddb_scope_draw_data_t * restrict draw_data) {
-    if (scope->mode_did_change
-        || draw_data->point_count != view_width) {
+ddb_scope_get_draw_data (ddb_scope_t *restrict scope, int view_width, int view_height, int y_axis_flip, ddb_scope_draw_data_t *restrict draw_data) {
+    if (scope->mode_did_change || draw_data->point_count != view_width) {
         free (draw_data->points);
         int channels = scope->mode == DDB_SCOPE_MONO ? 1 : scope->channels;
         draw_data->points = calloc (view_width * channels, sizeof (ddb_scope_point_t));
@@ -119,7 +116,7 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
 
     fpu_control fpu;
     (void)fpu;
-    fpu_setround(&fpu);
+    fpu_setround (&fpu);
 
     int left_a = 0;
     int left_b = 0;
@@ -129,16 +126,16 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
     float fsample_count = (float)scope->sample_count;
 
     for (int i = 0; i < draw_data->point_count; i++) {
-        float right = (float)(i+1) / fpoint_count * fsample_count;
-        if (right > scope->sample_count-1) {
-            right = scope->sample_count-1;
+        float right = (float)(i + 1) / fpoint_count * (fsample_count - 1);
+        if (right > scope->sample_count - 1) {
+            right = scope->sample_count - 1;
         }
 
-        int right_a = ftoi(floorf(right));
-        float fright_b = ceilf(right);
-        int right_b = ftoi(fright_b);
+        int right_a = ftoi (floorf (right));
+        float fright_b = ceilf (right);
+        int right_b = ftoi (fright_b);
 
-        float rightfrac = fright_b - right;
+        float rightfrac = 1.f - (fright_b - right);
 
         for (int c = 0; c < output_channels; c++) {
             draw_data->points[draw_data->point_count * c + i].ymin = 1;
@@ -148,7 +145,7 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
         for (int c = 0; c < output_channels; c++) {
             int output_channel = c;
 
-            ddb_scope_point_t * restrict minmax = &draw_data->points[draw_data->point_count * output_channel + i];
+            ddb_scope_point_t *restrict minmax = &draw_data->points[draw_data->point_count * output_channel + i];
             float minmax_ymin = minmax->ymin;
             float minmax_ymax = minmax->ymax;
 
@@ -220,7 +217,7 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
         leftfrac = rightfrac;
     }
 
-    fpu_restore(fpu);
+    fpu_restore (fpu);
 
     draw_data->mode = scope->mode;
     draw_data->channels = scope->channels;
@@ -229,5 +226,5 @@ ddb_scope_get_draw_data (ddb_scope_t * restrict scope, int view_width, int view_
 void
 ddb_scope_draw_data_dealloc (ddb_scope_draw_data_t *draw_data) {
     free (draw_data->points);
-    memset (draw_data, 0, sizeof(ddb_scope_draw_data_t));
+    memset (draw_data, 0, sizeof (ddb_scope_draw_data_t));
 }
