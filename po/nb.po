@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-28 11:29+0200\n"
+"POT-Creation-Date: 2023-11-07 19:05+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: heskjestad <cato@heskjestad.xyz>, 2021-2023\n"
 "Language-Team: Norwegian Bokmål (http://app.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
@@ -3721,7 +3721,7 @@ msgstr "Albumomslagets størrelse (piksler)"
 #: ../translation/plugins.c:423
 #, no-c-format
 msgid "Don't reuse notifications (KDE quirk)"
-msgstr ""
+msgstr "Ikke gjenbruk varslinger (særhet i KDE)"
 
 #. plugins/oss/oss.c
 #: ../translation/plugins.c:426

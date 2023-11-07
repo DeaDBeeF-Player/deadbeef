@@ -7,13 +7,14 @@
 # Algimantas Margevičius <margevicius.algimantas@gmail.com>, 2012
 # Moo, 2017
 # Moo, 2017-2022
+# Moo, 2023
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-28 11:29+0200\n"
+"POT-Creation-Date: 2023-11-07 19:05+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Moo, 2017-2022\n"
+"Last-Translator: Moo, 2023\n"
 "Language-Team: Lithuanian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/lt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2002,7 +2003,7 @@ msgstr "Centras"
 
 #: ../plugins/gtkui/interface.c:1893
 msgid "Disabled"
-msgstr ""
+msgstr "Išjungta"
 
 #: ../plugins/gtkui/interface.c:1894
 msgid "8 bit"
@@ -3375,7 +3376,7 @@ msgstr ""
 #: ../translation/plugins.c:265
 #, no-c-format
 msgid "Duplicate Playlist"
-msgstr ""
+msgstr "Dubliuoti grojaraštį"
 
 #: ../translation/plugins.c:269
 #, no-c-format
