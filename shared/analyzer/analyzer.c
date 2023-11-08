@@ -50,11 +50,14 @@ _generate_octave_note_bars (ddb_analyzer_t *analyzer);
 static void
 _tempered_scale_bands_precalc (ddb_analyzer_t *analyzer);
 
-static float _bin_for_freq_floor (ddb_analyzer_t *analyzer, float freq);
+static float
+_bin_for_freq_floor (ddb_analyzer_t *analyzer, float freq);
 
-static float _bin_for_freq_round (ddb_analyzer_t *analyzer, float freq);
+static float
+_bin_for_freq_round (ddb_analyzer_t *analyzer, float freq);
 
-static float _freq_for_bin (ddb_analyzer_t *analyzer, int bin);
+static float
+_freq_for_bin (ddb_analyzer_t *analyzer, int bin);
 
 static float
 _interpolate_bin_with_ratio (float *fft_data, int bin, float ratio);
@@ -63,7 +66,7 @@ _interpolate_bin_with_ratio (float *fft_data, int bin, float ratio);
 
 ddb_analyzer_t *
 ddb_analyzer_alloc (void) {
-    return calloc(1, sizeof (ddb_analyzer_t));
+    return calloc (1, sizeof (ddb_analyzer_t));
 }
 
 ddb_analyzer_t *
@@ -104,10 +107,10 @@ ddb_analyzer_process (ddb_analyzer_t *analyzer, int samplerate, int channels, co
         channels = 1;
     }
 
-    if (analyzer->mode_did_change || channels != analyzer->channels || fft_size != analyzer->fft_size || samplerate/2 != analyzer->fft_samplerate) {
+    if (analyzer->mode_did_change || channels != analyzer->channels || fft_size != analyzer->fft_size || samplerate / 2 != analyzer->fft_samplerate) {
         analyzer->channels = channels;
         analyzer->fft_size = fft_size;
-        analyzer->fft_samplerate = samplerate/2;
+        analyzer->fft_samplerate = samplerate / 2;
         free (analyzer->fft_data);
         analyzer->fft_data = malloc (fft_size * channels * sizeof (float));
         need_regenerate = 1;
@@ -144,24 +147,20 @@ ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
         for (int i = 0; i < analyzer->bar_count; i++, bar++) {
             float norm_h = _interpolate_bin_with_ratio (fft_data, bar->bin, bar->ratio);
 
-
             if (norm_h < exp_lower_bound) {
                 norm_h = exp_lower_bound;
             }
 
-
             // if the bar spans more than one bin, find the max value
-            for (int b = bar->bin+1; b <= bar->last_bin; b++) {
+            for (int b = bar->bin + 1; b <= bar->last_bin; b++) {
                 float val = analyzer->fft_data[b];
                 if (val > norm_h) {
                     norm_h = val;
                 }
             }
 
-            norm_h = norm_h;
-
             float bound = -analyzer->db_lower_bound;
-            float height = (20*log10(norm_h) + bound)/bound;
+            float height = (20 * log10 (norm_h) + bound) / bound;
 
             if (ch == 0) {
                 bar->height = height;
@@ -205,22 +204,20 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
         if (analyzer->enable_bar_index_lookup_table) {
             if (draw_data->bar_index_for_x_coordinate_table_size != view_width) {
                 free (draw_data->bar_index_for_x_coordinate_table);
-                draw_data->bar_index_for_x_coordinate_table = calloc (view_width
-                                                                      , sizeof (int));
+                draw_data->bar_index_for_x_coordinate_table = calloc (view_width, sizeof (int));
                 draw_data->bar_index_for_x_coordinate_table_size = view_width;
             }
         }
-
     }
     else if (analyzer->mode == DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS) {
         if (analyzer->fractional_bars) {
             float width = (float)view_width / analyzer->bar_count;
-            float gap = analyzer->bar_gap_denominator > 0 ? width/analyzer->bar_gap_denominator : 0;
+            float gap = analyzer->bar_gap_denominator > 0 ? width / analyzer->bar_gap_denominator : 0;
             draw_data->bar_width = width - gap;
         }
         else {
             int width = view_width / analyzer->bar_count;
-            int gap = analyzer->bar_gap_denominator > 0 ? width/analyzer->bar_gap_denominator : 0;
+            int gap = analyzer->bar_gap_denominator > 0 ? width / analyzer->bar_gap_denominator : 0;
             if (gap < 1) {
                 gap = 1;
             }
@@ -233,7 +230,7 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
     }
 
     if (draw_data->bar_index_for_x_coordinate_table != NULL) {
-        memset(draw_data->bar_index_for_x_coordinate_table, 0xff, sizeof (int) * view_width);
+        memset (draw_data->bar_index_for_x_coordinate_table, 0xff, sizeof (int) * view_width);
     }
 
     ddb_analyzer_bar_t *bar = analyzer->bars;
@@ -247,20 +244,16 @@ ddb_analyzer_get_draw_data (ddb_analyzer_t *analyzer, int view_width, int view_h
         draw_bar->xpos = xpos;
         draw_bar->peak_ypos = _get_bar_height (analyzer, bar->peak, view_height);
 
-        if (analyzer->mode == DDB_ANALYZER_MODE_FREQUENCIES
-            && analyzer->enable_bar_index_lookup_table) {
+        if (analyzer->mode == DDB_ANALYZER_MODE_FREQUENCIES && analyzer->enable_bar_index_lookup_table) {
             int lookup_index = (int)draw_bar->xpos;
-            if (lookup_index < view_width
-                && draw_data->bar_index_for_x_coordinate_table[lookup_index] == -1) {
+            if (lookup_index < view_width && draw_data->bar_index_for_x_coordinate_table[lookup_index] == -1) {
                 draw_data->bar_index_for_x_coordinate_table[lookup_index] = i;
             }
-            if (lookup_index > 0
-                && draw_data->bar_index_for_x_coordinate_table[lookup_index-1] == -1) {
-                draw_data->bar_index_for_x_coordinate_table[lookup_index-1] = i;
+            if (lookup_index > 0 && draw_data->bar_index_for_x_coordinate_table[lookup_index - 1] == -1) {
+                draw_data->bar_index_for_x_coordinate_table[lookup_index - 1] = i;
             }
-            if (lookup_index < view_width - 1
-                && draw_data->bar_index_for_x_coordinate_table[lookup_index+1] == -1) {
-                draw_data->bar_index_for_x_coordinate_table[lookup_index+1] = i;
+            if (lookup_index < view_width - 1 && draw_data->bar_index_for_x_coordinate_table[lookup_index + 1] == -1) {
+                draw_data->bar_index_for_x_coordinate_table[lookup_index + 1] = i;
             }
         }
     }
@@ -276,7 +269,7 @@ void
 ddb_analyzer_draw_data_dealloc (ddb_analyzer_draw_data_t *draw_data) {
     free (draw_data->bars);
     free (draw_data->bar_index_for_x_coordinate_table);
-    memset (draw_data, 0, sizeof(ddb_analyzer_draw_data_t));
+    memset (draw_data, 0, sizeof (ddb_analyzer_draw_data_t));
 }
 
 #pragma mark - Private
@@ -304,8 +297,8 @@ _generate_frequency_labels (ddb_analyzer_t *analyzer) {
     // calculate the distance between any 2 neighbour labels
     float freq = 64000;
     float freq2 = 32000;
-    float pos = width_log * (log10(freq) - min_freq_log) / view_width;
-    float pos2 = width_log * (log10(freq2) - min_freq_log) / view_width;
+    float pos = width_log * (log10 (freq) - min_freq_log) / view_width;
+    float pos2 = width_log * (log10 (freq2) - min_freq_log) / view_width;
     float dist = pos - pos2;
 
     // generate position and text for each label
@@ -314,10 +307,10 @@ _generate_frequency_labels (ddb_analyzer_t *analyzer) {
         analyzer->label_freq_positions[index] = pos;
 
         if (freq < 1000) {
-            snprintf (analyzer->label_freq_texts[index], sizeof(analyzer->label_freq_texts[index]), "%d", (int)round(freq));
+            snprintf (analyzer->label_freq_texts[index], sizeof (analyzer->label_freq_texts[index]), "%d", (int)round (freq));
         }
         else {
-            snprintf (analyzer->label_freq_texts[index], sizeof(analyzer->label_freq_texts[index]), "%dk", ((int)freq)/1000);
+            snprintf (analyzer->label_freq_texts[index], sizeof (analyzer->label_freq_texts[index]), "%dk", ((int)freq) / 1000);
         }
 
         pos -= dist;
@@ -351,7 +344,7 @@ _generate_frequency_bars (ddb_analyzer_t *analyzer) {
         float freq = _freq_for_bin (analyzer, i);
 
         // FIXME: only int position!
-        int pos = width_log * (log10(freq) - min_freq_log);
+        int pos = width_log * (log10 (freq) - min_freq_log);
 
         if (pos > prev && pos >= 0) {
             // start accumulating frequencies for the new band
@@ -370,7 +363,7 @@ _generate_frequency_bars (ddb_analyzer_t *analyzer) {
 static void
 _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
     analyzer->bar_count = 0;
-    analyzer->exp_lower_bound = powf(10, analyzer->db_lower_bound / 20.f) + FLT_EPSILON;
+    analyzer->exp_lower_bound = powf (10, analyzer->db_lower_bound / 20.f) + FLT_EPSILON;
 
     _tempered_scale_bands_precalc (analyzer);
 
@@ -396,50 +389,53 @@ _generate_octave_note_bars (ddb_analyzer_t *analyzer) {
 
         ddb_analyzer_bar_t *bar = analyzer->bars + analyzer->bar_count;
 
-        int bin = _bin_for_freq_floor(analyzer, band->freq);
+        int bin = _bin_for_freq_floor (analyzer, band->freq);
 
         bar->bin = bin;
         bar->last_bin = 0;
         bar->ratio = 0;
 
         // interpolation ratio of next bin of previous bar to the first bin of this bar
-        if (prev_bar && bin-1 > prev_bar->bin) {
-            prev_bar->last_bin = bin-1;
+        if (prev_bar && bin - 1 > prev_bar->bin) {
+            prev_bar->last_bin = bin - 1;
         }
 
         analyzer->bar_count += 1;
 
         // get interpolation ratio to the next bin
-        int bin2 = bin+1;
+        int bin2 = bin + 1;
         if (bin2 < analyzer->fft_size) {
-            float p = log10(band->freq);
-            float p1 = log10(_freq_for_bin(analyzer, bin));
-            float p2 = log10(_freq_for_bin(analyzer, bin2));
-            float d = p2-p1;
-            bar->ratio = (p-p1)/d;
+            float p = log10 (band->freq);
+            float p1 = bin == 0 ? 0 : log10 (_freq_for_bin (analyzer, bin));
+            float p2 = bin2 == 0 ? 0 : log10 (_freq_for_bin (analyzer, bin2));
+            float d = p2 - p1;
+            bar->ratio = (p - p1) / d;
         }
 
         prev_bar = bar;
     }
 
     for (int i = 0; i < analyzer->bar_count; i++) {
-        analyzer->bars[i].xpos = (float)i/analyzer->bar_count;
+        analyzer->bars[i].xpos = (float)i / analyzer->bar_count;
     }
 }
 
-static float _bin_for_freq_floor (ddb_analyzer_t *analyzer, float freq) {
+static float
+_bin_for_freq_floor (ddb_analyzer_t *analyzer, float freq) {
     float max = analyzer->fft_size - 1;
     float bin = floor (freq * analyzer->fft_size / analyzer->fft_samplerate);
     return bin < max ? bin : max;
 }
 
-static float _bin_for_freq_round (ddb_analyzer_t *analyzer, float freq) {
+static float
+_bin_for_freq_round (ddb_analyzer_t *analyzer, float freq) {
     float max = analyzer->fft_size - 1;
     float bin = round (freq * analyzer->fft_size / analyzer->fft_samplerate);
     return bin < max ? bin : max;
 }
 
-static float _freq_for_bin (ddb_analyzer_t *analyzer, int bin) {
+static float
+_freq_for_bin (ddb_analyzer_t *analyzer, int bin) {
     return (int64_t)bin * analyzer->fft_samplerate / analyzer->fft_size;
 }
 
@@ -453,10 +449,10 @@ _tempered_scale_bands_precalc (ddb_analyzer_t *analyzer) {
     analyzer->tempered_scale_bands = calloc (OCTAVES * STEPS, sizeof (ddb_analyzer_band_t));
 
     for (int i = 0; i < OCTAVES * STEPS; i++) {
-        float f = C0 * pow(ROOT24, i);
+        float f = C0 * pow (ROOT24, i);
         float bin = _bin_for_freq_floor (analyzer, f);
-        float binf  = _freq_for_bin (analyzer, bin);
-        float fn = _freq_for_bin (analyzer, bin+1);
+        float binf = _freq_for_bin (analyzer, bin);
+        float fn = _freq_for_bin (analyzer, bin + 1);
         float ratio = (f - binf) / (fn - binf);
 
         analyzer->tempered_scale_bands[i].bin = bin;
@@ -485,4 +481,3 @@ _interpolate_bin_with_ratio (float *fft_data, int bin, float ratio) {
     }
     return result;
 }
-
