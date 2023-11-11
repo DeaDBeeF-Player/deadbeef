@@ -580,6 +580,10 @@ static char sb_text[512];
                 scriptableItemSave(tfQueryRoot);
             }
 
+            // refresh the tree
+            NSInteger index = self.tfQuerySelectViewController.indexOfSelectedItem;
+            scriptableItem_t *item = scriptableItemChildAtIndex(tfQueryRoot, (unsigned int)index);
+            [self scriptableSelectItemSelected:item];
         }
     });
 #endif

@@ -34,7 +34,6 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) NSOutlineView *outlineView;
 @property (nonatomic) NSSearchField *searchField;
-@property (nonatomic) NSPopUpButton *selectorPopup;
 
 @property (atomic) DB_mediasource_t *medialibPlugin;
 @property (atomic,readonly) ddb_mediasource_source_t *medialibSource;
@@ -374,10 +373,10 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     if (_id == DB_EV_CONFIGCHANGED) {
         dispatch_async(dispatch_get_main_queue(), ^{
             NSString *preset = self.mediaLibraryManager.preset;
-            if (![preset isEqualToString:self.currentPreset]) {
-                self.currentPreset = preset;
-                [self filterChanged];
-            }
+            // NOTE: don't add a check for whether user changed to another preset.
+            // This would break a refresh if the current preset changes settings.
+            self.currentPreset = preset;
+            [self filterChanged];
         });
     }
     return 0;
