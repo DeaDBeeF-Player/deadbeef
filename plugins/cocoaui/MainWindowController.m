@@ -195,6 +195,7 @@ extern DB_functions_t *deadbeef;
         return;
     }
     if (deadbeef->get_output()->state() != DDB_PLAYBACK_STATE_PLAYING) {
+        [self frameUpdate];
         return;
     }
 
