@@ -2325,14 +2325,18 @@ typedef struct {
 
     /// This tells the source to start operating with the current configuration.
     /// It may cancel any current operation, and get the new state with the new settings.
-    /// For example, the medialib plugin is supposed to start the scanner with the current / new settings.
-    /// This source is not supposed to run any operations automatically, and the caller is expected to call refresh
+    /// For example, the medialib plugin will start scanning with the current / new settings.
+    /// The source is not supposed to run any operations automatically,
+    /// and the caller is expected to call refresh
     /// every time when the plugin configuration changes.
     /// However, when the source is created - it's may load its initial state.
     void (*refresh) (ddb_mediasource_source_t *source);
 
-    /// Add event listener. Your callback function will be called every time some event occurs. Such as state change, content update, and so on.
-    /// The callback function may be executed on background thread, so make sure to dispatch to main to update UI.
+    /// Add event listener.
+    /// Your callback function will be called every time some event occurs.
+    /// Such as state change, content update, and so on.
+    /// The callback function may be executed on background thread,
+    /// so make sure to dispatch to main when updating UI.
     int (*add_listener) (ddb_mediasource_source_t *source, ddb_medialib_listener_t listener, void *user_data);
 
     /// Remove event listener
