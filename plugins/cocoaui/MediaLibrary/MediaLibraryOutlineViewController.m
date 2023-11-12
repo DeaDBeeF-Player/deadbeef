@@ -50,6 +50,8 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) NSString *currentPreset;
 
+@property (nonatomic) NSImage *folderImage;
+
 @end
 
 @implementation MediaLibraryOutlineViewController
@@ -106,6 +108,8 @@ extern DB_functions_t *deadbeef;
     self.albumArtCache = [NSMutableDictionary new];
 
     self.selectedItems = [NSMutableArray new];
+
+    self.folderImage = [NSWorkspace.sharedWorkspace iconForFileType:NSFileTypeForHFSTypeCode(kGenericFolderIcon)];
 
     return self;
 }
@@ -520,6 +524,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 - (void)updateCoverForItem:(MediaLibraryItem *)item track:(ddb_playItem_t *)track {
     void (^completionBlock)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) = ^(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) {
         NSImage *image = [self getImage:query coverInfo:cover error:error];
+
         dispatch_async(dispatch_get_main_queue(), ^{
             if (image != nil) {
                 NSString *key = [self albumArtCacheKeyForTrack:query->track];
@@ -531,10 +536,17 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
             if (row == -1) {
                 return;
             }
-            item.coverImage = image;
+
+            if (image == nil && item.children.count != 0) {
+                item.coverImage = self.folderImage;
+            }
+            else {
+                item.coverImage = image;
+            }
+
             NSTableRowView *rowView = [self.outlineView rowViewAtRow:row makeIfNecessary:NO];
             NSTableCellView *cellView = [rowView viewAtColumn:0];
-            cellView.imageView.image = image;
+            cellView.imageView.image = item.coverImage;
         });
     };
     ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
@@ -567,6 +579,10 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
             view.textField.stringValue = mlItem.stringValue;
             view.imageView.image = nil;
 
+            if (mlItem.coverImage == nil && mlItem.children.count != 0) {
+                view.imageView.image = self.folderImage;
+            }
+
             if (it) {
                 if (mlItem.coverImage) {
                     view.imageView.image = mlItem.coverImage;
@@ -582,10 +598,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
                         if (!mlItem.coverObtained) {
                             NSInteger row = [self.outlineView rowForItem:mlItem];
                             if (row >= 0) {
-                                NSTableCellView *cellView = [[self.outlineView rowViewAtRow:row makeIfNecessary:NO] viewAtColumn:0];
-                                if (cellView) {
-                                    [self updateCoverForItem:mlItem track:it];
-                                }
+                                [self updateCoverForItem:mlItem track:it];
                             }
                             mlItem.coverObtained = YES;
                         }
