@@ -27,6 +27,7 @@ typedef struct {
     ddb_gtkui_widget_t base;
     gtkScriptableSelectViewController_t *selectViewController;
     gtkScriptableSelectViewControllerDelegate_t scriptableSelectDelegate;
+    GdkPixbuf *folder_icon;
     GtkTreeView *tree;
     GtkEntry *search_entry;
     ddb_mediasource_source_t *source;
@@ -40,6 +41,7 @@ typedef struct {
 } w_medialib_viewer_t;
 
 enum {
+    COL_ICON,
     COL_TITLE,
     COL_TRACK,
     COL_ITEM,
@@ -65,6 +67,7 @@ _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, const ddb_medialib_item
             size_t len = strlen (item_text) + 20;
             char *text = malloc (len + 20);
             snprintf (text, len, "%s (%d)", item_text, child_numchildren);
+            gtk_tree_store_set (store, &child, COL_ICON, mlv->folder_icon, -1);
             gtk_tree_store_set (store, &child, COL_TITLE, text, -1);
             free (text);
         }
@@ -374,8 +377,13 @@ w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
         mlv->item_tree = NULL;
     }
     free (mlv->preset);
+    mlv->preset = NULL;
     free (mlv->search_text);
     mlv->search_text = NULL;
+    if (mlv->folder_icon) {
+        g_object_unref (mlv->folder_icon);
+        mlv->folder_icon = NULL;
+    }
 }
 
 static int
@@ -697,6 +705,9 @@ w_medialib_viewer_create (void) {
     w->base.destroy = w_medialib_viewer_destroy;
     w->base.message = w_medialib_viewer_message;
 
+    GtkIconTheme *icon_theme = gtk_icon_theme_get_default ();
+    w->folder_icon = gtk_icon_theme_load_icon (icon_theme, "folder-music", 16, 0, NULL);
+
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
     DB_mediasource_t *plugin = (DB_mediasource_t *)deadbeef->plug_get_for_id ("medialib");
@@ -759,7 +770,8 @@ w_medialib_viewer_create (void) {
     gtk_container_add (GTK_CONTAINER (scroll), GTK_WIDGET (w->tree));
 
     GtkTreeStore *store = gtk_tree_store_new (
-        3,
+        4,
+        G_TYPE_ICON, // COL_ICON
         G_TYPE_STRING, // COL_TITLE
         G_TYPE_POINTER, // COL_TRACK
         G_TYPE_POINTER // COL_ITEM
@@ -767,7 +779,8 @@ w_medialib_viewer_create (void) {
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
-    add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_TITLE, 1, 0, "", 0);
+    add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_ICON, 0, 0, "Icon", 1);
+    add_treeview_column (w, GTK_TREE_VIEW (w->tree), COL_TITLE, 1, 0, "Title", 0);
 
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
