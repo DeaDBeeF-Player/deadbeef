@@ -65,16 +65,32 @@ static const char _default_config[] =
 
 static scriptableStringListItem_t *
 _itemNames (scriptableItem_t *item) {
-    scriptableStringListItem_t *s = scriptableStringListItemAlloc ();
-    s->str = strdup ("TFQueryPreset");
-    return s;
+    scriptableStringListItem_t *newPreset = scriptableStringListItemAlloc ();
+    newPreset->str = strdup ("New");
+
+    scriptableStringListItem_t *albums = scriptableStringListItemAlloc ();
+    albums->str = strdup ("Albums");
+
+    scriptableStringListItem_t *artists = scriptableStringListItemAlloc ();
+    artists->str = strdup ("Artists");
+
+    scriptableStringListItem_t *genres = scriptableStringListItemAlloc ();
+    genres->str = strdup ("Genres");
+
+    scriptableStringListItem_t *folders = scriptableStringListItemAlloc ();
+    folders->str = strdup ("Folders");
+
+    newPreset->next = albums;
+    albums->next = artists;
+    artists->next = genres;
+    genres->next = folders;
+
+    return newPreset;
 }
 
 static scriptableStringListItem_t *
 _itemTypes (scriptableItem_t *item) {
-    scriptableStringListItem_t *s = scriptableStringListItemAlloc ();
-    s->str = strdup ("TFQueryPreset");
-    return s;
+    return _itemNames (item);
 }
 
 static int
@@ -155,10 +171,8 @@ _loadPreset (scriptableItem_t *scriptableQuery, json_t *query, scriptableItem_t 
 }
 
 static int
-_resetPreset (scriptableItem_t *item) {
+_resetPresetNamed (scriptableItem_t *item, scriptableItem_t *root, const char *presetName) {
     int res = -1;
-
-    scriptableItem_t *root = scriptableItemParent (item);
 
     json_error_t error;
     json_t *json = json_loads (_default_config, 0, &error);
@@ -179,8 +193,6 @@ _resetPreset (scriptableItem_t *item) {
     scriptableItemFlagsAdd (root, SCRIPTABLE_FLAG_IS_LOADING);
 
     size_t count = json_array_size (queries);
-
-    const char *presetName = scriptableItemPropertyValueForKey (item, "name");
 
     for (size_t i = 0; i < count; i++) {
         json_t *query = json_array_get (queries, i);
@@ -229,6 +241,12 @@ error:
     return res;
 }
 
+static int
+_resetPreset (scriptableItem_t *item) {
+    scriptableItem_t *root = scriptableItemParent (item);
+    return _resetPresetNamed (item, root, scriptableItemPropertyValueForKey (item, "name"));
+}
+
 static scriptableOverrides_t _presetCallbacks = {
     .readonlyPrefix = _readonlyPrefix,
     .save = _presetSave,
@@ -252,7 +270,13 @@ static scriptableItem_t *
 _createPreset (scriptableItem_t *root, const char *type) {
     // type is ignored, since there's only one preset type
     scriptableItem_t *item = _createBlankPreset ();
-    scriptableItemSetUniqueNameUsingPrefixAndRoot (item, "New TF Query Preset", root);
+    if (!strcmp (type, "New")) {
+        scriptableItemSetUniqueNameUsingPrefixAndRoot (item, "New Preset", root);
+    }
+    else {
+        _resetPresetNamed (item, root, type);
+        scriptableItemSetUniqueNameUsingPrefixAndRoot (item, type, root);
+    }
     return item;
 }
 
