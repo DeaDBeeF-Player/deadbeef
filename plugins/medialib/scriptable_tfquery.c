@@ -27,6 +27,10 @@
 #include <jansson.h>
 #include "scriptable_tfquery.h"
 
+#define trace(...) \
+    { deadbeef->log_detailed (&plugin->plugin, 0, __VA_ARGS__); }
+static DB_mediasource_t *plugin;
+
 // structure:
 // - presetRoot
 //    - presets: List<Preset>
@@ -305,10 +309,13 @@ error:
 }
 
 void
-ml_scriptable_init (DB_functions_t *_deadbeef, scriptableItem_t *root) {
+ml_scriptable_init (DB_functions_t *_deadbeef, DB_mediasource_t *_plugin, scriptableItem_t *root) {
     deadbeef = _deadbeef;
+    plugin = _plugin;
     int tf_query_result = scriptableTFQueryLoadPresets (root);
-    assert (tf_query_result != -1);
+    if (tf_query_result == -1) {
+        trace ("medialib: Failed to load tf query presets");
+    }
 }
 
 void

@@ -34,9 +34,9 @@ int
 scriptableTFQueryLoadPresets (scriptableItem_t *root);
 
 void
-ml_scriptable_init(DB_functions_t *_deadbeef, scriptableItem_t *root);
+ml_scriptable_init (DB_functions_t *_deadbeef, DB_mediasource_t *_plugin, scriptableItem_t *root);
 
 void
-ml_scriptable_deinit(void);
+ml_scriptable_deinit (void);
 
 #endif /* scriptable_tfquery_h */

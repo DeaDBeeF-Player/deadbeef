@@ -47,31 +47,31 @@ ml_connect (void) {
 static scriptableItem_t *_scriptableRoot;
 
 static scriptableItem_t *
-scriptableTFQueryRoot(void) {
+scriptableTFQueryRoot (void) {
     return _scriptableRoot;
 }
 
 static int
 ml_start (void) {
-    ml_source_init(deadbeef);
-    ml_db_init(deadbeef);
-    ml_scanner_init(&plugin, deadbeef);
-    ml_tree_init(deadbeef);
-    ml_item_state_init(deadbeef);
+    ml_source_init (deadbeef);
+    ml_db_init (deadbeef);
+    ml_scanner_init (&plugin, deadbeef);
+    ml_tree_init (deadbeef);
+    ml_item_state_init (deadbeef);
 
-    _scriptableRoot = scriptableTFQueryRootCreate();
-    ml_scriptable_init(deadbeef, _scriptableRoot);
+    _scriptableRoot = scriptableTFQueryRootCreate ();
+    ml_scriptable_init (deadbeef, &plugin, _scriptableRoot);
 
     return 0;
 }
 
 static int
 ml_stop (void) {
-    ml_scanner_free();
-    ml_tree_free();
-    ml_scriptable_deinit();
+    ml_scanner_free ();
+    ml_tree_free ();
+    ml_scriptable_deinit ();
     if (_scriptableRoot != NULL) {
-        scriptableItemFree(_scriptableRoot);
+        scriptableItemFree (_scriptableRoot);
         _scriptableRoot = NULL;
     }
 
@@ -85,15 +85,15 @@ ml_add_listener (ddb_mediasource_source_t *_source, ddb_medialib_listener_t list
     medialib_source_t *source = (medialib_source_t *)_source;
 
     __block int result = -1;
-    dispatch_sync(source->sync_queue, ^{
-        for (int i = 0; i < MAX_LISTENERS; i++) {
-            if (!source->ml_listeners[i]) {
-                source->ml_listeners[i] = listener;
-                source->ml_listeners_userdatas[i] = user_data;
-                result = i;
-                return;
-            }
-        }
+    dispatch_sync (source->sync_queue, ^{
+      for (int i = 0; i < MAX_LISTENERS; i++) {
+          if (!source->ml_listeners[i]) {
+              source->ml_listeners[i] = listener;
+              source->ml_listeners_userdatas[i] = user_data;
+              result = i;
+              return;
+          }
+      }
     });
     return result;
 }
@@ -102,12 +102,11 @@ static void
 ml_remove_listener (ddb_mediasource_source_t *_source, int listener_id) {
     medialib_source_t *source = (medialib_source_t *)_source;
 
-    dispatch_sync(source->sync_queue, ^{
-        source->ml_listeners[listener_id] = NULL;
-        source->ml_listeners_userdatas[listener_id] = NULL;
+    dispatch_sync (source->sync_queue, ^{
+      source->ml_listeners[listener_id] = NULL;
+      source->ml_listeners_userdatas[listener_id] = NULL;
     });
 }
-
 
 static ddb_medialib_item_t *
 ml_create_item_tree (ddb_mediasource_source_t *_source, scriptableItem_t *preset, const char *filter) {
@@ -115,12 +114,12 @@ ml_create_item_tree (ddb_mediasource_source_t *_source, scriptableItem_t *preset
 
     __block ml_tree_item_t *root = NULL;
 
-    dispatch_sync(source->sync_queue, ^{
-        if (!source->enabled) {
-            return;
-        }
+    dispatch_sync (source->sync_queue, ^{
+      if (!source->enabled) {
+          return;
+      }
 
-        root = _create_item_tree_from_collection(filter, preset, source);
+      root = _create_item_tree_from_collection (filter, preset, source);
     });
 
     return (ddb_medialib_item_t *)root;
@@ -134,8 +133,8 @@ ml_is_tree_item_selected (ddb_mediasource_source_t *_source, const ddb_medialib_
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     const char *path = item->path;
     __block ml_collection_item_state_t state;
-    dispatch_sync(source->sync_queue, ^{
-        state = ml_item_state_get (&source->state, path);
+    dispatch_sync (source->sync_queue, ^{
+      state = ml_item_state_get (&source->state, path);
     });
     return state.selected;
 }
@@ -145,14 +144,14 @@ ml_set_tree_item_selected (ddb_mediasource_source_t *_source, const ddb_medialib
     medialib_source_t *source = (medialib_source_t *)_source;
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     const char *path = item->path;
-    dispatch_sync(source->sync_queue, ^{
-        ml_collection_item_state_t *prev = NULL;
-        ml_collection_item_state_t *state = ml_item_state_find (&source->state, path, &prev);
-        int expanded = 0;
-        if (state != NULL) {
-            expanded = state->expanded;
-        }
-        ml_item_state_update (&source->state, path, state, prev, selected, expanded);
+    dispatch_sync (source->sync_queue, ^{
+      ml_collection_item_state_t *prev = NULL;
+      ml_collection_item_state_t *state = ml_item_state_find (&source->state, path, &prev);
+      int expanded = 0;
+      if (state != NULL) {
+          expanded = state->expanded;
+      }
+      ml_item_state_update (&source->state, path, state, prev, selected, expanded);
     });
 }
 
@@ -162,8 +161,8 @@ ml_is_tree_item_expanded (ddb_mediasource_source_t *_source, const ddb_medialib_
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     const char *path = item->path;
     __block ml_collection_item_state_t state;
-    dispatch_sync(source->sync_queue, ^{
-        state = ml_item_state_get (&source->state, path);
+    dispatch_sync (source->sync_queue, ^{
+      state = ml_item_state_get (&source->state, path);
     });
     return state.expanded;
 }
@@ -176,70 +175,22 @@ ml_set_tree_item_expanded (ddb_mediasource_source_t *_source, const ddb_medialib
     if (path == NULL) {
         return;
     }
-    dispatch_sync(source->sync_queue, ^{
-        ml_collection_item_state_t *prev = NULL;
-        ml_collection_item_state_t *state = ml_item_state_find (&source->state, path, &prev);
-        int selected = 0;
-        if (state != NULL) {
-            selected = state->selected;
-        }
-        ml_item_state_update (&source->state, path, state, prev, selected, expanded);
+    dispatch_sync (source->sync_queue, ^{
+      ml_collection_item_state_t *prev = NULL;
+      ml_collection_item_state_t *state = ml_item_state_find (&source->state, path, &prev);
+      int selected = 0;
+      if (state != NULL) {
+          selected = state->selected;
+      }
+      ml_item_state_update (&source->state, path, state, prev, selected, expanded);
     });
 }
 
 #pragma mark -
 
-#if 0
-static ddb_playItem_t *
-ml_find_track (medialib_source_t *source, ddb_playItem_t *it) {
-    char track_uri[PATH_MAX];
-    const char *uri = deadbeef->pl_find_meta (it, ":URI");
-
-    const char *subsong = NULL;
-    if (deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK) {
-        subsong = deadbeef->pl_find_meta (it, ":TRACKNUM");
-    }
-    printf ("find lib track for key: %s\n", track_uri);
-    const char *key = deadbeef->metacache_add_string (track_uri);
-
-    ml_string_t *s = hash_find (source->db.track_uris.hash, key);
-
-    ml_collection_item_t *item = NULL;
-    if (s) {
-        // find the one with correct subsong
-        item = s->items;
-        while (item) {
-            if (!subsong) {
-                break;
-            }
-            const char *item_subsong = deadbeef->pl_find_meta (it, ":TRACKNUM");
-            if (item_subsong == subsong) {
-                break;
-            }
-            item = item->next;
-        }
-    }
-    if (item) {
-        uri = deadbeef->pl_find_meta (item->it, ":URI");
-        printf ("Found lib track %p (%s) for input track %p\n", item->it, uri, it);
-    }
-    else {
-        printf ("Track not found in lib: %s\n", key);
-    }
-    deadbeef->metacache_remove_string (key);
-
-    if (s) {
-        deadbeef->pl_item_ref (s->items->it);
-        return s->items->it;
-    }
-
-    return NULL;
-}
-#endif
-
 static scriptableItem_t *
-ml_get_queries_scriptable(ddb_mediasource_source_t *_source) {
-    return scriptableTFQueryRoot();
+ml_get_queries_scriptable (ddb_mediasource_source_t *_source) {
+    return scriptableTFQueryRoot ();
 }
 
 static ddb_mediasource_state_t
@@ -256,10 +207,10 @@ ml_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 #pragma mark - folder access
 
 static void
-ml_enable_saving(ddb_mediasource_source_t *_source, int enable) {
+ml_enable_saving (ddb_mediasource_source_t *_source, int enable) {
     medialib_source_t *source = (medialib_source_t *)_source;
-    dispatch_sync(source->sync_queue, ^{
-        source->disable_file_operations = !enable;
+    dispatch_sync (source->sync_queue, ^{
+      source->disable_file_operations = !enable;
     });
 }
 
@@ -267,8 +218,8 @@ static unsigned
 ml_folder_count (ddb_mediasource_source_t *_source) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block unsigned res = 0;
-    dispatch_sync(source->sync_queue, ^{
-        res = (unsigned)json_array_size(source->musicpaths_json);
+    dispatch_sync (source->sync_queue, ^{
+      res = (unsigned)json_array_size (source->musicpaths_json);
     });
     return res;
 }
@@ -276,46 +227,45 @@ ml_folder_count (ddb_mediasource_source_t *_source) {
 static void
 ml_folder_at_index (ddb_mediasource_source_t *_source, int index, char *folder, size_t size) {
     medialib_source_t *source = (medialib_source_t *)_source;
-    dispatch_sync(source->sync_queue, ^{
-        json_t *data = json_array_get (source->musicpaths_json, index);
-        *folder = 0;
-        if (json_is_string (data)) {
-            const char *musicdir = json_string_value (data);
-            strncat(folder, musicdir, size);
-        }
+    dispatch_sync (source->sync_queue, ^{
+      json_t *data = json_array_get (source->musicpaths_json, index);
+      *folder = 0;
+      if (json_is_string (data)) {
+          const char *musicdir = json_string_value (data);
+          strncat (folder, musicdir, size);
+      }
     });
 }
 
-
 static void
 _save_folders_config (medialib_source_t *source) {
-    char *dump = json_dumps(source->musicpaths_json, JSON_COMPACT);
+    char *dump = json_dumps (source->musicpaths_json, JSON_COMPACT);
     if (dump) {
         char conf_name[200];
         snprintf (conf_name, sizeof (conf_name), "%spaths", source->source_conf_prefix);
         deadbeef->conf_set_str (conf_name, dump);
         free (dump);
         dump = NULL;
-        deadbeef->conf_save();
+        deadbeef->conf_save ();
     }
 }
 
 static void
 ml_set_folders (ddb_mediasource_source_t *_source, const char **folders, size_t count) {
     medialib_source_t *source = (medialib_source_t *)_source;
-    dispatch_sync(source->sync_queue, ^{
-        if (!source->musicpaths_json) {
-            source->musicpaths_json = json_array();
-        }
+    dispatch_sync (source->sync_queue, ^{
+      if (!source->musicpaths_json) {
+          source->musicpaths_json = json_array ();
+      }
 
-        json_array_clear(source->musicpaths_json);
-        for (int i = 0; i < count; i++) {
-            json_t *value = json_string(folders[i]);
-            json_array_append(source->musicpaths_json, value);
-            json_decref(value);
-        }
+      json_array_clear (source->musicpaths_json);
+      for (int i = 0; i < count; i++) {
+          json_t *value = json_string (folders[i]);
+          json_array_append (source->musicpaths_json, value);
+          json_decref (value);
+      }
 
-        _save_folders_config(source);
+      _save_folders_config (source);
     });
 }
 
@@ -325,15 +275,15 @@ ml_get_folders (ddb_mediasource_source_t *_source, /* out */ size_t *_count) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block char **folders = NULL;
     __block size_t count = 0;
-    dispatch_sync(source->sync_queue, ^{
-        count = json_array_size(source->musicpaths_json);
-        folders = calloc (count, sizeof (char *));
-        for (int i = 0; i < count; i++) {
-            json_t *data = json_array_get (source->musicpaths_json, i);
-            if (json_is_string (data)) {
-                folders[i] = strdup (json_string_value (data));
-            }
-        }
+    dispatch_sync (source->sync_queue, ^{
+      count = json_array_size (source->musicpaths_json);
+      folders = calloc (count, sizeof (char *));
+      for (int i = 0; i < count; i++) {
+          json_t *data = json_array_get (source->musicpaths_json, i);
+          if (json_is_string (data)) {
+              folders[i] = strdup (json_string_value (data));
+          }
+      }
     });
 
     *_count = count;
@@ -354,14 +304,14 @@ static void
 ml_insert_folder_at_index (ddb_mediasource_source_t *_source, const char *folder, int index) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block int notify = 0;
-    dispatch_sync(source->sync_queue, ^{
-        json_t *value = json_string(folder);
-        if (-1 != json_array_insert(source->musicpaths_json, index, value)) {
-            notify = 1;
-        }
-        json_decref(value);
-        _save_folders_config(source);
-        ml_source_update_fs_watch(source);
+    dispatch_sync (source->sync_queue, ^{
+      json_t *value = json_string (folder);
+      if (-1 != json_array_insert (source->musicpaths_json, index, value)) {
+          notify = 1;
+      }
+      json_decref (value);
+      _save_folders_config (source);
+      ml_source_update_fs_watch (source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
@@ -372,12 +322,12 @@ static void
 ml_remove_folder_at_index (ddb_mediasource_source_t *_source, int index) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block int notify = 0;
-    dispatch_sync(source->sync_queue, ^{
-        if (-1 != json_array_remove(source->musicpaths_json, index)) {
-            notify = 1;
-        }
-        _save_folders_config(source);
-        ml_source_update_fs_watch(source);
+    dispatch_sync (source->sync_queue, ^{
+      if (-1 != json_array_remove (source->musicpaths_json, index)) {
+          notify = 1;
+      }
+      _save_folders_config (source);
+      ml_source_update_fs_watch (source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
@@ -388,14 +338,14 @@ static void
 ml_append_folder (ddb_mediasource_source_t *_source, const char *folder) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block int notify = 0;
-    dispatch_sync(source->sync_queue, ^{
-        json_t *value = json_string(folder);
-        if (-1 != json_array_append(source->musicpaths_json, value)) {
-            notify = 1;
-        }
-        json_decref(value);
-        _save_folders_config(source);
-        ml_source_update_fs_watch(source);
+    dispatch_sync (source->sync_queue, ^{
+      json_t *value = json_string (folder);
+      if (-1 != json_array_append (source->musicpaths_json, value)) {
+          notify = 1;
+      }
+      json_decref (value);
+      _save_folders_config (source);
+      ml_source_update_fs_watch (source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
@@ -436,7 +386,7 @@ ml_tree_item_get_children_count (const ddb_medialib_item_t *_item) {
 #pragma mark -
 
 ddb_medialib_plugin_api_t api = {
-    ._size = sizeof(ddb_medialib_plugin_api_t),
+    ._size = sizeof (ddb_medialib_plugin_api_t),
     .enable_file_operations = ml_enable_saving,
     .folder_count = ml_folder_count,
     .folder_at_index = ml_folder_at_index,
@@ -459,6 +409,7 @@ static DB_mediasource_t plugin = {
     .plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.version_major = DDB_MEDIALIB_VERSION_MAJOR,
     .plugin.version_minor = DDB_MEDIALIB_VERSION_MINOR,
+    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.type = DB_PLUGIN_MEDIASOURCE,
     .plugin.id = "medialib",
     .plugin.name = "Media Library",
@@ -483,8 +434,7 @@ static DB_mediasource_t plugin = {
         "2. Altered source versions must be plainly marked as such, and must not be\n"
         " misrepresented as being the original software.\n"
         "\n"
-        "3. This notice may not be removed or altered from any source distribution.\n"
-    ,
+        "3. This notice may not be removed or altered from any source distribution.\n",
     .plugin.website = "http://deadbeef.sf.net",
     .plugin.connect = ml_connect,
     .plugin.start = ml_start,
