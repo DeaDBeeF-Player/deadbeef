@@ -29,7 +29,31 @@
 
 #define trace(...) \
     { deadbeef->log_detailed (&plugin->plugin, 0, __VA_ARGS__); }
+
+static DB_functions_t *deadbeef;
 static DB_mediasource_t *plugin;
+
+static const char _default_config[] =
+    "{\"queries\":["
+    "{\"name\":\"Albums\",\"items\":["
+    "\"$if2(%album artist%,\\\\<?\\\\>) - [\\\\[Disc %disc%\\\\] ]$if2(%album%,\\\\<?\\\\>)\","
+    "\"[%tracknumber%. ]%title%\""
+    "]},"
+    "{\"name\":\"Artists\",\"items\":["
+    "\"$if2(%album artist%,\\\\<?\\\\>)\","
+    "\"$if2(%album artist%,\\\\<?\\\\>) - [\\\\[Disc %disc%\\\\] ]$if2(%album%,\\\\<?\\\\>)\","
+    "\"[%tracknumber%. ]%title%\""
+    "]},"
+    "{\"name\":\"Genres\",\"items\":["
+    "\"$if2(%genre%,\\\\<?\\\\>)\","
+    "\"$if2(%album artist%,\\\\<?\\\\>) - [\\\\[Disc %disc%\\\\] ]$if2(%album%,\\\\<?\\\\>)\","
+    "\"[%tracknumber%. ]%title%\""
+    "]},"
+    "{\"name\":\"Folders\",\"items\":["
+    "\"%folder_tree%\","
+    "\"[%tracknumber%. ]%title%\""
+    "]}"
+    "]}";
 
 // structure:
 // - presetRoot
@@ -38,8 +62,6 @@ static DB_mediasource_t *plugin;
 //             name: String
 //             tfStrings: List<String>
 //       }
-
-static DB_functions_t *deadbeef;
 
 static scriptableStringListItem_t *
 _itemNames (scriptableItem_t *item) {
@@ -57,7 +79,6 @@ _itemTypes (scriptableItem_t *item) {
 
 static int
 _presetSave (scriptableItem_t *item) {
-    // FIXME: save to file
     return 0;
 }
 
@@ -98,6 +119,116 @@ _presetPbIdentifier (scriptableItem_t *item) {
     return "deadbeef.medialib.tfstring";
 }
 
+static int
+_loadPreset (scriptableItem_t *scriptableQuery, json_t *query, scriptableItem_t *root) {
+    json_t *name = json_object_get (query, "name");
+    if (!json_is_string (name)) {
+        return -1;
+    }
+
+    json_t *items = json_object_get (query, "items");
+    if (!json_is_array (items)) {
+        return -1;
+    }
+
+    size_t item_count = json_array_size (items);
+
+    // validate
+    for (size_t item_index = 0; item_index < item_count; item_index++) {
+        json_t *item = json_array_get (items, item_index);
+        if (!json_is_string (item)) {
+            return -1;
+        }
+    }
+
+    scriptableItemSetPropertyValueForKey (scriptableQuery, json_string_value (name), "name");
+
+    for (size_t item_index = 0; item_index < item_count; item_index++) {
+        json_t *item = json_array_get (items, item_index);
+
+        scriptableItem_t *scriptableItem = scriptableItemAlloc ();
+        scriptableItemSetPropertyValueForKey (scriptableItem, json_string_value (item), "name");
+        scriptableItemAddSubItem (scriptableQuery, scriptableItem);
+    }
+
+    return 0;
+}
+
+static int
+_resetPreset (scriptableItem_t *item) {
+    int res = -1;
+
+    scriptableItem_t *root = scriptableItemParent (item);
+
+    json_error_t error;
+    json_t *json = json_loads (_default_config, 0, &error);
+
+    if (json == NULL) {
+        return -1;
+    }
+
+    json_t *queries = json_object_get (json, "queries");
+    if (queries == NULL) {
+        goto error;
+    }
+
+    if (!json_is_array (queries)) {
+        goto error;
+    }
+
+    scriptableItemFlagsAdd (root, SCRIPTABLE_FLAG_IS_LOADING);
+
+    size_t count = json_array_size (queries);
+
+    const char *presetName = scriptableItemPropertyValueForKey (item, "name");
+
+    for (size_t i = 0; i < count; i++) {
+        json_t *query = json_array_get (queries, i);
+        if (!json_is_object (query)) {
+            goto error;
+        }
+
+        json_t *name = json_object_get (query, "name");
+        if (!json_is_string (name)) {
+            goto error;
+        }
+
+        if (strcmp (json_string_value (name), presetName)) {
+            continue;
+        }
+
+        scriptableItemFlagsAdd (item, SCRIPTABLE_FLAG_IS_LOADING);
+
+        for (;;) {
+            scriptableItem_t *child = scriptableItemChildren (item);
+            if (child == NULL) {
+                break;
+            }
+            scriptableItemRemoveSubItem (item, child);
+        }
+
+        if (-1 == _loadPreset (item, query, root)) {
+            scriptableItemFlagsRemove (item, SCRIPTABLE_FLAG_IS_LOADING);
+            goto error;
+        }
+
+        scriptableItemFlagsRemove (item, SCRIPTABLE_FLAG_IS_LOADING);
+
+        break;
+    }
+
+    res = 0;
+
+error:
+    scriptableItemFlagsRemove (root, SCRIPTABLE_FLAG_IS_LOADING);
+
+    if (json != NULL) {
+        json_delete (json);
+    }
+
+    return res;
+}
+
 static scriptableOverrides_t _presetCallbacks = {
     .readonlyPrefix = _readonlyPrefix,
     .save = _presetSave,
@@ -106,12 +237,13 @@ static scriptableOverrides_t _presetCallbacks = {
     .factoryItemNames = _presetItemNames,
     .factoryItemTypes = _presetItemTypes,
     .createItemOfType = _presetCreateItemOfType,
+    .reset = _resetPreset,
 };
 
 static scriptableItem_t *
 _createBlankPreset (void) {
     scriptableItem_t *item = scriptableItemAlloc ();
-    scriptableItemFlagsSet (item, SCRIPTABLE_FLAG_IS_LIST | SCRIPTABLE_FLAG_IS_REORDABLE | SCRIPTABLE_FLAG_CAN_RENAME);
+    scriptableItemFlagsSet (item, SCRIPTABLE_FLAG_IS_LIST | SCRIPTABLE_FLAG_IS_REORDABLE | SCRIPTABLE_FLAG_CAN_RENAME | SCRIPTABLE_FLAG_CAN_RESET);
     scriptableItemSetOverrides (item, &_presetCallbacks);
     return item;
 }
@@ -196,28 +328,6 @@ scriptableTFQueryRootCreate (void) {
     return root;
 }
 
-static const char _default_config[] =
-    "{\"queries\":["
-    "{\"name\":\"Albums\",\"items\":["
-    "\"$if2(%album artist%,\\\\<?\\\\>) - [\\\\[Disc %disc%\\\\] ]$if2(%album%,\\\\<?\\\\>)\","
-    "\"[%tracknumber%. ]%title%\""
-    "]},"
-    "{\"name\":\"Artists\",\"items\":["
-    "\"$if2(%album artist%,\\\\<?\\\\>)\","
-    "\"$if2(%album artist%,\\\\<?\\\\>) - [\\\\[Disc %disc%\\\\] ]$if2(%album%,\\\\<?\\\\>)\","
-    "\"[%tracknumber%. ]%title%\""
-    "]},"
-    "{\"name\":\"Genres\",\"items\":["
-    "\"$if2(%genre%,\\\\<?\\\\>)\","
-    "\"$if2(%album artist%,\\\\<?\\\\>) - [\\\\[Disc %disc%\\\\] ]$if2(%album%,\\\\<?\\\\>)\","
-    "\"[%tracknumber%. ]%title%\""
-    "]},"
-    "{\"name\":\"Folders\",\"items\":["
-    "\"%folder_tree%\","
-    "\"[%tracknumber%. ]%title%\""
-    "]}"
-    "]}";
-
 int
 scriptableTFQueryLoadPresets (scriptableItem_t *root) {
     int res = -1;
@@ -260,41 +370,17 @@ scriptableTFQueryLoadPresets (scriptableItem_t *root) {
             goto error;
         }
 
-        json_t *name = json_object_get (query, "name");
-        if (!json_is_string (name)) {
-            goto error;
-        }
-
-        json_t *items = json_object_get (query, "items");
-        if (!json_is_array (items)) {
-            goto error;
-        }
-
-        size_t item_count = json_array_size (items);
-
-        // validate
-        for (size_t item_index = 0; item_index < item_count; item_index++) {
-            json_t *item = json_array_get (items, item_index);
-            if (!json_is_string (item)) {
-                goto error;
-            }
-        }
-
         // create
         scriptableItem_t *scriptableQuery = _createBlankPreset ();
         scriptableItemFlagsAdd (scriptableQuery, SCRIPTABLE_FLAG_IS_LOADING);
-        scriptableItemSetPropertyValueForKey (scriptableQuery, json_string_value (name), "name");
-
-        for (size_t item_index = 0; item_index < item_count; item_index++) {
-            json_t *item = json_array_get (items, item_index);
-
-            scriptableItem_t *scriptableItem = scriptableItemAlloc ();
-            scriptableItemSetPropertyValueForKey (scriptableItem, json_string_value (item), "name");
-            scriptableItemAddSubItem (scriptableQuery, scriptableItem);
+        int res = _loadPreset (scriptableQuery, query, root);
+        if (res == -1) {
+            scriptableItemFree (scriptableQuery);
+            scriptableItemFlagsRemove (scriptableQuery, SCRIPTABLE_FLAG_IS_LOADING);
+            goto error;
         }
-
-        scriptableItemAddSubItem (root, scriptableQuery);
         scriptableItemFlagsRemove (scriptableQuery, SCRIPTABLE_FLAG_IS_LOADING);
+        scriptableItemAddSubItem (root, scriptableQuery);
     }
 
     res = 0;
