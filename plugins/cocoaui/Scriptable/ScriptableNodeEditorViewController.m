@@ -362,7 +362,8 @@
             return; // name unchanged
         }
 
-        if (scriptableItemContainsSubItemWithName (scriptableItemParent(item), value)) {
+        if (!(scriptableItemFlags(scriptableItemParent(item)) & SCRIPTABLE_FLAG_ALLOW_NON_UNIQUE_KEYS)
+            && scriptableItemContainsSubItemWithName (scriptableItemParent(item), value)) {
             [self.errorViewer scriptableErrorViewer:self duplicateNameErrorForItem:item];
             [textField becomeFirstResponder];
         }

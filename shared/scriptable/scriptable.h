@@ -32,17 +32,19 @@ typedef struct scriptableItem_s scriptableItem_t;
 
 enum scriptableFlags_t {
     /// suppress calling hooks/delegates while loading data
-    SCRIPTABLE_FLAG_IS_LOADING = 1<<0,
+    SCRIPTABLE_FLAG_IS_LOADING = 1 << 0,
     /// don't allow editing item (renaming etc) -- e.g. for built-in presets
-    SCRIPTABLE_FLAG_IS_READONLY = 1<<1,
+    SCRIPTABLE_FLAG_IS_READONLY = 1 << 1,
     /// a list of presets, or items in a preset (e.g. nodes in dsp preset)
-    SCRIPTABLE_FLAG_IS_LIST = 1<<2,
+    SCRIPTABLE_FLAG_IS_LIST = 1 << 2,
     /// whether items can be reordered by the user
-    SCRIPTABLE_FLAG_IS_REORDABLE = 1<<3,
+    SCRIPTABLE_FLAG_IS_REORDABLE = 1 << 3,
     /// whether the names can be changed by the user
-    SCRIPTABLE_FLAG_CAN_RENAME = 1<<4,
+    SCRIPTABLE_FLAG_CAN_RENAME = 1 << 4,
     /// whether to show Reset button / let the user reset the item to defaults
-    SCRIPTABLE_FLAG_CAN_RESET = 1<<5,
+    SCRIPTABLE_FLAG_CAN_RESET = 1 << 5,
+    /// whether non-unique keys are allowed
+    SCRIPTABLE_FLAG_ALLOW_NON_UNIQUE_KEYS = 1 << 6,
 };
 
 struct scriptableOverrides_t {
@@ -51,37 +53,37 @@ struct scriptableOverrides_t {
     int _size;
 
     /// for drag drop on mac
-    const char *(*pasteboardItemIdentifier)(scriptableItem_t *item);
+    const char *(*pasteboardItemIdentifier) (scriptableItem_t *item);
 
     /// A text to display in UI when the item is read-only
-    const char *(*readonlyPrefix)(scriptableItem_t *item);
+    const char *(*readonlyPrefix) (scriptableItem_t *item);
 
-    scriptableStringListItem_t *(*factoryItemNames)(scriptableItem_t *item);
+    scriptableStringListItem_t *(*factoryItemNames) (scriptableItem_t *item);
 
-    scriptableStringListItem_t *(*factoryItemTypes)(scriptableItem_t *item);
+    scriptableStringListItem_t *(*factoryItemTypes) (scriptableItem_t *item);
 
-    scriptableItem_t *(*createItemOfType)(scriptableItem_t *item, const char *type);
+    scriptableItem_t *(*createItemOfType) (scriptableItem_t *item, const char *type);
 
-    int (*isSubItemNameAllowed)(scriptableItem_t *item, const char *name);
+    int (*isSubItemNameAllowed) (scriptableItem_t *item, const char *name);
 
     /// Called after the child list or properties are modified
     /// (add/remove/insert child or property)
-    int (*didUpdateItem)(scriptableItem_t *item);
+    int (*didUpdateItem) (scriptableItem_t *item);
 
     /// Called right after @c didUpdateItem, but for the parent
-    int (*didUpdateChildItem)(scriptableItem_t *item, scriptableItem_t *subItem);
+    int (*didUpdateChildItem) (scriptableItem_t *item, scriptableItem_t *subItem);
 
     /// Called right before the child item is removed
-    int (*willRemoveChildItem)(scriptableItem_t *item, scriptableItem_t *subItem);
+    int (*willRemoveChildItem) (scriptableItem_t *item, scriptableItem_t *subItem);
 
     /// Called before the item is destroyed to perform additional cleanup
-    void (*willDestroyItem)(scriptableItem_t *item);
+    void (*willDestroyItem) (scriptableItem_t *item);
 
-    int (*save)(scriptableItem_t *item);
+    int (*save) (scriptableItem_t *item);
 
-    int (*reset)(scriptableItem_t *item);
+    int (*reset) (scriptableItem_t *item);
 
-    char * (*saveToString)(scriptableItem_t *item);
+    char *(*saveToString) (scriptableItem_t *item);
 
     void (*propertyValueWillChangeForKey) (scriptableItem_t *item, const char *key);
     void (*propertyValueDidChangeForKey) (scriptableItem_t *item, const char *key);
@@ -93,7 +95,7 @@ scriptableItem_t *
 scriptableItemAlloc (void);
 
 void
-scriptableItemSetOverrides(scriptableItem_t *item, scriptableOverrides_t *overrides);
+scriptableItemSetOverrides (scriptableItem_t *item, scriptableOverrides_t *overrides);
 
 void
 scriptableItemFree (scriptableItem_t *item);
@@ -104,10 +106,14 @@ scriptableStringListItemAlloc (void);
 void
 scriptableStringListItemFree (scriptableStringListItem_t *item);
 
-uint64_t scriptableItemFlags(scriptableItem_t *item);
-void scriptableItemFlagsSet(scriptableItem_t *item, uint64_t flags);
-void scriptableItemFlagsAdd(scriptableItem_t *item, uint64_t flags);
-void scriptableItemFlagsRemove(scriptableItem_t *item, uint64_t flags);
+uint64_t
+scriptableItemFlags (scriptableItem_t *item);
+void
+scriptableItemFlagsSet (scriptableItem_t *item, uint64_t flags);
+void
+scriptableItemFlagsAdd (scriptableItem_t *item, uint64_t flags);
+void
+scriptableItemFlagsRemove (scriptableItem_t *item, uint64_t flags);
 
 void
 scriptableStringListFree (scriptableStringListItem_t *list);
@@ -143,24 +149,25 @@ scriptableItem_t *
 scriptableItemClone (scriptableItem_t *item);
 
 scriptableItem_t *
-scriptableItemParent(scriptableItem_t *item);
-
-void scriptableItemPropertiesForEach(scriptableItem_t *item, int(^block)(const char *key, const char *value));
-
-const char *
-scriptableItemConfigDialog(scriptableItem_t *item);
+scriptableItemParent (scriptableItem_t *item);
 
 void
-scriptableItemSetConfigDialog(scriptableItem_t *item, const char *configDialog);
+scriptableItemPropertiesForEach (scriptableItem_t *item, int (^block) (const char *key, const char *value));
 
 const char *
-scriptableItemPasteboardIdentifier(scriptableItem_t *item);
+scriptableItemConfigDialog (scriptableItem_t *item);
+
+void
+scriptableItemSetConfigDialog (scriptableItem_t *item, const char *configDialog);
+
+const char *
+scriptableItemPasteboardIdentifier (scriptableItem_t *item);
 
 scriptableItem_t *
-scriptableItemChildren(scriptableItem_t *item);
+scriptableItemChildren (scriptableItem_t *item);
 
 scriptableItem_t *
-scriptableItemNext(scriptableItem_t *item);
+scriptableItemNext (scriptableItem_t *item);
 
 // - CRUD
 
@@ -206,7 +213,7 @@ void
 scriptableDeinitShared (void);
 
 scriptableItem_t *
-scriptableRootShared(void);
+scriptableRootShared (void);
 
 #ifdef __cplusplus
 }

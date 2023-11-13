@@ -261,7 +261,7 @@ static scriptableOverrides_t _presetCallbacks = {
 static scriptableItem_t *
 _createBlankPreset (void) {
     scriptableItem_t *item = scriptableItemAlloc ();
-    scriptableItemFlagsSet (item, SCRIPTABLE_FLAG_IS_LIST | SCRIPTABLE_FLAG_IS_REORDABLE | SCRIPTABLE_FLAG_CAN_RENAME | SCRIPTABLE_FLAG_CAN_RESET);
+    scriptableItemFlagsSet (item, SCRIPTABLE_FLAG_IS_LIST | SCRIPTABLE_FLAG_IS_REORDABLE | SCRIPTABLE_FLAG_CAN_RENAME | SCRIPTABLE_FLAG_CAN_RESET | SCRIPTABLE_FLAG_ALLOW_NON_UNIQUE_KEYS);
     scriptableItemSetOverrides (item, &_presetCallbacks);
     return item;
 }
