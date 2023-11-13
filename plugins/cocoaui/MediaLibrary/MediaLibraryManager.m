@@ -46,8 +46,10 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)setPreset:(NSString *)preset {
+    [self willChangeValueForKey:@"preset"];
     deadbeef->conf_set_str("medialib.preset", preset.UTF8String);
     deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+    [self didChangeValueForKey:@"preset"];
 }
 
 - (NSString *)preset {

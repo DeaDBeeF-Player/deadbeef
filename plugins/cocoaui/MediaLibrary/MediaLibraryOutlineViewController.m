@@ -21,6 +21,8 @@
 
 extern DB_functions_t *deadbeef;
 
+static void *kPresetCtx = &kPresetCtx;
+
 @interface MediaLibraryOutlineViewController() <NSOutlineViewDataSource,MediaLibraryOutlineViewDelegate,TrackContextMenuDelegate,TrackPropertiesWindowControllerDelegate> {
 }
 
@@ -77,7 +79,10 @@ extern DB_functions_t *deadbeef;
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(applicationWillQuit:) name:@"ApplicationWillQuit" object:nil];
 
+
+
     self.currentPreset = self.mediaLibraryManager.preset;
+    [self.mediaLibraryManager addObserver:self forKeyPath:@"preset" options:0 context:kPresetCtx];
 
     self.outlineView = outlineView;
     self.outlineView.dataSource = self;
@@ -114,6 +119,20 @@ extern DB_functions_t *deadbeef;
     return self;
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == kPresetCtx) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // NOTE: don't add a check for whether user changed to another preset.
+            // This would break a refresh if the current preset changes settings.
+            self.currentPreset = self.mediaLibraryManager.preset;
+            [self filterChanged];
+        });
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 - (void)disconnect {
     if (self.medialibPlugin == NULL) {
         return;
@@ -132,6 +151,7 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)dealloc {
+    [self.mediaLibraryManager removeObserver:self forKeyPath:@"preset" context:kPresetCtx];
     [self disconnect];
 }
 
@@ -373,16 +393,6 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 }
 
 - (int)widgetMessage:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
-
-    if (_id == DB_EV_CONFIGCHANGED) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSString *preset = self.mediaLibraryManager.preset;
-            // NOTE: don't add a check for whether user changed to another preset.
-            // This would break a refresh if the current preset changes settings.
-            self.currentPreset = preset;
-            [self filterChanged];
-        });
-    }
     return 0;
 }
 
