@@ -21,6 +21,7 @@
 @property (nonatomic) ddb_medialib_plugin_api_t *medialib;
 @property (nonatomic) XCTestExpectation *scanCompletedExpectation;
 @property (nonatomic) int waitCount;
+@property (nonatomic) ddb_mediasource_source_t *source;
 
 @end
 
@@ -34,9 +35,17 @@
     self.medialib = (ddb_medialib_plugin_api_t *)self.plugin->get_extended_api();
     self.scanCompletedExpectation = [[XCTestExpectation alloc] initWithDescription:@"Scan completed"];
     self.waitCount = 0;
+
+    conf_set_int("medialib.IntegrationTest.enabled", 0);
+    self.source = self.plugin->create_source("IntegrationTest");
+    self.medialib->enable_file_operations(self.source, 0);
+    self.plugin->set_source_enabled(self.source, 1);
+
 }
 
 - (void)tearDown {
+    self.plugin->free_source(self.source);
+
     conf_free();
     ddb_logger_free();
 }
@@ -60,26 +69,21 @@ _listener(ddb_mediasource_event_type_t event, void *user_data) {
     snprintf (path, sizeof (path), "%s/TestData/MediaLibrary/MultiArtist", dbplugindir);
     const char *folders[] = { path };
 
-    ddb_mediasource_source_t *source;
-    source = self.plugin->create_source("IntegrationTest");
-    self.medialib->enable_file_operations(source, 0);
-    self.plugin->add_listener(source, _listener, (__bridge void *)(self));
-    self.medialib->set_folders(source, folders, 1);
-    self.plugin->refresh(source);
+    self.plugin->add_listener(self.source, _listener, (__bridge void *)(self));
+    self.medialib->set_folders(self.source, folders, 1);
+    self.plugin->refresh(self.source);
 
     [self waitForExpectations:@[self.scanCompletedExpectation] timeout:5];
 
     scriptableItem_t *root = scriptableTFQueryRootCreate ();
-    ml_scriptable_init(deadbeef, root);
+    ml_scriptable_init(deadbeef, self.plugin, root);
 
-    ddb_medialib_item_t *tree = self.plugin->create_item_tree(source, scriptableItemSubItemForName(root, "Genres"), NULL);
+    ddb_medialib_item_t *tree = self.plugin->create_item_tree(self.source, scriptableItemSubItemForName(root, "Genres"), NULL);
 
     int count = 0;
     const ddb_medialib_item_t *children = self.plugin->tree_item_get_children(tree);
     for (const ddb_medialib_item_t *child = children; child; child = self.plugin->tree_item_get_next(child), count += 1);
-    self.plugin->free_item_tree(source, tree);
-
-    self.plugin->free_source(source);
+    self.plugin->free_item_tree(self.source, tree);
 
     scriptableItemFree(root);
 
