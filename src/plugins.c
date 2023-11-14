@@ -1033,12 +1033,14 @@ plug_load_all (void) {
     if (xdg_local_home) {
         strncpy (xdg_plugin_dir, xdg_local_home, sizeof (xdg_plugin_dir));
         xdg_plugin_dir[sizeof(xdg_plugin_dir)-1] = 0;
+        xdg_plugin_dir_explicit_arch[0] = 0;
     } else {
         char *homedir = getenv (HOMEDIR);
 
         if (!homedir) {
             trace_err ("plug_load_all: warning: unable to find home directory\n");
             xdg_plugin_dir[0] = 0;
+            xdg_plugin_dir_explicit_arch[0] = 0;
         }
         else {
             // multilib support:
@@ -1072,7 +1074,7 @@ plug_load_all (void) {
     // XXX: Here absolute path is assumed, however if dirname is a relative
     // path it won't work.
     if (strcmp(xdg_plugin_dir, dirname) == 0) {
-        plugins_dirs[1] = NULL;
+        xdg_plugin_dir[0] = 0;
     }
 #else
     const char *plugins_dirs[] = { dirname, NULL };
