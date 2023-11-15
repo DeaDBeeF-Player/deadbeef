@@ -2206,6 +2206,10 @@
 		2DC1CE5A240EEBA6000776DB /* analopl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC1CDCE240EEBA5000776DB /* analopl.h */; };
 		2DC1CE5B240EEBA6000776DB /* rat.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC1CDCF240EEBA5000776DB /* rat.h */; };
 		2DC4199E1B90540A007E3026 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DC4199D1B90540A007E3026 /* Carbon.framework */; };
+		2DC5A2A72B05450400CBDA66 /* mlcellrendererpixbuf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC5A2A12B05449800CBDA66 /* mlcellrendererpixbuf.h */; };
+		2DC5A2A82B05450400CBDA66 /* mlcellrendererpixbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5A2A22B05449800CBDA66 /* mlcellrendererpixbuf.c */; };
+		2DC5A2A92B05450400CBDA66 /* mlcellrendererpixbuf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC5A2A12B05449800CBDA66 /* mlcellrendererpixbuf.h */; };
+		2DC5A2AA2B05450400CBDA66 /* mlcellrendererpixbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5A2A22B05449800CBDA66 /* mlcellrendererpixbuf.c */; };
 		2DC655752741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC655742741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib */; };
 		2DC655862741955A00583E14 /* ScopePreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC655852741955A00583E14 /* ScopePreferencesViewController.xib */; };
 		2DC6566E2744289C00583E14 /* ddbequalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B57F2269BB4300AFF9AE /* ddbequalizer.h */; };
@@ -6821,6 +6825,8 @@
 		2DC1CDCE240EEBA5000776DB /* analopl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = analopl.h; sourceTree = "<group>"; };
 		2DC1CDCF240EEBA5000776DB /* rat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rat.h; sourceTree = "<group>"; };
 		2DC4199D1B90540A007E3026 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		2DC5A2A12B05449800CBDA66 /* mlcellrendererpixbuf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mlcellrendererpixbuf.h; sourceTree = "<group>"; };
+		2DC5A2A22B05449800CBDA66 /* mlcellrendererpixbuf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mlcellrendererpixbuf.c; sourceTree = "<group>"; };
 		2DC655742741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpectrumAnalyzerPreferencesViewController.xib; sourceTree = "<group>"; };
 		2DC655852741955A00583E14 /* ScopePreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScopePreferencesViewController.xib; sourceTree = "<group>"; };
 		2DC6565C2744287000583E14 /* gtk2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = gtk2.xcconfig; sourceTree = "<group>"; };
@@ -11789,6 +11795,8 @@
 				2DCCCF7D26C43D080034F4BB /* medialibwidget.c */,
 				2DE55ACC26C5A47F008F33FF /* medialibmanager.h */,
 				2DE55ACD26C5A47F008F33FF /* medialibmanager.c */,
+				2DC5A2A12B05449800CBDA66 /* mlcellrendererpixbuf.h */,
+				2DC5A2A22B05449800CBDA66 /* mlcellrendererpixbuf.c */,
 			);
 			path = medialib;
 			sourceTree = "<group>";
@@ -14125,6 +14133,7 @@
 				2DC656832744289C00583E14 /* actions.h in Headers */,
 				2DC656842744289C00583E14 /* trkproperties.h in Headers */,
 				2DC656852744289C00583E14 /* ddb_splitter.h in Headers */,
+				2DC5A2A72B05450400CBDA66 /* mlcellrendererpixbuf.h in Headers */,
 				2D0AC9AC2864E12700F6D56A /* selpropertieswidget.h in Headers */,
 				2DC656862744289C00583E14 /* ddb_splitter_size_mode.h in Headers */,
 				2DC656872744289C00583E14 /* prefwinnetwork.h in Headers */,
@@ -14208,6 +14217,7 @@
 				2DE3B7D12269BF1700AFF9AE /* actions.h in Headers */,
 				2DE3B7C52269BF1300AFF9AE /* trkproperties.h in Headers */,
 				2DE3B7ED2269BF3100AFF9AE /* ddb_splitter.h in Headers */,
+				2DC5A2A92B05450400CBDA66 /* mlcellrendererpixbuf.h in Headers */,
 				2D0AC9AD2864E12700F6D56A /* selpropertieswidget.h in Headers */,
 				2DE3B7FB2269BF3100AFF9AE /* ddb_splitter_size_mode.h in Headers */,
 				2D715C1A26C839020022A8F0 /* prefwinnetwork.h in Headers */,
@@ -17939,6 +17949,7 @@
 				2DC656D02744289C00583E14 /* pluginconf.c in Sources */,
 				2DC656D12744289C00583E14 /* trkproperties.c in Sources */,
 				2DC656D22744289C00583E14 /* ctmapping.c in Sources */,
+				2DC5A2A82B05450400CBDA66 /* mlcellrendererpixbuf.c in Sources */,
 				2DC656D32744289C00583E14 /* prefwinnetwork.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -18043,6 +18054,7 @@
 				2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */,
 				2DE3B7EA2269BF3100AFF9AE /* trkproperties.c in Sources */,
 				2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */,
+				2DC5A2AA2B05450400CBDA66 /* mlcellrendererpixbuf.c in Sources */,
 				2D715C1B26C839020022A8F0 /* prefwinnetwork.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
