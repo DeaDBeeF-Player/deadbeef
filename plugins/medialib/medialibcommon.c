@@ -21,15 +21,16 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <stdlib.h>
 #include "medialibcommon.h"
 #include "medialibsource.h"
 
 void
 ml_notify_listeners (medialib_source_t *source, int event) {
-    dispatch_sync(source->sync_queue, ^{
+    dispatch_sync (source->sync_queue, ^{
         for (int i = 0; i < MAX_LISTENERS; i++) {
             if (source->ml_listeners[i]) {
-                source->ml_listeners[i] (event, source->ml_listeners_userdatas[i]);
+                source->ml_listeners[i](event, source->ml_listeners_userdatas[i]);
             }
         }
     });

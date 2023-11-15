@@ -17,7 +17,9 @@ medialib_la_SOURCES =\
 	medialibstate.c\
 	medialibstate.h\
 	medialibtree.c\
-	medialibtree.h
+	medialibtree.h\
+	scriptable_tfquery.c\
+	scriptable_tfquery.h
 
 medialib_la_LDFLAGS = -module -avoid-version
 
