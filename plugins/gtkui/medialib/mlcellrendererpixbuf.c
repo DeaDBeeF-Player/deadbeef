@@ -98,7 +98,7 @@ _set_property (
             cellpixbuf->path = NULL;
         }
         if (str != NULL) {
-            cellpixbuf->path = strdup (cellpixbuf->path);
+            cellpixbuf->path = strdup (str);
         }
         break;
     }
