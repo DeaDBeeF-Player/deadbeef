@@ -28,11 +28,16 @@
 
 G_BEGIN_DECLS
 
+typedef struct {
+    void *ctx;
+    GdkPixbuf *(*cell_did_became_visible) (void *ctx, const char *path);
+} MlCellRendererPixbufDelegate;
+
 #define ML_TYPE_CELL_RENDERER_PIXBUF (ml_cell_renderer_pixbuf_get_type ())
 G_DECLARE_FINAL_TYPE (MlCellRendererPixbuf, ml_cell_renderer_pixbuf, ML, CELL_RENDERER_PIXBUF, GtkCellRenderer)
 
 MlCellRendererPixbuf *
-ml_cell_renderer_pixbuf_new (void);
+ml_cell_renderer_pixbuf_new (MlCellRendererPixbufDelegate *delegate);
 
 G_END_DECLS
 

@@ -30,7 +30,9 @@ struct _MlCellRendererPixbuf {
     GtkCellRenderer parent_instance;
 
     // instance variables for subclass go here
-    ddb_playItem_t *track;
+    MlCellRendererPixbufDelegate *delegate;
+    char *path;
+    GdkPixbuf *pixbuf;
 };
 
 G_DEFINE_TYPE (MlCellRendererPixbuf, ml_cell_renderer_pixbuf, GTK_TYPE_CELL_RENDERER)
@@ -42,8 +44,22 @@ ml_cell_renderer_pixbuf_init (MlCellRendererPixbuf *self) {
 
 enum {
     PROP_0,
-    PROP_TRACK,
+    PROP_PATH,
+    PROP_PIXBUF,
 };
+
+static void
+_finalize (GObject *object) {
+    MlCellRendererPixbuf *self = ML_CELL_RENDERER_PIXBUF (object);
+    if (self->path) {
+        free (self->path);
+        self->path = NULL;
+    }
+    if (self->pixbuf) {
+        g_object_unref (self->pixbuf);
+        self->pixbuf = NULL;
+    }
+}
 
 static void
 _get_property (
@@ -54,10 +70,12 @@ _get_property (
     MlCellRendererPixbuf *self = ML_CELL_RENDERER_PIXBUF (object);
 
     switch (param_id) {
-    case PROP_TRACK:
-        g_value_set_pointer (value, self->track);
+    case PROP_PATH:
+        g_value_set_string (value, self->path);
         break;
-
+    case PROP_PIXBUF:
+        g_value_set_object (value, self->pixbuf);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, psec);
         break;
@@ -73,12 +91,33 @@ _set_property (
     MlCellRendererPixbuf *cellpixbuf = ML_CELL_RENDERER_PIXBUF (object);
 
     switch (param_id) {
-    case PROP_TRACK:
-        cellpixbuf->track = (ddb_playItem_t *)g_value_get_pointer (value);
+    case PROP_PATH: {
+        const char *str = g_value_get_string (value);
+        if (cellpixbuf->path) {
+            free (cellpixbuf->path);
+            cellpixbuf->path = NULL;
+        }
+        if (str != NULL) {
+            cellpixbuf->path = strdup (cellpixbuf->path);
+        }
+        break;
+    }
+    case PROP_PIXBUF:
+        cellpixbuf->pixbuf = g_value_get_object (value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
         break;
+    }
+}
+
+static void
+_get_size (GtkCellRenderer *cell, GtkWidget *widget, const GdkRectangle *cell_area, gint *x_offset, gint *y_offset, gint *width, gint *height) {
+    if (width != NULL) {
+        *width = 16;
+    }
+    if (height != NULL) {
+        *height = 16;
     }
 }
 
@@ -90,18 +129,36 @@ _render (
     const GdkRectangle *background_area,
     const GdkRectangle *cell_area,
     GtkCellRendererState flags) {
-    MlCellRendererPixbuf *cellpixbuf = ML_CELL_RENDERER_PIXBUF (cell);
+    MlCellRendererPixbuf *self = ML_CELL_RENDERER_PIXBUF (cell);
 
-    // get associated track
-    // ask cover manager for album art
-    // render, or wait for callback
-    ddb_playItem_t *track = cellpixbuf->track;
+    GdkRectangle pix_rect;
+    pix_rect.x = cell_area->x;
+    pix_rect.y = cell_area->y;
+    pix_rect.width = 16;
+    pix_rect.height = 16;
 
-    const char *title = "<NULL>";
-    if (track != NULL) {
-        title = deadbeef->pl_find_meta (track, "title") ?: "<?>";
+    GdkRectangle draw_rect;
+    if (!gdk_rectangle_intersect (cell_area, &pix_rect, &draw_rect)) {
+        return;
     }
-    //    printf ("Render cell: %p %s\n", track, title);
+
+    GtkStyleContext *context = gtk_widget_get_style_context (widget);
+    gtk_style_context_save (context);
+
+    gtk_style_context_add_class (context, GTK_STYLE_CLASS_IMAGE);
+
+    GdkPixbuf *pixbuf = self->pixbuf;
+    if (pixbuf == NULL) {
+        pixbuf = self->delegate->cell_did_became_visible (self->delegate->ctx, self->path);
+    }
+
+    if (pixbuf) {
+        cairo_rectangle (cr, cell_area->x, cell_area->y, 64, 64);
+        gdk_cairo_set_source_pixbuf (cr, pixbuf, cell_area->x, cell_area->y);
+        cairo_fill (cr);
+    }
+
+    gtk_style_context_restore (context);
 }
 
 static void
@@ -109,14 +166,19 @@ ml_cell_renderer_pixbuf_class_init (MlCellRendererPixbufClass *class) {
     // virtual function overrides go here
     // property and signal definitions go here
     GObjectClass *object_class = G_OBJECT_CLASS (class);
-    class->parent_class.render = _render;
+    object_class->finalize = _finalize;
     object_class->get_property = _get_property;
     object_class->set_property = _set_property;
+    class->parent_class.get_size = _get_size;
+    class->parent_class.render = _render;
 
-    g_object_class_install_property (object_class, PROP_TRACK, g_param_spec_pointer ("track", "Track Object", "The track", G_PARAM_READWRITE));
+    g_object_class_install_property (object_class, PROP_PATH, g_param_spec_string ("path", "Track Object", "The path", "", G_PARAM_READWRITE));
+    g_object_class_install_property (object_class, PROP_PIXBUF, g_param_spec_object ("pixbuf", "Pixbuf Object", "The pixbuf", GDK_TYPE_PIXBUF, G_PARAM_READWRITE));
 }
 
 MlCellRendererPixbuf *
-ml_cell_renderer_pixbuf_new (void) {
-    return g_object_new (ML_TYPE_CELL_RENDERER_PIXBUF, NULL);
+ml_cell_renderer_pixbuf_new (MlCellRendererPixbufDelegate *delegate) {
+    MlCellRendererPixbuf *self = g_object_new (ML_TYPE_CELL_RENDERER_PIXBUF, NULL);
+    self->delegate = delegate;
+    return self;
 }
