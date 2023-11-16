@@ -33,16 +33,16 @@ typedef struct covermanager_s covermanager_t;
 
 /// Called by @c covermanager_cover_for_track when the cover is ready.
 /// The @c img argument is not retained, and will be released after the block completes.
-typedef void (^covermanager_completion_block_t)(GdkPixbuf *img);
+typedef void (^covermanager_completion_block_t) (GdkPixbuf *img);
 
 covermanager_t *
-covermanager_shared(void);
+covermanager_shared (void);
 
 void
-covermanager_shared_free(void);
+covermanager_shared_free (void);
 
 covermanager_t *
-covermanager_new(void);
+covermanager_new (void);
 
 void
 covermanager_free (covermanager_t *manager);
@@ -52,7 +52,11 @@ covermanager_free (covermanager_t *manager);
 /// If the cover is immediately available -- it will be returned (retained), and the @c completion_block will not be called.
 /// Otherwise the @c completion_block will be called when the requests completes.
 GdkPixbuf *
-covermanager_cover_for_track(covermanager_t *manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block);
+covermanager_cover_for_track (covermanager_t *manager, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block);
+
+/// Same as @c covermanager_cover_for_track but would not return default cover
+GdkPixbuf *
+covermanager_cover_for_track_no_default (covermanager_t *impl, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block);
 
 /// Create scaled image with specified dimensions. Returns retained object.
 GdkPixbuf *
@@ -63,6 +67,6 @@ GtkAllocation
 covermanager_desired_size_for_image_size (covermanager_t *manager, GtkAllocation image_size, GtkAllocation availableSize);
 
 void
-covermanager_terminate(covermanager_t *manager);
+covermanager_terminate (covermanager_t *manager);
 
 #endif /* covermanager_h */

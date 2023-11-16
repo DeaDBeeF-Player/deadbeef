@@ -759,7 +759,7 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     }
 
     int64_t reload_index = mlv->reload_index;
-    covermanager_cover_for_track (covermanager_shared (), track, mlv->artwork_source_id, ^(GdkPixbuf *img) {
+    covermanager_cover_for_track_no_default (covermanager_shared (), track, mlv->artwork_source_id, ^(GdkPixbuf *img) {
         if (reload_index != mlv->reload_index || img == NULL) {
             gtk_tree_path_free (path);
             return;
