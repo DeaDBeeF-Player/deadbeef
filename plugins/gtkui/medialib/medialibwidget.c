@@ -870,7 +870,11 @@ w_medialib_viewer_create (void) {
     gtk_container_add (GTK_CONTAINER (scroll), GTK_WIDGET (w->tree));
 
     GtkIconTheme *icon_theme = gtk_icon_theme_get_default ();
+#if GTK_CHECK_VERSION(3, 0, 0)
     w->folder_icon = gtk_icon_theme_load_icon (icon_theme, "folder-music", 16, 0, NULL);
+#else
+    w->folder_icon = gtk_icon_theme_load_icon (icon_theme, "folder", 16, 0, NULL);
+#endif
     ddb_artwork_plugin_t *artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     if (artwork_plugin != NULL) {
         w->artwork_source_id = artwork_plugin->allocate_source_id ();

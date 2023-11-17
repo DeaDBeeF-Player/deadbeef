@@ -166,11 +166,11 @@ _render (
 
         gtk_style_context_add_class (context, GTK_STYLE_CLASS_IMAGE);
 #else
-        cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+        cairo_t *cr = gdk_cairo_create (window);
 #endif
 
-        cairo_rectangle (cr, cell_area->x, cell_area->y, 64, 64);
-        gdk_cairo_set_source_pixbuf (cr, pixbuf, cell_area->x, cell_area->y);
+        gdk_cairo_set_source_pixbuf (cr, pixbuf, pix_rect.x, pix_rect.y);
+        gdk_cairo_rectangle (cr, &draw_rect);
         cairo_fill (cr);
 #if GTK_CHECK_VERSION(3, 0, 0)
         gtk_style_context_restore (context);
