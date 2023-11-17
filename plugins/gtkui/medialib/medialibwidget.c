@@ -36,7 +36,7 @@ typedef struct {
     char *preset;
     char *search_text;
     int listener_id;
-    GtkTreeIter root_iter; // FIXME: should not be needed
+    GtkTreeIter root_iter;
     GtkTreeStore *store;
     ddb_medialib_item_t *item_tree;
     gint collapse_expand_select_timeout;
