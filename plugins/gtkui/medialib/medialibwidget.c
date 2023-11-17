@@ -116,7 +116,10 @@ _medialib_state_did_change (void *user_data) {
     case DDB_MEDIASOURCE_STATE_IDLE:
         if (enabled) {
             char text[200];
-            int count = plugin->tree_item_get_children_count (mlv->item_tree);
+            int count = 0;
+            if (mlv->item_tree != NULL) {
+                count = plugin->tree_item_get_children_count (mlv->item_tree);
+            }
             snprintf (text, sizeof (text), "%s (%d)", _ ("All Music"), mlv->item_tree ? count : 0);
             gtk_tree_store_set (store, &mlv->root_iter, COL_TITLE, text, -1);
         }
@@ -724,7 +727,24 @@ _drag_data_get (
     tracks = NULL;
 }
 
-//static GdkPixbuf *folder_pixbuf;
+static void
+_receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
+    // FIXME: background queue
+
+    // scale
+    GtkAllocation a;
+    a.x = 0;
+    a.y = 0;
+    a.width = 16;
+    a.height = 16;
+    GdkPixbuf *scaled_img = covermanager_create_scaled_image (covermanager_shared (), img, a);
+
+    GtkTreeStore *store = mlv->store;
+    GtkTreeIter iter;
+    GtkTreeModel *model = GTK_TREE_MODEL (mlv->store);
+    gtk_tree_model_get_iter (model, &iter, path);
+    gtk_tree_store_set (store, &iter, COL_ICON, scaled_img, -1);
+}
 
 static GdkPixbuf *
 _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
@@ -765,30 +785,17 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     }
 
     int64_t reload_index = mlv->reload_index;
-    covermanager_cover_for_track_no_default (covermanager_shared (), track, mlv->artwork_source_id, ^(GdkPixbuf *img) {
-        if (reload_index != mlv->reload_index || img == NULL) {
-            gtk_tree_path_free (path);
-            return;
+    GdkPixbuf *cached_cover = covermanager_cover_for_track_no_default (covermanager_shared (), track, mlv->artwork_source_id, ^(GdkPixbuf *img) {
+        if (reload_index == mlv->reload_index && img != NULL) {
+            _receive_cover (mlv, path, img);
         }
-
-        // FIXME: background queue
-
-        // scale
-        GtkAllocation a;
-        a.x = 0;
-        a.y = 0;
-        a.width = 16;
-        a.height = 16;
-        GdkPixbuf *scaled_img = covermanager_create_scaled_image (covermanager_shared (), img, a);
-
-        GtkTreeStore *store = mlv->store;
-        GtkTreeIter iter;
-        gtk_tree_model_get_iter (model, &iter, path);
-        gtk_tree_store_set (store, &iter, COL_ICON, scaled_img, -1);
-
         gtk_tree_path_free (path);
     });
 
+    if (cached_cover != NULL) {
+        _receive_cover (mlv, path, cached_cover);
+        gtk_tree_path_free (path);
+    }
     return mlv->folder_icon;
 }
 
