@@ -22,6 +22,8 @@
 */
 
 #include <deadbeef/deadbeef.h>
+#include <stdlib.h>
+#include <string.h>
 #include "mlcellrendererpixbuf.h"
 
 extern DB_functions_t *deadbeef;
@@ -111,8 +113,13 @@ _set_property (
     }
 }
 
+#if !GTK_CHECK_VERSION(3, 0, 0)
+static void
+_get_size (GtkCellRenderer *cell, GtkWidget *widget, GdkRectangle *cell_area, gint *x_offset, gint *y_offset, gint *width, gint *height) {
+#else
 static void
 _get_size (GtkCellRenderer *cell, GtkWidget *widget, const GdkRectangle *cell_area, gint *x_offset, gint *y_offset, gint *width, gint *height) {
+#endif
     if (width != NULL) {
         *width = 16;
     }
@@ -121,6 +128,10 @@ _get_size (GtkCellRenderer *cell, GtkWidget *widget, const GdkRectangle *cell_ar
     }
 }
 
+#if !GTK_CHECK_VERSION(3, 0, 0)
+static void
+_render (GtkCellRenderer *cell, GdkDrawable *window, GtkWidget *widget, GdkRectangle *background_area, GdkRectangle *cell_area, GdkRectangle *expose_area, GtkCellRendererState flags) {
+#else
 static void
 _render (
     GtkCellRenderer *cell,
@@ -129,6 +140,7 @@ _render (
     const GdkRectangle *background_area,
     const GdkRectangle *cell_area,
     GtkCellRendererState flags) {
+#endif
     MlCellRendererPixbuf *self = ML_CELL_RENDERER_PIXBUF (cell);
 
     GdkRectangle pix_rect;
@@ -142,23 +154,30 @@ _render (
         return;
     }
 
-    GtkStyleContext *context = gtk_widget_get_style_context (widget);
-    gtk_style_context_save (context);
-
-    gtk_style_context_add_class (context, GTK_STYLE_CLASS_IMAGE);
-
     GdkPixbuf *pixbuf = self->pixbuf;
     if (pixbuf == NULL) {
         pixbuf = self->delegate->cell_did_became_visible (self->delegate->ctx, self->path);
     }
 
-    if (pixbuf) {
+    if (pixbuf != NULL) {
+#if GTK_CHECK_VERSION(3, 0, 0)
+        GtkStyleContext *context = gtk_widget_get_style_context (widget);
+        gtk_style_context_save (context);
+
+        gtk_style_context_add_class (context, GTK_STYLE_CLASS_IMAGE);
+#else
+        cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
+#endif
+
         cairo_rectangle (cr, cell_area->x, cell_area->y, 64, 64);
         gdk_cairo_set_source_pixbuf (cr, pixbuf, cell_area->x, cell_area->y);
         cairo_fill (cr);
+#if GTK_CHECK_VERSION(3, 0, 0)
+        gtk_style_context_restore (context);
+#else
+        cairo_destroy (cr);
+#endif
     }
-
-    gtk_style_context_restore (context);
 }
 
 static void

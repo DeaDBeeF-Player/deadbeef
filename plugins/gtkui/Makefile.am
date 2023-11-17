@@ -40,6 +40,7 @@ GTKUI_SOURCES = \
     tfimport.c tfimport.h\
 	medialib/medialibwidget.c medialib/medialibwidget.h\
 	medialib/medialibmanager.c medialib/medialibmanager.h\
+	medialib/mlcellrendererpixbuf.c medialib/mlcellrendererpixbuf.h\
 	covermanager/covermanager.c covermanager/covermanager.h\
 	covermanager/gobjcache.c covermanager/gobjcache.h\
 	covermanager/albumartwidget.c covermanager/albumartwidget.h\
