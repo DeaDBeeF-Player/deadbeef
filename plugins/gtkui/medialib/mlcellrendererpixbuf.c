@@ -105,7 +105,14 @@ _set_property (
         break;
     }
     case PROP_PIXBUF:
+        if (cellpixbuf->pixbuf != NULL) {
+            g_object_unref (cellpixbuf->pixbuf);
+            cellpixbuf->pixbuf = NULL;
+        }
         cellpixbuf->pixbuf = g_value_get_object (value);
+        if (cellpixbuf->pixbuf != NULL) {
+            g_object_ref (cellpixbuf->pixbuf);
+        }
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
