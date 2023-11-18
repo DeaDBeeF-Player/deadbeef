@@ -23,7 +23,7 @@
   Oleksiy Yakovenko waker@users.sourceforge.net
 */
 #ifdef HAVE_CONFIG_H
-#  include "config.h"
+#    include "config.h"
 #endif
 #include <stdio.h>
 #include <stdint.h>
@@ -40,7 +40,7 @@
 #include "threading.h"
 #include <deadbeef/common.h>
 
-#define min(x,y) ((x)<(y)?(x):(y))
+#define min(x, y) ((x) < (y) ? (x) : (y))
 
 static DB_conf_item_t *conf_items;
 static int changed;
@@ -81,7 +81,7 @@ int
 conf_load (void) {
     size_t l = strlen (dbconfdir);
     const char configfile[] = "/config";
-    char fname[l + sizeof(configfile)];
+    char fname[l + sizeof (configfile)];
     memcpy (fname, dbconfdir, l);
     memcpy (fname + l, configfile, sizeof (configfile));
     FILE *fp = fopen (fname, "rb");
@@ -103,7 +103,7 @@ conf_load (void) {
     l = ftell (fp);
     rewind (fp);
 
-    uint8_t *buffer = malloc (l+1);
+    uint8_t *buffer = malloc (l + 1);
     if (l != fread (buffer, 1, l, fp)) {
         free (buffer);
         trace_err ("failed to read entire config file to memory\n");
@@ -126,7 +126,7 @@ conf_load (void) {
         *estr = 0;
 
         if (str[0] == '#' || str[0] <= 0x20) {
-            str = estr+1;
+            str = estr + 1;
             continue;
         }
         uint8_t *p = (uint8_t *)str;
@@ -135,7 +135,7 @@ conf_load (void) {
         }
         if (!*p) {
             trace_err ("error in config file line %d\n", line);
-            str = estr+1;
+            str = estr + 1;
             continue;
         }
         *p = 0;
@@ -152,7 +152,7 @@ conf_load (void) {
         *p = 0;
         // new items are appended, to preserve order
         conf_set_str ((const char *)str, (const char *)value);
-        str = estr+1;
+        str = estr + 1;
     }
     changed = 0;
     free (buffer);
@@ -180,7 +180,7 @@ conf_save (void) {
     conf_lock ();
 
     if (!changed) {
-        conf_unlock();
+        conf_unlock ();
         return 0;
     }
 
@@ -192,26 +192,26 @@ conf_save (void) {
         return -1;
     }
 
-    writer = buffered_file_writer_new(fp, 64*1024);
+    writer = buffered_file_writer_new (fp, 64 * 1024);
 
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
-        if (buffered_file_writer_write(writer, it->key, strlen(it->key)) < 0) {
+        if (buffered_file_writer_write (writer, it->key, strlen (it->key)) < 0) {
             goto error;
         }
-        if (buffered_file_writer_write(writer, " ", 1) < 0)  {
+        if (buffered_file_writer_write (writer, " ", 1) < 0) {
             goto error;
         }
-        if (buffered_file_writer_write(writer, it->value, strlen(it->value)) < 0) {
+        if (buffered_file_writer_write (writer, it->value, strlen (it->value)) < 0) {
             goto error;
         }
-        if (buffered_file_writer_write(writer, "\n", 1) < 0)  {
+        if (buffered_file_writer_write (writer, "\n", 1) < 0) {
             goto error;
         }
     }
-    if (buffered_file_writer_flush(writer) < 0) {
+    if (buffered_file_writer_flush (writer) < 0) {
         goto error;
     }
-    buffered_file_writer_free(writer);
+    buffered_file_writer_free (writer);
     writer = NULL;
     if (EOF == fclose (fp)) {
         fp = NULL;
@@ -227,13 +227,13 @@ conf_save (void) {
     conf_unlock ();
     return 0;
 error:
+    if (fp != NULL) {
+        fclose (fp);
+    }
     conf_unlock ();
     trace_err ("failed to write to file %s (%s)\n", tempfile, strerror (errno));
     if (writer != NULL) {
-        buffered_file_writer_free(writer);
-    }
-    if (fp != NULL) {
-        fclose (fp);
+        buffered_file_writer_free (writer);
     }
     return -1;
 }
@@ -268,10 +268,10 @@ conf_get_str (const char *key, const char *def, char *buffer, int buffer_size) {
     conf_lock ();
     const char *out = conf_get_str_fast (key, def);
     if (out) {
-        size_t n = strlen (out)+1;
+        size_t n = strlen (out) + 1;
         n = min (n, buffer_size);
         memcpy (buffer, out, n);
-        buffer[buffer_size-1] = 0;
+        buffer[buffer_size - 1] = 0;
     }
     else {
         *buffer = 0;
@@ -382,7 +382,7 @@ conf_set_int (const char *key, int val) {
 void
 conf_set_int64 (const char *key, int64_t val) {
     char s[20];
-    snprintf (s, sizeof (s), "%"PRId64, val);
+    snprintf (s, sizeof (s), "%" PRId64, val);
     conf_set_str (key, s);
 }
 
