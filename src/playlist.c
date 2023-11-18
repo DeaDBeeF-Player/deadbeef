@@ -881,12 +881,17 @@ plt_clear (playlist_t *plt) {
     pl_lock ();
 
     it = plt->head[PL_MAIN];
-    plt->head[PL_MAIN] = NULL;
-    plt->head[PL_SEARCH] = NULL;
     plt->count[PL_MAIN] = 0;
     plt->count[PL_SEARCH] = 0;
+    plt->totaltime = 0;
+    plt->seltime = 0;
+    plt->head[PL_MAIN] = NULL;
+    plt->head[PL_SEARCH] = NULL;
+    plt->tail[PL_MAIN] = NULL;
+    plt->tail[PL_SEARCH] = NULL;
     plt->current_row[PL_MAIN] = -1;
     plt->current_row[PL_SEARCH] = -1;
+    plt->scroll = 0;
 
     pl_unlock ();
 
