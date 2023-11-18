@@ -28,6 +28,8 @@
 
 G_BEGIN_DECLS
 
+#define ML_CELL_RENDERER_PIXBUF_SIZE 24
+
 typedef struct {
     void *ctx;
     GdkPixbuf *(*cell_did_became_visible) (void *ctx, const char *path);

@@ -128,10 +128,10 @@ static void
 _get_size (GtkCellRenderer *cell, GtkWidget *widget, const GdkRectangle *cell_area, gint *x_offset, gint *y_offset, gint *width, gint *height) {
 #endif
     if (width != NULL) {
-        *width = 16;
+        *width = ML_CELL_RENDERER_PIXBUF_SIZE;
     }
     if (height != NULL) {
-        *height = 16;
+        *height = ML_CELL_RENDERER_PIXBUF_SIZE;
     }
 }
 
@@ -153,8 +153,8 @@ _render (
     GdkRectangle pix_rect;
     pix_rect.x = cell_area->x;
     pix_rect.y = cell_area->y;
-    pix_rect.width = 16;
-    pix_rect.height = 16;
+    pix_rect.width = ML_CELL_RENDERER_PIXBUF_SIZE;
+    pix_rect.height = ML_CELL_RENDERER_PIXBUF_SIZE;
 
     GdkRectangle draw_rect;
     if (!gdk_rectangle_intersect (cell_area, &pix_rect, &draw_rect)) {

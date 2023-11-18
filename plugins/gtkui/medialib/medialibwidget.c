@@ -735,8 +735,8 @@ _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
     GtkAllocation a;
     a.x = 0;
     a.y = 0;
-    a.width = 16;
-    a.height = 16;
+    a.width = ML_CELL_RENDERER_PIXBUF_SIZE;
+    a.height = ML_CELL_RENDERER_PIXBUF_SIZE;
     GdkPixbuf *scaled_img = covermanager_create_scaled_image (covermanager_shared (), img, a);
 
     GtkTreeStore *store = mlv->store;
@@ -870,11 +870,9 @@ w_medialib_viewer_create (void) {
     gtk_container_add (GTK_CONTAINER (scroll), GTK_WIDGET (w->tree));
 
     GtkIconTheme *icon_theme = gtk_icon_theme_get_default ();
-#if GTK_CHECK_VERSION(3, 0, 0)
-    w->folder_icon = gtk_icon_theme_load_icon (icon_theme, "folder-music", 16, 0, NULL);
-#else
-    w->folder_icon = gtk_icon_theme_load_icon (icon_theme, "folder", 16, 0, NULL);
-#endif
+    // NOTE: using "folder-music" icon doesn't yield a good result,
+    // since it doesn't look like a folder across the icon themes.
+    w->folder_icon = gtk_icon_theme_load_icon (icon_theme, "folder", ML_CELL_RENDERER_PIXBUF_SIZE, 0, NULL);
     ddb_artwork_plugin_t *artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     if (artwork_plugin != NULL) {
         w->artwork_source_id = artwork_plugin->allocate_source_id ();
