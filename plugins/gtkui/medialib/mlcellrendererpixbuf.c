@@ -64,11 +64,7 @@ _finalize (GObject *object) {
 }
 
 static void
-_get_property (
-    GObject *object,
-    guint param_id,
-    GValue *value,
-    GParamSpec *psec) {
+_get_property (GObject *object, guint param_id, GValue *value, GParamSpec *psec) {
     MlCellRendererPixbuf *self = ML_CELL_RENDERER_PIXBUF (object);
 
     switch (param_id) {
@@ -85,11 +81,7 @@ _get_property (
 }
 
 static void
-_set_property (
-    GObject *object,
-    guint param_id,
-    const GValue *value,
-    GParamSpec *pspec) {
+_set_property (GObject *object, guint param_id, const GValue *value, GParamSpec *pspec) {
     MlCellRendererPixbuf *cellpixbuf = ML_CELL_RENDERER_PIXBUF (object);
 
     switch (param_id) {
@@ -122,10 +114,24 @@ _set_property (
 
 #if !GTK_CHECK_VERSION(3, 0, 0)
 static void
-_get_size (GtkCellRenderer *cell, GtkWidget *widget, GdkRectangle *cell_area, gint *x_offset, gint *y_offset, gint *width, gint *height) {
+_get_size (
+    GtkCellRenderer *cell,
+    GtkWidget *widget,
+    GdkRectangle *cell_area,
+    gint *x_offset,
+    gint *y_offset,
+    gint *width,
+    gint *height) {
 #else
 static void
-_get_size (GtkCellRenderer *cell, GtkWidget *widget, const GdkRectangle *cell_area, gint *x_offset, gint *y_offset, gint *width, gint *height) {
+_get_size (
+    GtkCellRenderer *cell,
+    GtkWidget *widget,
+    const GdkRectangle *cell_area,
+    gint *x_offset,
+    gint *y_offset,
+    gint *width,
+    gint *height) {
 #endif
     if (width != NULL) {
         *width = ML_CELL_RENDERER_PIXBUF_SIZE;
@@ -137,7 +143,14 @@ _get_size (GtkCellRenderer *cell, GtkWidget *widget, const GdkRectangle *cell_ar
 
 #if !GTK_CHECK_VERSION(3, 0, 0)
 static void
-_render (GtkCellRenderer *cell, GdkDrawable *window, GtkWidget *widget, GdkRectangle *background_area, GdkRectangle *cell_area, GdkRectangle *expose_area, GtkCellRendererState flags) {
+_render (
+    GtkCellRenderer *cell,
+    GdkDrawable *window,
+    GtkWidget *widget,
+    GdkRectangle *background_area,
+    GdkRectangle *cell_area,
+    GdkRectangle *expose_area,
+    GtkCellRendererState flags) {
 #else
 static void
 _render (
@@ -198,8 +211,14 @@ ml_cell_renderer_pixbuf_class_init (MlCellRendererPixbufClass *class) {
     class->parent_class.get_size = _get_size;
     class->parent_class.render = _render;
 
-    g_object_class_install_property (object_class, PROP_PATH, g_param_spec_string ("path", "Track Object", "The path", "", G_PARAM_READWRITE));
-    g_object_class_install_property (object_class, PROP_PIXBUF, g_param_spec_object ("pixbuf", "Pixbuf Object", "The pixbuf", GDK_TYPE_PIXBUF, G_PARAM_READWRITE));
+    g_object_class_install_property (
+        object_class,
+        PROP_PATH,
+        g_param_spec_string ("path", "Track Object", "The path", "", G_PARAM_READWRITE));
+    g_object_class_install_property (
+        object_class,
+        PROP_PIXBUF,
+        g_param_spec_object ("pixbuf", "Pixbuf Object", "The pixbuf", GDK_TYPE_PIXBUF, G_PARAM_READWRITE));
 }
 
 MlCellRendererPixbuf *

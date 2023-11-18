@@ -349,7 +349,10 @@ _scriptableSelectSelectionDidChange (gtkScriptableSelectViewController_t *vc, sc
 }
 
 static void
-_scriptableSelectScriptableDidChange (gtkScriptableSelectViewController_t *view_controller, gtkScriptableChange_t change_type, void *context) {
+_scriptableSelectScriptableDidChange (
+    gtkScriptableSelectViewController_t *view_controller,
+    gtkScriptableChange_t change_type,
+    void *context) {
     w_medialib_viewer_t *mlv = context;
     scriptableItem_t *presets = plugin->get_queries_scriptable (mlv->source);
     scriptableItemSave (presets);
@@ -433,13 +436,26 @@ _create_text_column (w_medialib_viewer_t *w, GtkTreeView *tree, int column_index
 }
 
 static GtkTreeViewColumn *
-_create_lazy_pixbuf_column (w_medialib_viewer_t *w, GtkTreeView *tree, int path_column_index, int pixbuf_column_index, const char *title, int align_right) {
+_create_lazy_pixbuf_column (
+    w_medialib_viewer_t *w,
+    GtkTreeView *tree,
+    int path_column_index,
+    int pixbuf_column_index,
+    const char *title,
+    int align_right) {
     GtkCellRenderer *rend = NULL;
     rend = GTK_CELL_RENDERER (ml_cell_renderer_pixbuf_new (&w->pixbuf_cell_delegate));
     if (align_right) {
         g_object_set (rend, "xalign", 1.0, NULL);
     }
-    return gtk_tree_view_column_new_with_attributes (title, rend, "path", path_column_index, "pixbuf", pixbuf_column_index, NULL);
+    return gtk_tree_view_column_new_with_attributes (
+        title,
+        rend,
+        "path",
+        path_column_index,
+        "pixbuf",
+        pixbuf_column_index,
+        NULL);
 }
 
 static GtkTreeViewColumn *
@@ -500,7 +516,11 @@ _collect_tracks_from_iter (GtkTreeModel *model, GtkTreeIter *iter, ddb_playItem_
 }
 
 static int
-_collect_selected_tracks (GtkTreeModel *model, GtkTreeSelection *selection, ddb_playItem_t **tracks, int append_position) {
+_collect_selected_tracks (
+    GtkTreeModel *model,
+    GtkTreeSelection *selection,
+    ddb_playItem_t **tracks,
+    int append_position) {
     GList *selected_rows = gtk_tree_selection_get_selected_rows (selection, NULL);
 
     int count = 0;
@@ -710,12 +730,7 @@ _configure_did_activate (GtkButton *self, gpointer user_data) {
 }
 
 static void
-_drag_data_get (
-    GtkWidget *widget,
-    GdkDragContext *context,
-    GtkSelectionData *selection_data,
-    guint info,
-    guint time) {
+_drag_data_get (GtkWidget *widget, GdkDragContext *context, GtkSelectionData *selection_data, guint info, guint time) {
     GtkTreeModel *model = GTK_TREE_MODEL (gtk_tree_view_get_model (GTK_TREE_VIEW (widget)));
     GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 
@@ -727,7 +742,12 @@ _drag_data_get (
     _collect_selected_tracks (model, selection, tracks, 0);
 
     GdkAtom type = gtk_selection_data_get_target (selection_data);
-    gtk_selection_data_set (selection_data, type, sizeof (void *) * 8, (const guchar *)tracks, count * sizeof (ddb_playItem_t *));
+    gtk_selection_data_set (
+        selection_data,
+        type,
+        sizeof (void *) * 8,
+        (const guchar *)tracks,
+        count * sizeof (ddb_playItem_t *));
 
     free (tracks);
     tracks = NULL;
@@ -801,11 +821,15 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     }
 
     int64_t reload_index = mlv->reload_index;
-    GdkPixbuf *cached_cover = covermanager_cover_for_track_no_default (covermanager_shared (), track, mlv->artwork_source_id, ^(GdkPixbuf *img) {
-        if (reload_index == mlv->reload_index && img != NULL) {
-            _receive_cover (mlv, path, img);
-        }
-    });
+    GdkPixbuf *cached_cover = covermanager_cover_for_track_no_default (
+        covermanager_shared (),
+        track,
+        mlv->artwork_source_id,
+        ^(GdkPixbuf *img) {
+            if (reload_index == mlv->reload_index && img != NULL) {
+                _receive_cover (mlv, path, img);
+            }
+        });
 
     if (cached_cover != NULL) {
         _receive_cover (mlv, path, cached_cover);
@@ -908,7 +932,8 @@ w_medialib_viewer_create (void) {
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
-    GtkTreeViewColumn *col_icon = _create_lazy_pixbuf_column (w, GTK_TREE_VIEW (w->tree), COL_PATH, COL_ICON, "Icon", 0);
+    GtkTreeViewColumn *col_icon =
+        _create_lazy_pixbuf_column (w, GTK_TREE_VIEW (w->tree), COL_PATH, COL_ICON, "Icon", 0);
     GtkTreeViewColumn *col_text = _create_text_column (w, GTK_TREE_VIEW (w->tree), COL_TITLE, "Title", 0);
 
     _setup_treeview_column (GTK_TREE_VIEW (w->tree), col_icon, "Icon", 0, 0);
@@ -925,11 +950,7 @@ w_medialib_viewer_create (void) {
     g_signal_connect ((gpointer)w->tree, "button_press_event", G_CALLBACK (_treeview_row_mousedown), w);
     g_signal_connect ((gpointer)configure_button, "clicked", G_CALLBACK (_configure_did_activate), w);
 
-    GtkTargetEntry entry = {
-        .target = TARGET_PLAYITEM_POINTERS,
-        .flags = GTK_TARGET_SAME_APP,
-        .info = 0
-    };
+    GtkTargetEntry entry = { .target = TARGET_PLAYITEM_POINTERS, .flags = GTK_TARGET_SAME_APP, .info = 0 };
     gtk_drag_source_set (GTK_WIDGET (w->tree), GDK_BUTTON1_MASK, &entry, 1, GDK_ACTION_COPY);
 
     g_signal_connect ((gpointer)w->tree, "drag_data_get", G_CALLBACK (_drag_data_get), w);

@@ -120,9 +120,7 @@ static uintptr_t _playlist_mutex;
     { pl_unlock (); }
 
 // used at startup to prevent crashes
-static playlist_t _dummy_playlist = {
-    .refc = 1
-};
+static playlist_t _dummy_playlist = { .refc = 1 };
 
 static int no_remove_notify;
 
@@ -188,14 +186,25 @@ pl_free (void) {
 
         for (playItem_t *it = _playlists_head->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
             if (it->_refc > 1) {
-                fprintf (stderr, "\033[0;31mWARNING: playitem %p %s(%s) has refc=%d at delete time\033[37;0m\n", it, pl_find_meta_raw (it, ":URI"), pl_find_meta_raw (it, "track"), it->_refc);
+                fprintf (
+                    stderr,
+                    "\033[0;31mWARNING: playitem %p %s(%s) has refc=%d at delete time\033[37;0m\n",
+                    it,
+                    pl_find_meta_raw (it, ":URI"),
+                    pl_find_meta_raw (it, "track"),
+                    it->_refc);
             }
         }
 
         //fprintf (stderr, "\033[0;31mplt refc %d\033[37;0m\n", playlists_head->refc);
 
         if (_playlists_head->refc > 1) {
-            fprintf (stderr, "\033[0;31mWARNING: PLAYLIST %p %s has refc=%d at delete time\033[37;0m\n", _playlists_head, _playlists_head->title, _playlists_head->refc);
+            fprintf (
+                stderr,
+                "\033[0;31mWARNING: PLAYLIST %p %s has refc=%d at delete time\033[37;0m\n",
+                _playlists_head,
+                _playlists_head->title,
+                _playlists_head->refc);
         }
 
         plt_remove (0);
@@ -733,7 +742,12 @@ plt_move (int from, int to) {
         return;
     }
     if (from >= _playlists_count || to >= _playlists_count) {
-        fprintf (stderr, "plt_move: attempt to move playlist to/from out of bounds index; from=%d, to=%d, count=%d\n", from, to, _playlists_count);
+        fprintf (
+            stderr,
+            "plt_move: attempt to move playlist to/from out of bounds index; from=%d, to=%d, count=%d\n",
+            from,
+            to,
+            _playlists_count);
         return;
     }
     LOCK;
@@ -903,7 +917,14 @@ pl_clear (void) {
 }
 
 playItem_t * /* insert internal cuesheet - called by plugins */
-plt_insert_cue_from_buffer (playlist_t *plt, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate) {
+plt_insert_cue_from_buffer (
+    playlist_t *plt,
+    playItem_t *after,
+    playItem_t *origin,
+    const uint8_t *buffer,
+    int buffersize,
+    int numsamples,
+    int samplerate) {
     if (plt->loading_cue) {
         // means it was called from _load_cue
         plt->cue_numsamples = numsamples;
@@ -936,7 +957,14 @@ plt_insert_dir_int (
     void *user_data);
 
 static playItem_t *
-plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb) (playItem_t *it, void *data), void *user_data);
+plt_load_int (
+    int visibility,
+    playlist_t *plt,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data);
 
 int
 fileadd_filter_test (ddb_file_found_data_t *data) {
@@ -973,7 +1001,17 @@ plt_insert_file_int (
         for (int i = 0; vfsplugs[i]; i++) {
             if (vfsplugs[i]->is_container) {
                 if (vfsplugs[i]->is_container (fname)) {
-                    playItem_t *it = plt_insert_dir_int (visibility, flags, plt, vfsplugs[i], after, fname, pabort, callback, NULL, user_data);
+                    playItem_t *it = plt_insert_dir_int (
+                        visibility,
+                        flags,
+                        plt,
+                        vfsplugs[i],
+                        after,
+                        fname,
+                        pabort,
+                        callback,
+                        NULL,
+                        user_data);
                     if (it) {
                         if (callback_with_result) {
                             callback_with_result (DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data);
@@ -1108,7 +1146,10 @@ plt_insert_file_int (
     if (!strcasecmp (eol, "cue")) {
         playItem_t *inserted = plt_load_cue_file (plt, after, fname, NULL, NULL, 0);
         if (callback_with_result) {
-            callback_with_result (inserted ? DDB_INSERT_FILE_RESULT_SUCCESS : DDB_INSERT_FILE_RESULT_CUESHEET_ERROR, fname, user_data);
+            callback_with_result (
+                inserted ? DDB_INSERT_FILE_RESULT_SUCCESS : DDB_INSERT_FILE_RESULT_CUESHEET_ERROR,
+                fname,
+                user_data);
         }
         return inserted;
     }
@@ -1136,12 +1177,15 @@ plt_insert_file_int (
 
                     file_recognized = 1;
 
-                    playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)plt, DB_PLAYITEM (after), fname);
+                    playItem_t *inserted =
+                        (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)plt, DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
                         if (callback && callback (inserted, user_data) < 0) {
                             *pabort = 1;
                         }
-                        else if (callback_with_result && callback_with_result (DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data) < 0) {
+                        else if (
+                            callback_with_result &&
+                            callback_with_result (DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data) < 0) {
                             *pabort = 1;
                         }
                         if (file_add_listeners) {
@@ -1178,12 +1222,15 @@ plt_insert_file_int (
                     }
 
                     file_recognized = 1;
-                    playItem_t *inserted = (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)plt, DB_PLAYITEM (after), fname);
+                    playItem_t *inserted =
+                        (playItem_t *)decoders[i]->insert ((ddb_playlist_t *)plt, DB_PLAYITEM (after), fname);
                     if (inserted != NULL) {
                         if (callback && callback (inserted, user_data) < 0) {
                             *pabort = 1;
                         }
-                        else if (callback_with_result && callback_with_result (DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data) < 0) {
+                        else if (
+                            callback_with_result &&
+                            callback_with_result (DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data) < 0) {
                             *pabort = 1;
                         }
                         if (file_add_listeners) {
@@ -1232,8 +1279,23 @@ _get_insert_file_flags_from_config (void) {
 }
 
 playItem_t *
-plt_insert_file (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb) (playItem_t *it, void *data), void *user_data) {
-    return plt_insert_file_int (0, _get_insert_file_flags_from_config (), plt, after, fname, pabort, cb, NULL, user_data);
+plt_insert_file (
+    playlist_t *plt,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data) {
+    return plt_insert_file_int (
+        0,
+        _get_insert_file_flags_from_config (),
+        plt,
+        after,
+        fname,
+        pabort,
+        cb,
+        NULL,
+        user_data);
 }
 
 static int
@@ -1242,7 +1304,14 @@ dirent_alphasort (const struct dirent **a, const struct dirent **b) {
 }
 
 static void
-_get_fullname_and_dir (char *fullname, int sz, char *dir, int dirsz, DB_vfs_t *vfs, const char *dirname, const char *d_name) {
+_get_fullname_and_dir (
+    char *fullname,
+    int sz,
+    char *dir,
+    int dirsz,
+    DB_vfs_t *vfs,
+    const char *dirname,
+    const char *d_name) {
     char resolved_dirname[PATH_MAX];
 
     char *res = realpath (dirname, resolved_dirname);
@@ -1415,7 +1484,14 @@ plt_insert_dir_int (
     // try loading cuesheets first
     for (int c = 0; c < ncuefiles; c++) {
         int i = cuefiles[c];
-        _get_fullname_and_dir (fullname, sizeof (fullname), fulldir, sizeof (fulldir), vfs, dirname, namelist[i]->d_name);
+        _get_fullname_and_dir (
+            fullname,
+            sizeof (fullname),
+            fulldir,
+            sizeof (fulldir),
+            vfs,
+            dirname,
+            namelist[i]->d_name);
 
         playItem_t *inserted = plt_load_cue_file (plt, after, fullname, fulldir, namelist, n);
         namelist[i]->d_name[0] = 0;
@@ -1438,10 +1514,29 @@ plt_insert_dir_int (
             _get_fullname_and_dir (fullname, sizeof (fullname), NULL, 0, vfs, dirname, namelist[i]->d_name);
             playItem_t *inserted = NULL;
             if (!vfs) {
-                inserted = plt_insert_dir_int (visibility, flags, plt, vfs, after, fullname, pabort, callback, callback_with_result, user_data);
+                inserted = plt_insert_dir_int (
+                    visibility,
+                    flags,
+                    plt,
+                    vfs,
+                    after,
+                    fullname,
+                    pabort,
+                    callback,
+                    callback_with_result,
+                    user_data);
             }
             if (!inserted) {
-                inserted = plt_insert_file_int (visibility, flags, plt, after, fullname, pabort, callback, callback_with_result, user_data);
+                inserted = plt_insert_file_int (
+                    visibility,
+                    flags,
+                    plt,
+                    after,
+                    fullname,
+                    pabort,
+                    callback,
+                    callback_with_result,
+                    user_data);
             }
 
             if (inserted) {
@@ -1464,17 +1559,40 @@ plt_insert_dir_int (
 }
 
 playItem_t *
-plt_insert_dir (playlist_t *playlist, playItem_t *after, const char *dirname, int *pabort, int (*cb) (playItem_t *it, void *data), void *user_data) {
+plt_insert_dir (
+    playlist_t *playlist,
+    playItem_t *after,
+    const char *dirname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data) {
 
-    playItem_t *ret = plt_insert_dir_int (0, _get_insert_file_flags_from_config (), playlist, NULL, after, dirname, pabort, cb, NULL, user_data);
+    playItem_t *ret = plt_insert_dir_int (
+        0,
+        _get_insert_file_flags_from_config (),
+        playlist,
+        NULL,
+        after,
+        dirname,
+        pabort,
+        cb,
+        NULL,
+        user_data);
 
     return ret;
 }
 
 static int
-plt_add_file_int (int visibility, uint32_t flags, playlist_t *plt, const char *fname, int (*cb) (playItem_t *it, void *data), void *user_data) {
+plt_add_file_int (
+    int visibility,
+    uint32_t flags,
+    playlist_t *plt,
+    const char *fname,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data) {
     int abort = 0;
-    playItem_t *it = plt_insert_file_int (visibility, flags, plt, plt->tail[PL_MAIN], fname, &abort, cb, NULL, user_data);
+    playItem_t *it =
+        plt_insert_file_int (visibility, flags, plt, plt->tail[PL_MAIN], fname, &abort, cb, NULL, user_data);
     if (it) {
         // pl_insert_file doesn't hold reference, don't unref here
         return 0;
@@ -1888,7 +2006,14 @@ length_to_uint8 (size_t len) {
 }
 
 int
-plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb) (playItem_t *it, void *data), void *user_data) {
+plt_save (
+    playlist_t *plt,
+    playItem_t *first,
+    playItem_t *last,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data) {
     LOCK;
     plt->last_save_modification_idx = plt->modification_idx;
     const char *ext = strrchr (fname, '.');
@@ -1900,7 +2025,11 @@ plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fnam
                 if (exts && plug[i]->save) {
                     for (int e = 0; exts[e]; e++) {
                         if (!strcasecmp (exts[e], ext + 1)) {
-                            int res = plug[i]->save ((ddb_playlist_t *)plt, fname, (DB_playItem_t *)_current_playlist->head[PL_MAIN], NULL);
+                            int res = plug[i]->save (
+                                (ddb_playlist_t *)plt,
+                                fname,
+                                (DB_playItem_t *)_current_playlist->head[PL_MAIN],
+                                NULL);
                             UNLOCK;
                             return res;
                         }
@@ -2187,7 +2316,14 @@ pl_save_all (void) {
 }
 
 static playItem_t *
-plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb) (playItem_t *it, void *data), void *user_data) {
+plt_load_int (
+    int visibility,
+    playlist_t *plt,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data) {
     playItem_t *it = NULL;
     playItem_t *last_added = NULL;
 
@@ -2230,10 +2366,17 @@ plt_load_int (int visibility, playlist_t *plt, playItem_t *after, const char *fn
                 if (plug[p]->load && !strcasecmp (ext, plug[p]->extensions[e])) {
                     DB_playItem_t *loaded_it = NULL;
                     if (cb || (plug[p]->load && !plug[p]->load2)) {
-                        loaded_it = plug[p]->load ((ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort, (int (*) (DB_playItem_t *, void *))cb, user_data);
+                        loaded_it = plug[p]->load (
+                            (ddb_playlist_t *)plt,
+                            (DB_playItem_t *)after,
+                            fname,
+                            pabort,
+                            (int (*) (DB_playItem_t *, void *))cb,
+                            user_data);
                     }
                     else if (plug[p]->plugin.api_vminor >= 5 && plug[p]->load2) {
-                        loaded_it = plug[p]->load2 (visibility, (ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort);
+                        loaded_it =
+                            plug[p]->load2 (visibility, (ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort);
                     }
                     return (playItem_t *)loaded_it;
                 }
@@ -2516,7 +2659,13 @@ load_fail:
 }
 
 playItem_t *
-plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb) (playItem_t *it, void *data), void *user_data) {
+plt_load (
+    playlist_t *plt,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data) {
     return plt_load_int (0, plt, after, fname, pabort, cb, user_data);
 }
 
@@ -3252,7 +3401,9 @@ pl_format_title_int (const char *escape_chars, playItem_t *it, int idx, char *s,
                         }
                     }
                     if (n < 1) {
-                        fprintf (stderr, "pl_format_title_int: got unpredicted state while formatting escaped string. please report a bug.\n");
+                        fprintf (
+                            stderr,
+                            "pl_format_title_int: got unpredicted state while formatting escaped string. please report a bug.\n");
                         *ss = 0; // should never happen
                         return -1;
                     }
@@ -3769,7 +3920,9 @@ pl_ensure_lock (void) {
             return;
         }
     }
-    fprintf (stderr, "\033[0;31mnon-thread-safe playlist access function was called outside of pl_lock. please make a backtrace and post a bug. thank you.\033[37;0m\n");
+    fprintf (
+        stderr,
+        "\033[0;31mnon-thread-safe playlist access function was called outside of pl_lock. please make a backtrace and post a bug. thank you.\033[37;0m\n");
     assert (0);
 #endif
 }
@@ -3834,7 +3987,10 @@ unlisten_file_added (int id) {
 }
 
 int
-listen_file_add_beginend (void (*callback_begin) (ddb_fileadd_data_t *data, void *user_data), void (*callback_end) (ddb_fileadd_data_t *data, void *user_data), void *user_data) {
+listen_file_add_beginend (
+    void (*callback_begin) (ddb_fileadd_data_t *data, void *user_data),
+    void (*callback_end) (ddb_fileadd_data_t *data, void *user_data),
+    void *user_data) {
     ddb_fileadd_beginend_listener_t *l;
 
     int id = 1;
@@ -3911,12 +4067,24 @@ unregister_fileadd_filter (int id) {
 }
 
 playItem_t *
-plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*callback) (playItem_t *it, void *user_data), void *user_data) {
+plt_load2 (
+    int visibility,
+    playlist_t *plt,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data) {
     return plt_load_int (visibility, plt, after, fname, pabort, callback, user_data);
 }
 
 int
-plt_add_file2 (int visibility, playlist_t *plt, const char *fname, int (*callback) (playItem_t *it, void *user_data), void *user_data) {
+plt_add_file2 (
+    int visibility,
+    playlist_t *plt,
+    const char *fname,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data) {
     int res = plt_add_file_int (visibility, _get_insert_file_flags_from_config (), plt, fname, callback, user_data);
     return res;
 }
@@ -3929,7 +4097,12 @@ pl_item_init (const char *fname) {
 }
 
 int
-plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callback) (playItem_t *it, void *user_data), void *user_data) {
+plt_add_dir2 (
+    int visibility,
+    playlist_t *plt,
+    const char *dirname,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data) {
     int prev_sl = plt->follow_symlinks;
     plt->follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
 
@@ -3937,7 +4110,17 @@ plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callba
     plt->ignore_archives = conf_get_int ("ignore_archives", 1);
 
     int abort = 0;
-    playItem_t *it = plt_insert_dir_int (visibility, _get_insert_file_flags_from_config (), plt, NULL, plt->tail[PL_MAIN], dirname, &abort, callback, NULL, user_data);
+    playItem_t *it = plt_insert_dir_int (
+        visibility,
+        _get_insert_file_flags_from_config (),
+        plt,
+        NULL,
+        plt->tail[PL_MAIN],
+        dirname,
+        &abort,
+        callback,
+        NULL,
+        user_data);
 
     plt->ignore_archives = prev;
     plt->follow_symlinks = prev_sl;
@@ -3949,17 +4132,50 @@ plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callba
 }
 
 playItem_t *
-plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*callback) (playItem_t *it, void *user_data), void *user_data) {
-    return plt_insert_file_int (visibility, _get_insert_file_flags_from_config (), playlist, after, fname, pabort, callback, NULL, user_data);
+plt_insert_file2 (
+    int visibility,
+    playlist_t *playlist,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data) {
+    return plt_insert_file_int (
+        visibility,
+        _get_insert_file_flags_from_config (),
+        playlist,
+        after,
+        fname,
+        pabort,
+        callback,
+        NULL,
+        user_data);
 }
 
 playItem_t *
-plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback) (playItem_t *it, void *user_data), void *user_data) {
+plt_insert_dir2 (
+    int visibility,
+    playlist_t *plt,
+    playItem_t *after,
+    const char *dirname,
+    int *pabort,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data) {
     int prev_sl = plt->follow_symlinks;
     plt->follow_symlinks = conf_get_int ("add_folders_follow_symlinks", 0);
     plt->ignore_archives = conf_get_int ("ignore_archives", 1);
 
-    playItem_t *ret = plt_insert_dir_int (visibility, _get_insert_file_flags_from_config (), plt, NULL, after, dirname, pabort, callback, NULL, user_data);
+    playItem_t *ret = plt_insert_dir_int (
+        visibility,
+        _get_insert_file_flags_from_config (),
+        plt,
+        NULL,
+        after,
+        dirname,
+        pabort,
+        callback,
+        NULL,
+        user_data);
 
     plt->follow_symlinks = prev_sl;
     plt->ignore_archives = 0;
@@ -3967,7 +4183,15 @@ plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char 
 }
 
 playItem_t *
-plt_insert_dir3 (int visibility, uint32_t flags, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback) (ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data) {
+plt_insert_dir3 (
+    int visibility,
+    uint32_t flags,
+    playlist_t *plt,
+    playItem_t *after,
+    const char *dirname,
+    int *pabort,
+    int (*callback) (ddb_insert_file_result_t result, const char *fname, void *user_data),
+    void *user_data) {
     return plt_insert_dir_int (visibility, flags, plt, NULL, after, dirname, pabort, NULL, callback, user_data);
 }
 
@@ -4054,7 +4278,18 @@ plt_process_embedded_cue (playlist_t *plt, playItem_t *after, playItem_t *it, in
     const char *cuesheet = pl_find_meta (it, "cuesheet");
     if (cuesheet) {
         const char *fname = pl_find_meta (it, ":URI");
-        cue = plt_load_cuesheet_from_buffer (plt, after, fname, it, totalsamples, samplerate, (const uint8_t *)cuesheet, (int)strlen (cuesheet), NULL, 0, 0);
+        cue = plt_load_cuesheet_from_buffer (
+            plt,
+            after,
+            fname,
+            it,
+            totalsamples,
+            samplerate,
+            (const uint8_t *)cuesheet,
+            (int)strlen (cuesheet),
+            NULL,
+            0,
+            0);
     }
     pl_unlock ();
     return cue;
@@ -4161,13 +4396,7 @@ pl_set_shufflerating (playItem_t *it, int rating) {
 
 int
 pl_items_from_same_album (playItem_t *a, playItem_t *b) {
-    const char *keys[] = {
-        "band",
-        "album artist",
-        "albumartist",
-        "artist",
-        NULL
-    };
+    const char *keys[] = { "band", "album artist", "albumartist", "artist", NULL };
 
     const char *a_artist = NULL;
     const char *b_artist = NULL;

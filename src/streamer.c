@@ -312,7 +312,12 @@ streamer_start_playback (playItem_t *from, playItem_t *it) {
             pl_item_unref (qnext);
         }
 
-        trace ("from=%p (%s), to=%p (%s) [2]\n", from, from ? pl_find_meta (from, ":URI") : "null", it, it ? pl_find_meta (it, ":URI") : "null");
+        trace (
+            "from=%p (%s), to=%p (%s) [2]\n",
+            from,
+            from ? pl_find_meta (from, ":URI") : "null",
+            it,
+            it ? pl_find_meta (it, ":URI") : "null");
         send_trackchanged (from, it);
         started_timestamp = time (NULL);
     }
@@ -577,9 +582,7 @@ _streamer_find_minimal_notplayed_imp (playlist_t *plt, unsigned int check_floor,
     // if check_floor is truthy, such that shufflerating > floor
     playItem_t *pmin = NULL;
     for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
-        if (
-            !pl_get_played (i) &&
-            (!pmin || pl_get_shufflerating (i) < pl_get_shufflerating (pmin)) &&
+        if (!pl_get_played (i) && (!pmin || pl_get_shufflerating (i) < pl_get_shufflerating (pmin)) &&
             (!check_floor || floor < pl_get_shufflerating (i))) {
             pmin = i;
         }
@@ -602,9 +605,7 @@ _streamer_find_maximal_played_imp (playlist_t *plt, unsigned int check_ceil, int
     // if check_ceil is truthy, such that shufflerating < ceil
     playItem_t *pmax = NULL;
     for (playItem_t *i = plt->head[PL_MAIN]; i; i = i->next[PL_MAIN]) {
-        if (
-            pl_get_played (i) &&
-            (!pmax || pl_get_shufflerating (i) > pl_get_shufflerating (pmax)) &&
+        if (pl_get_played (i) && (!pmax || pl_get_shufflerating (i) > pl_get_shufflerating (pmax)) &&
             (!check_ceil || pl_get_shufflerating (i) < ceil)) {
             pmax = i;
         }
@@ -800,7 +801,8 @@ get_prev_track (playItem_t *curr, ddb_shuffle_t shuffle, ddb_repeat_t repeat) {
             }
 
             if (pmax && shuffle == DDB_SHUFFLE_ALBUMS) {
-                while (pmax && pmax->next[PL_MAIN] && pl_get_played (pmax->next[PL_MAIN]) && pl_get_shufflerating (pmax) == pl_get_shufflerating (pmax->next[PL_MAIN])) {
+                while (pmax && pmax->next[PL_MAIN] && pl_get_played (pmax->next[PL_MAIN]) &&
+                       pl_get_shufflerating (pmax) == pl_get_shufflerating (pmax->next[PL_MAIN])) {
                     pmax = pmax->next[PL_MAIN];
                 }
             }
@@ -1179,7 +1181,8 @@ stream_track (playItem_t *it, int startpaused) {
         }
         ctmap_unlock ();
 
-        if (!plugs[0] && (!strcmp (cct, "audio/x-mpegurl") || !strncmp (cct, "text/html", 9) || !strncmp (cct, "audio/x-scpls", 13) || !strncmp (cct, "application/octet-stream", 9))) {
+        if (!plugs[0] && (!strcmp (cct, "audio/x-mpegurl") || !strncmp (cct, "text/html", 9) ||
+                          !strncmp (cct, "audio/x-scpls", 13) || !strncmp (cct, "application/octet-stream", 9))) {
             // download playlist into temp file
             trace ("downloading playlist into temp file...\n");
             char *buf = NULL;
@@ -1327,7 +1330,10 @@ stream_track (playItem_t *it, int startpaused) {
     for (;;) {
         if (!decoder_id[0] && plugs[0] && !plugs[plug_idx]) {
             pl_set_played (it, 1);
-            trace_err ("No suitable decoder found for stream %s of content-type %s\n", pl_find_meta (playing_track, ":URI"), cct);
+            trace_err (
+                "No suitable decoder found for stream %s of content-type %s\n",
+                pl_find_meta (playing_track, ":URI"),
+                cct);
 
             if (!startpaused) {
                 streamer_play_failed (it);
@@ -1356,7 +1362,11 @@ stream_track (playItem_t *it, int startpaused) {
                         if (exts) {
                             for (int j = 0; exts[j]; j++) {
                                 if (!strcasecmp (exts[j], ext) || !strcmp (exts[j], "*")) {
-                                    fprintf (stderr, "streamer: %s : changed decoder plugin to %s\n", fname, decs[i]->plugin.id);
+                                    fprintf (
+                                        stderr,
+                                        "streamer: %s : changed decoder plugin to %s\n",
+                                        fname,
+                                        decs[i]->plugin.id);
                                     pl_replace_meta (it, "!DECODER", decs[i]->plugin.id);
                                     pl_replace_meta (it, "!FILETYPE", ext);
                                     dec = decs[i];
@@ -1439,7 +1449,11 @@ stream_track (playItem_t *it, int startpaused) {
             streamer_set_streaming_track (it);
             streamer_unlock ();
 
-            trace ("bps=%d, channels=%d, samplerate=%d\n", new_fileinfo->fmt.bps, new_fileinfo->fmt.channels, new_fileinfo->fmt.samplerate);
+            trace (
+                "bps=%d, channels=%d, samplerate=%d\n",
+                new_fileinfo->fmt.bps,
+                new_fileinfo->fmt.channels,
+                new_fileinfo->fmt.samplerate);
             break;
         }
     }
@@ -1891,7 +1905,8 @@ streamer_thread (void *unused) {
         }
         if (_add_format_silence > 0) {
             res = streamreader_silence_block (block, streaming_track, fileinfo_curr, mutex);
-            int bytes_per_sec = fileinfo_curr->fmt.samplerate * fileinfo_curr->fmt.channels * (fileinfo_curr->fmt.bps / 8);
+            int bytes_per_sec =
+                fileinfo_curr->fmt.samplerate * fileinfo_curr->fmt.channels * (fileinfo_curr->fmt.bps / 8);
             _add_format_silence -= block->size / (double)bytes_per_sec;
         }
         else {
@@ -2131,7 +2146,14 @@ process_output_block (streamblock_t *block, char *bytes, int bytes_available_siz
     extern void android_eq_apply (char *dspbytes, int dspsize);
     android_eq_apply (input, sz);
 
-    dsp_apply_simple_downsampler (datafmt.samplerate, datafmt.channels, input, sz, output->fmt.samplerate, &dspbytes, &dspsize);
+    dsp_apply_simple_downsampler (
+        datafmt.samplerate,
+        datafmt.channels,
+        input,
+        sz,
+        output->fmt.samplerate,
+        &dspbytes,
+        &dspsize);
     datafmt.samplerate = output->fmt.samplerate;
     sz = dspsize;
 #else
@@ -2175,7 +2197,8 @@ process_output_block (streamblock_t *block, char *bytes, int bytes_available_siz
     decoded_block->first = block->first;
     decoded_block->total_bytes = decoded_block->remaining_bytes = sz;
     decoded_block->is_silent_header = block->is_silent_header;
-    decoded_block->playback_time = (float)sz / output->fmt.samplerate / ((output->fmt.bps >> 3) * output->fmt.channels) * dspratio;
+    decoded_block->playback_time =
+        (float)sz / output->fmt.samplerate / ((output->fmt.bps >> 3) * output->fmt.channels) * dspratio;
 
     block->pos = block->size;
     streamreader_next_block ();
@@ -2245,7 +2268,8 @@ streamer_apply_soft_volume (char *bytes, int sz) {
         if (ivolume != 1000) {
             int third = bytesread / 3;
             for (int i = 0; i < third; i++) {
-                int32_t sample = ((unsigned char)stream[0]) | ((unsigned char)stream[1] << 8) | ((signed char)stream[2] << 16);
+                int32_t sample =
+                    ((unsigned char)stream[0]) | ((unsigned char)stream[1] << 8) | ((signed char)stream[2] << 16);
                 int32_t newsample = (int32_t)((int64_t)sample * ivolume / 1000);
                 stream[0] = (newsample & 0x0000ff);
                 stream[1] = (newsample & 0x00ff00) >> 8;
@@ -2405,7 +2429,10 @@ _streamer_fill_playback_buffer (void) {
 
     size_t latency = _output_ringbuf_setup (&plug_get_output ()->fmt);
 
-    while (block != NULL && decoded_blocks_have_free () && decoded_blocks_playback_time_total () < conf_playback_buffer_size && (_output_ringbuf.size - _output_ringbuf.remaining - latency) >= block->size * MAX_DSP_RATIO && !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
+    while (block != NULL && decoded_blocks_have_free () &&
+           decoded_blocks_playback_time_total () < conf_playback_buffer_size &&
+           (_output_ringbuf.size - _output_ringbuf.remaining - latency) >= block->size * MAX_DSP_RATIO &&
+           !memcmp (&block->fmt, &last_block_fmt, sizeof (ddb_waveformat_t))) {
         int rb = process_output_block (block, _dsp_process_buffer.buffer, block->size * MAX_DSP_RATIO);
         if (rb <= 0) {
             break;
@@ -2475,7 +2502,12 @@ streamer_read (char *bytes, int size) {
     }
 #    endif
     ringbuf_read_keep_offset (&_output_ringbuf, _viz_read_buffer.buffer, viz_bytes, -offset);
-    viz_process (_viz_read_buffer.buffer, (int)viz_bytes, output, 4096, wave_size); // FIXME: fft size needs to be configurable
+    viz_process (
+        _viz_read_buffer.buffer,
+        (int)viz_bytes,
+        output,
+        4096,
+        wave_size); // FIXME: fft size needs to be configurable
 #endif
 
     // Play
@@ -2552,7 +2584,11 @@ streamer_configchanged (void) {
     int new_conf_streamer_samplerate_mult_48 = clamp_samplerate (conf_get_int ("streamer.samplerate_mult_48", 48000));
     int new_conf_streamer_samplerate_mult_44 = clamp_samplerate (conf_get_int ("streamer.samplerate_mult_44", 44100));
 
-    if (conf_streamer_override_samplerate != new_conf_streamer_override_samplerate || conf_streamer_use_dependent_samplerate != new_conf_streamer_use_dependent_samplerate || conf_streamer_samplerate != new_conf_streamer_samplerate || conf_streamer_samplerate_mult_48 != new_conf_streamer_samplerate_mult_48 || conf_streamer_samplerate_mult_44 != new_conf_streamer_samplerate_mult_44 || formatchanged) {
+    if (conf_streamer_override_samplerate != new_conf_streamer_override_samplerate ||
+        conf_streamer_use_dependent_samplerate != new_conf_streamer_use_dependent_samplerate ||
+        conf_streamer_samplerate != new_conf_streamer_samplerate ||
+        conf_streamer_samplerate_mult_48 != new_conf_streamer_samplerate_mult_48 ||
+        conf_streamer_samplerate_mult_44 != new_conf_streamer_samplerate_mult_44 || formatchanged) {
         memset (&last_block_fmt, 0, sizeof (last_block_fmt));
     }
 
