@@ -85,7 +85,7 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     conf.medialib_paths = _ml_source_get_music_paths (source, &conf.medialib_paths_count);
 
     dispatch_sync (source->sync_queue, ^{
-      ml_index (&scanner, &conf, 0);
+        ml_index (&scanner, &conf, 0);
     });
 
     ml_free_music_paths (conf.medialib_paths, conf.medialib_paths_count);
@@ -103,8 +103,8 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     scanner.tracks = NULL;
 
     dispatch_sync (source->sync_queue, ^{
-      source->ml_playlist = plt;
-      memcpy (&source->db, &scanner.db, sizeof (ml_db_t));
+        source->ml_playlist = plt;
+        memcpy (&source->db, &scanner.db, sizeof (ml_db_t));
     });
 
     source->_ml_state = DDB_MEDIASOURCE_STATE_IDLE;
@@ -177,13 +177,15 @@ ml_free_source (ddb_mediasource_source_t *_source) {
     medialib_source_t *source = (medialib_source_t *)_source;
 
     dispatch_sync (source->sync_queue, ^{
-      ml_watch_fs_stop (source->fs_watcher);
-      source->scanner_terminate = 1;
+        ml_watch_fs_stop (source->fs_watcher);
+        source->scanner_terminate = 1;
     });
 
     printf ("waiting for scanner queue to finish\n");
-    dispatch_sync (source->scanner_queue, ^{
-                   });
+    dispatch_sync (
+        source->scanner_queue,
+        ^{
+        });
     printf ("scanner queue finished\n");
 
     dispatch_release (source->scanner_queue);
@@ -208,30 +210,38 @@ ml_set_source_enabled (ddb_mediasource_source_t *_source, int enabled) {
     __block int notify = 0;
     medialib_source_t *source = (medialib_source_t *)_source;
     dispatch_sync (source->sync_queue, ^{
-      if (source->enabled != enabled) {
-          source->enabled = enabled;
-          if (!enabled) {
-              source->scanner_terminate = 1;
-          }
-          char conf_name[200];
-          snprintf (conf_name, sizeof (conf_name), "%senabled", source->source_conf_prefix);
-          deadbeef->conf_set_int (conf_name, enabled);
-          deadbeef->conf_save ();
+        if (source->enabled != enabled) {
+            source->enabled = enabled;
+            if (!enabled) {
+                source->scanner_terminate = 1;
+            }
+            char conf_name[200];
+            snprintf (conf_name, sizeof (conf_name), "%senabled", source->source_conf_prefix);
+            deadbeef->conf_set_int (conf_name, enabled);
+            deadbeef->conf_save ();
 
-          if (enabled) {
-              // load the stored playlist before scanning
-              dispatch_async (source->scanner_queue, ^{
-                char plpath[PATH_MAX];
-                snprintf (plpath, sizeof (plpath), "%s/medialib.dbpl", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
-                _ml_load_playlist (source, plpath);
-                dispatch_sync (source->sync_queue, ^{
-                  ml_source_update_fs_watch (source);
+            if (enabled) {
+                // load the stored playlist before scanning
+                dispatch_async (source->scanner_queue, ^{
+                    char plpath[PATH_MAX];
+                    snprintf (
+                        plpath,
+                        sizeof (plpath),
+                        "%s/medialib.dbpl",
+                        deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
+                    _ml_load_playlist (source, plpath);
+                    dispatch_sync (source->sync_queue, ^{
+                        ml_source_update_fs_watch (source);
+                    });
                 });
-              });
-          }
+            }
+            else {
+                ml_watch_fs_stop (source->fs_watcher);
+                source->fs_watcher = NULL;
+            }
 
-          notify = 1;
-      }
+            notify = 1;
+        }
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE);
@@ -244,7 +254,7 @@ ml_is_source_enabled (ddb_mediasource_source_t *_source) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block int enabled = 0;
     dispatch_sync (source->sync_queue, ^{
-      enabled = source->enabled;
+        enabled = source->enabled;
     });
     return enabled;
 }
@@ -255,53 +265,53 @@ ml_refresh (ddb_mediasource_source_t *_source) {
 
     __block int64_t scanner_current_index = -1;
     dispatch_sync (source->sync_queue, ^{
-      // interrupt plt_insert_dir
-      source->scanner_terminate = 1;
-      // interrupt all queued scanners
-      source->scanner_cancel_index = source->scanner_current_index;
-      source->scanner_current_index += 1;
-      scanner_current_index = source->scanner_current_index;
+        // interrupt plt_insert_dir
+        source->scanner_terminate = 1;
+        // interrupt all queued scanners
+        source->scanner_cancel_index = source->scanner_current_index;
+        source->scanner_current_index += 1;
+        scanner_current_index = source->scanner_current_index;
     });
 
     dispatch_async (source->scanner_queue, ^{
-      __block int enabled = 0;
-      __block int cancel = 0;
-      dispatch_sync (source->sync_queue, ^{
-        if (source->scanner_cancel_index >= scanner_current_index) {
-            cancel = 1;
-            return;
-        }
-        source->scanner_terminate = 0;
-      });
-
-      if (cancel) {
-          return;
-      }
-
-      __block ml_scanner_configuration_t conf = { 0 };
-      dispatch_sync (source->sync_queue, ^{
-        conf.medialib_paths = _ml_source_get_music_paths (source, &conf.medialib_paths_count);
-        enabled = source->enabled;
-        if (!conf.medialib_paths || !source->enabled) {
-            // no paths: early out
-            // empty playlist + empty index
-            if (!source->ml_playlist) {
-                source->ml_playlist = deadbeef->plt_alloc ("medialib");
+        __block int enabled = 0;
+        __block int cancel = 0;
+        dispatch_sync (source->sync_queue, ^{
+            if (source->scanner_cancel_index >= scanner_current_index) {
+                cancel = 1;
+                return;
             }
-            deadbeef->plt_clear (source->ml_playlist);
-            ml_db_free (&source->db);
-            ml_free_music_paths (conf.medialib_paths, conf.medialib_paths_count);
+            source->scanner_terminate = 0;
+        });
+
+        if (cancel) {
             return;
         }
-      });
 
-      if (conf.medialib_paths == NULL || !enabled) {
-          // content became empty
-          ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE);
-          return;
-      }
+        __block ml_scanner_configuration_t conf = { 0 };
+        dispatch_sync (source->sync_queue, ^{
+            conf.medialib_paths = _ml_source_get_music_paths (source, &conf.medialib_paths_count);
+            enabled = source->enabled;
+            if (!conf.medialib_paths || !source->enabled) {
+                // no paths: early out
+                // empty playlist + empty index
+                if (!source->ml_playlist) {
+                    source->ml_playlist = deadbeef->plt_alloc ("medialib");
+                }
+                deadbeef->plt_clear (source->ml_playlist);
+                ml_db_free (&source->db);
+                ml_free_music_paths (conf.medialib_paths, conf.medialib_paths_count);
+                return;
+            }
+        });
 
-      scanner_thread (source, conf);
+        if (conf.medialib_paths == NULL || !enabled) {
+            // content became empty
+            ml_notify_listeners (source, DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE);
+            return;
+        }
+
+        scanner_thread (source, conf);
     });
 }
 
