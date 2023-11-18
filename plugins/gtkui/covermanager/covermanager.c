@@ -56,20 +56,6 @@ typedef struct {
 
 static covermanager_t *_shared;
 
-static gboolean
-_dispatch_on_main_wrapper (void *context) {
-    void (^block) (void) = context;
-    block ();
-    Block_release (block);
-    return FALSE;
-}
-
-static void
-_dispatch_on_main (void (^block) (void)) {
-    dispatch_block_t copy_block = Block_copy (block);
-    g_idle_add (_dispatch_on_main_wrapper, copy_block);
-}
-
 static char *
 _cache_key_for_track (covermanager_t *impl, ddb_playItem_t *track) {
     ddb_tf_context_t ctx = {
@@ -122,7 +108,7 @@ static void
 _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
     covermanager_t *manager = user_data;
 
-    _dispatch_on_main (^{
+    gtkui_dispatch_on_main (^{
         if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
             _settings_did_change_for_track (manager, (ddb_playItem_t *)p1);
         }
@@ -278,7 +264,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         return;
     }
 
-    _dispatch_on_main (^{
+    gtkui_dispatch_on_main (^{
         // Prevent spurious loading of the same image. The load is already scheduled, so we should just wait for it.
         char *key = _cache_key_for_track (impl, query->track);
         gboolean should_wait = gobj_cache_get_should_wait (impl->cache, key) || (gobj_cache_get (impl->cache, key) != NULL);
@@ -286,7 +272,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         if (should_wait) {
             // append to the end of loader queue
             dispatch_async (impl->loader_queue, ^{
-                _dispatch_on_main (^{
+                gtkui_dispatch_on_main (^{
                     GdkPixbuf *img = GDK_PIXBUF (gobj_cache_get (impl->cache, key));
                     _callback_and_cleanup (query, cover, img);
                     free (key);
@@ -314,7 +300,7 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
             }
 
             // Update the UI on main queue
-            _dispatch_on_main (^{
+            gtkui_dispatch_on_main (^{
                 _callback_and_cleanup (query, cover, img);
             });
         });

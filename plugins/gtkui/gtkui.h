@@ -27,13 +27,13 @@
 #include <gtk/gtk.h>
 
 #ifdef HAVE_CONFIG_H
-#include "../../config.h"
+#    include "../../config.h"
 #endif
 
 #include <deadbeef/deadbeef.h>
 
-#if GTK_CHECK_VERSION(3,0,0)
-#include "deadbeefapp.h"
+#if GTK_CHECK_VERSION(3, 0, 0)
+#    include "deadbeefapp.h"
 extern DeadbeefApp *gapp;
 #endif
 
@@ -105,16 +105,13 @@ void
 seekbar_draw (GtkWidget *widget, cairo_t *cr);
 
 gboolean
-on_seekbar_button_press_event          (GtkWidget       *widget,
-                                        GdkEventButton  *event);
+on_seekbar_button_press_event (GtkWidget *widget, GdkEventButton *event);
 
 gboolean
-on_seekbar_button_release_event        (GtkWidget       *widget,
-                                        GdkEventButton  *event);
+on_seekbar_button_release_event (GtkWidget *widget, GdkEventButton *event);
 
 gboolean
-on_seekbar_motion_notify_event         (GtkWidget       *widget,
-                                        GdkEventMotion  *event);
+on_seekbar_motion_notify_event (GtkWidget *widget, GdkEventMotion *event);
 
 void
 gtkui_set_titlebar (DB_playItem_t *it);
@@ -132,13 +129,13 @@ int
 gtkui_rename_playlist (ddb_playlist_t *plt);
 
 int
-gtkui_rename_playlist_at_index(int plt_idx);
+gtkui_rename_playlist_at_index (int plt_idx);
 
 int
-gtkui_remove_playlist(ddb_playlist_t *plt);
+gtkui_remove_playlist (ddb_playlist_t *plt);
 
 int
-gtkui_remove_playlist_at_index(int plt_idx);
+gtkui_remove_playlist_at_index (int plt_idx);
 
 int
 gtkui_get_curr_playlist_mod (void);
@@ -152,20 +149,18 @@ gtkui_show_info_window (const char *fname, const char *title, GtkWidget **pwindo
 void
 on_gtkui_info_window_delete (GtkWidget *widget, GtkTextDirection previous_direction, GtkWidget **pwindow);
 
-GtkWidget*
+GtkWidget *
 gtkui_create_pltmenu (ddb_playlist_t *plt);
 
 void
-gtkui_free_pltmenu(void);
+gtkui_free_pltmenu (void);
 
 void
 gtkui_quit (void);
 
 extern int gtkui_hotkey_grabbing;
 gboolean
-on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
-                                        GdkEventKey     *event,
-                                        gpointer         user_data);
+on_hotkeys_set_key_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data);
 
 int
 gtkui_get_gui_refresh_rate (void);
@@ -174,16 +169,16 @@ void
 gtkui_titlebar_tf_init (void);
 
 void
-gtkui_show_log_window(gboolean show);
+gtkui_show_log_window (gboolean show);
 
 void
-gtkui_toggle_log_window(void);
+gtkui_toggle_log_window (void);
 
 void
-gtkui_mainwin_init(void);
+gtkui_mainwin_init (void);
 
 void
-gtkui_mainwin_free(void);
+gtkui_mainwin_free (void);
 
 enum GtkuiFileChooserType {
     GTKUI_FILECHOOSER_OPENFILE,
@@ -193,11 +188,12 @@ enum GtkuiFileChooserType {
 };
 
 GSList *
-show_file_chooser (const gchar          *title,
-                   enum GtkuiFileChooserType type,
-                   gboolean             select_multiple);
+show_file_chooser (const gchar *title, enum GtkuiFileChooserType type, gboolean select_multiple);
 
 char *
-gtkui_trim_whitespace(char *p, size_t len);
+gtkui_trim_whitespace (char *p, size_t len);
+
+void
+gtkui_dispatch_on_main (void (^block) (void));
 
 #endif

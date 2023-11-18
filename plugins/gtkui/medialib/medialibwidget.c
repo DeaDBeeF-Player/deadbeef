@@ -22,6 +22,7 @@
 #include "../../../shared/scriptable/scriptable.h"
 #include "../scriptable/gtkScriptableSelectViewController.h"
 #include "mlcellrendererpixbuf.h"
+#include "../gtkui.h"
 
 extern DB_functions_t *deadbeef;
 static DB_mediasource_t *plugin;
@@ -46,6 +47,7 @@ typedef struct {
     GdkPixbuf *folder_icon;
     int reload_index;
     int64_t artwork_source_id;
+    dispatch_queue_t background_queue;
 } w_medialib_viewer_t;
 
 enum {
@@ -391,6 +393,10 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
 static void
 w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
+    if (mlv->background_queue != NULL) {
+        dispatch_release (mlv->background_queue);
+        mlv->background_queue = NULL;
+    }
     if (mlv->selectViewController != NULL) {
         gtkScriptableSelectViewControllerFree (mlv->selectViewController);
     }
@@ -729,22 +735,27 @@ _drag_data_get (
 
 static void
 _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
-    // FIXME: background queue
+    g_object_ref (img);
+    dispatch_async (mlv->background_queue, ^{
+        // scale
+        GtkAllocation a;
+        a.x = 0;
+        a.y = 0;
+        a.width = ML_CELL_RENDERER_PIXBUF_SIZE;
+        a.height = ML_CELL_RENDERER_PIXBUF_SIZE;
+        GdkPixbuf *scaled_img = covermanager_create_scaled_image (covermanager_shared (), img, a);
 
-    // scale
-    GtkAllocation a;
-    a.x = 0;
-    a.y = 0;
-    a.width = ML_CELL_RENDERER_PIXBUF_SIZE;
-    a.height = ML_CELL_RENDERER_PIXBUF_SIZE;
-    GdkPixbuf *scaled_img = covermanager_create_scaled_image (covermanager_shared (), img, a);
-
-    GtkTreeStore *store = mlv->store;
-    GtkTreeIter iter;
-    GtkTreeModel *model = GTK_TREE_MODEL (mlv->store);
-    gtk_tree_model_get_iter (model, &iter, path);
-    gtk_tree_store_set (store, &iter, COL_ICON, scaled_img, -1);
-    g_object_unref (scaled_img);
+        gtkui_dispatch_on_main (^{
+            GtkTreeStore *store = mlv->store;
+            GtkTreeIter iter;
+            GtkTreeModel *model = GTK_TREE_MODEL (mlv->store);
+            gtk_tree_model_get_iter (model, &iter, path);
+            gtk_tree_store_set (store, &iter, COL_ICON, scaled_img, -1);
+            g_object_unref (scaled_img);
+            gtk_tree_path_free (path);
+            g_object_unref (img);
+        });
+    });
 }
 
 static GdkPixbuf *
@@ -790,12 +801,10 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
         if (reload_index == mlv->reload_index && img != NULL) {
             _receive_cover (mlv, path, img);
         }
-        gtk_tree_path_free (path);
     });
 
     if (cached_cover != NULL) {
         _receive_cover (mlv, path, cached_cover);
-        gtk_tree_path_free (path);
     }
     return mlv->folder_icon;
 }
@@ -880,6 +889,7 @@ w_medialib_viewer_create (void) {
     }
     w->pixbuf_cell_delegate.ctx = w;
     w->pixbuf_cell_delegate.cell_did_became_visible = _pixbuf_cell_did_become_visible;
+    w->background_queue = dispatch_queue_create ("MedialibBackgroundQueue", NULL);
 
     GtkTreeStore *store = gtk_tree_store_new (
         5,

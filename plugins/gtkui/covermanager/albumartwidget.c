@@ -31,8 +31,9 @@
 #include "covermanager.h"
 #include "gobjcache.h"
 #include <Block.h>
+#include "../gtkui.h"
 
-#define min(x,y) ((x)<(y)?(x):(y))
+#define min(x, y) ((x) < (y) ? (x) : (y))
 
 extern DB_functions_t *deadbeef;
 extern int design_mode;
@@ -61,20 +62,6 @@ typedef struct {
 } w_albumart_t;
 
 static gboolean
-_dispatch_on_main_wrapper (void *context) {
-    void (^block)(void) = context;
-    block ();
-    Block_release(block);
-    return FALSE;
-}
-
-static void
-_dispatch_on_main(void (^block)(void)) {
-    dispatch_block_t copy_block = Block_copy(block);
-    g_idle_add(_dispatch_on_main_wrapper, copy_block);
-}
-
-static gboolean
 _update (w_albumart_t *w) {
     if (w->plugin == NULL) {
         return FALSE;
@@ -83,7 +70,7 @@ _update (w_albumart_t *w) {
     w->throttle_id = 0;
 
     GtkAllocation frame;
-    gtk_widget_get_allocation(GTK_WIDGET(w->drawing_area), &frame);
+    gtk_widget_get_allocation (GTK_WIDGET (w->drawing_area), &frame);
 
     if (frame.width == 0 || frame.height == 0) {
         return FALSE;
@@ -92,77 +79,77 @@ _update (w_albumart_t *w) {
     ddb_playItem_t *it = NULL;
     switch (w->mode) {
     case MODE_SELECTED: {
-        int cursor = deadbeef->pl_get_cursor(PL_MAIN);
+        int cursor = deadbeef->pl_get_cursor (PL_MAIN);
         if (cursor != -1) {
-            ddb_playlist_t *plt = deadbeef->plt_get_curr();
+            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             if (plt == NULL) {
-                gtk_widget_queue_draw(w->drawing_area);
+                gtk_widget_queue_draw (w->drawing_area);
                 return FALSE;
             }
-            it = deadbeef->plt_get_item_for_idx(plt, cursor, PL_MAIN);
+            it = deadbeef->plt_get_item_for_idx (plt, cursor, PL_MAIN);
             deadbeef->plt_unref (plt);
             plt = NULL;
         }
     } break;
     case MODE_PLAYING: {
-        it = deadbeef->streamer_get_playing_track_safe();
+        it = deadbeef->streamer_get_playing_track_safe ();
     } break;
     }
 
     if (it == NULL) {
         if (w->image != NULL) {
-            gobj_unref(w->image);
+            gobj_unref (w->image);
             w->image = NULL;
         }
-        gtk_widget_queue_draw(w->drawing_area);
+        gtk_widget_queue_draw (w->drawing_area);
         return FALSE;
     }
-    w->plugin->cancel_queries_with_source_id(w->source_id);
+    w->plugin->cancel_queries_with_source_id (w->source_id);
 
-    GtkAllocation availableSize = {0};
+    GtkAllocation availableSize = { 0 };
     availableSize.width = frame.width;
     availableSize.height = frame.height;
 
     int64_t currentIndex = w->request_index++;
 
-    covermanager_t *cm = covermanager_shared();
+    covermanager_t *cm = covermanager_shared ();
 
-    GdkPixbuf *image = covermanager_cover_for_track(cm, it, w->source_id, ^(GdkPixbuf *img) {
-        if (currentIndex != w->request_index-1) {
+    GdkPixbuf *image = covermanager_cover_for_track (cm, it, w->source_id, ^(GdkPixbuf *img) {
+        if (currentIndex != w->request_index - 1) {
             return;
         }
         if (img != NULL) {
-            GtkAllocation originalSize = {0};
-            originalSize.width = gdk_pixbuf_get_width(img);
-            originalSize.height = gdk_pixbuf_get_height(img);
-            GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, availableSize);
-            GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, img, desired_size);
+            GtkAllocation originalSize = { 0 };
+            originalSize.width = gdk_pixbuf_get_width (img);
+            originalSize.height = gdk_pixbuf_get_height (img);
+            GtkAllocation desired_size = covermanager_desired_size_for_image_size (cm, originalSize, availableSize);
+            GdkPixbuf *scaled_image = covermanager_create_scaled_image (cm, img, desired_size);
             w->image = scaled_image;
         }
         else {
             if (w->image != NULL) {
-                gobj_unref(w->image);
+                gobj_unref (w->image);
                 w->image = NULL;
             }
         }
-        gtk_widget_queue_draw(w->drawing_area);
+        gtk_widget_queue_draw (w->drawing_area);
     });
 
     deadbeef->pl_item_unref (it);
     it = NULL;
 
     if (image != NULL) {
-        GtkAllocation originalSize = {0};
-        originalSize.width = gdk_pixbuf_get_width(image);
-        originalSize.height = gdk_pixbuf_get_height(image);
-        GtkAllocation desired_size = covermanager_desired_size_for_image_size(cm, originalSize, availableSize);
+        GtkAllocation originalSize = { 0 };
+        originalSize.width = gdk_pixbuf_get_width (image);
+        originalSize.height = gdk_pixbuf_get_height (image);
+        GtkAllocation desired_size = covermanager_desired_size_for_image_size (cm, originalSize, availableSize);
 
-        GdkPixbuf *scaled_image = covermanager_create_scaled_image(cm, image, desired_size);
+        GdkPixbuf *scaled_image = covermanager_create_scaled_image (cm, image, desired_size);
         w->image = scaled_image;
-        gobj_unref(image);
+        gobj_unref (image);
     }
 
-    gtk_widget_queue_draw(w->drawing_area);
+    gtk_widget_queue_draw (w->drawing_area);
 
     return FALSE;
 }
@@ -173,18 +160,16 @@ _throttled_update (w_albumart_t *w) {
         return;
     }
     if (w->throttle_id != 0) {
-        g_source_remove(w->throttle_id);
+        g_source_remove (w->throttle_id);
     }
-    w->throttle_id = g_timeout_add(10, (gboolean(*)(void*))_update, w);
-
+    w->throttle_id = g_timeout_add (10, (gboolean (*) (void *))_update, w);
 }
 
 static gboolean
-_size_did_change (GtkWidget* self, GdkEventConfigure *event, w_albumart_t *w) {
-    _throttled_update(w);
+_size_did_change (GtkWidget *self, GdkEventConfigure *event, w_albumart_t *w) {
+    _throttled_update (w);
     return FALSE;
 }
-
 
 static int
 _message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
@@ -196,11 +181,10 @@ _message (ddb_gtkui_widget_t *base, uint32_t id, uintptr_t ctx, uint32_t p1, uin
     case DB_EV_PLAYLISTCHANGED:
     case DB_EV_PLAYLISTSWITCHED:
     case DB_EV_CURSOR_MOVED: {
-        _dispatch_on_main(^{
-            _throttled_update(w);
+        gtkui_dispatch_on_main (^{
+            _throttled_update (w);
         });
-    }
-        break;
+    } break;
     }
     return 0;
 }
@@ -213,13 +197,13 @@ _draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     }
 
     GtkAllocation a;
-    gtk_widget_get_allocation(widget, &a);
+    gtk_widget_get_allocation (widget, &a);
 
-#if !GTK_CHECK_VERSION(3,0,0)
-    gtk_paint_flat_box(gtk_widget_get_style(widget), gtk_widget_get_window(widget), GTK_STATE_NORMAL, GTK_SHADOW_NONE, &a, widget, NULL, 0, 0, a.width, a.height);
+#if !GTK_CHECK_VERSION(3, 0, 0)
+    gtk_paint_flat_box (gtk_widget_get_style (widget), gtk_widget_get_window (widget), GTK_STATE_NORMAL, GTK_SHADOW_NONE, &a, widget, NULL, 0, 0, a.width, a.height);
 #else
-    GtkStyleContext *context = gtk_widget_get_style_context(widget);
-    gtk_render_background(context, cr, 0, 0, a.width, a.height);
+    GtkStyleContext *context = gtk_widget_get_style_context (widget);
+    gtk_render_background (context, cr, 0, 0, a.width, a.height);
 #endif
 
     if (a.width < 8 || a.height < 8) {
@@ -230,22 +214,22 @@ _draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data) {
         return TRUE;
     }
 
-    const int pw = gdk_pixbuf_get_width(w->image);
-    const int ph = gdk_pixbuf_get_height(w->image);
-    cairo_rectangle(cr, 0, 0, a.width, a.height);
+    const int pw = gdk_pixbuf_get_width (w->image);
+    const int ph = gdk_pixbuf_get_height (w->image);
+    cairo_rectangle (cr, 0, 0, a.width, a.height);
     if (pw > a.width || ph > a.height || (pw < a.width && ph < a.height)) {
-        const double scale = min(a.width/(double)pw, a.height/(double)ph);
-        cairo_translate(cr, (a.width - a.width*scale)/2., (a.height - a.height*scale)/2.);
-        cairo_scale(cr, scale, scale);
-        cairo_pattern_set_filter(cairo_get_source(cr), CAIRO_FILTER_FAST);
+        const double scale = min (a.width / (double)pw, a.height / (double)ph);
+        cairo_translate (cr, (a.width - a.width * scale) / 2., (a.height - a.height * scale) / 2.);
+        cairo_scale (cr, scale, scale);
+        cairo_pattern_set_filter (cairo_get_source (cr), CAIRO_FILTER_FAST);
     }
-    gdk_cairo_set_source_pixbuf(cr, w->image, (a.width - pw)/2., (a.height - ph)/2.);
-    cairo_fill(cr);
+    gdk_cairo_set_source_pixbuf (cr, w->image, (a.width - pw) / 2., (a.height - ph) / 2.);
+    cairo_fill (cr);
 
     return TRUE;
 }
 
-#if !GTK_CHECK_VERSION(3,0,0)
+#if !GTK_CHECK_VERSION(3, 0, 0)
 static gboolean
 _expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
@@ -258,28 +242,27 @@ _expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data) {
 static void
 _menu_update (w_albumart_t *s) {
     s->updating_menu = TRUE;
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_playing_track), s->mode == MODE_PLAYING);
-    gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(s->mode_selected_track), s->mode == MODE_SELECTED);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (s->mode_playing_track), s->mode == MODE_PLAYING);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (s->mode_selected_track), s->mode == MODE_SELECTED);
     s->updating_menu = FALSE;
 }
 
 static gboolean
-_button_press (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
+_button_press (GtkWidget *self, GdkEventButton *event, gpointer user_data) {
     if (design_mode) {
         return FALSE;
     }
     w_albumart_t *s = user_data;
 
     if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
-        _menu_update(s);
+        _menu_update (s);
         gtk_menu_popup_at_pointer (GTK_MENU (s->menu), NULL);
     }
     return TRUE;
 }
 
-
 static void
-_menu_activate (GtkWidget* self, gpointer user_data) {
+_menu_activate (GtkWidget *self, gpointer user_data) {
     w_albumart_t *s = user_data;
 
     if (s->updating_menu) {
@@ -304,7 +287,7 @@ _deserialize_from_keyvalues (ddb_gtkui_widget_t *widget, const char **keyvalues)
 
     for (int i = 0; keyvalues[i]; i += 2) {
         if (!strcmp (keyvalues[i], "mode")) {
-            if (!strcmp (keyvalues[i+1], "playing")) {
+            if (!strcmp (keyvalues[i + 1], "playing")) {
                 s->mode = MODE_PLAYING;
             }
         }
@@ -330,7 +313,7 @@ _serialize_to_keyvalues (ddb_gtkui_widget_t *widget) {
 }
 
 static void
-_free_serialized_keyvalues(ddb_gtkui_widget_t *w, char const **keyvalues) {
+_free_serialized_keyvalues (ddb_gtkui_widget_t *w, char const **keyvalues) {
     free (keyvalues);
 }
 
@@ -338,8 +321,8 @@ static void
 _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
     w_albumart_t *w = (w_albumart_t *)user_data;
     if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
-        _dispatch_on_main(^{
-            _throttled_update(w);
+        gtkui_dispatch_on_main (^{
+            _throttled_update (w);
         });
     }
 }
@@ -360,46 +343,44 @@ w_albumart_create (void) {
     w->base.widget = gtk_event_box_new ();
     w->base.message = _message;
     w->base.destroy = _destroy;
-    w->drawing_area = gtk_drawing_area_new();
+    w->drawing_area = gtk_drawing_area_new ();
     w->exapi._size = sizeof (ddb_gtkui_widget_extended_api_t);
     w->exapi.deserialize_from_keyvalues = _deserialize_from_keyvalues;
     w->exapi.serialize_to_keyvalues = _serialize_to_keyvalues;
     w->exapi.free_serialized_keyvalues = _free_serialized_keyvalues;
-    gtk_widget_show (GTK_WIDGET(w->drawing_area));
-    gtk_container_add (GTK_CONTAINER (w->base.widget), GTK_WIDGET(w->drawing_area));
+    gtk_widget_show (GTK_WIDGET (w->drawing_area));
+    gtk_container_add (GTK_CONTAINER (w->base.widget), GTK_WIDGET (w->drawing_area));
     w_override_signals (w->base.widget, w);
 
-    g_signal_connect(G_OBJECT(w->drawing_area), "configure-event", G_CALLBACK(_size_did_change), w);
-#if !GTK_CHECK_VERSION(3,0,0)
-    g_signal_connect_after ((gpointer) w->drawing_area, "expose_event", G_CALLBACK (_expose_event), w);
+    g_signal_connect (G_OBJECT (w->drawing_area), "configure-event", G_CALLBACK (_size_did_change), w);
+#if !GTK_CHECK_VERSION(3, 0, 0)
+    g_signal_connect_after ((gpointer)w->drawing_area, "expose_event", G_CALLBACK (_expose_event), w);
 #else
-    g_signal_connect_after ((gpointer) w->drawing_area, "draw", G_CALLBACK (_draw_event), w);
+    g_signal_connect_after ((gpointer)w->drawing_area, "draw", G_CALLBACK (_draw_event), w);
 #endif
-    w->plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id("artwork2");
+    w->plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     if (w->plugin != NULL) {
-        w->source_id = w->plugin->allocate_source_id();
-        w->plugin->add_listener(_artwork_listener, w);
+        w->source_id = w->plugin->allocate_source_id ();
+        w->plugin->add_listener (_artwork_listener, w);
     }
 
     g_signal_connect ((gpointer)w->base.widget, "button-press-event", G_CALLBACK (_button_press), w);
 
-    w->menu = gtk_menu_new();
+    w->menu = gtk_menu_new ();
 
-    w->mode_playing_track = gtk_check_menu_item_new_with_mnemonic( _("Playing Track"));
-    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_playing_track), TRUE);
-    gtk_widget_show(w->mode_playing_track);
+    w->mode_playing_track = gtk_check_menu_item_new_with_mnemonic (_ ("Playing Track"));
+    gtk_check_menu_item_set_draw_as_radio (GTK_CHECK_MENU_ITEM (w->mode_playing_track), TRUE);
+    gtk_widget_show (w->mode_playing_track);
 
-    w->mode_selected_track = gtk_check_menu_item_new_with_mnemonic( _("Selected Track"));
-    gtk_check_menu_item_set_draw_as_radio(GTK_CHECK_MENU_ITEM(w->mode_selected_track), TRUE);
-    gtk_widget_show(w->mode_selected_track);
+    w->mode_selected_track = gtk_check_menu_item_new_with_mnemonic (_ ("Selected Track"));
+    gtk_check_menu_item_set_draw_as_radio (GTK_CHECK_MENU_ITEM (w->mode_selected_track), TRUE);
+    gtk_widget_show (w->mode_selected_track);
 
-    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->mode_playing_track, 0);
-    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->mode_selected_track, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), w->mode_playing_track, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), w->mode_selected_track, 1);
 
-    g_signal_connect((gpointer)w->mode_playing_track, "activate", G_CALLBACK(_menu_activate), w);
-    g_signal_connect((gpointer)w->mode_selected_track, "activate", G_CALLBACK(_menu_activate), w);
+    g_signal_connect ((gpointer)w->mode_playing_track, "activate", G_CALLBACK (_menu_activate), w);
+    g_signal_connect ((gpointer)w->mode_selected_track, "activate", G_CALLBACK (_menu_activate), w);
 
     return (ddb_gtkui_widget_t *)w;
 }
-
-
