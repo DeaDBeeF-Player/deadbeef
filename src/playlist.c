@@ -867,15 +867,32 @@ plt_move (int from, int to) {
 
 void
 plt_clear (playlist_t *plt) {
-    // FIXME: calling plt_remove_item from here will cause a deadlock via streamer_lock
+    playItem_t *it = NULL;
     pl_lock ();
-    while (plt->head[PL_MAIN]) {
-        plt_remove_item (plt, plt->head[PL_MAIN]);
-    }
+
+    it = plt->head[PL_MAIN];
+    plt->head[PL_MAIN] = NULL;
+    plt->head[PL_SEARCH] = NULL;
+    plt->count[PL_MAIN] = 0;
+    plt->count[PL_SEARCH] = 0;
     plt->current_row[PL_MAIN] = -1;
     plt->current_row[PL_SEARCH] = -1;
-    plt_modified (plt);
+
     pl_unlock ();
+
+    while (it != NULL) {
+        playItem_t *next = it->next[PL_MAIN];
+        it->next[PL_MAIN] = NULL;
+        it->prev[PL_MAIN] = NULL;
+        it->next[PL_SEARCH] = NULL;
+        it->prev[PL_SEARCH] = NULL;
+        streamer_song_removed_notify (it);
+        playqueue_remove (it);
+        pl_item_unref (it);
+        it = next;
+    }
+
+    plt_modified (plt);
 }
 
 void
