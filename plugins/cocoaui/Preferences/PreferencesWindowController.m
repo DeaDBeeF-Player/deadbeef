@@ -69,9 +69,7 @@
 
     BOOL enableMedialib = NO;
 
-#if ENABLE_MEDIALIB
     enableMedialib = self.mediaLibraryPreferencesViewController.isAvailable;
-#endif
 
     if (!enableMedialib) {
         [self.toolbar removeItemAtIndex:4];

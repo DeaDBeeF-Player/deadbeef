@@ -28,9 +28,7 @@
 #import "DesignModeState.h"
 #import "GuiPreferencesWindowController.h"
 #import "MainWindowController.h"
-#ifdef ENABLE_MEDIALIB
 #import "MediaLibraryManager.h"
-#endif
 #import "PlaylistWidget.h"
 #import "PlaylistWithTabsWidget.h"
 #import "PreferencesWindowController.h"
@@ -121,7 +119,6 @@ extern DB_functions_t *deadbeef;
     }
 #endif
 
-#if ENABLE_MEDIALIB
     self.playlistWithTabsView = self.splitViewController.bodyViewController.wrapperView;
     self.designableContainerView = self.splitViewController.bodyViewController.designableView;
 
@@ -147,19 +144,6 @@ extern DB_functions_t *deadbeef;
             [self.tfQuerySelectViewController selectItem:currentPreset];
         }
     }
-
-#else
-    self.mainContentViewController = [MainContentViewController new];
-    [self.designableContainerView addSubview:self.mainContentViewController.view];
-    [NSLayoutConstraint activateConstraints:@[
-        [self.designableContainerView.topAnchor constraintEqualToAnchor:self.mainContentViewController.view.topAnchor],
-        [self.designableContainerView.bottomAnchor constraintEqualToAnchor:self.mainContentViewController.view.bottomAnchor],
-        [self.designableContainerView.leadingAnchor constraintEqualToAnchor:self.mainContentViewController.view.leadingAnchor],
-        [self.designableContainerView.trailingAnchor constraintEqualToAnchor:self.mainContentViewController.view.trailingAnchor],
-    ]];
-
-    self.designableContainerView = self.mainContentViewController.designableView;
-#endif
 
     id<WidgetProtocol> rootWidget = DesignModeState.sharedInstance.rootWidget;
     NSView *view = rootWidget.view;
@@ -560,16 +544,13 @@ static char sb_text[512];
 #pragma mark - ScriptableSelectDelegate
 
 - (void)scriptableSelectItemSelected:(scriptableItem_t *)item {
-#if ENABLE_MEDIALIB
     const char *name = scriptableItemPropertyValueForKey(item, "name");
     self.mediaLibraryManager.preset = @(name);
-#endif
 }
 
 #pragma mark - ScriptableItemDelegate
 
 - (void)scriptableItemDidChange:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
-#if ENABLE_MEDIALIB
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.tfQuerySelectViewController reloadData];
 
@@ -586,7 +567,6 @@ static char sb_text[512];
             [self scriptableSelectItemSelected:item];
         }
     });
-#endif
 }
 
 @end

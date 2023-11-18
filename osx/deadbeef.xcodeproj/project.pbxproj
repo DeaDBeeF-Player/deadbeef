@@ -720,7 +720,6 @@
 		2D11D3CD1B9DC6B500C7C731 /* vtx.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D11D3B91B9DC67100C7C731 /* vtx.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */; };
 		2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */; };
-		2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */; };
 		2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
 		2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */; };
 		2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */; };
@@ -5344,7 +5343,6 @@
 		2D11D3C31B9DC69C00C7C731 /* vtxfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vtxfile.c; sourceTree = "<group>"; };
 		2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
-		2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		2D135EE7226E38AF00BAAE84 /* scriptable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable.h; sourceTree = "<group>"; };
 		2D135EE8226E38AF00BAAE84 /* scriptable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable.c; sourceTree = "<group>"; };
 		2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_dsp.h; sourceTree = "<group>"; };
@@ -9787,7 +9785,6 @@
 				2D49856E1D5CF0E900E4D985 /* Log.xib */,
 				2DBF3D3F270868D400023138 /* MainContentViewController.xib */,
 				2D17F8451AB3391A00AF2853 /* MainMenu.xib */,
-				2D11E8B11AA0E3DD00A67A20 /* MainWindow.xib */,
 				2D3EBD9C1A9379BD00E5E255 /* Preferences.xib */,
 				2D1A56391D9FF9A4005E5CDD /* ReplayGain.xib */,
 				2D651D19227227FA00375AE2 /* ScriptableNodeEditorViewController.xib */,
@@ -16569,7 +16566,6 @@
 				2DC657C32746F67600583E14 /* RenameTabViewController.xib in Resources */,
 				2DB05EB8252E47A00090635E /* iconNetworkTemplate.pdf in Resources */,
 				2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */,
-				2D11E8B41AA0E3DD00A67A20 /* MainWindow.xib in Resources */,
 				2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */,
 				2DBCA69D27944BB600D7432F /* ChangeLog in Resources */,
 				2DC657FC274A7C4600583E14 /* RenamePlaylistViewController.xib in Resources */,
@@ -22764,7 +22760,6 @@
 					GLIB_DISABLE_DEPRECATION_WARNINGS,
 					GTK_DISABLE_DEPRECATION_WARNINGS,
 					"DDB_WARN_DEPRECATED=1",
-					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -22829,7 +22824,6 @@
 					GLIB_DISABLE_DEPRECATION_WARNINGS,
 					GTK_DISABLE_DEPRECATION_WARNINGS,
 					"DDB_WARN_DEPRECATED=1",
-					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -23091,7 +23085,6 @@
 					GLIB_DISABLE_DEPRECATION_WARNINGS,
 					GTK_DISABLE_DEPRECATION_WARNINGS,
 					"DDB_WARN_DEPRECATED=1",
-					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -23156,7 +23149,6 @@
 					GLIB_DISABLE_DEPRECATION_WARNINGS,
 					GTK_DISABLE_DEPRECATION_WARNINGS,
 					"DDB_WARN_DEPRECATED=1",
-					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -23824,7 +23816,6 @@
 					"DISABLE_MM_KEY_GRABBER=1",
 					"_DEBUG=1",
 					"DDB_ENABLE_SCRIPTABLE=1",
-					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -23884,7 +23875,6 @@
 					"HAVE_LOG2=1",
 					"OSX_APPBUNDLE=1",
 					"DDB_ENABLE_SCRIPTABLE=1",
-					"ENABLE_MEDIALIB=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;

@@ -69,10 +69,6 @@ GTKUI_SOURCES = \
 sdkdir = $(pkgincludedir)
 sdk_HEADERS = gtkui_api.h
 
-if HAVE_MEDIALIB
-MEDIALIB_CFLAGS = -DENABLE_MEDIALIB=1
-endif
-
 if STATICLINK
 if HAVE_GTK2
 if HAVE_GTK3

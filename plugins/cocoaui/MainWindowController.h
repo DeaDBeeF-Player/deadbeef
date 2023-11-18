@@ -29,9 +29,7 @@
 
 @protocol WidgetProtocol;
 
-#ifdef ENABLE_MEDIALIB
 @class MediaLibraryManager;
-#endif
 
 @interface MainWindowController : NSWindowController
 
@@ -41,9 +39,7 @@
 @property (strong) IBOutlet MainWindowSidebarViewController *sidebarOutlineViewController;
 @property (unsafe_unretained) IBOutlet NSSegmentedControl *buttonBar;
 
-#ifdef ENABLE_MEDIALIB
 @property (nonatomic) MediaLibraryManager *mediaLibraryManager;
-#endif
 
 - (IBAction)seekBarAction:(id)sender;
 - (IBAction)volumeBarAction:(id)sender;
