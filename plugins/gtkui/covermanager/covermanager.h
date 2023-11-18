@@ -39,6 +39,9 @@ covermanager_t *
 covermanager_shared (void);
 
 void
+covermanager_shared_init (void);
+
+void
 covermanager_shared_free (void);
 
 covermanager_t *

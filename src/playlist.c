@@ -101,7 +101,9 @@
 #    error writing playlists in format <1.2 is not supported
 #endif
 
-#define min(x, y) ((x) < (y) ? (x) : (y))
+#ifndef min
+#    define min(x, y) ((x) < (y) ? (x) : (y))
+#endif
 
 static int _playlists_count = 0;
 static playlist_t *_playlists_head = NULL;

@@ -1566,10 +1566,6 @@ gtkui_mainwin_free (void) {
     deadbeef->unlisten_file_added (fileadded_listener_id);
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
-    covermanager_terminate (covermanager_shared ());
-    // FIXME: can't do this, since artwork holds non-refcounted references to it
-    //    covermanager_shared_free ();
-
     w_free ();
 
     if (refresh_timeout) {
@@ -1770,6 +1766,8 @@ gtkui_start (void) {
     gtk_disable_setlocale ();
     add_pixmap_directory (deadbeef->get_system_dir (DDB_SYS_DIR_PIXMAP));
 
+    covermanager_shared_init ();
+
 #if GTK_CHECK_VERSION(3, 10, 0) && USE_GTK_APPLICATION
     gapp = deadbeef_app_new ();
     GValue val = G_VALUE_INIT;
@@ -1795,6 +1793,10 @@ quit_gtk_cb (gpointer nothing) {
     extern int trkproperties_modified;
 
     gtkui_mainwin_free ();
+
+    covermanager_terminate (covermanager_shared ());
+    // FIXME: can't do this, since artwork holds non-refcounted references to it
+    //    covermanager_shared_free ();
 
     supereq_plugin = NULL;
     trkproperties_modified = 0;

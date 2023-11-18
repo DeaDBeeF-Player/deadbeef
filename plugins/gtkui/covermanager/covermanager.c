@@ -309,11 +309,12 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
 
 covermanager_t *
 covermanager_shared (void) {
-    // FIXME: this is not thread-safe
-    if (_shared == NULL) {
-        _shared = covermanager_new ();
-    }
     return _shared;
+}
+
+void
+covermanager_shared_init (void) {
+    _shared = covermanager_new ();
 }
 
 void
