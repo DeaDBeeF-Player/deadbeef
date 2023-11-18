@@ -877,7 +877,12 @@ plt_move (int from, int to) {
 
 void
 plt_clear (playlist_t *plt) {
+    // Remove all tracks in bulk,
+    // instead of removing each track individually.
+    // Helps to avoid a long slow lock, and eliminates some concurrency issues.
+
     playItem_t *it = NULL;
+
     pl_lock ();
 
     it = plt->head[PL_MAIN];
@@ -892,6 +897,7 @@ plt_clear (playlist_t *plt) {
     plt->current_row[PL_MAIN] = -1;
     plt->current_row[PL_SEARCH] = -1;
     plt->scroll = 0;
+    plt->modification_idx++;
 
     pl_unlock ();
 
@@ -906,8 +912,6 @@ plt_clear (playlist_t *plt) {
         pl_item_unref (it);
         it = next;
     }
-
-    plt_modified (plt);
 }
 
 void
