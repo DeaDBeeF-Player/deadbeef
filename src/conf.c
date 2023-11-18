@@ -40,8 +40,6 @@
 #include "threading.h"
 #include <deadbeef/common.h>
 
-#define min(x, y) ((x) < (y) ? (x) : (y))
-
 static DB_conf_item_t *conf_items;
 static int changed;
 static uintptr_t mutex;
