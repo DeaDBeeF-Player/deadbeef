@@ -425,50 +425,6 @@ w_medialib_viewer_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
     return 0;
 }
 
-static GtkTreeViewColumn *
-_create_text_column (w_medialib_viewer_t *w, GtkTreeView *tree, int column_index, const char *title, int align_right) {
-    GtkCellRenderer *rend = NULL;
-    rend = gtk_cell_renderer_text_new ();
-    if (align_right) {
-        g_object_set (rend, "xalign", 1.0, NULL);
-    }
-    return gtk_tree_view_column_new_with_attributes (title, rend, "text", column_index, NULL);
-}
-
-static GtkTreeViewColumn *
-_create_lazy_pixbuf_column (
-    w_medialib_viewer_t *w,
-    GtkTreeView *tree,
-    int path_column_index,
-    int pixbuf_column_index,
-    const char *title,
-    int align_right) {
-    GtkCellRenderer *rend = NULL;
-    rend = GTK_CELL_RENDERER (ml_cell_renderer_pixbuf_new (&w->pixbuf_cell_delegate));
-    if (align_right) {
-        g_object_set (rend, "xalign", 1.0, NULL);
-    }
-    return gtk_tree_view_column_new_with_attributes (
-        title,
-        rend,
-        "path",
-        path_column_index,
-        "pixbuf",
-        pixbuf_column_index,
-        NULL);
-}
-
-static GtkTreeViewColumn *
-_setup_treeview_column (GtkTreeView *tree, GtkTreeViewColumn *col, const char *title, int position, int expand) {
-    gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-    gtk_tree_view_column_set_expand (col, expand);
-    gtk_tree_view_insert_column (GTK_TREE_VIEW (tree), col, position);
-    GtkWidget *label = gtk_label_new (title);
-    gtk_tree_view_column_set_widget (col, label);
-    gtk_widget_show (label);
-    return col;
-}
-
 static void
 _search_text_did_change (GtkEditable *editable, gpointer user_data) {
     w_medialib_viewer_t *mlv = user_data;
@@ -932,12 +888,18 @@ w_medialib_viewer_create (void) {
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
-    GtkTreeViewColumn *col_icon =
-        _create_lazy_pixbuf_column (w, GTK_TREE_VIEW (w->tree), COL_PATH, COL_ICON, "Icon", 0);
-    GtkTreeViewColumn *col_text = _create_text_column (w, GTK_TREE_VIEW (w->tree), COL_TITLE, "Title", 0);
+    GtkCellRenderer *rend_pixbuf = GTK_CELL_RENDERER (ml_cell_renderer_pixbuf_new (&w->pixbuf_cell_delegate));
+    GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
 
-    _setup_treeview_column (GTK_TREE_VIEW (w->tree), col_icon, "Icon", 0, 0);
-    _setup_treeview_column (GTK_TREE_VIEW (w->tree), col_text, "Text", 1, 0);
+    GtkTreeViewColumn *col = gtk_tree_view_column_new ();
+    gtk_tree_view_append_column (w->tree, col);
+    gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+    gtk_tree_view_column_pack_start (col, rend_pixbuf, FALSE);
+    gtk_tree_view_column_pack_start (col, rend_text, FALSE);
+
+    gtk_tree_view_column_add_attribute (col, rend_pixbuf, "path", COL_PATH);
+    gtk_tree_view_column_add_attribute (col, rend_pixbuf, "pixbuf", COL_ICON);
+    gtk_tree_view_column_add_attribute (col, rend_text, "text", COL_TITLE);
 
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
