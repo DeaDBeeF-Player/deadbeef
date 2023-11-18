@@ -75,6 +75,7 @@ _FSEventStreamCallback(ConstFSEventStreamRef streamRef, void * __nullable client
 
     FSEventStreamScheduleWithRunLoop(eventStream, CFRunLoopGetMain(), kCFRunLoopCommonModes);
     FSEventStreamStart(eventStream);
+    _eventStream = eventStream;
 
     return self;
 }
