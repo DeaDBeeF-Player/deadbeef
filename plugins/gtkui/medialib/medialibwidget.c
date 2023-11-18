@@ -796,6 +796,10 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
         return mlv->folder_icon;
     }
 
+    if (mlv->artwork_source_id == 0) {
+        return mlv->folder_icon;
+    }
+
     int64_t reload_index = mlv->reload_index;
     GdkPixbuf *cached_cover = covermanager_cover_for_track_no_default (covermanager_shared (), track, mlv->artwork_source_id, ^(GdkPixbuf *img) {
         if (reload_index == mlv->reload_index && img != NULL) {
