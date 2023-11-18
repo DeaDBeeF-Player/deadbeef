@@ -744,6 +744,7 @@ _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
     GtkTreeModel *model = GTK_TREE_MODEL (mlv->store);
     gtk_tree_model_get_iter (model, &iter, path);
     gtk_tree_store_set (store, &iter, COL_ICON, scaled_img, -1);
+    g_object_unref (scaled_img);
 }
 
 static GdkPixbuf *
