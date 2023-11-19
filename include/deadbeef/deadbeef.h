@@ -2270,8 +2270,7 @@ typedef enum {
     DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE = 0,
     DDB_MEDIASOURCE_EVENT_STATE_DID_CHANGE = 1,
     DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE = 2,
-    DDB_MEDIASOURCE_EVENT_SELECTORS_DID_CHANGE = 3,
-    DDB_MEDIASOURCE_EVENT_OUT_OF_SYNC = 4, // Needs refresh -- e.g. if there are new files in music folders
+    DDB_MEDIASOURCE_EVENT_OUT_OF_SYNC = 3, // Needs refresh -- e.g. if there are new files in music folders
 } ddb_mediasource_event_type_t;
 
 /// Numbers from 1024 and up can be used by the plugins for additional events.

@@ -313,8 +313,6 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
     case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
         [self updateMedialibStatus];
         break;
-    case DDB_MEDIASOURCE_EVENT_SELECTORS_DID_CHANGE:
-        break;
     case DDB_MEDIASOURCE_EVENT_OUT_OF_SYNC:
         self.medialibPlugin->refresh(self.medialibSource);
         break;
