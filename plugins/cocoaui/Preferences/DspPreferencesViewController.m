@@ -62,10 +62,9 @@ extern DB_functions_t *deadbeef;
 
     // preset list and browse button
     self.dspSelectViewController = [ScriptableSelectViewController new];
-    self.dspSelectViewController.scriptableItemDelegate = self;
+    self.dspSelectViewController.delegate = self;
     self.dspSelectViewController.view.frame = _dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
-    self.dspSelectViewController.scriptableSelectDelegate = self;
     self.dspSelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
 
@@ -130,6 +129,7 @@ extern DB_functions_t *deadbeef;
 
 #pragma mark - ScriptableItemDelegate
 
+// NOTE this method is reused for 2 different delegates
 - (void)scriptableItemDidChange:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
     if (scriptable == self.dspChainDataSource.scriptable
         || scriptableItemIndexOfChild(self.dspChainDataSource.scriptable, scriptable) >= 0) {

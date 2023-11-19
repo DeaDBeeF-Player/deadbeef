@@ -33,7 +33,7 @@
 extern DB_functions_t *deadbeef;
 static NSString *default_format = @"[%tracknumber%. ][%artist% - ]%title%";
 
-@interface ConverterWindowController () <ScriptableSelectDelegate,ScriptableItemDelegate,NSControlTextEditingDelegate>
+@interface ConverterWindowController () <ScriptableSelectDelegate,NSControlTextEditingDelegate>
 
 @property (nonatomic) ddb_converter_t *converter_plugin;
 
@@ -121,8 +121,7 @@ static NSMutableArray *g_converterControllers;
     self.dspSelectViewController.view.frame = self.dspPresetSelectorContainer.bounds;
     [_dspPresetSelectorContainer addSubview:self.dspSelectViewController.view];
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
-    self.dspSelectViewController.scriptableItemDelegate = self;
-    self.dspSelectViewController.scriptableSelectDelegate = self;
+    self.dspSelectViewController.delegate = self;
     self.dspSelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
 
     char dsp_preset_name[100];
@@ -139,8 +138,7 @@ static NSMutableArray *g_converterControllers;
     self.encoderSelectViewController.view.frame = self.encoderPresetSelectorContainer.bounds;
     [self.encoderPresetSelectorContainer addSubview:self.encoderSelectViewController.view];
     self.encoderSelectViewController.dataSource = self.encoderPresetsDataSource;
-    self.encoderSelectViewController.scriptableItemDelegate = self;
-    self.encoderSelectViewController.scriptableSelectDelegate = self;
+    self.encoderSelectViewController.delegate = self;
     self.encoderSelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
 
     char enc_preset_name[100];
@@ -616,8 +614,6 @@ static NSMutableArray *g_converterControllers;
         deadbeef->conf_set_str ("converter.dsp_preset_name", name);
     }
 }
-
-#pragma mark - ScriptableItemDelegate
 
 - (void)scriptableItemDidChange:(scriptableItem_t * _Nonnull)scriptable change:(ScriptableItemChange)change {
     if (scriptable == scriptableEncoderRoot(scriptableRootShared())) {

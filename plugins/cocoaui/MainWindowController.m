@@ -40,7 +40,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface MainWindowController () <NSMenuDelegate,DeletePlaylistConfirmationControllerDelegate,ScriptableSelectDelegate,ScriptableItemDelegate> {
+@interface MainWindowController () <NSMenuDelegate,DeletePlaylistConfirmationControllerDelegate,ScriptableSelectDelegate> {
     NSTimer *_updateTimer;
     char *_titlebar_playing_script;
     char *_titlebar_playing_subtitle_script;
@@ -130,8 +130,7 @@ extern DB_functions_t *deadbeef;
 
     // preset list and browse button
     self.tfQuerySelectViewController = [ScriptableSelectViewController new];
-    self.tfQuerySelectViewController.scriptableItemDelegate = self;
-    self.tfQuerySelectViewController.scriptableSelectDelegate = self;
+    self.tfQuerySelectViewController.delegate = self;
     self.tfQuerySelectViewController.view.frame = _tfQueryContainer.bounds;
     [_tfQueryContainer addSubview:self.tfQuerySelectViewController.view];
     self.tfQuerySelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
@@ -538,8 +537,6 @@ static char sb_text[512];
 
 - (void)scriptableSelectItemSelected:(scriptableItem_t *)item {
 }
-
-#pragma mark - ScriptableItemDelegate
 
 - (void)scriptableItemDidChange:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

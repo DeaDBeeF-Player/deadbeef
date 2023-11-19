@@ -33,7 +33,7 @@
 - (IBAction)nameSelectedAction:(NSPopUpButton *)sender {
     NSUInteger index = sender.indexOfSelectedItem;
     [self updateModelFromCurrent];
-    [self.scriptableSelectDelegate scriptableSelectItemSelected:scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)index)];
+    [self.delegate scriptableSelectItemSelected:scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)index)];
 }
 
 - (void)initNodeEditorWindowController {
@@ -148,7 +148,7 @@ _model_listener (struct scriptableModel_t *model, void *user_data) {
 
 - (void)scriptableItemDidChange:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
     [self updateModelFromCurrent];
-    [self.scriptableItemDelegate scriptableItemDidChange:scriptable change:change];
+    [self.delegate scriptableItemDidChange:scriptable change:change];
 }
 
 @end

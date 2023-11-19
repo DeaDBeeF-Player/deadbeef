@@ -17,14 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ScriptableSelectDelegate
 
 - (void)scriptableSelectItemSelected:(scriptableItem_t *)item;
+- (void)scriptableItemDidChange:(scriptableItem_t *_Nonnull)scriptable change:(ScriptableItemChange)change;
 
 @end
 
 @interface ScriptableSelectViewController : NSViewController
 
 @property (nonatomic,strong) IBOutlet ScriptableTableDataSource *dataSource;
-@property (weak) NSObject<ScriptableItemDelegate> *scriptableItemDelegate;
-@property (weak) NSObject<ScriptableSelectDelegate> *scriptableSelectDelegate;
+@property (weak) NSObject<ScriptableSelectDelegate> *delegate;
 @property (weak) NSObject<ScriptableErrorViewer> *errorViewer;
 @property scriptableModel_t *scriptableModel;
 
