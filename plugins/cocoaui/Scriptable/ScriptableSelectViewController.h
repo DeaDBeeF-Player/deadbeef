@@ -24,9 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ScriptableSelectViewController : NSViewController
 
 @property (nonatomic,strong) IBOutlet ScriptableTableDataSource *dataSource;
-@property (weak) NSObject<ScriptableSelectDelegate> *delegate;
-@property (weak) NSObject<ScriptableErrorViewer> *errorViewer;
-@property scriptableModel_t *scriptableModel;
+@property (nonatomic,weak) NSObject<ScriptableSelectDelegate> *delegate;
+@property (nonatomic,weak) NSObject<ScriptableErrorViewer> *errorViewer;
+@property (nonatomic) scriptableModel_t *scriptableModel;
 
 @property (nonatomic,readonly) NSInteger indexOfSelectedItem;
 
