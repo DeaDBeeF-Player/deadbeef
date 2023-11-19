@@ -183,7 +183,6 @@ _reload_content (w_medialib_viewer_t *mlv) {
     GtkTreePath *root_path = gtk_tree_path_new_from_indices (0, -1);
     _add_items (mlv, &mlv->root_iter, mlv->item_tree, root_path);
 
-    //    gtk_tree_view_set_model(mlv->tree, GTK_TREE_MODEL(store));
     gtk_tree_view_expand_row (mlv->tree, root_path, mlv->search_text != NULL);
     gtk_tree_path_free (root_path);
 
@@ -340,12 +339,6 @@ static void
 _scriptableSelectSelectionDidChange (gtkScriptableSelectViewController_t *vc, scriptableItem_t *item, void *context) {
     w_medialib_viewer_t *mlv = context;
 
-    // FIXME: this should be handled by gtkScriptableSelectViewController internally
-    const char *name = scriptableItemPropertyValueForKey (item, "name");
-    gtkui_medialib_preset_set (name);
-
-    // FIXME: this should be triggered by observing the manager's property
-    gtkui_medialib_preset_set (name);
     _reload_content (mlv);
 }
 
@@ -383,20 +376,8 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
     mlv->scriptableSelectDelegate.selection_did_change = _scriptableSelectSelectionDidChange;
     mlv->scriptableSelectDelegate.scriptable_did_change = _scriptableSelectScriptableDidChange;
     gtkScriptableSelectViewControllerSetScriptable (mlv->selectViewController, presets);
+    gtkScriptableSelectViewControllerSetModel (mlv->selectViewController, gtkui_medialib_get_model ());
     gtkScriptableSelectViewControllerSetDelegate (mlv->selectViewController, &mlv->scriptableSelectDelegate, mlv);
-    //    gtkScriptableSelectViewControllerSelectItem (mlv->selectViewController, scriptableItemChildren (presets));
-
-    // select persisted preset by name
-    // FIXME: this should be handled by gtkScriptableSelectViewController internally
-    scriptableItem_t *scriptable = plugin->get_queries_scriptable (mlv->source);
-    if (scriptable != NULL) {
-        char *preset = gtkui_medialib_preset_get ();
-        scriptableItem_t *currentPreset = scriptableItemSubItemForName (scriptable, preset);
-        if (currentPreset != NULL) {
-            gtkScriptableSelectViewControllerSelectItem (mlv->selectViewController, currentPreset);
-        }
-        free (preset);
-    }
 
     // Root node
     GtkTreeStore *store = mlv->store;

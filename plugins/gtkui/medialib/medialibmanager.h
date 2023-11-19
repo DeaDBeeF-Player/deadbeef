@@ -10,6 +10,7 @@
 #define medialibmanager_h
 
 #include <deadbeef/deadbeef.h>
+#include "scriptable/scriptable_model.h"
 
 ddb_mediasource_source_t *
 gtkui_medialib_get_source (void);
@@ -22,5 +23,8 @@ gtkui_medialib_preset_set (const char *preset);
 
 char *
 gtkui_medialib_preset_get (void);
+
+scriptableModel_t *
+gtkui_medialib_get_model (void);
 
 #endif /* medialibmanager_h */

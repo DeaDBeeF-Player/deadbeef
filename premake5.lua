@@ -829,7 +829,7 @@ project "ddb_gui_GTK2"
     "shared/trkproperties_shared.c",
     "shared/analyzer/analyzer.c",
     "shared/scope/scope.c",
-    "shared/scriptable/scriptable.c",
+    "shared/scriptable/*.c",
     "plugins/libparser/parser.c",
     "src/utf8.c"
   }
@@ -862,7 +862,7 @@ project "ddb_gui_GTK3"
     "shared/trkproperties_shared.c",
     "shared/analyzer/analyzer.c",
     "shared/scope/scope.c",
-    "shared/scriptable/scriptable.c",
+    "shared/scriptable/*.c",
     "plugins/libparser/parser.c",
     "src/utf8.c"
   }
@@ -1221,7 +1221,7 @@ project "medialib"
     "plugins/medialib/medialibstate.c",
     "plugins/medialib/medialibtree.c",
     "plugins/medialib/scriptable_tfquery.c",
-    "shared/scriptable/scriptable.c"
+    "shared/scriptable/*.c"
   }
   includedirs {
     "shared"

@@ -26,6 +26,7 @@
 
 #include <gtk/gtk.h>
 #include "scriptable/scriptable.h"
+#include "scriptable/scriptable_model.h"
 #include "gtkScriptable.h"
 
 // ViewController representing a Dropdown box + edit button
@@ -58,6 +59,9 @@ gtkScriptableSelectViewControllerSetDelegate (
     gtkScriptableSelectViewController_t *self,
     gtkScriptableSelectViewControllerDelegate_t *delegate,
     void *context);
+
+void
+gtkScriptableSelectViewControllerSetModel (gtkScriptableSelectViewController_t *self, scriptableModel_t *model);
 
 void
 gtkScriptableSelectViewControllerLoad (gtkScriptableSelectViewController_t *self);

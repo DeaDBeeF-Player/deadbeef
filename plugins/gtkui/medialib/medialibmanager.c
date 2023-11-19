@@ -16,6 +16,7 @@ extern DB_functions_t *deadbeef;
 
 static DB_mediasource_t *_plugin;
 static ddb_mediasource_source_t *_source;
+static scriptableModel_t *_model;
 
 ddb_mediasource_source_t *
 gtkui_medialib_get_source (void) {
@@ -30,6 +31,9 @@ gtkui_medialib_get_source (void) {
 
     _source = _plugin->create_source ("deadbeef");
     _plugin->refresh (_source);
+
+    _model = scriptableModelInit (scriptableModelAlloc (), deadbeef, "medialib.preset");
+
     return _source;
 }
 
@@ -39,18 +43,23 @@ gtkui_medialib_free (void) {
         _plugin->free_source (_source);
         _source = NULL;
     }
+    if (_model) {
+        scriptableModelFree (_model);
+        _model = NULL;
+    }
+}
+
+scriptableModel_t *
+gtkui_medialib_get_model (void) {
+    return _model;
 }
 
 void
 gtkui_medialib_preset_set (const char *preset) {
-    deadbeef->conf_set_str ("medialib.preset", preset);
-    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
-    // FIXME: notify
+    scriptableModelGetAPI (_model)->set_active_name (_model, preset);
 }
 
 char *
 gtkui_medialib_preset_get (void) {
-    char *buffer = calloc (1, 100);
-    deadbeef->conf_get_str ("medialib.preset", "", buffer, 100);
-    return buffer;
+    return scriptableModelGetAPI (_model)->get_active_name (_model);
 }

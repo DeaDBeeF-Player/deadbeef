@@ -41,6 +41,13 @@ struct gtkScriptableSelectViewController_t {
 
     gtkScriptableSelectViewControllerDelegate_t *delegate;
     void *context;
+
+    scriptableModel_t *model;
+    scriptableModelAPI_t *model_api;
+    int64_t model_listener_id;
+
+    /// When true: ignore model notifications
+    int updating_model;
 };
 
 static void
@@ -63,6 +70,9 @@ _scriptable_did_change (
 
 static void
 _reload_data (gtkScriptableSelectViewController_t *self);
+
+static scriptableItem_t *
+_get_selected_item (gtkScriptableSelectViewController_t *self);
 
 gtkScriptableSelectViewController_t *
 gtkScriptableSelectViewControllerNew (void) {
@@ -104,6 +114,7 @@ gtkScriptableSelectViewControllerNew (void) {
 
 void
 gtkScriptableSelectViewControllerFree (gtkScriptableSelectViewController_t *self) {
+    gtkScriptableSelectViewControllerSetModel (self, NULL);
     g_object_unref (self->view);
     free (self);
 }
@@ -123,6 +134,42 @@ gtkScriptableSelectViewControllerSetDelegate (
     void *context) {
     self->delegate = delegate;
     self->context = context;
+}
+
+static void
+_update_current_from_model (gtkScriptableSelectViewController_t *self) {
+    char *preset = self->model_api->get_active_name (self->model);
+    scriptableItem_t *currentPreset = scriptableItemSubItemForName (self->scriptable, preset);
+    if (currentPreset != NULL) {
+        gtkScriptableSelectViewControllerSelectItem (self, currentPreset);
+    }
+    free (preset);
+}
+
+static void
+_model_listener (struct scriptableModel_t *model, void *user_data) {
+    gtkScriptableSelectViewController_t *self = user_data;
+    if (self->updating_model) {
+        return;
+    }
+
+    _update_current_from_model (self);
+}
+
+void
+gtkScriptableSelectViewControllerSetModel (gtkScriptableSelectViewController_t *self, scriptableModel_t *model) {
+    if (self->model != NULL) {
+        self->model_api->remove_listener (self->model, self->model_listener_id);
+        self->model_listener_id = 0;
+        self->model_api = NULL;
+    }
+    self->model = model;
+    if (model != NULL) {
+        self->model_api = scriptableModelGetAPI (model);
+        self->model_listener_id = self->model_api->add_listener (model, _model_listener, self);
+
+        _update_current_from_model (self);
+    }
 }
 
 void
@@ -149,19 +196,42 @@ gtkScriptableSelectViewControllerIndexOfSelectedItem (gtkScriptableSelectViewCon
 }
 
 static void
+_apply_active_selection_to_model (scriptableItem_t *item, gtkScriptableSelectViewController_t *self) {
+    if (self->model != NULL) {
+        const char *name = "";
+        if (item != NULL) {
+            name = scriptableItemPropertyValueForKey (item, "name");
+        }
+        self->updating_model = 1;
+        self->model_api->set_active_name (self->model, name);
+        self->updating_model = 0;
+    }
+}
+
+static scriptableItem_t *
+_get_selected_item (gtkScriptableSelectViewController_t *self) {
+    scriptableItem_t *item = NULL;
+
+    int active = gtk_combo_box_get_active (GTK_COMBO_BOX (self->comboBox));
+    if (active >= 0) {
+        item = scriptableItemChildAtIndex (self->scriptable, active);
+    }
+    return item;
+}
+
+static void
 _selection_did_change (GtkComboBox *comboBox, gpointer user_data) {
     gtkScriptableSelectViewController_t *self = user_data;
     if (self->delegate == NULL || self->is_reloading) {
         return;
     }
+    scriptableItem_t *item = _get_selected_item (self);
 
-    int active = gtk_combo_box_get_active (GTK_COMBO_BOX (self->comboBox));
-    if (active < 0) {
-        return;
+    _apply_active_selection_to_model (item, self);
+
+    if (self->delegate != NULL && self->delegate->selection_did_change != NULL) {
+        self->delegate->selection_did_change (self, item, self->context);
     }
-    scriptableItem_t *item = scriptableItemChildAtIndex (self->scriptable, active);
-
-    self->delegate->selection_did_change (self, item, self->context);
 }
 
 static void

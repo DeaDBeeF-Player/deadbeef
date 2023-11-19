@@ -2209,6 +2209,12 @@
 		2DC5A2A82B05450400CBDA66 /* mlcellrendererpixbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5A2A22B05449800CBDA66 /* mlcellrendererpixbuf.c */; };
 		2DC5A2A92B05450400CBDA66 /* mlcellrendererpixbuf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC5A2A12B05449800CBDA66 /* mlcellrendererpixbuf.h */; };
 		2DC5A2AA2B05450400CBDA66 /* mlcellrendererpixbuf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5A2A22B05449800CBDA66 /* mlcellrendererpixbuf.c */; };
+		2DC5A3022B0A125000CBDA66 /* scriptable_model.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC5A3002B0A125000CBDA66 /* scriptable_model.h */; };
+		2DC5A3042B0A168D00CBDA66 /* scriptable_model.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5A3012B0A125000CBDA66 /* scriptable_model.c */; };
+		2DC5A3052B0A168E00CBDA66 /* scriptable_model.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5A3012B0A125000CBDA66 /* scriptable_model.c */; };
+		2DC5A3062B0A168F00CBDA66 /* scriptable_model.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5A3012B0A125000CBDA66 /* scriptable_model.c */; };
+		2DC5A3072B0A169000CBDA66 /* scriptable_model.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5A3012B0A125000CBDA66 /* scriptable_model.c */; };
+		2DC5A3082B0A16A000CBDA66 /* scriptable_model.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DC5A3012B0A125000CBDA66 /* scriptable_model.c */; };
 		2DC655752741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC655742741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib */; };
 		2DC655862741955A00583E14 /* ScopePreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC655852741955A00583E14 /* ScopePreferencesViewController.xib */; };
 		2DC6566E2744289C00583E14 /* ddbequalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B57F2269BB4300AFF9AE /* ddbequalizer.h */; };
@@ -6825,6 +6831,8 @@
 		2DC4199D1B90540A007E3026 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		2DC5A2A12B05449800CBDA66 /* mlcellrendererpixbuf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mlcellrendererpixbuf.h; sourceTree = "<group>"; };
 		2DC5A2A22B05449800CBDA66 /* mlcellrendererpixbuf.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mlcellrendererpixbuf.c; sourceTree = "<group>"; };
+		2DC5A3002B0A125000CBDA66 /* scriptable_model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_model.h; sourceTree = "<group>"; };
+		2DC5A3012B0A125000CBDA66 /* scriptable_model.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_model.c; sourceTree = "<group>"; };
 		2DC655742741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SpectrumAnalyzerPreferencesViewController.xib; sourceTree = "<group>"; };
 		2DC655852741955A00583E14 /* ScopePreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScopePreferencesViewController.xib; sourceTree = "<group>"; };
 		2DC6565C2744287000583E14 /* gtk2.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = gtk2.xcconfig; sourceTree = "<group>"; };
@@ -11606,6 +11614,8 @@
 			children = (
 				2D135EE8226E38AF00BAAE84 /* scriptable.c */,
 				2D135EE7226E38AF00BAAE84 /* scriptable.h */,
+				2DC5A3002B0A125000CBDA66 /* scriptable_model.h */,
+				2DC5A3012B0A125000CBDA66 /* scriptable_model.c */,
 			);
 			path = scriptable;
 			sourceTree = "<group>";
@@ -14597,6 +14607,7 @@
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2DC657F8274A7C4600583E14 /* RenamePlaylistViewController.h in Headers */,
 				2DD3776027414BF6007AD315 /* ScopePreferencesViewController.h in Headers */,
+				2DC5A3022B0A125000CBDA66 /* scriptable_model.h in Headers */,
 				2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */,
 				2D9C0C25238DC2C100CE8C10 /* GroupByCustomWindowController.h in Headers */,
 				2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */,
@@ -16731,6 +16742,7 @@
 				2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */,
 				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,
 				2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */,
+				2DC5A3042B0A168D00CBDA66 /* scriptable_model.c in Sources */,
 				2D01D7DD1AB2219C00BCD3C4 /* pltmeta.c in Sources */,
 				2D01D7D71AB2219C00BCD3C4 /* handler.c in Sources */,
 				2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */,
@@ -17211,6 +17223,7 @@
 				2DBF3DC4270A101000023138 /* medialibstate.c in Sources */,
 				2D78C5642756919500F96F9D /* medialib.c in Sources */,
 				2D78C54C27568AC500F96F9D /* medialibsource.c in Sources */,
+				2DC5A3082B0A16A000CBDA66 /* scriptable_model.c in Sources */,
 				2D78C54A27568AC500F96F9D /* medialibcommon.c in Sources */,
 				2D78C56127568FFB00F96F9D /* medialibscanner.c in Sources */,
 				2DB520E62AA8FADB00B6250A /* scriptable.c in Sources */,
@@ -17823,6 +17836,7 @@
 				2DA21F4D298680990077BD4C /* RingBufTests.cpp in Sources */,
 				4D90AAFF20EA5CA500D13537 /* DDBTestInitializer.m in Sources */,
 				2D04C3D12433B3B9003C2AAC /* GrowableBufferTests.cpp in Sources */,
+				2DC5A3072B0A169000CBDA66 /* scriptable_model.c in Sources */,
 				2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */,
 				2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */,
 				2DEE302B29BC8D1900A293AD /* coreaudio.c in Sources */,
@@ -17932,6 +17946,7 @@
 				2D60EB06277238E000C28A44 /* searchplaylist.c in Sources */,
 				2DC656C72744289C00583E14 /* ddbvolumebar.c in Sources */,
 				2DC656C82744289C00583E14 /* actionhandlers.c in Sources */,
+				2DC5A3052B0A168E00CBDA66 /* scriptable_model.c in Sources */,
 				2DC656C92744289C00583E14 /* ddb_splitter.c in Sources */,
 				2D92D32429B92F9600218F1D /* tftintutil.c in Sources */,
 				2DC656CA2744289C00583E14 /* tfimport.c in Sources */,
@@ -18037,6 +18052,7 @@
 				2D60EB07277238E000C28A44 /* searchplaylist.c in Sources */,
 				2DE3B7FE2269BF3100AFF9AE /* ddbvolumebar.c in Sources */,
 				2DE3B7F52269BF3100AFF9AE /* actionhandlers.c in Sources */,
+				2DC5A3062B0A168F00CBDA66 /* scriptable_model.c in Sources */,
 				2DE3B7C82269BF1300AFF9AE /* ddb_splitter.c in Sources */,
 				2D92D32529B92F9700218F1D /* tftintutil.c in Sources */,
 				2DE3B7E62269BF3100AFF9AE /* tfimport.c in Sources */,
