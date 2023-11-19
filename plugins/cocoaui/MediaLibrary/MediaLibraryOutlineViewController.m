@@ -24,6 +24,7 @@ extern DB_functions_t *deadbeef;
 static void *kPresetCtx = &kPresetCtx;
 
 @interface MediaLibraryOutlineViewController() <NSOutlineViewDataSource,MediaLibraryOutlineViewDelegate,TrackContextMenuDelegate,TrackPropertiesWindowControllerDelegate> {
+    int64_t _modelListenerId;
 }
 
 @property (nonatomic) MediaLibraryItem *medialibRootItem;
@@ -50,8 +51,6 @@ static void *kPresetCtx = &kPresetCtx;
 
 @property (nonatomic) NSMutableDictionary<NSString *,NSImage *> *albumArtCache;
 
-@property (nonatomic) NSString *currentPreset;
-
 @property (nonatomic) NSImage *folderImage;
 
 @end
@@ -71,6 +70,16 @@ static void *kPresetCtx = &kPresetCtx;
     return [self initWithOutlineView:[NSOutlineView new] searchField:[NSSearchField new]];
 }
 
+static void
+_model_listener (struct scriptableModel_t *model, void *user_data) {
+    MediaLibraryOutlineViewController *self = (__bridge MediaLibraryOutlineViewController *)user_data;
+    [self modelListener];
+}
+
+- (void)modelListener {
+    [self initializeTreeView];
+}
+
 - (instancetype)initWithOutlineView:(NSOutlineView *)outlineView searchField:(NSSearchField *)searchField {
     self = [super init];
     if (!self) {
@@ -79,9 +88,6 @@ static void *kPresetCtx = &kPresetCtx;
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(applicationWillQuit:) name:@"ApplicationWillQuit" object:nil];
 
-
-
-    self.currentPreset = self.mediaLibraryManager.preset;
     [self.mediaLibraryManager addObserver:self forKeyPath:@"preset" options:0 context:kPresetCtx];
 
     self.outlineView = outlineView;
@@ -102,6 +108,9 @@ static void *kPresetCtx = &kPresetCtx;
     self.outlineView.menu.delegate = self;
 
     [self initializeTreeView];
+
+    scriptableModel_t *model = self.mediaLibraryManager.model;
+    _modelListenerId = scriptableModelGetAPI(model)->add_listener (model, _model_listener, (__bridge void *)self);
 
     [self.outlineView expandItem:self.medialibRootItem];
 
@@ -125,7 +134,6 @@ static void *kPresetCtx = &kPresetCtx;
         dispatch_async(dispatch_get_main_queue(), ^{
             // NOTE: don't add a check for whether user changed to another preset.
             // This would break a refresh if the current preset changes settings.
-            self.currentPreset = self.mediaLibraryManager.preset;
             [self filterChanged];
         });
     } else {
@@ -134,6 +142,10 @@ static void *kPresetCtx = &kPresetCtx;
 }
 
 - (void)disconnect {
+    scriptableModel_t *model = self.mediaLibraryManager.model;
+    scriptableModelGetAPI(model)->remove_listener(model, _modelListenerId);
+    _modelListenerId = 0;
+
     if (self.medialibPlugin == NULL) {
         return;
     }
@@ -170,7 +182,8 @@ static void _medialib_listener (ddb_mediasource_event_type_t event, void *user_d
 
     scriptableItem_t *tfQueryRoot =  self.medialibPlugin->get_queries_scriptable(self.medialibSource);
 
-    NSString *presetName = self.mediaLibraryManager.preset;
+    scriptableModel_t *model = self.mediaLibraryManager.model;
+    NSString *presetName = @(scriptableModelGetAPI(model)->get_active_name(model));
     scriptableItem_t *preset = NULL;
     if (presetName != nil) {
         preset = scriptableItemSubItemForName(tfQueryRoot, presetName.UTF8String);

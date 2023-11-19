@@ -14,6 +14,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic,readwrite) DB_mediasource_t *medialibPlugin;
 @property (nonatomic,readwrite) ddb_mediasource_source_t *source;
+@property (nonatomic,readwrite) scriptableModel_t *model;
 
 @end
 
@@ -33,29 +34,19 @@ extern DB_functions_t *deadbeef;
     _source = self.medialibPlugin->create_source ("deadbeef");
     self.medialibPlugin->refresh(_source);
 
+    self.model = scriptableModelInit(scriptableModelAlloc(), deadbeef, "medialib.preset");
+
     return self;
 }
 
 - (void)dealloc
 {
+    scriptableModelFree(_model);
     if (_source) {
         _medialibPlugin->free_source(_source);
         _source = NULL;
     }
     _medialibPlugin = NULL;
-}
-
-- (void)setPreset:(NSString *)preset {
-    [self willChangeValueForKey:@"preset"];
-    deadbeef->conf_set_str("medialib.preset", preset.UTF8String);
-    deadbeef->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
-    [self didChangeValueForKey:@"preset"];
-}
-
-- (NSString *)preset {
-    char buffer[100];
-    deadbeef->conf_get_str("medialib.preset", "", buffer, sizeof(buffer));
-    return @(buffer);
 }
 
 @end

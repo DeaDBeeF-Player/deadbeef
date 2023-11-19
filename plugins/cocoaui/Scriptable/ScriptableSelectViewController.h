@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #include "scriptable/scriptable.h"
+#include "scriptable/scriptable_model.h"
 #import "ScriptableTableDataSource.h"
 #import "ScriptableProtocols.h"
 
@@ -25,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak) NSObject<ScriptableItemDelegate> *scriptableItemDelegate;
 @property (weak) NSObject<ScriptableSelectDelegate> *scriptableSelectDelegate;
 @property (weak) NSObject<ScriptableErrorViewer> *errorViewer;
+@property scriptableModel_t *scriptableModel;
 
 @property (nonatomic,readonly) NSInteger indexOfSelectedItem;
 

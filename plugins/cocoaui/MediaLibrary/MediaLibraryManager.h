@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #include <deadbeef/deadbeef.h>
+#include "scriptable/scriptable_model.h"
 #include "medialib.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -16,8 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,readonly) DB_mediasource_t *medialibPlugin;
 @property (nonatomic,readonly) ddb_mediasource_source_t *source;
-
-@property (nullable, nonatomic) NSString *preset;
+@property (nonatomic,readonly) scriptableModel_t *model;
 
 @end
 

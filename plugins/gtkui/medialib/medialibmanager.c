@@ -53,13 +53,3 @@ scriptableModel_t *
 gtkui_medialib_get_model (void) {
     return _model;
 }
-
-void
-gtkui_medialib_preset_set (const char *preset) {
-    scriptableModelGetAPI (_model)->set_active_name (_model, preset);
-}
-
-char *
-gtkui_medialib_preset_get (void) {
-    return scriptableModelGetAPI (_model)->get_active_name (_model);
-}

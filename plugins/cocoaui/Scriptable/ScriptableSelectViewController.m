@@ -9,7 +9,11 @@
 #import "ScriptableSelectViewController.h"
 #import "ScriptableNodeEditorWindowController.h"
 
-@interface ScriptableSelectViewController ()
+@interface ScriptableSelectViewController () <ScriptableItemDelegate> {
+    scriptableModelAPI_t *_modelAPI;
+    int64_t _modelListenerId;
+    BOOL _updatingModel;
+}
 
 @property (weak) IBOutlet NSPopUpButton *nameList;
 @property (weak) IBOutlet NSButton *browseButton;
@@ -19,6 +23,8 @@
 
 @implementation ScriptableSelectViewController
 
+@synthesize scriptableModel = _scriptableModel;
+
 - (void)setDataSource:(ScriptableTableDataSource *)dataSource {
     _dataSource = dataSource;
     [self reloadData];
@@ -26,13 +32,14 @@
 
 - (IBAction)nameSelectedAction:(NSPopUpButton *)sender {
     NSUInteger index = sender.indexOfSelectedItem;
+    [self updateModelFromCurrent];
     [self.scriptableSelectDelegate scriptableSelectItemSelected:scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)index)];
 }
 
 - (void)initNodeEditorWindowController {
     self.nodeEditorWindowController = [[ScriptableNodeEditorWindowController alloc] initWithWindowNibName:@"ScriptableNodeEditorWindow"];
     self.nodeEditorWindowController.dataSource = self.dataSource;
-    self.nodeEditorWindowController.delegate = self.scriptableItemDelegate;
+    self.nodeEditorWindowController.delegate = self;
     self.nodeEditorWindowController.errorViewer = self.errorViewer;
 }
 
@@ -71,6 +78,77 @@
     if (index != -1) {
         [self.nameList selectItemAtIndex:index];
     }
+}
+
+- (void)updateCurrentFromModel {
+    if (_scriptableModel == NULL) {
+        return;
+    }
+    char *preset = _modelAPI->get_active_name (_scriptableModel);
+    scriptableItem_t *currentPreset = scriptableItemSubItemForName (self.dataSource.scriptable, preset);
+    if (currentPreset != NULL) {
+        [self selectItem:currentPreset];
+    }
+    free (preset);
+}
+
+- (void)updateModelFromCurrent {
+    if (_scriptableModel == NULL) {
+        return;
+    }
+
+    NSUInteger index = self.nameList.indexOfSelectedItem;
+    scriptableItem_t *item = scriptableItemChildAtIndex(self.dataSource.scriptable, (unsigned int)index);
+
+    const char *name = "";
+    if (item != NULL) {
+        name = scriptableItemPropertyValueForKey (item, "name");
+    }
+    _updatingModel = YES;
+    _modelAPI->set_active_name (_scriptableModel, name);
+    _updatingModel = NO;
+}
+
+static void
+_model_listener (struct scriptableModel_t *model, void *user_data) {
+    ScriptableSelectViewController *self = (__bridge ScriptableSelectViewController *)user_data;
+    [self modelListener];
+}
+
+- (void)modelListener {
+    if (_updatingModel) {
+        return;
+    }
+
+    [self updateCurrentFromModel];
+}
+
+- (scriptableModel_t *)scriptableModel {
+    return _scriptableModel;
+}
+
+- (void)setScriptableModel:(scriptableModel_t *)scriptableModel {
+    if (_scriptableModel != NULL) {
+        _modelAPI->remove_listener (_scriptableModel, self->_modelListenerId);
+        _modelListenerId = 0;
+        _modelAPI = NULL;
+    }
+
+    _scriptableModel = scriptableModel;
+
+    if (scriptableModel != NULL) {
+        _modelAPI = scriptableModelGetAPI (scriptableModel);
+        _modelListenerId = _modelAPI->add_listener (scriptableModel, _model_listener, (__bridge void *)self);
+
+        [self updateCurrentFromModel];
+    }
+}
+
+#pragma mark - ScriptableItemDelegate
+
+- (void)scriptableItemDidChange:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
+    [self updateModelFromCurrent];
+    [self.scriptableItemDelegate scriptableItemDidChange:scriptable change:change];
 }
 
 @end

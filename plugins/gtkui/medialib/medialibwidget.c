@@ -161,7 +161,9 @@ _reload_content (w_medialib_viewer_t *mlv) {
 
     scriptableItem_t *presets = plugin->get_queries_scriptable (mlv->source);
     if (presets) {
-        char *curr_preset = gtkui_medialib_preset_get ();
+        scriptableModel_t *model = gtkui_medialib_get_model ();
+
+        char *curr_preset = scriptableModelGetAPI (model)->get_active_name (model);
         if (curr_preset) {
             preset = scriptableItemSubItemForName (presets, curr_preset);
         }

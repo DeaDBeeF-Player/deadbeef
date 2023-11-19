@@ -136,14 +136,7 @@ extern DB_functions_t *deadbeef;
     [_tfQueryContainer addSubview:self.tfQuerySelectViewController.view];
     self.tfQuerySelectViewController.errorViewer = ScriptableErrorViewer.sharedInstance;
     self.tfQuerySelectViewController.dataSource = self.mlQueriesDataSource;
-
-    if (self.mlQueriesDataSource.scriptable != NULL) {
-        NSString *preset = self.mediaLibraryManager.preset;
-        scriptableItem_t *currentPreset = scriptableItemSubItemForName(self.mlQueriesDataSource.scriptable, preset.UTF8String);
-        if (currentPreset != NULL) {
-            [self.tfQuerySelectViewController selectItem:currentPreset];
-        }
-    }
+    self.tfQuerySelectViewController.scriptableModel = self.mediaLibraryManager.model;
 
     id<WidgetProtocol> rootWidget = DesignModeState.sharedInstance.rootWidget;
     NSView *view = rootWidget.view;
@@ -544,8 +537,6 @@ static char sb_text[512];
 #pragma mark - ScriptableSelectDelegate
 
 - (void)scriptableSelectItemSelected:(scriptableItem_t *)item {
-    const char *name = scriptableItemPropertyValueForKey(item, "name");
-    self.mediaLibraryManager.preset = @(name);
 }
 
 #pragma mark - ScriptableItemDelegate
@@ -560,11 +551,6 @@ static char sb_text[512];
             if (tfQueryRoot != NULL) {
                 scriptableItemSave(tfQueryRoot);
             }
-
-            // refresh the tree
-            NSInteger index = self.tfQuerySelectViewController.indexOfSelectedItem;
-            scriptableItem_t *item = scriptableItemChildAtIndex(tfQueryRoot, (unsigned int)index);
-            [self scriptableSelectItemSelected:item];
         }
     });
 }

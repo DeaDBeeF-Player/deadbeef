@@ -138,6 +138,9 @@ gtkScriptableSelectViewControllerSetDelegate (
 
 static void
 _update_current_from_model (gtkScriptableSelectViewController_t *self) {
+    if (self->model == NULL) {
+        return;
+    }
     char *preset = self->model_api->get_active_name (self->model);
     scriptableItem_t *currentPreset = scriptableItemSubItemForName (self->scriptable, preset);
     if (currentPreset != NULL) {
@@ -197,15 +200,16 @@ gtkScriptableSelectViewControllerIndexOfSelectedItem (gtkScriptableSelectViewCon
 
 static void
 _apply_active_selection_to_model (scriptableItem_t *item, gtkScriptableSelectViewController_t *self) {
-    if (self->model != NULL) {
-        const char *name = "";
-        if (item != NULL) {
-            name = scriptableItemPropertyValueForKey (item, "name");
-        }
-        self->updating_model = 1;
-        self->model_api->set_active_name (self->model, name);
-        self->updating_model = 0;
+    if (self->model == NULL) {
+        return;
     }
+    const char *name = "";
+    if (item != NULL) {
+        name = scriptableItemPropertyValueForKey (item, "name");
+    }
+    self->updating_model = 1;
+    self->model_api->set_active_name (self->model, name);
+    self->updating_model = 0;
 }
 
 static scriptableItem_t *

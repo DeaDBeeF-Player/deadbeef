@@ -18,12 +18,6 @@ gtkui_medialib_get_source (void);
 void
 gtkui_medialib_free (void);
 
-void
-gtkui_medialib_preset_set (const char *preset);
-
-char *
-gtkui_medialib_preset_get (void);
-
 scriptableModel_t *
 gtkui_medialib_get_model (void);
 
