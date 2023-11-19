@@ -6,11 +6,11 @@
 //  Copyright © 2021 Oleksiy Yakovenko. All rights reserved.
 //
 
-
 #include <deadbeef/deadbeef.h>
 #include "../../../gettext.h"
 #include "../support.h"
 #include "medialibmanager.h"
+#include <stdlib.h>
 
 extern DB_functions_t *deadbeef;
 
@@ -23,13 +23,13 @@ gtkui_medialib_get_source (void) {
         return _source;
     }
 
-    _plugin = (DB_mediasource_t *)deadbeef->plug_get_for_id("medialib");
+    _plugin = (DB_mediasource_t *)deadbeef->plug_get_for_id ("medialib");
     if (_plugin == NULL) {
         return NULL;
     }
 
     _source = _plugin->create_source ("deadbeef");
-    _plugin->refresh(_source);
+    _plugin->refresh (_source);
     return _source;
 }
 
@@ -41,3 +41,16 @@ gtkui_medialib_free (void) {
     }
 }
 
+void
+gtkui_medialib_preset_set (const char *preset) {
+    deadbeef->conf_set_str ("medialib.preset", preset);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+    // FIXME: notify
+}
+
+char *
+gtkui_medialib_preset_get (void) {
+    char *buffer = calloc (1, 100);
+    deadbeef->conf_get_str ("medialib.preset", "", buffer, 100);
+    return buffer;
+}

@@ -67,10 +67,19 @@ static void
 _duplicate_did_activate (GtkButton *button, gpointer user_data);
 
 static void
+_scriptable_did_change (
+    gtkScriptableListEditWindowController_t *view_controller,
+    gtkScriptableChange_t change_type,
+    void *context);
+
+static void
 _selection_did_change (GtkTreeSelection *treeselection, gpointer user_data);
 
 static void
-_init_treeview_cell_from_scriptable_item (gtkScriptableListEditViewController_t *self, GtkTreeIter *iter, scriptableItem_t *item);
+_init_treeview_cell_from_scriptable_item (
+    gtkScriptableListEditViewController_t *self,
+    GtkTreeIter *iter,
+    scriptableItem_t *item);
 
 static GtkWidget *
 _create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name);
@@ -91,6 +100,7 @@ gtkScriptableListEditViewController_t *
 gtkScriptableListEditViewControllerNew (void) {
     gtkScriptableListEditViewController_t *self = calloc (1, sizeof (gtkScriptableListEditViewController_t));
 
+    self->list_editor_window_delegate.scriptable_did_change = _scriptable_did_change;
     self->list_editor_window_delegate.window_did_close = _list_editor_window_did_close;
 
     return self;
@@ -103,7 +113,10 @@ gtkScriptableListEditViewControllerFree (gtkScriptableListEditViewController_t *
 }
 
 void
-gtkScriptableListEditViewControllerSetDelegate (gtkScriptableListEditViewController_t *self, gtkScriptableListEditViewControllerDelegate_t *delegate, void *context) {
+gtkScriptableListEditViewControllerSetDelegate (
+    gtkScriptableListEditViewController_t *self,
+    gtkScriptableListEditViewControllerDelegate_t *delegate,
+    void *context) {
     self->delegate = delegate;
     self->context = context;
 }
@@ -212,7 +225,9 @@ gtkScriptableListEditViewControllerGetView (gtkScriptableListEditViewController_
 }
 
 void
-gtkScriptableListEditViewControllerSetScriptable (gtkScriptableListEditViewController_t *self, scriptableItem_t *scriptable) {
+gtkScriptableListEditViewControllerSetScriptable (
+    gtkScriptableListEditViewController_t *self,
+    scriptableItem_t *scriptable) {
     self->scriptable = scriptable;
 
     gboolean editable = 0 != (scriptableItemFlags (scriptable) & SCRIPTABLE_FLAG_CAN_RENAME);
@@ -309,7 +324,10 @@ _insertion_index (gtkScriptableListEditViewController_t *self) {
 }
 
 static void
-_init_treeview_cell_from_scriptable_item (gtkScriptableListEditViewController_t *self, GtkTreeIter *iter, scriptableItem_t *item) {
+_init_treeview_cell_from_scriptable_item (
+    gtkScriptableListEditViewController_t *self,
+    GtkTreeIter *iter,
+    scriptableItem_t *item) {
     char *text = scriptableItemFormattedName (item);
     gtk_list_store_set (self->list_store, iter, 0, text, 1, item, -1);
 
@@ -509,9 +527,14 @@ _config_did_activate (GtkButton *button, gpointer user_data) {
         gtkScriptableListEditWindowControllerSetTitle (self->list_editor_window_controller, title);
         free (title);
 
-        gtkScriptableListEditWindowControllerSetDelegate (self->list_editor_window_controller, &self->list_editor_window_delegate, self);
+        gtkScriptableListEditWindowControllerSetDelegate (
+            self->list_editor_window_controller,
+            &self->list_editor_window_delegate,
+            self);
 
-        gtkScriptableListEditWindowControllerRunModal (self->list_editor_window_controller, GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
+        gtkScriptableListEditWindowControllerRunModal (
+            self->list_editor_window_controller,
+            GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
     }
     else {
         // FIXME: impl
@@ -603,11 +626,20 @@ _did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpo
     // so when error occurs -- reset the text back to unedited variant,
     // and don't attempt to re-enter edit mode.
 
-    if (!(scriptableItemFlags (scriptableItemParent (item)) & SCRIPTABLE_FLAG_ALLOW_NON_UNIQUE_KEYS) && scriptableItemContainsSubItemWithName (scriptableItemParent (item), new_text)) {
-        _display_alert (_ ("Can't do that"), _ ("Preset with this name already exists."), _ ("Try a different name."), GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
+    if (!(scriptableItemFlags (scriptableItemParent (item)) & SCRIPTABLE_FLAG_ALLOW_NON_UNIQUE_KEYS) &&
+        scriptableItemContainsSubItemWithName (scriptableItemParent (item), new_text)) {
+        _display_alert (
+            _ ("Can't do that"),
+            _ ("Preset with this name already exists."),
+            _ ("Try a different name."),
+            GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
     }
     else if (!scriptableItemIsSubItemNameAllowed (scriptableItemParent (item), new_text)) {
-        _display_alert (_ ("Can't do that"), _ ("This name is not allowed."), _ ("Try a different name."), GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
+        _display_alert (
+            _ ("Can't do that"),
+            _ ("This name is not allowed."),
+            _ ("Try a different name."),
+            GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
     }
     else {
         scriptableItemSetPropertyValueForKey (item, new_text, "name");
@@ -616,6 +648,17 @@ _did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpo
         if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
             self->delegate->scriptable_did_change (self, ScriptableItemChangeUpdate, self->context);
         }
+    }
+}
+
+static void
+_scriptable_did_change (
+    gtkScriptableListEditWindowController_t *view_controller,
+    gtkScriptableChange_t change_type,
+    void *context) {
+    gtkScriptableListEditViewController_t *self = context;
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change (self, change_type, self->context);
     }
 }
 
@@ -682,7 +725,13 @@ _did_reorder_items (GtkWidget *widget, GdkDragContext *context, gpointer user_da
 
 static void
 _display_alert (const char *title, const char *message, const char *secondary_message, GtkWindow *modalForWindow) {
-    GtkWidget *dlg = gtk_message_dialog_new (GTK_WINDOW (modalForWindow), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", message);
+    GtkWidget *dlg = gtk_message_dialog_new (
+        GTK_WINDOW (modalForWindow),
+        GTK_DIALOG_MODAL,
+        GTK_MESSAGE_WARNING,
+        GTK_BUTTONS_OK,
+        "%s",
+        message);
     gtk_window_set_transient_for (GTK_WINDOW (dlg), modalForWindow);
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dlg), "%s", secondary_message);
     gtk_window_set_title (GTK_WINDOW (dlg), title);
