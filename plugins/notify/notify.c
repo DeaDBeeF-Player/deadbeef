@@ -40,7 +40,7 @@ static time_t request_timer = 0;
 static int terminate;
 
 #define NOTIFY_DEFAULT_TITLE "%title%"
-#define NOTIFY_DEFAULT_CONTENT "%artist% - %album%"
+#define NOTIFY_DEFAULT_CONTENT "%artist%$if($and(%artist%,%album%), - ,)%album%"
 
 static char *tf_title;
 static char *tf_content;
@@ -56,17 +56,17 @@ notify_send (DBusMessage *msg, dbus_uint32_t replaces_id) {
     DBusError error;
     dbus_error_init (&error);
     DBusConnection *conn = dbus_bus_get (DBUS_BUS_SESSION, &error);
-    if(dbus_error_is_set (&error)) {
-        fprintf(stderr, "connection failed: %s",error.message);
-        dbus_error_free(&error);
+    if (dbus_error_is_set (&error)) {
+        fprintf (stderr, "connection failed: %s", error.message);
+        dbus_error_free (&error);
         dbus_message_unref (msg);
         return 0;
     }
 
     reply = dbus_connection_send_with_reply_and_block (conn, msg, -1, &error);
     if (dbus_error_is_set (&error)) {
-        fprintf(stderr, "send_with_reply_and_block error: (%s)\n", error.message); 
-        dbus_error_free(&error);
+        fprintf (stderr, "send_with_reply_and_block error: (%s)\n", error.message);
+        dbus_error_free (&error);
         dbus_message_unref (msg);
         return 0;
     }
@@ -76,17 +76,19 @@ notify_send (DBusMessage *msg, dbus_uint32_t replaces_id) {
         // Process the reply message
         DBusMessageIter args;
 
-        if (dbus_message_iter_init(reply, &args)) {
-            if (DBUS_TYPE_UINT32 == dbus_message_iter_get_arg_type(&args)) {
-                dbus_message_iter_get_basic(&args, &id);
+        if (dbus_message_iter_init (reply, &args)) {
+            if (DBUS_TYPE_UINT32 == dbus_message_iter_get_arg_type (&args)) {
+                dbus_message_iter_get_basic (&args, &id);
                 dbus_message_unref (reply);
-            } else {
-                fprintf(stderr, "Argument is not uint32\n"); 
             }
-        } else {
-            fprintf(stderr, "Reply has no arguments\n"); 
+            else {
+                fprintf (stderr, "Argument is not uint32\n");
+            }
         }
-    } 
+        else {
+            fprintf (stderr, "Reply has no arguments\n");
+        }
+    }
 
     dbus_message_unref (msg);
     dbus_connection_unref (conn);
@@ -141,10 +143,10 @@ esc_xml (const char *cmd, char *esc, int size) {
             dst += 6;
             src++;
         }
-        else if (*src == '\\' && *(src+1) == 'n') {
+        else if (*src == '\\' && *(src + 1) == 'n') {
             strcpy (dst, "\n");
             dst++;
-            src+=2;
+            src += 2;
         }
         else {
             *dst++ = *src++;
@@ -155,9 +157,10 @@ esc_xml (const char *cmd, char *esc, int size) {
 
 static void
 _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    void (^completion_block)(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) = (void (^)(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover))query->user_data;
-    completion_block(error, query, cover);
-    Block_release(completion_block);
+    void (^completion_block) (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) =
+        (void (^) (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover))query->user_data;
+    completion_block (error, query, cover);
+    Block_release (completion_block);
 }
 
 static dbus_uint32_t
@@ -176,10 +179,11 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
 
     char esc_content[1024];
     esc_xml (content, esc_content, sizeof (esc_content));
-    DBusMessage *msg = dbus_message_new_method_call (E_NOTIFICATION_BUS_NAME, E_NOTIFICATION_PATH, E_NOTIFICATION_INTERFACE, "Notify");
+    DBusMessage *msg =
+        dbus_message_new_method_call (E_NOTIFICATION_BUS_NAME, E_NOTIFICATION_PATH, E_NOTIFICATION_INTERFACE, "Notify");
 
     if (replaces_id == 0) {
-        time_t new_time = time(NULL);
+        time_t new_time = time (NULL);
         if (last_track == track && !force) {
             if (new_time - request_timer < 1) {
                 return replaces_id; // same track, less than 1 sec after previous notification -- pass
@@ -198,7 +202,7 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
 
     const char *v_appname = "DeaDBeeF";
 
-    bool should_wait_for_cover = !image_filename && deadbeef->conf_get_int("notify.albumart", 0) && artwork_plugin;
+    bool should_wait_for_cover = !image_filename && deadbeef->conf_get_int ("notify.albumart", 0) && artwork_plugin;
     bool should_apply_kde_fix = deadbeef->conf_get_int ("notify.fix_kde_5_23_5", 0) ? true : false;
 
     // KDE won't re-display notification via reuse,
@@ -209,25 +213,30 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
         const char *v_body = esc_content;
         dbus_int32_t v_timeout = -1;
 
-        dbus_message_append_args (msg
-                                  , DBUS_TYPE_STRING, &v_appname
-                                  , DBUS_TYPE_UINT32, &replaces_id
-                                  , DBUS_TYPE_STRING, &v_iconname
-                                  , DBUS_TYPE_STRING, &v_summary
-                                  , DBUS_TYPE_STRING, &v_body
-                                  , DBUS_TYPE_INVALID
-                                  );
+        dbus_message_append_args (
+            msg,
+            DBUS_TYPE_STRING,
+            &v_appname,
+            DBUS_TYPE_UINT32,
+            &replaces_id,
+            DBUS_TYPE_STRING,
+            &v_iconname,
+            DBUS_TYPE_STRING,
+            &v_summary,
+            DBUS_TYPE_STRING,
+            &v_body,
+            DBUS_TYPE_INVALID);
 
         DBusMessageIter iter, sub;
         // actions
-        dbus_message_iter_init_append(msg, &iter);
-        dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "s", &sub);
-        dbus_message_iter_close_container(&iter, &sub);
+        dbus_message_iter_init_append (msg, &iter);
+        dbus_message_iter_open_container (&iter, DBUS_TYPE_ARRAY, "s", &sub);
+        dbus_message_iter_close_container (&iter, &sub);
         // hints
-        dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "{sv}", &sub);
-        dbus_message_iter_close_container(&iter, &sub);
+        dbus_message_iter_open_container (&iter, DBUS_TYPE_ARRAY, "{sv}", &sub);
+        dbus_message_iter_close_container (&iter, &sub);
 
-        dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &v_timeout);
+        dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &v_timeout);
 
         replaces_id = notify_send (msg, replaces_id);
     }
@@ -239,32 +248,33 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
         deadbeef->pl_item_ref (track);
         query->source_id = 0;
 
-        void (^completion_block)(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) = ^(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-                char *image_filename;
-                if (cover != NULL && cover->image_filename != NULL) {
-                    image_filename = strdup (cover->image_filename);
+        void (^completion_block) (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) =
+            ^(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+                if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
+                    char *image_filename;
+                    if (cover != NULL && cover->image_filename != NULL) {
+                        image_filename = strdup (cover->image_filename);
+                    }
+                    else {
+                        image_filename = strdup ("deadbeef");
+                    }
+                    // redisplay notification with the album art
+                    ddb_playItem_t *track = query->track;
+                    deadbeef->pl_item_ref (track);
+                    dispatch_async (queue, ^{
+                        _replaces_id = show_notification (track, image_filename, replaces_id, 1);
+                        free (image_filename);
+                        deadbeef->pl_item_unref (track);
+                    });
                 }
-                else {
-                    image_filename = strdup("deadbeef");
+                deadbeef->pl_item_unref (query->track);
+                free (query);
+                if (cover != NULL) {
+                    artwork_plugin->cover_info_release (cover);
                 }
-                // redisplay notification with the album art
-                ddb_playItem_t *track = query->track;
-                deadbeef->pl_item_ref (track);
-                dispatch_async (queue, ^{
-                    _replaces_id = show_notification (track, image_filename, replaces_id, 1);
-                    free (image_filename);
-                    deadbeef->pl_item_unref (track);
-                });
-            }
-            deadbeef->pl_item_unref (query->track);
-            free (query);
-            if (cover != NULL) {
-                artwork_plugin->cover_info_release (cover);
-            }
-        };
+            };
 
-        query->user_data = (dispatch_block_t)Block_copy(completion_block);
+        query->user_data = (dispatch_block_t)Block_copy (completion_block);
         artwork_plugin->cover_get (query, _cover_loaded_callback);
     }
 
@@ -311,18 +321,14 @@ init_tf (void) {
 static int
 notify_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
-    case DB_EV_SONGSTARTED:
-    {
+    case DB_EV_SONGSTARTED: {
         ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
         on_songstarted (ev->track);
-    }
-        break;
-    case DB_EV_SONGCHANGED:
-    {
+    } break;
+    case DB_EV_SONGCHANGED: {
         ddb_event_trackchange_t *ev = (ddb_event_trackchange_t *)ctx;
         on_songstarted (ev->to);
-    }
-        break;
+    } break;
     case DB_EV_CONFIGCHANGED:
         init_tf ();
         break;
@@ -332,7 +338,7 @@ notify_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 int
 notify_start (void) {
-    queue = dispatch_queue_create("OSDNotifyQueue", NULL);
+    queue = dispatch_queue_create ("OSDNotifyQueue", NULL);
     return 0;
 }
 
@@ -378,35 +384,32 @@ static const char settings_dlg[] =
     "property \"Notification content format\" entry notify.format_content_tf \"" NOTIFY_DEFAULT_CONTENT "\";\n"
     "property \"Show album art\" checkbox notify.albumart 1;\n"
     "property \"Album art size (px)\" entry notify.albumart_size 64;\n"
-    "property \"Don't reuse notifications (KDE quirk)\" checkbox notify.fix_kde_5_23_5 0;\n"
-;
+    "property \"Don't reuse notifications (KDE quirk)\" checkbox notify.fix_kde_5_23_5 0;\n";
 
 static DB_misc_t plugin = {
-    DDB_PLUGIN_SET_API_VERSION
-    .plugin.type = DB_PLUGIN_MISC,
+    DDB_PLUGIN_SET_API_VERSION.plugin.type = DB_PLUGIN_MISC,
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.id = "notify",
     .plugin.name = "OSD Notify",
-    .plugin.descr = "Displays notifications when new track starts.\nRequires dbus and notification daemon to be running.\nNotification daemon should be provided by your desktop environment.\n",
-    .plugin.copyright = 
-        "OSD Notification plugin for DeaDBeeF Player\n"
-        "Copyright (C) 2009-2014 Oleksiy Yakovenko and contributors\n"
-        "\n"
-        "This program is free software; you can redistribute it and/or\n"
-        "modify it under the terms of the GNU General Public License\n"
-        "as published by the Free Software Foundation; either version 2\n"
-        "of the License, or (at your option) any later version.\n"
-        "\n"
-        "This program is distributed in the hope that it will be useful,\n"
-        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-        "GNU General Public License for more details.\n"
-        "\n"
-        "You should have received a copy of the GNU General Public License\n"
-        "along with this program; if not, write to the Free Software\n"
-        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
-    ,
+    .plugin.descr =
+        "Displays notifications when new track starts.\nRequires dbus and notification daemon to be running.\nNotification daemon should be provided by your desktop environment.\n",
+    .plugin.copyright = "OSD Notification plugin for DeaDBeeF Player\n"
+                        "Copyright (C) 2009-2014 Oleksiy Yakovenko and contributors\n"
+                        "\n"
+                        "This program is free software; you can redistribute it and/or\n"
+                        "modify it under the terms of the GNU General Public License\n"
+                        "as published by the Free Software Foundation; either version 2\n"
+                        "of the License, or (at your option) any later version.\n"
+                        "\n"
+                        "This program is distributed in the hope that it will be useful,\n"
+                        "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+                        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+                        "GNU General Public License for more details.\n"
+                        "\n"
+                        "You should have received a copy of the GNU General Public License\n"
+                        "along with this program; if not, write to the Free Software\n"
+                        "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n",
     .plugin.website = "http://deadbeef.sourceforge.net",
     .plugin.start = notify_start,
     .plugin.stop = notify_stop,
