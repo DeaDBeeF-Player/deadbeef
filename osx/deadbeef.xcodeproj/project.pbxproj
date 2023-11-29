@@ -1667,6 +1667,7 @@
 		2D98B69E273482F700E655AE /* AAPLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B69C273482F600E655AE /* AAPLView.h */; };
 		2D98B6A0273482F700E655AE /* AAPLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D98B69D273482F700E655AE /* AAPLView.m */; };
 		2D98B6A3273483A700E655AE /* AAPLConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D98B6A2273483A700E655AE /* AAPLConfig.h */; };
+		2D9B2A6A2B17D70F006F058D /* wildmidi.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DF930441AB816DC0030C0CA /* wildmidi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D9BD6792405A81600C02D60 /* SoundPreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9BD6772405A81600C02D60 /* SoundPreferencesViewController.h */; };
 		2D9BD67A2405A81600C02D60 /* SoundPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9BD6782405A81600C02D60 /* SoundPreferencesViewController.m */; };
 		2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D9C0C14238DC0E700CE8C10 /* GroupByCustomWindow.xib */; };
@@ -4469,6 +4470,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2D9B2A6A2B17D70F006F058D /* wildmidi.dylib in Copy Plugins */,
 				2DC6C65A29539AAE00A63CEB /* ddb_dsp_libretro.dylib in Copy Plugins */,
 				2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */,
 				2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */,
