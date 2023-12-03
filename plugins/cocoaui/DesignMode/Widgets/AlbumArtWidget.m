@@ -14,7 +14,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface AlbumArtWidget()
+@interface AlbumArtWidget() <CoverManagerListener>
 
 @property (nonatomic) NSImageView *imageView;
 @property (nonatomic) ddb_playItem_t *track;
@@ -45,6 +45,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
 - (void)dealloc
 {
+    [CoverManager.shared removeListener:self];
     if (_artwork_plugin != NULL) {
         _artwork_plugin->remove_listener (artwork_listener, (__bridge void *)self);
         _artwork_plugin = NULL;
@@ -86,6 +87,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     [self.imageView.bottomAnchor constraintEqualToAnchor:self.topLevelView.bottomAnchor].active = YES;
 
     [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(frameDidChange:) name:NSViewFrameDidChangeNotification object:self.imageView];
+
+    [CoverManager.shared addListener:self];
 
     return self;
 }
@@ -166,6 +169,12 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     }
         break;
     }
+}
+
+#pragma mark - CoverManagerListener
+
+- (void)coverManagerDidReset {
+    [self throttledUpdate];
 }
 
 @end

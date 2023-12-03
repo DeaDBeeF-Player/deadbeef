@@ -80,6 +80,13 @@ static int grouptitleheight = 22;
     [self freeGroups];
 }
 
+- (void)coverManagerDidReset {
+    for (PlaylistGroup *group in self.groups) {
+        group->cachedImage = nil;
+    }
+    self.needsDisplay = YES;
+}
+
 - (void)dealloc
 {
     [self cleanup];

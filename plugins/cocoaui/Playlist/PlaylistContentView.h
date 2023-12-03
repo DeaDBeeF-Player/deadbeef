@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)cleanup;
 
+- (void)coverManagerDidReset;
+
 - (void)drawRow:(int)idx;
 - (void)drawGroup:(nullable PlaylistGroup *)group;
 

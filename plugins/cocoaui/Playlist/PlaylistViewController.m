@@ -43,7 +43,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface PlaylistViewController() <DdbListviewDelegate,TrackContextMenuDelegate>
+@interface PlaylistViewController() <DdbListviewDelegate,TrackContextMenuDelegate,CoverManagerListener>
 
 @property (nonatomic) NSImage *playTpl;
 @property (nonatomic) NSImage *pauseTpl;
@@ -82,6 +82,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)dealloc
 {
+    [CoverManager.shared removeListener:self];
     if (_artwork_plugin != NULL) {
         _artwork_plugin->remove_listener (artwork_listener, (__bridge void *)self);
         _artwork_plugin = NULL;
@@ -479,6 +480,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     [self initContent];
     [self setupPlaylist:lv];
+
+    [CoverManager.shared addListener:self];
 }
 
 - (void)freeColumns {
@@ -1575,6 +1578,13 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
 - (int)playlistIter {
     return PL_MAIN;
+}
+
+#pragma mark - CoverManagerListener
+
+- (void)coverManagerDidReset {
+    PlaylistView *listview = (PlaylistView *)self.view;
+    [listview.contentView coverManagerDidReset];
 }
 
 @end

@@ -24,6 +24,10 @@
 #import <Foundation/Foundation.h>
 #include <deadbeef/deadbeef.h>
 
+@protocol CoverManagerListener
+- (void)coverManagerDidReset;
+@end
+
 @interface CoverManager : NSObject
 
 @property (class,nonatomic,readonly,nonnull) CoverManager *shared;
@@ -31,6 +35,9 @@
 + (void)freeSharedInstance;
 
 @property (atomic) BOOL isTerminating;
+
+- (void)addListener:(nonnull id<CoverManagerListener>)observer;
+- (void)removeListener:(nonnull id<CoverManagerListener>) observer;
 
 - (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track sourceId:(int64_t)sourceId completionBlock:(nonnull void (^) (NSImage * _Nullable img))completionBlock;
 - (nullable NSImage *)coverForTrack:(nonnull DB_playItem_t *)track completionBlock:(nonnull void (^) (NSImage * _Nullable img))completionBlock;

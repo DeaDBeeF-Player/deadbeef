@@ -44,6 +44,8 @@ static CoverManager *g_DefaultCoverManager = nil;
 
 @interface CoverManager()
 
+@property (nonnull, nonatomic) NSHashTable<id<CoverManagerListener>> *listeners;
+
 /// A background serial queue for creating NSImages.
 /// It has to be serial, to load the images in the same order they were requested.
 @property (nonatomic) dispatch_queue_t loaderQueue;
@@ -99,6 +101,9 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
     if (_artwork_plugin == NULL) {
         return self;
     }
+
+    _listeners = [NSHashTable weakObjectsHashTable];
+
     self.imageSize = deadbeef->conf_get_int("artwork.image_size", 256);
     [self updateDefaultCover];
 
@@ -115,6 +120,14 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
     _artwork_plugin->add_listener(_artwork_listener, (__bridge void *)(self));
 
     return self;
+}
+
+- (void)addListener:(id<CoverManagerListener>)observer {
+    [self.listeners addObject:observer];
+}
+
+- (void)removeListener:(id<CoverManagerListener>) observer {
+    [self.listeners removeObject:observer];
 }
 
 - (void)settingsDidChangeForTrack:(ddb_playItem_t *)track {
@@ -308,6 +321,11 @@ cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *co
 
 - (void)resetCache {
     [self.cachedCovers removeAllObjects];
+    for (id<CoverManagerListener> listener in self.listeners) {
+        if (listener != nil) {
+            [listener coverManagerDidReset];
+        }
+    }
 }
 
 - (NSImage *)createScaledImage:(NSImage *)image newSize:(CGSize)newSize {
