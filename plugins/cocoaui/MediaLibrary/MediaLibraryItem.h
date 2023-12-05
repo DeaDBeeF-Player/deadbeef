@@ -10,8 +10,6 @@
 #include <deadbeef/deadbeef.h>
 #include "../../medialib/medialib.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface MediaLibraryItem : NSObject
 
 + (instancetype)new NS_UNAVAILABLE;
@@ -33,5 +31,3 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly) const ddb_medialib_item_t *medialibItem;
 
 @end
-
-NS_ASSUME_NONNULL_END
