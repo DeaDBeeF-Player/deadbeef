@@ -522,10 +522,16 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 }
 
 - (NSString *)albumArtCacheKeyForTrack:(ddb_playItem_t *)track {
-    const char *artist = deadbeef->pl_find_meta (track, "artist") ?: "Unknown Artist";
-    const char *album = deadbeef->pl_find_meta (track, "album") ?: "Unknown Album";
+    const char *artist = deadbeef->pl_find_meta (track, "artist");
+    const char *album = deadbeef->pl_find_meta (track, "album");
 
-    return [NSString stringWithFormat:@"artist:%s;album:%s", artist, album];
+    if (artist != NULL && album != NULL) {
+        return [NSString stringWithFormat:@"artist:%s;album:%s", artist, album];
+    }
+    else {
+        const char *path = deadbeef->pl_find_meta(track, ":URI");
+        return [NSString stringWithFormat:@"file:%s", path];
+    }
 }
 
 // NOTE: this is running on background thread
