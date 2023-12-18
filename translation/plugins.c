@@ -354,6 +354,12 @@ _("Toggle Pause");
 // xgettext:no-c-format
 _("Play\\/Pause");
 // xgettext:no-c-format
+_("Play Next Album");
+// xgettext:no-c-format
+_("Play Previous Album");
+// xgettext:no-c-format
+_("Play Random Album");
+// xgettext:no-c-format
 _("Play Random");
 // xgettext:no-c-format
 _("Seek 1s Forward");
@@ -457,7 +463,7 @@ _("Skip when shorter than (sec)");
 // plugins/shellexecui/shellexecui.c
 // xgettext:no-c-format
 _("Configure Custom Shell Commands");
-// plugins/shn/shn.c
+// plugins/shn/shnplugin.c
 // xgettext:no-c-format
 _("Relative seek table path");
 // xgettext:no-c-format
