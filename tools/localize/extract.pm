@@ -108,10 +108,15 @@ sub extract {
                     }
                 }
             }
-            elsif (/^.*DB_plugin_action_t .* \{?/) {
+            elsif (/^[^(]*DB_plugin_action_t .* \{?/ || /^[^(]*ddb_dialog_t .* \{?/) {
                 # read until we hit title or };
+				my @actionLines = ($_);
                 while (<F>) {
-                    if (/^(\s*\.title\s*=\s*")/) {
+					last if (/\s*\};$/);
+					push @actionLines, $_;
+				}
+				foreach (@actionLines) {
+                    if (/^(.*\s*\.title\s*=\s*")/) {
                         my $begin = $1;
                         my $s = substr ($_, length ($begin));
                         if ($s =~ /(.*[^\\])"/) {
@@ -130,9 +135,6 @@ sub extract {
                                 }
                             }
                         }
-                    }
-                    elsif (/^\s*\};/) {
-                        last;
                     }
                 }
             }
