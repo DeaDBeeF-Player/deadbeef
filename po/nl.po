@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-07 19:05+0100\n"
+"POT-Creation-Date: 2023-12-18 11:13+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>, 2021-2023\n"
 "Language-Team: Dutch (http://app.transifex.com/deadbeef-player/deadbeef-player/language/nl/)\n"
@@ -21,88 +21,88 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../src/main.c:134
+#: ../src/main.c:136
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "Gebruik: deadbeef [opties] [bestand(en)]\n"
 
-#: ../src/main.c:135
+#: ../src/main.c:137
 #, c-format
 msgid "Options:\n"
 msgstr "Opties:\n"
 
-#: ../src/main.c:136
+#: ../src/main.c:138
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --help  or  -h     Hulp printen (dit bericht) en afsluiten\n"
 
-#: ../src/main.c:137
+#: ../src/main.c:139
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             Speler afsluiten\n"
 
-#: ../src/main.c:138
+#: ../src/main.c:140
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --version       Versie-informatie printen en afsluiten\n"
 
-#: ../src/main.c:139
+#: ../src/main.c:141
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play         Afspelen starten\n"
 
-#: ../src/main.c:140
+#: ../src/main.c:142
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop         Afspelen stoppen\n"
 
-#: ../src/main.c:141
+#: ../src/main.c:143
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --pause         Afspelen pauzeren\n"
 
-#: ../src/main.c:142
+#: ../src/main.c:144
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr "   --toggle-pause     Pauzeren/Hervatten\n"
 
-#: ../src/main.c:143
+#: ../src/main.c:145
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr "   --play-pause       Start het afspelen indien gestopt of pauzeer\n"
 
-#: ../src/main.c:144
+#: ../src/main.c:146
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --next         Volgend nummer op afspeellijst\n"
 
-#: ../src/main.c:145
+#: ../src/main.c:147
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --prev         Vorig nummer op afspeellijst\n"
 
-#: ../src/main.c:146
+#: ../src/main.c:148
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --random         Willekeurig nummer op afspeellijst\n"
 
-#: ../src/main.c:147
+#: ../src/main.c:149
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "   --queue         Bestand(en) toevoegen aan afspeellijst\n"
 
-#: ../src/main.c:148
+#: ../src/main.c:150
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr "   --gui PLUGIN       Geef op welke GUI-plug-in moet worden gebruikt - standaard is dit ‘GTK2’\n"
 
-#: ../src/main.c:149
+#: ../src/main.c:151
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "   --nowplaying FMT   Opgemaakte titel van nummer printen naar stdout\n"
 
-#: ../src/main.c:150
+#: ../src/main.c:152
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -110,106 +110,106 @@ msgid ""
 "                      copy[r]ight, [e]lapsed\n"
 msgstr "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n                      [l]ength, track[n]umber, [y]ear, [c]omment,\n                      copy[r]ight, [e]lapsed\n"
 
-#: ../src/main.c:153
+#: ../src/main.c:155
 #, c-format
 msgid ""
 "                      example: --nowplaying \"%%a - %%t\" should print "
 "\"artist - title\"\n"
 msgstr "                      voorbeeld: --nowplaying \"%%a - %%t\" zou \"artist - title\" moeten printen\n"
 
-#: ../src/main.c:154
+#: ../src/main.c:156
 #, c-format
 msgid "                      for more info, see %s\n"
 msgstr "                      bekijk %s voor meer informatie\n"
 
-#: ../src/main.c:155
+#: ../src/main.c:157
 #, c-format
 msgid "                      NOTE: --nowplaying is deprecated.\n"
 msgstr "                      LET OP: --nowplaying is verouderd.\n"
 
-#: ../src/main.c:156
+#: ../src/main.c:158
 #, c-format
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
 msgstr "   --nowplaying-tf FMT  Opgemaakte titel van nummer printen naar stdout middels de nieuwe titelopmaak\n"
 
-#: ../src/main.c:157
+#: ../src/main.c:159
 #, c-format
 msgid ""
 "                      FMT syntax: http://github.com/DeaDBeeF-"
 "Player/deadbeef/wiki/Title-formatting-2.0\n"
 msgstr "                      FMT-syntax: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
 
-#: ../src/main.c:158
+#: ../src/main.c:160
 #, c-format
 msgid ""
 "                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
 "should print \"artist - title\"\n"
 msgstr "                      voorbeeld: --nowplaying-tf \"%%artist%% - %%title%%\" zou \"artist - title\" moeten printen\n"
 
-#: ../src/main.c:159
+#: ../src/main.c:161
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
 msgstr "   --volume [NUM]     Print het deadbeef-volumeniveau of stel dit in.\n"
 
-#: ../src/main.c:160
+#: ../src/main.c:162
 #, c-format
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
 msgstr "                      De NUM-parameter kan worden gespecificeerd in procenten (absolute waarde of verhoging/verlaging)\n"
 
-#: ../src/main.c:161
+#: ../src/main.c:163
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
 msgstr "                      of in dB [-50, 0] (indien een voorvoegsel aanwezig is).\n"
 
-#: ../src/main.c:162
+#: ../src/main.c:164
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
 msgstr "                      Voorbeeld: --volume 80, --volume +10, --volume -5, of --volume -20dB\n"
 
-#: ../src/main.c:163
+#: ../src/main.c:165
 #, c-format
 msgid ""
 "   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
 "send commands to deadbeef itself.\n"
 msgstr "   --plugin=[PLUG]    Verstuur opdrachten naar een specifieke plug-in. Gebruik PLUG=main om opdrachten naar deadbeef zelf te versturen.\n"
 
-#: ../src/main.c:164
+#: ../src/main.c:166
 #, c-format
 msgid ""
 "                      To get plugin specific commands use --plugin=[PLUG] "
 "--help\n"
 msgstr "                      Gebruik --plugin=[PLUG] --help voor een overzicht van plug-in-specifieke opdrachten\n"
 
-#: ../src/main.c:165
+#: ../src/main.c:167
 #, c-format
 msgid ""
 "   --plugin-list      List all available plugins including indication for "
 "plugins that support commands.\n"
 msgstr "   --plugin-list      Toon alle beschikbare plug-ins, inclusief indicaties van plug-ins die opdrachten ondersteunen.\n"
 
-#: ../src/playlist.c:511 ../src/playlist.c:2533
+#: ../src/playlist.c:523 ../src/playlist.c:2690
 msgid "Default"
 msgstr "Standaard"
 
-#: ../src/playlist.c:3221 ../plugins/gtkui/widgets.c:2788
+#: ../src/playlist.c:3363 ../plugins/gtkui/widgets.c:2719
 msgid "Mono"
 msgstr "Mono"
 
-#: ../src/playlist.c:3221
+#: ../src/playlist.c:3363
 msgid "Stereo"
 msgstr "Stereo"
 
-#: ../src/playlist.c:3744
+#: ../src/playlist.c:3888
 msgid "Yes"
 msgstr "Ja"
 
-#: ../src/playlist.c:3744
+#: ../src/playlist.c:3888
 msgid "No"
 msgstr "Nee"
 
@@ -300,8 +300,8 @@ msgstr "Voorinstelling van codeerder bewerken"
 
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/converter/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:72
-#: ../plugins/gtkui/gtkui.c:588 ../plugins/gtkui/interface.c:1335
-#: ../plugins/gtkui/interface.c:4010 ../plugins/gtkui/widgets.c:1675
+#: ../plugins/gtkui/gtkui.c:601 ../plugins/gtkui/interface.c:1335
+#: ../plugins/gtkui/interface.c:4010 ../plugins/gtkui/widgets.c:1650
 #: ../plugins/shellexecui/interface.c:163
 #: ../plugins/shellexecui/shellexec.glade.h:7
 msgid "Title:"
@@ -428,6 +428,7 @@ msgstr "Verwijderen"
 
 #: ../plugins/converter/converter.glade.h:52
 #: ../plugins/converter/interface.c:680
+#: ../plugins/gtkui/medialib/medialibwidget.c:835
 msgid "Configure"
 msgstr "Instellen"
 
@@ -515,9 +516,9 @@ msgid "This action will delete the selected preset. Are you sure?"
 msgstr "Dit verwijdert de geselecteerde voorinstelling. Weet je het zeker?"
 
 #: ../plugins/converter/convgui.c:1091 ../plugins/converter/convgui.c:1687
-#: ../plugins/gtkui/gtkui.c:614 ../plugins/gtkui/gtkui.c:1715
+#: ../plugins/gtkui/gtkui.c:636 ../plugins/gtkui/gtkui.c:1752
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:71
-#: ../plugins/gtkui/prefwin/prefwin.c:143 ../plugins/gtkui/trkproperties.c:119
+#: ../plugins/gtkui/prefwin/prefwin.c:141 ../plugins/gtkui/trkproperties.c:119
 msgid "Warning"
 msgstr "Waarschuwing"
 
@@ -546,7 +547,7 @@ msgid "DSP Presets"
 msgstr "DSP-voorinstellingen"
 
 #: ../plugins/converter/convgui.c:1792 ../plugins/converter/convgui.c:1800
-#: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:647
+#: ../plugins/gtkui/actionhandlers.c:322 ../plugins/gtkui/callbacks.c:541
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/gtkui/interface.c:976
 #: ../translation/plugins.c:176
 #, no-c-format
@@ -632,26 +633,26 @@ msgstr "Afspeellijst laden"
 msgid "Save Playlist As"
 msgstr "Afspeellijst opslaan als"
 
-#: ../plugins/gtkui/callbacks.c:363
+#: ../plugins/gtkui/callbacks.c:314
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "Over DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:376
+#: ../plugins/gtkui/callbacks.c:325
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s-wijzigingslog"
 
-#: ../plugins/gtkui/callbacks.c:636
+#: ../plugins/gtkui/callbacks.c:531
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "Glenn de Groot\nPjotr\nHeimen Stoffels"
 
-#: ../plugins/gtkui/covermanager/albumartwidget.c:388
+#: ../plugins/gtkui/covermanager/albumartwidget.c:371
 msgid "Playing Track"
 msgstr "Momenteel spelend nummer"
 
-#: ../plugins/gtkui/covermanager/albumartwidget.c:392
+#: ../plugins/gtkui/covermanager/albumartwidget.c:375
 msgid "Selected Track"
 msgstr "Geselecteerd nummer"
 
@@ -897,6 +898,7 @@ msgid "_Translators"
 msgstr "Ver_talers"
 
 #: ../plugins/gtkui/deadbeef.glade.h:53 ../plugins/gtkui/interface.c:722
+#: ../plugins/gtkui/medialib/medialibwidget.c:845
 msgid "Search"
 msgstr "Zoeken"
 
@@ -929,7 +931,7 @@ msgid "Next"
 msgstr "Volgende"
 
 #: ../plugins/gtkui/deadbeef.glade.h:59 ../plugins/gtkui/interface.c:834
-#: ../translation/plugins.c:357
+#: ../translation/plugins.c:363
 #, no-c-format
 msgid "Play Random"
 msgstr "Willekeurig afspelen"
@@ -1219,7 +1221,7 @@ msgstr "Speler"
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/deadbeef.glade.h:136 ../plugins/gtkui/interface.c:2350
-#: ../translation/plugins.c:429
+#: ../translation/plugins.c:435
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "Afspeellijsten sluiten met middelste muisknop"
@@ -1249,7 +1251,7 @@ msgstr "Groepsruimte:"
 msgid "pixels"
 msgstr "pixels"
 
-#: ../plugins/gtkui/deadbeef.glade.h:143 ../plugins/gtkui/gtkui.c:1453
+#: ../plugins/gtkui/deadbeef.glade.h:143 ../plugins/gtkui/gtkui.c:1490
 #: ../plugins/gtkui/interface.c:2388 ../plugins/gtkui/interface.c:2833
 msgid "Playlist"
 msgstr "Afspeellijst"
@@ -1558,7 +1560,7 @@ msgid "Strip APEv2"
 msgstr "APEv2 verwijderen"
 
 #: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:4646
-#: ../translation/plugins.c:519
+#: ../translation/plugins.c:525
 #, no-c-format
 msgid "ID3v2 version"
 msgstr "ID3v2-versie"
@@ -1754,7 +1756,7 @@ msgid "Import Foobar2000 Preset"
 msgstr "Foobar2000-voorinstelling importeren"
 
 #. plugins/notify/notify.c
-#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:413
+#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:419
 #, no-c-format
 msgid "Enable"
 msgstr "Inschakelen"
@@ -1771,7 +1773,7 @@ msgstr "Preamp op nul"
 msgid "Zero Bands"
 msgstr "Banden op nul"
 
-#: ../plugins/gtkui/fileman.c:64 ../plugins/gtkui/gtkui.c:761
+#: ../plugins/gtkui/fileman.c:64 ../plugins/gtkui/gtkui.c:785
 #: ../plugins/pltbrowser/pltbrowser.c:65 ../translation/plugins.c:226
 #, no-c-format
 msgid "New Playlist"
@@ -1805,143 +1807,143 @@ msgstr "DeaDBeeF-afspeellijstbestanden (*.dbpl)"
 msgid "Follow symlinks"
 msgstr "Snelkoppelingen volgen"
 
-#: ../plugins/gtkui/gtkui.c:156 ../src/tf.c:2795
+#: ../plugins/gtkui/gtkui.c:168 ../src/tf.c:2795
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 dag %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:159 ../src/tf.c:2798
+#: ../plugins/gtkui/gtkui.c:171 ../src/tf.c:2798
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d dagen %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:205
+#: ../plugins/gtkui/gtkui.c:216
 msgid "total playtime"
 msgstr "totale afspeelduur"
 
-#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
+#: ../plugins/gtkui/gtkui.c:424 ../plugins/gtkui/gtkui.c:435
 msgid "Paused"
 msgstr "Gepauzeerd"
 
-#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:422
+#: ../plugins/gtkui/gtkui.c:425 ../plugins/gtkui/gtkui.c:435
 msgid "bit"
 msgstr "bit"
 
-#: ../plugins/gtkui/gtkui.c:418 ../plugins/gtkui/gtkui.c:419
+#: ../plugins/gtkui/gtkui.c:426 ../plugins/gtkui/gtkui.c:432
 msgid "selection playtime"
 msgstr "afspeelduur van selectie"
 
-#: ../plugins/gtkui/gtkui.c:419 ../plugins/gtkui/gtkui.c:423
+#: ../plugins/gtkui/gtkui.c:431 ../plugins/gtkui/gtkui.c:436
 msgid "Stopped"
 msgstr "Gestopt"
 
-#: ../plugins/gtkui/gtkui.c:585 ../plugins/gtkui/pltmenu.c:133
+#: ../plugins/gtkui/gtkui.c:598 ../plugins/gtkui/pltmenu.c:133
 msgid "Rename Playlist"
 msgstr "Afspeellijstnaam wijzigen"
 
-#: ../plugins/gtkui/gtkui.c:612
+#: ../plugins/gtkui/gtkui.c:631
 msgid "Removing playlist"
 msgstr "Afspeellijst verwijderen"
 
-#: ../plugins/gtkui/gtkui.c:613
+#: ../plugins/gtkui/gtkui.c:634
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
 msgstr "Weet je zeker dat je de geselecteerde afspeellijst ‘%s’ wilt verwijderen?"
 
-#: ../plugins/gtkui/gtkui.c:764 ../plugins/pltbrowser/pltbrowser.c:68
+#: ../plugins/gtkui/gtkui.c:788 ../plugins/pltbrowser/pltbrowser.c:68
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "Nieuwe afspeellijst (%d)"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1452
+#: ../plugins/gtkui/gtkui.c:1489
 msgid "Playlist with tabs"
 msgstr "Afspeellijst met tabbladen"
 
-#: ../plugins/gtkui/gtkui.c:1456
+#: ../plugins/gtkui/gtkui.c:1493
 msgid "Splitter (top and bottom)"
 msgstr "Splitsen (boven- en onderkant)"
 
-#: ../plugins/gtkui/gtkui.c:1457
+#: ../plugins/gtkui/gtkui.c:1494
 msgid "Splitter (left and right)"
 msgstr "Splitsen (links en rechts)"
 
-#: ../plugins/gtkui/gtkui.c:1459
+#: ../plugins/gtkui/gtkui.c:1496
 msgid "Tabs"
 msgstr "Tabbladen"
 
-#: ../plugins/gtkui/gtkui.c:1460
+#: ../plugins/gtkui/gtkui.c:1497
 msgid "Playlist tabs"
 msgstr "Afspeellijst-tabbladen"
 
-#: ../plugins/gtkui/gtkui.c:1461
+#: ../plugins/gtkui/gtkui.c:1499
 msgid "Selection properties"
 msgstr "Selectie-eigenschappen"
 
-#: ../plugins/gtkui/gtkui.c:1462
+#: ../plugins/gtkui/gtkui.c:1504
 msgid "Album art display"
 msgstr "Albumhoesweergave"
 
-#: ../plugins/gtkui/gtkui.c:1463
+#: ../plugins/gtkui/gtkui.c:1505
 msgid "Oscilloscope"
 msgstr "Oscilloscoop"
 
-#: ../plugins/gtkui/gtkui.c:1464
+#: ../plugins/gtkui/gtkui.c:1506
 msgid "Spectrum"
 msgstr "Spectrum"
 
-#: ../plugins/gtkui/gtkui.c:1465
+#: ../plugins/gtkui/gtkui.c:1507
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:1466
+#: ../plugins/gtkui/gtkui.c:1508
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1467 ../plugins/gtkui/widgets.c:3867
-#: ../plugins/gtkui/widgets.c:3954
+#: ../plugins/gtkui/gtkui.c:1509 ../plugins/gtkui/widgets.c:3789
+#: ../plugins/gtkui/widgets.c:3876
 msgid "Button"
 msgstr "Knop"
 
-#: ../plugins/gtkui/gtkui.c:1468
+#: ../plugins/gtkui/gtkui.c:1510
 msgid "Seekbar"
 msgstr "Zoekbalk"
 
-#: ../plugins/gtkui/gtkui.c:1469
+#: ../plugins/gtkui/gtkui.c:1511
 msgid "Playback controls"
 msgstr "Afspeelbediening"
 
-#: ../plugins/gtkui/gtkui.c:1470
+#: ../plugins/gtkui/gtkui.c:1512
 msgid "Volume bar"
 msgstr "Volumebalk"
 
-#: ../plugins/gtkui/gtkui.c:1471
+#: ../plugins/gtkui/gtkui.c:1513
 msgid "Chiptune voices"
 msgstr "Chiptune-stemmen"
 
-#: ../plugins/gtkui/gtkui.c:1472
+#: ../plugins/gtkui/gtkui.c:1514
 msgid "Log viewer"
 msgstr "Logbestand bekijken"
 
-#: ../plugins/gtkui/gtkui.c:1474
+#: ../plugins/gtkui/gtkui.c:1515
 msgid "Media library viewer"
 msgstr "Mediaverzamelingsweergave"
 
-#: ../plugins/gtkui/gtkui.c:1685
+#: ../plugins/gtkui/gtkui.c:1721
 msgid "Failed while reading help file"
 msgstr "Fout bij uitlezen van hulpbestand"
 
-#: ../plugins/gtkui/gtkui.c:1695
+#: ../plugins/gtkui/gtkui.c:1731
 msgid "Failed to load help file"
 msgstr "Kan hulpbestand niet laden"
 
-#: ../plugins/gtkui/gtkui.c:1712
+#: ../plugins/gtkui/gtkui.c:1749
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "De speler is momenteel bezig met achtergrondtaken. Als je nu afsluit, dan worden de taken onder- of afgebroken. Dit kan leiden tot gegevensverlies."
 
-#: ../plugins/gtkui/gtkui.c:1714
+#: ../plugins/gtkui/gtkui.c:1751
 msgid "Do you still want to quit?"
 msgstr "Weet je zeker dat je wilt afsluiten?"
 
@@ -1983,7 +1985,7 @@ msgstr "Weet je zeker dat je het momenteel spelende nummer wilt verwijderen?%s"
 msgid "Delete files from disk"
 msgstr "Bestanden verwijderen van schijf"
 
-#: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:901
+#: ../plugins/gtkui/gtkui_deletefromdisk.c:68 ../plugins/gtkui/widgets.c:897
 #: ../plugins/shellexecui/shellexecui.c:139
 msgid "Delete"
 msgstr "Verwijderen"
@@ -2029,7 +2031,7 @@ msgid "Track"
 msgstr "Nummer"
 
 #: ../plugins/gtkui/interface.c:2045 ../plugins/gtkui/playlist/plcommon.c:896
-#: ../plugins/gtkui/widgets.c:3293 ../plugins/gtkui/widgets.c:3964
+#: ../plugins/gtkui/widgets.c:3222 ../plugins/gtkui/widgets.c:3884
 #: ../translation/plugins.c:114
 #, no-c-format
 msgid "None"
@@ -2062,6 +2064,34 @@ msgstr "2.3 (aanbevolen)"
 #: ../plugins/gtkui/interface.c:4654
 msgid "2.4"
 msgstr "2.4"
+
+#: ../plugins/gtkui/medialib/medialibwidget.c:124
+msgid "All Music"
+msgstr "Alle muziek"
+
+#: ../plugins/gtkui/medialib/medialibwidget.c:128
+msgid "Media library is disabled"
+msgstr "De mediaverzameling is uitgeschakeld"
+
+#: ../plugins/gtkui/medialib/medialibwidget.c:132
+msgid "Loading..."
+msgstr "Bezig met laden…"
+
+#: ../plugins/gtkui/medialib/medialibwidget.c:135
+msgid "Scanning..."
+msgstr "Bezig met scannen…"
+
+#: ../plugins/gtkui/medialib/medialibwidget.c:138
+msgid "Indexing..."
+msgstr "Bezig met indexeren…"
+
+#: ../plugins/gtkui/medialib/medialibwidget.c:141
+msgid "Saving..."
+msgstr "Bezig met opslaan…"
+
+#: ../plugins/gtkui/medialib/medialibwidget.c:808
+msgid "Media Library plugin is unavailable."
+msgstr "De mediaverzamelingsplug-in is niet beschikbaar."
 
 #: ../plugins/gtkui/playlist/mainplaylist.c:233
 #: ../plugins/gtkui/playlist/searchplaylist.c:191
@@ -2206,13 +2236,17 @@ msgstr "Bestand openen…"
 msgid "Configure %s"
 msgstr "%s instellen"
 
-#: ../plugins/gtkui/prefwin/prefwin.c:140
+#: ../plugins/gtkui/prefwin/prefwin.c:138
 msgid "You modified the hotkeys settings, but didn't save your changes."
 msgstr "Je hebt de sneltoetsinstellingen aangepast, maar niet opgeslagen."
 
-#: ../plugins/gtkui/prefwin/prefwin.c:142
+#: ../plugins/gtkui/prefwin/prefwin.c:140
 msgid "Are you sure you want to continue without saving?"
 msgstr "Weet je zeker dat je wilt doorgaan zonder ze op te slaan?"
+
+#: ../plugins/gtkui/prefwin/prefwinmedialib.c:70
+msgid "Select music folders to add"
+msgstr "Selecteer toe te voegen mappen"
 
 #: ../plugins/gtkui/prefwin/prefwinsound.c:69
 msgid "Default Audio Device"
@@ -2267,7 +2301,7 @@ msgstr "Ongeldig bestand"
 msgid "Search [(%list_total% results)]"
 msgstr "[(%list_total% results)] doorzoeken"
 
-#: ../plugins/gtkui/selpropertieswidget.c:265 ../plugins/gtkui/widgets.c:2223
+#: ../plugins/gtkui/selpropertieswidget.c:265 ../plugins/gtkui/widgets.c:2155
 #: ../plugins/pltbrowser/pltbrowser.c:806
 msgid "Show Column Headers"
 msgstr "Kolomtitels tonen"
@@ -2330,227 +2364,227 @@ msgstr "Kan veld niet toevoegen"
 msgid "Field with such name already exists, please try different name."
 msgstr "Er is al een veld met deze naam. Probeer een andere naam."
 
-#: ../plugins/gtkui/widgets.c:460
+#: ../plugins/gtkui/widgets.c:459
 #, c-format
 msgid "Widget \"%s\" is not available"
 msgstr "De widget ‘%s’ is niet beschikbaar"
 
-#: ../plugins/gtkui/widgets.c:875
+#: ../plugins/gtkui/widgets.c:873
 msgid "Replace with..."
 msgstr "Vervangen door…"
 
-#: ../plugins/gtkui/widgets.c:880
+#: ../plugins/gtkui/widgets.c:878
 msgid "Insert..."
 msgstr "Invoegen…"
 
-#: ../plugins/gtkui/widgets.c:908
+#: ../plugins/gtkui/widgets.c:902
 msgid "Cut"
 msgstr "Knippen"
 
-#: ../plugins/gtkui/widgets.c:915
+#: ../plugins/gtkui/widgets.c:907
 msgid "Copy"
 msgstr "Kopiëren"
 
-#: ../plugins/gtkui/widgets.c:923
+#: ../plugins/gtkui/widgets.c:913
 msgid "Paste"
 msgstr "Plakken"
 
-#: ../plugins/gtkui/widgets.c:972
+#: ../plugins/gtkui/widgets.c:960
 msgid "Parent"
 msgstr "Bovenliggend"
 
-#: ../plugins/gtkui/widgets.c:1090
+#: ../plugins/gtkui/widgets.c:1077
 msgid "Multiple widgets of this type are not supported"
 msgstr "Geen ondersteuning voor meerdere widgets van dit type"
 
-#: ../plugins/gtkui/widgets.c:1375
+#: ../plugins/gtkui/widgets.c:1360
 msgid "Proportional Sizing"
 msgstr "Proportioneel schalen"
 
-#: ../plugins/gtkui/widgets.c:1387
+#: ../plugins/gtkui/widgets.c:1370
 msgid "Lock Top Pane Height"
 msgstr "Hoogte van bovenste paneel vastzetten"
 
-#: ../plugins/gtkui/widgets.c:1390
+#: ../plugins/gtkui/widgets.c:1373
 msgid "Lock Left Pane Width"
 msgstr "Breedte van linkerpaneel vastzetten"
 
-#: ../plugins/gtkui/widgets.c:1403
+#: ../plugins/gtkui/widgets.c:1384
 msgid "Lock Bottom Pane Height"
 msgstr "Hoogte van onderste paneel vastzetten"
 
-#: ../plugins/gtkui/widgets.c:1406
+#: ../plugins/gtkui/widgets.c:1387
 msgid "Lock Right Pane Width"
 msgstr "Breedte van rechterpaneel vastzetten"
 
-#: ../plugins/gtkui/widgets.c:1672 ../plugins/gtkui/widgets.c:1787
+#: ../plugins/gtkui/widgets.c:1647 ../plugins/gtkui/widgets.c:1757
 msgid "Rename Tab"
 msgstr "Tabbladnaam wijzigen"
 
-#: ../plugins/gtkui/widgets.c:1794
+#: ../plugins/gtkui/widgets.c:1762
 msgid "Remove Tab"
 msgstr "Tabblad verwijderen"
 
-#: ../plugins/gtkui/widgets.c:1801 ../plugins/gtkui/widgets.c:1980
+#: ../plugins/gtkui/widgets.c:1767 ../plugins/gtkui/widgets.c:1923
 msgid "Add New Tab"
 msgstr "Nieuw tabblad toevoegen"
 
-#: ../plugins/gtkui/widgets.c:1810
+#: ../plugins/gtkui/widgets.c:1774
 msgid "Move Tab Left"
 msgstr "Tabblad naar links verplaatsen"
 
-#: ../plugins/gtkui/widgets.c:1817
+#: ../plugins/gtkui/widgets.c:1779
 msgid "Move Tab Right"
 msgstr "Tabblad naar rechts verplaatsen"
 
-#: ../plugins/gtkui/widgets.c:2780 ../plugins/gtkui/widgets.c:3270
+#: ../plugins/gtkui/widgets.c:2711 ../plugins/gtkui/widgets.c:3199
 msgid "Rendering Mode"
 msgstr "Rendermodus"
 
-#: ../plugins/gtkui/widgets.c:2785
+#: ../plugins/gtkui/widgets.c:2716
 msgid "Multichannel"
 msgstr "Meerdere kanalen"
 
-#: ../plugins/gtkui/widgets.c:2794
+#: ../plugins/gtkui/widgets.c:2725
 msgid "Scale"
 msgstr "Schaal"
 
-#: ../plugins/gtkui/widgets.c:2799
+#: ../plugins/gtkui/widgets.c:2730
 msgid "Auto"
 msgstr "Automatisch"
 
-#: ../plugins/gtkui/widgets.c:2801 ../translation/plugins.c:83
+#: ../plugins/gtkui/widgets.c:2732 ../translation/plugins.c:83
 #, no-c-format
 msgid "1x"
 msgstr "1x"
 
-#: ../plugins/gtkui/widgets.c:2803 ../translation/plugins.c:85
+#: ../plugins/gtkui/widgets.c:2734 ../translation/plugins.c:85
 #, no-c-format
 msgid "2x"
 msgstr "2x"
 
-#: ../plugins/gtkui/widgets.c:2805
+#: ../plugins/gtkui/widgets.c:2736
 msgid "3x"
 msgstr "3x"
 
-#: ../plugins/gtkui/widgets.c:2807 ../translation/plugins.c:87
+#: ../plugins/gtkui/widgets.c:2738 ../translation/plugins.c:87
 #, no-c-format
 msgid "4x"
 msgstr "4x"
 
-#: ../plugins/gtkui/widgets.c:2816
+#: ../plugins/gtkui/widgets.c:2747
 msgid "Fragment Duration"
 msgstr "Fragmentduur"
 
-#: ../plugins/gtkui/widgets.c:2821
+#: ../plugins/gtkui/widgets.c:2752
 msgid "50 ms"
 msgstr "50 ms"
 
-#: ../plugins/gtkui/widgets.c:2823
+#: ../plugins/gtkui/widgets.c:2754
 msgid "100 ms"
 msgstr "100 ms"
 
-#: ../plugins/gtkui/widgets.c:2825
+#: ../plugins/gtkui/widgets.c:2756
 msgid "200 ms"
 msgstr "200 ms"
 
-#: ../plugins/gtkui/widgets.c:2827
+#: ../plugins/gtkui/widgets.c:2758
 msgid "300 ms"
 msgstr "300 ms"
 
-#: ../plugins/gtkui/widgets.c:2829
+#: ../plugins/gtkui/widgets.c:2760
 msgid "500 ms"
 msgstr "500 ms"
 
-#: ../plugins/gtkui/widgets.c:3275
+#: ../plugins/gtkui/widgets.c:3204
 msgid "Discrete Frequencies"
 msgstr "Discrete frequenties"
 
-#: ../plugins/gtkui/widgets.c:3278
+#: ../plugins/gtkui/widgets.c:3207
 msgid "1/12 Octave Bands"
 msgstr "1/12 octaafbanden"
 
-#: ../plugins/gtkui/widgets.c:3281
+#: ../plugins/gtkui/widgets.c:3210
 msgid "1/24 Octave Bands"
 msgstr "1/24 octaafbanden"
 
-#: ../plugins/gtkui/widgets.c:3288
+#: ../plugins/gtkui/widgets.c:3217
 msgid "Gap Size"
 msgstr "Ruimte-overbrugging"
 
-#: ../plugins/gtkui/widgets.c:3296
+#: ../plugins/gtkui/widgets.c:3225
 msgid "1/2 Bar"
 msgstr "1/2 bar"
 
-#: ../plugins/gtkui/widgets.c:3299
+#: ../plugins/gtkui/widgets.c:3228
 msgid "1/3 Bar"
 msgstr "1/3 bar"
 
-#: ../plugins/gtkui/widgets.c:3302
+#: ../plugins/gtkui/widgets.c:3231
 msgid "1/4 Bar"
 msgstr "1/4 bar"
 
-#: ../plugins/gtkui/widgets.c:3305
+#: ../plugins/gtkui/widgets.c:3234
 msgid "1/5 Bar"
 msgstr "1/5 bar"
 
-#: ../plugins/gtkui/widgets.c:3308
+#: ../plugins/gtkui/widgets.c:3237
 msgid "1/6 Bar"
 msgstr "1/6 bar"
 
-#: ../plugins/gtkui/widgets.c:3311
+#: ../plugins/gtkui/widgets.c:3240
 msgid "1/7 Bar"
 msgstr "1/7 bar"
 
-#: ../plugins/gtkui/widgets.c:3314
+#: ../plugins/gtkui/widgets.c:3243
 msgid "1/8 Bar"
 msgstr "1/8 bar"
 
-#: ../plugins/gtkui/widgets.c:3317
+#: ../plugins/gtkui/widgets.c:3246
 msgid "1/9 Bar"
 msgstr "1/9 bar"
 
-#: ../plugins/gtkui/widgets.c:3320
+#: ../plugins/gtkui/widgets.c:3249
 msgid "1/10 Bar"
 msgstr "1/10 bar"
 
-#: ../plugins/gtkui/widgets.c:3584
+#: ../plugins/gtkui/widgets.c:3512
 msgid "Expand Box by 1 Item"
 msgstr "Veld uitbreiden met 1 item"
 
-#: ../plugins/gtkui/widgets.c:3589
+#: ../plugins/gtkui/widgets.c:3517
 msgid "Shrink Box by 1 Item"
 msgstr "Veld inperken met 1 item"
 
-#: ../plugins/gtkui/widgets.c:3594
+#: ../plugins/gtkui/widgets.c:3522
 msgid "Homogeneous"
 msgstr "Uniform"
 
-#: ../plugins/gtkui/widgets.c:3634
+#: ../plugins/gtkui/widgets.c:3562
 msgid "Expand"
 msgstr "Uitbreiden"
 
-#: ../plugins/gtkui/widgets.c:3642
+#: ../plugins/gtkui/widgets.c:3568
 msgid "Fill"
 msgstr "Opvullen"
 
-#: ../plugins/gtkui/widgets.c:4044
+#: ../plugins/gtkui/widgets.c:3963
 msgid "Configure Button"
 msgstr "Knop instellen"
 
-#: ../plugins/gtkui/widgets.c:4317
+#: ../plugins/gtkui/widgets.c:4221
 msgid "_dB Scale"
 msgstr "_dB-schaal"
 
-#: ../plugins/gtkui/widgets.c:4328
+#: ../plugins/gtkui/widgets.c:4230
 msgid "_Linear Scale"
 msgstr "_Lineaire schaal"
 
-#: ../plugins/gtkui/widgets.c:4339
+#: ../plugins/gtkui/widgets.c:4239
 msgid "_Cubic Scale"
 msgstr "Kubis_che schaal"
 
-#: ../plugins/gtkui/widgets.c:4465
+#: ../plugins/gtkui/widgets.c:4359
 msgid "Voices:"
 msgstr "Stemmen:"
 
@@ -2846,97 +2880,97 @@ msgstr "Voorkeursomvang van periode"
 #: ../translation/plugins.c:22
 #, no-c-format
 msgid "Refresh Cover Art"
-msgstr "Hoezen verversen"
+msgstr ""
 
 #: ../translation/plugins.c:24
 #, no-c-format
 msgid "Fetch from embedded tags"
-msgstr "Ophalen uit ingesloten tags"
+msgstr ""
 
 #: ../translation/plugins.c:26
 #, no-c-format
 msgid "Fetch from local folder"
-msgstr "Ophalen uit lokale map"
+msgstr ""
 
 #: ../translation/plugins.c:28
 #, no-c-format
 msgid "Fetch from Last.fm"
-msgstr "Ophalen van Last.fm"
+msgstr ""
 
 #: ../translation/plugins.c:30
 #, no-c-format
 msgid "Fetch from MusicBrainz"
-msgstr "Ophalen van MusicBrainz"
+msgstr ""
 
 #: ../translation/plugins.c:32
 #, no-c-format
 msgid "Fetch from Albumart.org"
-msgstr "Ophalen van Albumart.org"
+msgstr ""
 
 #: ../translation/plugins.c:34
 #, no-c-format
 msgid "Fetch from World of Spectrum (AY files)"
-msgstr "Ophalen van World of Spectrum (alleen AY-bestanden)"
+msgstr ""
 
 #: ../translation/plugins.c:36
 #, no-c-format
 msgid "Save downloaded files to music folders"
-msgstr "Gedownloade bestanden opslaan in muziekmappen"
+msgstr ""
 
 #: ../translation/plugins.c:38
 #, no-c-format
 msgid "When no artwork is found"
-msgstr "Als er geen hoezen worden gevonden:"
+msgstr ""
 
 #: ../translation/plugins.c:40
 #, no-c-format
 msgid "leave blank"
-msgstr "leeglaten"
+msgstr ""
 
 #: ../translation/plugins.c:42
 #, no-c-format
 msgid "use DeaDBeeF default cover"
-msgstr "standaardhoes van DeaDBeeF gebruiken"
+msgstr ""
 
 #: ../translation/plugins.c:44
 #, no-c-format
 msgid "display custom image"
-msgstr "aangepaste afbeelding tonen"
+msgstr ""
 
 #: ../translation/plugins.c:46
 #, no-c-format
 msgid "Custom image path"
-msgstr "Pad naar aangepaste afbeelding"
+msgstr ""
 
 #: ../translation/plugins.c:48
 #, no-c-format
 msgid "Save to file name"
-msgstr "Opslaan onder bestandsnaam"
+msgstr ""
 
 #: ../translation/plugins.c:50
 #, no-c-format
 msgid "Search masks (; separated)"
-msgstr "Zoekfilters (puntkomma-gescheiden)"
+msgstr ""
 
 #: ../translation/plugins.c:52
 #, no-c-format
 msgid "Search folders (; separated)"
-msgstr "Zoekmappen (puntkomma-gescheiden)"
+msgstr ""
 
 #: ../translation/plugins.c:54
 #, no-c-format
 msgid "Cache refresh (hrs)"
-msgstr "Cache verversen (in uren)"
+msgstr ""
 
 #: ../translation/plugins.c:56
 #, no-c-format
 msgid "Simplified cache file names"
-msgstr "Vereenvoudige cachenamen"
+msgstr ""
 
 #: ../translation/plugins.c:58
 #, no-c-format
 msgid "Image size"
-msgstr "Afbeeldingsgrootte"
+msgstr ""
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:61
@@ -3124,7 +3158,7 @@ msgstr "ReplayGain"
 #: ../translation/plugins.c:146
 #, no-c-format
 msgid "Remove ReplayGain Information"
-msgstr "ReplayGain-informatie verwijderen"
+msgstr ""
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -3134,12 +3168,12 @@ msgstr "Selectie scannen als albums (op tags)"
 #: ../translation/plugins.c:150
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr "Selectie scannel als los album"
+msgstr ""
 
 #: ../translation/plugins.c:152
 #, no-c-format
 msgid "Scan Per-file Track Gain"
-msgstr "Gain per bestand scannen"
+msgstr ""
 
 #: ../translation/plugins.c:154
 #, no-c-format
@@ -3149,819 +3183,834 @@ msgstr "Gain per bestand scannen indien niet gescand"
 #: ../translation/plugins.c:158
 #, no-c-format
 msgid "Deselect All"
-msgstr "Selectie ongedaan maken"
+msgstr ""
 
 #: ../translation/plugins.c:160
 #, no-c-format
 msgid "Select All"
-msgstr "Alles selecteren"
+msgstr ""
 
 #: ../translation/plugins.c:166
 #, no-c-format
 msgid "Add Location"
-msgstr "Locatie toevoegen"
+msgstr ""
 
 #: ../translation/plugins.c:168
 #, no-c-format
 msgid "Add Folder(s)"
-msgstr "Map(pen) toevoegen"
+msgstr ""
 
 #: ../translation/plugins.c:170
 #, no-c-format
 msgid "Add File(s)"
-msgstr "Bestand(en) toevoegen"
+msgstr ""
 
 #: ../translation/plugins.c:172
 #, no-c-format
 msgid "Open File(s)"
-msgstr "Bestand(en) openen"
+msgstr ""
 
 #: ../translation/plugins.c:178
 #, no-c-format
 msgid "Show Help Page"
-msgstr "Hulppagina tonen"
+msgstr ""
 
 #: ../translation/plugins.c:182
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr "Herhaalmodus"
+msgstr ""
 
 #: ../translation/plugins.c:184
 #, no-c-format
 msgid "Repeat - Off"
-msgstr "Herhalen - Uit"
+msgstr ""
 
 #: ../translation/plugins.c:186
 #, no-c-format
 msgid "Repeat - Single Track"
-msgstr "Herhalen - Los nummer"
+msgstr ""
 
 #: ../translation/plugins.c:188
 #, no-c-format
 msgid "Repeat - All"
-msgstr "Herhalen - Alles"
+msgstr ""
 
 #: ../translation/plugins.c:190
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr "Willekeurige modus"
+msgstr ""
 
 #: ../translation/plugins.c:192
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr "Willekeurig - Willekeurige nummers"
+msgstr ""
 
 #: ../translation/plugins.c:194
 #, no-c-format
 msgid "Shuffle - Albums"
-msgstr "Willekeurig - Albums"
+msgstr ""
 
 #: ../translation/plugins.c:196
 #, no-c-format
 msgid "Shuffle - Tracks"
-msgstr "Willekeurig - Nummers"
+msgstr ""
 
 #: ../translation/plugins.c:198
 #, no-c-format
 msgid "Shuffle - Off"
-msgstr "Willekeurig - Uit"
+msgstr ""
 
 #: ../translation/plugins.c:200
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
-msgstr "Aanwijzer volgt afspelen in-/uitschakelen"
+msgstr ""
 
 #: ../translation/plugins.c:202
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
-msgstr "Schuiven volgt afspelen in-/uitschakelen"
+msgstr ""
 
 #: ../translation/plugins.c:204
 #, no-c-format
 msgid "View"
-msgstr "Beeld"
+msgstr ""
 
 #: ../translation/plugins.c:206
 #, no-c-format
 msgid "Show\\/Hide menu"
-msgstr "Menubalk tonen/verbergen"
+msgstr ""
 
 #: ../translation/plugins.c:208
 #, no-c-format
 msgid "Show\\/Hide statusbar"
-msgstr "Statusbalk tonen/verbergen"
+msgstr ""
 
 #: ../translation/plugins.c:210
 #, no-c-format
 msgid "Toggle Design Mode"
-msgstr "Ontwerpmodus aan/uit"
+msgstr ""
 
 #: ../translation/plugins.c:214
 #, no-c-format
 msgid "Sort Custom"
-msgstr "Aangepaste sortering"
+msgstr ""
 
 #: ../translation/plugins.c:216
 #, no-c-format
 msgid "Crop Selected"
-msgstr "Selectie bijsijden"
+msgstr ""
 
 #: ../translation/plugins.c:218
 #, no-c-format
 msgid "Remove Track(s) from Playlist"
-msgstr "Nummer(s) verwijderen van afspeellijst"
+msgstr ""
 
 #: ../translation/plugins.c:220
 #, no-c-format
 msgid "Save Playlist"
-msgstr "Afspeellijst opslaan"
+msgstr ""
 
 #: ../translation/plugins.c:224
 #, no-c-format
 msgid "Remove Current Playlist"
-msgstr "Huidige afspeellijst verwijderen"
+msgstr ""
 
 #: ../translation/plugins.c:228
 #, no-c-format
 msgid "Rename Current Playlist"
-msgstr "Afspeellijstnaam wijzigen"
+msgstr ""
 
 #: ../translation/plugins.c:230
 #, no-c-format
 msgid "Show\\/Hide Equalizer"
-msgstr "Equalizer tonen/verbergen"
+msgstr ""
 
 #: ../translation/plugins.c:232
 #, no-c-format
 msgid "Hide Equalizer"
-msgstr "Equalizer verbergen"
+msgstr ""
 
 #: ../translation/plugins.c:234
 #, no-c-format
 msgid "Show Equalizer"
-msgstr "Equalizer tonen"
+msgstr ""
 
 #: ../translation/plugins.c:236
 #, no-c-format
 msgid "Show\\/Hide Player Window"
-msgstr "Spelervenster tonen/verbergen"
+msgstr ""
 
 #: ../translation/plugins.c:238
 #, no-c-format
 msgid "Hide Player Window"
-msgstr "Spelervenster verbergen"
+msgstr ""
 
 #: ../translation/plugins.c:240
 #, no-c-format
 msgid "Show Player Window"
-msgstr "Spelervenster tonen"
+msgstr ""
 
 #: ../translation/plugins.c:242
 #, no-c-format
 msgid "Find"
-msgstr "Zoeken"
+msgstr ""
 
 #: ../translation/plugins.c:244
 #, no-c-format
 msgid "Show\\/Hide Log window"
-msgstr "Logboekvenster tonen/verbergen"
+msgstr ""
 
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
-msgstr "Bevestiging vragen alvorens bestanden te verwijderen van de schijf"
+msgstr ""
 
 #: ../translation/plugins.c:248
 #, no-c-format
 msgid "Status icon settings:"
-msgstr "Statuspictograminstellingen:"
+msgstr ""
 
 #: ../translation/plugins.c:250
 #, no-c-format
 msgid "Status icon volume control sensitivity"
-msgstr "Statuspictogram voor gevoeligheid van volumeknop"
+msgstr ""
 
 #: ../translation/plugins.c:252
 #, no-c-format
 msgid "Custom status icon"
-msgstr "Aangepast statuspictogram"
+msgstr ""
 
 #: ../translation/plugins.c:254
 #, no-c-format
 msgid "Misc:"
-msgstr "Overig:"
+msgstr ""
 
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Add separators between plugin context menu items"
-msgstr "Scheidingtekens toevoegen tussen rechtermuisknopmenu-onderdelen van plug-in"
+msgstr ""
 
 #: ../translation/plugins.c:258
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
-msgstr "Unicode-tekens gebruiken voor status bijhouden i.p.v. afbeeldingen"
+msgstr ""
 
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "Disable seekbar overlay text"
-msgstr "Tekstballon van spoelbalk uitschakelen"
+msgstr ""
 
 #. plugins/hotkeys/hotkeys.c
 #: ../translation/plugins.c:263
 #, no-c-format
 msgid "Previous or Restart Current Track"
-msgstr "Vorige of huidige nummer herstarten"
+msgstr ""
 
 #: ../translation/plugins.c:265
 #, no-c-format
 msgid "Duplicate Playlist"
-msgstr "Afspeellijst klonen"
+msgstr ""
 
 #: ../translation/plugins.c:269
 #, no-c-format
 msgid "Jump to Currently Playing Track"
-msgstr "Spoelen naar momenteel afspelend nummer"
+msgstr ""
 
 #: ../translation/plugins.c:271
 #, no-c-format
 msgid "Skip to"
-msgstr "Spoelen naar"
+msgstr ""
 
 #: ../translation/plugins.c:273
 #, no-c-format
 msgid "Previous Genre"
-msgstr "Vorig genre"
+msgstr ""
 
 #: ../translation/plugins.c:275
 #, no-c-format
 msgid "Previous Composer"
-msgstr "Vorige componist"
+msgstr ""
 
 #: ../translation/plugins.c:277
 #, no-c-format
 msgid "Previous Artist"
-msgstr "Vorige artiest"
+msgstr ""
 
 #: ../translation/plugins.c:279
 #, no-c-format
 msgid "Previous Album"
-msgstr "Vorig album"
+msgstr ""
 
 #: ../translation/plugins.c:281
 #, no-c-format
 msgid "Next Genre"
-msgstr "Volgend genre"
+msgstr ""
 
 #: ../translation/plugins.c:283
 #, no-c-format
 msgid "Next Composer"
-msgstr "Volgende componist"
+msgstr ""
 
 #: ../translation/plugins.c:285
 #, no-c-format
 msgid "Next Artist"
-msgstr "Volgende artiest"
+msgstr ""
 
 #: ../translation/plugins.c:287
 #, no-c-format
 msgid "Next Album"
-msgstr "Volgend album"
+msgstr ""
 
 #: ../translation/plugins.c:289
 #, no-c-format
 msgid "Next Playlist"
-msgstr "Volgende afspeellijst"
+msgstr ""
 
 #: ../translation/plugins.c:291
 #, no-c-format
 msgid "Previous Playlist"
-msgstr "Vorige afspeellijst"
+msgstr ""
 
 #: ../translation/plugins.c:293
 #, no-c-format
 msgid "Switch to Playlist 10"
-msgstr "Overschakelen naar afspeellijst 10"
+msgstr ""
 
 #: ../translation/plugins.c:295
 #, no-c-format
 msgid "Switch to Playlist 9"
-msgstr "Overschakelen naar afspeellijst 9"
+msgstr ""
 
 #: ../translation/plugins.c:297
 #, no-c-format
 msgid "Switch to Playlist 8"
-msgstr "Overschakelen naar afspeellijst 8"
+msgstr ""
 
 #: ../translation/plugins.c:299
 #, no-c-format
 msgid "Switch to Playlist 7"
-msgstr "Overschakelen naar afspeellijst 7"
+msgstr ""
 
 #: ../translation/plugins.c:301
 #, no-c-format
 msgid "Switch to Playlist 6"
-msgstr "Overschakelen naar afspeellijst 6"
+msgstr ""
 
 #: ../translation/plugins.c:303
 #, no-c-format
 msgid "Switch to Playlist 5"
-msgstr "Overschakelen naar afspeellijst 5"
+msgstr ""
 
 #: ../translation/plugins.c:305
 #, no-c-format
 msgid "Switch to Playlist 4"
-msgstr "Overschakelen naar afspeellijst 4"
+msgstr ""
 
 #: ../translation/plugins.c:307
 #, no-c-format
 msgid "Switch to Playlist 3"
-msgstr "Overschakelen naar afspeellijst 3"
+msgstr ""
 
 #: ../translation/plugins.c:309
 #, no-c-format
 msgid "Switch to Playlist 2"
-msgstr "Overschakelen naar afspeellijst 2"
+msgstr ""
 
 #: ../translation/plugins.c:311
 #, no-c-format
 msgid "Switch to Playlist 1"
-msgstr "Overschakelen naar afspeellijst 1"
+msgstr ""
 
 #: ../translation/plugins.c:313
 #, no-c-format
 msgid "Sort Randomize"
-msgstr "Willekeurig sorteren"
+msgstr ""
 
 #: ../translation/plugins.c:315
 #, no-c-format
 msgid "Sort by Date"
-msgstr "Sorteren op datum"
+msgstr ""
 
 #: ../translation/plugins.c:317
 #, no-c-format
 msgid "Sort by Artist"
-msgstr "Sorteren op artiest"
+msgstr ""
 
 #: ../translation/plugins.c:319
 #, no-c-format
 msgid "Sort by Album"
-msgstr "Sorteren op album"
+msgstr ""
 
 #: ../translation/plugins.c:321
 #, no-c-format
 msgid "Sort by Track Number"
-msgstr "Sorteren op volgnummer"
+msgstr ""
 
 #: ../translation/plugins.c:323
 #, no-c-format
 msgid "Sort by Title"
-msgstr "Sorteren op titel"
+msgstr ""
 
 #: ../translation/plugins.c:325
 #, no-c-format
 msgid "Invert Selection"
-msgstr "Selectie omkeren"
+msgstr ""
 
 #: ../translation/plugins.c:327
 #, no-c-format
 msgid "Clear Playlist"
-msgstr "Afspeellijst wissen"
+msgstr ""
 
 #: ../translation/plugins.c:331
 #, no-c-format
 msgid "Add to Playback Queue"
-msgstr "Toevoegen aan afspeelwachtrij"
+msgstr ""
 
 #: ../translation/plugins.c:333
 #, no-c-format
 msgid "Add to Front of Playback Queue"
-msgstr "Toevoegen bovenaan afspeelwachtrij"
+msgstr ""
 
 #: ../translation/plugins.c:335
 #, no-c-format
 msgid "Toggle in Playback Queue"
-msgstr "Schakelen in afspeelwachtrij"
+msgstr ""
 
 #: ../translation/plugins.c:337
 #, no-c-format
 msgid "Move"
-msgstr "Verplaatsen"
+msgstr ""
 
 #: ../translation/plugins.c:339
 #, no-c-format
 msgid "Move Tracks Down"
-msgstr "Nummers omlaag verplaatsen"
+msgstr ""
 
 #: ../translation/plugins.c:341
 #, no-c-format
 msgid "Move Tracks Up"
-msgstr "Nummers omhoog verplaatsen"
+msgstr ""
 
 #: ../translation/plugins.c:343
 #, no-c-format
 msgid "Toggle Mute"
-msgstr "Dempen/Ontdempen"
+msgstr ""
 
 #: ../translation/plugins.c:353
 #, no-c-format
 msgid "Toggle Pause"
-msgstr "Pauzeren/Hervatten"
+msgstr ""
 
 #: ../translation/plugins.c:355
 #, no-c-format
 msgid "Play\\/Pause"
-msgstr "Afspelen/Pauzeren"
+msgstr ""
+
+#: ../translation/plugins.c:357
+#, no-c-format
+msgid "Play Next Album"
+msgstr ""
 
 #: ../translation/plugins.c:359
 #, no-c-format
-msgid "Seek 1s Forward"
-msgstr "1s vooruitspoelen"
+msgid "Play Previous Album"
+msgstr ""
 
 #: ../translation/plugins.c:361
 #, no-c-format
-msgid "Seek 1s Backward"
-msgstr "1s terugspoelen"
-
-#: ../translation/plugins.c:363
-#, no-c-format
-msgid "Seek 5s Forward"
-msgstr "5s vooruitspoelen"
+msgid "Play Random Album"
+msgstr ""
 
 #: ../translation/plugins.c:365
 #, no-c-format
-msgid "Seek 5s Backward"
-msgstr "5s terugspoelen"
+msgid "Seek 1s Forward"
+msgstr ""
 
 #: ../translation/plugins.c:367
 #, no-c-format
-msgid "Seek 1% Forward"
-msgstr "1% vooruitspoelen"
+msgid "Seek 1s Backward"
+msgstr ""
 
 #: ../translation/plugins.c:369
 #, no-c-format
-msgid "Seek 1% Backward"
-msgstr "1% terugspoelen"
+msgid "Seek 5s Forward"
+msgstr ""
 
 #: ../translation/plugins.c:371
 #, no-c-format
-msgid "Seek 5% Forward"
-msgstr "5% vooruitspoelen"
+msgid "Seek 5s Backward"
+msgstr ""
 
 #: ../translation/plugins.c:373
 #, no-c-format
-msgid "Seek 5% Backward"
-msgstr "5% terugspoelen"
+msgid "Seek 1% Forward"
+msgstr ""
 
 #: ../translation/plugins.c:375
 #, no-c-format
-msgid "Volume Up"
-msgstr "Volume omhoog"
+msgid "Seek 1% Backward"
+msgstr ""
 
 #: ../translation/plugins.c:377
 #, no-c-format
-msgid "Volume Down"
-msgstr "Volume omlaag"
+msgid "Seek 5% Forward"
+msgstr ""
 
 #: ../translation/plugins.c:379
 #, no-c-format
-msgid "Toggle Stop After Current Track"
-msgstr "Stoppen na huidig nummer"
+msgid "Seek 5% Backward"
+msgstr ""
 
 #: ../translation/plugins.c:381
 #, no-c-format
+msgid "Volume Up"
+msgstr ""
+
+#: ../translation/plugins.c:383
+#, no-c-format
+msgid "Volume Down"
+msgstr ""
+
+#: ../translation/plugins.c:385
+#, no-c-format
+msgid "Toggle Stop After Current Track"
+msgstr ""
+
+#: ../translation/plugins.c:387
+#, no-c-format
 msgid "Toggle Stop After Current Album"
-msgstr "Stoppen na huidig album"
+msgstr ""
 
 #. plugins/lastfm/lastfm.c
-#: ../translation/plugins.c:384
+#: ../translation/plugins.c:390
 #, no-c-format
 msgid "Lookup on Last.fm"
 msgstr "Opzoeken op Last.fm"
 
-#: ../translation/plugins.c:386
+#: ../translation/plugins.c:392
 #, no-c-format
 msgid "Enable scrobbler"
 msgstr "Scrobblen inschakelen"
 
-#: ../translation/plugins.c:388
+#: ../translation/plugins.c:394
 #, no-c-format
 msgid "Disable nowplaying"
 msgstr "‘Je luistert naar’ uitschakelen"
 
-#: ../translation/plugins.c:390
+#: ../translation/plugins.c:396
 #, no-c-format
 msgid "Username"
 msgstr "Gebruikersnaam"
 
-#: ../translation/plugins.c:392
+#: ../translation/plugins.c:398
 #, no-c-format
 msgid "Password"
 msgstr "Wachtwoord"
 
-#: ../translation/plugins.c:394
+#: ../translation/plugins.c:400
 #, no-c-format
 msgid "Scrobble URL"
 msgstr "Scrobble-url"
 
-#: ../translation/plugins.c:396
+#: ../translation/plugins.c:402
 #, no-c-format
 msgid "Prefer Album Artist over Artist field"
 msgstr "Voorkeur voor albumartiest boven artiestveld"
 
-#: ../translation/plugins.c:398
+#: ../translation/plugins.c:404
 #, no-c-format
 msgid "Send MusicBrainz ID"
 msgstr "MusicBrainz-id versturen"
 
-#: ../translation/plugins.c:400
+#: ../translation/plugins.c:406
 #, no-c-format
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
 msgstr "Nummers korter dan 30 seconden versturen (niet aanbevolen)"
 
 #. plugins/mono2stereo/mono2stereo.c
-#: ../translation/plugins.c:403
+#: ../translation/plugins.c:409
 #, no-c-format
 msgid "Left mix"
 msgstr "Linkermix"
 
-#: ../translation/plugins.c:405
+#: ../translation/plugins.c:411
 #, no-c-format
 msgid "Right mix"
 msgstr "Rechtermix"
 
 #. plugins/mp3/mp3.c
-#: ../translation/plugins.c:408
+#: ../translation/plugins.c:414
 #, no-c-format
 msgid "Force 16 bit output"
 msgstr "16-bituitvoer afdwingen"
 
-#: ../translation/plugins.c:410
+#: ../translation/plugins.c:416
 #, no-c-format
 msgid "Backend"
 msgstr "Backend"
 
-#: ../translation/plugins.c:415
+#: ../translation/plugins.c:421
 #, no-c-format
 msgid "Notification title format"
 msgstr "Opmaak van meldingstitel"
 
-#: ../translation/plugins.c:417
+#: ../translation/plugins.c:423
 #, no-c-format
 msgid "Notification content format"
 msgstr "Opmaak van meldingsinhoud"
 
-#: ../translation/plugins.c:419
+#: ../translation/plugins.c:425
 #, no-c-format
 msgid "Show album art"
 msgstr "Albumhoezen tonen"
 
-#: ../translation/plugins.c:421
+#: ../translation/plugins.c:427
 #, no-c-format
 msgid "Album art size (px)"
 msgstr "Grootte van albumhoezen (px)"
 
-#: ../translation/plugins.c:423
+#: ../translation/plugins.c:429
 #, no-c-format
 msgid "Don't reuse notifications (KDE quirk)"
 msgstr "Meldingen niet hergebruiken (KDE-eigenaardigheid)"
 
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:426
+#: ../translation/plugins.c:432
 #, no-c-format
 msgid "Device file"
 msgstr "Apparaatbestand"
 
-#: ../translation/plugins.c:431
+#: ../translation/plugins.c:437
 #, no-c-format
 msgid "Highlight current playlist"
 msgstr "Huidige afspeellijst markeren"
 
-#: ../translation/plugins.c:433
+#: ../translation/plugins.c:439
 #, no-c-format
 msgid "Play on double-click"
 msgstr "Dubbelklikken om af te spelen"
 
 #. plugins/portaudio/portaudio.c
-#: ../translation/plugins.c:436
+#: ../translation/plugins.c:442
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
 msgstr "Buffergrootte (-1 = optimale waarde van portaudio gebruiken)"
 
-#: ../translation/plugins.c:438
+#: ../translation/plugins.c:444
 #, no-c-format
 msgid "Device name encoding"
 msgstr "Codering van apparaatnaam"
 
-#: ../translation/plugins.c:440
+#: ../translation/plugins.c:446
 #, no-c-format
 msgid "ASCII / UTF-8"
 msgstr "ASCII / UTF-8"
 
-#: ../translation/plugins.c:442
+#: ../translation/plugins.c:448
 #, no-c-format
 msgid "cp1250"
 msgstr "cp1250"
 
-#: ../translation/plugins.c:444
+#: ../translation/plugins.c:450
 #, no-c-format
 msgid "Defined below"
 msgstr "Zoals hieronder opgegeven"
 
-#: ../translation/plugins.c:446
+#: ../translation/plugins.c:452
 #, no-c-format
 msgid "Custom device name encoding"
 msgstr "Aangepaste codering van apparaatnaam"
 
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:449
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr "PulseAudio-server (laat leeg voor de standaardserver)"
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:452
+#: ../translation/plugins.c:458
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr "Standaardduur van nummers (in minuten)"
 
-#: ../translation/plugins.c:454
+#: ../translation/plugins.c:460
 #, no-c-format
 msgid "Samplerate"
 msgstr "Samplesnelheid"
 
-#: ../translation/plugins.c:456
+#: ../translation/plugins.c:462
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr "Overslaan indien korter dan (sec)"
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:459
+#: ../translation/plugins.c:465
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "Aangepaste shell-opdrachten instellen"
 
-#. plugins/shn/shn.c
-#: ../translation/plugins.c:462
+#. plugins/shn/shnplugin.c
+#: ../translation/plugins.c:468
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "Relatief pad voor zoektabel"
 
-#: ../translation/plugins.c:464
+#: ../translation/plugins.c:470
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "Absoluut pad voor zoektabel"
 
-#: ../translation/plugins.c:466
+#: ../translation/plugins.c:472
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Audio-bytes verwisselen (schakel om als je slechts statische ruis hoort)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:475
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "HVSC Songlength DB inschakelen"
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:477
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr "Volledig pad naar Songlengths.md5/.txt"
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:479
 #, no-c-format
 msgid "Bits per sample"
 msgstr "Bits per sample"
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "Standaardduur van nummers (sec)"
 
-#: ../translation/plugins.c:477
+#: ../translation/plugins.c:483
 #, no-c-format
 msgid "Mono synth"
 msgstr "Mono synth"
 
 #. plugins/sndfile/sndfile.c
-#: ../translation/plugins.c:480
+#: ../translation/plugins.c:486
 #, no-c-format
 msgid "Enable logging"
 msgstr "Loggen inschakelen"
 
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:483
+#: ../translation/plugins.c:489
 #, no-c-format
 msgid "Preamp"
 msgstr "Preamp"
 
-#: ../translation/plugins.c:485
+#: ../translation/plugins.c:491
 #, no-c-format
 msgid "1.2K"
 msgstr "1.2K"
 
-#: ../translation/plugins.c:487
+#: ../translation/plugins.c:493
 #, no-c-format
 msgid "1.8K"
 msgstr "1.8K"
 
-#: ../translation/plugins.c:489
+#: ../translation/plugins.c:495
 #, no-c-format
 msgid "2.5K"
 msgstr "2.5K"
 
-#: ../translation/plugins.c:491
+#: ../translation/plugins.c:497
 #, no-c-format
 msgid "3.5K"
 msgstr "3.5K"
 
-#: ../translation/plugins.c:493
+#: ../translation/plugins.c:499
 #, no-c-format
 msgid "5K"
 msgstr "5K"
 
-#: ../translation/plugins.c:495
+#: ../translation/plugins.c:501
 #, no-c-format
 msgid "7K"
 msgstr "7K"
 
-#: ../translation/plugins.c:497
+#: ../translation/plugins.c:503
 #, no-c-format
 msgid "10K"
 msgstr "10K"
 
-#: ../translation/plugins.c:499
+#: ../translation/plugins.c:505
 #, no-c-format
 msgid "14K"
 msgstr "14K"
 
-#: ../translation/plugins.c:501
+#: ../translation/plugins.c:507
 #, no-c-format
 msgid "20K"
 msgstr "20K"
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:504
+#: ../translation/plugins.c:510
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Configuratiebestand van Timidity++-bank"
 
 #. src/scriptable/scriptable_encoder.c
-#: ../translation/plugins.c:507
+#: ../translation/plugins.c:513
 #, no-c-format
 msgid "File extension"
 msgstr "Bestandsextensie"
 
-#: ../translation/plugins.c:509
+#: ../translation/plugins.c:515
 #, no-c-format
 msgid "Encoder command line"
 msgstr "Encodering - opdrachtregel"
 
-#: ../translation/plugins.c:511
+#: ../translation/plugins.c:517
 #, no-c-format
 msgid "Data transfer method"
 msgstr "Gegevensoverdrachtsmethode"
 
-#: ../translation/plugins.c:513
+#: ../translation/plugins.c:519
 #, no-c-format
 msgid "Pipe (stdin)"
 msgstr "Sluizen (stdin)"
 
-#: ../translation/plugins.c:515
+#: ../translation/plugins.c:521
 #, no-c-format
 msgid "Temporary file"
 msgstr "Tijdelijk bestand"
 
-#: ../translation/plugins.c:517
+#: ../translation/plugins.c:523
 #, no-c-format
 msgid "Source file"
 msgstr "Bronbestand"
 
-#: ../translation/plugins.c:521
+#: ../translation/plugins.c:527
 #, no-c-format
 msgid "Write ID3v2 tag"
 msgstr "ID3v2 wegschrijven"
 
-#: ../translation/plugins.c:523
+#: ../translation/plugins.c:529
 #, no-c-format
 msgid "Write ID3v1 tag"
 msgstr "ID3v1 wegschrijven"
 
-#: ../translation/plugins.c:525
+#: ../translation/plugins.c:531
 #, no-c-format
 msgid "Write APEv2 tag"
 msgstr "APEv2 wegschrijven"
 
-#: ../translation/plugins.c:527
+#: ../translation/plugins.c:533
 #, no-c-format
 msgid "Write FLAC tag"
 msgstr "FLAC wegschrijven"
 
-#: ../translation/plugins.c:529
+#: ../translation/plugins.c:535
 #, no-c-format
 msgid "Write OggVorbis tag"
 msgstr "OggVorbis wegschrijven"
 
-#: ../translation/plugins.c:531
+#: ../translation/plugins.c:537
 #, no-c-format
 msgid "Write MP4 tag"
 msgstr "MP4 wegschrijven"
