@@ -400,24 +400,37 @@ sndfile_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     float duration = (float)totalsamples / samplerate;
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
 
-    const char *type = "WAV";
-
     struct {
         int identifier;
         const char *name;
-    } map[] = { { SF_FORMAT_WAV, "WAV" },     { SF_FORMAT_AIFF, "AIFF" },
-                { SF_FORMAT_AU, "AU" },       { SF_FORMAT_RAW, "RAW" },
-                { SF_FORMAT_PAF, "PAF" },     { SF_FORMAT_SVX, "SVX" },
-                { SF_FORMAT_NIST, "NIST" },   { SF_FORMAT_VOC, "VOC" },
-                { SF_FORMAT_IRCAM, "IRCAM" }, { SF_FORMAT_W64, "W64" },
-                { SF_FORMAT_MAT4, "MAT4" },   { SF_FORMAT_MAT5, "MAT5" },
-                { SF_FORMAT_PVF, "PVF" },     { SF_FORMAT_XI, "XI" },
-                { SF_FORMAT_HTK, "HTK" },     { SF_FORMAT_SDS, "SDS" },
-                { SF_FORMAT_AVR, "AVR" },     { SF_FORMAT_WAVEX, "WAVEX" },
-                { SF_FORMAT_SD2, "SD2" },     { SF_FORMAT_FLAC, "FLAC" },
-                { SF_FORMAT_CAF, "CAF" },     { SF_FORMAT_WVE, "WVE" },
-                { SF_FORMAT_OGG, "OGG" },     { SF_FORMAT_MPC2K, "MPC2K" },
-                { SF_FORMAT_RF64, "RF64" },   { 0, NULL } };
+    } map[] = {
+        {SF_FORMAT_WAV,    "WAV"  },
+        { SF_FORMAT_AIFF,  "AIFF" },
+        { SF_FORMAT_AU,    "AU"   },
+        { SF_FORMAT_RAW,   "RAW"  },
+        { SF_FORMAT_PAF,   "PAF"  },
+        { SF_FORMAT_SVX,   "SVX"  },
+        { SF_FORMAT_NIST,  "NIST" },
+        { SF_FORMAT_VOC,   "VOC"  },
+        { SF_FORMAT_IRCAM, "IRCAM"},
+        { SF_FORMAT_W64,   "W64"  },
+        { SF_FORMAT_MAT4,  "MAT4" },
+        { SF_FORMAT_MAT5,  "MAT5" },
+        { SF_FORMAT_PVF,   "PVF"  },
+        { SF_FORMAT_XI,    "XI"   },
+        { SF_FORMAT_HTK,   "HTK"  },
+        { SF_FORMAT_SDS,   "SDS"  },
+        { SF_FORMAT_AVR,   "AVR"  },
+        { SF_FORMAT_WAVEX, "WAVEX"},
+        { SF_FORMAT_SD2,   "SD2"  },
+        { SF_FORMAT_FLAC,  "FLAC" },
+        { SF_FORMAT_CAF,   "CAF"  },
+        { SF_FORMAT_WVE,   "WVE"  },
+        { SF_FORMAT_OGG,   "OGG"  },
+        { SF_FORMAT_MPC2K, "MPC2K"},
+        { SF_FORMAT_RF64,  "RF64" },
+        { 0,               NULL   }
+    };
 
     int identifier = inf.format & SF_FORMAT_TYPEMASK;
     const char *format_name = "WAV";
@@ -526,9 +539,15 @@ static const struct metamap_s {
     int str_type;
     const char *meta_name;
 } metamap_items[] = {
-    { SF_STR_TITLE, "title" },   { SF_STR_COPYRIGHT, "copyright" }, { SF_STR_SOFTWARE, "encoder" },
-    { SF_STR_ARTIST, "artist" }, { SF_STR_COMMENT, "comment" },     { SF_STR_DATE, "year" },
-    { SF_STR_ALBUM, "album" },   { SF_STR_TRACKNUMBER, "track" },   { SF_STR_GENRE, "genre" },
+    {SF_STR_TITLE,        "title"    },
+    { SF_STR_COPYRIGHT,   "copyright"},
+    { SF_STR_SOFTWARE,    "encoder"  },
+    { SF_STR_ARTIST,      "artist"   },
+    { SF_STR_COMMENT,     "comment"  },
+    { SF_STR_DATE,        "year"     },
+    { SF_STR_ALBUM,       "album"    },
+    { SF_STR_TRACKNUMBER, "track"    },
+    { SF_STR_GENRE,       "genre"    },
 };
 
 static int
