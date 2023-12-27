@@ -9,9 +9,10 @@ cd ..
 tx push -s
 tx pull -a -f
 
-for i in po/*.po ; do
-    if ! [[ $(git diff $i | grep '+msgstr') ]]; then
+while read i; do
+    po=po/$i.po
+    if ! [[ $(git diff $po | grep '+msgstr') ]]; then
         echo $i unmodified
         git checkout HEAD $i
     fi
-done
+done <po/LINGUAS
