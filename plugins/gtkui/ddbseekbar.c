@@ -37,6 +37,17 @@
 #define DDB_IS_SEEKBAR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DDB_TYPE_SEEKBAR))
 #define DDB_IS_SEEKBAR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), DDB_TYPE_SEEKBAR))
 #define DDB_SEEKBAR_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), DDB_TYPE_SEEKBAR, DdbSeekbarClass))
+#define DDB_SEEKBAR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DDB_TYPE_SEEKBAR, DdbSeekbarPrivate))
+
+struct _DdbSeekbarPrivate {
+    int seekbar_moving;
+    float seekbar_moved;
+    float seektime_alpha;
+    int seekbar_move_x;
+    int textpos;
+    int textwidth;
+    drawctx_t drawctx;
+};
 
 static gpointer ddb_seekbar_parent_class = NULL;
 
@@ -209,17 +220,18 @@ ddb_seekbar_constructor (GType type, guint n_construct_properties, GObjectConstr
 static void
 ddb_seekbar_realize (GtkWidget *w) {
     GTK_WIDGET_CLASS (ddb_seekbar_parent_class)->realize (w);
-
     DdbSeekbar *self = DDB_SEEKBAR (w);
-    drawctx_init (&self->drawctx);
-    draw_init_font (&self->drawctx, DDB_SEEKBAR_FONT, 0);
+    DdbSeekbarPrivate *priv = DDB_SEEKBAR_GET_PRIVATE (self);
+    drawctx_init (&priv->drawctx);
+    draw_init_font (&priv->drawctx, DDB_SEEKBAR_FONT, 0);
 }
 
 static void
 ddb_seekbar_unrealize (GtkWidget *w) {
     GTK_WIDGET_CLASS (ddb_seekbar_parent_class)->unrealize (w);
     DdbSeekbar *self = DDB_SEEKBAR (w);
-    draw_free (&self->drawctx);
+    DdbSeekbarPrivate *priv = DDB_SEEKBAR_GET_PRIVATE (self);
+    draw_free (&priv->drawctx);
 }
 
 static void
@@ -241,14 +253,16 @@ ddb_seekbar_class_init (DdbSeekbarClass *klass) {
     GTK_WIDGET_CLASS (klass)->configure_event = ddb_seekbar_real_configure_event;
     GTK_WIDGET_CLASS (klass)->scroll_event = ddb_seekbar_scroll_event;
     G_OBJECT_CLASS (klass)->constructor = ddb_seekbar_constructor;
+    g_type_class_add_private (klass, sizeof (DdbSeekbarPrivate));
 }
 
 static void
 ddb_seekbar_instance_init (DdbSeekbar *self) {
+    DdbSeekbarPrivate *priv = DDB_SEEKBAR_GET_PRIVATE (self);
     gtk_widget_set_has_window ((GtkWidget *)self, FALSE);
     gtk_widget_set_has_tooltip ((GtkWidget *)self, TRUE);
-    self->seekbar_moving = 0;
-    self->seekbar_move_x = 0;
+    priv->seekbar_moving = 0;
+    priv->seekbar_move_x = 0;
 }
 
 GType
@@ -321,6 +335,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     }
 
     DdbSeekbar *self = DDB_SEEKBAR (widget);
+    DdbSeekbarPrivate *priv = DDB_SEEKBAR_GET_PRIVATE (self);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     GtkAllocation allocation;
@@ -344,8 +359,8 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
     // filler, only while playing a finite stream
     if (trk && deadbeef->pl_get_item_duration (trk) > 0) {
         float pos = 0;
-        if (self->seekbar_moving) {
-            int x = self->seekbar_move_x;
+        if (priv->seekbar_moving) {
+            int x = priv->seekbar_move_x;
             if (x < 0) {
                 x = 0;
             }
@@ -383,15 +398,15 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
 
     // overlay, only while playing a finite stream, and only during seeking
     if (trk && deadbeef->pl_get_item_duration (trk) > 0) {
-        if (!gtkui_disable_seekbar_overlay && (self->seekbar_moving || self->seekbar_moved > 0.0) && trk) {
+        if (!gtkui_disable_seekbar_overlay && (priv->seekbar_moving || priv->seekbar_moved > 0.0) && trk) {
             float time = 0;
             float dur = deadbeef->pl_get_item_duration (trk);
 
-            if (self->seekbar_moved > 0) {
+            if (priv->seekbar_moved > 0) {
                 time = deadbeef->streamer_get_playpos ();
             }
             else {
-                time = self->seekbar_move_x * dur / (a.width);
+                time = priv->seekbar_move_x * dur / (a.width);
             }
 
             if (time < 0) {
@@ -406,16 +421,16 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
             int sc = time - hr * 3600 - mn * 60;
             snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
 
-            draw_begin (&self->drawctx, cr);
+            draw_begin (&priv->drawctx, cr);
 
             // overlay extent
 
             int ew, eh;
-            draw_get_text_extents (&self->drawctx, s, (int)strlen (s), &ew, &eh);
+            draw_get_text_extents (&priv->drawctx, s, (int)strlen (s), &ew, &eh);
 
-            if (self->textpos == -1) {
-                self->textpos = ax + aw / 2 - ew / 2;
-                self->textwidth = ew + 20;
+            if (priv->textpos == -1) {
+                priv->textpos = ax + aw / 2 - ew / 2;
+                priv->textwidth = ew + 20;
             }
 
             // overlay background
@@ -425,14 +440,14 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
                 clr_selection.red / 65535.f,
                 clr_selection.green / 65535.f,
                 clr_selection.blue / 65535.f,
-                self->seektime_alpha);
+                priv->seektime_alpha);
             cairo_save (cr);
 
             clearlooks_rounded_rectangle (
                 cr,
-                ax + aw / 2 - self->textwidth / 2,
+                ax + aw / 2 - priv->textwidth / 2,
                 ay + 4,
-                self->textwidth,
+                priv->textwidth,
                 ah - 8,
                 3,
                 0xff);
@@ -446,10 +461,10 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
 
             float text_color[3] = { (float)clr.red / 0xffff, (float)clr.green / 0xffff, (float)clr.blue / 0xffff };
 
-            draw_set_fg_color (&self->drawctx, text_color);
-            draw_text_custom (&self->drawctx, self->textpos, ay + ah / 2 - eh / 2, ew, 0, 0, 0, 0, s);
+            draw_set_fg_color (&priv->drawctx, text_color);
+            draw_text_custom (&priv->drawctx, priv->textpos, ay + ah / 2 - eh / 2, ew, 0, 0, 0, 0, s);
 
-            draw_end (&self->drawctx);
+            draw_end (&priv->drawctx);
 
             int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
             if (fps < 1) {
@@ -458,11 +473,11 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
             else if (fps > 30) {
                 fps = 30;
             }
-            if (self->seekbar_moved >= 0.0) {
-                self->seekbar_moved -= 1.0 / fps;
+            if (priv->seekbar_moved >= 0.0) {
+                priv->seekbar_moved -= 1.0 / fps;
             }
             else {
-                self->seekbar_moved = 0.0;
+                priv->seekbar_moved = 0.0;
             }
         }
     }
@@ -475,10 +490,11 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
 gboolean
 on_seekbar_motion_notify_event (GtkWidget *widget, GdkEventMotion *event) {
     DdbSeekbar *self = DDB_SEEKBAR (widget);
-    if (self->seekbar_moving) {
+    DdbSeekbarPrivate *priv = DDB_SEEKBAR_GET_PRIVATE (self);
+    if (priv->seekbar_moving) {
         GtkAllocation a;
         gtk_widget_get_allocation (widget, &a);
-        self->seekbar_move_x = event->x - a.x;
+        priv->seekbar_move_x = event->x - a.x;
         gtk_widget_queue_draw (widget);
     }
     return FALSE;
@@ -487,17 +503,18 @@ on_seekbar_motion_notify_event (GtkWidget *widget, GdkEventMotion *event) {
 gboolean
 on_seekbar_button_press_event (GtkWidget *widget, GdkEventButton *event) {
     DdbSeekbar *self = DDB_SEEKBAR (widget);
+    DdbSeekbarPrivate *priv = DDB_SEEKBAR_GET_PRIVATE (self);
     if (deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_STOPPED) {
         return FALSE;
     }
-    self->seekbar_moving = 1;
-    self->seekbar_moved = 0;
-    self->textpos = -1;
-    self->textwidth = -1;
-    self->seektime_alpha = 0.8;
+    priv->seekbar_moving = 1;
+    priv->seekbar_moved = 0;
+    priv->textpos = -1;
+    priv->textwidth = -1;
+    priv->seektime_alpha = 0.8;
     GtkAllocation a;
     gtk_widget_get_allocation (widget, &a);
-    self->seekbar_move_x = event->x - a.x;
+    priv->seekbar_move_x = event->x - a.x;
     gtk_widget_queue_draw (widget);
     return FALSE;
 }
@@ -505,8 +522,9 @@ on_seekbar_button_press_event (GtkWidget *widget, GdkEventButton *event) {
 gboolean
 on_seekbar_button_release_event (GtkWidget *widget, GdkEventButton *event) {
     DdbSeekbar *self = DDB_SEEKBAR (widget);
-    self->seekbar_moving = 0;
-    self->seekbar_moved = 1.0;
+    DdbSeekbarPrivate *priv = DDB_SEEKBAR_GET_PRIVATE (self);
+    priv->seekbar_moving = 0;
+    priv->seekbar_moved = 1.0;
     DB_playItem_t *trk = deadbeef->streamer_get_playing_track_safe ();
     if (trk) {
         if (deadbeef->pl_get_item_duration (trk) >= 0) {

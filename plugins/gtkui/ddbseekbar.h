@@ -26,7 +26,6 @@
 
 #include <glib.h>
 #include <gtk/gtk.h>
-#include "drawing.h"
 
 G_BEGIN_DECLS
 
@@ -44,13 +43,6 @@ typedef struct _DdbSeekbarPrivate DdbSeekbarPrivate;
 struct _DdbSeekbar {
     GtkWidget parent_instance;
     DdbSeekbarPrivate *priv;
-    int seekbar_moving;
-    float seekbar_moved;
-    float seektime_alpha;
-    int seekbar_move_x;
-    int textpos;
-    int textwidth;
-    drawctx_t drawctx;
 };
 
 struct _DdbSeekbarClass {
