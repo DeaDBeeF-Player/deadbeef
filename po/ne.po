@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-18 11:13+0100\n"
+"POT-Creation-Date: 2023-12-27 12:17+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Ajaya Adhikari <aazaya9@gmail.com>, 2015\n"
 "Language-Team: Nepali (http://app.transifex.com/deadbeef-player/deadbeef-player/language/ne/)\n"
@@ -2224,11 +2224,11 @@ msgid ""
 "playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:47
+#: ../plugins/gtkui/pluginconf.c:48
 msgid "Open file..."
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:559
+#: ../plugins/gtkui/pluginconf.c:606
 #, c-format
 msgid "Configure %s"
 msgstr ""

@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-18 11:13+0100\n"
+"POT-Creation-Date: 2023-12-27 12:31+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Joe Bliss <pcpepik0@gmail.com>, 2013,2016,2020\n"
+"Last-Translator: Vašek Kovářík <l3d9z6@seznam.cz>, 2011\n"
 "Language-Team: Czech (http://app.transifex.com/deadbeef-player/deadbeef-player/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2226,11 +2226,11 @@ msgid ""
 "playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:47
+#: ../plugins/gtkui/pluginconf.c:48
 msgid "Open file..."
 msgstr "Otevřít soubor..."
 
-#: ../plugins/gtkui/pluginconf.c:559
+#: ../plugins/gtkui/pluginconf.c:606
 #, c-format
 msgid "Configure %s"
 msgstr "Nastavit %s"
@@ -2884,12 +2884,12 @@ msgstr ""
 #: ../translation/plugins.c:24
 #, no-c-format
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Získat z vložených značek"
 
 #: ../translation/plugins.c:26
 #, no-c-format
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Získat z místního adresáře"
 
 #: ../translation/plugins.c:28
 #, no-c-format
@@ -3157,7 +3157,7 @@ msgstr "ReplayGain"
 #: ../translation/plugins.c:146
 #, no-c-format
 msgid "Remove ReplayGain Information"
-msgstr ""
+msgstr "Odstranit ReplayGain informaci"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -3167,12 +3167,12 @@ msgstr "Skenovat výběr jako alba (dle značek)"
 #: ../translation/plugins.c:150
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr ""
+msgstr "Skenovat výběr jako jedno album"
 
 #: ../translation/plugins.c:152
 #, no-c-format
 msgid "Scan Per-file Track Gain"
-msgstr ""
+msgstr "Skenovat zesílení stopy"
 
 #: ../translation/plugins.c:154
 #, no-c-format
@@ -3212,62 +3212,62 @@ msgstr ""
 #: ../translation/plugins.c:178
 #, no-c-format
 msgid "Show Help Page"
-msgstr ""
+msgstr "Zobrazit nápovědu"
 
 #: ../translation/plugins.c:182
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr ""
+msgstr "Přepnout režim opakování"
 
 #: ../translation/plugins.c:184
 #, no-c-format
 msgid "Repeat - Off"
-msgstr ""
+msgstr "Opakování - Vypnuto"
 
 #: ../translation/plugins.c:186
 #, no-c-format
 msgid "Repeat - Single Track"
-msgstr ""
+msgstr "Opakování - Jedna stopa"
 
 #: ../translation/plugins.c:188
 #, no-c-format
 msgid "Repeat - All"
-msgstr ""
+msgstr "Opakování - Vše"
 
 #: ../translation/plugins.c:190
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr ""
+msgstr "Přepnout náhodný režim"
 
 #: ../translation/plugins.c:192
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr ""
+msgstr "Náhodně - Náhodné stopy"
 
 #: ../translation/plugins.c:194
 #, no-c-format
 msgid "Shuffle - Albums"
-msgstr ""
+msgstr "Náhodně - Alba"
 
 #: ../translation/plugins.c:196
 #, no-c-format
 msgid "Shuffle - Tracks"
-msgstr ""
+msgstr "Náhodně - Stopy"
 
 #: ../translation/plugins.c:198
 #, no-c-format
 msgid "Shuffle - Off"
-msgstr ""
+msgstr "Náhodně - Vypnuto"
 
 #: ../translation/plugins.c:200
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
-msgstr ""
+msgstr "Přepnout sledovat kurzorem přehrávání"
 
 #: ../translation/plugins.c:202
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
-msgstr ""
+msgstr "Přepnout posun s přehráváním"
 
 #: ../translation/plugins.c:204
 #, no-c-format
@@ -3292,7 +3292,7 @@ msgstr ""
 #: ../translation/plugins.c:214
 #, no-c-format
 msgid "Sort Custom"
-msgstr ""
+msgstr "Vlastní řazení"
 
 #: ../translation/plugins.c:216
 #, no-c-format
@@ -3307,12 +3307,12 @@ msgstr ""
 #: ../translation/plugins.c:220
 #, no-c-format
 msgid "Save Playlist"
-msgstr ""
+msgstr "Uložit playlist"
 
 #: ../translation/plugins.c:224
 #, no-c-format
 msgid "Remove Current Playlist"
-msgstr ""
+msgstr "Odebrat aktuální playlist"
 
 #: ../translation/plugins.c:228
 #, no-c-format
@@ -3362,7 +3362,7 @@ msgstr ""
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "Potvrzovat mazání souborů z disku"
 
 #: ../translation/plugins.c:248
 #, no-c-format
@@ -3372,12 +3372,12 @@ msgstr ""
 #: ../translation/plugins.c:250
 #, no-c-format
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Citlivost ovládání hlasitosti"
 
 #: ../translation/plugins.c:252
 #, no-c-format
 msgid "Custom status icon"
-msgstr ""
+msgstr "Vlastní ikona stavu"
 
 #: ../translation/plugins.c:254
 #, no-c-format
@@ -3387,12 +3387,12 @@ msgstr ""
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Přidat oddělovače mezi položky kontextového menu zásuvných modulů"
 
 #: ../translation/plugins.c:258
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
-msgstr ""
+msgstr "Použít unicode znaky namísto obrázků pro stav stopy"
 
 #: ../translation/plugins.c:260
 #, no-c-format
@@ -3418,7 +3418,7 @@ msgstr ""
 #: ../translation/plugins.c:271
 #, no-c-format
 msgid "Skip to"
-msgstr ""
+msgstr "Přeskočit na"
 
 #: ../translation/plugins.c:273
 #, no-c-format
@@ -3463,7 +3463,7 @@ msgstr ""
 #: ../translation/plugins.c:289
 #, no-c-format
 msgid "Next Playlist"
-msgstr ""
+msgstr "Následující playlist"
 
 #: ../translation/plugins.c:291
 #, no-c-format
@@ -3523,7 +3523,7 @@ msgstr ""
 #: ../translation/plugins.c:313
 #, no-c-format
 msgid "Sort Randomize"
-msgstr ""
+msgstr "Řadit náhodně"
 
 #: ../translation/plugins.c:315
 #, no-c-format
@@ -3558,7 +3558,7 @@ msgstr ""
 #: ../translation/plugins.c:327
 #, no-c-format
 msgid "Clear Playlist"
-msgstr ""
+msgstr "Vyčistit playlist"
 
 #: ../translation/plugins.c:331
 #, no-c-format
@@ -3583,12 +3583,12 @@ msgstr ""
 #: ../translation/plugins.c:339
 #, no-c-format
 msgid "Move Tracks Down"
-msgstr ""
+msgstr "Posunout stopy dolů"
 
 #: ../translation/plugins.c:341
 #, no-c-format
 msgid "Move Tracks Up"
-msgstr ""
+msgstr "Posunout stopy nahoru"
 
 #: ../translation/plugins.c:343
 #, no-c-format
@@ -3598,12 +3598,12 @@ msgstr ""
 #: ../translation/plugins.c:353
 #, no-c-format
 msgid "Toggle Pause"
-msgstr ""
+msgstr "Přepnout pozastavení"
 
 #: ../translation/plugins.c:355
 #, no-c-format
 msgid "Play\\/Pause"
-msgstr ""
+msgstr "Přehrát\\/Pozastavit"
 
 #: ../translation/plugins.c:357
 #, no-c-format
@@ -3673,7 +3673,7 @@ msgstr ""
 #: ../translation/plugins.c:385
 #, no-c-format
 msgid "Toggle Stop After Current Track"
-msgstr ""
+msgstr "Přepnout zastavení po aktuální stopě"
 
 #: ../translation/plugins.c:387
 #, no-c-format

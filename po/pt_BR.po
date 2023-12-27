@@ -6,6 +6,7 @@
 # Alexandro Casanova <shorterfire@gmail.com>, 2014
 # Henrique P. Machado <hpmachado@gnome.org>, 2010
 # Savio saviosiqueira, 2022
+# Savio saviosiqueira, 2022
 # secipolla <secipolla@gmail.com>, 2010
 # secipolla <secipolla@gmail.com>, 2010
 # Yuri Somacal, 2016,2018
@@ -14,9 +15,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-18 11:13+0100\n"
+"POT-Creation-Date: 2023-12-27 12:31+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Savio saviosiqueira, 2022\n"
+"Last-Translator: Yuri Somacal, 2016,2018\n"
 "Language-Team: Portuguese (Brazil) (http://app.transifex.com/deadbeef-player/deadbeef-player/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2230,11 +2231,11 @@ msgid ""
 "playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:47
+#: ../plugins/gtkui/pluginconf.c:48
 msgid "Open file..."
 msgstr "Abrir arquivo..."
 
-#: ../plugins/gtkui/pluginconf.c:559
+#: ../plugins/gtkui/pluginconf.c:606
 #, c-format
 msgid "Configure %s"
 msgstr "Configurar %s"
@@ -2888,12 +2889,12 @@ msgstr ""
 #: ../translation/plugins.c:24
 #, no-c-format
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Buscar nas etiquetas embutidas"
 
 #: ../translation/plugins.c:26
 #, no-c-format
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Buscar numa pasta local"
 
 #: ../translation/plugins.c:28
 #, no-c-format
@@ -3366,7 +3367,7 @@ msgstr ""
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "Pedir confirmação para excluir arquivos do disco"
 
 #: ../translation/plugins.c:248
 #, no-c-format
@@ -3376,12 +3377,12 @@ msgstr ""
 #: ../translation/plugins.c:250
 #, no-c-format
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Sensibilidade ao controle de volume no ícone de status"
 
 #: ../translation/plugins.c:252
 #, no-c-format
 msgid "Custom status icon"
-msgstr ""
+msgstr "Ícone de status personalizado"
 
 #: ../translation/plugins.c:254
 #, no-c-format
@@ -3391,7 +3392,7 @@ msgstr ""
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Adicionar separadores entre itens do menu de contexto dos plugins"
 
 #: ../translation/plugins.c:258
 #, no-c-format

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-18 11:13+0100\n"
+"POT-Creation-Date: 2023-12-27 12:31+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Ivica  Kolić <ikoli@yahoo.com>, 2010\n"
 "Language-Team: Croatian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/hr/)\n"
@@ -2225,11 +2225,11 @@ msgid ""
 "playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:47
+#: ../plugins/gtkui/pluginconf.c:48
 msgid "Open file..."
 msgstr "Otvori datoteku..."
 
-#: ../plugins/gtkui/pluginconf.c:559
+#: ../plugins/gtkui/pluginconf.c:606
 #, c-format
 msgid "Configure %s"
 msgstr "Konfiguriraj %s"
@@ -3361,7 +3361,7 @@ msgstr ""
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "Pitaj za potvrdu za brisanje datoteka sa diska"
 
 #: ../translation/plugins.c:248
 #, no-c-format

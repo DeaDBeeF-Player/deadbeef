@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-18 11:13+0100\n"
+"POT-Creation-Date: 2023-12-27 12:31+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: John Smith <aboutafteragain@gmail.com>, 2013,2016\n"
 "Language-Team: Basque (http://app.transifex.com/deadbeef-player/deadbeef-player/language/eu/)\n"
@@ -2226,11 +2226,11 @@ msgid ""
 "playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:47
+#: ../plugins/gtkui/pluginconf.c:48
 msgid "Open file..."
 msgstr "Ireki fitxategia..."
 
-#: ../plugins/gtkui/pluginconf.c:559
+#: ../plugins/gtkui/pluginconf.c:606
 #, c-format
 msgid "Configure %s"
 msgstr "Konfiguratu %s"
@@ -2884,12 +2884,12 @@ msgstr ""
 #: ../translation/plugins.c:24
 #, no-c-format
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Eskuratu txertatutako etiketetatik"
 
 #: ../translation/plugins.c:26
 #, no-c-format
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Eskuratu karpeta lokaletik"
 
 #: ../translation/plugins.c:28
 #, no-c-format
@@ -3362,7 +3362,7 @@ msgstr ""
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "Eskatu berrespena diskotik fitxategiak ezabatzeko"
 
 #: ../translation/plugins.c:248
 #, no-c-format
@@ -3372,12 +3372,12 @@ msgstr ""
 #: ../translation/plugins.c:250
 #, no-c-format
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Bolumen-kontrola egoera-ikonoaren sentikortasuna"
 
 #: ../translation/plugins.c:252
 #, no-c-format
 msgid "Custom status icon"
-msgstr ""
+msgstr "Egoera-ikono pertsonalizatua"
 
 #: ../translation/plugins.c:254
 #, no-c-format
@@ -3387,7 +3387,7 @@ msgstr ""
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Gehitu banatzaileak pluginen laster-menuetako elementuen artean"
 
 #: ../translation/plugins.c:258
 #, no-c-format

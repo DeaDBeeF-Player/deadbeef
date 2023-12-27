@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-18 11:13+0100\n"
+"POT-Creation-Date: 2023-12-27 12:31+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>, 2021-2023\n"
+"Last-Translator: Pjotr, 2011\n"
 "Language-Team: Dutch (http://app.transifex.com/deadbeef-player/deadbeef-player/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2227,11 +2227,11 @@ msgid ""
 "playlist"
 msgstr "Recentste sortering toepassen na elke afspeellijsttoevoeging"
 
-#: ../plugins/gtkui/pluginconf.c:47
+#: ../plugins/gtkui/pluginconf.c:48
 msgid "Open file..."
 msgstr "Bestand openen…"
 
-#: ../plugins/gtkui/pluginconf.c:559
+#: ../plugins/gtkui/pluginconf.c:606
 #, c-format
 msgid "Configure %s"
 msgstr "%s instellen"
@@ -2880,97 +2880,97 @@ msgstr "Voorkeursomvang van periode"
 #: ../translation/plugins.c:22
 #, no-c-format
 msgid "Refresh Cover Art"
-msgstr ""
+msgstr "Hoezen verversen"
 
 #: ../translation/plugins.c:24
 #, no-c-format
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Ophalen uit ingesloten tags"
 
 #: ../translation/plugins.c:26
 #, no-c-format
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Ophalen uit lokale map"
 
 #: ../translation/plugins.c:28
 #, no-c-format
 msgid "Fetch from Last.fm"
-msgstr ""
+msgstr "Ophalen van Last.fm"
 
 #: ../translation/plugins.c:30
 #, no-c-format
 msgid "Fetch from MusicBrainz"
-msgstr ""
+msgstr "Ophalen van MusicBrainz"
 
 #: ../translation/plugins.c:32
 #, no-c-format
 msgid "Fetch from Albumart.org"
-msgstr ""
+msgstr "Ophalen van Albumart.org"
 
 #: ../translation/plugins.c:34
 #, no-c-format
 msgid "Fetch from World of Spectrum (AY files)"
-msgstr ""
+msgstr "Ophalen van World of Spectrum (alleen AY-bestanden)"
 
 #: ../translation/plugins.c:36
 #, no-c-format
 msgid "Save downloaded files to music folders"
-msgstr ""
+msgstr "Gedownloade bestanden opslaan in muziekmappen"
 
 #: ../translation/plugins.c:38
 #, no-c-format
 msgid "When no artwork is found"
-msgstr ""
+msgstr "Als er geen hoezen worden gevonden:"
 
 #: ../translation/plugins.c:40
 #, no-c-format
 msgid "leave blank"
-msgstr ""
+msgstr "leeglaten"
 
 #: ../translation/plugins.c:42
 #, no-c-format
 msgid "use DeaDBeeF default cover"
-msgstr ""
+msgstr "standaardhoes van DeaDBeeF gebruiken"
 
 #: ../translation/plugins.c:44
 #, no-c-format
 msgid "display custom image"
-msgstr ""
+msgstr "aangepaste afbeelding tonen"
 
 #: ../translation/plugins.c:46
 #, no-c-format
 msgid "Custom image path"
-msgstr ""
+msgstr "Pad naar aangepaste afbeelding"
 
 #: ../translation/plugins.c:48
 #, no-c-format
 msgid "Save to file name"
-msgstr ""
+msgstr "Opslaan onder bestandsnaam"
 
 #: ../translation/plugins.c:50
 #, no-c-format
 msgid "Search masks (; separated)"
-msgstr ""
+msgstr "Zoekfilters (puntkomma-gescheiden)"
 
 #: ../translation/plugins.c:52
 #, no-c-format
 msgid "Search folders (; separated)"
-msgstr ""
+msgstr "Zoekmappen (puntkomma-gescheiden)"
 
 #: ../translation/plugins.c:54
 #, no-c-format
 msgid "Cache refresh (hrs)"
-msgstr ""
+msgstr "Cache verversen (in uren)"
 
 #: ../translation/plugins.c:56
 #, no-c-format
 msgid "Simplified cache file names"
-msgstr ""
+msgstr "Vereenvoudige cachenamen"
 
 #: ../translation/plugins.c:58
 #, no-c-format
 msgid "Image size"
-msgstr ""
+msgstr "Afbeeldingsgrootte"
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:61
@@ -3158,7 +3158,7 @@ msgstr "ReplayGain"
 #: ../translation/plugins.c:146
 #, no-c-format
 msgid "Remove ReplayGain Information"
-msgstr ""
+msgstr "ReplayGain-informatie verwijderen"
 
 #: ../translation/plugins.c:148
 #, no-c-format
@@ -3168,12 +3168,12 @@ msgstr "Selectie scannen als albums (op tags)"
 #: ../translation/plugins.c:150
 #, no-c-format
 msgid "Scan Selection As Single Album"
-msgstr ""
+msgstr "Selectie scannel als los album"
 
 #: ../translation/plugins.c:152
 #, no-c-format
 msgid "Scan Per-file Track Gain"
-msgstr ""
+msgstr "Gain per bestand scannen"
 
 #: ../translation/plugins.c:154
 #, no-c-format
@@ -3183,428 +3183,428 @@ msgstr "Gain per bestand scannen indien niet gescand"
 #: ../translation/plugins.c:158
 #, no-c-format
 msgid "Deselect All"
-msgstr ""
+msgstr "Selectie ongedaan maken"
 
 #: ../translation/plugins.c:160
 #, no-c-format
 msgid "Select All"
-msgstr ""
+msgstr "Alles selecteren"
 
 #: ../translation/plugins.c:166
 #, no-c-format
 msgid "Add Location"
-msgstr ""
+msgstr "Locatie toevoegen"
 
 #: ../translation/plugins.c:168
 #, no-c-format
 msgid "Add Folder(s)"
-msgstr ""
+msgstr "Map(pen) toevoegen"
 
 #: ../translation/plugins.c:170
 #, no-c-format
 msgid "Add File(s)"
-msgstr ""
+msgstr "Bestand(en) toevoegen"
 
 #: ../translation/plugins.c:172
 #, no-c-format
 msgid "Open File(s)"
-msgstr ""
+msgstr "Bestand(en) openen"
 
 #: ../translation/plugins.c:178
 #, no-c-format
 msgid "Show Help Page"
-msgstr ""
+msgstr "Hulppagina tonen"
 
 #: ../translation/plugins.c:182
 #, no-c-format
 msgid "Cycle Repeat Mode"
-msgstr ""
+msgstr "Herhaalmodus"
 
 #: ../translation/plugins.c:184
 #, no-c-format
 msgid "Repeat - Off"
-msgstr ""
+msgstr "Herhalen - Uit"
 
 #: ../translation/plugins.c:186
 #, no-c-format
 msgid "Repeat - Single Track"
-msgstr ""
+msgstr "Herhalen - Los nummer"
 
 #: ../translation/plugins.c:188
 #, no-c-format
 msgid "Repeat - All"
-msgstr ""
+msgstr "Herhalen - Alles"
 
 #: ../translation/plugins.c:190
 #, no-c-format
 msgid "Cycle Shuffle Mode"
-msgstr ""
+msgstr "Willekeurige modus"
 
 #: ../translation/plugins.c:192
 #, no-c-format
 msgid "Shuffle - Random Tracks"
-msgstr ""
+msgstr "Willekeurig - Willekeurige nummers"
 
 #: ../translation/plugins.c:194
 #, no-c-format
 msgid "Shuffle - Albums"
-msgstr ""
+msgstr "Willekeurig - Albums"
 
 #: ../translation/plugins.c:196
 #, no-c-format
 msgid "Shuffle - Tracks"
-msgstr ""
+msgstr "Willekeurig - Nummers"
 
 #: ../translation/plugins.c:198
 #, no-c-format
 msgid "Shuffle - Off"
-msgstr ""
+msgstr "Willekeurig - Uit"
 
 #: ../translation/plugins.c:200
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
-msgstr ""
+msgstr "Aanwijzer volgt afspelen in-/uitschakelen"
 
 #: ../translation/plugins.c:202
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
-msgstr ""
+msgstr "Schuiven volgt afspelen in-/uitschakelen"
 
 #: ../translation/plugins.c:204
 #, no-c-format
 msgid "View"
-msgstr ""
+msgstr "Beeld"
 
 #: ../translation/plugins.c:206
 #, no-c-format
 msgid "Show\\/Hide menu"
-msgstr ""
+msgstr "Menubalk tonen/verbergen"
 
 #: ../translation/plugins.c:208
 #, no-c-format
 msgid "Show\\/Hide statusbar"
-msgstr ""
+msgstr "Statusbalk tonen/verbergen"
 
 #: ../translation/plugins.c:210
 #, no-c-format
 msgid "Toggle Design Mode"
-msgstr ""
+msgstr "Ontwerpmodus aan/uit"
 
 #: ../translation/plugins.c:214
 #, no-c-format
 msgid "Sort Custom"
-msgstr ""
+msgstr "Aangepaste sortering"
 
 #: ../translation/plugins.c:216
 #, no-c-format
 msgid "Crop Selected"
-msgstr ""
+msgstr "Selectie bijsijden"
 
 #: ../translation/plugins.c:218
 #, no-c-format
 msgid "Remove Track(s) from Playlist"
-msgstr ""
+msgstr "Nummer(s) verwijderen van afspeellijst"
 
 #: ../translation/plugins.c:220
 #, no-c-format
 msgid "Save Playlist"
-msgstr ""
+msgstr "Afspeellijst opslaan"
 
 #: ../translation/plugins.c:224
 #, no-c-format
 msgid "Remove Current Playlist"
-msgstr ""
+msgstr "Huidige afspeellijst verwijderen"
 
 #: ../translation/plugins.c:228
 #, no-c-format
 msgid "Rename Current Playlist"
-msgstr ""
+msgstr "Afspeellijstnaam wijzigen"
 
 #: ../translation/plugins.c:230
 #, no-c-format
 msgid "Show\\/Hide Equalizer"
-msgstr ""
+msgstr "Equalizer tonen/verbergen"
 
 #: ../translation/plugins.c:232
 #, no-c-format
 msgid "Hide Equalizer"
-msgstr ""
+msgstr "Equalizer verbergen"
 
 #: ../translation/plugins.c:234
 #, no-c-format
 msgid "Show Equalizer"
-msgstr ""
+msgstr "Equalizer tonen"
 
 #: ../translation/plugins.c:236
 #, no-c-format
 msgid "Show\\/Hide Player Window"
-msgstr ""
+msgstr "Spelervenster tonen/verbergen"
 
 #: ../translation/plugins.c:238
 #, no-c-format
 msgid "Hide Player Window"
-msgstr ""
+msgstr "Spelervenster verbergen"
 
 #: ../translation/plugins.c:240
 #, no-c-format
 msgid "Show Player Window"
-msgstr ""
+msgstr "Spelervenster tonen"
 
 #: ../translation/plugins.c:242
 #, no-c-format
 msgid "Find"
-msgstr ""
+msgstr "Zoeken"
 
 #: ../translation/plugins.c:244
 #, no-c-format
 msgid "Show\\/Hide Log window"
-msgstr ""
+msgstr "Logboekvenster tonen/verbergen"
 
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "Bevestiging vragen alvorens bestanden te verwijderen van de schijf"
 
 #: ../translation/plugins.c:248
 #, no-c-format
 msgid "Status icon settings:"
-msgstr ""
+msgstr "Statuspictograminstellingen:"
 
 #: ../translation/plugins.c:250
 #, no-c-format
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Statuspictogram voor gevoeligheid van volumeknop"
 
 #: ../translation/plugins.c:252
 #, no-c-format
 msgid "Custom status icon"
-msgstr ""
+msgstr "Aangepast statuspictogram"
 
 #: ../translation/plugins.c:254
 #, no-c-format
 msgid "Misc:"
-msgstr ""
+msgstr "Overig:"
 
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Scheidingtekens toevoegen tussen rechtermuisknopmenu-onderdelen van plug-in"
 
 #: ../translation/plugins.c:258
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
-msgstr ""
+msgstr "Unicode-tekens gebruiken voor status bijhouden i.p.v. afbeeldingen"
 
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "Disable seekbar overlay text"
-msgstr ""
+msgstr "Tekstballon van spoelbalk uitschakelen"
 
 #. plugins/hotkeys/hotkeys.c
 #: ../translation/plugins.c:263
 #, no-c-format
 msgid "Previous or Restart Current Track"
-msgstr ""
+msgstr "Vorige of huidige nummer herstarten"
 
 #: ../translation/plugins.c:265
 #, no-c-format
 msgid "Duplicate Playlist"
-msgstr ""
+msgstr "Afspeellijst klonen"
 
 #: ../translation/plugins.c:269
 #, no-c-format
 msgid "Jump to Currently Playing Track"
-msgstr ""
+msgstr "Spoelen naar momenteel afspelend nummer"
 
 #: ../translation/plugins.c:271
 #, no-c-format
 msgid "Skip to"
-msgstr ""
+msgstr "Spoelen naar"
 
 #: ../translation/plugins.c:273
 #, no-c-format
 msgid "Previous Genre"
-msgstr ""
+msgstr "Vorig genre"
 
 #: ../translation/plugins.c:275
 #, no-c-format
 msgid "Previous Composer"
-msgstr ""
+msgstr "Vorige componist"
 
 #: ../translation/plugins.c:277
 #, no-c-format
 msgid "Previous Artist"
-msgstr ""
+msgstr "Vorige artiest"
 
 #: ../translation/plugins.c:279
 #, no-c-format
 msgid "Previous Album"
-msgstr ""
+msgstr "Vorig album"
 
 #: ../translation/plugins.c:281
 #, no-c-format
 msgid "Next Genre"
-msgstr ""
+msgstr "Volgend genre"
 
 #: ../translation/plugins.c:283
 #, no-c-format
 msgid "Next Composer"
-msgstr ""
+msgstr "Volgende componist"
 
 #: ../translation/plugins.c:285
 #, no-c-format
 msgid "Next Artist"
-msgstr ""
+msgstr "Volgende artiest"
 
 #: ../translation/plugins.c:287
 #, no-c-format
 msgid "Next Album"
-msgstr ""
+msgstr "Volgend album"
 
 #: ../translation/plugins.c:289
 #, no-c-format
 msgid "Next Playlist"
-msgstr ""
+msgstr "Volgende afspeellijst"
 
 #: ../translation/plugins.c:291
 #, no-c-format
 msgid "Previous Playlist"
-msgstr ""
+msgstr "Vorige afspeellijst"
 
 #: ../translation/plugins.c:293
 #, no-c-format
 msgid "Switch to Playlist 10"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 10"
 
 #: ../translation/plugins.c:295
 #, no-c-format
 msgid "Switch to Playlist 9"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 9"
 
 #: ../translation/plugins.c:297
 #, no-c-format
 msgid "Switch to Playlist 8"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 8"
 
 #: ../translation/plugins.c:299
 #, no-c-format
 msgid "Switch to Playlist 7"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 7"
 
 #: ../translation/plugins.c:301
 #, no-c-format
 msgid "Switch to Playlist 6"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 6"
 
 #: ../translation/plugins.c:303
 #, no-c-format
 msgid "Switch to Playlist 5"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 5"
 
 #: ../translation/plugins.c:305
 #, no-c-format
 msgid "Switch to Playlist 4"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 4"
 
 #: ../translation/plugins.c:307
 #, no-c-format
 msgid "Switch to Playlist 3"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 3"
 
 #: ../translation/plugins.c:309
 #, no-c-format
 msgid "Switch to Playlist 2"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 2"
 
 #: ../translation/plugins.c:311
 #, no-c-format
 msgid "Switch to Playlist 1"
-msgstr ""
+msgstr "Overschakelen naar afspeellijst 1"
 
 #: ../translation/plugins.c:313
 #, no-c-format
 msgid "Sort Randomize"
-msgstr ""
+msgstr "Willekeurig sorteren"
 
 #: ../translation/plugins.c:315
 #, no-c-format
 msgid "Sort by Date"
-msgstr ""
+msgstr "Sorteren op datum"
 
 #: ../translation/plugins.c:317
 #, no-c-format
 msgid "Sort by Artist"
-msgstr ""
+msgstr "Sorteren op artiest"
 
 #: ../translation/plugins.c:319
 #, no-c-format
 msgid "Sort by Album"
-msgstr ""
+msgstr "Sorteren op album"
 
 #: ../translation/plugins.c:321
 #, no-c-format
 msgid "Sort by Track Number"
-msgstr ""
+msgstr "Sorteren op volgnummer"
 
 #: ../translation/plugins.c:323
 #, no-c-format
 msgid "Sort by Title"
-msgstr ""
+msgstr "Sorteren op titel"
 
 #: ../translation/plugins.c:325
 #, no-c-format
 msgid "Invert Selection"
-msgstr ""
+msgstr "Selectie omkeren"
 
 #: ../translation/plugins.c:327
 #, no-c-format
 msgid "Clear Playlist"
-msgstr ""
+msgstr "Afspeellijst wissen"
 
 #: ../translation/plugins.c:331
 #, no-c-format
 msgid "Add to Playback Queue"
-msgstr ""
+msgstr "Toevoegen aan afspeelwachtrij"
 
 #: ../translation/plugins.c:333
 #, no-c-format
 msgid "Add to Front of Playback Queue"
-msgstr ""
+msgstr "Toevoegen bovenaan afspeelwachtrij"
 
 #: ../translation/plugins.c:335
 #, no-c-format
 msgid "Toggle in Playback Queue"
-msgstr ""
+msgstr "Schakelen in afspeelwachtrij"
 
 #: ../translation/plugins.c:337
 #, no-c-format
 msgid "Move"
-msgstr ""
+msgstr "Verplaatsen"
 
 #: ../translation/plugins.c:339
 #, no-c-format
 msgid "Move Tracks Down"
-msgstr ""
+msgstr "Nummers omlaag verplaatsen"
 
 #: ../translation/plugins.c:341
 #, no-c-format
 msgid "Move Tracks Up"
-msgstr ""
+msgstr "Nummers omhoog verplaatsen"
 
 #: ../translation/plugins.c:343
 #, no-c-format
 msgid "Toggle Mute"
-msgstr ""
+msgstr "Dempen/Ontdempen"
 
 #: ../translation/plugins.c:353
 #, no-c-format
 msgid "Toggle Pause"
-msgstr ""
+msgstr "Pauzeren/Hervatten"
 
 #: ../translation/plugins.c:355
 #, no-c-format
 msgid "Play\\/Pause"
-msgstr ""
+msgstr "Afspelen/Pauzeren"
 
 #: ../translation/plugins.c:357
 #, no-c-format
@@ -3624,62 +3624,62 @@ msgstr ""
 #: ../translation/plugins.c:365
 #, no-c-format
 msgid "Seek 1s Forward"
-msgstr ""
+msgstr "1s vooruitspoelen"
 
 #: ../translation/plugins.c:367
 #, no-c-format
 msgid "Seek 1s Backward"
-msgstr ""
+msgstr "1s terugspoelen"
 
 #: ../translation/plugins.c:369
 #, no-c-format
 msgid "Seek 5s Forward"
-msgstr ""
+msgstr "5s vooruitspoelen"
 
 #: ../translation/plugins.c:371
 #, no-c-format
 msgid "Seek 5s Backward"
-msgstr ""
+msgstr "5s terugspoelen"
 
 #: ../translation/plugins.c:373
 #, no-c-format
 msgid "Seek 1% Forward"
-msgstr ""
+msgstr "1% vooruitspoelen"
 
 #: ../translation/plugins.c:375
 #, no-c-format
 msgid "Seek 1% Backward"
-msgstr ""
+msgstr "1% terugspoelen"
 
 #: ../translation/plugins.c:377
 #, no-c-format
 msgid "Seek 5% Forward"
-msgstr ""
+msgstr "5% vooruitspoelen"
 
 #: ../translation/plugins.c:379
 #, no-c-format
 msgid "Seek 5% Backward"
-msgstr ""
+msgstr "5% terugspoelen"
 
 #: ../translation/plugins.c:381
 #, no-c-format
 msgid "Volume Up"
-msgstr ""
+msgstr "Volume omhoog"
 
 #: ../translation/plugins.c:383
 #, no-c-format
 msgid "Volume Down"
-msgstr ""
+msgstr "Volume omlaag"
 
 #: ../translation/plugins.c:385
 #, no-c-format
 msgid "Toggle Stop After Current Track"
-msgstr ""
+msgstr "Stoppen na huidig nummer"
 
 #: ../translation/plugins.c:387
 #, no-c-format
 msgid "Toggle Stop After Current Album"
-msgstr ""
+msgstr "Stoppen na huidig album"
 
 #. plugins/lastfm/lastfm.c
 #: ../translation/plugins.c:390

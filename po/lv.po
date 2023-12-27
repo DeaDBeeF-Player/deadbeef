@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-18 11:13+0100\n"
+"POT-Creation-Date: 2023-12-27 12:31+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: hairy_latvian <einars8@gmail.com>, 2014\n"
 "Language-Team: Latvian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/lv/)\n"
@@ -2226,11 +2226,11 @@ msgid ""
 "playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:47
+#: ../plugins/gtkui/pluginconf.c:48
 msgid "Open file..."
 msgstr "Atvērt failu..."
 
-#: ../plugins/gtkui/pluginconf.c:559
+#: ../plugins/gtkui/pluginconf.c:606
 #, c-format
 msgid "Configure %s"
 msgstr "Konfigurēt %s"
@@ -2884,12 +2884,12 @@ msgstr ""
 #: ../translation/plugins.c:24
 #, no-c-format
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "Saņemt no iekļautajiem tagiem"
 
 #: ../translation/plugins.c:26
 #, no-c-format
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "Saņemt no vietējās mapes"
 
 #: ../translation/plugins.c:28
 #, no-c-format
@@ -3362,7 +3362,7 @@ msgstr ""
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "Dzēšot failus no diska, jautāt apstiprinājumu"
 
 #: ../translation/plugins.c:248
 #, no-c-format
@@ -3372,12 +3372,12 @@ msgstr ""
 #: ../translation/plugins.c:250
 #, no-c-format
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "Statusa ikonas skaļuma kontroles jutīgums"
 
 #: ../translation/plugins.c:252
 #, no-c-format
 msgid "Custom status icon"
-msgstr ""
+msgstr "Pielāgota statusa ikona"
 
 #: ../translation/plugins.c:254
 #, no-c-format
@@ -3387,7 +3387,7 @@ msgstr ""
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "Pievienot atdalītājus starp spraudņu konteksta izvēlnes vienumiem"
 
 #: ../translation/plugins.c:258
 #, no-c-format

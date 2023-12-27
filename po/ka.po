@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-18 11:13+0100\n"
+"POT-Creation-Date: 2023-12-27 12:31+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: arabuli <arabulibeqa@yahoo.com>, 2015\n"
 "Language-Team: Georgian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/ka/)\n"
@@ -2225,11 +2225,11 @@ msgid ""
 "playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:47
+#: ../plugins/gtkui/pluginconf.c:48
 msgid "Open file..."
 msgstr "ფაილის გახსნა..."
 
-#: ../plugins/gtkui/pluginconf.c:559
+#: ../plugins/gtkui/pluginconf.c:606
 #, c-format
 msgid "Configure %s"
 msgstr ""
@@ -2968,7 +2968,7 @@ msgstr ""
 #: ../translation/plugins.c:58
 #, no-c-format
 msgid "Image size"
-msgstr ""
+msgstr "გამოსახულების ზომა"
 
 #. plugins/cdda/cdda.c
 #: ../translation/plugins.c:61
@@ -3181,17 +3181,17 @@ msgstr ""
 #: ../translation/plugins.c:158
 #, no-c-format
 msgid "Deselect All"
-msgstr ""
+msgstr "მონიშვნის მოხსნა"
 
 #: ../translation/plugins.c:160
 #, no-c-format
 msgid "Select All"
-msgstr ""
+msgstr "ყველაფრის მონიშვნა"
 
 #: ../translation/plugins.c:166
 #, no-c-format
 msgid "Add Location"
-msgstr ""
+msgstr "მდებარეობის დამატება"
 
 #: ../translation/plugins.c:168
 #, no-c-format
@@ -3306,7 +3306,7 @@ msgstr ""
 #: ../translation/plugins.c:220
 #, no-c-format
 msgid "Save Playlist"
-msgstr ""
+msgstr "დასაკრავი სიის შენახვა"
 
 #: ../translation/plugins.c:224
 #, no-c-format
@@ -3527,7 +3527,7 @@ msgstr ""
 #: ../translation/plugins.c:315
 #, no-c-format
 msgid "Sort by Date"
-msgstr ""
+msgstr "თარიღის მიხედვით დალაგება"
 
 #: ../translation/plugins.c:317
 #, no-c-format
@@ -3552,7 +3552,7 @@ msgstr ""
 #: ../translation/plugins.c:325
 #, no-c-format
 msgid "Invert Selection"
-msgstr ""
+msgstr "მონიშვნის ინვერსია"
 
 #: ../translation/plugins.c:327
 #, no-c-format
@@ -3592,7 +3592,7 @@ msgstr ""
 #: ../translation/plugins.c:343
 #, no-c-format
 msgid "Toggle Mute"
-msgstr ""
+msgstr "დადუმების გადართვა"
 
 #: ../translation/plugins.c:353
 #, no-c-format
@@ -3662,12 +3662,12 @@ msgstr ""
 #: ../translation/plugins.c:381
 #, no-c-format
 msgid "Volume Up"
-msgstr ""
+msgstr "ხმის აწევა"
 
 #: ../translation/plugins.c:383
 #, no-c-format
 msgid "Volume Down"
-msgstr ""
+msgstr "ხმის დაწევა"
 
 #: ../translation/plugins.c:385
 #, no-c-format

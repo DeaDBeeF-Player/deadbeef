@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-18 11:13+0100\n"
+"POT-Creation-Date: 2023-12-27 12:31+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Amith Chinthaka <amith@compsoc.lk>, 2013\n"
 "Language-Team: Sinhala (Sri Lanka) (http://app.transifex.com/deadbeef-player/deadbeef-player/language/si_LK/)\n"
@@ -2225,11 +2225,11 @@ msgid ""
 "playlist"
 msgstr ""
 
-#: ../plugins/gtkui/pluginconf.c:47
+#: ../plugins/gtkui/pluginconf.c:48
 msgid "Open file..."
 msgstr "ගොනුව විවෘත කරන්න..."
 
-#: ../plugins/gtkui/pluginconf.c:559
+#: ../plugins/gtkui/pluginconf.c:606
 #, c-format
 msgid "Configure %s"
 msgstr "වින්‍යාස කිරීම %s"
@@ -2883,12 +2883,12 @@ msgstr ""
 #: ../translation/plugins.c:24
 #, no-c-format
 msgid "Fetch from embedded tags"
-msgstr ""
+msgstr "අන්තර්ගත ටැග් වලින් ලබා ගන්න"
 
 #: ../translation/plugins.c:26
 #, no-c-format
 msgid "Fetch from local folder"
-msgstr ""
+msgstr "පරිස්ථානීය ෆෝල්ඩර වලින් ලබා ගන්න"
 
 #: ../translation/plugins.c:28
 #, no-c-format
@@ -3361,7 +3361,7 @@ msgstr ""
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
-msgstr ""
+msgstr "තැටියේ ඇති ගොනු මකා දැමීමට ප්‍රථම තහවුරු කර ගැනීමට විමසන්න"
 
 #: ../translation/plugins.c:248
 #, no-c-format
@@ -3371,12 +3371,12 @@ msgstr ""
 #: ../translation/plugins.c:250
 #, no-c-format
 msgid "Status icon volume control sensitivity"
-msgstr ""
+msgstr "ශබ්ධය පාලනය කිරීමේ සංවේදීතා තත්වය සඳහා වූ සංකේතය"
 
 #: ../translation/plugins.c:252
 #, no-c-format
 msgid "Custom status icon"
-msgstr ""
+msgstr "භාවිත තත්ව අයිකනය"
 
 #: ../translation/plugins.c:254
 #, no-c-format
@@ -3386,7 +3386,7 @@ msgstr ""
 #: ../translation/plugins.c:256
 #, no-c-format
 msgid "Add separators between plugin context menu items"
-msgstr ""
+msgstr "මෙනූ අයිකන අතර වෙන්කිරීමක් යොදන්න"
 
 #: ../translation/plugins.c:258
 #, no-c-format
