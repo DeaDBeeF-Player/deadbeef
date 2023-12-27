@@ -28,6 +28,7 @@
 #include <drawing.h>
 #include <gtkui.h>
 #include <math.h>
+#include <string.h>
 #include "support.h"
 #include "ddbseekbar.h"
 
