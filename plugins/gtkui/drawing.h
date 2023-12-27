@@ -45,65 +45,71 @@ enum {
     DDB_GROUP_FONT = 1,
     DDB_TABSTRIP_FONT = 2,
     DDB_COLUMN_FONT = 3,
+    DDB_SEEKBAR_FONT = 4,
 };
 
+void
+drawctx_init (drawctx_t *const ctx);
 
 void
-drawctx_init (drawctx_t * const ctx);
+draw_begin (drawctx_t *const ctx, cairo_t *cr);
 
 void
-draw_begin (drawctx_t * const ctx, cairo_t *cr);
+draw_end (drawctx_t *const ctx);
 
 void
-draw_end (drawctx_t * const ctx);
+draw_free (drawctx_t *const ctx);
 
 void
-draw_free (drawctx_t * const ctx);
+draw_set_fg_color (drawctx_t *const ctx, float *rgb);
 
 void
-draw_set_fg_color (drawctx_t * const ctx, float *rgb);
+draw_line (drawctx_t *const ctx, float x1, float y1, float x2, float y2);
 
 void
-draw_line (drawctx_t * const ctx, float x1, float y1, float x2, float y2);
-
-void
-draw_rect (drawctx_t * const ctx, float x, float y, float w, float h, int fill);
+draw_rect (drawctx_t *const ctx, float x, float y, float w, float h, int fill);
 
 float
-draw_get_font_size (drawctx_t * const ctx);
+draw_get_font_size (drawctx_t *const ctx);
 
 void
-draw_init_font (drawctx_t * const ctx, int type, int reset);
+draw_init_font (drawctx_t *const ctx, int type, int reset);
 
 void
-draw_init_font_style (drawctx_t * const ctx, int bold, int italic, int type);
+draw_init_font_style (drawctx_t *const ctx, int bold, int italic, int type);
 
 void
-draw_init_font_normal (drawctx_t * const ctx);
+draw_init_font_normal (drawctx_t *const ctx);
 
 void
-draw_text (drawctx_t * const ctx, float x, float y, int width, int align, const char *text);
+draw_text_custom (
+    drawctx_t *const ctx,
+    float x,
+    float y,
+    int width,
+    int align,
+    int type,
+    int bold,
+    int italic,
+    const char *text);
 
 void
-draw_text_custom (drawctx_t * const ctx, float x, float y, int width, int align, int type, int bold, int italic, const char *text);
+draw_text_with_colors (drawctx_t *const ctx, float x, float y, int width, int align, const char *text);
 
 void
-draw_text_with_colors (drawctx_t * const ctx, float x, float y, int width, int align, const char *text);
+draw_get_layout_extents (drawctx_t *const ctx, int *w, int *h);
 
 void
-draw_get_layout_extents (drawctx_t * const ctx, int *w, int *h);
-
-void
-draw_get_text_extents (drawctx_t * const ctx, const char *text, int len, int *w, int *h);
+draw_get_text_extents (drawctx_t *const ctx, const char *text, int len, int *w, int *h);
 
 int
-draw_is_ellipsized (drawctx_t * const ctx);
+draw_is_ellipsized (drawctx_t *const ctx);
 
 const char *
-draw_get_text (drawctx_t * const ctx);
+draw_get_text (drawctx_t *const ctx);
 
 int
-draw_get_listview_rowheight (drawctx_t * const ctx);
+draw_get_listview_rowheight (drawctx_t *const ctx);
 
 int
 gtkui_listview_override_conf (const char *conf_str);
@@ -198,7 +204,7 @@ gtkui_get_listview_column_text_color (GdkColor *clr);
 void
 gtkui_get_listview_cursor_color (GdkColor *clr);
 
-const char*
+const char *
 gtkui_get_listview_text_font (void);
 
 const char *
@@ -220,6 +226,6 @@ int
 gtkui_override_tabstrip_colors (void);
 
 const char *
-gtkui_get_tabstrip_text_font  (void);
+gtkui_get_tabstrip_text_font (void);
 
 #endif // __DRAWING_H

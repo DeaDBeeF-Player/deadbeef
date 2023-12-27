@@ -40,28 +40,38 @@
 
 static gpointer ddb_seekbar_parent_class = NULL;
 
-GType ddb_seekbar_get_type (void);
-enum  {
-	DDB_SEEKBAR_DUMMY_PROPERTY
-};
-#if GTK_CHECK_VERSION(3,0,0)
-static void ddb_seekbar_get_preferred_width (GtkWidget* base, gint *minimal_width, gint *natural_width);
-static void ddb_seekbar_get_preferred_height (GtkWidget* base, gint *minimal_height, gint *natural_height);
+GType
+ddb_seekbar_get_type (void);
+enum { DDB_SEEKBAR_DUMMY_PROPERTY };
+#if GTK_CHECK_VERSION(3, 0, 0)
+static void
+ddb_seekbar_get_preferred_width (GtkWidget *base, gint *minimal_width, gint *natural_width);
+static void
+ddb_seekbar_get_preferred_height (GtkWidget *base, gint *minimal_height, gint *natural_height);
 #else
-static gboolean ddb_seekbar_real_expose_event (GtkWidget* base, GdkEventExpose* event);
+static gboolean
+ddb_seekbar_real_expose_event (GtkWidget *base, GdkEventExpose *event);
 #endif
-static void ddb_seekbar_real_size_request (GtkWidget* base, GtkRequisition* requisition);
-static gboolean ddb_seekbar_real_draw (GtkWidget* base, cairo_t *cr);
-static gboolean ddb_seekbar_real_button_press_event (GtkWidget* base, GdkEventButton* event);
-static gboolean ddb_seekbar_real_button_release_event (GtkWidget* base, GdkEventButton* event);
-static gboolean ddb_seekbar_real_motion_notify_event (GtkWidget* base, GdkEventMotion* event);
-static gboolean ddb_seekbar_real_configure_event (GtkWidget* base, GdkEventConfigure* event);
-DdbSeekbar* ddb_seekbar_construct (GType object_type);
-static GObject * ddb_seekbar_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties);
+static void
+ddb_seekbar_real_size_request (GtkWidget *base, GtkRequisition *requisition);
+static gboolean
+ddb_seekbar_real_draw (GtkWidget *base, cairo_t *cr);
+static gboolean
+ddb_seekbar_real_button_press_event (GtkWidget *base, GdkEventButton *event);
+static gboolean
+ddb_seekbar_real_button_release_event (GtkWidget *base, GdkEventButton *event);
+static gboolean
+ddb_seekbar_real_motion_notify_event (GtkWidget *base, GdkEventMotion *event);
+static gboolean
+ddb_seekbar_real_configure_event (GtkWidget *base, GdkEventConfigure *event);
+DdbSeekbar *
+ddb_seekbar_construct (GType object_type);
+static GObject *
+ddb_seekbar_constructor (GType type, guint n_construct_properties, GObjectConstructParam *construct_properties);
 
-
-#if GTK_CHECK_VERSION(3,0,0)
-static void ddb_seekbar_get_preferred_width (GtkWidget* widget, gint *minimal_width, gint *natural_width) {
+#if GTK_CHECK_VERSION(3, 0, 0)
+static void
+ddb_seekbar_get_preferred_width (GtkWidget *widget, gint *minimal_width, gint *natural_width) {
     GtkRequisition requisition;
 
     ddb_seekbar_real_size_request (widget, &requisition);
@@ -69,7 +79,8 @@ static void ddb_seekbar_get_preferred_width (GtkWidget* widget, gint *minimal_wi
     *minimal_width = *natural_width = requisition.width;
 }
 
-static void ddb_seekbar_get_preferred_height (GtkWidget* widget, gint *minimal_height, gint *natural_height) {
+static void
+ddb_seekbar_get_preferred_height (GtkWidget *widget, gint *minimal_height, gint *natural_height) {
     GtkRequisition requisition;
 
     ddb_seekbar_real_size_request (widget, &requisition);
@@ -78,75 +89,79 @@ static void ddb_seekbar_get_preferred_height (GtkWidget* widget, gint *minimal_h
 }
 #endif
 
-static void ddb_seekbar_real_size_request (GtkWidget* base, GtkRequisition* requisition) {
-	GtkRequisition _vala_requisition = {0};
-	if (requisition) {
-		*requisition = _vala_requisition;
-	}
+static void
+ddb_seekbar_real_size_request (GtkWidget *base, GtkRequisition *requisition) {
+    GtkRequisition _vala_requisition = { 0 };
+    if (requisition) {
+        *requisition = _vala_requisition;
+    }
 }
 
-static gboolean ddb_seekbar_real_draw (GtkWidget* base, cairo_t *cr) {
-	seekbar_draw (base, cr);
-	return FALSE;
+static gboolean
+ddb_seekbar_real_draw (GtkWidget *base, cairo_t *cr) {
+    seekbar_draw (base, cr);
+    return FALSE;
 }
 
-#if !GTK_CHECK_VERSION(3,0,0)
-static gboolean ddb_seekbar_real_expose_event (GtkWidget* base, GdkEventExpose* event) {
+#if !GTK_CHECK_VERSION(3, 0, 0)
+static gboolean
+ddb_seekbar_real_expose_event (GtkWidget *base, GdkEventExpose *event) {
     cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (base));
     ddb_seekbar_real_draw (base, cr);
     cairo_destroy (cr);
-	return FALSE;
+    return FALSE;
 }
 #endif
 
-static gboolean ddb_seekbar_real_button_press_event (GtkWidget* base, GdkEventButton* event) {
-	DdbSeekbar * self;
-	gboolean result = FALSE;
-	GdkEventButton _tmp0_;
-	gboolean _tmp1_ = FALSE;
-	self = (DdbSeekbar*) base;
-	g_return_val_if_fail (event != NULL, FALSE);
-	_tmp0_ = *event;
-	_tmp1_ = on_seekbar_button_press_event ((GtkWidget*) self, &_tmp0_);
-	result = _tmp1_;
-	return result;
+static gboolean
+ddb_seekbar_real_button_press_event (GtkWidget *base, GdkEventButton *event) {
+    DdbSeekbar *self;
+    gboolean result = FALSE;
+    GdkEventButton _tmp0_;
+    gboolean _tmp1_ = FALSE;
+    self = (DdbSeekbar *)base;
+    g_return_val_if_fail (event != NULL, FALSE);
+    _tmp0_ = *event;
+    _tmp1_ = on_seekbar_button_press_event ((GtkWidget *)self, &_tmp0_);
+    result = _tmp1_;
+    return result;
 }
 
-
-static gboolean ddb_seekbar_real_button_release_event (GtkWidget* base, GdkEventButton* event) {
-	DdbSeekbar * self;
-	gboolean result = FALSE;
-	GdkEventButton _tmp0_;
-	gboolean _tmp1_ = FALSE;
-	self = (DdbSeekbar*) base;
-	g_return_val_if_fail (event != NULL, FALSE);
-	_tmp0_ = *event;
-	_tmp1_ = on_seekbar_button_release_event ((GtkWidget*) self, &_tmp0_);
-	result = _tmp1_;
-	return result;
+static gboolean
+ddb_seekbar_real_button_release_event (GtkWidget *base, GdkEventButton *event) {
+    DdbSeekbar *self;
+    gboolean result = FALSE;
+    GdkEventButton _tmp0_;
+    gboolean _tmp1_ = FALSE;
+    self = (DdbSeekbar *)base;
+    g_return_val_if_fail (event != NULL, FALSE);
+    _tmp0_ = *event;
+    _tmp1_ = on_seekbar_button_release_event ((GtkWidget *)self, &_tmp0_);
+    result = _tmp1_;
+    return result;
 }
 
-
-static gboolean ddb_seekbar_real_motion_notify_event (GtkWidget* base, GdkEventMotion* event) {
-	DdbSeekbar * self;
-	gboolean result = FALSE;
-	GdkEventMotion _tmp0_;
-	gboolean _tmp1_ = FALSE;
-	self = (DdbSeekbar*) base;
-	g_return_val_if_fail (event != NULL, FALSE);
-	_tmp0_ = *event;
-	_tmp1_ = on_seekbar_motion_notify_event ((GtkWidget*) self, &_tmp0_);
-	result = _tmp1_;
-	return result;
+static gboolean
+ddb_seekbar_real_motion_notify_event (GtkWidget *base, GdkEventMotion *event) {
+    DdbSeekbar *self;
+    gboolean result = FALSE;
+    GdkEventMotion _tmp0_;
+    gboolean _tmp1_ = FALSE;
+    self = (DdbSeekbar *)base;
+    g_return_val_if_fail (event != NULL, FALSE);
+    _tmp0_ = *event;
+    _tmp1_ = on_seekbar_motion_notify_event ((GtkWidget *)self, &_tmp0_);
+    result = _tmp1_;
+    return result;
 }
 
-
-static gboolean ddb_seekbar_real_configure_event (GtkWidget* base, GdkEventConfigure* event) {
-	gboolean result = FALSE;
-	g_return_val_if_fail (event != NULL, FALSE);
-	gtkui_init_theme_colors ();
-	result = FALSE;
-	return result;
+static gboolean
+ddb_seekbar_real_configure_event (GtkWidget *base, GdkEventConfigure *event) {
+    gboolean result = FALSE;
+    g_return_val_if_fail (event != NULL, FALSE);
+    gtkui_init_theme_colors ();
+    result = FALSE;
+    return result;
 }
 
 static int
@@ -157,7 +172,8 @@ seek_sec (float sec) {
     return 0;
 }
 
-static gboolean ddb_seekbar_scroll_event(GtkWidget *widget, GdkEventScroll *event) {
+static gboolean
+ddb_seekbar_scroll_event (GtkWidget *widget, GdkEventScroll *event) {
 
     if (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_RIGHT) {
         seek_sec (5.0f);
@@ -169,85 +185,109 @@ static gboolean ddb_seekbar_scroll_event(GtkWidget *widget, GdkEventScroll *even
     return FALSE;
 }
 
-DdbSeekbar* ddb_seekbar_construct (GType object_type) {
-	DdbSeekbar * self;
-	self = g_object_newv (object_type, 0, NULL);
-	return self;
+DdbSeekbar *
+ddb_seekbar_construct (GType object_type) {
+    DdbSeekbar *self;
+    self = g_object_newv (object_type, 0, NULL);
+    return self;
 }
 
-
-GtkWidget* ddb_seekbar_new (void) {
-	return GTK_WIDGET (ddb_seekbar_construct (DDB_TYPE_SEEKBAR));
+GtkWidget *
+ddb_seekbar_new (void) {
+    return GTK_WIDGET (ddb_seekbar_construct (DDB_TYPE_SEEKBAR));
 }
 
-
-static GObject * ddb_seekbar_constructor (GType type, guint n_construct_properties, GObjectConstructParam * construct_properties) {
-	GObject * obj;
-	GObjectClass * parent_class;
-	parent_class = G_OBJECT_CLASS (ddb_seekbar_parent_class);
-	obj = parent_class->constructor (type, n_construct_properties, construct_properties);
-	return obj;
+static GObject *
+ddb_seekbar_constructor (GType type, guint n_construct_properties, GObjectConstructParam *construct_properties) {
+    GObject *obj;
+    GObjectClass *parent_class;
+    parent_class = G_OBJECT_CLASS (ddb_seekbar_parent_class);
+    obj = parent_class->constructor (type, n_construct_properties, construct_properties);
+    return obj;
 }
 
+static void
+ddb_seekbar_realize (GtkWidget *w) {
+    GTK_WIDGET_CLASS (ddb_seekbar_parent_class)->realize (w);
 
-static void ddb_seekbar_class_init (DdbSeekbarClass * klass) {
-	ddb_seekbar_parent_class = g_type_class_peek_parent (klass);
-#if GTK_CHECK_VERSION(3,0,0)
-	GTK_WIDGET_CLASS (klass)->get_preferred_width = ddb_seekbar_get_preferred_width;
-	GTK_WIDGET_CLASS (klass)->get_preferred_height = ddb_seekbar_get_preferred_height;
-	GTK_WIDGET_CLASS (klass)->draw = ddb_seekbar_real_draw;
+    DdbSeekbar *self = DDB_SEEKBAR (w);
+    drawctx_init (&self->drawctx);
+    draw_init_font (&self->drawctx, DDB_SEEKBAR_FONT, 0);
+}
+
+static void
+ddb_seekbar_unrealize (GtkWidget *w) {
+    GTK_WIDGET_CLASS (ddb_seekbar_parent_class)->unrealize (w);
+    DdbSeekbar *self = DDB_SEEKBAR (w);
+    draw_free (&self->drawctx);
+}
+
+static void
+ddb_seekbar_class_init (DdbSeekbarClass *klass) {
+    ddb_seekbar_parent_class = g_type_class_peek_parent (klass);
+#if GTK_CHECK_VERSION(3, 0, 0)
+    GTK_WIDGET_CLASS (klass)->get_preferred_width = ddb_seekbar_get_preferred_width;
+    GTK_WIDGET_CLASS (klass)->get_preferred_height = ddb_seekbar_get_preferred_height;
+    GTK_WIDGET_CLASS (klass)->draw = ddb_seekbar_real_draw;
 #else
-	GTK_WIDGET_CLASS (klass)->size_request = ddb_seekbar_real_size_request;
-	GTK_WIDGET_CLASS (klass)->expose_event = ddb_seekbar_real_expose_event;
+    GTK_WIDGET_CLASS (klass)->size_request = ddb_seekbar_real_size_request;
+    GTK_WIDGET_CLASS (klass)->expose_event = ddb_seekbar_real_expose_event;
 #endif
-	GTK_WIDGET_CLASS (klass)->button_press_event = ddb_seekbar_real_button_press_event;
-	GTK_WIDGET_CLASS (klass)->button_release_event = ddb_seekbar_real_button_release_event;
-	GTK_WIDGET_CLASS (klass)->motion_notify_event = ddb_seekbar_real_motion_notify_event;
-	GTK_WIDGET_CLASS (klass)->configure_event = ddb_seekbar_real_configure_event;
+    GTK_WIDGET_CLASS (klass)->realize = ddb_seekbar_realize;
+    GTK_WIDGET_CLASS (klass)->unrealize = ddb_seekbar_unrealize;
+    GTK_WIDGET_CLASS (klass)->button_press_event = ddb_seekbar_real_button_press_event;
+    GTK_WIDGET_CLASS (klass)->button_release_event = ddb_seekbar_real_button_release_event;
+    GTK_WIDGET_CLASS (klass)->motion_notify_event = ddb_seekbar_real_motion_notify_event;
+    GTK_WIDGET_CLASS (klass)->configure_event = ddb_seekbar_real_configure_event;
     GTK_WIDGET_CLASS (klass)->scroll_event = ddb_seekbar_scroll_event;
-	G_OBJECT_CLASS (klass)->constructor = ddb_seekbar_constructor;
+    G_OBJECT_CLASS (klass)->constructor = ddb_seekbar_constructor;
 }
 
-
-static void ddb_seekbar_instance_init (DdbSeekbar * self) {
-	gtk_widget_set_has_window ((GtkWidget*) self, FALSE);
-	gtk_widget_set_has_tooltip ((GtkWidget*) self, TRUE);
-	self->seekbar_moving = 0;
+static void
+ddb_seekbar_instance_init (DdbSeekbar *self) {
+    gtk_widget_set_has_window ((GtkWidget *)self, FALSE);
+    gtk_widget_set_has_tooltip ((GtkWidget *)self, TRUE);
+    self->seekbar_moving = 0;
     self->seekbar_move_x = 0;
 }
 
-
-GType ddb_seekbar_get_type (void) {
-	static volatile gsize ddb_seekbar_type_id__volatile = 0;
-	if (g_once_init_enter ((gsize *)(&ddb_seekbar_type_id__volatile))) {
-		static const GTypeInfo g_define_type_info = { sizeof (DdbSeekbarClass), (GBaseInitFunc) NULL, (GBaseFinalizeFunc) NULL, (GClassInitFunc) ddb_seekbar_class_init, (GClassFinalizeFunc) NULL, NULL, sizeof (DdbSeekbar), 0, (GInstanceInitFunc) ddb_seekbar_instance_init, NULL };
-		GType ddb_seekbar_type_id;
-		ddb_seekbar_type_id = g_type_register_static (GTK_TYPE_WIDGET, "DdbSeekbar", &g_define_type_info, 0);
-		g_once_init_leave (&ddb_seekbar_type_id__volatile, ddb_seekbar_type_id);
-	}
-	return ddb_seekbar_type_id__volatile;
+GType
+ddb_seekbar_get_type (void) {
+    static volatile gsize ddb_seekbar_type_id__volatile = 0;
+    if (g_once_init_enter ((gsize *)(&ddb_seekbar_type_id__volatile))) {
+        static const GTypeInfo g_define_type_info = { sizeof (DdbSeekbarClass),
+                                                      (GBaseInitFunc)NULL,
+                                                      (GBaseFinalizeFunc)NULL,
+                                                      (GClassInitFunc)ddb_seekbar_class_init,
+                                                      (GClassFinalizeFunc)NULL,
+                                                      NULL,
+                                                      sizeof (DdbSeekbar),
+                                                      0,
+                                                      (GInstanceInitFunc)ddb_seekbar_instance_init,
+                                                      NULL };
+        GType ddb_seekbar_type_id;
+        ddb_seekbar_type_id = g_type_register_static (GTK_TYPE_WIDGET, "DdbSeekbar", &g_define_type_info, 0);
+        g_once_init_leave (&ddb_seekbar_type_id__volatile, ddb_seekbar_type_id);
+    }
+    return ddb_seekbar_type_id__volatile;
 }
 
-enum
-{
-	CORNER_NONE        = 0,
-	CORNER_TOPLEFT     = 1,
-	CORNER_TOPRIGHT    = 2,
-	CORNER_BOTTOMLEFT  = 4,
-	CORNER_BOTTOMRIGHT = 8,
-	CORNER_ALL         = 15
+enum {
+    CORNER_NONE = 0,
+    CORNER_TOPLEFT = 1,
+    CORNER_TOPRIGHT = 2,
+    CORNER_BOTTOMLEFT = 4,
+    CORNER_BOTTOMRIGHT = 8,
+    CORNER_ALL = 15
 };
 
 static void
-clearlooks_rounded_rectangle (cairo_t * cr,
-			      double x, double y, double w, double h,
-			      double radius, uint8_t corners)
-{
+clearlooks_rounded_rectangle (cairo_t *cr, double x, double y, double w, double h, double radius, uint8_t corners) {
     if (radius < 0.01 || (corners == CORNER_NONE)) {
         cairo_rectangle (cr, x, y, w, h);
         return;
     }
-	
+
     if (corners & CORNER_TOPLEFT)
         cairo_move_to (cr, x + radius, y);
     else
@@ -272,7 +312,6 @@ clearlooks_rounded_rectangle (cairo_t * cr,
         cairo_arc (cr, x + radius, y + radius, radius, M_PI, M_PI * 1.5);
     else
         cairo_line_to (cr, x, y);
-	
 }
 
 void
@@ -283,7 +322,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
 
     DdbSeekbar *self = DDB_SEEKBAR (widget);
 
-#if GTK_CHECK_VERSION(3,0,0)
+#if GTK_CHECK_VERSION(3, 0, 0)
     GtkAllocation allocation;
     gtk_widget_get_allocation (widget, &allocation);
     cairo_translate (cr, -allocation.x, -allocation.y);
@@ -310,8 +349,8 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
             if (x < 0) {
                 x = 0;
             }
-            if (x > a.width-1) {
-                x = a.width-1;
+            if (x > a.width - 1) {
+                x = a.width - 1;
             }
             pos = x;
         }
@@ -323,18 +362,22 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
         }
         // left
         if (pos > 0) {
-            cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
-            cairo_rectangle (cr, ax, ah/2-4+ay, pos, 8);
+            cairo_set_source_rgb (
+                cr,
+                clr_selection.red / 65535.f,
+                clr_selection.green / 65535.f,
+                clr_selection.blue / 65535.f);
+            cairo_rectangle (cr, ax, ah / 2 - 4 + ay, pos, 8);
             cairo_clip (cr);
-            clearlooks_rounded_rectangle (cr, 2+ax, ah/2-4+ay, aw-4, 8, 4, 0xff);
+            clearlooks_rounded_rectangle (cr, 2 + ax, ah / 2 - 4 + ay, aw - 4, 8, 4, 0xff);
             cairo_fill (cr);
             cairo_reset_clip (cr);
         }
     }
 
     // empty seekbar, just a frame, always visible
-    clearlooks_rounded_rectangle (cr, 2+ax, a.height/2-4+ay, aw-4, 8, 4, 0xff);
-    cairo_set_source_rgb (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f );
+    clearlooks_rounded_rectangle (cr, 2 + ax, a.height / 2 - 4 + ay, aw - 4, 8, 4, 0xff);
+    cairo_set_source_rgb (cr, clr_selection.red / 65535.f, clr_selection.green / 65535.f, clr_selection.blue / 65535.f);
     cairo_set_line_width (cr, 2);
     cairo_stroke (cr);
 
@@ -358,31 +401,55 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
                 time = dur;
             }
             char s[1000];
-            int hr = time/3600;
-            int mn = (time-hr*3600)/60;
-            int sc = time-hr*3600-mn*60;
+            int hr = time / 3600;
+            int mn = (time - hr * 3600) / 60;
+            int sc = time - hr * 3600 - mn * 60;
             snprintf (s, sizeof (s), "%02d:%02d:%02d", hr, mn, sc);
 
-            cairo_set_source_rgba (cr, clr_selection.red/65535.f, clr_selection.green/65535.f, clr_selection.blue/65535.f, self->seektime_alpha);
-            cairo_save (cr);
-            cairo_set_font_size (cr, 20);
+            draw_begin (&self->drawctx, cr);
 
-            cairo_text_extents_t ex;
-            cairo_text_extents (cr, s, &ex);
+            // overlay extent
+
+            int ew, eh;
+            draw_get_text_extents (&self->drawctx, s, (int)strlen (s), &ew, &eh);
+
             if (self->textpos == -1) {
-                self->textpos = ax + aw/2 - ex.width/2;
-                self->textwidth = ex.width + 20;
+                self->textpos = ax + aw / 2 - ew / 2;
+                self->textwidth = ew + 20;
             }
 
-            clearlooks_rounded_rectangle (cr, ax + aw/2 - self->textwidth/2, ay+4, self->textwidth, ah-8, 3, 0xff);
-            cairo_fill (cr);
+            // overlay background
 
-            cairo_move_to (cr, self->textpos, ay+ah/2+ex.height/2);
+            cairo_set_source_rgba (
+                cr,
+                clr_selection.red / 65535.f,
+                clr_selection.green / 65535.f,
+                clr_selection.blue / 65535.f,
+                self->seektime_alpha);
+            cairo_save (cr);
+
+            clearlooks_rounded_rectangle (
+                cr,
+                ax + aw / 2 - self->textwidth / 2,
+                ay + 4,
+                self->textwidth,
+                ah - 8,
+                3,
+                0xff);
+            cairo_fill (cr);
+            cairo_restore (cr);
+
+            // overlay foreground
+
             GdkColor clr;
             gtkui_get_listview_selected_text_color (&clr);
-            cairo_set_source_rgba (cr, clr.red/65535.f, clr.green/65535.f, clr.blue/65535.f, self->seektime_alpha);
-            cairo_show_text (cr, s);
-            cairo_restore (cr);
+
+            float text_color[3] = { (float)clr.red / 0xffff, (float)clr.green / 0xffff, (float)clr.blue / 0xffff };
+
+            draw_set_fg_color (&self->drawctx, text_color);
+            draw_text_custom (&self->drawctx, self->textpos, ay + ah / 2 - eh / 2, ew, 0, 0, 0, 0, s);
+
+            draw_end (&self->drawctx);
 
             int fps = deadbeef->conf_get_int ("gtkui.refresh_rate", 10);
             if (fps < 1) {
@@ -392,7 +459,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
                 fps = 30;
             }
             if (self->seekbar_moved >= 0.0) {
-                self->seekbar_moved -= 1.0/fps;
+                self->seekbar_moved -= 1.0 / fps;
             }
             else {
                 self->seekbar_moved = 0.0;
@@ -406,9 +473,7 @@ seekbar_draw (GtkWidget *widget, cairo_t *cr) {
 }
 
 gboolean
-on_seekbar_motion_notify_event         (GtkWidget       *widget,
-                                        GdkEventMotion  *event)
-{
+on_seekbar_motion_notify_event (GtkWidget *widget, GdkEventMotion *event) {
     DdbSeekbar *self = DDB_SEEKBAR (widget);
     if (self->seekbar_moving) {
         GtkAllocation a;
@@ -420,9 +485,7 @@ on_seekbar_motion_notify_event         (GtkWidget       *widget,
 }
 
 gboolean
-on_seekbar_button_press_event          (GtkWidget       *widget,
-                                        GdkEventButton  *event)
-{
+on_seekbar_button_press_event (GtkWidget *widget, GdkEventButton *event) {
     DdbSeekbar *self = DDB_SEEKBAR (widget);
     if (deadbeef->get_output ()->state () == DDB_PLAYBACK_STATE_STOPPED) {
         return FALSE;
@@ -439,11 +502,8 @@ on_seekbar_button_press_event          (GtkWidget       *widget,
     return FALSE;
 }
 
-
 gboolean
-on_seekbar_button_release_event        (GtkWidget       *widget,
-                                        GdkEventButton  *event)
-{
+on_seekbar_button_release_event (GtkWidget *widget, GdkEventButton *event) {
     DdbSeekbar *self = DDB_SEEKBAR (widget);
     self->seekbar_moving = 0;
     self->seekbar_moved = 1.0;
@@ -465,49 +525,29 @@ on_seekbar_button_release_event        (GtkWidget       *widget,
 }
 
 static gboolean
-on_evbox_button_press_event          (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
+on_evbox_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
     return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
 }
 
 static gboolean
-on_evbox_button_release_event        (GtkWidget       *widget,
-                                        GdkEventButton  *event,
-                                        gpointer         user_data)
-{
+on_evbox_button_release_event (GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
     return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
 }
 
 static gboolean
-on_evbox_motion_notify_event         (GtkWidget       *widget,
-                                        GdkEventMotion  *event,
-                                        gpointer         user_data)
-{
+on_evbox_motion_notify_event (GtkWidget *widget, GdkEventMotion *event, gpointer user_data) {
     return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
 }
 
 static gboolean
-on_evbox_scroll_event                (GtkWidget       *widget,
-                                        GdkEvent        *event,
-                                        gpointer         user_data) {
+on_evbox_scroll_event (GtkWidget *widget, GdkEvent *event, gpointer user_data) {
     return gtk_widget_event (GTK_WIDGET (user_data), (GdkEvent *)event);
 }
 
 void
 ddb_seekbar_init_signals (DdbSeekbar *sb, GtkWidget *evbox) {
-  g_signal_connect ((gpointer) evbox, "button_press_event",
-                    G_CALLBACK (on_evbox_button_press_event),
-                    sb);
-  g_signal_connect ((gpointer) evbox, "button_release_event",
-                    G_CALLBACK (on_evbox_button_release_event),
-                    sb);
-  g_signal_connect ((gpointer) evbox, "scroll_event",
-                    G_CALLBACK (on_evbox_scroll_event),
-                    sb);
-  g_signal_connect ((gpointer) evbox, "motion_notify_event",
-                    G_CALLBACK (on_evbox_motion_notify_event),
-                    sb);
+    g_signal_connect ((gpointer)evbox, "button_press_event", G_CALLBACK (on_evbox_button_press_event), sb);
+    g_signal_connect ((gpointer)evbox, "button_release_event", G_CALLBACK (on_evbox_button_release_event), sb);
+    g_signal_connect ((gpointer)evbox, "scroll_event", G_CALLBACK (on_evbox_scroll_event), sb);
+    g_signal_connect ((gpointer)evbox, "motion_notify_event", G_CALLBACK (on_evbox_motion_notify_event), sb);
 }
-
