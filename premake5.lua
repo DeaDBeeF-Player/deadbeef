@@ -558,7 +558,7 @@ project "notify_plugin"
   files {
     "plugins/notify/notify.c"
   }
-  pkgconfig ("dbus-1")
+  pkgconfig ("dbus-1", "glib-2.0", "gio-2.0", "gdk-pixbuf-2.0")
   buildoptions {"-fblocks"}
   links {"dispatch", "BlocksRuntime"}
 end

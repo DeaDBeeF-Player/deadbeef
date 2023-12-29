@@ -733,7 +733,16 @@ AS_IF([test "${enable_gme}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
 ])
 
 AS_IF([test "${HAVE_DBUS}" = "yes" -a "${enable_notify}" != "no"], [
-    HAVE_NOTIFY=yes
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        HAVE_NOTIFY=yes
+        NOTIFY_DEPS_CFLAGS="${GTK3_310_CFLAGS}"
+        NOTIFY_DEPS_LIBS="${GTK3_310_LIBS}"
+        AC_SUBST(NOTIFY_DEPS_CFLAGS)
+        AC_SUBST(NOTIFY_DEPS_LIBS)
+    ], [
+        PKG_CHECK_MODULES(NOTIFY_DEPS, glib-2.0 >= 2.26 gio-2.0 gdk-pixbuf-2.0, HAVE_NOTIFY=yes, HAVE_NOTIFY=no)
+    ])
+
     NOTIFY_LIBS="$DBUS_DEPS_LIBS"
     NOTIFY_CFLAGS="$DBUS_DEPS_CFLAGS"
     AC_SUBST(NOTIFY_LIBS)

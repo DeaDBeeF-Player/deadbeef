@@ -157,7 +157,7 @@ static GdkPixbuf *
 _load_image_from_cover (covermanager_t *impl, ddb_cover_info_t *cover, int want_default) {
     GdkPixbuf *img = NULL;
 
-    if (!img && cover && cover->image_filename) {
+    if (cover && cover->image_filename) {
         long size = 0;
         char *buf = _buffer_from_file (cover->image_filename, &size);
         if (buf != NULL) {
@@ -267,7 +267,8 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
     gtkui_dispatch_on_main (^{
         // Prevent spurious loading of the same image. The load is already scheduled, so we should just wait for it.
         char *key = _cache_key_for_track (impl, query->track);
-        gboolean should_wait = gobj_cache_get_should_wait (impl->cache, key) || (gobj_cache_get (impl->cache, key) != NULL);
+        gboolean should_wait =
+            gobj_cache_get_should_wait (impl->cache, key) || (gobj_cache_get (impl->cache, key) != NULL);
 
         if (should_wait) {
             // append to the end of loader queue
@@ -378,7 +379,12 @@ covermanager_free (covermanager_t *impl) {
 }
 
 static GdkPixbuf *
-_cover_for_track (covermanager_t *impl, int want_default, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block) {
+_cover_for_track (
+    covermanager_t *impl,
+    int want_default,
+    DB_playItem_t *track,
+    int64_t source_id,
+    covermanager_completion_block_t completion_block) {
     if (!impl->plugin) {
         completion_block (NULL);
         return NULL;
@@ -418,12 +424,20 @@ _cover_for_track (covermanager_t *impl, int want_default, DB_playItem_t *track, 
 }
 
 GdkPixbuf *
-covermanager_cover_for_track_no_default (covermanager_t *impl, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block) {
+covermanager_cover_for_track_no_default (
+    covermanager_t *impl,
+    DB_playItem_t *track,
+    int64_t source_id,
+    covermanager_completion_block_t completion_block) {
     return _cover_for_track (impl, 0, track, source_id, completion_block);
 }
 
 GdkPixbuf *
-covermanager_cover_for_track (covermanager_t *impl, DB_playItem_t *track, int64_t source_id, covermanager_completion_block_t completion_block) {
+covermanager_cover_for_track (
+    covermanager_t *impl,
+    DB_playItem_t *track,
+    int64_t source_id,
+    covermanager_completion_block_t completion_block) {
     return _cover_for_track (impl, 1, track, source_id, completion_block);
 }
 
@@ -451,8 +465,13 @@ covermanager_create_scaled_image (covermanager_t *manager, GdkPixbuf *image, Gtk
 }
 
 GtkAllocation
-covermanager_desired_size_for_image_size (covermanager_t *manager, GtkAllocation image_size, GtkAllocation availableSize) {
-    double scale = min ((double)availableSize.width / (double)image_size.width, (double)availableSize.height / (double)image_size.height);
+covermanager_desired_size_for_image_size (
+    covermanager_t *manager,
+    GtkAllocation image_size,
+    GtkAllocation availableSize) {
+    double scale = min (
+        (double)availableSize.width / (double)image_size.width,
+        (double)availableSize.height / (double)image_size.height);
 
     GtkAllocation a = { 0 };
     a.width = image_size.width * scale;

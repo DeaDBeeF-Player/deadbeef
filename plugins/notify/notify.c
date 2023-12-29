@@ -23,9 +23,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include "../../gettext.h"
 #include "../artwork/artwork.h"
 
+#define min(x, y) ((x) < (y) ? (x) : (y))
+#define MAX_ALBUM_ART_FILE_SIZE (40 * 1024 * 1024)
 #define E_NOTIFICATION_BUS_NAME "org.freedesktop.Notifications"
 #define E_NOTIFICATION_INTERFACE "org.freedesktop.Notifications"
 #define E_NOTIFICATION_PATH "/org/freedesktop/Notifications"
@@ -163,6 +166,128 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
     Block_release (completion_block);
 }
 
+static char *
+_buffer_from_file (const char *fname, long *psize) {
+    char *buffer = NULL;
+    FILE *fp = fopen (fname, "rb");
+    if (fp == NULL) {
+        return NULL;
+    }
+    if (fseek (fp, 0, SEEK_END) < 0) {
+        goto error;
+    }
+    long size = ftell (fp);
+    if (size <= 0 || size > MAX_ALBUM_ART_FILE_SIZE) {
+        goto error; // we don't really want to load ultra-high-res images
+    }
+    rewind (fp);
+
+    buffer = malloc (size);
+    if (buffer == NULL) {
+        goto error;
+    }
+
+    if (fread (buffer, 1, size, fp) != size) {
+        goto error;
+    }
+
+    fclose (fp);
+
+    *psize = size;
+    return buffer;
+
+error:
+    if (fp != NULL) {
+        fclose (fp);
+    }
+    free (buffer);
+    return NULL;
+}
+
+static GdkPixbuf *
+_create_scaled_image (GdkPixbuf *image, int width, int height) {
+    int originalWidth = gdk_pixbuf_get_width (image);
+    int originalHeight = gdk_pixbuf_get_height (image);
+
+    if (originalWidth <= width && originalHeight <= height) {
+        g_object_ref (image);
+        return image;
+    }
+
+    gboolean has_alpha = gdk_pixbuf_get_has_alpha (image);
+    int bits_per_sample = gdk_pixbuf_get_bits_per_sample (image);
+
+    GdkPixbuf *scaled_image = gdk_pixbuf_new (GDK_COLORSPACE_RGB, has_alpha, bits_per_sample, width, height);
+
+    double scale_x = (double)width / (double)originalWidth;
+    double scale_y = (double)height / (double)originalHeight;
+
+    gdk_pixbuf_scale (image, scaled_image, 0, 0, width, height, 0, 0, scale_x, scale_y, GDK_INTERP_BILINEAR);
+
+    return scaled_image;
+}
+
+static void
+_desired_size_for_image_size (
+    int image_width,
+    int image_height,
+    int avail_width,
+    int avail_height,
+    int *result_width,
+    int *result_height) {
+    double scale = min ((double)avail_width / (double)image_width, (double)avail_height / (double)image_height);
+
+    *result_width = image_width * scale;
+    *result_height = image_height * scale;
+}
+
+static GdkPixbuf *
+_load_image (const char *image_filename) {
+    GdkPixbuf *img = NULL;
+
+    long size = 0;
+    char *buf = _buffer_from_file (image_filename, &size);
+    if (buf != NULL) {
+        GdkPixbufLoader *loader = gdk_pixbuf_loader_new ();
+        gdk_pixbuf_loader_write (loader, (const guchar *)buf, size, NULL);
+        gdk_pixbuf_loader_close (loader, NULL);
+        img = gdk_pixbuf_loader_get_pixbuf (loader);
+        free (buf);
+    }
+
+    if (img == NULL) {
+        return NULL;
+    }
+
+    int max_image_size = deadbeef->conf_get_int ("notify.albumart_size", 64);
+    if (max_image_size < 32) {
+        max_image_size = 32;
+    }
+    else if (max_image_size > 100) {
+        max_image_size = 100;
+    }
+
+    // downscale
+    int orig_width = gdk_pixbuf_get_width (img);
+    int orig_height = gdk_pixbuf_get_height (img);
+
+    if (orig_width > max_image_size || orig_height > max_image_size) {
+        int new_width = max_image_size;
+        int new_height = max_image_size;
+
+        int result_width;
+        int result_height;
+
+        _desired_size_for_image_size (orig_width, orig_height, new_width, new_height, &result_width, &result_height);
+
+        GdkPixbuf *scaled_img = _create_scaled_image (img, result_width, result_height);
+        g_object_unref (img);
+        img = scaled_img;
+    }
+
+    return img;
+}
+
 static dbus_uint32_t
 show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t replaces_id, int force) {
     char title[1024];
@@ -205,13 +330,20 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
     bool should_wait_for_cover = !image_filename && deadbeef->conf_get_int ("notify.albumart", 0) && artwork_plugin;
     bool should_apply_kde_fix = deadbeef->conf_get_int ("notify.fix_kde_5_23_5", 0) ? true : false;
 
-    // KDE won't re-display notification via reuse,
+    // KDE won't re-display notification via reuse,
     // so don't show it now and wait for cover callback.
     if (!(should_wait_for_cover && should_apply_kde_fix)) {
-        char *v_iconname = image_filename ?: "deadbeef";
+        char *v_iconname = ""; // image_filename ?: "deadbeef";
         const char *v_summary = title;
         const char *v_body = esc_content;
         dbus_int32_t v_timeout = -1;
+
+        GdkPixbuf *img = _load_image (image_filename);
+        if (!img) {
+            v_iconname = "deadbeef";
+        }
+
+        DBusMessageIter iter, sub;
 
         dbus_message_append_args (
             msg,
@@ -227,13 +359,78 @@ show_notification (DB_playItem_t *track, char *image_filename, dbus_uint32_t rep
             &v_body,
             DBUS_TYPE_INVALID);
 
-        DBusMessageIter iter, sub;
         // actions
         dbus_message_iter_init_append (msg, &iter);
         dbus_message_iter_open_container (&iter, DBUS_TYPE_ARRAY, "s", &sub);
         dbus_message_iter_close_container (&iter, &sub);
+
         // hints
         dbus_message_iter_open_container (&iter, DBUS_TYPE_ARRAY, "{sv}", &sub);
+
+        if (img != NULL) {
+            dbus_int32_t width = gdk_pixbuf_get_width (img);
+            dbus_int32_t height = gdk_pixbuf_get_height (img);
+            dbus_int32_t stride = gdk_pixbuf_get_rowstride (img);
+            dbus_bool_t has_alpha = gdk_pixbuf_get_has_alpha (img);
+            dbus_int32_t bits_per_sample = gdk_pixbuf_get_bits_per_sample (img);
+            dbus_int32_t channels = gdk_pixbuf_get_n_channels (img);
+            guchar *image_bytes = gdk_pixbuf_get_pixels (img);
+
+            DBusMessageIter dict_entry_sub;
+            dbus_message_iter_open_container (&sub, DBUS_TYPE_DICT_ENTRY, 0, &dict_entry_sub);
+
+            {
+                char *v_image_data = "image-data";
+                dbus_message_iter_append_basic (&dict_entry_sub, DBUS_TYPE_STRING, &v_image_data);
+
+                DBusMessageIter value_sub;
+
+                dbus_message_iter_open_container (&dict_entry_sub, DBUS_TYPE_VARIANT, "(iiibiiay)", &value_sub);
+
+                {
+
+                    DBusMessageIter image_sub;
+                    dbus_message_iter_open_container (&value_sub, DBUS_TYPE_STRUCT, NULL, &image_sub);
+
+                    {
+
+                        dbus_message_iter_append_basic (&image_sub, DBUS_TYPE_INT32, &width);
+                        dbus_message_iter_append_basic (&image_sub, DBUS_TYPE_INT32, &height);
+                        dbus_message_iter_append_basic (&image_sub, DBUS_TYPE_INT32, &stride);
+                        dbus_message_iter_append_basic (&image_sub, DBUS_TYPE_BOOLEAN, &has_alpha);
+                        dbus_message_iter_append_basic (&image_sub, DBUS_TYPE_INT32, &bits_per_sample);
+                        dbus_message_iter_append_basic (&image_sub, DBUS_TYPE_INT32, &channels);
+
+                        DBusMessageIter data_sub;
+
+                        dbus_message_iter_open_container (
+                            &image_sub,
+                            DBUS_TYPE_ARRAY,
+                            DBUS_TYPE_BYTE_AS_STRING,
+                            &data_sub);
+
+                        {
+                            dbus_message_iter_append_fixed_array (
+                                &data_sub,
+                                DBUS_TYPE_BYTE,
+                                &image_bytes,
+                                stride * height);
+                        }
+
+                        dbus_message_iter_close_container (&image_sub, &data_sub);
+                    }
+
+                    dbus_message_iter_close_container (&value_sub, &image_sub);
+                }
+
+                dbus_message_iter_close_container (&dict_entry_sub, &value_sub);
+            }
+
+            dbus_message_iter_close_container (&sub, &dict_entry_sub);
+
+            g_object_unref (img);
+        }
+
         dbus_message_iter_close_container (&iter, &sub);
 
         dbus_message_iter_append_basic (&iter, DBUS_TYPE_INT32, &v_timeout);
