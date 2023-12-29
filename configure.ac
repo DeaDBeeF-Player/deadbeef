@@ -735,8 +735,8 @@ AS_IF([test "${enable_gme}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
 AS_IF([test "${HAVE_DBUS}" = "yes" -a "${enable_notify}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_NOTIFY=yes
-        NOTIFY_DEPS_CFLAGS="${GTK3_310_CFLAGS}"
-        NOTIFY_DEPS_LIBS="${GTK3_310_LIBS}"
+        NOTIFY_DEPS_CFLAGS="${GTK2_216_CFLAGS}"
+        NOTIFY_DEPS_LIBS="${GDK_PIXBUF_LIBS}"
         AC_SUBST(NOTIFY_DEPS_CFLAGS)
         AC_SUBST(NOTIFY_DEPS_LIBS)
     ], [
