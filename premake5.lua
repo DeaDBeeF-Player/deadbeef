@@ -898,6 +898,7 @@ project "converter"
     "plugins/converter/converter.c",
     "shared/mp4tagutil.c"
   }
+  includedirs {"external/mp4p/include", "shared"}
   links {"mp4p"}
 end
 
