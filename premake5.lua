@@ -30,7 +30,8 @@ if _OPTIONS["standard"] ~= nil then
   plugins_to_disable = {"plugin-converter", "plugin-converter_gtk2",
                         "plugin-converter_gtk3","plugin-ffmpeg","plugin-waveout",
                         "plugin-wildmidi", "plugin-soundtouch", "plugin-sid", "plugin-gme",
-                        "plugin-mms", "plugin-cdda", "plugin-sc68", "plugin-vtx"}
+                        "plugin-mms", "plugin-cdda", "plugin-sc68", "plugin-vtx",
+                        "plugin-notify"}
   for i,v in ipairs(plugins_to_disable) do
     if _OPTIONS[v] == nil then
       _OPTIONS[v] = "disabled"
