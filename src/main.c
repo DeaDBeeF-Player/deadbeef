@@ -25,7 +25,7 @@
   Oleksiy Yakovenko waker@users.sourceforge.net
 */
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#    include <config.h>
 #endif
 #include <assert.h>
 #include <stdio.h>
@@ -38,10 +38,10 @@
 #include <locale.h>
 #include <sys/time.h>
 #ifdef __linux__
-#include <sys/prctl.h>
+#    include <sys/prctl.h>
 #endif
 #if !defined(__linux__) && !defined(_POSIX_C_SOURCE)
-#define _POSIX_C_SOURCE 1
+#    define _POSIX_C_SOURCE 1
 #endif
 #include <limits.h>
 #include <errno.h>
@@ -52,23 +52,23 @@
 #define DEFAULT_LISTENING_PORT 48879
 
 #ifdef __MINGW32__
-#define USE_INET_SOCKET
-#include <winsock2.h>
+#    define USE_INET_SOCKET
+#    include <winsock2.h>
 #else
-#include <sys/socket.h>
-#include <sys/select.h>
-#include <sys/un.h>
-#include <sys/errno.h>
-#ifdef USE_INET_SOCKET
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif
+#    include <sys/socket.h>
+#    include <sys/select.h>
+#    include <sys/un.h>
+#    include <sys/errno.h>
+#    ifdef USE_INET_SOCKET
+#        include <netinet/in.h>
+#        include <arpa/inet.h>
+#    endif
 #endif
 
 #include <sys/fcntl.h>
 #include <signal.h>
 #ifdef __GLIBC__
-#include <execinfo.h>
+#    include <execinfo.h>
 #endif
 #include <unistd.h>
 #include "gettext.h"
@@ -83,33 +83,33 @@
 #include <deadbeef/common.h>
 #include "junklib.h"
 #ifdef OSX_APPBUNDLE
-#include "cocoautil.h"
+#    include "cocoautil.h"
 #endif
 #include "playqueue.h"
 #include "tf.h"
 #include "logger.h"
 
 #ifdef OSX_APPBUNDLE
-#include "scriptable/scriptable.h"
-#include "scriptable/scriptable_dsp.h"
-#include "scriptable/scriptable_encoder.h"
+#    include "scriptable/scriptable.h"
+#    include "scriptable/scriptable_dsp.h"
+#    include "scriptable/scriptable_encoder.h"
 //#include "scriptable/scriptable_tfquery.h"
 #endif
 
 #ifndef PREFIX
-#error PREFIX must be defined
+#    error PREFIX must be defined
 #endif
 
 #ifdef OSX_APPBUNDLE
-#define SYS_CONFIG_DIR "Library/Preferences"
+#    define SYS_CONFIG_DIR "Library/Preferences"
 #elif defined(__MINGW32__)
-#define SYS_CONFIG_DIR "AppData/Roaming"
+#    define SYS_CONFIG_DIR "AppData/Roaming"
 #else
-#define SYS_CONFIG_DIR ".config"
+#    define SYS_CONFIG_DIR ".config"
 #endif
 
 #ifdef __MINGW32__
-#include "../shared/windows/utils.h"
+#    include "../shared/windows/utils.h"
 #endif
 
 // some common global variables
@@ -133,38 +133,55 @@ print_help (void) {
 #ifdef ENABLE_NLS
     bind_textdomain_codeset (PACKAGE, "");
 #endif
-    fprintf (stdout, _("Usage: deadbeef [options] [--] [file(s)]\n"));
-    fprintf (stdout, _("Options:\n"));
-    fprintf (stdout, _("   --help  or  -h     Print help (this message) and exit\n"));
-    fprintf (stdout, _("   --quit             Quit player\n"));
-    fprintf (stdout, _("   --version          Print version info and exit\n"));
-    fprintf (stdout, _("   --play             Start playback\n"));
-    fprintf (stdout, _("   --stop             Stop playback\n"));
-    fprintf (stdout, _("   --pause            Pause playback\n"));
-    fprintf (stdout, _("   --toggle-pause     Toggle pause\n"));
-    fprintf (stdout, _("   --play-pause       Start playback if stopped, toggle pause otherwise\n"));
-    fprintf (stdout, _("   --next             Next song in playlist\n"));
-    fprintf (stdout, _("   --prev             Previous song in playlist\n"));
-    fprintf (stdout, _("   --random           Random song in playlist\n"));
-    fprintf (stdout, _("   --queue            Append file(s) to existing playlist\n"));
-    fprintf (stdout, _("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"));
-    fprintf (stdout, _("   --nowplaying FMT   Print formatted track name to stdout\n"));
-    fprintf (stdout, _("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-                "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-                "                      copy[r]ight, [e]lapsed\n"));
-    fprintf (stdout, _("                      example: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
-    fprintf (stdout, _("                      for more info, see %s\n"), "http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting");
-    fprintf (stdout, _("                      NOTE: --nowplaying is deprecated.\n"));
-    fprintf (stdout, _("   --nowplaying-tf FMT  Print formatted track name to stdout, using the new title formatting\n"));
-    fprintf (stdout, _("                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"));
-    fprintf (stdout, _("                      example: --nowplaying-tf \"%%artist%% - %%title%%\" should print \"artist - title\"\n"));
-    fprintf (stdout, _("   --volume [NUM]     Print or set deadbeef volume level.\n"));
-    fprintf (stdout, _("                      The NUM parameter can be specified in percents (absolute value or increment/decrement)\n"));
-    fprintf (stdout, _("                      or in dB [-50, 0] (if with suffix).\n"));
-    fprintf (stdout, _("                      Examples: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"));
-    fprintf (stdout, _("   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to send commands to deadbeef itself.\n"));
-    fprintf (stdout, _("                      To get plugin specific commands use --plugin=[PLUG] --help\n"));
-    fprintf (stdout, _("   --plugin-list      List all available plugins including indication for plugins that support commands.\n"));
+    fprintf (stdout, _ ("Usage: deadbeef [options] [--] [file(s)]\n"));
+    fprintf (stdout, _ ("Options:\n"));
+    fprintf (stdout, _ ("   --help  or  -h     Print help (this message) and exit\n"));
+    fprintf (stdout, _ ("   --quit             Quit player\n"));
+    fprintf (stdout, _ ("   --version          Print version info and exit\n"));
+    fprintf (stdout, _ ("   --play             Start playback\n"));
+    fprintf (stdout, _ ("   --stop             Stop playback\n"));
+    fprintf (stdout, _ ("   --pause            Pause playback\n"));
+    fprintf (stdout, _ ("   --toggle-pause     Toggle pause\n"));
+    fprintf (stdout, _ ("   --play-pause       Start playback if stopped, toggle pause otherwise\n"));
+    fprintf (stdout, _ ("   --next             Next song in playlist\n"));
+    fprintf (stdout, _ ("   --prev             Previous song in playlist\n"));
+    fprintf (stdout, _ ("   --random           Random song in playlist\n"));
+    fprintf (stdout, _ ("   --queue            Append file(s) to existing playlist\n"));
+    fprintf (stdout, _ ("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"));
+    fprintf (stdout, _ ("   --nowplaying FMT   Print formatted track name to stdout\n"));
+    fprintf (
+        stdout,
+        _ ("                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+           "                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+           "                      copy[r]ight, [e]lapsed\n"));
+    fprintf (stdout, _ ("                      example: --nowplaying \"%%a - %%t\" should print \"artist - title\"\n"));
+    fprintf (
+        stdout,
+        _ ("                      for more info, see %s\n"),
+        "http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting");
+    fprintf (stdout, _ ("                      NOTE: --nowplaying is deprecated.\n"));
+    fprintf (
+        stdout,
+        _ ("   --nowplaying-tf FMT  Print formatted track name to stdout, using the new title formatting\n"));
+    fprintf (
+        stdout,
+        _ ("                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"));
+    fprintf (
+        stdout,
+        _ ("                      example: --nowplaying-tf \"%%artist%% - %%title%%\" should print \"artist - title\"\n"));
+    fprintf (stdout, _ ("   --volume [NUM]     Print or set deadbeef volume level.\n"));
+    fprintf (
+        stdout,
+        _ ("                      The NUM parameter can be specified in percents (absolute value or increment/decrement)\n"));
+    fprintf (stdout, _ ("                      or in dB [-50, 0] (if with suffix).\n"));
+    fprintf (stdout, _ ("                      Examples: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"));
+    fprintf (
+        stdout,
+        _ ("   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to send commands to deadbeef itself.\n"));
+    fprintf (stdout, _ ("                      To get plugin specific commands use --plugin=[PLUG] --help\n"));
+    fprintf (
+        stdout,
+        _ ("   --plugin-list      List all available plugins including indication for plugins that support commands.\n"));
 #ifdef ENABLE_NLS
     bind_textdomain_codeset (PACKAGE, "UTF-8");
 #endif
@@ -173,13 +190,13 @@ print_help (void) {
 // Parse command line an return a single buffer with all
 // parameters concatenated (separated by \0).  File names
 // are resolved.
-char*
+char *
 prepare_command_line (int argc, char *argv[], int *size) {
     int seen_ddash = 0;
 
     // initial buffer limit, will expand if needed
     size_t limit = 4096;
-    char *buf = (char*) malloc (limit);
+    char *buf = (char *)malloc (limit);
 
     if (argc <= 1) {
         buf[0] = 0;
@@ -201,9 +218,9 @@ prepare_command_line (int argc, char *argv[], int *size) {
 
         // make sure that there is enough space in the buffer;
         // re-allocate, if needed
-        size_t arglen = strlen(arg) + 1;
+        size_t arglen = strlen (arg) + 1;
         while (p + arglen >= limit) {
-            char *newbuf = (char*) malloc (limit * 2);
+            char *newbuf = (char *)malloc (limit * 2);
             memcpy (newbuf, buf, p);
             free (buf);
             limit *= 2;
@@ -213,7 +230,7 @@ prepare_command_line (int argc, char *argv[], int *size) {
         memcpy (buf + p, arg, arglen);
         p += arglen;
 
-        if (!strcmp("--", argv[i])) {
+        if (!strcmp ("--", argv[i])) {
             seen_ddash = 1;
         }
     }
@@ -230,7 +247,7 @@ typedef struct {
 } ddb_response_impl_t;
 
 static int
-_append_response(ddb_response_t *response, char *buffer, size_t size) {
+_append_response (ddb_response_t *response, char *buffer, size_t size) {
     ddb_response_impl_t *impl = (ddb_response_impl_t *)response;
     size_t new_size = impl->buffer_size + size;
     if (new_size > impl->buffer_capacity) {
@@ -396,37 +413,43 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             if (parg < pend) {
                 char *end;
                 const int pct = (int)strtol (parg, &end, 10);
-                if (!strcasecmp(end, "db")) {
+                if (!strcasecmp (end, "db")) {
                     deadbeef->volume_set_db (pct);
-                } else {
+                }
+                else {
                     const char is_increment = (parg[0] == '-' || parg[0] == '+');
-                    const float new_volume = is_increment ? deadbeef->volume_get_db() * 2 + 100 + pct : pct;
-                    deadbeef->volume_set_db ((new_volume/100.0 * 50) - 50);
+                    const float new_volume = is_increment ? deadbeef->volume_get_db () * 2 + 100 + pct : pct;
+                    deadbeef->volume_set_db ((new_volume / 100.0 * 50) - 50);
                 }
             }
             if (sendback) {
-                snprintf (sendback, sbsize, "\1%.0f%% (%.2f dB)", deadbeef->volume_get_db() * 2 + 100 , deadbeef->volume_get_db());
+                snprintf (
+                    sendback,
+                    sbsize,
+                    "\1%.0f%% (%.2f dB)",
+                    deadbeef->volume_get_db () * 2 + 100,
+                    deadbeef->volume_get_db ());
             }
             return 0;
         }
-        else if (!strncmp(parg, "--plugin=", strlen("--plugin="))) {
-            if (!strcmp(parg + strlen("--plugin="), "main")) {
-                parg += strlen(parg) + 1;
+        else if (!strncmp (parg, "--plugin=", strlen ("--plugin="))) {
+            if (!strcmp (parg + strlen ("--plugin="), "main")) {
+                parg += strlen (parg) + 1;
                 continue;
             }
 
             // get length until pend or next "--plugin" occurrence
             int parg_len = 0;
             while ((parg + parg_len) < pend) {
-                if (parg_len && !strncmp(parg + parg_len, "--plugin=", strlen("--plugin="))) {
+                if (parg_len && !strncmp (parg + parg_len, "--plugin=", strlen ("--plugin="))) {
                     break;
                 }
-                parg_len += strlen(parg + parg_len) + 1;
+                parg_len += strlen (parg + parg_len) + 1;
             }
             parg_len--;
 
-            const char *plugid = parg + strlen("--plugin=");
-            DB_plugin_t *p = plug_get_for_id(plugid);
+            const char *plugid = parg + strlen ("--plugin=");
+            DB_plugin_t *p = plug_get_for_id (plugid);
             if (p && p->api_vmajor == 1 && p->api_vminor >= 15 && p->exec_cmdline != NULL) {
 
                 ddb_response_impl_t response = {
@@ -434,8 +457,8 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                     .base.append = _append_response,
                 };
 
-                size_t plugarg_len = parg_len - strlen(parg) - 1;
-                int ret = p->exec_cmdline(parg + strlen(parg) + 1, (int) plugarg_len, &response.base);
+                size_t plugarg_len = parg_len - strlen (parg) - 1;
+                int ret = p->exec_cmdline (parg + strlen (parg) + 1, (int)plugarg_len, &response.base);
 
                 off_t out_size = response.buffer_size;
                 if (out_size > sbsize - 2) {
@@ -443,7 +466,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 }
                 // copy plugin output to sendback (if any output produced)
                 if (out_size > 0 && sendback) {
-                    sendback[0]='\1';
+                    sendback[0] = '\1';
 
                     memcpy (sendback + 1, response.buffer, out_size);
                     sendback[out_size + 1] = 0;
@@ -458,11 +481,11 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
             parg += parg_len + 1;
             continue;
         }
-        else if (!strcmp(parg, "--plugin-list")) {
+        else if (!strcmp (parg, "--plugin-list")) {
             char out[2048];
             int out_pos = 0;
             int i = 0;
-            DB_plugin_t ** plugins = plug_get_list();
+            DB_plugin_t **plugins = plug_get_list ();
             while (plugins[i] && (2048 - out_pos) >= 0) {
                 const char *format = plugins[i]->exec_cmdline ? "\033[32m%s\033[0m, " : "%s, ";
                 out_pos += snprintf (out + out_pos, 2048 - out_pos, format, plugins[i]->id);
@@ -481,7 +504,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
         parg++;
     }
     if (parg < pend) {
-        if (add_paths(parg, (int)(pend - parg), queue, sendback, sbsize) > 0) {
+        if (add_paths (parg, (int)(pend - parg), queue, sendback, sbsize) > 0) {
             return 0; // files not loaded, but continue normally
         }
         if (!queue) {
@@ -495,7 +518,7 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
 // 0 - no error, files loaded
 // 1 - no error, but files not loaded
 int
-add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
+add_paths (const char *paths, int len, int queue, char *sendback, int sbsize) {
     const char *parg = paths;
     const char *pend = paths + len;
 
@@ -513,7 +536,10 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
     playlist_t *curr_plt = plt_get_curr ();
     if (plt_add_files_begin (curr_plt, 0) != 0) {
         plt_unref (curr_plt);
-        snprintf (sendback, sbsize, "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
+        snprintf (
+            sendback,
+            sbsize,
+            "it's not allowed to add files to playlist right now, because another file adding operation is in progress. please try again later.");
         return 1;
     }
     // add files
@@ -531,8 +557,8 @@ add_paths(const char *paths, int len, int queue, char *sendback, int sbsize) {
         else {
             pname = parg;
         }
-        if (deadbeef->plt_add_dir2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
-            if (deadbeef->plt_add_file2 (0, (ddb_playlist_t*)curr_plt, pname, NULL, NULL) < 0) {
+        if (deadbeef->plt_add_dir2 (0, (ddb_playlist_t *)curr_plt, pname, NULL, NULL) < 0) {
+            if (deadbeef->plt_add_file2 (0, (ddb_playlist_t *)curr_plt, pname, NULL, NULL) < 0) {
                 int ab = 0;
                 playItem_t *after = plt_get_last (curr_plt, PL_MAIN);
                 playItem_t *it = plt_load2 (0, curr_plt, after, pname, &ab, NULL, NULL);
@@ -567,33 +593,35 @@ static unsigned srv_socket;
 static struct sockaddr_in srv_local;
 static struct sockaddr_in srv_remote;
 
-int db_socket_init_inet () {
-#ifdef __MINGW32__
+int
+db_socket_init_inet () {
+#    ifdef __MINGW32__
     // initiate winsock
     WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) {
+    if (WSAStartup (MAKEWORD (2, 2), &wsaData) != 0) {
         trace_err ("Error with WSAStartup(), WinSock startup failed.\n");
         return -1;
     }
-#endif
+#    endif
 
     return 0;
 }
 
-int db_socket_set_inet (struct sockaddr_in *remote, int *len) {
+int
+db_socket_set_inet (struct sockaddr_in *remote, int *len) {
     int s;
-    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
+    if ((s = socket (AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror ("socket");
+        exit (1);
     }
 
     memset (remote, 0, sizeof (*remote));
 
-    remote->sin_family      = AF_INET;
-    remote->sin_addr.s_addr = inet_addr("127.0.0.1");
-    remote->sin_port        = htons(DEFAULT_LISTENING_PORT);
+    remote->sin_family = AF_INET;
+    remote->sin_addr.s_addr = inet_addr ("127.0.0.1");
+    remote->sin_port = htons (DEFAULT_LISTENING_PORT);
 
-    *len = sizeof(*remote);
+    *len = sizeof (*remote);
 
     return s;
 }
@@ -602,29 +630,31 @@ int db_socket_set_inet (struct sockaddr_in *remote, int *len) {
 static struct sockaddr_un srv_local;
 static struct sockaddr_un srv_remote;
 
-int db_socket_set_unix (struct sockaddr_un *remote, int *len) {
+int
+db_socket_set_unix (struct sockaddr_un *remote, int *len) {
     int s;
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket");
-        exit(1);
+    if ((s = socket (AF_UNIX, SOCK_STREAM, 0)) == -1) {
+        perror ("socket");
+        exit (1);
     }
 
     memset (remote, 0, sizeof (struct sockaddr_un));
     remote->sun_family = AF_UNIX;
 
-#if USE_ABSTRACT_SOCKET_NAME
+#    if USE_ABSTRACT_SOCKET_NAME
     memcpy (remote->sun_path, server_id, sizeof (server_id));
-    *len = offsetof(struct sockaddr_un, sun_path) + sizeof (server_id)-1;
-#else
+    *len = offsetof (struct sockaddr_un, sun_path) + sizeof (server_id) - 1;
+#    else
     char *socketdirenv = getenv ("DDB_SOCKET_DIR");
     snprintf (remote->sun_path, sizeof (remote->sun_path), "%s/socket", socketdirenv ? socketdirenv : dbruntimedir);
-    *len = offsetof(struct sockaddr_un, sun_path) + (int)strlen (remote->sun_path);
-#endif
+    *len = offsetof (struct sockaddr_un, sun_path) + (int)strlen (remote->sun_path);
+#    endif
     return s;
 }
 #endif
 
-void db_socket_close (int s) {
+void
+db_socket_close (int s) {
 #ifdef __MINGW32__
     closesocket (s);
 #else
@@ -641,29 +671,29 @@ server_start (void) {
 #ifdef USE_INET_SOCKET
     srv_socket = db_socket_set_inet (&srv_local, &len);
 
-#ifdef __MINGW32__
+#    ifdef __MINGW32__
     unsigned long flags = 1;
-    if (ioctlsocket(srv_socket, FIONBIO, &flags) == SOCKET_ERROR) {
+    if (ioctlsocket (srv_socket, FIONBIO, &flags) == SOCKET_ERROR) {
         perror ("ioctlsocket FIONBIO");
         return -1;
     }
-#endif
+#    endif
 #else
     srv_socket = db_socket_set_unix (&srv_local, &len);
-#ifndef USE_ABSTRACT_SOCKET_NAME
-    if (unlink(srv_local.sun_path) < 0) {
+#    ifndef USE_ABSTRACT_SOCKET_NAME
+    if (unlink (srv_local.sun_path) < 0) {
         perror ("INFO: unlink socket");
     }
-    len = offsetof(struct sockaddr_un, sun_path) + (int)strlen (srv_local.sun_path);
-#endif
+    len = offsetof (struct sockaddr_un, sun_path) + (int)strlen (srv_local.sun_path);
+#    endif
 
     int flags;
-    flags = fcntl (srv_socket, F_GETFL,0);
+    flags = fcntl (srv_socket, F_GETFL, 0);
     if (flags == -1) {
         perror ("fcntl F_GETFL");
         return -1;
     }
-    if (fcntl(srv_socket, F_SETFL, flags | O_NONBLOCK) < 0) {
+    if (fcntl (srv_socket, F_SETFL, flags | O_NONBLOCK) < 0) {
         perror ("fcntl F_SETFL");
         return -1;
     }
@@ -673,13 +703,13 @@ server_start (void) {
         return -1;
     }
 
-    if (bind(srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
+    if (bind (srv_socket, (struct sockaddr *)&srv_local, len) < 0) {
         perror ("bind");
         return -1;
     }
 
-    if (listen(srv_socket, 5) == -1) {
-        perror("listen");
+    if (listen (srv_socket, 5) == -1) {
+        perror ("listen");
         return -1;
     }
     return 0;
@@ -694,30 +724,30 @@ server_close (void) {
 }
 
 // Read the whole message till end-of-stream
-char*
+char *
 read_entire_message (int sockfd, int *size) {
     int bufsize = 4096; // initial buffer size, will expand if
-                        // the actual package turns out to be bigger
-    char *buf = (char*) malloc(bufsize);
+        // the actual package turns out to be bigger
+    char *buf = (char *)malloc (bufsize);
     int rdp = 0;
 
     for (;;) {
         if (rdp >= bufsize) {
             int newsize = bufsize * 2;
-            char *newbuf = (char*) malloc(newsize);
-            memcpy(newbuf, buf, rdp);
-            free(buf);
+            char *newbuf = (char *)malloc (newsize);
+            memcpy (newbuf, buf, rdp);
+            free (buf);
             buf = newbuf;
             bufsize = newsize;
         }
 
-        ssize_t rd = recv(sockfd, buf + rdp, bufsize - rdp, 0);
+        ssize_t rd = recv (sockfd, buf + rdp, bufsize - rdp, 0);
         if (rd < 0) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 usleep (50000);
                 continue;
             }
-            free(buf);
+            free (buf);
             return NULL;
         }
         if (rd == 0) {
@@ -735,14 +765,14 @@ server_update (void) {
     // handle remote stuff
     int t = sizeof (srv_remote);
     int s2;
-    s2 = accept(srv_socket, (struct sockaddr *)&srv_remote, &t);
+    s2 = accept (srv_socket, (struct sockaddr *)&srv_remote, &t);
     if (s2 == -1 && errno != EAGAIN && errno != EWOULDBLOCK) {
-        perror("accept");
+        perror ("accept");
         return -1;
     }
     else if (s2 != -1) {
         int size = -1;
-        char *buf = read_entire_message(s2, &size);
+        char *buf = read_entire_message (s2, &size);
         char sendback[1024] = "";
         if (size > 0) {
             if (size == 1 && buf[0] == 0) {
@@ -755,15 +785,15 @@ server_update (void) {
         }
         if (sendback[0]) {
             // send nowplaying back to client
-            send (s2, sendback, strlen (sendback)+1, 0);
+            send (s2, sendback, strlen (sendback) + 1, 0);
         }
         else {
             send (s2, "", 1, 0);
         }
-        db_socket_close(s2);
+        db_socket_close (s2);
 
         if (buf) {
-            free(buf);
+            free (buf);
         }
     }
     return 0;
@@ -779,14 +809,14 @@ server_loop (void *ctx) {
 #endif
     fd_set rds;
     int ret;
-    struct timeval timeout = {0, 0};
+    struct timeval timeout = { 0, 0 };
 
-    FD_ZERO(&rds);
+    FD_ZERO (&rds);
     while (!server_terminate) {
-        FD_SET(srv_socket, &rds);
+        FD_SET (srv_socket, &rds);
         timeout.tv_usec = 500000;
-        if ((ret = select(srv_socket + 1, &rds, NULL, NULL, &timeout)) < 0 && errno != EINTR) {
-            perror("select");
+        if ((ret = select (srv_socket + 1, &rds, NULL, NULL, &timeout)) < 0 && errno != EINTR) {
+            perror ("select");
             exit (-1);
         }
         if (ret > 0) {
@@ -807,8 +837,8 @@ save_resume_state (void) {
     playlist_t *plt = pl_get_playlist (trk);
     int paused = (output->state () == DDB_PLAYBACK_STATE_PAUSED);
     if (trk && plt) {
-        playlist = plt_get_idx_of(plt);
-        playtrack = plt_get_item_idx(plt, trk, PL_MAIN);
+        playlist = plt_get_idx_of (plt);
+        playtrack = plt_get_item_idx (plt, trk, PL_MAIN);
         playpos = streamer_get_playpos ();
         pl_item_unref (trk);
     }
@@ -832,7 +862,7 @@ player_mainloop (void) {
         uint32_t p1;
         uint32_t p2;
         int term = 0;
-        while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+        while (messagepump_pop (&msg, &ctx, &p1, &p2) != -1) {
             // broadcast to all plugins
             DB_plugin_t **plugs = plug_get_list ();
             for (int n = 0; plugs[n]; n++) {
@@ -847,15 +877,13 @@ player_mainloop (void) {
                     plug_reinit_sound ();
                     conf_save ();
                     break;
-                case DB_EV_TERMINATE:
-                    {
-                        save_resume_state ();
+                case DB_EV_TERMINATE: {
+                    save_resume_state ();
 
-                        playqueue_clear ();
+                    playqueue_clear ();
 
-                        term = 1;
-                    }
-                    break;
+                    term = 1;
+                } break;
                 case DB_EV_PLAY_CURRENT:
                     streamer_play_current_track ();
                     break;
@@ -905,15 +933,13 @@ player_mainloop (void) {
                     pl_configchanged ();
                     junk_configchanged ();
                     break;
-                case DB_EV_SEEK:
-                    {
-                        int32_t pos = (int32_t)p1;
-                        if (pos < 0) {
-                            pos = 0;
-                        }
-                        streamer_set_seek (p1 / 1000.f);
+                case DB_EV_SEEK: {
+                    int32_t pos = (int32_t)p1;
+                    if (pos < 0) {
+                        pos = 0;
                     }
-                    break;
+                    streamer_set_seek (p1 / 1000.f);
+                } break;
                 case DB_EV_PLAYLISTCHANGED:
                     switch (p1) {
                     case DDB_PLAYLIST_CHANGE_CONTENT:
@@ -924,8 +950,8 @@ player_mainloop (void) {
                     }
                 case DB_EV_PAUSED:
                 case DB_EV_SONGFINISHED:
-                    save_resume_state();
-                    conf_save();
+                    save_resume_state ();
+                    conf_save ();
                     break;
                 }
             }
@@ -945,12 +971,12 @@ void
 sigsegv_handler (int sig) {
     trace_err ("Segmentation Fault\n");
     int j, nptrs;
-#define SIZE 100
+#    define SIZE 100
     void *buffer[100];
     char **strings;
 
-    nptrs = backtrace(buffer, SIZE);
-    printf("backtrace() returned %d addresses\n", nptrs);
+    nptrs = backtrace (buffer, SIZE);
+    printf ("backtrace() returned %d addresses\n", nptrs);
 
     /* The call
      * backtrace_symbols_fd(buffer,
@@ -958,16 +984,16 @@ sigsegv_handler (int sig) {
      * STDOUT_FILENO)
      would produce similar output to the following: */
 
-    strings = backtrace_symbols(buffer, nptrs);
+    strings = backtrace_symbols (buffer, nptrs);
     if (strings == NULL) {
-        perror("backtrace_symbols");
-        exit(EXIT_FAILURE);
+        perror ("backtrace_symbols");
+        exit (EXIT_FAILURE);
     }
 
     for (j = 0; j < nptrs; j++)
-        printf("%s\n", strings[j]);
+        printf ("%s\n", strings[j]);
 
-    free(strings);
+    free (strings);
     exit (0);
 }
 #endif
@@ -982,7 +1008,7 @@ restore_resume_state (void) {
         int paused = conf_get_int ("resume.paused", 0);
         trace ("resume: track %d pos %f playlist %d\n", track, pos, plt);
         if (plt >= 0 && track >= 0 && pos >= 0) {
-            plt_set_curr_idx(plt);
+            plt_set_curr_idx (plt);
             streamer_set_current_playlist (plt);
             if (!_previous_session_did_crash) {
                 streamer_yield ();
@@ -1009,16 +1035,16 @@ plug_get_gui (void) {
 
 #if !_DEBUG
 static void
-_touch(const char *path) {
+_touch (const char *path) {
     struct stat stat_struct;
     if (0 != stat (path, &stat_struct)) {
-        FILE *fp = fopen(path,"w+b");
+        FILE *fp = fopen (path, "w+b");
         if (fp != NULL) {
-            (void)fclose(fp);
+            (void)fclose (fp);
         }
     }
     else {
-        (void)utime(path, NULL);
+        (void)utime (path, NULL);
     }
 }
 #endif
@@ -1035,7 +1061,7 @@ main_cleanup_and_quit (void) {
     uintptr_t ctx;
     uint32_t p1;
     uint32_t p2;
-    while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+    while (messagepump_pop (&msg, &ctx, &p1, &p2) != -1) {
         if (msg >= DB_EV_FIRST && ctx) {
             messagepump_event_free ((ddb_event_t *)ctx);
         }
@@ -1070,9 +1096,9 @@ main_cleanup_and_quit (void) {
     // so unload everything 1st before final cleanup
     plug_disconnect_all ();
     plug_unload_all (^{
-        // at this point we can simply do exit(0), but let's clean up for debugging
+    // at this point we can simply do exit(0), but let's clean up for debugging
 #ifdef OSX_APPBUNDLE
-        scriptableDeinitShared();
+        scriptableDeinitShared ();
 #endif
 
         pl_free (); // may access conf_*
@@ -1085,13 +1111,13 @@ main_cleanup_and_quit (void) {
         trace ("logger_free\n");
 
         trace ("💛💙\n");
-        ddb_logger_free();
+        ddb_logger_free ();
 
         char crash_marker[PATH_MAX];
         snprintf (crash_marker, sizeof (crash_marker), "%s/running", dbconfdir);
-        unlink(crash_marker);
+        unlink (crash_marker);
 
-        exit(0);
+        exit (0);
     });
 }
 
@@ -1112,7 +1138,7 @@ mainloop_thread (void *ctx) {
 int
 main (int argc, char *argv[]) {
 #if __MINGW32__
-    windows_arg_fix(&argc, argv);
+    windows_arg_fix (&argc, argv);
 #endif
     ddb_logger_init ();
     int portable = 0;
@@ -1128,8 +1154,7 @@ main (int argc, char *argv[]) {
     portable_full = 1;
 #endif
 
-    struct stat st;
-    char *exe_path = calloc(PATH_MAX, 1);
+    char *exe_path = calloc (PATH_MAX, 1);
     int exe_path_found = 0;
     if (-1 != readlink ("/proc/self/exe", exe_path, PATH_MAX)) {
         char *e = strrchr (exe_path, '/');
@@ -1137,18 +1162,18 @@ main (int argc, char *argv[]) {
             *e = 0;
 
             // check for plugins folder
-            char *plugins_path = calloc(PATH_MAX, 1);
-            snprintf(plugins_path, PATH_MAX, "%s/plugins", exe_path);
+            char *plugins_path = calloc (PATH_MAX, 1);
+            snprintf (plugins_path, PATH_MAX, "%s/plugins", exe_path);
 
             struct stat st;
             if (0 == stat (plugins_path, &st) && S_ISDIR (st.st_mode)) {
                 exe_path_found = 1;
-                strcpy(dbinstalldir, exe_path);
+                strcpy (dbinstalldir, exe_path);
             }
             free (plugins_path);
         }
     }
-    free(exe_path);
+    free (exe_path);
     if (!exe_path_found) {
         if (!realpath (argv[0], dbinstalldir)) {
             strcpy (dbinstalldir, argv[0]);
@@ -1196,7 +1221,7 @@ main (int argc, char *argv[]) {
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C");
 #ifdef ENABLE_NLS
-//    trace ("enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
+    //    trace ("enabling gettext support: package=" PACKAGE ", dir=" LOCALEDIR "...\n");
     if (portable) {
         char localedir[PATH_MAX];
         snprintf (localedir, sizeof (localedir), "%s/locale", dbinstalldir);
@@ -1210,7 +1235,7 @@ main (int argc, char *argv[]) {
 #endif
 
 #ifndef VERSION
-#define VERSION "devel"
+#    define VERSION "devel"
 #endif
 
     trace ("starting deadbeef " VERSION "%s%s\n", staticlink ? " [static]" : "", portable ? " [portable]" : "");
@@ -1289,9 +1314,8 @@ main (int argc, char *argv[]) {
 
     // Get runtime directory
     const char *xdg_runtime = getenv (RUNTIMEDIR);
-    if (xdg_runtime)
-    {
-        if (snprintf(dbruntimedir, sizeof (dbruntimedir), "%s/deadbeef/", xdg_runtime) >= (int)sizeof (dbruntimedir)) {
+    if (xdg_runtime) {
+        if (snprintf (dbruntimedir, sizeof (dbruntimedir), "%s/deadbeef/", xdg_runtime) >= (int)sizeof (dbruntimedir)) {
             trace_err ("fatal: cache path is too long: %s\n", dbruntimedir);
             return -1;
         }
@@ -1304,8 +1328,8 @@ main (int argc, char *argv[]) {
     // Get plugins dir from environment variable, portable directory or library dir
     char *env_plugin_dir = getenv ("DEADBEEF_PLUGIN_DIR");
     if (env_plugin_dir) {
-        strncpy (dbplugindir, env_plugin_dir, sizeof(dbplugindir));
-        if (dbplugindir[sizeof(dbplugindir) - 1] != 0) {
+        strncpy (dbplugindir, env_plugin_dir, sizeof (dbplugindir));
+        if (dbplugindir[sizeof (dbplugindir) - 1] != 0) {
             trace_err ("fatal: plugin path is too long: %s\n", env_plugin_dir);
             return -1;
         }
@@ -1370,7 +1394,8 @@ main (int argc, char *argv[]) {
             trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
-        if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/share/deadbeef/pixmaps", PREFIX) > (int)sizeof (dbpixmapdir)) {
+        if (snprintf (dbpixmapdir, sizeof (dbpixmapdir), "%s/share/deadbeef/pixmaps", PREFIX) >
+            (int)sizeof (dbpixmapdir)) {
             trace_err ("fatal: install path is too long: %s\n", dbinstalldir);
             return -1;
         }
@@ -1378,8 +1403,8 @@ main (int argc, char *argv[]) {
 
     const char *plugname = "main";
     for (int i = 1; i < argc; i++) {
-        if (!strncmp (argv[i], "--plugin=", strlen("--plugin="))) {
-            plugname = argv[i] + strlen("--plugin=");
+        if (!strncmp (argv[i], "--plugin=", strlen ("--plugin="))) {
+            plugname = argv[i] + strlen ("--plugin=");
         }
         // help, version and nowplaying are executed with any filter
         if (!strcmp (argv[i], "--help") || !strcmp (argv[i], "-h")) {
@@ -1393,28 +1418,30 @@ main (int argc, char *argv[]) {
             return 0;
         }
         else if (!strcmp (argv[i], "--gui")) {
-            if (i == argc-1) {
+            if (i == argc - 1) {
                 break;
             }
             i++;
-            strncpy (use_gui_plugin, argv[i], sizeof(use_gui_plugin) - 1);
-            use_gui_plugin[sizeof(use_gui_plugin) - 1] = 0;
+            strncpy (use_gui_plugin, argv[i], sizeof (use_gui_plugin) - 1);
+            use_gui_plugin[sizeof (use_gui_plugin) - 1] = 0;
         }
     }
 
-//    trace ("installdir: %s\n", dbinstalldir);
-//    trace ("confdir: %s\n", confdir);
-//    trace ("docdir: %s\n", dbdocdir);
-//    trace ("plugindir: %s\n", dbplugindir);
-//    trace ("pixmapdir: %s\n", dbpixmapdir);
+    //    trace ("installdir: %s\n", dbinstalldir);
+    //    trace ("confdir: %s\n", confdir);
+    //    trace ("docdir: %s\n", dbdocdir);
+    //    trace ("plugindir: %s\n", dbplugindir);
+    //    trace ("pixmapdir: %s\n", dbpixmapdir);
 
 #ifdef __MINGW32__
-    char *directories[] = {dbconfdir, dbinstalldir, dbdocdir, dbplugindir, dbpixmapdir, dbcachedir, dbresourcedir, NULL};
+    char *directories[] = {
+        dbconfdir, dbinstalldir, dbdocdir, dbplugindir, dbpixmapdir, dbcachedir, dbresourcedir, NULL
+    };
     for (int i = 0; directories[i] != NULL; i++) {
         // replace backslashes with normal slashes
-        if (strchr(directories[i], '\\')) {
+        if (strchr (directories[i], '\\')) {
             char *slash_p = directories[i];
-            while (slash_p = strchr(slash_p, '\\')) {
+            while (slash_p = strchr (slash_p, '\\')) {
                 *slash_p = '/';
                 slash_p++;
             }
@@ -1432,7 +1459,7 @@ main (int argc, char *argv[]) {
     unsigned int len;
 #ifdef USE_INET_SOCKET
     struct sockaddr_in remote;
-    if (db_socket_init_inet() < 0) {
+    if (db_socket_init_inet () < 0) {
         exit (-1);
     }
     s = db_socket_set_inet (&remote, &len);
@@ -1440,17 +1467,17 @@ main (int argc, char *argv[]) {
     struct sockaddr_un remote;
     s = db_socket_set_unix (&remote, &len);
 #endif
-    if (connect(s, (struct sockaddr *)&remote, len) == 0) {
+    if (connect (s, (struct sockaddr *)&remote, len) == 0) {
         // pass args to remote and exit
-        if (send(s, cmdline, size, 0) == -1) {
+        if (send (s, cmdline, size, 0) == -1) {
             perror ("send");
             exit (-1);
         }
         // end of message
-        shutdown(s, SHUT_WR);
+        shutdown (s, SHUT_WR);
 
         int sz = -1;
-        char *out = read_entire_message(s, &sz);
+        char *out = read_entire_message (s, &sz);
         if (sz == -1) {
             trace_err ("failed to pass args to remote!\n");
             exit (-1);
@@ -1476,10 +1503,10 @@ main (int argc, char *argv[]) {
         db_socket_close (s);
         exit (exit_code);
     }
-//    else {
-//        perror ("INFO: failed to connect to existing session:");
-//    }
-    db_socket_close(s);
+    //    else {
+    //        perror ("INFO: failed to connect to existing session:");
+    //    }
+    db_socket_close (s);
 
     // become a server
     if (server_start () < 0) {
@@ -1489,7 +1516,7 @@ main (int argc, char *argv[]) {
     // hack: report nowplaying
     if (!strcmp (cmdline, "--nowplaying")) {
         char nothing[] = "nothing";
-        fwrite (nothing, 1, sizeof (nothing)-1, stdout);
+        fwrite (nothing, 1, sizeof (nothing) - 1, stdout);
         free (cmdline);
         cmdline = NULL;
         return 0;
@@ -1499,13 +1526,13 @@ main (int argc, char *argv[]) {
     snprintf (crash_marker, sizeof (crash_marker), "%s/running", dbconfdir);
 
 #if !_DEBUG
-    struct stat crash_marker_stat = {0};
-    if (!stat(crash_marker, &crash_marker_stat)) {
+    struct stat crash_marker_stat = { 0 };
+    if (!stat (crash_marker, &crash_marker_stat)) {
         trace_err ("We had a crash. Will not resume the saved session to avoid a crash cycle.\n");
         _previous_session_did_crash = 1;
     }
 
-    _touch(crash_marker);
+    _touch (crash_marker);
 #endif
 
     pl_init ();
@@ -1520,20 +1547,20 @@ main (int argc, char *argv[]) {
 
     // Volume needs to be initialized before the plugins start
 
-    int volume_needs_migration = conf_get_str_fast("playback.volume.normalized", NULL) == NULL;
+    int volume_needs_migration = conf_get_str_fast ("playback.volume.normalized", NULL) == NULL;
     if (volume_needs_migration) {
         // migrate the volume from dB to normalized / amplitude
-        float vol_db = conf_get_float("playback.volume", 0);
+        float vol_db = conf_get_float ("playback.volume", 0);
         volume_set_db (vol_db);
     }
     else {
-        volume_set_amp (conf_get_float("playback.volume.normalized", 1));
+        volume_set_amp (conf_get_float ("playback.volume.normalized", 1));
     }
 
     messagepump_init (); // required to push messages while handling commandline
 
 #ifdef OSX_APPBUNDLE
-    scriptableInitShared();
+    scriptableInitShared ();
 #endif
     if (plug_load_all ()) { // required to add files to playlist from commandline
         exit (-1);
@@ -1561,10 +1588,9 @@ main (int argc, char *argv[]) {
 
     free (cmdline);
 
-
 #ifdef OSX_APPBUNDLE
-    scriptableDspLoadPresets(scriptableRootShared());
-    scriptableEncoderLoadPresets(scriptableRootShared());
+    scriptableDspLoadPresets (scriptableRootShared ());
+    scriptableEncoderLoadPresets (scriptableRootShared ());
 #endif
 
     streamer_init ();
@@ -1592,7 +1618,7 @@ main (int argc, char *argv[]) {
 
     // NOTE: It's not guaranteed that the code after this line will be called.
     // On some platforms (cocoa), main_cleanup_and_quit is called directly before quit.
-    
+
     trace ("gui plugin has quit; waiting for mainloop thread to finish\n");
     thread_join (mainloop_tid);
 
@@ -1601,8 +1627,7 @@ main (int argc, char *argv[]) {
     // main_cleanup_and_quit will call "exit" after async jobs finish, which may occur on another thread.
     // Therefore infinite wait here.
     for (;;) {
-        usleep(10000000);
+        usleep (10000000);
     }
     return 0;
 }
-
