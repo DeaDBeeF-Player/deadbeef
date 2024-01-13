@@ -1128,15 +1128,38 @@ main (int argc, char *argv[]) {
     portable_full = 1;
 #endif
 
-    if (!realpath (argv[0], dbinstalldir)) {
-        strcpy (dbinstalldir, argv[0]);
+    struct stat st;
+    char *exe_path = calloc(PATH_MAX, 1);
+    int exe_path_found = 0;
+    if (-1 != readlink ("/proc/self/exe", exe_path, PATH_MAX)) {
+        char *e = strrchr (exe_path, '/');
+        if (e != NULL) {
+            *e = 0;
+
+            // check for plugins folder
+            char *plugins_path = calloc(PATH_MAX, 1);
+            snprintf(plugins_path, PATH_MAX, "%s/plugins", exe_path);
+
+            struct stat st;
+            if (0 == stat (plugins_path, &st) && S_ISDIR (st.st_mode)) {
+                exe_path_found = 1;
+                strcpy(dbinstalldir, exe_path);
+            }
+            free (plugins_path);
+        }
     }
-    char *e = strrchr (dbinstalldir, '/');
-    if (e) {
-        *e = 0;
-    }
-    else {
-        strcpy (dbinstalldir, PREFIX);
+    free(exe_path);
+    if (!exe_path_found) {
+        if (!realpath (argv[0], dbinstalldir)) {
+            strcpy (dbinstalldir, argv[0]);
+        }
+        char *e = strrchr (dbinstalldir, '/');
+        if (e) {
+            *e = 0;
+        }
+        else {
+            strcpy (dbinstalldir, PREFIX);
+        }
     }
 
     // detect portable version by looking for plugins/ and deadbeef.png and portable_full by config/
