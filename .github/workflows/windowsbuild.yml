@@ -15,7 +15,7 @@ jobs:
         update: true
         install: >-
           mingw-w64-x86_64-toolchain mingw-w64-x86_64-libzip mingw-w64-x86_64-pkg-config mingw-w64-x86_64-dlfcn
-          git make tar unzip xz zip mingw-w64-x86_64-clang mingw-w64-x86_64-libblocksruntime
+          git make tar unzip xz zip mingw-w64-x86_64-clang
           mingw-w64-x86_64-jansson mingw-w64-x86_64-gtk3 mingw-w64-x86_64-gtk2 mingw-w64-x86_64-mpg123
           mingw-w64-x86_64-flac mingw-w64-x86_64-curl mingw-w64-x86_64-portaudio mingw-w64-x86_64-faad2 mingw-w64-x86_64-flac
           mingw-w64-x86_64-wavpack mingw-w64-x86_64-libvorbis mingw-w64-x86_64-libogg mingw-w64-x86_64-opusfile mingw-w64-x86_64-opus
