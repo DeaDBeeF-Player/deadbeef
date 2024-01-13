@@ -1154,8 +1154,9 @@ main (int argc, char *argv[]) {
     portable_full = 1;
 #endif
 
-    char *exe_path = calloc (PATH_MAX, 1);
     int exe_path_found = 0;
+#ifndef _WIN32
+    char *exe_path = calloc (PATH_MAX, 1);
     if (-1 != readlink ("/proc/self/exe", exe_path, PATH_MAX)) {
         char *e = strrchr (exe_path, '/');
         if (e != NULL) {
@@ -1174,6 +1175,7 @@ main (int argc, char *argv[]) {
         }
     }
     free (exe_path);
+#endif
     if (!exe_path_found) {
         if (!realpath (argv[0], dbinstalldir)) {
             strcpy (dbinstalldir, argv[0]);
