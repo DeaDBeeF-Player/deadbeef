@@ -183,7 +183,7 @@ void startup_fixes() {
             win_charset_conv(deadbeef_working_dir, deadbeef_working_dir_byte_len, deadbeef_filepath, ddb_path_utf_byte_len, "WCHAR_T", "UTF-8");
             strcat(capath, deadbeef_filepath);
         }
-        strcat (capath, "share\\ssl\\certs\\ca-bundle.crt");
+        strcat (capath, "\\share\\ssl\\certs\\ca-bundle.crt");
         putenv (capath);
     }
 
