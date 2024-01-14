@@ -913,8 +913,9 @@ player_mainloop (void) {
                     }
                     break;
                 case DB_EV_TOGGLE_PAUSE:
-                    if (output->state () != DDB_PLAYBACK_STATE_PLAYING) {
-                        streamer_play_current_track ();
+                    if (output->state () == DDB_PLAYBACK_STATE_PAUSED) {
+                        output->unpause ();
+                        messagepump_push (DB_EV_PAUSED, 0, 0, 0);
                     }
                     else {
                         output->pause ();
