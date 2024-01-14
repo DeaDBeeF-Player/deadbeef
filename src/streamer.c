@@ -945,7 +945,15 @@ streamer_song_removed_notify (playItem_t *it) {
         ddb_repeat_t repeat = streamer_get_repeat ();
         streamer_set_next_track_to_play (NULL);
         next = get_next_track (it, shuffle, repeat);
+        if (next == it) {
+            pl_item_unref(next);
+            next = NULL;
+        }
         prev = get_prev_track (it, shuffle, repeat);
+        if (prev == it) {
+            pl_item_unref(prev);
+            prev = NULL;
+        }
         streamer_set_next_track_to_play (next);
         streamer_set_prev_track_to_play (prev);
     }
