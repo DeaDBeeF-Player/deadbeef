@@ -22,6 +22,7 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 #include "undo_playlist.h"
 
 #define UNDO_SELECTION_LIST_UNSELECTED 1
@@ -32,6 +33,7 @@ typedef struct {
     playItem_t **items;
     playItem_t *insert_position; // insert after this item
     size_t count;
+    int current_row[PL_MAX_ITERATORS]; // current row (cursor)
     uint32_t flags; // reusable flag fields, meaning changes depending on the operation type.
 } undo_operation_item_list_t;
 
@@ -102,7 +104,8 @@ _undo_perform_change_selection (undobuffer_t *undobuffer, undo_operation_item_li
     for (size_t i = 0; i < op->count; i++) {
         pl_set_selected(op->items[i], !(op->flags & UNDO_SELECTION_LIST_UNSELECTED));
     }
-}
+    memcpy (op->plt->current_row, op->current_row, sizeof (op->current_row));
+} 
 
 static int
 _undo_operation_prepare(undobuffer_t *undobuffer, playlist_t *plt) {
@@ -174,6 +177,7 @@ undo_change_selection(undobuffer_t *undobuffer, playlist_t *plt) {
     }
 
     undo_operation_item_list_t *op = _undo_operation_item_list_new(undobuffer, plt, items, count, 0);
+    memcpy(op->current_row, plt->current_row, sizeof (plt->current_row));
     op->flags = flags;
 
     op->_super.perform = (undo_operation_perform_fn)_undo_perform_change_selection;
