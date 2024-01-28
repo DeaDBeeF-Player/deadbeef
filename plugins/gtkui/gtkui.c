@@ -974,6 +974,12 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         return -1;
     }
 
+    if (id == DB_EV_PLAYLISTCHANGED) {
+        gtkui_dispatch_on_main(^{
+            deadbeef->undo_process();
+        });
+    }
+
     switch (id) {
     case DB_EV_SONGSTARTED: {
         ddb_event_track_t *ev = (ddb_event_track_t *)ctx;

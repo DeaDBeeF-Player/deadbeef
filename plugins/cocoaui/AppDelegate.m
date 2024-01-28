@@ -725,10 +725,16 @@ main_cleanup_and_quit (void);
 }
 
 - (int)ddb_message:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    if (_id == DB_EV_PLAYLISTCHANGED) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            deadbeef->undo_process();
+        });
+    }
+
     [self.mainWindow.sidebarOutlineViewController.mediaLibraryOutlineViewController  widgetMessage:_id ctx:ctx p1:p1 p2:p2];
 
-        [DesignModeState.sharedInstance.rootWidget message:_id ctx:ctx p1:p1 p2:p2];
-        [self.searchWindow.viewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
+    [DesignModeState.sharedInstance.rootWidget message:_id ctx:ctx p1:p1 p2:p2];
+    [self.searchWindow.viewController sendMessage:_id ctx:ctx p1:p1 p2:p2];
 
     if (_id == DB_EV_CONFIGCHANGED) {
         [self performSelectorOnMainThread:@selector(configChanged) withObject:nil waitUntilDone:NO];

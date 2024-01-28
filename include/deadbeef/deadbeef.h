@@ -1711,6 +1711,8 @@ typedef struct {
     /// since this function internally uses streamer_lock, which may cause a deadlock against pl_lock.
     ddb_playItem_t * (*streamer_get_playing_track_safe) (void);
 #endif
+
+    void (*undo_process)(void);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this
