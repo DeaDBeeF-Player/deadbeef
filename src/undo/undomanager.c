@@ -62,6 +62,9 @@ undomanager_shared_init (void) {
 
 undobuffer_t *
 undomanager_get_buffer (undomanager_t *undomanager) {
+    if (undomanager == NULL) {
+        return NULL;
+    }
     return undomanager->buffer;
 }
 
