@@ -10451,12 +10451,12 @@
 		2D7387D329BE5DA1003E3126 /* undo */ = {
 			isa = PBXGroup;
 			children = (
-				2D7387D429BE5DA1003E3126 /* undomanager.c */,
-				2D7387D529BE5DA1003E3126 /* undobuffer.c */,
 				2D7387D629BE5DA1003E3126 /* undo_playlist.c */,
-				2D7387D729BE5DA1003E3126 /* undomanager.h */,
-				2D7387D829BE5DA1003E3126 /* undobuffer.h */,
 				2D7387D929BE5DA1003E3126 /* undo_playlist.h */,
+				2D7387D529BE5DA1003E3126 /* undobuffer.c */,
+				2D7387D829BE5DA1003E3126 /* undobuffer.h */,
+				2D7387D429BE5DA1003E3126 /* undomanager.c */,
+				2D7387D729BE5DA1003E3126 /* undomanager.h */,
 			);
 			path = undo;
 			sourceTree = "<group>";

@@ -57,7 +57,8 @@ int cocoaui_command (int command, ...) {
         const char *name = va_arg(args, const char *);
         va_end(args);
 
-        NSUndoManager *undoManager = g_appDelegate.mainWindow.window.undoManager;
+        AppDelegate *appDelegate = (AppDelegate *)NSApp.delegate;
+        NSUndoManager *undoManager = appDelegate.mainWindow.window.undoManager;
         DdbUndoBuffer *buffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
 
         [undoManager setActionName:[NSString stringWithUTF8String:name]];
