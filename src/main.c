@@ -917,7 +917,7 @@ player_mainloop (void) {
                         output->unpause ();
                         messagepump_push (DB_EV_PAUSED, 0, 0, 0);
                     }
-                    else {
+                    else if (output->state () == DDB_PLAYBACK_STATE_PLAYING) {
                         output->pause ();
                         messagepump_push (DB_EV_PAUSED, 0, 1, 0);
                     }
