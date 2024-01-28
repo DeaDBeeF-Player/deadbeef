@@ -142,11 +142,6 @@ static void
 _viz_spectrum_listen_stub (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) {
 }
 
-static void
-runloop_end(void) {
-    undomanager_flush(undomanager_shared(), "Some Action");
-}
-
 // deadbeef api
 static DB_functions_t deadbeef_api = {
     .vmajor = DB_API_VERSION_MAJOR,
@@ -539,7 +534,6 @@ static DB_functions_t deadbeef_api = {
     .plt_insert_dir3 = (ddb_playItem_t *(*) (int visibility, uint32_t flags, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort, int (*callback)(ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data))plt_insert_dir3,
 
     .streamer_get_playing_track_safe = (DB_playItem_t *(*) (void))streamer_get_playing_track,
-    .runloop_end = runloop_end,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

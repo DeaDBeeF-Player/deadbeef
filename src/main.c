@@ -28,6 +28,7 @@
 #    include <config.h>
 #endif
 #include <assert.h>
+#include <dispatch/dispatch.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -951,6 +952,10 @@ player_mainloop (void) {
                         streamer_notify_track_deleted ();
                         break;
                     }
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        undomanager_flush(undomanager_shared(), "Some Action");
+                    });
+                    // fallthrough
                 case DB_EV_PAUSED:
                 case DB_EV_SONGFINISHED:
                     save_resume_state ();

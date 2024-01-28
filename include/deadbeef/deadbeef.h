@@ -1710,8 +1710,6 @@ typedef struct {
     /// Please ensure that this function is not called from within @c pl_lock,
     /// since this function internally uses streamer_lock, which may cause a deadlock against pl_lock.
     ddb_playItem_t * (*streamer_get_playing_track_safe) (void);
-
-    void (*runloop_end)(void);
 #endif
 } DB_functions_t;
 
