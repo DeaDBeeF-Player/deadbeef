@@ -182,7 +182,8 @@ static int grouptitleheight = 22;
             [self.delegate dropItems:(int)from_playlist before:row indices:indices count:(int)length copy:op==NSDragOperationCopy];
             free(indices);
         }
-    }
+        deadbeef->runloop_end();
+   }
     if ([pboard.types containsObject:ddbMedialibItemUTIType]) {
         NSArray *classes = @[[MedialibItemDragDropHolder class]];
         NSDictionary *options = @{};
@@ -202,18 +203,23 @@ static int grouptitleheight = 22;
         }
         [self.delegate dropPlayItems:items before:row count:(int)itemCount];
         free (items);
+        deadbeef->runloop_end();
     }
     else if ([pboard.types containsObject:NSFilenamesPboardType]) {
 
         NSArray *paths = [pboard propertyListForType:NSFilenamesPboardType];
         if (row != (self.dataModel).invalidRow) {
             // add before selected row
-            [self.delegate externalDropItems:paths after: [self.dataModel rowForIndex:sel-1] ];
+            [self.delegate externalDropItems:paths after: [self.dataModel rowForIndex:sel-1] completionBlock:^{
+                deadbeef->runloop_end();
+            }];
         }
         else {
             // no selected row, add to end
             DdbListviewRow_t lastRow = [self.dataModel rowForIndex:((self.dataModel).rowCount-1)];
-            [self.delegate externalDropItems:paths after:lastRow];
+            [self.delegate externalDropItems:paths after:lastRow completionBlock:^{
+                deadbeef->runloop_end();
+            }];
         }
     }
 

@@ -1367,7 +1367,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     deadbeef->pl_save_all();
 }
 
--(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)_after {
+-(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)_after  completionBlock:(nonnull void (^) (void))completionBlock {
     ddb_playlist_t *plt = deadbeef->plt_alloc("drag-drop-playlist");
     ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
     if (!deadbeef->plt_add_files_begin (plt, 0)) {
@@ -1422,6 +1422,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                     deadbeef->plt_unref (plt_curr);
                     deadbeef->pl_save_current();
                     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+
+                    completionBlock();
                 });
             }
         });
