@@ -1921,7 +1921,6 @@ pl_item_unref (playItem_t *it) {
 
 int
 plt_delete_selected (playlist_t *playlist) {
-
     LOCK;
     int count = plt_getselcount (playlist);
     if (count == 0) {
@@ -1931,10 +1930,15 @@ plt_delete_selected (playlist_t *playlist) {
     playItem_t **items_to_delete = calloc (count, sizeof (playItem_t *));
     playItem_t *next = NULL;
     int i = 0;
-    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next) {
+    int ret = -1;
+    int current_index = 0;
+    for (playItem_t *it = playlist->head[PL_MAIN]; it; it = next, current_index++) {
         next = it->next[PL_MAIN];
         if (it->selected) {
             items_to_delete[i++] = it;
+            if (ret == -1) {
+                ret = current_index;
+            }
             pl_item_ref (it);
         }
     }
@@ -1954,7 +1958,7 @@ plt_delete_selected (playlist_t *playlist) {
         playlist->current_row[PL_SEARCH] = playlist->count[PL_SEARCH] - 1;
     }
     UNLOCK;
-    return count - 1;
+    return ret;
 }
 
 int
