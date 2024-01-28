@@ -35,7 +35,10 @@ deadbeef_SOURCES =\
 	u8_uc_map.h\
 	vfs.c vfs.h vfs_stdio.c\
 	volume.c volume.h\
-	viz.c viz.h
+	viz.c viz.h\
+	undo/undo_playlist.c undo/undo_playlist.h\
+	undo/undobuffer.c undo/undobuffer.h\
+	undo/undomanager.c undo/undomanager.h
 
 deadbeef_LDADD = $(LDADD) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(DISPATCH_LIBS) $(LTLIBINTL) ../shared/libctmap.la ../plugins/libparser/libparser.la
 
