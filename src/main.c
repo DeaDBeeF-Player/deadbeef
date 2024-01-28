@@ -1104,6 +1104,8 @@ main_cleanup_and_quit (void) {
         scriptableDeinitShared ();
 #endif
 
+        undomanager_free(undomanager_shared());
+
         pl_free (); // may access conf_*
         conf_free ();
 
@@ -1112,8 +1114,6 @@ main_cleanup_and_quit (void) {
         trace ("plug_cleanup\n");
         plug_cleanup ();
         trace ("logger_free\n");
-
-        undomanager_free(undomanager_shared());
 
         trace ("💛💙\n");
         ddb_logger_free ();
