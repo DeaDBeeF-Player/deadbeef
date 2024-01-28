@@ -450,25 +450,25 @@ main_cleanup_and_quit (void);
                         }
                     }
                 }
-                deadbeef->plt_add_files_end (plt, 0);
                 if (!fileadd_cancelled) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         if (clear) {
                             deadbeef->plt_clear(plt_curr);
-                            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                         }
                         ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
+                        deadbeef->undo_set_action_name("Add Files");
                         [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:tail];
                         if (tail != NULL) {
                             deadbeef->pl_item_unref (tail);
                         }
                         deadbeef->pl_save_current();
-                        if (play) {
-                            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-                            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
-                        }
+                        deadbeef->plt_add_files_end (plt, 0);
                         deadbeef->plt_unref (plt);
                         deadbeef->plt_unref (plt_curr);
+
+                        if (play) {
+                            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+                        }
                     });
                 }
                 else {
@@ -510,7 +510,6 @@ main_cleanup_and_quit (void);
                         deadbeef->plt_add_dir2 (0, plt, fileName.UTF8String, NULL, NULL);
                     }
                 }
-                deadbeef->plt_add_files_end (plt, 0);
                 if (!fileadd_cancelled) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
@@ -518,10 +517,11 @@ main_cleanup_and_quit (void);
                         if (tail != NULL) {
                             deadbeef->pl_item_unref (tail);
                         }
+                        deadbeef->pl_save_current();
+                        deadbeef->undo_set_action_name("Add Folders");
+                        deadbeef->plt_add_files_end (plt, 0);
                         deadbeef->plt_unref (plt);
                         deadbeef->plt_unref (plt_curr);
-                        deadbeef->pl_save_current();
-                        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                     });
                 }
                 else {
@@ -543,22 +543,30 @@ main_cleanup_and_quit (void);
         if (returnCode == NSModalResponseOK) {
             NSString *text = [self.addLocationTextField.stringValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-            ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+            ddb_playlist_t *plt = deadbeef->plt_alloc ("add-location");
+            ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
                 dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
                 dispatch_async(aQueue, ^{
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-                    deadbeef->plt_insert_file2 (0, plt, tail, text.UTF8String, NULL, NULL, NULL);
+                     deadbeef->plt_insert_file2 (0, plt, tail, text.UTF8String, NULL, NULL, NULL);
+                    [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:tail];
                     if (tail) {
                         deadbeef->pl_item_unref (tail);
                     }
-                    deadbeef->plt_add_files_end (plt, 0);
-                    deadbeef->plt_unref (plt);
                     deadbeef->pl_save_current ();
+
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        deadbeef->undo_set_action_name("Add Location");
+                        deadbeef->plt_add_files_end (plt, 0);
+                        deadbeef->plt_unref (plt);
+                        deadbeef->plt_unref (plt_curr);
+                    });
                 });
             }
             else {
                 deadbeef->plt_unref (plt);
+                deadbeef->plt_unref (plt_curr);
             }
         }
     }];
@@ -857,15 +865,14 @@ main_cleanup_and_quit (void);
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
                 int abort = 0;
                 deadbeef->plt_load2 (0, plt, NULL, fname.UTF8String, &abort, NULL, NULL);
-                deadbeef->plt_add_files_end (plt, 0);
                 if (!abort) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         deadbeef->plt_clear (plt_curr);
                         [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:NULL];
                         deadbeef->plt_save_config (plt);
+                        deadbeef->plt_add_files_end (plt, 0);
                         deadbeef->plt_unref (plt);
                         deadbeef->plt_unref (plt_curr);
-                        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                     });
                 }
                 else {

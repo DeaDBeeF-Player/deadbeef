@@ -144,8 +144,14 @@ _viz_spectrum_listen_stub (void *ctx, void (*callback)(void *ctx, const ddb_audi
 
 static void
 _undo_process(void) {
-    undomanager_flush(undomanager_shared(), "Some Action");
+    undomanager_flush(undomanager_shared());
 }
+
+static void
+_undo_set_action_name (const char *name) {
+    undomanager_set_action_name (undomanager_shared(), name);
+}
+
 
 // deadbeef api
 static DB_functions_t deadbeef_api = {
@@ -540,6 +546,7 @@ static DB_functions_t deadbeef_api = {
 
     .streamer_get_playing_track_safe = (DB_playItem_t *(*) (void))streamer_get_playing_track,
     .undo_process = _undo_process,
+    .undo_set_action_name = _undo_set_action_name,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

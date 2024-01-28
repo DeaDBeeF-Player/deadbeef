@@ -162,6 +162,9 @@ static int grouptitleheight = 22;
         row = [self.dataModel rowForIndex:sel];
     }
 
+
+    deadbeef->undo_set_action_name("Drag & drop");
+
     if ([pboard.types containsObject:ddbPlaylistItemsUTIType]) {
         NSArray *classes = @[[PlaylistLocalDragDropHolder class]];
         NSDictionary *options = @{};

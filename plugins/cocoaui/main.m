@@ -61,7 +61,9 @@ int cocoaui_command (int command, ...) {
         NSUndoManager *undoManager = appDelegate.mainWindow.window.undoManager;
         DdbUndoBuffer *buffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
 
-        [undoManager setActionName:[NSString stringWithUTF8String:name]];
+        NSString *actionName = @(name ?: "");
+        actionName = [actionName stringByReplacingOccurrencesOfString:@"&" withString:@"&&"];
+        [undoManager setActionName:actionName];
         [undoManager registerUndoBuffer:buffer];
     }
 

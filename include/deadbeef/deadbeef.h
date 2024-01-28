@@ -1712,7 +1712,13 @@ typedef struct {
     ddb_playItem_t * (*streamer_get_playing_track_safe) (void);
 #endif
 
+    /// Called to create an undo action from all actions
+    /// accumulated since the previous calls
     void (*undo_process)(void);
+
+    /// Set the action name to be displayed in Undo/Redo menu item.
+    /// The name is reset to null for each new action when undo_process is called.
+    void (*undo_set_action_name) (const char *name);
 } DB_functions_t;
 
 // NOTE: an item placement must be selected like this

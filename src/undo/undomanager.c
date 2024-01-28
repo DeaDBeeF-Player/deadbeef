@@ -22,12 +22,14 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 #include "undomanager.h"
 
 extern DB_functions_t *deadbeef;
 
 struct undomanager_s {
     undobuffer_t *buffer;
+    char *action_name;
 };
 
 static undomanager_t *_shared;
@@ -44,6 +46,7 @@ undomanager_free (undomanager_t *undomanager) {
     if (undomanager == _shared) {
         _shared = NULL;
     }
+    free (undomanager->action_name);
     if (undomanager->buffer != NULL) {
         undobuffer_free(undomanager->buffer);
     }
@@ -87,17 +90,30 @@ _plug_get_gui (void) {
 }
 
 void
-undomanager_flush(undomanager_t *undomanager, const char *name) {
-    undobuffer_t *undobuffer = undomanager_consume_buffer(undomanager);
-    if (!undobuffer_has_operations(undobuffer)) {
+undomanager_set_action_name (undomanager_t *undomanager, const char *name) {
+    free (undomanager->action_name);
+    undomanager->action_name = name ? strdup (name) : NULL;
+}
+
+const char *
+undomanager_get_action_name (undomanager_t *undomanager) {
+    return undomanager->action_name;
+}
+
+void
+undomanager_flush(undomanager_t *undomanager) {
+    undobuffer_t *undobuffer = undomanager_consume_buffer (undomanager);
+    if (!undobuffer_has_operations (undobuffer)) {
         return;
     }
 
-    DB_plugin_t *ui_plugin = _plug_get_gui();
+    DB_plugin_t *ui_plugin = _plug_get_gui ();
     if (ui_plugin && ui_plugin->command) {
-        ui_plugin->command (111, undobuffer, name);
+        ui_plugin->command (111, undobuffer, undomanager_get_action_name (undomanager));
     }
     else {
-        undobuffer_free(undobuffer); // lost
+        undobuffer_free (undobuffer); // lost
     }
+
+    undomanager_set_action_name (undomanager, NULL);
 }
