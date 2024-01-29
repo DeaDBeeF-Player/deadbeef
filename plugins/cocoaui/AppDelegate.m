@@ -454,6 +454,7 @@ main_cleanup_and_quit (void);
                     dispatch_async(dispatch_get_main_queue(), ^{
                         if (clear) {
                             deadbeef->plt_clear(plt_curr);
+                            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
                         }
                         ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
                         deadbeef->undo_set_action_name("Add Files");
@@ -862,12 +863,13 @@ main_cleanup_and_quit (void);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             ddb_playlist_t *plt = deadbeef->plt_alloc ("load-playlist");
             ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
+            deadbeef->plt_clear (plt_curr);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
             if (!deadbeef->plt_add_files_begin (plt, 0)) {
                 int abort = 0;
                 deadbeef->plt_load2 (0, plt, NULL, fname.UTF8String, &abort, NULL, NULL);
                 if (!abort) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        deadbeef->plt_clear (plt_curr);
                         [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:NULL];
                         deadbeef->plt_save_config (plt);
                         deadbeef->plt_add_files_end (plt, 0);
