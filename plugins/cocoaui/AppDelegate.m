@@ -438,6 +438,10 @@ main_cleanup_and_quit (void);
         NSArray* files = openDlg.URLs;
         ddb_playlist_t *plt = deadbeef->plt_alloc("open-files");
         ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
+        if (clear) {
+            deadbeef->plt_clear(plt_curr);
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+        }
         if (!deadbeef->plt_add_files_begin (plt, 0)) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 for (NSUInteger i = 0; i < files.count; i++) {
@@ -451,10 +455,6 @@ main_cleanup_and_quit (void);
                 }
                 if (!fileadd_cancelled) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        if (clear) {
-                            deadbeef->plt_clear(plt_curr);
-                            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-                        }
                         ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
                         deadbeef->undo_set_action_name("Add Files");
                         deadbeef->plt_move_all_items(plt_curr, plt, tail);
@@ -472,6 +472,7 @@ main_cleanup_and_quit (void);
                     });
                 }
                 else {
+                    deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
                     deadbeef->plt_unref (plt_curr);
                 }
@@ -525,6 +526,7 @@ main_cleanup_and_quit (void);
                     });
                 }
                 else {
+                    deadbeef->plt_add_files_end (plt, 0);
                     deadbeef->plt_unref (plt);
                     deadbeef->plt_unref (plt_curr);
                 }

@@ -871,6 +871,7 @@
 		2D28F1271C283CAD004A6E7B /* tns.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0C41C283CAC004A6E7B /* tns.h */; };
 		2D2A14BA19B6485200AD1EB7 /* gme.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
+		2D2C51562B67B5B800EAC44E /* fileman.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5ED2269BB4300AFF9AE /* fileman.c */; };
 		2D30D0B425E2A5DD0023A299 /* DesignModeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D0B225E2A5DD0023A299 /* DesignModeState.h */; };
 		2D30D0B525E2A5DD0023A299 /* DesignModeState.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D0B325E2A5DD0023A299 /* DesignModeState.m */; };
 		2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */; };
@@ -17814,6 +17815,7 @@
 				2DA24B1019E7203A00E34920 /* http_proxy.c in Sources */,
 				2DA24B3A19E7203B00E34920 /* strequal.c in Sources */,
 				2D667E081C9C2D8500359129 /* curl_ntlm_core.c in Sources */,
+				2D2C51562B67B5B800EAC44E /* fileman.c in Sources */,
 				2DA24B2019E7203A00E34920 /* netrc.c in Sources */,
 				2DA24B1A19E7203A00E34920 /* llist.c in Sources */,
 				2DA24B4119E7203B00E34920 /* transfer.c in Sources */,
