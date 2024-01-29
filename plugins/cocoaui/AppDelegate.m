@@ -38,7 +38,6 @@
 #import "LogWindowController.h"
 #import "NowPlayable.h"
 #import "NSMenu+ActionItems.h"
-#import "PlaylistUtil.h"
 #import "ReplayGainScannerController.h"
 #import "TrackPropertiesManager.h"
 #import "streamer.h"
@@ -458,7 +457,7 @@ main_cleanup_and_quit (void);
                         }
                         ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
                         deadbeef->undo_set_action_name("Add Files");
-                        [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:tail];
+                        deadbeef->plt_move_all_items(plt_curr, plt, tail);
                         if (tail != NULL) {
                             deadbeef->pl_item_unref (tail);
                         }
@@ -514,7 +513,7 @@ main_cleanup_and_quit (void);
                 if (!fileadd_cancelled) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
-                        [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:tail];
+                        deadbeef->plt_move_all_items(plt_curr, plt, tail);
                         if (tail != NULL) {
                             deadbeef->pl_item_unref (tail);
                         }
@@ -551,7 +550,7 @@ main_cleanup_and_quit (void);
                 dispatch_async(aQueue, ^{
                     DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
                      deadbeef->plt_insert_file2 (0, plt, tail, text.UTF8String, NULL, NULL, NULL);
-                    [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:tail];
+                    deadbeef->plt_move_all_items(plt_curr, plt, tail);
                     if (tail) {
                         deadbeef->pl_item_unref (tail);
                     }
@@ -870,7 +869,7 @@ main_cleanup_and_quit (void);
                 deadbeef->plt_load2 (0, plt, NULL, fname.UTF8String, &abort, NULL, NULL);
                 if (!abort) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:NULL];
+                        deadbeef->plt_move_all_items(plt_curr, plt, NULL);
                         deadbeef->plt_save_config (plt);
                         deadbeef->plt_add_files_end (plt, 0);
                         deadbeef->plt_unref (plt);

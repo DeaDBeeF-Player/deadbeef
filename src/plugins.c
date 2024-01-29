@@ -545,6 +545,7 @@ static DB_functions_t deadbeef_api = {
     .plt_insert_dir3 = (ddb_playItem_t *(*) (int visibility, uint32_t flags, ddb_playlist_t *plt, ddb_playItem_t *after, const char *dirname, int *pabort, int (*callback)(ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data))plt_insert_dir3,
 
     .streamer_get_playing_track_safe = (DB_playItem_t *(*) (void))streamer_get_playing_track,
+    .plt_move_all_items = (void (*) (ddb_playlist_t *to, ddb_playlist_t *from, ddb_playItem_t *insert_after))plt_move_all_items,
     .undo_process = _undo_process,
     .undo_set_action_name = _undo_set_action_name,
 };

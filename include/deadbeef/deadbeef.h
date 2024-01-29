@@ -1712,6 +1712,9 @@ typedef struct {
     ddb_playItem_t * (*streamer_get_playing_track_safe) (void);
 #endif
 
+    /// Move all items from playlist @c from to playlist @c to, after the item specified by @c insert_after
+    void (*plt_move_all_items) (ddb_playlist_t *to, ddb_playlist_t *from, ddb_playItem_t *insert_after);
+
     /// Called to create an undo action from all actions
     /// accumulated since the previous calls
     void (*undo_process)(void);

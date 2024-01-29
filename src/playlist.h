@@ -406,6 +406,9 @@ void
 plt_move_items (playlist_t *to, int iter, playlist_t *from, playItem_t *drop_before, uint32_t *indexes, int count);
 
 void
+plt_move_all_items (playlist_t *to, playlist_t *from, playItem_t *insert_after);
+
+void
 plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, uint32_t *indices, int cnt);
 
 void

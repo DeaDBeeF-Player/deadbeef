@@ -3689,6 +3689,26 @@ plt_move_items (playlist_t *to, int iter, playlist_t *from, playItem_t *drop_bef
 }
 
 void
+plt_move_all_items (playlist_t *to, playlist_t *from, playItem_t *insert_after) {
+    LOCK;
+    playItem_t *it = from->head[PL_MAIN];
+    pl_item_ref(it);
+    while (it != NULL) {
+        playItem_t *next = it->next[PL_MAIN];
+        if (next != NULL) {
+            pl_item_ref (next);
+        }
+
+        plt_remove_item (from, it);
+        plt_insert_item (to, insert_after, it);
+        insert_after = it;
+        pl_item_unref (it);
+        it = next;
+    }
+    UNLOCK;
+}
+
+void
 plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, uint32_t *indices, int cnt) {
     pl_lock ();
 

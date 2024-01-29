@@ -22,6 +22,7 @@
 */
 
 #include <deadbeef/deadbeef.h>
+#include <dispatch/dispatch.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -86,7 +87,7 @@ gtkpl_addfile_cb (gpointer data, gpointer userdata) {
     g_free (data);
 }
 
-void
+static void
 gtkpl_add_files (GSList *lst) {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
@@ -128,24 +129,19 @@ gtkui_add_files (struct _GSList *lst) {
     deadbeef->thread_detach (tid);
 }
 
-static void
-open_files_worker (void *data) {
-    GSList *lst = (GSList *)data;
-    gtkpl_add_files (lst);
-    deadbeef->pl_save_current ();
-    deadbeef->pl_set_cursor (PL_MAIN, 0);
-    deadbeef->conf_save ();
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
-}
-
 void
 gtkui_open_files (struct _GSList *lst) {
     deadbeef->pl_clear ();
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
-    intptr_t tid = deadbeef->thread_start (open_files_worker, lst);
-    deadbeef->thread_detach (tid);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        gtkpl_add_files (lst);
+        deadbeef->pl_save_current ();
+        deadbeef->pl_set_cursor (PL_MAIN, 0);
+        deadbeef->conf_save ();
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+    });
 }
 
 void

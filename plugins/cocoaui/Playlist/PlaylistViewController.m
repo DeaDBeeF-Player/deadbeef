@@ -27,7 +27,6 @@
 #import "GroupByCustomWindowController.h"
 #import "NSImage+Additions.h"
 #import "PlaylistGroup.h"
-#import "PlaylistUtil.h"
 #import "PlaylistViewController.h"
 #import "PlaylistView.h"
 #import "TrackContextMenu.h"
@@ -1415,7 +1414,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             else {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     // move items to UI playlist
-                    [PlaylistUtil.shared moveItemsFromPlaylist:plt toPlaylist:plt_curr afterItem:(ddb_playItem_t *)_after];
+                    deadbeef->plt_move_all_items(plt_curr, plt, (ddb_playItem_t *)_after);
                     // TODO: set cursor to the first dropped item
 
                     deadbeef->plt_unref (plt);
