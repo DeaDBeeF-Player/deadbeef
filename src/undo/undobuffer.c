@@ -30,6 +30,7 @@ extern DB_functions_t *deadbeef;
 struct _undobuffer_s {
     undo_operation_t *operations;
     int enabled;
+    int grouping;
 };
 
 undobuffer_t *
@@ -86,7 +87,7 @@ void
 undobuffer_execute (undobuffer_t *undobuffer) {
     for (undo_operation_t *op = undobuffer->operations; op != NULL; op = op->next) {
         if (op->perform != NULL) {
-            op->perform(undobuffer, op);
+            op->perform(op);
         }
     }
     if (undobuffer->operations != NULL) {
@@ -97,4 +98,24 @@ undobuffer_execute (undobuffer_t *undobuffer) {
 int
 undobuffer_has_operations(undobuffer_t *undobuffer) {
     return undobuffer->operations != NULL;
+}
+
+void
+undobuffer_group_begin (undobuffer_t *undobuffer) {
+    undobuffer->grouping = 1;
+}
+
+void
+undobuffer_group_end (undobuffer_t *undobuffer) {
+    undobuffer->grouping = 0;
+}
+
+int
+undobuffer_is_grouping (undobuffer_t *undobuffer) {
+    return undobuffer->grouping;
+}
+
+undo_operation_t *
+undobuffer_get_current_operation (undobuffer_t *undobuffer) {
+    return undobuffer->grouping ? undobuffer->operations : NULL;
 }

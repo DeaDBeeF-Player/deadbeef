@@ -1008,6 +1008,8 @@ typedef struct {
     int (*plt_getselcount) (ddb_playlist_t *playlist);
     float (*plt_get_totaltime) (ddb_playlist_t *plt);
     int (*plt_get_item_count) (ddb_playlist_t *plt, int iter);
+
+    /// If undo registration is enabled: to call on main thread.
     int (*plt_delete_selected) (ddb_playlist_t *plt);
     void (*plt_set_cursor) (ddb_playlist_t *plt, int iter, int cursor);
     int (*plt_get_cursor) (ddb_playlist_t *plt, int iter);
@@ -1713,6 +1715,7 @@ typedef struct {
 #endif
 
     /// Move all items from playlist @c from to playlist @c to, after the item specified by @c insert_after
+    /// If undo registration is enabled: required to be called on main thread.
     void (*plt_move_all_items) (ddb_playlist_t *to, ddb_playlist_t *from, ddb_playItem_t *insert_after);
 
     /// Called to create an undo action from all actions

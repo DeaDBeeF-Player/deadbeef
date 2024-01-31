@@ -1950,10 +1950,12 @@ plt_delete_selected (playlist_t *playlist) {
     }
     UNLOCK;
 
+    undobuffer_group_begin (undomanager_get_buffer (undomanager_shared ()));
     for (i = 0; i < count; i++) {
         plt_remove_item (playlist, items_to_delete[i]);
         pl_item_unref (items_to_delete[i]);
     }
+    undobuffer_group_end (undomanager_get_buffer (undomanager_shared ()));
     free (items_to_delete);
 
     LOCK;
@@ -3693,6 +3695,7 @@ plt_move_all_items (playlist_t *to, playlist_t *from, playItem_t *insert_after) 
     LOCK;
     playItem_t *it = from->head[PL_MAIN];
     pl_item_ref(it);
+    undobuffer_group_begin (undomanager_get_buffer (undomanager_shared ()));
     while (it != NULL) {
         playItem_t *next = it->next[PL_MAIN];
         if (next != NULL) {
@@ -3705,6 +3708,7 @@ plt_move_all_items (playlist_t *to, playlist_t *from, playItem_t *insert_after) 
         pl_item_unref (it);
         it = next;
     }
+    undobuffer_group_end (undomanager_get_buffer (undomanager_shared ()));
     UNLOCK;
 }
 

@@ -23,6 +23,8 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "undobuffer.h"
+#include "undomanager.h"
 #include "undo_playlist.h"
 
 #define UNDO_SELECTION_LIST_UNSELECTED 1
@@ -74,25 +76,27 @@ _undo_operation_item_list_new(undobuffer_t *undobuffer, playlist_t *plt, playIte
 }
 
 static void
-_undo_perform_remove_items(undobuffer_t *undobuffer, undo_operation_item_list_t *op) {
-    // FIXME: add plt_remove_items function
+_undo_perform_remove_items(undo_operation_item_list_t *op) {
+    undobuffer_group_begin (undomanager_get_buffer (undomanager_shared ()));
     for (size_t i = 0; i < op->count; i++) {
         plt_remove_item(op->plt, op->items[i]);
     }
+    undobuffer_group_end (undomanager_get_buffer (undomanager_shared ()));
 }
 
 static void
-_undo_perform_insert_items (undobuffer_t *undobuffer, undo_operation_item_list_t *op) {
-    // FIXME: add plt_insert_items function
+_undo_perform_insert_items (undo_operation_item_list_t *op) {
+    undobuffer_group_begin (undomanager_get_buffer (undomanager_shared ()));
     playItem_t *after = op->insert_position;
     for (size_t i = 0; i < op->count; i++) {
         plt_insert_item(op->plt, after, op->items[i]);
         after = op->items[i];
     }
+    undobuffer_group_end (undomanager_get_buffer (undomanager_shared ()));
 }
 
 static void
-_undo_perform_change_selection (undobuffer_t *undobuffer, undo_operation_item_list_t *op) {
+_undo_perform_change_selection (undo_operation_item_list_t *op) {
     // Restore selection according to the flag.
     if (op->flags & UNDO_SELECTION_LIST_UNSELECTED) {
         plt_select_all(op->plt);
@@ -126,11 +130,34 @@ undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items,
     if (_undo_operation_prepare (undobuffer, plt) != 0) {
         return;
     }
-    playItem_t *after = pl_get_prev(items[0], PL_MAIN);
-    undo_operation_item_list_t *op = _undo_operation_item_list_new(undobuffer, plt, items, count, 1);
-    op->insert_position = after;
-    op->_super.perform = (undo_operation_perform_fn)_undo_perform_insert_items;
-    undobuffer_append_operation(undobuffer, &op->_super);
+    // optimization: batching
+    undo_operation_item_list_t *op = NULL;
+    if (undobuffer_is_grouping (undobuffer)) {
+        undo_operation_t *baseop = undobuffer_get_current_operation(undobuffer);
+        if (baseop->perform == (undo_operation_perform_fn)_undo_perform_insert_items) {
+            op = (undo_operation_item_list_t *)baseop;
+        }
+    }
+
+    playItem_t *after = items[0]->prev[PL_MAIN];
+
+    if (op == NULL || after != op->insert_position) {
+        op = _undo_operation_item_list_new(undobuffer, plt, items, count, 1);
+        if (after != NULL) {
+            pl_item_ref (after);
+            op->insert_position = after;
+        }
+        op->_super.perform = (undo_operation_perform_fn)_undo_perform_insert_items;
+        undobuffer_append_operation(undobuffer, &op->_super);
+        return;
+    }
+
+    op->items = realloc (op->items, (op->count + count) * sizeof (playItem_t *));
+    for (size_t i = 0; i < count; i++) {
+        op->items[op->count + i] = items[i];
+        pl_item_ref(items[i]);
+    }
+    op->count += count;
 }
 
 void
@@ -138,9 +165,28 @@ undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items,
     if (_undo_operation_prepare (undobuffer, plt) != 0) {
         return;
     }
-    undo_operation_item_list_t *op = _undo_operation_item_list_new(undobuffer, plt, items, count, 1);
-    op->_super.perform = (undo_operation_perform_fn)_undo_perform_remove_items;
-    undobuffer_append_operation(undobuffer, &op->_super);
+
+    // optimization: batching
+    undo_operation_item_list_t *op = NULL;
+    if (undobuffer_is_grouping (undobuffer)) {
+        undo_operation_t *baseop = undobuffer_get_current_operation(undobuffer);
+        if (baseop->perform == (undo_operation_perform_fn)_undo_perform_remove_items) {
+            op = (undo_operation_item_list_t *)baseop;
+        }
+    }
+
+    if (op == NULL) {
+        op = _undo_operation_item_list_new(undobuffer, plt, items, count, 1);
+        op->_super.perform = (undo_operation_perform_fn)_undo_perform_remove_items;
+        undobuffer_append_operation(undobuffer, &op->_super);
+        return;
+    }
+    op->items = realloc (op->items, (op->count + count) * sizeof (playItem_t *));
+    for (size_t i = 0; i < count; i++) {
+        op->items[op->count + i] = items[i];
+        pl_item_ref(items[i]);
+    }
+    op->count += count;
 }
 
 void
