@@ -22,6 +22,7 @@
 */
 
 #import "DdbUndoBuffer.h"
+#include "undomanager.h"
 
 @interface DdbUndoBuffer()
 
@@ -42,7 +43,7 @@
 }
 
 - (void)apply {
-    undobuffer_execute(self.buffer);
+    undobuffer_execute(self.buffer, undomanager_get_buffer(undomanager_shared()));
 }
 
 @end

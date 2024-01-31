@@ -84,10 +84,10 @@ undobuffer_append_operation (undobuffer_t *undobuffer, undo_operation_t *op) {
 }
 
 void
-undobuffer_execute (undobuffer_t *undobuffer) {
+undobuffer_execute (undobuffer_t *undobuffer, undobuffer_t *current_undobuffer) {
     for (undo_operation_t *op = undobuffer->operations; op != NULL; op = op->next) {
         if (op->perform != NULL) {
-            op->perform(op);
+            op->perform(current_undobuffer, op);
         }
     }
     if (undobuffer->operations != NULL) {

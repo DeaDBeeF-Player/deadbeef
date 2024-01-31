@@ -29,9 +29,6 @@
 void
 undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
 
-//void
-//undo_append_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
-
 void
 undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
 

@@ -33,7 +33,7 @@ struct _undobuffer_s;
 typedef struct _undobuffer_s undobuffer_t;
 
 struct undo_operation_s;
-typedef void (*undo_operation_perform_fn)(struct undo_operation_s *op);
+typedef void (*undo_operation_perform_fn)(undobuffer_t *undobuffer, struct undo_operation_s *op);
 typedef void (*undo_operation_deinit_fn)(struct undo_operation_s *op);
 
 typedef struct undo_operation_s {
@@ -69,8 +69,10 @@ undobuffer_get_current_operation (undobuffer_t *undobuffer);
 void
 undobuffer_append_operation (undobuffer_t *undobuffer, undo_operation_t *op);
 
+/// @param undobuffer the buffer to execute
+/// @param current_undobuffer the current buffer to register the resulting undo operations
 void
-undobuffer_execute (undobuffer_t *undobuffer);
+undobuffer_execute (undobuffer_t *undobuffer, undobuffer_t *current_undobuffer);
 
 int
 undobuffer_has_operations(undobuffer_t *undobuffer);

@@ -24,11 +24,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "undobuffer.h"
-#include "undomanager.h"
 #include "undo_playlist.h"
 
 #define UNDO_SELECTION_LIST_UNSELECTED 1
 
+// This structure is reused for Insert, Remove and ChangeSelection operations.
+// The list of items is required to be contiguous in the target playlist.
+// ChangeSelection operations are registered automatically before registering Insert or Remove, only when undobuffer is empty.
 typedef struct {
     undo_operation_t _super;
     playlist_t *plt;
@@ -36,12 +38,13 @@ typedef struct {
     playItem_t *insert_position; // insert after this item
     size_t count;
     int current_row[PL_MAX_ITERATORS]; // current row (cursor)
-    uint32_t flags; // reusable flag fields, meaning changes depending on the operation type.
+
+    // UNDO_SELECTION_LIST_UNSELECTED: indicates that the items list represents unselected items for undo selection change operations.
+    uint32_t flags;
 } undo_operation_item_list_t;
 
 void
 undo_change_selection(undobuffer_t *undobuffer, playlist_t *plt);
-
 
 static void
 _undo_operation_item_list_deinit(undo_operation_item_list_t *op) {
@@ -76,27 +79,30 @@ _undo_operation_item_list_new(undobuffer_t *undobuffer, playlist_t *plt, playIte
 }
 
 static void
-_undo_perform_remove_items(undo_operation_item_list_t *op) {
-    undobuffer_group_begin (undomanager_get_buffer (undomanager_shared ()));
+_undo_perform_remove_items(undobuffer_t *undobuffer, undo_operation_t *_op) {
+    undo_operation_item_list_t *op = (undo_operation_item_list_t *)_op;
+    undobuffer_group_begin (undobuffer);
     for (size_t i = 0; i < op->count; i++) {
         plt_remove_item(op->plt, op->items[i]);
     }
-    undobuffer_group_end (undomanager_get_buffer (undomanager_shared ()));
+    undobuffer_group_end (undobuffer);
 }
 
 static void
-_undo_perform_insert_items (undo_operation_item_list_t *op) {
-    undobuffer_group_begin (undomanager_get_buffer (undomanager_shared ()));
+_undo_perform_insert_items (undobuffer_t *undobuffer, undo_operation_t *_op) {
+    undo_operation_item_list_t *op = (undo_operation_item_list_t *)_op;
+    undobuffer_group_begin (undobuffer);
     playItem_t *after = op->insert_position;
     for (size_t i = 0; i < op->count; i++) {
         plt_insert_item(op->plt, after, op->items[i]);
         after = op->items[i];
     }
-    undobuffer_group_end (undomanager_get_buffer (undomanager_shared ()));
+    undobuffer_group_end (undobuffer);
 }
 
 static void
-_undo_perform_change_selection (undo_operation_item_list_t *op) {
+_undo_perform_change_selection (undobuffer_t *undobuffer, undo_operation_t *_op) {
+    undo_operation_item_list_t *op = (undo_operation_item_list_t *)_op;
     // Restore selection according to the flag.
     if (op->flags & UNDO_SELECTION_LIST_UNSELECTED) {
         plt_select_all(op->plt);
@@ -124,7 +130,8 @@ _undo_operation_prepare(undobuffer_t *undobuffer, playlist_t *plt) {
     return 0;
 }
 
-// It's required that the items don't have holes, i.e. they're linked together
+// The list of items must be contiguous in playlist.
+// The list will be batched with the previous operation if possible.
 void
 undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count) {
     if (_undo_operation_prepare (undobuffer, plt) != 0) {
@@ -170,14 +177,14 @@ undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items,
     undo_operation_item_list_t *op = NULL;
     if (undobuffer_is_grouping (undobuffer)) {
         undo_operation_t *baseop = undobuffer_get_current_operation(undobuffer);
-        if (baseop->perform == (undo_operation_perform_fn)_undo_perform_remove_items) {
+        if (baseop->perform == _undo_perform_remove_items) {
             op = (undo_operation_item_list_t *)baseop;
         }
     }
 
     if (op == NULL) {
         op = _undo_operation_item_list_new(undobuffer, plt, items, count, 1);
-        op->_super.perform = (undo_operation_perform_fn)_undo_perform_remove_items;
+        op->_super.perform = _undo_perform_remove_items;
         undobuffer_append_operation(undobuffer, &op->_super);
         return;
     }
@@ -226,6 +233,6 @@ undo_change_selection(undobuffer_t *undobuffer, playlist_t *plt) {
     memcpy(op->current_row, plt->current_row, sizeof (plt->current_row));
     op->flags = flags;
 
-    op->_super.perform = (undo_operation_perform_fn)_undo_perform_change_selection;
+    op->_super.perform = _undo_perform_change_selection;
     undobuffer_append_operation(undobuffer, &op->_super);
 }
