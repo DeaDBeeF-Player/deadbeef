@@ -102,17 +102,16 @@ undomanager_get_action_name (undomanager_t *undomanager) {
 
 void
 undomanager_flush(undomanager_t *undomanager) {
-    undobuffer_t *undobuffer = undomanager_consume_buffer (undomanager);
-    if (!undobuffer_has_operations (undobuffer)) {
-        return;
-    }
-
     DB_plugin_t *ui_plugin = _plug_get_gui ();
-    if (ui_plugin && ui_plugin->command) {
+    undobuffer_t *undobuffer = undomanager_consume_buffer (undomanager);
+
+    int has_ui_command = ui_plugin != NULL && ui_plugin->command != NULL;
+
+    if (undobuffer_has_operations (undobuffer) && has_ui_command) {
         ui_plugin->command (111, undobuffer, undomanager_get_action_name (undomanager));
     }
     else {
-        undobuffer_free (undobuffer); // lost
+        undobuffer_free (undobuffer);
     }
 
     undomanager_set_action_name (undomanager, NULL);
