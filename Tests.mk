@@ -54,7 +54,7 @@ TEST_C_SOURCES=$(wildcard \
 	src/md5/*.c \
 	src/metadata/*.c \
 	src/scriptable/*.c \
-	src/undo/*.c\
+	src/undo/*.c \
 	Tests/*.c)
 TEST_C_SOURCES:=$(filter-out src/main.c,$(TEST_C_SOURCES))
 TEST_C_OBJS:=$(addprefix $(BUILD)/,\
@@ -74,7 +74,7 @@ GOOGLE_TEST_SOURCES=external/googletest/googletest/src/gtest-all.cc
 GOOGLE_TEST_OBJS:=$(addprefix $(BUILD)/,$(notdir $(patsubst %.cc,%.o,$(GOOGLE_TEST_SOURCES))))
 
 VPATH=src \
-	$(addprefix src/,scriptable ConvertUTF md5 metadata) \
+	$(addprefix src/,scriptable ConvertUTF md5 metadata undo) \
 	$(addprefix plugins/,libparser m3u mp3 nullout shellexec vfs_curl) \
 	$(addprefix external/,mp4p/src wcwidth googletest/googletest/src) \
 	shared \
