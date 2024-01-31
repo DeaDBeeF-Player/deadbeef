@@ -193,6 +193,7 @@ project "deadbeef"
   targetdir "bin/%{cfg.buildcfg}"
   files {
     "src/md5/*.c",
+    "src/undo/*.c",
     "src/*.c",
     "plugins/libparser/*.c",
     "external/wcwidth/wcwidth.c",

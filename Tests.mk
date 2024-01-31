@@ -38,21 +38,23 @@ LIBRARIES=-lmad -lmpg123 -lcurl -ldispatch -lpthread -lBlocksRuntime -lm -ljanss
 LDFLAGS=-L$(STATIC_ROOT)/lib -L$(STATIC_ROOT)/lib/x86_64-linux-gnu
 
 
-TEST_C_SOURCES=$(wildcard src/*.c \
-	shared/*.c \
-	src/scriptable/*.c \
-	shared/scriptable/*.c \
-	plugins/libparser/*.c \
-	plugins/nullout/*.c \
-	src/ConvertUTF/*.c \
-	src/metadata/*.c \
-	plugins/m3u/*.c \
-	plugins/vfs_curl/*.c \
-	plugins/shellexec/*.c \
+TEST_C_SOURCES=$(wildcard \
 	external/mp4p/src/*.c \
 	external/wcwidth/*.c \
-	src/md5/*.c \
+	plugins/libparser/*.c \
+	plugins/m3u/*.c \
 	plugins/mp3/*.c \
+	plugins/nullout/*.c \
+	plugins/shellexec/*.c \
+	plugins/vfs_curl/*.c \
+	shared/*.c \
+	shared/scriptable/*.c \
+	src/*.c \
+	src/ConvertUTF/*.c \
+	src/md5/*.c \
+	src/metadata/*.c \
+	src/scriptable/*.c \
+	src/undo/*.c\
 	Tests/*.c)
 TEST_C_SOURCES:=$(filter-out src/main.c,$(TEST_C_SOURCES))
 TEST_C_OBJS:=$(addprefix $(BUILD)/,\
