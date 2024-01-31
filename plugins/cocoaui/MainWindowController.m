@@ -522,6 +522,9 @@ static char sb_text[512];
     if (_id == DB_EV_PLAYBACK_STATE_DID_CHANGE) {
         [self performSelectorOnMainThread:@selector(ensureRefresh) withObject:nil waitUntilDone:NO];
     }
+    else if (_id == DB_EV_PLAYLISTCHANGED) {
+        [self performSelectorOnMainThread:@selector(updateSonginfo) withObject:nil waitUntilDone:NO];
+    }
 }
 
 #pragma mark - DeletePlaylistConfirmationControllerDelegate
