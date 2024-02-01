@@ -76,6 +76,9 @@ void
 gtkui_open_files (struct _GSList *lst);
 
 void
+gtkui_add_location (const char *path, const char *custom_title);
+
+void
 gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length);
 
 // color scheme constants

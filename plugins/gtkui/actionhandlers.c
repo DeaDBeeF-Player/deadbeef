@@ -278,26 +278,13 @@ action_add_location_handler_cb (void *user_data) {
                 char *text_copy = strdup(text);
                 char *trimmed_text = gtkui_trim_whitespace(text_copy, strlen(text_copy));
 
-                ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-                if (!deadbeef->plt_add_files_begin (plt, 0)) {
-                    DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
-                    DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, trimmed_text, NULL, NULL, NULL);
+                const char *custom_title = NULL;
 #ifndef DISABLE_CUSTOM_TITLE
-                    if (it && deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
-                        deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", gtk_entry_get_text (GTK_ENTRY (ct)));
-                    }
-#else
-#   pragma unused(it)
+                if (deadbeef->conf_get_int ("gtkui.location_set_custom_title", 0)) {
+                    custom_title = gtk_entry_get_text (GTK_ENTRY (ct));
+                }
 #endif
-                    if (tail) {
-                        deadbeef->pl_item_unref (tail);
-                    }
-                    deadbeef->plt_add_files_end (plt, 0);
-                    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-                }
-                if (plt) {
-                    deadbeef->plt_unref (plt);
-                }
+                gtkui_add_location(trimmed_text, custom_title);
 
                 free (text_copy);
             }

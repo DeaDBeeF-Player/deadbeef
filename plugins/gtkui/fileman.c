@@ -120,17 +120,20 @@ gtkui_add_files (struct _GSList *lst) {
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         gtkpl_add_files (plt, lst);
-        ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
-        deadbeef->undo_set_action_name ("Add Files");
-        deadbeef->plt_move_all_items (plt_curr, plt, tail);
-        if (tail != NULL) {
-            deadbeef->pl_item_unref (tail);
-        }
+        gtkui_dispatch_on_main (^{
+            ddb_playItem_t *tail = deadbeef->plt_get_tail_item (plt_curr, PL_MAIN);
+            deadbeef->undo_set_action_name ("Add Files");
+            deadbeef->plt_move_all_items (plt_curr, plt, tail);
+            if (tail != NULL) {
+                deadbeef->pl_item_unref (tail);
+                tail = NULL;
+            }
 
-        deadbeef->plt_save_config (plt_curr);
-        deadbeef->plt_add_files_end (plt, 0);
-        deadbeef->plt_unref (plt_curr);
-        deadbeef->plt_unref (plt);
+            deadbeef->plt_save_config (plt_curr);
+            deadbeef->plt_add_files_end (plt, 0);
+            deadbeef->plt_unref (plt_curr);
+            deadbeef->plt_unref (plt);
+        });
     });
 }
 
@@ -143,6 +146,70 @@ gtkui_open_files (struct _GSList *lst) {
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 
     gtkui_add_files(lst);
+}
+
+void
+gtkui_add_location (const char *path, const char *custom_title) {
+    ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
+    ddb_playlist_t *plt = deadbeef->plt_alloc ("add-location");
+
+    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
+        deadbeef->plt_unref (plt);
+        deadbeef->plt_unref (plt_curr);
+        return;
+    }
+
+    char *custom_title_copy = NULL;
+    if (custom_title != NULL) {
+        custom_title_copy = strdup (custom_title);
+    }
+
+    char *path_copy = strdup (path);
+
+    dispatch_async (dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        DB_playItem_t *tail = deadbeef->plt_get_last (plt, PL_MAIN);
+        DB_playItem_t *it = deadbeef->plt_insert_file2 (0, plt, tail, path_copy, NULL, NULL, NULL);
+
+        if (tail) {
+            deadbeef->pl_item_unref (tail);
+            tail = NULL;
+        }
+
+        if (it == NULL) {
+            deadbeef->plt_add_files_end (plt, 0);
+
+            free (path_copy);
+            free (custom_title_copy);
+            deadbeef->plt_unref (plt);
+            deadbeef->plt_unref (plt_curr);
+
+            return;
+        }
+
+        deadbeef->pl_item_ref (it);
+
+        gtkui_dispatch_on_main (^{
+            if (custom_title_copy != NULL) {
+                deadbeef->pl_replace_meta (it, ":CUSTOM_TITLE", custom_title_copy);
+            }
+
+            ddb_playItem_t *tail = deadbeef->plt_get_tail_item (plt_curr, PL_MAIN);
+            deadbeef->undo_set_action_name ("Add Files");
+            deadbeef->plt_move_all_items (plt_curr, plt, tail);
+            if (tail != NULL) {
+                deadbeef->pl_item_unref (tail);
+            }
+
+            deadbeef->plt_save_config (plt_curr);
+            deadbeef->plt_add_files_end (plt, 0);
+
+            free (path_copy);
+            free (custom_title_copy);
+            deadbeef->pl_item_unref (it);
+            deadbeef->plt_unref (plt);
+            deadbeef->plt_unref (plt_curr);
+        });
+    });
 }
 
 void
