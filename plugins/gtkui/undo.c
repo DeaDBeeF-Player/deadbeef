@@ -78,6 +78,30 @@ gtkui_undo_deinit (void) {
     memset (&_state, 0, sizeof (_state));
 }
 
+static void
+_append_item (undo_item_t **head, undo_item_t **tail, undo_item_t *item) {
+    item->prev = *tail;
+    if (*tail != NULL) {
+        (*tail)->next = item;
+    }
+    *tail = item;
+
+    if (*head == NULL) {
+        *head = item;
+    }
+}
+
+static void
+_pop_last (undo_item_t **head, undo_item_t **tail) {
+    if ((*tail)->prev != NULL) {
+        (*tail)->prev->next = NULL;
+        (*tail) = (*tail)->prev;
+    }
+    else {
+        *head = *tail = NULL;
+    }
+}
+
 void
 gtkui_undo_append_buffer (undobuffer_t *undobuffer, const char *action_name) {
     if (_state.type == none) {
@@ -92,34 +116,30 @@ gtkui_undo_append_buffer (undobuffer_t *undobuffer, const char *action_name) {
 
     if (_state.type == none || _state.type == redo) {
         // append to undo list
-        item->prev = _state.undo_tail;
-        if (_state.undo_tail != NULL) {
-            _state.undo_tail->next = item;
-        }
-        _state.undo_tail = item;
-
-        if (_state.undo_head == NULL) {
-            _state.undo_head = item;
-        }
+        _append_item (&_state.undo_head, &_state.undo_tail, item);
     }
     if (_state.type == undo) {
         // append to redo list
-        item->prev = _state.redo_tail;
-        if (_state.redo_tail != NULL) {
-            _state.redo_tail->next = item;
-        }
-        _state.redo_tail = item;
-
-        if (_state.redo_head == NULL) {
-            _state.redo_head = item;
-        }
+        _append_item (&_state.redo_head, &_state.redo_tail, item);
     }
 
 }
 
-void
-gtkui_perform_undo (void) {
-    undo_item_t *item = _state.undo_tail;
+static void
+_perform_undo_redo (undo_type_t type) {
+    undo_item_t **head;
+    undo_item_t **tail;
+
+    if (type == undo) {
+        head = &_state.undo_head;
+        tail = &_state.undo_tail;
+    }
+    else {
+        head = &_state.redo_head;
+        tail = &_state.redo_tail;
+    }
+
+    undo_item_t *item = *tail;
     if (item == NULL) {
         return;
     }
@@ -128,16 +148,9 @@ gtkui_perform_undo (void) {
     undobuffer_t *new_buffer = undomanager_get_buffer (undomanager);
 
     // pop last undo item and execute in undo mode
+    _pop_last (head, tail);
 
-    if (item->prev) {
-        item->prev->next = NULL;
-        _state.undo_tail = item->prev;
-    }
-    else {
-        _state.undo_head = _state.undo_tail = NULL;
-    }
-
-    _state.type = undo;
+    _state.type = type;
     undobuffer_execute(item->undobuffer, new_buffer);
     undomanager_set_action_name(undomanager, item->action_name);
     undomanager_flush (undomanager);
@@ -146,31 +159,13 @@ gtkui_perform_undo (void) {
 }
 
 void
+gtkui_perform_undo (void) {
+    _perform_undo_redo (undo);
+}
+
+void
 gtkui_perform_redo (void) {
-    undo_item_t *item = _state.redo_tail;
-    if (item == NULL) {
-        return;
-    }
-
-    undomanager_t *undomanager = undomanager_shared ();
-    undobuffer_t *new_buffer = undomanager_get_buffer (undomanager);
-
-    // pop last redo item and execute in redo mode
-
-    if (item->prev) {
-        item->prev->next = NULL;
-        _state.redo_tail = item->prev;
-    }
-    else {
-        _state.redo_head = _state.redo_tail = NULL;
-    }
-
-    _state.type = redo;
-    undobuffer_execute(item->undobuffer, new_buffer);
-    undomanager_set_action_name(undomanager, item->action_name);
-    undomanager_flush (undomanager);
-    _free_item (item);
-    _state.type = none;
+    _perform_undo_redo (redo);
 }
 
 int
