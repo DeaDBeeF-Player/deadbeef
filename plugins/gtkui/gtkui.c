@@ -69,7 +69,7 @@
 #include "covermanager/albumartwidget.h"
 #include "selpropertieswidget.h"
 #include "undo.h"
-#include "undomanager.h"
+#include "undo/undomanager.h"
 
 #define USE_GTK_APPLICATION 1
 

@@ -23,7 +23,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "undobuffer.h"
 #include "undo_playlist.h"
 
 #define UNDO_SELECTION_LIST_UNSELECTED 1

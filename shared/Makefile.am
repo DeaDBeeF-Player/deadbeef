@@ -1,4 +1,4 @@
-SUBDIRS = analyzer scope scriptable
+SUBDIRS = analyzer scope scriptable undo
 
 noinst_LTLIBRARIES = libmp4tagutil.la libtrkpropertiesutil.la libeqpreset.la libctmap.la libdeletefromdisk.la libtftintutil.la
 
@@ -19,3 +19,4 @@ libdeletefromdisk_la_CFLAGS = -fPIC -std=c99 -I@top_srcdir@/include
 
 libtftintutil_la_SOURCES = tftintutil.h tftintutil.c
 libtftintutil_la_CFLAGS = -fPIC -std=c99 -I@top_srcdir@/include
+

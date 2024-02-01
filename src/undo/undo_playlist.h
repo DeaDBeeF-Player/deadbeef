@@ -24,7 +24,7 @@
 #ifndef undo_playlist_h
 #define undo_playlist_h
 
-#include "undobuffer.h"
+#include "undo/undobuffer.h"
 #include "../playlist.h"
 
 void

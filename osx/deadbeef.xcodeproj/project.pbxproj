@@ -1656,8 +1656,6 @@
 		2D95F6BE29392CE9002D8499 /* libvorbislib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37F41B2C40580029DE0A /* libvorbislib.dylib */; };
 		2D95F6C129392F18002D8499 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F6BF29392F17002D8499 /* base64.c */; };
 		2D95F6C229392F18002D8499 /* base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6C029392F17002D8499 /* base64.h */; };
-		2D95F6DD293B58E1002D8499 /* undo_playlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6DB293B58E1002D8499 /* undo_playlist.h */; };
-		2D95F70C293B95AC002D8499 /* undomanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F70A293B95AC002D8499 /* undomanager.h */; };
 		2D95F721293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F71F293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.h */; };
 		2D95F725293BA3DA002D8499 /* DdbUndoBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F723293BA3DA002D8499 /* DdbUndoBuffer.h */; };
 		2D95F726293BA3DA002D8499 /* DdbUndoBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F724293BA3DA002D8499 /* DdbUndoBuffer.m */; };
@@ -6241,8 +6239,6 @@
 		2D95F6B929392884002D8499 /* artwork_ogg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_ogg.c; sourceTree = "<group>"; };
 		2D95F6BF29392F17002D8499 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
 		2D95F6C029392F17002D8499 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
-		2D95F6DB293B58E1002D8499 /* undo_playlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undo_playlist.h; sourceTree = "<group>"; };
-		2D95F70A293B95AC002D8499 /* undomanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undomanager.h; sourceTree = "<group>"; };
 		2D95F71F293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSUndoManager+DdbUndoBuffer.h"; sourceTree = "<group>"; };
 		2D95F720293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSUndoManager+DdbUndoBuffer.m"; sourceTree = "<group>"; };
 		2D95F723293BA3DA002D8499 /* DdbUndoBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbUndoBuffer.h; sourceTree = "<group>"; };
@@ -9587,6 +9583,17 @@
 			path = codebook;
 			sourceTree = "<group>";
 		};
+		2D2C51632B6C085400EAC44E /* undo */ = {
+			isa = PBXGroup;
+			children = (
+				2D7387D529BE5DA1003E3126 /* undobuffer.c */,
+				2D7387D829BE5DA1003E3126 /* undobuffer.h */,
+				2D7387D429BE5DA1003E3126 /* undomanager.c */,
+				2D7387D729BE5DA1003E3126 /* undomanager.h */,
+			);
+			path = undo;
+			sourceTree = "<group>";
+		};
 		2D30D13625E2A6B40023A299 /* DesignMode */ = {
 			isa = PBXGroup;
 			children = (
@@ -10458,10 +10465,6 @@
 			children = (
 				2D7387D629BE5DA1003E3126 /* undo_playlist.c */,
 				2D7387D929BE5DA1003E3126 /* undo_playlist.h */,
-				2D7387D529BE5DA1003E3126 /* undobuffer.c */,
-				2D7387D829BE5DA1003E3126 /* undobuffer.h */,
-				2D7387D429BE5DA1003E3126 /* undomanager.c */,
-				2D7387D729BE5DA1003E3126 /* undomanager.h */,
 			);
 			path = undo;
 			sourceTree = "<group>";
@@ -10968,6 +10971,7 @@
 		2D92D1ED29B92DF900218F1D /* shared */ = {
 			isa = PBXGroup;
 			children = (
+				2D2C51632B6C085400EAC44E /* undo */,
 				2DB520E52AA8FA4C00B6250A /* scriptable */,
 				2D92D21929B92DF900218F1D /* analyzer */,
 				2D92D1F629B92DF900218F1D /* scope */,
@@ -12092,15 +12096,6 @@
 			path = Playlist;
 			sourceTree = "<group>";
 		};
-		2DDD75EF25E14FC200FA6FE5 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				2D95F6DB293B58E1002D8499 /* undo_playlist.h */,
-				2D95F70A293B95AC002D8499 /* undomanager.h */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		2DDD764125E1506100FA6FE5 /* metadata */ = {
 			isa = PBXGroup;
 			children = (
@@ -12393,7 +12388,6 @@
 				4D1B3E7C18379829003E6066 /* Frameworks */,
 				4D1B3E7B18379829003E6066 /* Products */,
 				2D48DC5C2269B732002CACFD /* DeaDBeeF GTK3.plist */,
-				2DDD75EF25E14FC200FA6FE5 /* Recovered References */,
 				2DC6578D274428F300583E14 /* DeaDBeeF GTK2.plist */,
 			);
 			sourceTree = "<group>";
@@ -14700,13 +14694,11 @@
 				2DC657C62748502F00583E14 /* SegmentedTabView.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
 				2DC6580D274A994100583E14 /* TableViewWithReturnAction.h in Headers */,
-				2D95F6DD293B58E1002D8499 /* undo_playlist.h in Headers */,
 				2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
 				2D78C55927568B4A00F96F9D /* medialibscanner.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
-				2D95F70C293B95AC002D8499 /* undomanager.h in Headers */,
 				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
 				2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,

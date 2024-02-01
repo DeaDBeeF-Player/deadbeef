@@ -25,8 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "undo.h"
-#include "undobuffer.h"
-#include "undomanager.h"
+#include "undo/undobuffer.h"
+#include "undo/undomanager.h"
 
 extern DB_functions_t *deadbeef;
 

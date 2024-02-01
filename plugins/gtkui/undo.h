@@ -24,7 +24,7 @@
 #ifndef undo_h
 #define undo_h
 
-#include "undobuffer.h"
+#include "undo/undobuffer.h"
 
 void
 gtkui_undo_deinit (void);

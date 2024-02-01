@@ -86,8 +86,6 @@
 #endif
 
 // file format revision history
-// 1.1->1.2 changelog:
-//    added flags field
 // 1.0->1.1 changelog:
 //    added sample-accurate seek positions for sub-tracks
 // 1.1->1.2 changelog:
