@@ -25,70 +25,70 @@
 #include <string.h>
 #include "undomanager.h"
 
-struct undomanager_s {
-    undobuffer_t *buffer;
+struct ddb_undomanager_s {
+    ddb_undobuffer_t *buffer;
     char *action_name;
 };
 
-static undomanager_t *_shared;
+static ddb_undomanager_t *_shared;
 
-undomanager_t *
-undomanager_alloc (void) {
-    undomanager_t *undomanager = calloc (1, sizeof (undomanager_t));
-    undomanager->buffer = undobuffer_alloc();
+ddb_undomanager_t *
+ddb_undomanager_alloc (void) {
+    ddb_undomanager_t *undomanager = calloc (1, sizeof (ddb_undomanager_t));
+    undomanager->buffer = ddb_undobuffer_alloc();
     return undomanager;
 }
 
 void
-undomanager_free (undomanager_t *undomanager) {
+ddb_undomanager_free (ddb_undomanager_t *undomanager) {
     if (undomanager == _shared) {
         _shared = NULL;
     }
     free (undomanager->action_name);
     if (undomanager->buffer != NULL) {
-        undobuffer_free(undomanager->buffer);
+        ddb_undobuffer_free(undomanager->buffer);
     }
     free (undomanager);
 }
 
-undomanager_t *
-undomanager_shared (void) {
+ddb_undomanager_t *
+ddb_undomanager_shared (void) {
     return _shared;
 }
 
 void
-undomanager_shared_init (undomanager_t *undomanager) {
+ddb_undomanager_shared_init (ddb_undomanager_t *undomanager) {
     if (undomanager == NULL) {
-        _shared = undomanager_alloc ();
+        _shared = ddb_undomanager_alloc ();
     }
     else {
         _shared = undomanager;
     }
 }
 
-undobuffer_t *
-undomanager_get_buffer (undomanager_t *undomanager) {
+ddb_undobuffer_t *
+ddb_undomanager_get_buffer (ddb_undomanager_t *undomanager) {
     if (undomanager == NULL) {
         return NULL;
     }
     return undomanager->buffer;
 }
 
-undobuffer_t *
-undomanager_consume_buffer (undomanager_t *undomanager) {
-    undobuffer_t *buffer = undomanager->buffer;
-    undomanager->buffer = undobuffer_alloc();
+ddb_undobuffer_t *
+ddb_undomanager_consume_buffer (ddb_undomanager_t *undomanager) {
+    ddb_undobuffer_t *buffer = undomanager->buffer;
+    undomanager->buffer = ddb_undobuffer_alloc();
     return buffer;
 }
 
 void
-undomanager_set_action_name (undomanager_t *undomanager, const char *name) {
+ddb_undomanager_set_action_name (ddb_undomanager_t *undomanager, const char *name) {
     free (undomanager->action_name);
     undomanager->action_name = name ? strdup (name) : NULL;
 }
 
 const char *
-undomanager_get_action_name (undomanager_t *undomanager) {
+ddb_undomanager_get_action_name (ddb_undomanager_t *undomanager) {
     return undomanager->action_name;
 }
 

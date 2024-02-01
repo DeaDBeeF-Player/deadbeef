@@ -30,7 +30,7 @@ void
 gtkui_undo_deinit (void);
 
 void
-gtkui_undo_append_buffer (undobuffer_t *undobuffer, const char *action_name);
+gtkui_undo_append_buffer (ddb_undobuffer_t *undobuffer, const char *action_name);
 
 void
 gtkui_perform_undo (void);

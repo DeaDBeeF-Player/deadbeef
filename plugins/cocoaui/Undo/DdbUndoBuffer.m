@@ -29,24 +29,24 @@ extern DB_functions_t *deadbeef;
 
 @interface DdbUndoBuffer()
 
-@property (nonatomic) undobuffer_t *buffer;
+@property (nonatomic) ddb_undobuffer_t *buffer;
 
 @end
 
 @implementation DdbUndoBuffer
 
 - (void)dealloc {
-    undobuffer_free (_buffer);
+    ddb_undobuffer_free (_buffer);
 }
 
-- (instancetype)initWithUndoBuffer:(undobuffer_t *)buffer {
+- (instancetype)initWithUndoBuffer:(ddb_undobuffer_t *)buffer {
     self = [super init];
     _buffer = buffer;
     return self;
 }
 
 - (void)apply {
-    undobuffer_execute(self.buffer, undomanager_get_buffer(undomanager_shared()));
+    ddb_undobuffer_execute(self.buffer, ddb_undomanager_get_buffer(ddb_undomanager_shared()));
 
     deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }

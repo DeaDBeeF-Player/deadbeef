@@ -31,7 +31,7 @@
 // The list of items is required to be contiguous in the target playlist.
 // ChangeSelection operations are registered automatically before registering Insert or Remove, only when undobuffer is empty.
 typedef struct {
-    undo_operation_t _super;
+    ddb_undo_operation_t _super;
     playlist_t *plt;
     playItem_t **items;
     playItem_t *insert_position; // insert after this item
@@ -43,7 +43,7 @@ typedef struct {
 } undo_operation_item_list_t;
 
 void
-undo_change_selection(undobuffer_t *undobuffer, playlist_t *plt);
+undo_change_selection(ddb_undobuffer_t *undobuffer, playlist_t *plt);
 
 static void
 _undo_operation_item_list_deinit(undo_operation_item_list_t *op) {
@@ -58,7 +58,7 @@ _undo_operation_item_list_deinit(undo_operation_item_list_t *op) {
 }
 
 static undo_operation_item_list_t *
-_undo_operation_item_list_new(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count, int copy) {
+_undo_operation_item_list_new(ddb_undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count, int copy) {
     undo_operation_item_list_t *op = calloc (1, sizeof (undo_operation_item_list_t));
     op->count = count;
     plt_ref(plt);
@@ -73,34 +73,34 @@ _undo_operation_item_list_new(undobuffer_t *undobuffer, playlist_t *plt, playIte
     else {
         op->items = items;
     }
-    op->_super.deinit = (undo_operation_deinit_fn)_undo_operation_item_list_deinit;
+    op->_super.deinit = (ddb_undo_operation_deinit_fn)_undo_operation_item_list_deinit;
     return op;
 }
 
 static void
-_undo_perform_remove_items(undobuffer_t *undobuffer, undo_operation_t *_op) {
+_undo_perform_remove_items(ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *_op) {
     undo_operation_item_list_t *op = (undo_operation_item_list_t *)_op;
-    undobuffer_group_begin (undobuffer);
+    ddb_undobuffer_group_begin (undobuffer);
     for (size_t i = 0; i < op->count; i++) {
         plt_remove_item(op->plt, op->items[i]);
     }
-    undobuffer_group_end (undobuffer);
+    ddb_undobuffer_group_end (undobuffer);
 }
 
 static void
-_undo_perform_insert_items (undobuffer_t *undobuffer, undo_operation_t *_op) {
+_undo_perform_insert_items (ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *_op) {
     undo_operation_item_list_t *op = (undo_operation_item_list_t *)_op;
-    undobuffer_group_begin (undobuffer);
+    ddb_undobuffer_group_begin (undobuffer);
     playItem_t *after = op->insert_position;
     for (size_t i = 0; i < op->count; i++) {
         plt_insert_item(op->plt, after, op->items[i]);
         after = op->items[i];
     }
-    undobuffer_group_end (undobuffer);
+    ddb_undobuffer_group_end (undobuffer);
 }
 
 static void
-_undo_perform_change_selection (undobuffer_t *undobuffer, undo_operation_t *_op) {
+_undo_perform_change_selection (ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *_op) {
     undo_operation_item_list_t *op = (undo_operation_item_list_t *)_op;
     // Restore selection according to the flag.
     if (op->flags & UNDO_SELECTION_LIST_UNSELECTED) {
@@ -117,12 +117,12 @@ _undo_perform_change_selection (undobuffer_t *undobuffer, undo_operation_t *_op)
 } 
 
 static int
-_undo_operation_prepare(undobuffer_t *undobuffer, playlist_t *plt) {
+_undo_operation_prepare(ddb_undobuffer_t *undobuffer, playlist_t *plt) {
     if (!plt->undo_enabled) {
         return 1;
     }
 
-    if (!undobuffer_has_operations(undobuffer)) {
+    if (!ddb_undobuffer_has_operations(undobuffer)) {
         undo_change_selection(undobuffer, plt);
     }
 
@@ -132,15 +132,15 @@ _undo_operation_prepare(undobuffer_t *undobuffer, playlist_t *plt) {
 // The list of items must be contiguous in playlist.
 // The list will be batched with the previous operation if possible.
 void
-undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count) {
+undo_remove_items(ddb_undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count) {
     if (_undo_operation_prepare (undobuffer, plt) != 0) {
         return;
     }
     // optimization: batching
     undo_operation_item_list_t *op = NULL;
-    if (undobuffer_is_grouping (undobuffer)) {
-        undo_operation_t *baseop = undobuffer_get_current_operation(undobuffer);
-        if (baseop->perform == (undo_operation_perform_fn)_undo_perform_insert_items) {
+    if (ddb_undobuffer_is_grouping (undobuffer)) {
+        ddb_undo_operation_t *baseop = ddb_undobuffer_get_current_operation(undobuffer);
+        if (baseop->perform == (ddb_undo_operation_perform_fn)_undo_perform_insert_items) {
             op = (undo_operation_item_list_t *)baseop;
         }
     }
@@ -153,8 +153,8 @@ undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items,
             pl_item_ref (after);
             op->insert_position = after;
         }
-        op->_super.perform = (undo_operation_perform_fn)_undo_perform_insert_items;
-        undobuffer_append_operation(undobuffer, &op->_super);
+        op->_super.perform = (ddb_undo_operation_perform_fn)_undo_perform_insert_items;
+        ddb_undobuffer_append_operation(undobuffer, &op->_super);
         return;
     }
 
@@ -167,15 +167,15 @@ undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items,
 }
 
 void
-undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count) {
+undo_insert_items(ddb_undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count) {
     if (_undo_operation_prepare (undobuffer, plt) != 0) {
         return;
     }
 
     // optimization: batching
     undo_operation_item_list_t *op = NULL;
-    if (undobuffer_is_grouping (undobuffer)) {
-        undo_operation_t *baseop = undobuffer_get_current_operation(undobuffer);
+    if (ddb_undobuffer_is_grouping (undobuffer)) {
+        ddb_undo_operation_t *baseop = ddb_undobuffer_get_current_operation(undobuffer);
         if (baseop->perform == _undo_perform_remove_items) {
             op = (undo_operation_item_list_t *)baseop;
         }
@@ -184,7 +184,7 @@ undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items,
     if (op == NULL) {
         op = _undo_operation_item_list_new(undobuffer, plt, items, count, 1);
         op->_super.perform = _undo_perform_remove_items;
-        undobuffer_append_operation(undobuffer, &op->_super);
+        ddb_undobuffer_append_operation(undobuffer, &op->_super);
         return;
     }
     op->items = realloc (op->items, (op->count + count) * sizeof (playItem_t *));
@@ -196,7 +196,7 @@ undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items,
 }
 
 void
-undo_change_selection(undobuffer_t *undobuffer, playlist_t *plt) {
+undo_change_selection(ddb_undobuffer_t *undobuffer, playlist_t *plt) {
     if (!plt->undo_enabled) {
         return;
     }
@@ -233,5 +233,5 @@ undo_change_selection(undobuffer_t *undobuffer, playlist_t *plt) {
     op->flags = flags;
 
     op->_super.perform = _undo_perform_change_selection;
-    undobuffer_append_operation(undobuffer, &op->_super);
+    ddb_undobuffer_append_operation(undobuffer, &op->_super);
 }

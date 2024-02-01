@@ -155,29 +155,29 @@ _plug_get_gui (void) {
 
 static void
 _undo_process(void) {
-    undomanager_t *undomanager = undomanager_shared();
+    ddb_undomanager_t *undomanager = ddb_undomanager_shared();
 
     DB_plugin_t *ui_plugin = _plug_get_gui ();
-    undobuffer_t *undobuffer = undomanager_consume_buffer (undomanager);
+    ddb_undobuffer_t *undobuffer = ddb_undomanager_consume_buffer (undomanager);
 
     int has_ui_command = ui_plugin != NULL && ui_plugin->command != NULL;
 
     int res = -1;
-    if (undobuffer_has_operations (undobuffer) && has_ui_command) {
+    if (ddb_undobuffer_has_operations (undobuffer) && has_ui_command) {
         ui_plugin->command (110, undomanager);
-        res = ui_plugin->command (111, undobuffer, undomanager_get_action_name (undomanager));
+        res = ui_plugin->command (111, undobuffer, ddb_undomanager_get_action_name (undomanager));
     }
 
     if (res != 0) {
-        undobuffer_free (undobuffer);
+        ddb_undobuffer_free (undobuffer);
     }
 
-    undomanager_set_action_name (undomanager, NULL);
+    ddb_undomanager_set_action_name (undomanager, NULL);
 }
 
 static void
 _undo_set_action_name (const char *name) {
-    undomanager_set_action_name (undomanager_shared(), name);
+    ddb_undomanager_set_action_name (ddb_undomanager_shared(), name);
 }
 
 

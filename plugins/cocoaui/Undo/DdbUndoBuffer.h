@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DdbUndoBuffer : NSObject
 
-- (instancetype)initWithUndoBuffer:(undobuffer_t *)buffer;
+- (instancetype)initWithUndoBuffer:(ddb_undobuffer_t *)buffer;
 - (void)apply;
 
 @end

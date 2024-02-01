@@ -53,7 +53,7 @@ int cocoaui_command (int command, ...) {
         // register undo
         va_list args;
         va_start(args, command);
-        undobuffer_t *undobuffer = va_arg(args, undobuffer_t *);
+        ddb_undobuffer_t *undobuffer = va_arg(args, ddb_undobuffer_t *);
         const char *name = va_arg(args, const char *);
         va_end(args);
 

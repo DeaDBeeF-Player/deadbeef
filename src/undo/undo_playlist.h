@@ -28,9 +28,9 @@
 #include "../playlist.h"
 
 void
-undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+undo_remove_items(ddb_undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
 
 void
-undo_insert_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
+undo_insert_items(ddb_undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);
 
 #endif /* undo_playlist_h */

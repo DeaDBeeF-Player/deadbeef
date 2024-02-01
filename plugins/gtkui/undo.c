@@ -35,7 +35,7 @@ typedef struct undo_item_s undo_item_t;
 
 struct undo_item_s {
     char *action_name;
-    undobuffer_t *undobuffer;
+    ddb_undobuffer_t *undobuffer;
     undo_item_t *prev;
     undo_item_t *next;
 };
@@ -60,7 +60,7 @@ static undo_state_t _state;
 
 static void
 _free_item (undo_item_t *item) {
-    undobuffer_free(item->undobuffer);
+    ddb_undobuffer_free(item->undobuffer);
     free (item->action_name);
     free (item);
 }
@@ -106,7 +106,7 @@ _pop_last (undo_item_t **head, undo_item_t **tail) {
 }
 
 void
-gtkui_undo_append_buffer (undobuffer_t *undobuffer, const char *action_name) {
+gtkui_undo_append_buffer (ddb_undobuffer_t *undobuffer, const char *action_name) {
     if (_state.type == none) {
         // discard all redo operations
         _free_item_list (_state.redo_head);
@@ -147,15 +147,15 @@ _perform_undo_redo (undo_type_t type) {
         return;
     }
 
-    undomanager_t *undomanager = undomanager_shared ();
-    undobuffer_t *new_buffer = undomanager_get_buffer (undomanager);
+    ddb_undomanager_t *undomanager = ddb_undomanager_shared ();
+    ddb_undobuffer_t *new_buffer = ddb_undomanager_get_buffer (undomanager);
 
     // pop last undo item and execute in undo mode
     _pop_last (head, tail);
 
     _state.type = type;
-    undobuffer_execute(item->undobuffer, new_buffer);
-    undomanager_set_action_name(undomanager, item->action_name);
+    ddb_undobuffer_execute(item->undobuffer, new_buffer);
+    ddb_undomanager_set_action_name(undomanager, item->action_name);
     deadbeef->undo_process();
     _free_item (item);
     _state.type = none;

@@ -1106,7 +1106,7 @@ main_cleanup_and_quit (void) {
         scriptableDeinitShared ();
 #endif
 
-        undomanager_free(undomanager_shared());
+        ddb_undomanager_free(ddb_undomanager_shared());
 
         pl_free (); // may access conf_*
         conf_free ();
@@ -1578,7 +1578,7 @@ main (int argc, char *argv[]) {
 
     streamer_playmodes_init ();
 
-    undomanager_shared_init (NULL);
+    ddb_undomanager_shared_init (NULL);
 
     pl_load_all ();
 

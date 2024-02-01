@@ -1644,7 +1644,7 @@ plt_remove_item (playlist_t *playlist, playItem_t *it) {
 
     // remove from both lists
     LOCK;
-    undo_remove_items(undomanager_get_buffer(undomanager_shared()), playlist, &it, 1);
+    undo_remove_items(ddb_undomanager_get_buffer(ddb_undomanager_shared()), playlist, &it, 1);
 
     for (int iter = PL_MAIN; iter <= PL_SEARCH; iter++) {
         if (it->prev[iter] || it->next[iter] || playlist->head[iter] == it || playlist->tail[iter] == it) {
@@ -1797,7 +1797,7 @@ pl_get_idx_of_iter (playItem_t *it, int iter) {
 playItem_t *
 plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
     LOCK;
-    undo_insert_items(undomanager_get_buffer(undomanager_shared()), playlist, &it, 1);
+    undo_insert_items(ddb_undomanager_get_buffer(ddb_undomanager_shared()), playlist, &it, 1);
     pl_item_ref (it);
     if (!after) {
         it->next[PL_MAIN] = playlist->head[PL_MAIN];
@@ -1948,12 +1948,12 @@ plt_delete_selected (playlist_t *playlist) {
     }
     UNLOCK;
 
-    undobuffer_group_begin (undomanager_get_buffer (undomanager_shared ()));
+    ddb_undobuffer_group_begin (ddb_undomanager_get_buffer (ddb_undomanager_shared ()));
     for (i = 0; i < count; i++) {
         plt_remove_item (playlist, items_to_delete[i]);
         pl_item_unref (items_to_delete[i]);
     }
-    undobuffer_group_end (undomanager_get_buffer (undomanager_shared ()));
+    ddb_undobuffer_group_end (ddb_undomanager_get_buffer (ddb_undomanager_shared ()));
     free (items_to_delete);
 
     LOCK;
@@ -3693,7 +3693,7 @@ plt_move_all_items (playlist_t *to, playlist_t *from, playItem_t *insert_after) 
     LOCK;
     playItem_t *it = from->head[PL_MAIN];
     pl_item_ref(it);
-    undobuffer_group_begin (undomanager_get_buffer (undomanager_shared ()));
+    ddb_undobuffer_group_begin (ddb_undomanager_get_buffer (ddb_undomanager_shared ()));
     while (it != NULL) {
         playItem_t *next = it->next[PL_MAIN];
         if (next != NULL) {
@@ -3706,7 +3706,7 @@ plt_move_all_items (playlist_t *to, playlist_t *from, playItem_t *insert_after) 
         pl_item_unref (it);
         it = next;
     }
-    undobuffer_group_end (undomanager_get_buffer (undomanager_shared ()));
+    ddb_undobuffer_group_end (ddb_undomanager_get_buffer (ddb_undomanager_shared ()));
     UNLOCK;
 }
 

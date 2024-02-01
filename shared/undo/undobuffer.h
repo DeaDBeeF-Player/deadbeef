@@ -23,56 +23,56 @@
 
 
 
-#ifndef undobuffer_h
-#define undobuffer_h
+#ifndef ddb_undobuffer_h
+#define ddb_undobuffer_h
 
-struct _undobuffer_s;
+struct _ddb_undobuffer_s;
 
-typedef struct _undobuffer_s undobuffer_t;
+typedef struct _ddb_undobuffer_s ddb_undobuffer_t;
 
-struct undo_operation_s;
-typedef void (*undo_operation_perform_fn)(undobuffer_t *undobuffer, struct undo_operation_s *op);
-typedef void (*undo_operation_deinit_fn)(struct undo_operation_s *op);
+struct ddb_undo_operation_s;
+typedef void (*ddb_undo_operation_perform_fn)(ddb_undobuffer_t *undobuffer, struct ddb_undo_operation_s *op);
+typedef void (*ddb_undo_operation_deinit_fn)(struct ddb_undo_operation_s *op);
 
-typedef struct undo_operation_s {
-    struct undo_operation_s *next;
-    undo_operation_perform_fn perform;
-    undo_operation_deinit_fn deinit;
-} undo_operation_t;
+typedef struct ddb_undo_operation_s {
+    struct ddb_undo_operation_s *next;
+    ddb_undo_operation_perform_fn perform;
+    ddb_undo_operation_deinit_fn deinit;
+} ddb_undo_operation_t;
 
-undobuffer_t *
-undobuffer_alloc(void);
-
-void
-undobuffer_free (undobuffer_t *undobuffer);
+ddb_undobuffer_t *
+ddb_undobuffer_alloc(void);
 
 void
-undobuffer_set_enabled (undobuffer_t *undobuffer, int enabled);
+ddb_undobuffer_free (ddb_undobuffer_t *undobuffer);
+
+void
+ddb_undobuffer_set_enabled (ddb_undobuffer_t *undobuffer, int enabled);
 
 int
-undobuffer_is_enabled (undobuffer_t *undobuffer);
+ddb_undobuffer_is_enabled (ddb_undobuffer_t *undobuffer);
 
 void
-undobuffer_group_begin (undobuffer_t *undobuffer);
+ddb_undobuffer_group_begin (ddb_undobuffer_t *undobuffer);
 
 void
-undobuffer_group_end (undobuffer_t *undobuffer);
+ddb_undobuffer_group_end (ddb_undobuffer_t *undobuffer);
 
 int
-undobuffer_is_grouping (undobuffer_t *undobuffer);
+ddb_undobuffer_is_grouping (ddb_undobuffer_t *undobuffer);
 
-undo_operation_t *
-undobuffer_get_current_operation (undobuffer_t *undobuffer);
+ddb_undo_operation_t *
+ddb_undobuffer_get_current_operation (ddb_undobuffer_t *undobuffer);
 
 void
-undobuffer_append_operation (undobuffer_t *undobuffer, undo_operation_t *op);
+ddb_undobuffer_append_operation (ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *op);
 
 /// @param undobuffer the buffer to execute
 /// @param current_undobuffer the current buffer to register the resulting undo operations
 void
-undobuffer_execute (undobuffer_t *undobuffer, undobuffer_t *current_undobuffer);
+ddb_undobuffer_execute (ddb_undobuffer_t *undobuffer, ddb_undobuffer_t *current_undobuffer);
 
 int
-undobuffer_has_operations(undobuffer_t *undobuffer);
+ddb_undobuffer_has_operations(ddb_undobuffer_t *undobuffer);
 
-#endif /* undobuffer_h */
+#endif /* ddb_undobuffer_h */

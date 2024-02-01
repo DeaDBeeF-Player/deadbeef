@@ -91,7 +91,7 @@ gtkui_add_dirs (GSList *lst) {
 
         gtkui_dispatch_on_main(^{
             ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
-            deadbeef->undo_set_action_name ("Add Folders");
+            deadbeef->undo_set_action_name (_("Add Folders"));
             deadbeef->plt_move_all_items (plt_curr, plt, tail);
             if (tail != NULL) {
                 deadbeef->pl_item_unref (tail);
@@ -122,7 +122,7 @@ gtkui_add_files (struct _GSList *lst) {
         gtkpl_add_files (plt, lst);
         gtkui_dispatch_on_main (^{
             ddb_playItem_t *tail = deadbeef->plt_get_tail_item (plt_curr, PL_MAIN);
-            deadbeef->undo_set_action_name ("Add Files");
+            deadbeef->undo_set_action_name (_("Add Files"));
             deadbeef->plt_move_all_items (plt_curr, plt, tail);
             if (tail != NULL) {
                 deadbeef->pl_item_unref (tail);
@@ -194,13 +194,13 @@ gtkui_add_location (const char *path, const char *custom_title) {
             }
 
             ddb_playItem_t *tail = deadbeef->plt_get_tail_item (plt_curr, PL_MAIN);
-            deadbeef->undo_set_action_name ("Add Files");
             deadbeef->plt_move_all_items (plt_curr, plt, tail);
             if (tail != NULL) {
                 deadbeef->pl_item_unref (tail);
             }
 
             deadbeef->plt_save_config (plt_curr);
+            deadbeef->undo_set_action_name(_("Add Location"));
             deadbeef->plt_add_files_end (plt, 0);
 
             free (path_copy);
@@ -254,28 +254,18 @@ strcopy_special (char *dest, const char *src, int len) {
     *dest = 0;
 }
 
-static gboolean
-set_dnd_cursor_idle (gpointer data) {
-    if (!data) {
+static void
+set_dnd_cursor (ddb_playItem_t *first) {
+    if (first == NULL) {
         deadbeef->pl_set_cursor (PL_MAIN, -1);
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-        return FALSE;
-    }
-    int cursor = deadbeef->pl_get_idx_of (DB_PLAYITEM (data));
-    deadbeef->pl_set_cursor (PL_MAIN, cursor);
-    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-    return FALSE;
-}
-
-void
-gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
-    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
-        free (ptr);
-        deadbeef->plt_unref (plt);
         return;
     }
+    int cursor = deadbeef->pl_get_idx_of (first);
+    deadbeef->pl_set_cursor (PL_MAIN, cursor);
+}
 
+static ddb_playItem_t *
+gtkpl_add_fm_dropped_files (ddb_playlist_t *plt, DB_playItem_t *drop_before, const char *ptr, int length) {
     DdbListviewIter first = NULL;
     DdbListviewIter after = NULL;
     if (drop_before) {
@@ -293,8 +283,6 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
         if (pe - p < 4096 && pe - p > 7) {
             char fname[(int)(pe - p)+1];
             strcopy_special (fname, (const char *)p, (int)(pe-p));
-            //strncpy (fname, p, pe - p);
-            //fname[pe - p] = 0;
             int abort = 0;
             DdbListviewIter inserted = deadbeef->plt_insert_dir2 (0, plt, after, fname, &abort, NULL, NULL);
             if (!inserted && !abort) {
@@ -323,12 +311,11 @@ gtkpl_add_fm_dropped_files (DB_playItem_t *drop_before, char *ptr, int length) {
     if (after) {
         deadbeef->pl_item_unref (after);
     }
-    free (ptr);
 
-    deadbeef->plt_add_files_end (plt, 0);
-    deadbeef->plt_save_config (plt);
-    deadbeef->plt_unref (plt);
-    g_idle_add (set_dnd_cursor_idle, first);
+    if (first != NULL) {
+        deadbeef->pl_item_ref (first);
+    }
+    return first;
 }
 
 struct fmdrop_data {
@@ -339,11 +326,7 @@ struct fmdrop_data {
 
 void
 gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length) {
-    struct fmdrop_data *data = malloc (sizeof (struct fmdrop_data));
-    if (!data) {
-        fprintf (stderr, "gtkui_receive_fm_drop: malloc failed\n");
-        return;
-    }
+    struct fmdrop_data *data = calloc (1, sizeof (struct fmdrop_data));
     data->mem = mem;
     data->length = length;
     if (before) {
@@ -351,12 +334,47 @@ gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length) {
     }
     data->drop_before = before;
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        gtkpl_add_fm_dropped_files (data->drop_before, data->mem, data->length);
+    ddb_playlist_t *plt = deadbeef->plt_alloc ("receive-drag-drop");
+    ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
+
+    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
         if (data->drop_before) {
             deadbeef->pl_item_unref (data->drop_before);
         }
+        free (mem);
         free (data);
+        deadbeef->plt_unref (plt);
+        deadbeef->plt_unref (plt_curr);
+        return;
+    }
+
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        ddb_playItem_t *first = gtkpl_add_fm_dropped_files (plt, data->drop_before, data->mem, data->length);
+
+        gtkui_dispatch_on_main(^{
+            ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
+            deadbeef->undo_set_action_name(_("Drag & Drop"));
+            deadbeef->plt_move_all_items (plt_curr, plt, tail);
+            if (tail != NULL) {
+                deadbeef->pl_item_unref (tail);
+            }
+
+            deadbeef->plt_save_config (plt_curr);
+            deadbeef->plt_add_files_end (plt, 0);
+            set_dnd_cursor (first);
+
+            if (first != NULL) {
+                deadbeef->pl_item_unref (first);
+            }
+            if (data->drop_before) {
+                deadbeef->pl_item_unref (data->drop_before);
+            }
+            free (mem);
+            free (data);
+            deadbeef->plt_unref (plt);
+            deadbeef->plt_unref (plt_curr);
+        });
     });
 }
 

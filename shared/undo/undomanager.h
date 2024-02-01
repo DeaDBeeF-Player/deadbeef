@@ -21,40 +21,39 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef undomanager_h
-#define undomanager_h
+#ifndef ddb_undomanager_h
+#define ddb_undomanager_h
 
 #include "undobuffer.h"
 
-struct undomanager_s;
+struct ddb_undomanager_s;
 
-typedef struct undomanager_s undomanager_t;
+typedef struct ddb_undomanager_s ddb_undomanager_t;
 
-undomanager_t *
-undomanager_alloc (void);
-
-void
-undomanager_free (undomanager_t *undomanager);
-
-undobuffer_t *
-undomanager_get_buffer (undomanager_t *undomanager);
-
-undobuffer_t *
-undomanager_consume_buffer (undomanager_t *undomanager);
+ddb_undomanager_t *
+ddb_undomanager_alloc (void);
 
 void
-undomanager_set_action_name (undomanager_t *undomanager, const char *name);
+ddb_undomanager_free (ddb_undomanager_t *undomanager);
+
+ddb_undobuffer_t *
+ddb_undomanager_get_buffer (ddb_undomanager_t *undomanager);
+
+ddb_undobuffer_t *
+ddb_undomanager_consume_buffer (ddb_undomanager_t *undomanager);
+
+void
+ddb_undomanager_set_action_name (ddb_undomanager_t *undomanager, const char *name);
 
 const char *
-undomanager_get_action_name (undomanager_t *undomanager);
-
+ddb_undomanager_get_action_name (ddb_undomanager_t *undomanager);
 
 #pragma mark - Shared instance
 
-undomanager_t *
-undomanager_shared (void);
+ddb_undomanager_t *
+ddb_undomanager_shared (void);
 
 void
-undomanager_shared_init (undomanager_t *undomanager);
+ddb_undomanager_shared_init (ddb_undomanager_t *undomanager);
 
-#endif /* undomanager_h */
+#endif /* ddb_undomanager_h */

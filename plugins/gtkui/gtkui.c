@@ -2314,10 +2314,10 @@ int _gtkui_command (int command, ...) {
     if (command == 110) { // init with undomanager
         va_list args;
         va_start (args, command);
-        undomanager_t *undomanager = va_arg (args, undomanager_t *);
+        ddb_undomanager_t *undomanager = va_arg (args, ddb_undomanager_t *);
         va_end (args);
 
-        undomanager_shared_init (undomanager);
+        ddb_undomanager_shared_init (undomanager);
 
         return 0;
     }
@@ -2326,7 +2326,7 @@ int _gtkui_command (int command, ...) {
         // register undo buffer
         va_list args;
         va_start (args, command);
-        undobuffer_t *undobuffer = va_arg (args, undobuffer_t *);
+        ddb_undobuffer_t *undobuffer = va_arg (args, ddb_undobuffer_t *);
         const char *name = va_arg (args, const char *);
         va_end (args);
 
