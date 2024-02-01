@@ -1511,3 +1511,11 @@ on_visualization_custom_background_color_button_color_set
 void
 on_combo_bit_override_changed          (GtkComboBox     *combobox,
                                         gpointer         user_data);
+
+void
+on_mainwin_undo_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);
+
+void
+on_mainwin_redo_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data);

@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2022 Oleksiy Yakovenko and other contributors
+    Copyright (C) 2009-2023 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -21,44 +21,33 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef undomanager_h
-#define undomanager_h
+#ifndef undo_h
+#define undo_h
 
 #include "undobuffer.h"
 
-struct undomanager_s;
-
-typedef struct undomanager_s undomanager_t;
-
-undomanager_t *
-undomanager_alloc (void);
+void
+gtkui_undo_deinit (void);
 
 void
-undomanager_free (undomanager_t *undomanager);
-
-undobuffer_t *
-undomanager_get_buffer (undomanager_t *undomanager);
-
-undobuffer_t *
-undomanager_consume_buffer (undomanager_t *undomanager);
-
-// Send the accumulated undo buffer to the UI for registration
-void
-undomanager_flush(undomanager_t *undomanager);
+gtkui_undo_append_buffer (undobuffer_t *undobuffer, const char *action_name);
 
 void
-undomanager_set_action_name (undomanager_t *undomanager, const char *name);
+gtkui_perform_undo (void);
+
+void
+gtkui_perform_redo (void);
+
+int
+gtkui_has_undo (void);
+
+int
+gtkui_has_redo (void);
 
 const char *
-undomanager_get_action_name (undomanager_t *undomanager);
+gtkui_get_undo_action_name (void);
 
+const char *
+gtkui_get_redo_action_name (void);
 
-#pragma mark - Shared instance
-
-undomanager_t *
-undomanager_shared (void);
-
-void
-undomanager_shared_init (undomanager_t *undomanager);
-
-#endif /* undomanager_h */
+#endif /* undo_h */

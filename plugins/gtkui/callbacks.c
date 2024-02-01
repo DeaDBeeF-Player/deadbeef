@@ -49,6 +49,7 @@
 #include "../libparser/parser.h"
 #include "drawing.h"
 #include "eq.h"
+#include "undo.h"
 #include "wingeom.h"
 #include "widgets.h"
 #include "../hotkeys/hotkeys.h"
@@ -706,4 +707,19 @@ on_sortfmt_show (GtkWidget *widget, gpointer user_data) {
         gtk_text_view_set_buffer (GTK_TEXT_VIEW (widget), sortbuffer);
         g_object_unref (G_OBJECT (sortbuffer));
     }
+}
+
+void
+on_mainwin_undo_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    gtkui_perform_undo ();
+}
+
+
+void
+on_mainwin_redo_activate               (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    gtkui_perform_redo ();
 }

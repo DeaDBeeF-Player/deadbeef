@@ -65,9 +65,11 @@ int cocoaui_command (int command, ...) {
         actionName = [actionName stringByReplacingOccurrencesOfString:@"&" withString:@"&&"];
         [undoManager setActionName:actionName];
         [undoManager registerUndoBuffer:buffer];
+
+        return 0;
     }
 
-    return 0;
+    return -1;
 }
 
 DB_gui_t plugin = {

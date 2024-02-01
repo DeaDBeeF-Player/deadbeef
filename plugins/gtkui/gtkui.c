@@ -68,6 +68,8 @@
 #include "plmenu.h"
 #include "covermanager/albumartwidget.h"
 #include "selpropertieswidget.h"
+#include "undo.h"
+#include "undomanager.h"
 
 #define USE_GTK_APPLICATION 1
 
@@ -1489,6 +1491,36 @@ gtkui_mainwin_drag_data_received (
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }
 
+static void
+_refresh_undo_redo_menu (void) {
+    GtkWidget *undo = lookup_widget (mainwin, "undo");
+    GtkWidget *redo = lookup_widget (mainwin, "redo");
+
+    int has_undo = gtkui_has_undo ();
+    int has_redo = gtkui_has_redo ();
+    gtk_widget_set_sensitive (undo, has_undo);
+    gtk_widget_set_sensitive (redo, has_redo);
+
+    const char *undo_action_name = gtkui_get_undo_action_name ();
+    const char *redo_action_name = gtkui_get_redo_action_name ();
+
+    char text[100];
+    if (has_undo && undo_action_name != NULL) {
+        snprintf (text, sizeof (text), _("Undo %s"), undo_action_name);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (undo), text);
+    }
+    else {
+        gtk_menu_item_set_label (GTK_MENU_ITEM (undo), _("Undo"));
+    }
+    if (has_redo && redo_action_name != NULL) {
+        snprintf (text, sizeof (text), _("Redo %s"), redo_action_name);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (redo), text);
+    }
+    else {
+        gtk_menu_item_set_label (GTK_MENU_ITEM (redo), _("Redo"));
+    }
+}
+
 void
 gtkui_mainwin_init (void) {
     // register widget types
@@ -1521,6 +1553,7 @@ gtkui_mainwin_init (void) {
     w_reg_widget (_ ("Media library viewer"), 0, w_medialib_viewer_create, "medialibviewer", NULL);
 
     mainwin = create_mainwin ();
+    _refresh_undo_redo_menu ();
 
 #if GTK_CHECK_VERSION(3, 10, 0) && USE_GTK_APPLICATION
     // This must be called before window is shown
@@ -1658,6 +1691,7 @@ gtkui_mainwin_free (void) {
         set_title_timeout_id = 0;
     }
 
+    gtkui_undo_deinit();
     clipboard_free_current ();
     eq_window_destroy ();
     trkproperties_destroy ();
@@ -2275,6 +2309,35 @@ _get_cover_art_thumb (
     return NULL;
 }
 
+static
+int _gtkui_command (int command, ...) {
+    if (command == 110) { // init with undomanager
+        va_list args;
+        va_start (args, command);
+        undomanager_t *undomanager = va_arg (args, undomanager_t *);
+        va_end (args);
+
+        undomanager_shared_init (undomanager);
+
+        return 0;
+    }
+
+    else if (command == 111) {
+        // register undo buffer
+        va_list args;
+        va_start (args, command);
+        undobuffer_t *undobuffer = va_arg (args, undobuffer_t *);
+        const char *name = va_arg (args, const char *);
+        va_end (args);
+
+        gtkui_undo_append_buffer (undobuffer, name);
+        _refresh_undo_redo_menu ();
+        return 0;
+    }
+
+    return -1;
+}
+
 #pragma mark -
 
 // define plugin interface
@@ -2331,6 +2394,7 @@ ddb_gtkui_t plugin = {
                             "You should have received a copy of the GNU Lesser General Public\n"
                             "License along with this library. If not, see <http://www.gnu.org/licenses/>.\n",
     .gui.plugin.website = "http://deadbeef.sf.net",
+    .gui.plugin.command = _gtkui_command,
     .gui.plugin.start = gtkui_start,
     .gui.plugin.stop = gtkui_stop,
     .gui.plugin.configdialog = settings_dlg,

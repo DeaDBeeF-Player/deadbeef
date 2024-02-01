@@ -59,8 +59,13 @@ undomanager_shared (void) {
 }
 
 void
-undomanager_shared_init (void) {
-    _shared = undomanager_alloc ();
+undomanager_shared_init (undomanager_t *undomanager) {
+    if (undomanager == NULL) {
+        _shared = undomanager_alloc ();
+    }
+    else {
+        _shared = undomanager;
+    }
 }
 
 undobuffer_t *
@@ -107,10 +112,13 @@ undomanager_flush(undomanager_t *undomanager) {
 
     int has_ui_command = ui_plugin != NULL && ui_plugin->command != NULL;
 
+    int res = -1;
     if (undobuffer_has_operations (undobuffer) && has_ui_command) {
-        ui_plugin->command (111, undobuffer, undomanager_get_action_name (undomanager));
+        ui_plugin->command (110, undomanager);
+        res = ui_plugin->command (111, undobuffer, undomanager_get_action_name (undomanager));
     }
-    else {
+
+    if (res != 0) {
         undobuffer_free (undobuffer);
     }
 

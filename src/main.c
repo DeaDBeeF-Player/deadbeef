@@ -1578,7 +1578,7 @@ main (int argc, char *argv[]) {
 
     streamer_playmodes_init ();
 
-    undomanager_shared_init();
+    undomanager_shared_init (NULL);
 
     pl_load_all ();
 
