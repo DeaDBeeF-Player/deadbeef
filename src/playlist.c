@@ -902,8 +902,12 @@ plt_clear (playlist_t *plt) {
 
     pl_unlock ();
 
+    ddb_undobuffer_t *undobuffer = ddb_undomanager_get_buffer (ddb_undomanager_shared ());
     while (it != NULL) {
         playItem_t *next = it->next[PL_MAIN];
+
+        undo_remove_items(undobuffer, plt, &it, 1);
+
         it->next[PL_MAIN] = NULL;
         it->prev[PL_MAIN] = NULL;
         it->next[PL_SEARCH] = NULL;
