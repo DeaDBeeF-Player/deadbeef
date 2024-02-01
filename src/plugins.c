@@ -142,9 +142,37 @@ static void
 _viz_spectrum_listen_stub (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) {
 }
 
+static DB_plugin_t *
+_plug_get_gui (void) {
+    struct DB_plugin_s **plugs = deadbeef->plug_get_list ();
+    for (int i = 0; plugs[i]; i++) {
+        if (plugs[i]->type == DB_PLUGIN_GUI) {
+            return plugs[i];
+        }
+    }
+    return NULL;
+}
+
 static void
 _undo_process(void) {
-    undomanager_flush(undomanager_shared());
+    undomanager_t *undomanager = undomanager_shared();
+
+    DB_plugin_t *ui_plugin = _plug_get_gui ();
+    undobuffer_t *undobuffer = undomanager_consume_buffer (undomanager);
+
+    int has_ui_command = ui_plugin != NULL && ui_plugin->command != NULL;
+
+    int res = -1;
+    if (undobuffer_has_operations (undobuffer) && has_ui_command) {
+        ui_plugin->command (110, undomanager);
+        res = ui_plugin->command (111, undobuffer, undomanager_get_action_name (undomanager));
+    }
+
+    if (res != 0) {
+        undobuffer_free (undobuffer);
+    }
+
+    undomanager_set_action_name (undomanager, NULL);
 }
 
 static void

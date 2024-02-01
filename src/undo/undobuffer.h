@@ -26,8 +26,6 @@
 #ifndef undobuffer_h
 #define undobuffer_h
 
-#include "../playlist.h"
-
 struct _undobuffer_s;
 
 typedef struct _undobuffer_s undobuffer_t;

@@ -21,11 +21,14 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <deadbeef/deadbeef.h>
 #include <stdlib.h>
 #include <string.h>
 #include "undo.h"
 #include "undobuffer.h"
 #include "undomanager.h"
+
+extern DB_functions_t *deadbeef;
 
 struct undo_item_s;
 typedef struct undo_item_s undo_item_t;
@@ -153,9 +156,11 @@ _perform_undo_redo (undo_type_t type) {
     _state.type = type;
     undobuffer_execute(item->undobuffer, new_buffer);
     undomanager_set_action_name(undomanager, item->action_name);
-    undomanager_flush (undomanager);
+    deadbeef->undo_process();
     _free_item (item);
     _state.type = none;
+
+    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void

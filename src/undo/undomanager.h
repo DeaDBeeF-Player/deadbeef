@@ -42,10 +42,6 @@ undomanager_get_buffer (undomanager_t *undomanager);
 undobuffer_t *
 undomanager_consume_buffer (undomanager_t *undomanager);
 
-// Send the accumulated undo buffer to the UI for registration
-void
-undomanager_flush(undomanager_t *undomanager);
-
 void
 undomanager_set_action_name (undomanager_t *undomanager, const char *name);
 

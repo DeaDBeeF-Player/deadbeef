@@ -23,6 +23,9 @@
 
 #import "DdbUndoBuffer.h"
 #include "undomanager.h"
+#include <deadbeef/deadbeef.h>
+
+extern DB_functions_t *deadbeef;
 
 @interface DdbUndoBuffer()
 
@@ -44,6 +47,8 @@
 
 - (void)apply {
     undobuffer_execute(self.buffer, undomanager_get_buffer(undomanager_shared()));
+
+    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 @end

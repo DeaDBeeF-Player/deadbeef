@@ -25,6 +25,7 @@
 #define undo_playlist_h
 
 #include "undobuffer.h"
+#include "../playlist.h"
 
 void
 undo_remove_items(undobuffer_t *undobuffer, playlist_t *plt, playItem_t **items, size_t count);

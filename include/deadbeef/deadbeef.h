@@ -1718,8 +1718,7 @@ typedef struct {
     /// If undo registration is enabled: required to be called on main thread.
     void (*plt_move_all_items) (ddb_playlist_t *to, ddb_playlist_t *from, ddb_playItem_t *insert_after);
 
-    /// Called to create an undo action from all actions
-    /// accumulated since the previous calls
+    /// Called to send the accumulated undo buffer to the active UI plugin.
     void (*undo_process)(void);
 
     /// Set the action name to be displayed in Undo/Redo menu item.

@@ -25,8 +25,6 @@
 #include <string.h>
 #include "undomanager.h"
 
-extern DB_functions_t *deadbeef;
-
 struct undomanager_s {
     undobuffer_t *buffer;
     char *action_name;
@@ -83,17 +81,6 @@ undomanager_consume_buffer (undomanager_t *undomanager) {
     return buffer;
 }
 
-static DB_plugin_t *
-_plug_get_gui (void) {
-    struct DB_plugin_s **plugs = deadbeef->plug_get_list ();
-    for (int i = 0; plugs[i]; i++) {
-        if (plugs[i]->type == DB_PLUGIN_GUI) {
-            return plugs[i];
-        }
-    }
-    return NULL;
-}
-
 void
 undomanager_set_action_name (undomanager_t *undomanager, const char *name) {
     free (undomanager->action_name);
@@ -105,22 +92,3 @@ undomanager_get_action_name (undomanager_t *undomanager) {
     return undomanager->action_name;
 }
 
-void
-undomanager_flush(undomanager_t *undomanager) {
-    DB_plugin_t *ui_plugin = _plug_get_gui ();
-    undobuffer_t *undobuffer = undomanager_consume_buffer (undomanager);
-
-    int has_ui_command = ui_plugin != NULL && ui_plugin->command != NULL;
-
-    int res = -1;
-    if (undobuffer_has_operations (undobuffer) && has_ui_command) {
-        ui_plugin->command (110, undomanager);
-        res = ui_plugin->command (111, undobuffer, undomanager_get_action_name (undomanager));
-    }
-
-    if (res != 0) {
-        undobuffer_free (undobuffer);
-    }
-
-    undomanager_set_action_name (undomanager, NULL);
-}
