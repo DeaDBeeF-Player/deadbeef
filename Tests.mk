@@ -49,6 +49,7 @@ TEST_C_SOURCES=$(wildcard \
 	plugins/vfs_curl/*.c \
 	shared/*.c \
 	shared/scriptable/*.c \
+	shared/undo/*.c \
 	src/*.c \
 	src/ConvertUTF/*.c \
 	src/md5/*.c \
@@ -79,6 +80,7 @@ VPATH=src \
 	$(addprefix external/,mp4p/src wcwidth googletest/googletest/src) \
 	shared \
 	shared/scriptable \
+	shared/undo \
 	Tests
 
 $(BUILD)/%.o: %.c
