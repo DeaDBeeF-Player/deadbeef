@@ -194,6 +194,7 @@ project "deadbeef"
   files {
     "src/md5/*.c",
     "src/undo/*.c",
+    "shared/undo/*.c",
     "src/*.c",
     "plugins/libparser/*.c",
     "external/wcwidth/wcwidth.c",
