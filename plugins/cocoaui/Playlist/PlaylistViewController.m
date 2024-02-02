@@ -1336,6 +1336,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     deadbeef->plt_sort_v2 (plt, PL_MAIN, c->type, (c->sortFormat && c->sortFormat[0]) ? c->sortFormat : c->format, self.columns[column].sort_order);
     deadbeef->plt_unref (plt);
 
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+
     PlaylistView *lv = (PlaylistView *)self.view;
     lv.headerView.needsDisplay = YES;
 }

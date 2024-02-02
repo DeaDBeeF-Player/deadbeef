@@ -1125,6 +1125,7 @@ pl_common_col_sort (DdbListviewColumnSortOrder sort_order, int iter, void *user_
     char *format = (c->sort_format && strlen(c->sort_format)) ? c->sort_format : c->format;
     deadbeef->plt_sort_v2 (plt, iter, c->id, format, sort_order == DdbListviewColumnSortOrderDescending ? DDB_SORT_DESCENDING : DDB_SORT_ASCENDING);
     deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 void

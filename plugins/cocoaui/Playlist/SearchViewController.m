@@ -96,6 +96,7 @@ extern DB_functions_t *deadbeef;
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     deadbeef->plt_sort_v2 (plt, PL_SEARCH, c->type, c->format, order-1);
     deadbeef->plt_unref (plt);
+    deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 @end
