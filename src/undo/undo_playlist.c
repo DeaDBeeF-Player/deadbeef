@@ -140,7 +140,7 @@ undo_remove_items(ddb_undobuffer_t *undobuffer, playlist_t *plt, playItem_t **it
     undo_operation_item_list_t *op = NULL;
     if (ddb_undobuffer_is_grouping (undobuffer)) {
         ddb_undo_operation_t *baseop = ddb_undobuffer_get_current_operation(undobuffer);
-        if (baseop->perform == (ddb_undo_operation_perform_fn)_undo_perform_insert_items) {
+        if (baseop != NULL && baseop->perform == (ddb_undo_operation_perform_fn)_undo_perform_insert_items) {
             op = (undo_operation_item_list_t *)baseop;
         }
     }
@@ -176,7 +176,7 @@ undo_insert_items(ddb_undobuffer_t *undobuffer, playlist_t *plt, playItem_t **it
     undo_operation_item_list_t *op = NULL;
     if (ddb_undobuffer_is_grouping (undobuffer)) {
         ddb_undo_operation_t *baseop = ddb_undobuffer_get_current_operation(undobuffer);
-        if (baseop->perform == _undo_perform_remove_items) {
+        if (baseop != NULL && baseop->perform == _undo_perform_remove_items) {
             op = (undo_operation_item_list_t *)baseop;
         }
     }
@@ -205,7 +205,11 @@ undo_change_selection(ddb_undobuffer_t *undobuffer, playlist_t *plt) {
     // and indicate which one is captured with a flag.
 
     const int selcount = plt_getselcount(plt);
-    const int unselcount = plt_get_item_count(plt, PL_MAIN);
+    const int unselcount = plt_get_item_count(plt, PL_MAIN) - selcount;
+
+    if (selcount == 0 && unselcount == 0) {
+        return;
+    }
 
     uint32_t flags = 0;
     playItem_t **items;
