@@ -69,7 +69,7 @@
 #include "covermanager/albumartwidget.h"
 #include "selpropertieswidget.h"
 #include "undo.h"
-#include "undo/undomanager.h"
+#include "undointegration.h"
 
 #define USE_GTK_APPLICATION 1
 
@@ -1491,36 +1491,6 @@ gtkui_mainwin_drag_data_received (
     gtk_drag_finish (drag_context, TRUE, FALSE, time);
 }
 
-static void
-_refresh_undo_redo_menu (void) {
-    GtkWidget *undo = lookup_widget (mainwin, "undo");
-    GtkWidget *redo = lookup_widget (mainwin, "redo");
-
-    int has_undo = gtkui_has_undo ();
-    int has_redo = gtkui_has_redo ();
-    gtk_widget_set_sensitive (undo, has_undo);
-    gtk_widget_set_sensitive (redo, has_redo);
-
-    const char *undo_action_name = gtkui_get_undo_action_name ();
-    const char *redo_action_name = gtkui_get_redo_action_name ();
-
-    char text[100];
-    if (has_undo && undo_action_name != NULL) {
-        snprintf (text, sizeof (text), _("Undo %s"), undo_action_name);
-        gtk_menu_item_set_label (GTK_MENU_ITEM (undo), text);
-    }
-    else {
-        gtk_menu_item_set_label (GTK_MENU_ITEM (undo), _("Undo"));
-    }
-    if (has_redo && redo_action_name != NULL) {
-        snprintf (text, sizeof (text), _("Redo %s"), redo_action_name);
-        gtk_menu_item_set_label (GTK_MENU_ITEM (redo), text);
-    }
-    else {
-        gtk_menu_item_set_label (GTK_MENU_ITEM (redo), _("Redo"));
-    }
-}
-
 void
 gtkui_mainwin_init (void) {
     // register widget types
@@ -1553,7 +1523,7 @@ gtkui_mainwin_init (void) {
     w_reg_widget (_ ("Media library viewer"), 0, w_medialib_viewer_create, "medialibviewer", NULL);
 
     mainwin = create_mainwin ();
-    _refresh_undo_redo_menu ();
+    refresh_undo_redo_menu ();
 
 #if GTK_CHECK_VERSION(3, 10, 0) && USE_GTK_APPLICATION
     // This must be called before window is shown
@@ -1865,24 +1835,6 @@ gapplication_shutdown_handler (GApplication *app, gpointer user_data) {
 }
 #endif
 
-static void
-_undo_initialize (ddb_undomanager_t *undomanager) {
-    ddb_undomanager_shared_init (undomanager);
-}
-
-static int
-_undo_process_action (ddb_undobuffer_t *undobuffer, const char *action_name) {
-    gtkui_undo_append_buffer (undobuffer, action_name);
-    _refresh_undo_redo_menu ();
-    return 0;
-}
-
-static ddb_undo_interface_t _undo_interface = {
-    ._size = sizeof (ddb_undo_interface_t),
-    .initialize = _undo_initialize,
-    .process_action = _undo_process_action,
-};
-
 static int
 gtkui_start (void) {
     fprintf (
@@ -1892,7 +1844,7 @@ gtkui_start (void) {
         GTK_MINOR_VERSION,
         GTK_MICRO_VERSION);
 
-    deadbeef->register_for_undo (&_undo_interface);
+    undo_integration_init();
 
     import_legacy_tf ("gtkui.titlebar_playing", "gtkui.titlebar_playing_tf");
     import_legacy_tf ("gtkui.titlebar_stopped", "gtkui.titlebar_stopped_tf");

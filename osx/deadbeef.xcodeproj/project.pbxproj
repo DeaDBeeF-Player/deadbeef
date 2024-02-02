@@ -876,10 +876,6 @@
 		2D2C515A2B6BE15900EAC44E /* undo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2C51572B6BE15800EAC44E /* undo.h */; };
 		2D2C515B2B6BE15900EAC44E /* undo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2C51582B6BE15900EAC44E /* undo.c */; };
 		2D2C515C2B6BE15900EAC44E /* undo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2C51582B6BE15900EAC44E /* undo.c */; };
-		2D2C515E2B6BE21500EAC44E /* undomanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D7387D429BE5DA1003E3126 /* undomanager.c */; };
-		2D2C515F2B6BE21500EAC44E /* undobuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D7387D529BE5DA1003E3126 /* undobuffer.c */; };
-		2D2C51612B6BE21500EAC44E /* undomanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D7387D429BE5DA1003E3126 /* undomanager.c */; };
-		2D2C51622B6BE21500EAC44E /* undobuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D7387D529BE5DA1003E3126 /* undobuffer.c */; };
 		2D30D0B425E2A5DD0023A299 /* DesignModeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D0B225E2A5DD0023A299 /* DesignModeState.h */; };
 		2D30D0B525E2A5DD0023A299 /* DesignModeState.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D0B325E2A5DD0023A299 /* DesignModeState.m */; };
 		2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */; };
@@ -1650,6 +1646,12 @@
 		2D92D33C29B9323600218F1D /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21C29B92DF900218F1D /* analyzer.c */; };
 		2D92D33D29B9324A00218F1D /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F329B92DF900218F1D /* tftintutil.c */; };
 		2D92D33E29B9324A00218F1D /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
+		2D92F37C2B6D226F00BD07E8 /* UndoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92F37A2B6D226F00BD07E8 /* UndoIntegration.h */; };
+		2D92F37D2B6D226F00BD07E8 /* UndoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D92F37B2B6D226F00BD07E8 /* UndoIntegration.m */; };
+		2D92F3822B6D250D00BD07E8 /* undointegration.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92F37F2B6D23FF00BD07E8 /* undointegration.c */; };
+		2D92F3832B6D250E00BD07E8 /* undointegration.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92F37F2B6D23FF00BD07E8 /* undointegration.c */; };
+		2D92F3842B6D25C400BD07E8 /* undointegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92F37E2B6D23FE00BD07E8 /* undointegration.h */; };
+		2D92F3852B6D25C400BD07E8 /* undointegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92F37E2B6D23FE00BD07E8 /* undointegration.h */; };
 		2D95F6B72939283D002D8499 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D95F6BA29392884002D8499 /* artwork_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6B829392884002D8499 /* artwork_ogg.h */; };
 		2D95F6BB29392884002D8499 /* artwork_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F6B929392884002D8499 /* artwork_ogg.c */; };
@@ -6235,6 +6237,10 @@
 		2D92D21C29B92DF900218F1D /* analyzer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		2D92D21D29B92DF900218F1D /* growableBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = growableBuffer.h; sourceTree = "<group>"; };
 		2D92D21E29B92DF900218F1D /* ctmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ctmap.c; sourceTree = "<group>"; };
+		2D92F37A2B6D226F00BD07E8 /* UndoIntegration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UndoIntegration.h; sourceTree = "<group>"; };
+		2D92F37B2B6D226F00BD07E8 /* UndoIntegration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UndoIntegration.m; sourceTree = "<group>"; };
+		2D92F37E2B6D23FE00BD07E8 /* undointegration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undointegration.h; sourceTree = "<group>"; };
+		2D92F37F2B6D23FF00BD07E8 /* undointegration.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = undointegration.c; sourceTree = "<group>"; };
 		2D95F6B829392884002D8499 /* artwork_ogg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_ogg.h; sourceTree = "<group>"; };
 		2D95F6B929392884002D8499 /* artwork_ogg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_ogg.c; sourceTree = "<group>"; };
 		2D95F6BF29392F17002D8499 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
@@ -11025,6 +11031,8 @@
 				2D95F720293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.m */,
 				2D95F727293BB295002D8499 /* DdbUndoBufferRetainer.h */,
 				2D95F728293BB295002D8499 /* DdbUndoBufferRetainer.m */,
+				2D92F37A2B6D226F00BD07E8 /* UndoIntegration.h */,
+				2D92F37B2B6D226F00BD07E8 /* UndoIntegration.m */,
 			);
 			path = Undo;
 			sourceTree = "<group>";
@@ -12214,6 +12222,8 @@
 				2D0AC9A92864E12600F6D56A /* selpropertieswidget.h */,
 				2D2C51572B6BE15800EAC44E /* undo.h */,
 				2D2C51582B6BE15900EAC44E /* undo.c */,
+				2D92F37E2B6D23FE00BD07E8 /* undointegration.h */,
+				2D92F37F2B6D23FF00BD07E8 /* undointegration.c */,
 			);
 			name = gtkui;
 			path = plugins/gtkui;
@@ -14215,6 +14225,7 @@
 				2D0AC9AC2864E12700F6D56A /* selpropertieswidget.h in Headers */,
 				2DC656862744289C00583E14 /* ddb_splitter_size_mode.h in Headers */,
 				2DC656872744289C00583E14 /* prefwinnetwork.h in Headers */,
+				2D92F3842B6D25C400BD07E8 /* undointegration.h in Headers */,
 				2DC656882744289C00583E14 /* support.h in Headers */,
 				2D60EAFE277235C800C28A44 /* playlistcontroller.h in Headers */,
 				2DC6568A2744289C00583E14 /* ctmapping.h in Headers */,
@@ -14300,6 +14311,7 @@
 				2D0AC9AD2864E12700F6D56A /* selpropertieswidget.h in Headers */,
 				2DE3B7FB2269BF3100AFF9AE /* ddb_splitter_size_mode.h in Headers */,
 				2D715C1A26C839020022A8F0 /* prefwinnetwork.h in Headers */,
+				2D92F3852B6D25C400BD07E8 /* undointegration.h in Headers */,
 				2DE3B80B2269BF3100AFF9AE /* support.h in Headers */,
 				2D60EAFF277235C800C28A44 /* playlistcontroller.h in Headers */,
 				2DE3B7E92269BF3100AFF9AE /* ctmapping.h in Headers */,
@@ -14687,6 +14699,7 @@
 				2DF55C292270F415002C44DC /* ScriptableSelectViewController.h in Headers */,
 				2D6DCB3E291B105D00D6ECE6 /* fastftoi.h in Headers */,
 				2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */,
+				2D92F37C2B6D226F00BD07E8 /* UndoIntegration.h in Headers */,
 				2DB951CB26B1E05300602876 /* SpectrumAnalyzerSettings.h in Headers */,
 				2DAB1A3026A5FB9C00EA8B8F /* PreferencesPluginEntry.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
@@ -17983,6 +17996,7 @@
 				2DC656A12744289C00583E14 /* fileman.c in Sources */,
 				2DC656A22744289C00583E14 /* prefwinsound.c in Sources */,
 				2D9793ED276E894E0062585E /* gobjcache.c in Sources */,
+				2D92F3822B6D250D00BD07E8 /* undointegration.c in Sources */,
 				2D92D31D29B92F8D00218F1D /* eqpreset.c in Sources */,
 				2DC656A42744289C00583E14 /* eq.c in Sources */,
 				2DC656A52744289C00583E14 /* deadbeefapp.c in Sources */,
@@ -18009,7 +18023,6 @@
 				2DC656B72744289C00583E14 /* actions.c in Sources */,
 				2DC656B82744289C00583E14 /* hotkeys.c in Sources */,
 				2DC656B92744289C00583E14 /* callbacks.c in Sources */,
-				2D2C515F2B6BE21500EAC44E /* undobuffer.c in Sources */,
 				2D0AC9AA2864E12700F6D56A /* selpropertieswidget.c in Sources */,
 				2DC656BA2744289C00583E14 /* pltmenu.c in Sources */,
 				2DC656BB2744289C00583E14 /* ddbcellrenderertextmultiline.c in Sources */,
@@ -18038,7 +18051,6 @@
 				2DC656CE2744289C00583E14 /* dspconfig.c in Sources */,
 				2DC656CF2744289C00583E14 /* widgets.c in Sources */,
 				2D56580D2AEE64200014443E /* gtkScriptable.c in Sources */,
-				2D2C515E2B6BE21500EAC44E /* undomanager.c in Sources */,
 				2DC656D02744289C00583E14 /* pluginconf.c in Sources */,
 				2DC656D12744289C00583E14 /* trkproperties.c in Sources */,
 				2DC656D22744289C00583E14 /* ctmapping.c in Sources */,
@@ -18092,6 +18104,7 @@
 				2DE3B7FA2269BF3100AFF9AE /* fileman.c in Sources */,
 				2D715C0B26C833570022A8F0 /* prefwinsound.c in Sources */,
 				2D9793EE276E894F0062585E /* gobjcache.c in Sources */,
+				2D92F3832B6D250E00BD07E8 /* undointegration.c in Sources */,
 				2D92D31F29B92F8D00218F1D /* eqpreset.c in Sources */,
 				2DE3B7C02269BF1300AFF9AE /* eq.c in Sources */,
 				2DE3B8022269BF3100AFF9AE /* deadbeefapp.c in Sources */,
@@ -18118,7 +18131,6 @@
 				2DE3B7F62269BF3100AFF9AE /* actions.c in Sources */,
 				2DE3B8002269BF3100AFF9AE /* hotkeys.c in Sources */,
 				2DE3B8012269BF3100AFF9AE /* callbacks.c in Sources */,
-				2D2C51622B6BE21500EAC44E /* undobuffer.c in Sources */,
 				2D0AC9AB2864E12700F6D56A /* selpropertieswidget.c in Sources */,
 				2DE3B7C72269BF1300AFF9AE /* pltmenu.c in Sources */,
 				2DE3B7C32269BF1300AFF9AE /* ddbcellrenderertextmultiline.c in Sources */,
@@ -18147,7 +18159,6 @@
 				2DE3B7DD2269BF3100AFF9AE /* dspconfig.c in Sources */,
 				2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */,
 				2D56580E2AEE64210014443E /* gtkScriptable.c in Sources */,
-				2D2C51612B6BE21500EAC44E /* undomanager.c in Sources */,
 				2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */,
 				2DE3B7EA2269BF3100AFF9AE /* trkproperties.c in Sources */,
 				2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */,
@@ -18382,6 +18393,7 @@
 				2DC657E4274A5F6000583E14 /* PlaylistBrowserWidget.m in Sources */,
 				2D95F726293BA3DA002D8499 /* DdbUndoBuffer.m in Sources */,
 				2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */,
+				2D92F37D2B6D226F00BD07E8 /* UndoIntegration.m in Sources */,
 				2D92D32129B92F9100218F1D /* pluginsettings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

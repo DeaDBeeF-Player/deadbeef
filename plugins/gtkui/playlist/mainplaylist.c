@@ -35,12 +35,11 @@
 #include "../search.h"
 #include "../support.h"
 #include "../trkproperties.h"
+#include "../undointegration.h"
 #include "ddblistview.h"
 #include "mainplaylist.h"
 #include "playlistrenderer.h"
 #include "plcommon.h"
-#include "undo/undobuffer.h"
-#include "undo/undomanager.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -105,7 +104,7 @@ main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint3
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
-    ddb_undomanager_set_action_name(ddb_undomanager_shared(), _("Add Files"));
+    ddb_undo->set_action_name (_("Add Files"));
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
@@ -136,7 +135,7 @@ main_tracks_copy_drag_n_drop (DdbListviewIter before, DdbListviewIter *tracks, i
     }
     deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
-    ddb_undomanager_set_action_name(ddb_undomanager_shared(), _("Add Files"));
+    ddb_undo->set_action_name (_("Add Files"));
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 

@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2022 Oleksiy Yakovenko and other contributors
+    Copyright (C) 2009-2024 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -21,16 +21,17 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <Foundation/Foundation.h>
+#ifndef undointegration_h
+#define undointegration_h
+
 #include <deadbeef/deadbeef.h>
 
-NS_ASSUME_NONNULL_BEGIN
+extern ddb_undo_interface_t *ddb_undo;
 
-@interface DdbUndoBuffer : NSObject
+void
+undo_integration_init (void);
 
-- (instancetype)initWithUndoBuffer:(struct ddb_undobuffer_s *)buffer;
-- (void)apply;
+void
+refresh_undo_redo_menu (void);
 
-@end
-
-NS_ASSUME_NONNULL_END
+#endif /* undointegration_h */

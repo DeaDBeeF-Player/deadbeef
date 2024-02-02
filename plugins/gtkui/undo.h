@@ -24,13 +24,13 @@
 #ifndef undo_h
 #define undo_h
 
-#include "undo/undobuffer.h"
+#include <deadbeef/deadbeef.h>
 
 void
 gtkui_undo_deinit (void);
 
 void
-gtkui_undo_append_buffer (ddb_undobuffer_t *undobuffer, const char *action_name);
+gtkui_undo_append_buffer (struct ddb_undobuffer_s *undobuffer, const char *action_name);
 
 void
 gtkui_perform_undo (void);

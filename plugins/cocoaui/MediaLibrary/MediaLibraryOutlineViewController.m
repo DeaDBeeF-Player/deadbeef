@@ -18,8 +18,7 @@
 #import "MedialibItemDragDropHolder.h"
 #import "TrackContextMenu.h"
 #import "TrackPropertiesWindowController.h"
-#import "undo/undobuffer.h"
-#import "undo/undomanager.h"
+#import "UndoIntegration.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -374,8 +373,7 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
 
     int count = 0;
 
-    ddb_undobuffer_t *undobuffer = ddb_undomanager_get_buffer (ddb_undomanager_shared ());
-    ddb_undobuffer_group_begin (undobuffer);
+    ddb_undo->group_begin();
 
     ddb_playItem_t *prev = deadbeef->plt_get_last(plt, PL_MAIN);
     for (item in items) {
@@ -393,7 +391,7 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
         count += 1;
     }
 
-    ddb_undobuffer_group_end (undobuffer);
+    ddb_undo->group_end ();
 
     if (prev != NULL) {
         deadbeef->pl_item_unref (prev);
@@ -423,7 +421,7 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
 
     deadbeef->plt_unref (curr_plt);
 
-    ddb_undomanager_set_action_name (ddb_undomanager_shared(), "Add Files");
+    ddb_undo->set_action_name ("Add Files");
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, DDB_PLAYLIST_CHANGE_CONTENT, 0, 0);
     if (count > 0) {

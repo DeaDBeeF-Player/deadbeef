@@ -142,7 +142,7 @@ static void
 _viz_spectrum_listen_stub (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) {
 }
 
-static ddb_undo_interface_t *_undo_interface;
+static ddb_undo_hooks_t *_undo_hooks;
 
 static void
 _undo_process(void) {
@@ -151,8 +151,8 @@ _undo_process(void) {
     ddb_undobuffer_t *undobuffer = ddb_undomanager_consume_buffer (undomanager);
 
     int res = -1;
-    if (ddb_undobuffer_has_operations (undobuffer) && _undo_interface != NULL) {
-        res = _undo_interface->process_action(undobuffer, ddb_undomanager_get_action_name (undomanager));
+    if (ddb_undobuffer_has_operations (undobuffer) && _undo_hooks != NULL) {
+        res = _undo_hooks->process_action(undobuffer, ddb_undomanager_get_action_name (undomanager));
     }
 
     if (res != 0) {
@@ -163,9 +163,43 @@ _undo_process(void) {
 }
 
 static void
-_register_for_undo (ddb_undo_interface_t *interface) {
-    _undo_interface = interface;
-    interface->initialize (ddb_undomanager_shared ());
+_undo_group_begin(void) {
+    ddb_undobuffer_group_begin (ddb_undomanager_get_buffer (ddb_undomanager_shared ()));
+}
+
+static void
+_undo_group_end(void) {
+    ddb_undobuffer_group_end (ddb_undomanager_get_buffer (ddb_undomanager_shared ()));
+}
+
+static void
+_undo_set_action_name (const char *action_name) {
+    ddb_undomanager_set_action_name (ddb_undomanager_shared (), action_name);
+}
+
+static void
+_undo_free_buffer (struct ddb_undobuffer_s *undobuffer) {
+    ddb_undobuffer_free (undobuffer);
+}
+
+static void
+_undo_execute_buffer (struct ddb_undobuffer_s *undobuffer) {
+    ddb_undobuffer_execute (undobuffer, ddb_undomanager_get_buffer(ddb_undomanager_shared()));
+}
+
+static ddb_undo_interface_t _undo_interface = {
+    ._size = sizeof (_undo_interface),
+    .group_begin = _undo_group_begin,
+    .group_end = _undo_group_end,
+    .set_action_name = _undo_set_action_name,
+    .free_buffer = _undo_free_buffer,
+    .execute_buffer = _undo_execute_buffer,
+};
+
+static void
+_register_for_undo (ddb_undo_hooks_t *hooks) {
+    _undo_hooks = hooks;
+    hooks->initialize (&_undo_interface);
 }
 
 // deadbeef api

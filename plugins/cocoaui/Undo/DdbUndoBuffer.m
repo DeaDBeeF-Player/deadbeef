@@ -22,31 +22,31 @@
 */
 
 #import "DdbUndoBuffer.h"
-#include "undomanager.h"
-#include <deadbeef/deadbeef.h>
+#import <deadbeef/deadbeef.h>
+#import "UndoIntegration.h"
 
 extern DB_functions_t *deadbeef;
 
 @interface DdbUndoBuffer()
 
-@property (nonatomic) ddb_undobuffer_t *buffer;
+@property (nonatomic) struct ddb_undobuffer_s *buffer;
 
 @end
 
 @implementation DdbUndoBuffer
 
 - (void)dealloc {
-    ddb_undobuffer_free (_buffer);
+    ddb_undo->free_buffer (_buffer);
 }
 
-- (instancetype)initWithUndoBuffer:(ddb_undobuffer_t *)buffer {
+- (instancetype)initWithUndoBuffer:(struct ddb_undobuffer_s *)buffer {
     self = [super init];
     _buffer = buffer;
     return self;
 }
 
 - (void)apply {
-    ddb_undobuffer_execute(self.buffer, ddb_undomanager_get_buffer(ddb_undomanager_shared()));
+    ddb_undo->execute_buffer (self.buffer);
 
     deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }

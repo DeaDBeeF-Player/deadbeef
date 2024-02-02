@@ -26,39 +26,14 @@
 #include <deadbeef/deadbeef.h>
 #import "DdbUndoBuffer.h"
 #import "NSUndoManager+DdbUndoBuffer.h"
-#include "undobuffer.h"
-#include "undomanager.h"
+#import "Undo/UndoIntegration.h"
 
 extern DB_functions_t *deadbeef;
-
-static void
-_undo_initialize (ddb_undomanager_t *undomanager) {
-}
-
-static int
-_undo_process_action (ddb_undobuffer_t *undobuffer, const char *action_name) {
-    AppDelegate *appDelegate = (AppDelegate *)NSApp.delegate;
-    NSUndoManager *undoManager = appDelegate.mainWindow.window.undoManager;
-    DdbUndoBuffer *buffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
-
-    NSString *actionName = @(action_name ?: "");
-    actionName = [actionName stringByReplacingOccurrencesOfString:@"&" withString:@"&&"];
-    [undoManager setActionName:actionName];
-    [undoManager registerUndoBuffer:buffer];
-
-    return 0;
-}
-
-static ddb_undo_interface_t _undo_interface = {
-    ._size = sizeof (ddb_undo_interface_t),
-    .initialize = _undo_initialize,
-    .process_action = _undo_process_action,
-};
 
 int cocoaui_start(void) {
     char *argv[1];
     argv[0] = "FIXME";
-    deadbeef->register_for_undo (&_undo_interface);
+    UndoIntegrationInit();
     return NSApplicationMain(1, (const char **)argv);
 }
 

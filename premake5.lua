@@ -836,7 +836,6 @@ project "ddb_gui_GTK2"
     "shared/analyzer/analyzer.c",
     "shared/scope/scope.c",
     "shared/scriptable/*.c",
-    "shared/undo/*.c",
     "plugins/libparser/parser.c",
     "src/utf8.c"
   }
@@ -870,7 +869,6 @@ project "ddb_gui_GTK3"
     "shared/analyzer/analyzer.c",
     "shared/scope/scope.c",
     "shared/scriptable/*.c",
-    "shared/undo/*.c",
     "plugins/libparser/parser.c",
     "src/utf8.c"
   }

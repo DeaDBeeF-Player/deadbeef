@@ -14,7 +14,7 @@
 #import "MedialibItemDragDropHolder.h"
 #import "PlaylistLocalDragDropHolder.h"
 #include <deadbeef/deadbeef.h>
-#import "undomanager.h"
+#import "UndoIntegration.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -164,7 +164,7 @@ static int grouptitleheight = 22;
     }
 
 
-    ddb_undomanager_set_action_name (ddb_undomanager_shared(), "Drag & drop");
+    ddb_undo->set_action_name ("Drag & drop");
 
     if ([pboard.types containsObject:ddbPlaylistItemsUTIType]) {
         NSArray *classes = @[[PlaylistLocalDragDropHolder class]];

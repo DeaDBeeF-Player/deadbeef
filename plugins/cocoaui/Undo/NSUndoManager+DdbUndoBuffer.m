@@ -24,7 +24,9 @@
 #import "DdbUndoBuffer.h"
 #import "DdbUndoBufferRetainer.h"
 #import "NSUndoManager+DdbUndoBuffer.h"
-#include "undomanager.h"
+#import "UndoIntegration.h"
+
+extern DB_functions_t *deadbeef;
 
 @implementation NSUndoManager (DdbUndoBuffer)
 
@@ -41,9 +43,7 @@
         [target apply];
         [DdbUndoBufferRetainer.shared releaseBuffer:target];
 
-        ddb_undobuffer_t *undobuffer = ddb_undomanager_consume_buffer(ddb_undomanager_shared());
-        DdbUndoBuffer *wrappedBuffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
-        [self registerUndoBuffer:wrappedBuffer];
+        deadbeef->undo_process();
     }];
 }
 
