@@ -1623,6 +1623,8 @@ main (int argc, char *argv[]) {
 
     DB_plugin_t *gui = plug_get_gui ();
     if (gui) {
+        // FIXME
+        gui->command (110, ddb_undomanager_shared());
         gui->start ();
     }
 

@@ -164,7 +164,6 @@ _undo_process(void) {
 
     int res = -1;
     if (ddb_undobuffer_has_operations (undobuffer) && has_ui_command) {
-        ui_plugin->command (110, undomanager);
         res = ui_plugin->command (111, undobuffer, ddb_undomanager_get_action_name (undomanager));
     }
 
