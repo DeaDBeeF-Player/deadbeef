@@ -1106,9 +1106,9 @@ main_cleanup_and_quit (void) {
         scriptableDeinitShared ();
 #endif
 
+        pl_free (); // may access conf_*
         ddb_undomanager_free(ddb_undomanager_shared());
 
-        pl_free (); // may access conf_*
         conf_free ();
 
         trace ("messagepump_free\n");
