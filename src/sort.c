@@ -31,6 +31,9 @@
 #include "pltmeta.h"
 #include "plmeta.h"
 #include "messagepump.h"
+#include "undo/undobuffer.h"
+#include "undo/undomanager.h"
+#include "undo/undo_playlist.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -40,7 +43,32 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
 
 void
 plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
+    ddb_undobuffer_t *undobuffer = ddb_undomanager_get_buffer (ddb_undomanager_shared ());
+    if (plt->undo_enabled) {
+        pl_lock ();
+        int count = plt->count[PL_MAIN];
+        playItem_t **tracks = calloc (count, sizeof (playItem_t *));
+        int index = 0;
+        for (playItem_t *it = plt->head[PL_MAIN]; it != NULL; it = it->next[PL_MAIN]) {
+            tracks[index++] = it;
+        }
+        undo_remove_items(undobuffer, plt, tracks, count);
+        free (tracks);
+    }
+
     plt_sort_internal (plt, iter, id, format, order, 1);
+
+    if (plt->undo_enabled) {
+        int count = plt->count[PL_MAIN];
+        playItem_t **tracks = calloc (count, sizeof (playItem_t *));
+        int index = 0;
+        for (playItem_t *it = plt->head[PL_MAIN]; it != NULL; it = it->next[PL_MAIN]) {
+            tracks[index++] = it;
+        }
+        undo_insert_items(undobuffer, plt, tracks, count);
+        free (tracks);
+        pl_unlock ();
+    }
 }
 
 // sort for title formatting v1
