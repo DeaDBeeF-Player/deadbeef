@@ -903,20 +903,29 @@ plt_clear (playlist_t *plt) {
     pl_unlock ();
 
     ddb_undobuffer_t *undobuffer = ddb_undomanager_get_buffer (ddb_undomanager_shared ());
+    ddb_undobuffer_group_begin (undobuffer);
     while (it != NULL) {
         playItem_t *next = it->next[PL_MAIN];
+        playItem_t *next_search = it->next[PL_SEARCH];
 
         undo_remove_items(undobuffer, plt, &it, 1);
 
+        if (next != NULL) {
+            next->prev[PL_MAIN] = NULL;
+        }
+        if (next_search != NULL) {
+            next_search->prev[PL_SEARCH] = NULL;
+        }
+
         it->next[PL_MAIN] = NULL;
-        it->prev[PL_MAIN] = NULL;
         it->next[PL_SEARCH] = NULL;
-        it->prev[PL_SEARCH] = NULL;
+
         streamer_song_removed_notify (it);
         playqueue_remove (it);
         pl_item_unref (it);
         it = next;
     }
+    ddb_undobuffer_group_end (undobuffer);
 }
 
 void
