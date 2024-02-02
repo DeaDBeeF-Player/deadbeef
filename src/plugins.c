@@ -142,29 +142,17 @@ static void
 _viz_spectrum_listen_stub (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) {
 }
 
-static DB_plugin_t *
-_plug_get_gui (void) {
-    struct DB_plugin_s **plugs = deadbeef->plug_get_list ();
-    for (int i = 0; plugs[i]; i++) {
-        if (plugs[i]->type == DB_PLUGIN_GUI) {
-            return plugs[i];
-        }
-    }
-    return NULL;
-}
+static ddb_undo_interface_t *_undo_interface;
 
 static void
 _undo_process(void) {
     ddb_undomanager_t *undomanager = ddb_undomanager_shared();
 
-    DB_plugin_t *ui_plugin = _plug_get_gui ();
     ddb_undobuffer_t *undobuffer = ddb_undomanager_consume_buffer (undomanager);
 
-    int has_ui_command = ui_plugin != NULL && ui_plugin->command != NULL;
-
     int res = -1;
-    if (ddb_undobuffer_has_operations (undobuffer) && has_ui_command) {
-        res = ui_plugin->command (111, undobuffer, ddb_undomanager_get_action_name (undomanager));
+    if (ddb_undobuffer_has_operations (undobuffer) && _undo_interface != NULL) {
+        res = _undo_interface->process_action(undobuffer, ddb_undomanager_get_action_name (undomanager));
     }
 
     if (res != 0) {
@@ -175,10 +163,10 @@ _undo_process(void) {
 }
 
 static void
-_undo_set_action_name (const char *name) {
-    ddb_undomanager_set_action_name (ddb_undomanager_shared(), name);
+_register_for_undo (ddb_undo_interface_t *interface) {
+    _undo_interface = interface;
+    interface->initialize (ddb_undomanager_shared ());
 }
-
 
 // deadbeef api
 static DB_functions_t deadbeef_api = {
@@ -574,7 +562,7 @@ static DB_functions_t deadbeef_api = {
     .streamer_get_playing_track_safe = (DB_playItem_t *(*) (void))streamer_get_playing_track,
     .plt_move_all_items = (void (*) (ddb_playlist_t *to, ddb_playlist_t *from, ddb_playItem_t *insert_after))plt_move_all_items,
     .undo_process = _undo_process,
-    .undo_set_action_name = _undo_set_action_name,
+    .register_for_undo = _register_for_undo,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

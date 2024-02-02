@@ -41,6 +41,7 @@
 #import "ReplayGainScannerController.h"
 #import "TrackPropertiesManager.h"
 #import "streamer.h"
+#import "undomanager.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -456,7 +457,7 @@ main_cleanup_and_quit (void);
                 if (!fileadd_cancelled) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
-                        deadbeef->undo_set_action_name("Add Files");
+                        ddb_undomanager_set_action_name (ddb_undomanager_shared(), "Add Files");
                         deadbeef->plt_move_all_items(plt_curr, plt, tail);
                         if (tail != NULL) {
                             deadbeef->pl_item_unref (tail);
@@ -519,7 +520,7 @@ main_cleanup_and_quit (void);
                             deadbeef->pl_item_unref (tail);
                         }
                         deadbeef->pl_save_current();
-                        deadbeef->undo_set_action_name("Add Folders");
+                        ddb_undomanager_set_action_name (ddb_undomanager_shared(), "Add Folders");
                         deadbeef->plt_add_files_end (plt, 0);
                         deadbeef->plt_unref (plt);
                         deadbeef->plt_unref (plt_curr);
@@ -559,7 +560,7 @@ main_cleanup_and_quit (void);
                     deadbeef->pl_save_current ();
 
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        deadbeef->undo_set_action_name("Add Location");
+                        ddb_undomanager_set_action_name (ddb_undomanager_shared(), "Add Location");
                         deadbeef->plt_add_files_end (plt, 0);
                         deadbeef->plt_unref (plt);
                         deadbeef->plt_unref (plt_curr);

@@ -517,7 +517,7 @@ _append_tracks_to_playlist (ddb_playItem_t **tracks, int count, ddb_playlist_t *
     }
 
     ddb_undobuffer_group_end (undobuffer);
-    deadbeef->undo_set_action_name (_("Add Files"));
+    ddb_undomanager_set_action_name (ddb_undomanager_shared(), _("Add Files"));
 
     if (prev != NULL) {
         deadbeef->pl_item_unref (prev);

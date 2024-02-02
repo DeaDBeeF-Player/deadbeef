@@ -1865,6 +1865,24 @@ gapplication_shutdown_handler (GApplication *app, gpointer user_data) {
 }
 #endif
 
+static void
+_undo_initialize (ddb_undomanager_t *undomanager) {
+    ddb_undomanager_shared_init (undomanager);
+}
+
+static int
+_undo_process_action (ddb_undobuffer_t *undobuffer, const char *action_name) {
+    gtkui_undo_append_buffer (undobuffer, action_name);
+    _refresh_undo_redo_menu ();
+    return 0;
+}
+
+static ddb_undo_interface_t _undo_interface = {
+    ._size = sizeof (ddb_undo_interface_t),
+    .initialize = _undo_initialize,
+    .process_action = _undo_process_action,
+};
+
 static int
 gtkui_start (void) {
     fprintf (
@@ -1873,6 +1891,8 @@ gtkui_start (void) {
         GTK_MAJOR_VERSION,
         GTK_MINOR_VERSION,
         GTK_MICRO_VERSION);
+
+    deadbeef->register_for_undo (&_undo_interface);
 
     import_legacy_tf ("gtkui.titlebar_playing", "gtkui.titlebar_playing_tf");
     import_legacy_tf ("gtkui.titlebar_stopped", "gtkui.titlebar_stopped_tf");
@@ -2309,35 +2329,6 @@ _get_cover_art_thumb (
     return NULL;
 }
 
-static
-int _gtkui_command (int command, ...) {
-    if (command == 110) { // init with undomanager
-        va_list args;
-        va_start (args, command);
-        ddb_undomanager_t *undomanager = va_arg (args, ddb_undomanager_t *);
-        va_end (args);
-
-        ddb_undomanager_shared_init (undomanager);
-
-        return 0;
-    }
-
-    else if (command == 111) {
-        // register undo buffer
-        va_list args;
-        va_start (args, command);
-        ddb_undobuffer_t *undobuffer = va_arg (args, ddb_undobuffer_t *);
-        const char *name = va_arg (args, const char *);
-        va_end (args);
-
-        gtkui_undo_append_buffer (undobuffer, name);
-        _refresh_undo_redo_menu ();
-        return 0;
-    }
-
-    return -1;
-}
-
 #pragma mark -
 
 // define plugin interface
@@ -2394,7 +2385,6 @@ ddb_gtkui_t plugin = {
                             "You should have received a copy of the GNU Lesser General Public\n"
                             "License along with this library. If not, see <http://www.gnu.org/licenses/>.\n",
     .gui.plugin.website = "http://deadbeef.sf.net",
-    .gui.plugin.command = _gtkui_command,
     .gui.plugin.start = gtkui_start,
     .gui.plugin.stop = gtkui_stop,
     .gui.plugin.configdialog = settings_dlg,

@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include "undobuffer.h"
 
-struct _ddb_undobuffer_s {
+struct ddb_undobuffer_s {
     ddb_undo_operation_t *operations;
     int enabled;
     int grouping;

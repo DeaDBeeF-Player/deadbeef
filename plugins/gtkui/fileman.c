@@ -31,6 +31,7 @@
 #include "playlist/ddblistview.h"
 #include "progress.h"
 #include "support.h"
+#include "undo/undomanager.h"
 
 static void
 gtkpl_adddir_cb (gpointer data, gpointer userdata) {
@@ -91,7 +92,7 @@ gtkui_add_dirs (GSList *lst) {
 
         gtkui_dispatch_on_main(^{
             ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
-            deadbeef->undo_set_action_name (_("Add Folders"));
+            ddb_undomanager_set_action_name (ddb_undomanager_shared(), _("Add Folders"));
             deadbeef->plt_move_all_items (plt_curr, plt, tail);
             if (tail != NULL) {
                 deadbeef->pl_item_unref (tail);
@@ -122,7 +123,7 @@ gtkui_add_files (struct _GSList *lst) {
         gtkpl_add_files (plt, lst);
         gtkui_dispatch_on_main (^{
             ddb_playItem_t *tail = deadbeef->plt_get_tail_item (plt_curr, PL_MAIN);
-            deadbeef->undo_set_action_name (_("Add Files"));
+            ddb_undomanager_set_action_name (ddb_undomanager_shared(), _("Add Files"));
             deadbeef->plt_move_all_items (plt_curr, plt, tail);
             if (tail != NULL) {
                 deadbeef->pl_item_unref (tail);
@@ -200,7 +201,7 @@ gtkui_add_location (const char *path, const char *custom_title) {
             }
 
             deadbeef->plt_save_config (plt_curr);
-            deadbeef->undo_set_action_name(_("Add Location"));
+            ddb_undomanager_set_action_name (ddb_undomanager_shared(), _("Add Location"));
             deadbeef->plt_add_files_end (plt, 0);
 
             free (path_copy);
@@ -354,7 +355,7 @@ gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length) {
 
         gtkui_dispatch_on_main(^{
             ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
-            deadbeef->undo_set_action_name(_("Drag & Drop"));
+            ddb_undomanager_set_action_name (ddb_undomanager_shared(), _("Drag & Drop"));
             deadbeef->plt_move_all_items (plt_curr, plt, tail);
             if (tail != NULL) {
                 deadbeef->pl_item_unref (tail);

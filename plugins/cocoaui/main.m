@@ -27,12 +27,38 @@
 #import "DdbUndoBuffer.h"
 #import "NSUndoManager+DdbUndoBuffer.h"
 #include "undobuffer.h"
+#include "undomanager.h"
 
 extern DB_functions_t *deadbeef;
+
+static void
+_undo_initialize (ddb_undomanager_t *undomanager) {
+}
+
+static int
+_undo_process_action (ddb_undobuffer_t *undobuffer, const char *action_name) {
+    AppDelegate *appDelegate = (AppDelegate *)NSApp.delegate;
+    NSUndoManager *undoManager = appDelegate.mainWindow.window.undoManager;
+    DdbUndoBuffer *buffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
+
+    NSString *actionName = @(action_name ?: "");
+    actionName = [actionName stringByReplacingOccurrencesOfString:@"&" withString:@"&&"];
+    [undoManager setActionName:actionName];
+    [undoManager registerUndoBuffer:buffer];
+
+    return 0;
+}
+
+static ddb_undo_interface_t _undo_interface = {
+    ._size = sizeof (ddb_undo_interface_t),
+    .initialize = _undo_initialize,
+    .process_action = _undo_process_action,
+};
 
 int cocoaui_start(void) {
     char *argv[1];
     argv[0] = "FIXME";
+    deadbeef->register_for_undo (&_undo_interface);
     return NSApplicationMain(1, (const char **)argv);
 }
 
@@ -48,30 +74,6 @@ int cocoaui_message (uint32_t _id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return [appDelegate ddb_message:_id ctx:ctx p1:p1 p2:p2];
 }
 
-int cocoaui_command (int command, ...) {
-    if (command == 111) {
-        // register undo
-        va_list args;
-        va_start(args, command);
-        ddb_undobuffer_t *undobuffer = va_arg(args, ddb_undobuffer_t *);
-        const char *name = va_arg(args, const char *);
-        va_end(args);
-
-        AppDelegate *appDelegate = (AppDelegate *)NSApp.delegate;
-        NSUndoManager *undoManager = appDelegate.mainWindow.window.undoManager;
-        DdbUndoBuffer *buffer = [[DdbUndoBuffer alloc] initWithUndoBuffer:undobuffer];
-
-        NSString *actionName = @(name ?: "");
-        actionName = [actionName stringByReplacingOccurrencesOfString:@"&" withString:@"&&"];
-        [undoManager setActionName:actionName];
-        [undoManager registerUndoBuffer:buffer];
-
-        return 0;
-    }
-
-    return -1;
-}
-
 DB_gui_t plugin = {
     .plugin.type = DB_PLUGIN_GUI,
     DDB_PLUGIN_SET_API_VERSION
@@ -82,7 +84,6 @@ DB_gui_t plugin = {
     .plugin.start = cocoaui_start,
     .plugin.stop = cocoaui_stop,
     .plugin.message = cocoaui_message,
-    .plugin.command = cocoaui_command,
     // NSApplicationMain doesn't return, so it doesn't seem it's possible to cleanup
 };
 

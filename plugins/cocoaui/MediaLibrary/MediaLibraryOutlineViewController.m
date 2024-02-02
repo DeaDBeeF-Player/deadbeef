@@ -423,7 +423,7 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
 
     deadbeef->plt_unref (curr_plt);
 
-    deadbeef->undo_set_action_name ("Add Files");
+    ddb_undomanager_set_action_name (ddb_undomanager_shared(), "Add Files");
 
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, DDB_PLAYLIST_CHANGE_CONTENT, 0, 0);
     if (count > 0) {

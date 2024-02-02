@@ -26,9 +26,9 @@
 #ifndef ddb_undobuffer_h
 #define ddb_undobuffer_h
 
-struct _ddb_undobuffer_s;
+struct ddb_undobuffer_s;
 
-typedef struct _ddb_undobuffer_s ddb_undobuffer_t;
+typedef struct ddb_undobuffer_s ddb_undobuffer_t;
 
 struct ddb_undo_operation_s;
 typedef void (*ddb_undo_operation_perform_fn)(ddb_undobuffer_t *undobuffer, struct ddb_undo_operation_s *op);
