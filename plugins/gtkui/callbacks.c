@@ -167,6 +167,9 @@ on_playrand_clicked (GtkButton *button, gpointer user_data) {
 
 gboolean
 on_mainwin_key_press_event (GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    if (event->is_modifier) {
+        return FALSE;
+    }
     // local hotkeys
     GdkModifierType consumed_modifiers;
     guint accel_key;
