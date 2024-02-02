@@ -97,11 +97,17 @@ ddb_undobuffer_has_operations(ddb_undobuffer_t *undobuffer) {
 
 void
 ddb_undobuffer_group_begin (ddb_undobuffer_t *undobuffer) {
+    if (undobuffer == NULL) {
+        return;
+    }
     undobuffer->grouping = 1;
 }
 
 void
 ddb_undobuffer_group_end (ddb_undobuffer_t *undobuffer) {
+    if (undobuffer == NULL) {
+        return;
+    }
     undobuffer->grouping = 0;
 }
 

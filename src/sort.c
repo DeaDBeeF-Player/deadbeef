@@ -47,26 +47,30 @@ plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
     if (plt->undo_enabled) {
         pl_lock ();
         int count = plt->count[PL_MAIN];
-        playItem_t **tracks = calloc (count, sizeof (playItem_t *));
-        int index = 0;
-        for (playItem_t *it = plt->head[PL_MAIN]; it != NULL; it = it->next[PL_MAIN]) {
-            tracks[index++] = it;
+        if (count != 0) {
+            playItem_t **tracks = calloc (count, sizeof (playItem_t *));
+            int index = 0;
+            for (playItem_t *it = plt->head[PL_MAIN]; it != NULL; it = it->next[PL_MAIN]) {
+                tracks[index++] = it;
+            }
+            undo_remove_items(undobuffer, plt, tracks, count);
+            free (tracks);
         }
-        undo_remove_items(undobuffer, plt, tracks, count);
-        free (tracks);
     }
 
     plt_sort_internal (plt, iter, id, format, order, 1);
 
     if (plt->undo_enabled) {
         int count = plt->count[PL_MAIN];
-        playItem_t **tracks = calloc (count, sizeof (playItem_t *));
-        int index = 0;
-        for (playItem_t *it = plt->head[PL_MAIN]; it != NULL; it = it->next[PL_MAIN]) {
-            tracks[index++] = it;
+        if (count != 0) {
+            playItem_t **tracks = calloc (count, sizeof (playItem_t *));
+            int index = 0;
+            for (playItem_t *it = plt->head[PL_MAIN]; it != NULL; it = it->next[PL_MAIN]) {
+                tracks[index++] = it;
+            }
+            undo_insert_items(undobuffer, plt, tracks, count);
+            free (tracks);
         }
-        undo_insert_items(undobuffer, plt, tracks, count);
-        free (tracks);
         pl_unlock ();
     }
 }
