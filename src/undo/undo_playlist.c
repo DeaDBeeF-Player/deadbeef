@@ -80,6 +80,9 @@ _undo_operation_item_list_new(ddb_undobuffer_t *undobuffer, playlist_t *plt, pla
 static void
 _undo_perform_remove_items(ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *_op) {
     undo_operation_item_list_t *op = (undo_operation_item_list_t *)_op;
+
+    plt_set_curr (op->plt);
+
     ddb_undobuffer_group_begin (undobuffer);
     for (size_t i = 0; i < op->count; i++) {
         plt_remove_item(op->plt, op->items[i]);
@@ -90,6 +93,9 @@ _undo_perform_remove_items(ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *_
 static void
 _undo_perform_insert_items (ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *_op) {
     undo_operation_item_list_t *op = (undo_operation_item_list_t *)_op;
+
+    plt_set_curr (op->plt);
+
     ddb_undobuffer_group_begin (undobuffer);
     playItem_t *after = op->insert_position;
     for (size_t i = 0; i < op->count; i++) {
@@ -102,6 +108,9 @@ _undo_perform_insert_items (ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *
 static void
 _undo_perform_change_selection (ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *_op) {
     undo_operation_item_list_t *op = (undo_operation_item_list_t *)_op;
+
+    plt_set_curr (op->plt);
+
     // Restore selection according to the flag.
     if (op->flags & UNDO_SELECTION_LIST_UNSELECTED) {
         plt_select_all(op->plt);
