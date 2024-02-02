@@ -218,4 +218,10 @@ action_playback_loop_cycle_handler(DB_plugin_action_t *act, ddb_action_context_t
 int
 action_toggle_logwindow_handler(DB_plugin_action_t *act, ddb_action_context_t ctx);
 
+int
+action_undo(DB_plugin_action_t *act, ddb_action_context_t ctx);
+
+int
+action_redo(DB_plugin_action_t *act, ddb_action_context_t ctx);
+
 #endif

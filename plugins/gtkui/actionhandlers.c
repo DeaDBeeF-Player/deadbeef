@@ -45,6 +45,7 @@
 #include "support.h"
 #include "trkproperties.h"
 #include "wingeom.h"
+#include "undo.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -854,5 +855,17 @@ action_toggle_logwindow_handler_cb (void *data) {
 int
 action_toggle_logwindow_handler(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     g_idle_add (action_toggle_logwindow_handler_cb, NULL);
+    return 0;
+}
+
+int
+action_undo(DB_plugin_action_t *act, ddb_action_context_t ctx) {
+    gtkui_perform_undo();
+    return 0;
+}
+
+int
+action_redo(DB_plugin_action_t *act, ddb_action_context_t ctx) {
+    gtkui_perform_redo();
     return 0;
 }

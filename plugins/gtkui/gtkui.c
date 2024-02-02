@@ -2201,9 +2201,25 @@ static DB_plugin_action_t action_view_log = { .title = "View/Show\\/Hide Log win
                                               .callback2 = action_toggle_logwindow_handler,
                                               .next = &action_find };
 
+static DB_plugin_action_t action_edit_undo = {
+    .title = "Edit/Undo",
+    .name = "undo",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_undo,
+    .next = &action_view_log
+};
+
+static DB_plugin_action_t action_edit_redo = {
+    .title = "Edit/Redo",
+    .name = "redo",
+    .flags = DB_ACTION_COMMON,
+    .callback2 = action_redo,
+    .next = &action_edit_undo
+};
+
 static DB_plugin_action_t *
 gtkui_get_actions (DB_playItem_t *it) {
-    return &action_view_log;
+    return &action_edit_redo;
 }
 
 #if !GTK_CHECK_VERSION(3, 0, 0)
