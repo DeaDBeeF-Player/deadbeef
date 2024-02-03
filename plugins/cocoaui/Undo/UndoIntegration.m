@@ -33,7 +33,7 @@ ddb_undo_interface_t *ddb_undo;
 
 static void
 _undo_initialize (ddb_undo_interface_t *interface) {
-    ddb_undo = ddb_undo;
+    ddb_undo = interface;
 }
 
 static int
