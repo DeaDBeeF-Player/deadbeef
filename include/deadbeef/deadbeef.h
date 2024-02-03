@@ -844,7 +844,7 @@ typedef struct {
 
 typedef struct {
     size_t _size;
-    void (*initialize)(ddb_undo_interface_t *interface);
+    void (*initialize)(ddb_undo_interface_t *undo_interface);
     int (*process_action)(struct ddb_undobuffer_s *undobuffer, const char *action_name);
 } ddb_undo_hooks_t;
 #endif
@@ -1743,11 +1743,12 @@ typedef struct {
     /// Called to send the accumulated undo buffer to the active UI plugin.
     void (*undo_process)(void);
 
-    /// Allow UI plugin to declare Undo support, and register for receiving undo events.
-    /// Calling this function will enable Undo system, and will use the hooks functions
+    /// Allow the UI plugin to declare Undo support, and register for receiving undo events.
+    /// Calling this function will enable Undo system, and will use the hooks
     /// for communicating with UI plugin.
-    /// This function can be called only once per session, usually by the UI plugin's start method.
-    void (*register_for_undo) (ddb_undo_hooks_t *interface);
+    /// This function can be called only once per session,
+    /// usually from the UI plugin's start method.
+    void (*register_for_undo) (ddb_undo_hooks_t *undo_hooks);
 #endif
 } DB_functions_t;
 
