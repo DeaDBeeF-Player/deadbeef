@@ -1722,6 +1722,12 @@
 		2D9EF3102B6FAF5C0042F6D8 /* keyboard_shortcuts.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */; };
 		2D9EF3132B6FB0800042F6D8 /* KeyboardShortcutManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EF3112B6FB0800042F6D8 /* KeyboardShortcutManager.h */; };
 		2D9EF3142B6FB0800042F6D8 /* KeyboardShortcutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EF3122B6FB0800042F6D8 /* KeyboardShortcutManager.m */; };
+		2D9EF3182B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EF3152B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.h */; };
+		2D9EF3192B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EF3162B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.m */; };
+		2D9EF31A2B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D9EF3172B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.xib */; };
+		2D9EF31E2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EF31B2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.h */; };
+		2D9EF31F2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EF31C2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.m */; };
+		2D9EF3202B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D9EF31D2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib */; };
 		2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */; };
 		2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */; };
 		2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9FD9E12607C68500F406D1 /* AlbumArtImageView.h */; };
@@ -6353,6 +6359,12 @@
 		2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = keyboard_shortcuts.c; sourceTree = "<group>"; };
 		2D9EF3112B6FB0800042F6D8 /* KeyboardShortcutManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardShortcutManager.h; sourceTree = "<group>"; };
 		2D9EF3122B6FB0800042F6D8 /* KeyboardShortcutManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutManager.m; sourceTree = "<group>"; };
+		2D9EF3152B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardShortcutEditorViewController.h; sourceTree = "<group>"; };
+		2D9EF3162B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutEditorViewController.m; sourceTree = "<group>"; };
+		2D9EF3172B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = KeyboardShortcutEditorViewController.xib; sourceTree = "<group>"; };
+		2D9EF31B2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardShortcutEditorWindowController.h; sourceTree = "<group>"; };
+		2D9EF31C2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutEditorWindowController.m; sourceTree = "<group>"; };
+		2D9EF31D2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = KeyboardShortcutEditorWindowController.xib; sourceTree = "<group>"; };
 		2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SeekbarOverlay.h; sourceTree = "<group>"; };
 		2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SeekbarOverlay.m; sourceTree = "<group>"; };
 		2D9FD9E12607C68500F406D1 /* AlbumArtImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlbumArtImageView.h; sourceTree = "<group>"; };
@@ -11176,6 +11188,12 @@
 				2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */,
 				2D9EF3112B6FB0800042F6D8 /* KeyboardShortcutManager.h */,
 				2D9EF3122B6FB0800042F6D8 /* KeyboardShortcutManager.m */,
+				2D9EF3152B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.h */,
+				2D9EF3162B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.m */,
+				2D9EF3172B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.xib */,
+				2D9EF31B2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.h */,
+				2D9EF31C2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.m */,
+				2D9EF31D2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib */,
 			);
 			path = KeyboardShortcuts;
 			sourceTree = "<group>";
@@ -14726,11 +14744,13 @@
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2DDD7ABB25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
 				2DC657C62748502F00583E14 /* SegmentedTabView.h in Headers */,
+				2D9EF31E2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
 				2DC6580D274A994100583E14 /* TableViewWithReturnAction.h in Headers */,
 				2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
 				2D78C55927568B4A00F96F9D /* medialibscanner.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
+				2D9EF3182B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.h in Headers */,
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
@@ -16665,6 +16685,7 @@
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
 				2DD3774E27412C85007AD315 /* SpectrumAnalyzerPreferencesWindowController.xib in Resources */,
+				2D9EF3202B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				2DD377432740420C007AD315 /* AppearancePreferencesViewController.xib in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
@@ -16674,6 +16695,7 @@
 				2DB05EF9252E4A9D0090635E /* iconAppearanceTemplate.pdf in Resources */,
 				4D2A6CA4183BC29400AC6BF5 /* btnstopTemplate.pdf in Resources */,
 				4D2A6CA1183BC29400AC6BF5 /* btnnextTemplate.pdf in Resources */,
+				2D9EF31A2B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.xib in Resources */,
 				2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */,
 				2DC65828274AB03800583E14 /* LyricsViewController.xib in Resources */,
 				2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */,
@@ -18306,6 +18328,7 @@
 				2DAF2BE21A9232AF0052854F /* TrackPropertiesWindowController.m in Sources */,
 				2D9BD67A2405A81600C02D60 /* SoundPreferencesViewController.m in Sources */,
 				2D7C1FB329461C6900163538 /* SpectrumAnalyzerLabelsView.m in Sources */,
+				2D9EF3192B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.m in Sources */,
 				2D30D20E25E2A8930023A299 /* WidgetTopLevelView.m in Sources */,
 				2DC6580F274A994100583E14 /* TableViewWithReturnAction.m in Sources */,
 				2DDF87EE2402845C00CA8E91 /* NSMenu+ActionItems.m in Sources */,
@@ -18409,6 +18432,7 @@
 				2DC657EC274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */,
 				2D98B681272B272300E655AE /* VisualizationShaders.metal in Sources */,
 				2D7387EF29BE5DF7003E3126 /* NSUndoManager+DdbUndoBuffer.m in Sources */,
+				2D9EF31F2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.m in Sources */,
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
 				0D56852A271DC35E0026F700 /* ScopeWidget.m in Sources */,
 				2DCF73B51A952F8900495740 /* PreferencesWindowController.m in Sources */,

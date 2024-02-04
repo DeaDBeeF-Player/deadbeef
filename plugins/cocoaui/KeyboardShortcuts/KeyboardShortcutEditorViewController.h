@@ -21,12 +21,12 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <AppKit/AppKit.h>
+#import <Cocoa/Cocoa.h>
 
-@interface KeyboardShortcutManager : NSObject
+NS_ASSUME_NONNULL_BEGIN
 
-- (nonnull instancetype)init NS_UNAVAILABLE;
-- (nonnull instancetype)new NS_UNAVAILABLE;
-- (nonnull instancetype)initWithMenu:(nonnull NSMenu *)menu NS_DESIGNATED_INITIALIZER;
+@interface KeyboardShortcutEditorViewController : NSViewController
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -36,6 +36,8 @@
 #import "HelpWindowController.h"
 #import "junklib.h"
 #import "KeyboardShortcuts/KeyboardShortcutManager.h"
+#import "KeyboardShortcuts/KeyboardShortcutEditorViewController.h"
+#import "KeyboardShortcuts/KeyboardShortcutEditorWindowController.h"
 #import "LogWindowController.h"
 #import "NowPlayable.h"
 #import "NSMenu+ActionItems.h"
@@ -77,6 +79,7 @@ extern DB_functions_t *deadbeef;
 @property DesignModeState *designModeState;
 
 @property (nonatomic) KeyboardShortcutManager *keyboardShortcutManager;
+@property (nonatomic) KeyboardShortcutEditorWindowController *keyboardShortcutEditorWindowController;
 
 @end
 
@@ -1024,6 +1027,15 @@ main_cleanup_and_quit (void);
 
 - (IBAction)displayTrackProperties:(id)sender {
     [TrackPropertiesManager.shared displayTrackProperties];
+}
+
+- (IBAction)editKeybooardShortcutsAction:(id)sender {
+    if (self.keyboardShortcutEditorWindowController == nil) {
+        self.keyboardShortcutEditorWindowController = [[KeyboardShortcutEditorWindowController alloc] initWithWindowNibName:@"KeyboardShortcutEditorWindowController"];
+        NSViewController *viewController = [KeyboardShortcutEditorViewController new];
+        self.keyboardShortcutEditorWindowController.window.contentView = viewController.view;
+    }
+    [self.keyboardShortcutEditorWindowController showWindow:nil];
 }
 
 @end

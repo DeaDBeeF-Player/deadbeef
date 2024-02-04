@@ -21,12 +21,17 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <AppKit/AppKit.h>
+#import "KeyboardShortcutEditorViewController.h"
 
-@interface KeyboardShortcutManager : NSObject
+@interface KeyboardShortcutEditorViewController ()
 
-- (nonnull instancetype)init NS_UNAVAILABLE;
-- (nonnull instancetype)new NS_UNAVAILABLE;
-- (nonnull instancetype)initWithMenu:(nonnull NSMenu *)menu NS_DESIGNATED_INITIALIZER;
+@end
+
+@implementation KeyboardShortcutEditorViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do view setup here.
+}
 
 @end

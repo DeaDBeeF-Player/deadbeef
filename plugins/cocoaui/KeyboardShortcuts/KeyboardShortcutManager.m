@@ -1,4 +1,3 @@
-//
 /*
     DeaDBeeF -- the music player
     Copyright (C) 2009-2024 Oleksiy Yakovenko and other contributors
