@@ -2525,6 +2525,8 @@
 		2DD81CFC25152DC3008C716C /* noartwork.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3125152D86008C716C /* noartwork.png */; };
 		2DD81CFD25152DC5008C716C /* buffering_16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DD81C3325152D86008C716C /* buffering_16.png */; };
 		2DD877A31C370C7100CC94FB /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD877A21C370C7100CC94FB /* ferror68.c */; };
+		2DD886522B6FD4C2000434FB /* KeyboardShortcutViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD886502B6FD4C2000434FB /* KeyboardShortcutViewItem.h */; };
+		2DD886532B6FD4C2000434FB /* KeyboardShortcutViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD886512B6FD4C2000434FB /* KeyboardShortcutViewItem.m */; };
 		2DD9F4E92A7A65FD00BC76DC /* TrackPropertiesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */; };
 		2DD9F4EA2A7A65FD00BC76DC /* TrackPropertiesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9F4E82A7A65FD00BC76DC /* TrackPropertiesManager.m */; };
 		2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */; };
@@ -7000,6 +7002,8 @@
 		2DD81C3125152D86008C716C /* noartwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = noartwork.png; sourceTree = "<group>"; };
 		2DD81C3325152D86008C716C /* buffering_16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buffering_16.png; sourceTree = "<group>"; };
 		2DD877A21C370C7100CC94FB /* ferror68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ferror68.c; sourceTree = "<group>"; };
+		2DD886502B6FD4C2000434FB /* KeyboardShortcutViewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardShortcutViewItem.h; sourceTree = "<group>"; };
+		2DD886512B6FD4C2000434FB /* KeyboardShortcutViewItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutViewItem.m; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
 		2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesManager.h; sourceTree = "<group>"; };
@@ -11194,6 +11198,8 @@
 				2D9EF31B2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.h */,
 				2D9EF31C2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.m */,
 				2D9EF31D2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib */,
+				2DD886502B6FD4C2000434FB /* KeyboardShortcutViewItem.h */,
+				2DD886512B6FD4C2000434FB /* KeyboardShortcutViewItem.m */,
 			);
 			path = KeyboardShortcuts;
 			sourceTree = "<group>";
@@ -14780,6 +14786,7 @@
 				2D9EF30F2B6FAF5C0042F6D8 /* keyboard_shortcuts.h in Headers */,
 				2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */,
 				2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */,
+				2DD886522B6FD4C2000434FB /* KeyboardShortcutViewItem.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
 				2D98B6A3273483A700E655AE /* AAPLConfig.h in Headers */,
 				2D49857F1D5CF13F00E4D985 /* LogWindowController.h in Headers */,
@@ -18401,6 +18408,7 @@
 				2DC6C5E3294CE06B00A63CEB /* ChiptuneVoicesWidget.m in Sources */,
 				2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */,
 				2DEBA1D323E207A3000E4135 /* EqualizerWindowController.m in Sources */,
+				2DD886532B6FD4C2000434FB /* KeyboardShortcutViewItem.m in Sources */,
 				2DA8912325FFEB9B0084860D /* PlaylistGroup.m in Sources */,
 				2DD3775C27414BD9007AD315 /* ScopePreferencesWindowController.m in Sources */,
 				2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */,

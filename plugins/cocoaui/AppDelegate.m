@@ -80,6 +80,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) KeyboardShortcutManager *keyboardShortcutManager;
 @property (nonatomic) KeyboardShortcutEditorWindowController *keyboardShortcutEditorWindowController;
+@property (nonatomic) KeyboardShortcutEditorViewController *keyboardShortcutEditorViewController;
 
 @end
 
@@ -1032,9 +1033,13 @@ main_cleanup_and_quit (void);
 - (IBAction)editKeybooardShortcutsAction:(id)sender {
     if (self.keyboardShortcutEditorWindowController == nil) {
         self.keyboardShortcutEditorWindowController = [[KeyboardShortcutEditorWindowController alloc] initWithWindowNibName:@"KeyboardShortcutEditorWindowController"];
-        NSViewController *viewController = [KeyboardShortcutEditorViewController new];
-        self.keyboardShortcutEditorWindowController.window.contentView = viewController.view;
+        self.keyboardShortcutEditorViewController = [KeyboardShortcutEditorViewController new];
+        self.keyboardShortcutEditorWindowController.window.contentView = self.keyboardShortcutEditorViewController.view;
     }
+
+    KeyboardShortcutViewItem *viewItem = [self.keyboardShortcutManager createViewItems];
+    [self.keyboardShortcutEditorViewController updateWithViewItem:viewItem];
+
     [self.keyboardShortcutEditorWindowController showWindow:nil];
 }
 

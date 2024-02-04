@@ -65,8 +65,33 @@ ddb_keyboard_shortcuts_init_with_config (const char *config_json) {
 
 ddb_keyboard_shortcut_t *
 ddb_keyboard_shortcut_append (ddb_keyboard_shortcut_t *parent) {
-    return calloc (1, sizeof (ddb_keyboard_shortcut_t));
+    ddb_keyboard_shortcut_t *shortcut = calloc (1, sizeof (ddb_keyboard_shortcut_t));
+
+    ddb_keyboard_shortcut_t *tail = parent->children;
+    while (tail != NULL && tail->next != NULL) {
+        tail = tail->next;
+    }
+
+    if (tail != NULL) {
+        tail->next = shortcut;
+    }
+    else {
+        parent->children = shortcut;
+    }
+
+    return shortcut;
 }
+
+ddb_keyboard_shortcut_t *
+ddb_keyboard_shortcut_get_children (ddb_keyboard_shortcut_t *shortcut) {
+    return shortcut->children;
+}
+
+ddb_keyboard_shortcut_t *
+ddb_keyboard_shortcut_get_next (ddb_keyboard_shortcut_t *shortcut) {
+    return shortcut->next;
+}
+
 
 const char *
 ddb_keyboard_shortcut_get_title (ddb_keyboard_shortcut_t *shortcut) {

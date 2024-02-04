@@ -23,7 +23,10 @@
 
 #import "KeyboardShortcutEditorViewController.h"
 
-@interface KeyboardShortcutEditorViewController ()
+@interface KeyboardShortcutEditorViewController () <NSOutlineViewDelegate, NSOutlineViewDataSource>
+@property (weak) IBOutlet NSOutlineView *outlineView;
+
+@property (nonatomic, nullable) KeyboardShortcutViewItem *viewItem;
 
 @end
 
@@ -32,6 +35,54 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do view setup here.
+}
+
+- (void)updateWithViewItem:(KeyboardShortcutViewItem *)viewItem {
+    self.viewItem = viewItem;
+    [self.outlineView reloadData];
+}
+
+#pragma mark - NSOutlineViewDataSource
+
+- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
+    KeyboardShortcutViewItem *viewItem = item;
+    if (item == nil) {
+        viewItem = self.viewItem;
+    }
+    return viewItem.children.count;
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
+    KeyboardShortcutViewItem *viewItem = item;
+    if (item == nil) {
+        viewItem = self.viewItem;
+    }
+    return viewItem.children[index];
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
+    KeyboardShortcutViewItem *viewItem = item;
+    return viewItem.children != nil;
+}
+
+#pragma mark -
+
+
+- (nullable NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(nullable NSTableColumn *)tableColumn item:(id)item {
+    NSTableCellView *view;
+    view = [outlineView makeViewWithIdentifier:tableColumn.identifier owner:self];
+
+    KeyboardShortcutViewItem *viewItem = item;
+
+    if ([tableColumn.identifier isEqualToString:@"TextCell1"]) {
+        const char *title = ddb_keyboard_shortcut_get_title(viewItem.shortcut);
+        view.textField.stringValue = @(title ?: "");
+    }
+    else {
+        const char *keyCombination = ddb_keyboard_shortcut_get_key_combination(viewItem.shortcut);
+        view.textField.stringValue = @(keyCombination ?: "");
+    }
+    return view;
 }
 
 @end

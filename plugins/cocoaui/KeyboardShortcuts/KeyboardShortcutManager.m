@@ -22,6 +22,7 @@
 */
 
 #import "KeyboardShortcutManager.h"
+#import "KeyboardShortcutViewItem.h"
 #import "keyboard_shortcuts.h"
 
 @implementation KeyboardShortcutManager
@@ -43,23 +44,85 @@
     return self;
 }
 
+- (NSString *)keyCombinationDisplayStringFromKeyEquivalent:(NSString *)keyEquivalent modifierMask:(NSEventModifierFlags)modifierMask {
+    if (keyEquivalent == nil || [keyEquivalent isEqualToString:@""]) {
+        return nil;
+    }
+
+    NSString *result = keyEquivalent.uppercaseString;
+
+    if (modifierMask & NSEventModifierFlagCommand) {
+        result = [@"⌘" stringByAppendingString:result];
+    }
+
+    if (modifierMask & NSEventModifierFlagShift) {
+        result = [@"⇧" stringByAppendingString:result];
+    }
+
+    if (modifierMask & NSEventModifierFlagOption) {
+        result = [@"⌥" stringByAppendingString:result];
+    }
+
+    if (modifierMask & NSEventModifierFlagControl) {
+        result = [@"⌃" stringByAppendingString:result];
+    }
+
+    return result;
+}
+
 - (void)traverseMenuItems:(NSArray<NSMenuItem *> *)items parent:(ddb_keyboard_shortcut_t *)parent {
     for (NSMenuItem *item in items) {
         NSString *title = item.title;
-        NSString *keyCombination = item.keyEquivalent;
-        
+        NSString *keyCombination;
+
         NSString *selectorString;
         SEL action = item.action;
 
-        if (action != nil) {
-            selectorString = NSStringFromSelector (action);
+        if (action == nil && item.submenu == nil) {
+            continue;
         }
+
+        if (action != nil && item.submenu == nil) {
+            keyCombination = [self keyCombinationDisplayStringFromKeyEquivalent:item.keyEquivalent modifierMask:item.keyEquivalentModifierMask];
+        }
+
+        selectorString = NSStringFromSelector (action);
 
         ddb_keyboard_shortcut_t *shortcut = ddb_keyboard_shortcut_append (parent);
         ddb_keyboard_shortcut_set_title (shortcut, title.UTF8String);
         ddb_keyboard_shortcut_set_selector (shortcut, selectorString.UTF8String);
         ddb_keyboard_shortcut_set_key_combination (shortcut, keyCombination.UTF8String);
         ddb_keyboard_shortcut_set_default_key_combination (shortcut, keyCombination.UTF8String);
+
+        if (item.submenu != nil) {
+            [self traverseMenuItems:item.submenu.itemArray parent:shortcut];
+       }
+    }
+}
+
+- (KeyboardShortcutViewItem *)createViewItems {
+    KeyboardShortcutViewItem *viewItemRoot = [KeyboardShortcutViewItem new];
+    ddb_keyboard_shortcut_t *root = ddb_keyboard_shortcuts_get_root ();
+
+    [self createViewItemHierarchy:viewItemRoot shortcut:root];
+
+    return viewItemRoot;
+}
+
+- (void)createViewItemHierarchy:(KeyboardShortcutViewItem *)viewItem shortcut:(ddb_keyboard_shortcut_t *)shortcut {
+    viewItem.shortcut = shortcut;
+    NSMutableArray<KeyboardShortcutViewItem *> *children = [NSMutableArray new];
+
+    ddb_keyboard_shortcut_t *child = ddb_keyboard_shortcut_get_children (shortcut);
+    while (child != NULL) {
+        KeyboardShortcutViewItem *childViewItem = [KeyboardShortcutViewItem new];
+        [self createViewItemHierarchy:childViewItem shortcut:child];
+        [children addObject:childViewItem];
+        child = ddb_keyboard_shortcut_get_next (child);
+    }
+
+    if (children.count != 0) {
+        viewItem.children = children.copy;
     }
 }
 

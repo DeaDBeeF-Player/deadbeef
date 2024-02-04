@@ -21,15 +21,14 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <Cocoa/Cocoa.h>
-#import "KeyboardShortcutViewItem.h"
 
-NS_ASSUME_NONNULL_BEGIN
 
-@interface KeyboardShortcutEditorViewController : NSViewController
+#import <Foundation/Foundation.h>
+#import "keyboard_shortcuts.h"
 
-- (void)updateWithViewItem:(KeyboardShortcutViewItem *)viewItem;
+@interface KeyboardShortcutViewItem : NSObject
+
+@property (nonatomic, nullable) ddb_keyboard_shortcut_t *shortcut;
+@property (nonatomic, nullable) NSArray<KeyboardShortcutViewItem *> *children;
 
 @end
-
-NS_ASSUME_NONNULL_END

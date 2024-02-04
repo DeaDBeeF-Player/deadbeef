@@ -22,11 +22,14 @@
 */
 
 #import <AppKit/AppKit.h>
+#import "KeyboardShortcutViewItem.h"
 
 @interface KeyboardShortcutManager : NSObject
 
 - (nonnull instancetype)init NS_UNAVAILABLE;
 - (nonnull instancetype)new NS_UNAVAILABLE;
 - (nonnull instancetype)initWithMenu:(nonnull NSMenu *)menu NS_DESIGNATED_INITIALIZER;
+
+- (nullable KeyboardShortcutViewItem *)createViewItems;
 
 @end

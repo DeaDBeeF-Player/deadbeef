@@ -39,6 +39,12 @@ ddb_keyboard_shortcuts_init_with_config (const char *config_json);
 ddb_keyboard_shortcut_t *
 ddb_keyboard_shortcut_append (ddb_keyboard_shortcut_t *parent);
 
+ddb_keyboard_shortcut_t *
+ddb_keyboard_shortcut_get_children (ddb_keyboard_shortcut_t *shortcut);
+
+ddb_keyboard_shortcut_t *
+ddb_keyboard_shortcut_get_next (ddb_keyboard_shortcut_t *shortcut);
+
 const char *
 ddb_keyboard_shortcut_get_title (ddb_keyboard_shortcut_t *shortcut);
 
