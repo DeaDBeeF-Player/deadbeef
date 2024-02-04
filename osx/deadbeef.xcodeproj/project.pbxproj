@@ -1718,6 +1718,10 @@
 		2D9EBB7125E45BAA00255592 /* DesignModeDeps.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */; };
 		2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */; };
 		2D9EBB7325E45BAA00255592 /* DesignModeDeps.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */; };
+		2D9EF30F2B6FAF5C0042F6D8 /* keyboard_shortcuts.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EF30D2B6FAF5C0042F6D8 /* keyboard_shortcuts.h */; };
+		2D9EF3102B6FAF5C0042F6D8 /* keyboard_shortcuts.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */; };
+		2D9EF3132B6FB0800042F6D8 /* KeyboardShortcutManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9EF3112B6FB0800042F6D8 /* KeyboardShortcutManager.h */; };
+		2D9EF3142B6FB0800042F6D8 /* KeyboardShortcutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9EF3122B6FB0800042F6D8 /* KeyboardShortcutManager.m */; };
 		2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */; };
 		2D9F6535241BE78C00D9D16E /* SeekbarOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */; };
 		2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9FD9E12607C68500F406D1 /* AlbumArtImageView.h */; };
@@ -6345,6 +6349,10 @@
 		2D9EBAAA25E44A0700255592 /* WidgetSerializer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetSerializer.m; sourceTree = "<group>"; };
 		2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignModeDeps.h; sourceTree = "<group>"; };
 		2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeDeps.m; sourceTree = "<group>"; };
+		2D9EF30D2B6FAF5C0042F6D8 /* keyboard_shortcuts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = keyboard_shortcuts.h; sourceTree = "<group>"; };
+		2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = keyboard_shortcuts.c; sourceTree = "<group>"; };
+		2D9EF3112B6FB0800042F6D8 /* KeyboardShortcutManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardShortcutManager.h; sourceTree = "<group>"; };
+		2D9EF3122B6FB0800042F6D8 /* KeyboardShortcutManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutManager.m; sourceTree = "<group>"; };
 		2D9F6532241BE78C00D9D16E /* SeekbarOverlay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SeekbarOverlay.h; sourceTree = "<group>"; };
 		2D9F6533241BE78C00D9D16E /* SeekbarOverlay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SeekbarOverlay.m; sourceTree = "<group>"; };
 		2D9FD9E12607C68500F406D1 /* AlbumArtImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlbumArtImageView.h; sourceTree = "<group>"; };
@@ -11161,6 +11169,17 @@
 			path = wcwidth;
 			sourceTree = "<group>";
 		};
+		2D9EF30C2B6FAEFB0042F6D8 /* KeyboardShortcuts */ = {
+			isa = PBXGroup;
+			children = (
+				2D9EF30D2B6FAF5C0042F6D8 /* keyboard_shortcuts.h */,
+				2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */,
+				2D9EF3112B6FB0800042F6D8 /* KeyboardShortcutManager.h */,
+				2D9EF3122B6FB0800042F6D8 /* KeyboardShortcutManager.m */,
+			);
+			path = KeyboardShortcuts;
+			sourceTree = "<group>";
+		};
 		2D9FA3862404515500276E00 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -13137,6 +13156,7 @@
 		4DEE38461838E6450022D2B7 /* cocoaui */ = {
 			isa = PBXGroup;
 			children = (
+				2D9EF30C2B6FAEFB0042F6D8 /* KeyboardShortcuts */,
 				2DBCA69727944B0B00D7432F /* Assets */,
 				2DC657D92749607600583E14 /* DdbTabStrip */,
 				2D30D13625E2A6B40023A299 /* DesignMode */,
@@ -14701,6 +14721,7 @@
 				2D71C26A1DC88E5C00247CEF /* ScriptableTableDataSource.h in Headers */,
 				2D92F37C2B6D226F00BD07E8 /* UndoIntegration.h in Headers */,
 				2DB951CB26B1E05300602876 /* SpectrumAnalyzerSettings.h in Headers */,
+				2D9EF3132B6FB0800042F6D8 /* KeyboardShortcutManager.h in Headers */,
 				2DAB1A3026A5FB9C00EA8B8F /* PreferencesPluginEntry.h in Headers */,
 				2D60108D1A9CDF06000136AF /* SearchWindowController.h in Headers */,
 				2DDD7ABB25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
@@ -14736,6 +14757,7 @@
 				2DD3775127412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h in Headers */,
 				2DC657A72746D9E400583E14 /* TabsWidget.h in Headers */,
 				2DD377552741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h in Headers */,
+				2D9EF30F2B6FAF5C0042F6D8 /* keyboard_shortcuts.h in Headers */,
 				2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */,
 				2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
@@ -18312,6 +18334,7 @@
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,
 				2DC65809274A876300583E14 /* DeletePlaylistConfirmationController.m in Sources */,
+				2D9EF3102B6FAF5C0042F6D8 /* keyboard_shortcuts.c in Sources */,
 				2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
 				2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */,
@@ -18392,6 +18415,7 @@
 				2D986143226C816000BAACB1 /* BrowseButton.m in Sources */,
 				2DC657E4274A5F6000583E14 /* PlaylistBrowserWidget.m in Sources */,
 				2D95F726293BA3DA002D8499 /* DdbUndoBuffer.m in Sources */,
+				2D9EF3142B6FB0800042F6D8 /* KeyboardShortcutManager.m in Sources */,
 				2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */,
 				2D92F37D2B6D226F00BD07E8 /* UndoIntegration.m in Sources */,
 				2D92D32129B92F9100218F1D /* pluginsettings.c in Sources */,

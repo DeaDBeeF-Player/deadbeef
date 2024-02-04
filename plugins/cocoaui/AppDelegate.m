@@ -35,6 +35,7 @@
 #import "EqualizerWindowController.h"
 #import "HelpWindowController.h"
 #import "junklib.h"
+#import "KeyboardShortcuts/KeyboardShortcutManager.h"
 #import "LogWindowController.h"
 #import "NowPlayable.h"
 #import "NSMenu+ActionItems.h"
@@ -75,7 +76,7 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSMenuItem *designModeMenuItem;
 @property DesignModeState *designModeState;
 
-
+@property (nonatomic) KeyboardShortcutManager *keyboardShortcutManager;
 
 @end
 
@@ -189,6 +190,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     self.designModeState = DesignModeState.sharedInstance;
     self.mediaLibraryManager = [MediaLibraryManager new];
     [self initMainMenu];
+    self.keyboardShortcutManager = [[KeyboardShortcutManager alloc] initWithMenu:self.mainMenu];
     [self initMainWindow];
     [self initSearchWindow];
     [self initLogWindow];
