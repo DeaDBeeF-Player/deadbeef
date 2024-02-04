@@ -68,7 +68,7 @@
 #include "plmenu.h"
 #include "covermanager/albumartwidget.h"
 #include "selpropertieswidget.h"
-#include "undo.h"
+#include "undostack.h"
 #include "undointegration.h"
 
 #define USE_GTK_APPLICATION 1
@@ -1661,7 +1661,7 @@ gtkui_mainwin_free (void) {
         set_title_timeout_id = 0;
     }
 
-    gtkui_undo_deinit();
+    gtkui_undostack_deinit();
     clipboard_free_current ();
     eq_window_destroy ();
     trkproperties_destroy ();

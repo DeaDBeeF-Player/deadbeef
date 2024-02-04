@@ -24,7 +24,7 @@
 #include "gtkui.h"
 #include "support.h"
 #include "undointegration.h"
-#include "undo.h"
+#include "undostack.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -37,7 +37,7 @@ _undo_initialize (ddb_undo_interface_t *interface) {
 
 static int
 _undo_process_action (struct ddb_undobuffer_s *undobuffer, const char *action_name) {
-    gtkui_undo_append_buffer (undobuffer, action_name);
+    gtkui_undostack_append_buffer (undobuffer, action_name);
     refresh_undo_redo_menu ();
     return 0;
 }
@@ -57,13 +57,13 @@ refresh_undo_redo_menu (void) {
     GtkWidget *undo = lookup_widget (mainwin, "undo");
     GtkWidget *redo = lookup_widget (mainwin, "redo");
 
-    int has_undo = gtkui_has_undo ();
-    int has_redo = gtkui_has_redo ();
+    int has_undo = gtkui_undostack_has_undo ();
+    int has_redo = gtkui_undostack_has_redo ();
     gtk_widget_set_sensitive (undo, has_undo);
     gtk_widget_set_sensitive (redo, has_redo);
 
-    const char *undo_action_name = gtkui_get_undo_action_name ();
-    const char *redo_action_name = gtkui_get_redo_action_name ();
+    const char *undo_action_name = gtkui_undostack_get_undo_action_name ();
+    const char *redo_action_name = gtkui_undostack_get_redo_action_name ();
 
     char text[100];
     if (has_undo && undo_action_name != NULL) {

@@ -63,7 +63,7 @@ GTKUI_SOURCES = \
 	scriptable/gtkScriptableListEditViewController.c scriptable/gtkScriptableListEditViewController.h\
 	scriptable/gtkScriptableListEditWindowController.c scriptable/gtkScriptableListEditWindowController.h\
 	scriptable/gtkScriptableSelectViewController.c scriptable/gtkScriptableSelectViewController.h\
-	undo.c undo.h\
+	undostack.c undostack.h\
 	undointegration.c undointegration.h
 
 	$(SM_SOURCES) $(OSXSRC)

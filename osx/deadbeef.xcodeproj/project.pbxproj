@@ -872,10 +872,10 @@
 		2D2A14BA19B6485200AD1EB7 /* gme.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D2C51562B67B5B800EAC44E /* fileman.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5ED2269BB4300AFF9AE /* fileman.c */; };
-		2D2C51592B6BE15900EAC44E /* undo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2C51572B6BE15800EAC44E /* undo.h */; };
-		2D2C515A2B6BE15900EAC44E /* undo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2C51572B6BE15800EAC44E /* undo.h */; };
-		2D2C515B2B6BE15900EAC44E /* undo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2C51582B6BE15900EAC44E /* undo.c */; };
-		2D2C515C2B6BE15900EAC44E /* undo.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2C51582B6BE15900EAC44E /* undo.c */; };
+		2D2C51592B6BE15900EAC44E /* undostack.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2C51572B6BE15800EAC44E /* undostack.h */; };
+		2D2C515A2B6BE15900EAC44E /* undostack.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2C51572B6BE15800EAC44E /* undostack.h */; };
+		2D2C515B2B6BE15900EAC44E /* undostack.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2C51582B6BE15900EAC44E /* undostack.c */; };
+		2D2C515C2B6BE15900EAC44E /* undostack.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2C51582B6BE15900EAC44E /* undostack.c */; };
 		2D30D0B425E2A5DD0023A299 /* DesignModeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D0B225E2A5DD0023A299 /* DesignModeState.h */; };
 		2D30D0B525E2A5DD0023A299 /* DesignModeState.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D0B325E2A5DD0023A299 /* DesignModeState.m */; };
 		2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */; };
@@ -5527,8 +5527,8 @@
 		2D28F0C41C283CAC004A6E7B /* tns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tns.h; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		2D2C51572B6BE15800EAC44E /* undo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undo.h; sourceTree = "<group>"; };
-		2D2C51582B6BE15900EAC44E /* undo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = undo.c; sourceTree = "<group>"; };
+		2D2C51572B6BE15800EAC44E /* undostack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undostack.h; sourceTree = "<group>"; };
+		2D2C51582B6BE15900EAC44E /* undostack.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = undostack.c; sourceTree = "<group>"; };
 		2D30D0B225E2A5DD0023A299 /* DesignModeState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignModeState.h; sourceTree = "<group>"; };
 		2D30D0B325E2A5DD0023A299 /* DesignModeState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeState.m; sourceTree = "<group>"; };
 		2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetTopLevelView.h; sourceTree = "<group>"; };
@@ -12220,8 +12220,8 @@
 				2DA62BA426F3C8A800ED449A /* gtkui_deletefromdisk.c */,
 				2D0AC9992864E12600F6D56A /* selpropertieswidget.c */,
 				2D0AC9A92864E12600F6D56A /* selpropertieswidget.h */,
-				2D2C51572B6BE15800EAC44E /* undo.h */,
-				2D2C51582B6BE15900EAC44E /* undo.c */,
+				2D2C51572B6BE15800EAC44E /* undostack.h */,
+				2D2C51582B6BE15900EAC44E /* undostack.c */,
 				2D92F37E2B6D23FE00BD07E8 /* undointegration.h */,
 				2D92F37F2B6D23FF00BD07E8 /* undointegration.c */,
 			);
@@ -14204,7 +14204,7 @@
 				2DC656742744289C00583E14 /* gtkui.h in Headers */,
 				2DC656752744289C00583E14 /* clipboard.h in Headers */,
 				2DC656762744289C00583E14 /* ddbtabstrip.h in Headers */,
-				2D2C51592B6BE15900EAC44E /* undo.h in Headers */,
+				2D2C51592B6BE15900EAC44E /* undostack.h in Headers */,
 				2DC656772744289C00583E14 /* prefwinmisc.h in Headers */,
 				2DC656792744289C00583E14 /* widgets.h in Headers */,
 				2DC6567A2744289C00583E14 /* drawing.h in Headers */,
@@ -14290,7 +14290,7 @@
 				2DE3B7CC2269BF1300AFF9AE /* gtkui.h in Headers */,
 				2DE3B7F72269BF3100AFF9AE /* clipboard.h in Headers */,
 				2DE3B7EB2269BF3100AFF9AE /* ddbtabstrip.h in Headers */,
-				2D2C515A2B6BE15900EAC44E /* undo.h in Headers */,
+				2D2C515A2B6BE15900EAC44E /* undostack.h in Headers */,
 				2D715C1226C836FE0022A8F0 /* prefwinmisc.h in Headers */,
 				2DE3B7E02269BF3100AFF9AE /* widgets.h in Headers */,
 				2DE3B7D32269BF1700AFF9AE /* drawing.h in Headers */,
@@ -18017,7 +18017,7 @@
 				2DC656B42744289C00583E14 /* prefwinplayback.c in Sources */,
 				2DC656B52744289C00583E14 /* medialibmanager.c in Sources */,
 				2DC656B62744289C00583E14 /* plcommon.c in Sources */,
-				2D2C515B2B6BE15900EAC44E /* undo.c in Sources */,
+				2D2C515B2B6BE15900EAC44E /* undostack.c in Sources */,
 				2D9793F3276F6D2F0062585E /* albumartwidget.c in Sources */,
 				2D60EB00277235C800C28A44 /* playlistcontroller.c in Sources */,
 				2DC656B72744289C00583E14 /* actions.c in Sources */,
@@ -18125,7 +18125,7 @@
 				2D715C0F26C835E90022A8F0 /* prefwinplayback.c in Sources */,
 				2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */,
 				2DE3B7D52269BF1700AFF9AE /* plcommon.c in Sources */,
-				2D2C515C2B6BE15900EAC44E /* undo.c in Sources */,
+				2D2C515C2B6BE15900EAC44E /* undostack.c in Sources */,
 				2D9793F4276F6D2F0062585E /* albumartwidget.c in Sources */,
 				2D60EB01277235C800C28A44 /* playlistcontroller.c in Sources */,
 				2DE3B7F62269BF3100AFF9AE /* actions.c in Sources */,

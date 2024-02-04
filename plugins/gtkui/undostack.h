@@ -27,27 +27,27 @@
 #include <deadbeef/deadbeef.h>
 
 void
-gtkui_undo_deinit (void);
+gtkui_undostack_deinit (void);
 
 void
-gtkui_undo_append_buffer (struct ddb_undobuffer_s *undobuffer, const char *action_name);
+gtkui_undostack_append_buffer (struct ddb_undobuffer_s *undobuffer, const char *action_name);
 
 void
-gtkui_perform_undo (void);
+gtkui_undostack_perform_undo (void);
 
 void
-gtkui_perform_redo (void);
+gtkui_undostack_perform_redo (void);
 
 int
-gtkui_has_undo (void);
+gtkui_undostack_has_undo (void);
 
 int
-gtkui_has_redo (void);
+gtkui_undostack_has_redo (void);
 
 const char *
-gtkui_get_undo_action_name (void);
+gtkui_undostack_get_undo_action_name (void);
 
 const char *
-gtkui_get_redo_action_name (void);
+gtkui_undostack_get_redo_action_name (void);
 
 #endif /* undo_h */

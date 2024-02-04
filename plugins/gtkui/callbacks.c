@@ -49,7 +49,7 @@
 #include "../libparser/parser.h"
 #include "drawing.h"
 #include "eq.h"
-#include "undo.h"
+#include "undostack.h"
 #include "wingeom.h"
 #include "widgets.h"
 #include "../hotkeys/hotkeys.h"
@@ -716,7 +716,7 @@ void
 on_mainwin_undo_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    gtkui_perform_undo ();
+    gtkui_undostack_perform_undo ();
 }
 
 
@@ -724,5 +724,5 @@ void
 on_mainwin_redo_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
-    gtkui_perform_redo ();
+    gtkui_undostack_perform_redo ();
 }

@@ -24,64 +24,57 @@
 #include <deadbeef/deadbeef.h>
 #include <stdlib.h>
 #include <string.h>
-#include "undo.h"
+#include "undostack.h"
 #include "undointegration.h"
 
 extern DB_functions_t *deadbeef;
 
-struct undo_item_s;
-typedef struct undo_item_s undo_item_t;
+struct undostack_item_s;
+typedef struct undostack_item_s undostack_item_t;
 
-struct undo_item_s {
+struct undostack_item_s {
     char *action_name;
     struct ddb_undobuffer_s *undobuffer;
-    undo_item_t *prev;
-    undo_item_t *next;
+    undostack_item_t *prev;
+    undostack_item_t *next;
 };
 
 typedef enum {
-    none,
-    undo,
-    redo,
-} undo_type_t;
+    undostack_operation_type_none,
+    undostack_operation_type_undo,
+    undostack_operation_type_redo,
+} undostack_operation_type_t;
 
 typedef struct {
-    undo_item_t *undo_head;
-    undo_item_t *undo_tail;
+    undostack_item_t *undo_head;
+    undostack_item_t *undo_tail;
 
-    undo_item_t *redo_head;
-    undo_item_t *redo_tail;
+    undostack_item_t *redo_head;
+    undostack_item_t *redo_tail;
 
-    undo_type_t type;
-} undo_state_t;
+    undostack_operation_type_t type;
+} undostack_state_t;
 
-static undo_state_t _state;
+static undostack_state_t _state;
 
 static void
-_free_item (undo_item_t *item) {
+_free_item (undostack_item_t *item) {
     ddb_undo->free_buffer (item->undobuffer);
     free (item->action_name);
     free (item);
 }
 
 static void
-_free_item_list (undo_item_t *item) {
+_free_item_list (undostack_item_t *item) {
     while (item != NULL) {
-        undo_item_t *next = item->next;
+        undostack_item_t *next = item->next;
         _free_item (item);
         item = next;
     }
 }
 
-void
-gtkui_undo_deinit (void) {
-    _free_item_list(_state.undo_head);
-    _free_item_list(_state.redo_head);
-    memset (&_state, 0, sizeof (_state));
-}
-
 static void
-_append_item (undo_item_t **head, undo_item_t **tail, undo_item_t *item) {
+_append_item (undostack_item_t **head, undostack_item_t **tail, undostack_item_t *item) {
     item->prev = *tail;
     if (*tail != NULL) {
         (*tail)->next = item;
@@ -94,7 +87,7 @@ _append_item (undo_item_t **head, undo_item_t **tail, undo_item_t *item) {
 }
 
 static void
-_pop_last (undo_item_t **head, undo_item_t **tail) {
+_pop_last (undostack_item_t **head, undostack_item_t **tail) {
     if ((*tail)->prev != NULL) {
         (*tail)->prev->next = NULL;
         (*tail) = (*tail)->prev;
@@ -104,35 +97,12 @@ _pop_last (undo_item_t **head, undo_item_t **tail) {
     }
 }
 
-void
-gtkui_undo_append_buffer (struct ddb_undobuffer_s *undobuffer, const char *action_name) {
-    if (_state.type == none) {
-        // discard all redo operations
-        _free_item_list (_state.redo_head);
-        _state.redo_head = _state.redo_tail = NULL;
-    }
-
-    undo_item_t *item = calloc (1, sizeof (undo_item_t));
-    item->action_name = action_name ? strdup (action_name) : NULL;
-    item->undobuffer = undobuffer;
-
-    if (_state.type == none || _state.type == redo) {
-        // append to undo list
-        _append_item (&_state.undo_head, &_state.undo_tail, item);
-    }
-    if (_state.type == undo) {
-        // append to redo list
-        _append_item (&_state.redo_head, &_state.redo_tail, item);
-    }
-
-}
-
 static void
-_perform_undo_redo (undo_type_t type) {
-    undo_item_t **head;
-    undo_item_t **tail;
+_perform_undo_redo (undostack_operation_type_t type) {
+    undostack_item_t **head;
+    undostack_item_t **tail;
 
-    if (type == undo) {
+    if (type == undostack_operation_type_undo) {
         head = &_state.undo_head;
         tail = &_state.undo_tail;
     }
@@ -141,7 +111,7 @@ _perform_undo_redo (undo_type_t type) {
         tail = &_state.redo_tail;
     }
 
-    undo_item_t *item = *tail;
+    undostack_item_t *item = *tail;
     if (item == NULL) {
         return;
     }
@@ -154,37 +124,69 @@ _perform_undo_redo (undo_type_t type) {
     ddb_undo->set_action_name (item->action_name);
     deadbeef->undo_process();
     _free_item (item);
-    _state.type = none;
+    _state.type = undostack_operation_type_none;
 
+    // FIXME: This would call undo_process again, which we don't want,
+    // but we do need to call it here to refresh playlist.
     deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, 0, 0);
 }
 
 void
-gtkui_perform_undo (void) {
-    _perform_undo_redo (undo);
+gtkui_undostack_deinit (void) {
+    _free_item_list(_state.undo_head);
+    _free_item_list(_state.redo_head);
+    memset (&_state, 0, sizeof (_state));
 }
 
 void
-gtkui_perform_redo (void) {
-    _perform_undo_redo (redo);
+gtkui_undostack_append_buffer (struct ddb_undobuffer_s *undobuffer, const char *action_name) {
+    if (_state.type == undostack_operation_type_none) {
+        // discard all redo operations
+        _free_item_list (_state.redo_head);
+        _state.redo_head = _state.redo_tail = NULL;
+    }
+
+    undostack_item_t *item = calloc (1, sizeof (undostack_item_t));
+    item->action_name = action_name ? strdup (action_name) : NULL;
+    item->undobuffer = undobuffer;
+
+    if (_state.type == undostack_operation_type_none || _state.type == undostack_operation_type_redo) {
+        // append to undo list
+        _append_item (&_state.undo_head, &_state.undo_tail, item);
+    }
+    if (_state.type == undostack_operation_type_undo) {
+        // append to redo list
+        _append_item (&_state.redo_head, &_state.redo_tail, item);
+    }
+
+}
+
+void
+gtkui_undostack_perform_undo (void) {
+    _perform_undo_redo (undostack_operation_type_undo);
+}
+
+void
+gtkui_undostack_perform_redo (void) {
+    _perform_undo_redo (undostack_operation_type_redo);
 }
 
 int
-gtkui_has_undo (void) {
+gtkui_undostack_has_undo (void) {
     return _state.undo_tail != NULL;
 }
 
 int
-gtkui_has_redo (void) {
+gtkui_undostack_has_redo (void) {
     return _state.redo_tail != NULL;
 }
 
 const char *
-gtkui_get_undo_action_name (void) {
+gtkui_undostack_get_undo_action_name (void) {
     return _state.undo_tail ? _state.undo_tail->action_name : NULL;
 }
 
 const char *
-gtkui_get_redo_action_name (void) {
+gtkui_undostack_get_redo_action_name (void) {
     return _state.redo_tail ? _state.redo_tail->action_name : NULL;
 }
