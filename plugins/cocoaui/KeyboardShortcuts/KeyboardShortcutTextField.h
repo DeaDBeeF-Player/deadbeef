@@ -23,10 +23,21 @@
 
 #import <Cocoa/Cocoa.h>
 
-NS_ASSUME_NONNULL_BEGIN
+@class KeyboardShortcutTextField;
 
-@interface KeyboardShortcutTextField : NSTextField
+@protocol KeyboardShortcutTextFieldDelegate <NSTextFieldDelegate>
+
+@optional
+- (void)textFieldDidAssignShortcut:(KeyboardShortcutTextField *)textField;
 
 @end
 
-NS_ASSUME_NONNULL_END
+@interface KeyboardShortcutTextField : NSTextField
+
+@property (weak) id<KeyboardShortcutTextFieldDelegate> delegate;
+
+@property (nonatomic, readonly) NSString *key;
+@property (nonatomic, readonly) NSEventModifierFlags modifierFlags;
+
+@end
+

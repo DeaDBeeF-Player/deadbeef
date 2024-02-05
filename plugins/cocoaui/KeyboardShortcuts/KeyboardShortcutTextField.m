@@ -25,12 +25,14 @@
 #import "KeyboardShortcutConverter.h"
 
 @interface KeyboardShortcutTextField()
-@property (nonatomic, nullable) id eventMonitor;
-@property (nonatomic, nullable) NSString *key;
-@property (nonatomic) NSEventModifierFlags modifierFlags;
+@property (nonatomic) id eventMonitor;
+@property (nonatomic, readwrite) NSString *key;
+@property (nonatomic, readwrite) NSEventModifierFlags modifierFlags;
 @end
 
 @implementation KeyboardShortcutTextField
+
+@dynamic delegate;
 
 - (void)dealloc
 {
@@ -77,8 +79,8 @@
         strongSelf.stringValue = displayString;
         [NSEvent removeMonitor:strongSelf.eventMonitor];
         strongSelf.eventMonitor = nil;
-        [strongSelf.window makeFirstResponder:nil];
-        return event;
+        [self.delegate textFieldDidAssignShortcut:self];
+        return nil;
     }];
     return [super becomeFirstResponder];
 }

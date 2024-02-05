@@ -11196,22 +11196,22 @@
 		2D9EF30C2B6FAEFB0042F6D8 /* KeyboardShortcuts */ = {
 			isa = PBXGroup;
 			children = (
-				2D9EF30D2B6FAF5C0042F6D8 /* keyboard_shortcuts.h */,
 				2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */,
-				2D9EF3112B6FB0800042F6D8 /* KeyboardShortcutManager.h */,
-				2D9EF3122B6FB0800042F6D8 /* KeyboardShortcutManager.m */,
+				2D9EF30D2B6FAF5C0042F6D8 /* keyboard_shortcuts.h */,
+				2DD886582B71056E000434FB /* KeyboardShortcutConverter.h */,
+				2DD886592B71056E000434FB /* KeyboardShortcutConverter.m */,
 				2D9EF3152B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.h */,
 				2D9EF3162B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.m */,
 				2D9EF3172B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.xib */,
 				2D9EF31B2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.h */,
 				2D9EF31C2B6FBC380042F6D8 /* KeyboardShortcutEditorWindowController.m */,
 				2D9EF31D2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib */,
-				2DD886502B6FD4C2000434FB /* KeyboardShortcutViewItem.h */,
-				2DD886512B6FD4C2000434FB /* KeyboardShortcutViewItem.m */,
+				2D9EF3112B6FB0800042F6D8 /* KeyboardShortcutManager.h */,
+				2D9EF3122B6FB0800042F6D8 /* KeyboardShortcutManager.m */,
 				2DD886542B70D83B000434FB /* KeyboardShortcutTextField.h */,
 				2DD886552B70D83B000434FB /* KeyboardShortcutTextField.m */,
-				2DD886582B71056E000434FB /* KeyboardShortcutConverter.h */,
-				2DD886592B71056E000434FB /* KeyboardShortcutConverter.m */,
+				2DD886502B6FD4C2000434FB /* KeyboardShortcutViewItem.h */,
+				2DD886512B6FD4C2000434FB /* KeyboardShortcutViewItem.m */,
 			);
 			path = KeyboardShortcuts;
 			sourceTree = "<group>";

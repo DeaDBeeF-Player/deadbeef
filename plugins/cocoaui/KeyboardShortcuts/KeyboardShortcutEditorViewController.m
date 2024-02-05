@@ -21,10 +21,11 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "KeyboardShortcutConverter.h"
 #import "KeyboardShortcutEditorViewController.h"
 #import "KeyboardShortcutTextField.h"
 
-@interface KeyboardShortcutEditorViewController () <NSOutlineViewDelegate, NSOutlineViewDataSource>
+@interface KeyboardShortcutEditorViewController () <NSOutlineViewDelegate, NSOutlineViewDataSource, KeyboardShortcutTextFieldDelegate>
 @property (weak) IBOutlet NSOutlineView *outlineView;
 
 @property (nonatomic, nullable) KeyboardShortcutViewItem *viewItem;
@@ -88,10 +89,24 @@
         else  {
             const char *keyCombination = ddb_keyboard_shortcut_get_key_combination(viewItem.shortcut);
             view.textField.stringValue = @(keyCombination ?: "");
+            view.textField.delegate = self;
         }
     }
 
     return view;
+}
+
+#pragma mark - KeyboardShortcutTextFieldDelegate
+
+- (void)textFieldDidAssignShortcut:(KeyboardShortcutTextField *)textField {
+    NSInteger row = [self.outlineView rowForView:textField];
+    if (row != -1) {
+        KeyboardShortcutViewItem *viewItem = [self.outlineView itemAtRow:row];
+
+        NSString *keyCombination = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:textField.key modifierMask:textField.modifierFlags];
+        ddb_keyboard_shortcut_set_key_combination(viewItem.shortcut, keyCombination.UTF8String);
+    }
+    [self.view.window makeFirstResponder:self.outlineView];
 }
 
 @end
