@@ -11196,8 +11196,8 @@
 		2D9EF30C2B6FAEFB0042F6D8 /* KeyboardShortcuts */ = {
 			isa = PBXGroup;
 			children = (
-				2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */,
 				2D9EF30D2B6FAF5C0042F6D8 /* keyboard_shortcuts.h */,
+				2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */,
 				2DD886582B71056E000434FB /* KeyboardShortcutConverter.h */,
 				2DD886592B71056E000434FB /* KeyboardShortcutConverter.m */,
 				2D9EF3152B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.h */,

@@ -27,6 +27,15 @@
 struct ddb_keyboard_shortcut_s;
 typedef struct ddb_keyboard_shortcut_s ddb_keyboard_shortcut_t;
 
+typedef enum {
+    ddb_keyboard_shortcut_modifiers_none = 0x00000000,
+    ddb_keyboard_shortcut_modifiers_shift = 0x00000001,
+    ddb_keyboard_shortcut_modifiers_option = 0x00000002,
+    ddb_keyboard_shortcut_modifiers_control = 0x00000004,
+    ddb_keyboard_shortcut_modifiers_super = 0x00000008,
+    ddb_keyboard_shortcut_modifiers_fn = 0x00000010,
+} ddb_keyboard_shortcut_modifiers_t;
+
 ddb_keyboard_shortcut_t *
 ddb_keyboard_shortcuts_get_root (void);
 
@@ -58,15 +67,27 @@ void
 ddb_keyboard_shortcut_set_selector (ddb_keyboard_shortcut_t *shortcut, const char *selector);
 
 const char *
-ddb_keyboard_shortcut_get_key_combination (ddb_keyboard_shortcut_t *shortcut);
+ddb_keyboard_shortcut_get_key_character (ddb_keyboard_shortcut_t *shortcut);
 
 void
-ddb_keyboard_shortcut_set_key_combination (ddb_keyboard_shortcut_t *shortcut, const char *key_combination);
+ddb_keyboard_shortcut_set_key_character (ddb_keyboard_shortcut_t *shortcut, const char *character);
+
+ddb_keyboard_shortcut_modifiers_t
+ddb_keyboard_shortcut_get_key_modifiers (ddb_keyboard_shortcut_t *shortcut);
+
+void
+ddb_keyboard_shortcut_set_key_modifiers (ddb_keyboard_shortcut_t *shortcut, ddb_keyboard_shortcut_modifiers_t modifiers);
 
 const char *
-ddb_keyboard_shortcut_get_default_key_combination (ddb_keyboard_shortcut_t *shortcut);
+ddb_keyboard_shortcut_get_default_key_character (ddb_keyboard_shortcut_t *shortcut);
 
 void
-ddb_keyboard_shortcut_set_default_key_combination (ddb_keyboard_shortcut_t *shortcut, const char *default_key_combination);
+ddb_keyboard_shortcut_set_default_key_character (ddb_keyboard_shortcut_t *shortcut, const char *character);
+
+ddb_keyboard_shortcut_modifiers_t
+ddb_keyboard_shortcut_get_default_key_modifiers (ddb_keyboard_shortcut_t *shortcut);
+
+void
+ddb_keyboard_shortcut_set_default_key_modifiers (ddb_keyboard_shortcut_t *shortcut, ddb_keyboard_shortcut_modifiers_t modifiers);
 
 #endif /* keyboard_shortcuts_h */

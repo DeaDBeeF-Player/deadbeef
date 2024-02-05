@@ -66,8 +66,10 @@
         ddb_keyboard_shortcut_t *shortcut = ddb_keyboard_shortcut_append (parent);
         ddb_keyboard_shortcut_set_title (shortcut, title.UTF8String);
         ddb_keyboard_shortcut_set_selector (shortcut, selectorString.UTF8String);
-        ddb_keyboard_shortcut_set_key_combination (shortcut, keyCombination.UTF8String);
-        ddb_keyboard_shortcut_set_default_key_combination (shortcut, keyCombination.UTF8String);
+        ddb_keyboard_shortcut_set_key_character (shortcut, item.keyEquivalent.UTF8String);
+        ddb_keyboard_shortcut_modifiers_t modifiers = [KeyboardShortcutConverter.shared ddbModifiersFromAppKitModifiers:item.keyEquivalentModifierMask];
+        ddb_keyboard_shortcut_set_key_modifiers (shortcut, modifiers);
+        ddb_keyboard_shortcut_set_default_key_character (shortcut, item.keyEquivalent.UTF8String);
 
         if (item.submenu != nil) {
             [self traverseMenuItems:item.submenu.itemArray parent:shortcut];

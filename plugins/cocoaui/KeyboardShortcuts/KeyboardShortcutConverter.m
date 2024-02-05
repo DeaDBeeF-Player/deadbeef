@@ -118,4 +118,56 @@
     return result;
 }
 
+- (ddb_keyboard_shortcut_modifiers_t)ddbModifiersFromAppKitModifiers:(NSEventModifierFlags)modifierMask {
+    ddb_keyboard_shortcut_modifiers_t result = 0;
+
+    if (modifierMask & NSEventModifierFlagCommand) {
+        result |= ddb_keyboard_shortcut_modifiers_super;
+    }
+
+    if (modifierMask & NSEventModifierFlagShift) {
+        result |= ddb_keyboard_shortcut_modifiers_shift;
+    }
+
+    if (modifierMask & NSEventModifierFlagOption) {
+        result |= ddb_keyboard_shortcut_modifiers_option;
+    }
+
+    if (modifierMask & NSEventModifierFlagControl) {
+        result |= ddb_keyboard_shortcut_modifiers_control;
+    }
+
+    if (modifierMask & NSEventModifierFlagFunction) {
+        result |= ddb_keyboard_shortcut_modifiers_fn;
+    }
+
+    return result;
+}
+
+- (NSEventModifierFlags)appKitModifiersFromDdbModifiers:(ddb_keyboard_shortcut_modifiers_t)modifiers {
+    NSEventModifierFlags result = 0;
+
+    if (modifiers & ddb_keyboard_shortcut_modifiers_super) {
+        result |= NSEventModifierFlagCommand;
+    }
+
+    if (modifiers & ddb_keyboard_shortcut_modifiers_shift) {
+        result |= NSEventModifierFlagCommand;
+    }
+
+    if (modifiers & ddb_keyboard_shortcut_modifiers_option) {
+        result |= NSEventModifierFlagOption;
+    }
+
+    if (modifiers & ddb_keyboard_shortcut_modifiers_control) {
+        result |= NSEventModifierFlagControl;
+    }
+
+    if (modifiers & ddb_keyboard_shortcut_modifiers_fn) {
+        result |= NSEventModifierFlagFunction;
+    }
+
+    return result;
+}
+
 @end

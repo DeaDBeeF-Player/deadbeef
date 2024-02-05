@@ -28,8 +28,12 @@
 struct ddb_keyboard_shortcut_s {
     char *title; // NOTE: this may be localized
     char *selector;
-    char *key_combination;
-    char *default_key_combination;
+
+    char *key_character;
+    ddb_keyboard_shortcut_modifiers_t key_modifiers;
+
+    char *default_key_character;
+    ddb_keyboard_shortcut_modifiers_t default_key_modifiers;
 
     ddb_keyboard_shortcut_t *children;
     ddb_keyboard_shortcut_t *next;
@@ -44,8 +48,8 @@ _deinit_shortcut (ddb_keyboard_shortcut_t *shortcut) {
     }
     free (shortcut->title);
     free (shortcut->selector);
-    free (shortcut->key_combination);
-    free (shortcut->default_key_combination);
+    free (shortcut->key_character);
+    free (shortcut->default_key_character);
     free (shortcut);
 }
 
@@ -122,29 +126,49 @@ ddb_keyboard_shortcut_set_selector (ddb_keyboard_shortcut_t *shortcut, const cha
 }
 
 const char *
-ddb_keyboard_shortcut_get_key_combination (ddb_keyboard_shortcut_t *shortcut) {
-    return shortcut->key_combination;
+ddb_keyboard_shortcut_get_key_character (ddb_keyboard_shortcut_t *shortcut) {
+    return shortcut->key_character;
 }
 
 void
-ddb_keyboard_shortcut_set_key_combination (ddb_keyboard_shortcut_t *shortcut, const char *key_combination) {
-    free (shortcut->key_combination);
-    shortcut->key_combination = NULL;
-    if (key_combination != NULL) {
-        shortcut->key_combination = strdup (key_combination);
+ddb_keyboard_shortcut_set_key_character (ddb_keyboard_shortcut_t *shortcut, const char *character) {
+    free (shortcut->key_character);
+    shortcut->key_character = NULL;
+    if (character != NULL) {
+        shortcut->key_character = strdup (character);
     }
+}
+
+ddb_keyboard_shortcut_modifiers_t
+ddb_keyboard_shortcut_get_key_modifiers (ddb_keyboard_shortcut_t *shortcut) {
+    return shortcut->key_modifiers;
+}
+
+void
+ddb_keyboard_shortcut_set_key_modifiers (ddb_keyboard_shortcut_t *shortcut, ddb_keyboard_shortcut_modifiers_t modifiers) {
+    shortcut->key_modifiers = modifiers;
 }
 
 const char *
-ddb_keyboard_shortcut_get_default_key_combination (ddb_keyboard_shortcut_t *shortcut) {
-    return shortcut->default_key_combination;
+ddb_keyboard_shortcut_get_default_key_character (ddb_keyboard_shortcut_t *shortcut) {
+    return shortcut->default_key_character;
 }
 
 void
-ddb_keyboard_shortcut_set_default_key_combination (ddb_keyboard_shortcut_t *shortcut, const char *default_key_combination) {
-    free (shortcut->default_key_combination);
-    shortcut->default_key_combination = NULL;
-    if (default_key_combination != NULL) {
-        shortcut->default_key_combination = strdup (default_key_combination);
+ddb_keyboard_shortcut_set_default_key_character (ddb_keyboard_shortcut_t *shortcut, const char *character) {
+    free (shortcut->default_key_character);
+    shortcut->default_key_character = NULL;
+    if (character != NULL) {
+        shortcut->default_key_character = strdup (character);
     }
+}
+
+ddb_keyboard_shortcut_modifiers_t
+ddb_keyboard_shortcut_get_default_key_modifiers (ddb_keyboard_shortcut_t *shortcut) {
+    return shortcut->default_key_modifiers;
+}
+
+void
+ddb_keyboard_shortcut_set_default_key_modifiers (ddb_keyboard_shortcut_t *shortcut, ddb_keyboard_shortcut_modifiers_t modifiers) {
+    shortcut->default_key_modifiers = modifiers;
 }

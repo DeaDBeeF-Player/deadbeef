@@ -87,8 +87,11 @@
             view.textField.stringValue = viewItem.displayText;
         }
         else  {
-            const char *keyCombination = ddb_keyboard_shortcut_get_key_combination(viewItem.shortcut);
-            view.textField.stringValue = @(keyCombination ?: "");
+            NSString *keyCharacter = @(ddb_keyboard_shortcut_get_key_character (viewItem.shortcut));
+            NSEventModifierFlags keyModifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers(viewItem.shortcut)];
+
+            NSString *keyCombination = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:keyCharacter modifierMask:keyModifiers];
+            view.textField.stringValue = keyCombination ?: @"";
             view.textField.delegate = self;
         }
     }
@@ -103,8 +106,11 @@
     if (row != -1) {
         KeyboardShortcutViewItem *viewItem = [self.outlineView itemAtRow:row];
 
-        NSString *keyCombination = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:textField.key modifierMask:textField.modifierFlags];
-        ddb_keyboard_shortcut_set_key_combination(viewItem.shortcut, keyCombination.UTF8String);
+        ddb_keyboard_shortcut_set_key_character(viewItem.shortcut, textField.key.UTF8String);
+
+        ddb_keyboard_shortcut_modifiers_t modifiers = [KeyboardShortcutConverter.shared ddbModifiersFromAppKitModifiers:textField.modifierFlags];
+        ddb_keyboard_shortcut_set_key_modifiers(viewItem.shortcut, modifiers);
+
     }
     [self.view.window makeFirstResponder:self.outlineView];
 }

@@ -22,11 +22,14 @@
 */
 
 #import <AppKit/AppKit.h>
+#import "keyboard_shortcuts.h"
 
 @interface KeyboardShortcutConverter : NSObject
 
 @property (class, nonatomic, readonly) KeyboardShortcutConverter *shared;
 
 - (NSString *)keyCombinationDisplayStringFromKeyEquivalent:(NSString *)keyEquivalent modifierMask:(NSEventModifierFlags)modifierMask;
+- (ddb_keyboard_shortcut_modifiers_t)ddbModifiersFromAppKitModifiers:(NSEventModifierFlags)modifierMask;
+- (NSEventModifierFlags)appKitModifiersFromDdbModifiers:(ddb_keyboard_shortcut_modifiers_t)modifiers;
 
 @end
