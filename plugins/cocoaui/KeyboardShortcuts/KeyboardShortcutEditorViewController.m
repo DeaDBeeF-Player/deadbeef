@@ -22,6 +22,7 @@
 */
 
 #import "KeyboardShortcutEditorViewController.h"
+#import "KeyboardShortcutTextField.h"
 
 @interface KeyboardShortcutEditorViewController () <NSOutlineViewDelegate, NSOutlineViewDataSource>
 @property (weak) IBOutlet NSOutlineView *outlineView;

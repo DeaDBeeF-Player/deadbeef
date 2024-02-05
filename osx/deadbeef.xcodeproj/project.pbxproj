@@ -2527,6 +2527,10 @@
 		2DD877A31C370C7100CC94FB /* ferror68.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD877A21C370C7100CC94FB /* ferror68.c */; };
 		2DD886522B6FD4C2000434FB /* KeyboardShortcutViewItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD886502B6FD4C2000434FB /* KeyboardShortcutViewItem.h */; };
 		2DD886532B6FD4C2000434FB /* KeyboardShortcutViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD886512B6FD4C2000434FB /* KeyboardShortcutViewItem.m */; };
+		2DD886562B70D83B000434FB /* KeyboardShortcutTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD886542B70D83B000434FB /* KeyboardShortcutTextField.h */; };
+		2DD886572B70D83B000434FB /* KeyboardShortcutTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD886552B70D83B000434FB /* KeyboardShortcutTextField.m */; };
+		2DD8865A2B71056E000434FB /* KeyboardShortcutConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD886582B71056E000434FB /* KeyboardShortcutConverter.h */; };
+		2DD8865B2B71056E000434FB /* KeyboardShortcutConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD886592B71056E000434FB /* KeyboardShortcutConverter.m */; };
 		2DD9F4E92A7A65FD00BC76DC /* TrackPropertiesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */; };
 		2DD9F4EA2A7A65FD00BC76DC /* TrackPropertiesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9F4E82A7A65FD00BC76DC /* TrackPropertiesManager.m */; };
 		2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */; };
@@ -7004,6 +7008,10 @@
 		2DD877A21C370C7100CC94FB /* ferror68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ferror68.c; sourceTree = "<group>"; };
 		2DD886502B6FD4C2000434FB /* KeyboardShortcutViewItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardShortcutViewItem.h; sourceTree = "<group>"; };
 		2DD886512B6FD4C2000434FB /* KeyboardShortcutViewItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutViewItem.m; sourceTree = "<group>"; };
+		2DD886542B70D83B000434FB /* KeyboardShortcutTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardShortcutTextField.h; sourceTree = "<group>"; };
+		2DD886552B70D83B000434FB /* KeyboardShortcutTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutTextField.m; sourceTree = "<group>"; };
+		2DD886582B71056E000434FB /* KeyboardShortcutConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardShortcutConverter.h; sourceTree = "<group>"; };
+		2DD886592B71056E000434FB /* KeyboardShortcutConverter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutConverter.m; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
 		2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesManager.h; sourceTree = "<group>"; };
@@ -11200,6 +11208,10 @@
 				2D9EF31D2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib */,
 				2DD886502B6FD4C2000434FB /* KeyboardShortcutViewItem.h */,
 				2DD886512B6FD4C2000434FB /* KeyboardShortcutViewItem.m */,
+				2DD886542B70D83B000434FB /* KeyboardShortcutTextField.h */,
+				2DD886552B70D83B000434FB /* KeyboardShortcutTextField.m */,
+				2DD886582B71056E000434FB /* KeyboardShortcutConverter.h */,
+				2DD886592B71056E000434FB /* KeyboardShortcutConverter.m */,
 			);
 			path = KeyboardShortcuts;
 			sourceTree = "<group>";
@@ -14711,6 +14723,7 @@
 				2DDD781625E1578C00FA6FE5 /* SplitterWidget.h in Headers */,
 				2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */,
 				2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */,
+				2DD8865A2B71056E000434FB /* KeyboardShortcutConverter.h in Headers */,
 				2D72F6FF277BA9D800868136 /* DdbVolumeBar.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2DB1641A24FAB13400034E11 /* MediaLibraryManager.h in Headers */,
@@ -14781,6 +14794,7 @@
 				2DC657BF2746F67600583E14 /* RenameTabViewController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
 				2DD3775127412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h in Headers */,
+				2DD886562B70D83B000434FB /* KeyboardShortcutTextField.h in Headers */,
 				2DC657A72746D9E400583E14 /* TabsWidget.h in Headers */,
 				2DD377552741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h in Headers */,
 				2D9EF30F2B6FAF5C0042F6D8 /* keyboard_shortcuts.h in Headers */,
@@ -18386,6 +18400,7 @@
 				2D92D33A29B9322700218F1D /* tftintutil.c in Sources */,
 				2DDE52A724F821630096EF80 /* MediaLibraryOutlineView.m in Sources */,
 				2DC657FA274A7C4600583E14 /* RenamePlaylistViewController.m in Sources */,
+				2DD8865B2B71056E000434FB /* KeyboardShortcutConverter.m in Sources */,
 				2DC657C82748502F00583E14 /* SegmentedTabView.m in Sources */,
 				2DDD779025E153D000FA6FE5 /* WidgetFactory.m in Sources */,
 				2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */,
@@ -18440,6 +18455,7 @@
 				2DC657EC274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */,
 				2D98B681272B272300E655AE /* VisualizationShaders.metal in Sources */,
 				2D7387EF29BE5DF7003E3126 /* NSUndoManager+DdbUndoBuffer.m in Sources */,
+				2DD886572B70D83B000434FB /* KeyboardShortcutTextField.m in Sources */,
 				2D9EF31F2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.m in Sources */,
 				2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */,
 				0D56852A271DC35E0026F700 /* ScopeWidget.m in Sources */,

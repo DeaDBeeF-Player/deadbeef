@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "KeyboardShortcutConverter.h"
 #import "KeyboardShortcutManager.h"
 #import "KeyboardShortcutViewItem.h"
 #import "keyboard_shortcuts.h"
@@ -44,32 +45,6 @@
     return self;
 }
 
-- (NSString *)keyCombinationDisplayStringFromKeyEquivalent:(NSString *)keyEquivalent modifierMask:(NSEventModifierFlags)modifierMask {
-    if (keyEquivalent == nil || [keyEquivalent isEqualToString:@""]) {
-        return nil;
-    }
-
-    NSString *result = keyEquivalent.uppercaseString;
-
-    if (modifierMask & NSEventModifierFlagCommand) {
-        result = [@"⌘" stringByAppendingString:result];
-    }
-
-    if (modifierMask & NSEventModifierFlagShift) {
-        result = [@"⇧" stringByAppendingString:result];
-    }
-
-    if (modifierMask & NSEventModifierFlagOption) {
-        result = [@"⌥" stringByAppendingString:result];
-    }
-
-    if (modifierMask & NSEventModifierFlagControl) {
-        result = [@"⌃" stringByAppendingString:result];
-    }
-
-    return result;
-}
-
 - (void)traverseMenuItems:(NSArray<NSMenuItem *> *)items parent:(ddb_keyboard_shortcut_t *)parent {
     for (NSMenuItem *item in items) {
         NSString *title = item.title;
@@ -83,7 +58,7 @@
         }
 
         if (action != nil && item.submenu == nil) {
-            keyCombination = [self keyCombinationDisplayStringFromKeyEquivalent:item.keyEquivalent modifierMask:item.keyEquivalentModifierMask];
+            keyCombination = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:item.keyEquivalent modifierMask:item.keyEquivalentModifierMask];
         }
 
         selectorString = NSStringFromSelector (action);
