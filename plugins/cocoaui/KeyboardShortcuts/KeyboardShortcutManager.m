@@ -106,11 +106,35 @@
 
     [self createViewItemHierarchy:viewItemRoot shortcut:root];
 
+    // flatten the hierarchy to have only 2 levels
+    for (KeyboardShortcutViewItem *topLevelItem in viewItemRoot.children) {
+        NSMutableArray *children = [NSMutableArray new];
+        BOOL haveMoreDepth = NO;
+        do {
+            for (KeyboardShortcutViewItem *childViewItem in topLevelItem.children) {
+                if (childViewItem.children == nil) {
+                    [children addObject:childViewItem];
+                }
+                else {
+                    for (KeyboardShortcutViewItem *subViewItem in childViewItem.children) {
+                        subViewItem.displayText = [childViewItem.displayText stringByAppendingString:[@" ▸ " stringByAppendingString:subViewItem.displayText]];
+                        [children addObject:subViewItem];
+                        if (subViewItem.children != nil) {
+                            haveMoreDepth = YES;
+                        }
+                    }
+                }
+            }
+        } while (haveMoreDepth);
+        topLevelItem.children = children.copy;
+    }
+
     return viewItemRoot;
 }
 
 - (void)createViewItemHierarchy:(KeyboardShortcutViewItem *)viewItem shortcut:(ddb_keyboard_shortcut_t *)shortcut {
     viewItem.shortcut = shortcut;
+    viewItem.displayText = @(ddb_keyboard_shortcut_get_title(shortcut) ?: "");
     NSMutableArray<KeyboardShortcutViewItem *> *children = [NSMutableArray new];
 
     ddb_keyboard_shortcut_t *child = ddb_keyboard_shortcut_get_children (shortcut);

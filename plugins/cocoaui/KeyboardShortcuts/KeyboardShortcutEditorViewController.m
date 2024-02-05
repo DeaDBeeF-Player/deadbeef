@@ -34,12 +34,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do view setup here.
 }
 
 - (void)updateWithViewItem:(KeyboardShortcutViewItem *)viewItem {
     self.viewItem = viewItem;
     [self.outlineView reloadData];
+    [self.outlineView expandItem:nil expandChildren:YES];
 }
 
 #pragma mark - NSOutlineViewDataSource
@@ -65,23 +65,31 @@
     return viewItem.children != nil;
 }
 
-#pragma mark -
-
+#pragma mark - NSOutlineViewDelegate
 
 - (nullable NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(nullable NSTableColumn *)tableColumn item:(id)item {
     NSTableCellView *view;
-    view = [outlineView makeViewWithIdentifier:tableColumn.identifier owner:self];
 
     KeyboardShortcutViewItem *viewItem = item;
 
-    if ([tableColumn.identifier isEqualToString:@"TextCell1"]) {
-        const char *title = ddb_keyboard_shortcut_get_title(viewItem.shortcut);
-        view.textField.stringValue = @(title ?: "");
+    if (viewItem.children != nil) {
+        if ([tableColumn.identifier isEqualToString:@"TextCell1"]) {
+            view = [outlineView makeViewWithIdentifier:@"Group" owner:self];
+            view.textField.stringValue = [viewItem.displayText stringByAppendingString:@" Menu"];
+        }
     }
     else {
-        const char *keyCombination = ddb_keyboard_shortcut_get_key_combination(viewItem.shortcut);
-        view.textField.stringValue = @(keyCombination ?: "");
+        view = [outlineView makeViewWithIdentifier:tableColumn.identifier owner:self];
+
+        if ([tableColumn.identifier isEqualToString:@"TextCell1"]) {
+            view.textField.stringValue = viewItem.displayText;
+        }
+        else  {
+            const char *keyCombination = ddb_keyboard_shortcut_get_key_combination(viewItem.shortcut);
+            view.textField.stringValue = @(keyCombination ?: "");
+        }
     }
+
     return view;
 }
 

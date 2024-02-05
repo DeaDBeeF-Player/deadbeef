@@ -29,6 +29,7 @@
 @interface KeyboardShortcutViewItem : NSObject
 
 @property (nonatomic, nullable) ddb_keyboard_shortcut_t *shortcut;
+@property (nonatomic, nonnull) NSString *displayText;
 @property (nonatomic, nullable) NSArray<KeyboardShortcutViewItem *> *children;
 
 @end
