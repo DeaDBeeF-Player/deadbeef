@@ -21,17 +21,9 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <Cocoa/Cocoa.h>
-#import "KeyboardShortcutViewItem.h"
+#import "KeyboardShortcutManager.h"
+#import "KeyboardShortcutEditorViewController.h"
 
-@protocol KeyboardShortcutModelProtocol
-- (void)applyShortcut:(nonnull ddb_keyboard_shortcut_t *)shortcut;
-@end
-
-@interface KeyboardShortcutEditorViewController : NSViewController
-
-@property (nonatomic, nullable) id<KeyboardShortcutModelProtocol> model;
-
-- (void)updateWithViewItem:(nonnull KeyboardShortcutViewItem *)viewItem;
+@interface KeyboardShortcutManager(ViewController) <KeyboardShortcutModelProtocol>
 
 @end

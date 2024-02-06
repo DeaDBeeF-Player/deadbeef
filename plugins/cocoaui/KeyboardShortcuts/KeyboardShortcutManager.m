@@ -26,6 +26,10 @@
 #import "KeyboardShortcutViewItem.h"
 #import "keyboard_shortcuts.h"
 
+@interface KeyboardShortcutManager()
+@property (nonatomic) NSMenu *menu;
+@end
+
 @implementation KeyboardShortcutManager
 
 - (void)dealloc {
@@ -37,6 +41,7 @@
     if (self == nil) {
         return nil;
     }
+    self.menu = menu;
 
     ddb_keyboard_shortcut_t *root = ddb_keyboard_shortcuts_get_root ();
 
@@ -73,7 +78,7 @@
 
         if (item.submenu != nil) {
             [self traverseMenuItems:item.submenu.itemArray parent:shortcut];
-       }
+        }
     }
 }
 
@@ -125,6 +130,38 @@
     if (children.count != 0) {
         viewItem.children = children.copy;
     }
+}
+
+- (void)findMenuItems:(NSArray<NSMenuItem *> *)menuItems matchingTitle:(NSString *)title action:(SEL)action performBlock:(void (^)(NSMenuItem *menuItem))block {
+    for (NSMenuItem *item in menuItems) {
+        if (item.submenu != nil) {
+            [self findMenuItems:item.submenu.itemArray matchingTitle:title action:action performBlock:block];
+        }
+        else {
+            if ([item.title isEqualToString:title] && item.action == action) {
+                block(item);
+            }
+        }
+    }
+}
+
+- (void)applyShortcut:(nonnull ddb_keyboard_shortcut_t *)shortcut {
+    const char *title = ddb_keyboard_shortcut_get_title (shortcut);
+    const char *action = ddb_keyboard_shortcut_get_selector (shortcut);
+
+    if (title == NULL || action == NULL) {
+        return;
+    }
+
+    SEL selector = NSSelectorFromString(@(action));
+
+    NSString *keyEquivalent = @(ddb_keyboard_shortcut_get_key_character(shortcut) ?: "");
+    NSEventModifierFlags modifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers(shortcut)];
+
+    [self findMenuItems:self.menu.itemArray matchingTitle:@(title) action:selector performBlock:^(NSMenuItem *menuItem) {
+        menuItem.keyEquivalent = keyEquivalent;
+        menuItem.keyEquivalentModifierMask = modifiers;
+    }];
 }
 
 @end

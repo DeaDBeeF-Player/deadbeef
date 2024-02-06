@@ -2531,6 +2531,7 @@
 		2DD886572B70D83B000434FB /* KeyboardShortcutTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD886552B70D83B000434FB /* KeyboardShortcutTextField.m */; };
 		2DD8865A2B71056E000434FB /* KeyboardShortcutConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD886582B71056E000434FB /* KeyboardShortcutConverter.h */; };
 		2DD8865B2B71056E000434FB /* KeyboardShortcutConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD886592B71056E000434FB /* KeyboardShortcutConverter.m */; };
+		2DD8865D2B72362E000434FB /* KeyboardShortcutManager+ViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = 2DD8865C2B72362E000434FB /* KeyboardShortcutManager+ViewController.h */; };
 		2DD9F4E92A7A65FD00BC76DC /* TrackPropertiesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */; };
 		2DD9F4EA2A7A65FD00BC76DC /* TrackPropertiesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD9F4E82A7A65FD00BC76DC /* TrackPropertiesManager.m */; };
 		2DDBA24D23E5E66D00051320 /* PlaylistContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */; };
@@ -7012,6 +7013,7 @@
 		2DD886552B70D83B000434FB /* KeyboardShortcutTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutTextField.m; sourceTree = "<group>"; };
 		2DD886582B71056E000434FB /* KeyboardShortcutConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardShortcutConverter.h; sourceTree = "<group>"; };
 		2DD886592B71056E000434FB /* KeyboardShortcutConverter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardShortcutConverter.m; sourceTree = "<group>"; };
+		2DD8865C2B72362E000434FB /* KeyboardShortcutManager+ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KeyboardShortcutManager+ViewController.h"; sourceTree = "<group>"; };
 		2DD9EF0419A5089F00189344 /* cocoautil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoautil.h; sourceTree = "<group>"; };
 		2DD9EF0519A5089F00189344 /* cocoautil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoautil.m; sourceTree = "<group>"; };
 		2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesManager.h; sourceTree = "<group>"; };
@@ -11208,6 +11210,7 @@
 				2D9EF31D2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib */,
 				2D9EF3112B6FB0800042F6D8 /* KeyboardShortcutManager.h */,
 				2D9EF3122B6FB0800042F6D8 /* KeyboardShortcutManager.m */,
+				2DD8865C2B72362E000434FB /* KeyboardShortcutManager+ViewController.h */,
 				2DD886542B70D83B000434FB /* KeyboardShortcutTextField.h */,
 				2DD886552B70D83B000434FB /* KeyboardShortcutTextField.m */,
 				2DD886502B6FD4C2000434FB /* KeyboardShortcutViewItem.h */,
@@ -18374,6 +18377,7 @@
 				2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
 				2DD3774B27404E11007AD315 /* VisualizationSettingsUtil.m in Sources */,
+				2DD8865D2B72362E000434FB /* KeyboardShortcutManager+ViewController.h in Sources */,
 				2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
 				2DAD80A22416DBB100EB3075 /* CustomToolbarItem.m in Sources */,

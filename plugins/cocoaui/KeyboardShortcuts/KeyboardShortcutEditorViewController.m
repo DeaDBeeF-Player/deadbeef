@@ -111,6 +111,8 @@
         ddb_keyboard_shortcut_modifiers_t modifiers = [KeyboardShortcutConverter.shared ddbModifiersFromAppKitModifiers:textField.modifierFlags];
         ddb_keyboard_shortcut_set_key_modifiers(viewItem.shortcut, modifiers);
 
+        [self.model applyShortcut:viewItem.shortcut];
+
     }
     [self.view.window makeFirstResponder:self.outlineView];
 }

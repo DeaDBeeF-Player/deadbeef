@@ -36,6 +36,7 @@
 #import "HelpWindowController.h"
 #import "junklib.h"
 #import "KeyboardShortcuts/KeyboardShortcutManager.h"
+#import "KeyboardShortcuts/KeyboardShortcutManager+ViewController.h"
 #import "KeyboardShortcuts/KeyboardShortcutEditorViewController.h"
 #import "KeyboardShortcuts/KeyboardShortcutEditorWindowController.h"
 #import "LogWindowController.h"
@@ -1034,6 +1035,7 @@ main_cleanup_and_quit (void);
     if (self.keyboardShortcutEditorWindowController == nil) {
         self.keyboardShortcutEditorWindowController = [[KeyboardShortcutEditorWindowController alloc] initWithWindowNibName:@"KeyboardShortcutEditorWindowController"];
         self.keyboardShortcutEditorViewController = [KeyboardShortcutEditorViewController new];
+        self.keyboardShortcutEditorViewController.model = self.keyboardShortcutManager;
         self.keyboardShortcutEditorWindowController.window.contentView = self.keyboardShortcutEditorViewController.view;
     }
 
