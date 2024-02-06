@@ -109,34 +109,22 @@ _load_shortcut (ddb_keyboard_shortcut_t *root, json_t *item) {
     _assign_shortcut (root, json_string_value (mac_action), key_character_str, modifiers_result);
 }
 
-static void
-_for_each_shortcut(ddb_keyboard_shortcut_t *item, void (^perform_block)(ddb_keyboard_shortcut_t *shortcut)) {
-    perform_block(item);
-
-    ddb_keyboard_shortcut_t *children = ddb_keyboard_shortcut_get_children (item);
-    while (children != NULL) {
-        _for_each_shortcut(children, perform_block);
-        children = ddb_keyboard_shortcut_get_next (children);
-    }
-}
-
 char *
 ddb_keyboard_shortcuts_save (ddb_keyboard_shortcut_t *root) {
     json_t *array = json_array ();
     
-    _for_each_shortcut(root, ^(ddb_keyboard_shortcut_t *shortcut){
+    ddb_keyboard_shortcut_for_each_recursive(root, ^(ddb_keyboard_shortcut_t *shortcut){
         const char *mac_action = ddb_keyboard_shortcut_get_mac_action (shortcut);
         if (mac_action == NULL) {
             return;
         }
-        const char *key_character = ddb_keyboard_shortcut_get_key_character (shortcut);
-        const char *default_key_character = ddb_keyboard_shortcut_get_default_key_character (shortcut);
-        ddb_keyboard_shortcut_modifiers_t key_modifiers = ddb_keyboard_shortcut_get_key_modifiers(shortcut);
-        ddb_keyboard_shortcut_modifiers_t default_key_modifiers = ddb_keyboard_shortcut_get_default_key_modifiers(shortcut);
 
-        if (!strcmp(key_character, default_key_character) && key_modifiers == default_key_modifiers) {
+        if (!ddb_keyboard_shortcut_is_modified(shortcut)) {
             return;
         }
+
+        const char *key_character = ddb_keyboard_shortcut_get_key_character (shortcut);
+        ddb_keyboard_shortcut_modifiers_t key_modifiers = ddb_keyboard_shortcut_get_key_modifiers (shortcut);
 
         json_t *item = json_object();
         json_object_set(item, "mac_action", json_string(mac_action));

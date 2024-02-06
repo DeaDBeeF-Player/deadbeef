@@ -172,3 +172,24 @@ void
 ddb_keyboard_shortcut_set_default_key_modifiers (ddb_keyboard_shortcut_t *shortcut, ddb_keyboard_shortcut_modifiers_t modifiers) {
     shortcut->default_key_modifiers = modifiers;
 }
+
+int
+ddb_keyboard_shortcut_is_modified (ddb_keyboard_shortcut_t *shortcut) {
+    if (shortcut->mac_action == NULL) {
+        return 0;
+    }
+    return  (strcmp (shortcut->key_character, shortcut->default_key_character)
+             || shortcut->key_modifiers != shortcut->default_key_modifiers);
+}
+
+void
+ddb_keyboard_shortcut_for_each_recursive (ddb_keyboard_shortcut_t *item, void (^perform_block)(ddb_keyboard_shortcut_t *shortcut)) {
+    perform_block(item);
+
+    ddb_keyboard_shortcut_t *children = ddb_keyboard_shortcut_get_children (item);
+    while (children != NULL) {
+        ddb_keyboard_shortcut_for_each_recursive (children, perform_block);
+        children = ddb_keyboard_shortcut_get_next (children);
+    }
+}
+

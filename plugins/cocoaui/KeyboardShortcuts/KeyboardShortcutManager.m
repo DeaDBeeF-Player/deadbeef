@@ -21,14 +21,20 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import <deadbeef/deadbeef.h>
 #import "KeyboardShortcutConverter.h"
 #import "KeyboardShortcutManager.h"
 #import "KeyboardShortcutViewItem.h"
 #import "keyboard_shortcuts.h"
 #import "keyboard_shortcut_serializer.h"
 
+extern DB_functions_t *deadbeef;
+
 @interface KeyboardShortcutManager()
+
 @property (nonatomic) NSMenu *menu;
+@property (nonatomic) NSMutableDictionary<NSString *, NSMenuItem *> *mapActionToMenuItem;
+
 @end
 
 @implementation KeyboardShortcutManager
@@ -46,7 +52,27 @@
 
     ddb_keyboard_shortcut_t *root = ddb_keyboard_shortcuts_get_root ();
 
+    self.mapActionToMenuItem = [NSMutableDictionary new];
+
     [self traverseMenuItems:menu.itemArray parent:root];
+
+    char *buffer = malloc (100000);
+    deadbeef->conf_get_str("cocoaui.shortcuts", "", buffer, 100000);
+    if (*buffer) {
+        ddb_keyboard_shortcuts_load (root, buffer);
+    }
+    free (buffer);
+
+    ddb_keyboard_shortcut_for_each_recursive(root, ^(ddb_keyboard_shortcut_t *shortcut) {
+        const char *action = ddb_keyboard_shortcut_get_mac_action (shortcut);
+        if (action == NULL) {
+            return;
+        }
+        if (!ddb_keyboard_shortcut_is_modified (shortcut)) {
+            return;
+        }
+        [self applyShortcut:shortcut];
+    });
 
     return self;
 }
@@ -80,6 +106,8 @@
             ddb_keyboard_shortcut_set_key_modifiers (shortcut, modifiers);
             ddb_keyboard_shortcut_set_default_key_character (shortcut, item.keyEquivalent.UTF8String);
             ddb_keyboard_shortcut_set_default_key_modifiers (shortcut, modifiers);
+
+            self.mapActionToMenuItem[selectorString] = item;
         }
 
         if (item.submenu != nil) {
@@ -155,25 +183,27 @@
 }
 
 - (void)applyShortcut:(nonnull ddb_keyboard_shortcut_t *)shortcut {
-    const char *title = ddb_keyboard_shortcut_get_title (shortcut);
     const char *action = ddb_keyboard_shortcut_get_mac_action (shortcut);
 
-    if (title == NULL || action == NULL) {
+    if (action == NULL) {
         return;
     }
 
-    SEL selector = NSSelectorFromString(@(action));
+    NSMenuItem *menuItem = self.mapActionToMenuItem[@(action)];
+    if (menuItem == nil) {
+        return;
+    }
 
     NSString *keyEquivalent = @(ddb_keyboard_shortcut_get_key_character(shortcut) ?: "");
     NSEventModifierFlags modifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers(shortcut)];
 
-    [self findMenuItems:self.menu.itemArray matchingTitle:@(title) action:selector performBlock:^(NSMenuItem *menuItem) {
-        menuItem.keyEquivalent = keyEquivalent;
-        menuItem.keyEquivalentModifierMask = modifiers;
-    }];
+    menuItem.keyEquivalent = keyEquivalent;
+    menuItem.keyEquivalentModifierMask = modifiers;
 
     char *jsonString = ddb_keyboard_shortcuts_save (ddb_keyboard_shortcuts_get_root ());
     if (jsonString != NULL) {
+        deadbeef->conf_set_str ("cocoaui.shortcuts", jsonString);
+        deadbeef->conf_save();
         free (jsonString);
     }
 }

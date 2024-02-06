@@ -90,4 +90,10 @@ ddb_keyboard_shortcut_get_default_key_modifiers (ddb_keyboard_shortcut_t *shortc
 void
 ddb_keyboard_shortcut_set_default_key_modifiers (ddb_keyboard_shortcut_t *shortcut, ddb_keyboard_shortcut_modifiers_t modifiers);
 
+int
+ddb_keyboard_shortcut_is_modified (ddb_keyboard_shortcut_t *shortcut);
+
+void
+ddb_keyboard_shortcut_for_each_recursive (ddb_keyboard_shortcut_t *item, void (^perform_block)(ddb_keyboard_shortcut_t *shortcut));
+
 #endif /* keyboard_shortcuts_h */
