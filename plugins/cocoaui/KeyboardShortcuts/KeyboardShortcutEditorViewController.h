@@ -25,7 +25,8 @@
 #import "KeyboardShortcutViewItem.h"
 
 @protocol KeyboardShortcutModelProtocol
-- (void)applyShortcut:(nonnull ddb_keyboard_shortcut_t *)shortcut;
+- (void)updateShortcut:(nonnull ddb_keyboard_shortcut_t *)shortcut keyCharacter:(nonnull NSString *)keyCharacter modifiers:(NSEventModifierFlags)modifiers;
+- (BOOL)shortcutHasDuplicates:(nonnull ddb_keyboard_shortcut_t *)shortcut;
 @end
 
 @interface KeyboardShortcutEditorViewController : NSViewController

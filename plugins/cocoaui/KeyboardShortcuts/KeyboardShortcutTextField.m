@@ -49,7 +49,6 @@
         return nil;
     }
     if (event.modifierFlags & NSEventModifierFlagShift) {
-        key = [key lowercaseString];
         unichar uc = [key characterAtIndex:0];
 
         // uppercase letter: remove shift and lowercase the char

@@ -35,7 +35,7 @@
 
 - (NSString *)keyCombinationDisplayStringFromKeyEquivalent:(NSString *)keyEquivalent modifierMask:(NSEventModifierFlags)modifierMask {
     if (keyEquivalent == nil || [keyEquivalent isEqualToString:@""]) {
-        return nil;
+        return @"";
     }
 
     NSString *result = keyEquivalent.uppercaseString;
@@ -45,7 +45,7 @@
     if (uc == 0x7f) {
         result = @"⌫";
     }
-    if (uc == 63272) {
+    else if (uc == 63272) {
         result = @"⌦";
         modifierMask &= ~NSEventModifierFlagFunction;
     }

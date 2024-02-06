@@ -54,13 +54,15 @@
     if (viewItem != nil) {
         if (ddb_keyboard_shortcut_is_modified(viewItem.shortcut)
             && !strcmp (ddb_keyboard_shortcut_get_key_character(viewItem.shortcut), "")) {
-            ddb_keyboard_shortcut_reset_to_default (viewItem.shortcut);
+            NSString *keyCharacter = @(ddb_keyboard_shortcut_get_default_key_character(viewItem.shortcut) ?: "");
+            NSEventModifierFlags modifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_default_key_modifiers(viewItem.shortcut)];
+
+            [self.model updateShortcut:viewItem.shortcut keyCharacter:keyCharacter modifiers:modifiers];
         }
         else {
-            ddb_keyboard_shortcut_set_clear (viewItem.shortcut);
+            [self.model updateShortcut:viewItem.shortcut keyCharacter:@"" modifiers:0];
         }
 
-        [self.model applyShortcut:viewItem.shortcut];
         [self.outlineView reloadItem:viewItem];
     }
 }
@@ -115,13 +117,21 @@
         if ([tableColumn.identifier isEqualToString:@"TextCell1"]) {
             view.textField.stringValue = viewItem.displayText;
         }
-        else {
+        else if ([tableColumn.identifier isEqualToString:@"TextCell2"]) {
             NSString *keyCharacter = @(ddb_keyboard_shortcut_get_key_character (viewItem.shortcut));
             NSEventModifierFlags keyModifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers(viewItem.shortcut)];
 
             NSString *keyCombination = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:keyCharacter modifierMask:keyModifiers];
             view.textField.stringValue = keyCombination ?: @"";
             view.textField.delegate = self;
+        }
+        else if ([tableColumn.identifier isEqualToString:@"ImageCell"]) {
+            if ([self.model shortcutHasDuplicates:viewItem.shortcut]) {
+                view.imageView.image = [NSImage imageNamed:@"NSCaution"];
+            }
+            else {
+                view.imageView.image = nil;
+            }
         }
     }
 
@@ -135,12 +145,8 @@
     if (row != -1) {
         KeyboardShortcutViewItem *viewItem = [self.outlineView itemAtRow:row];
 
-        ddb_keyboard_shortcut_set_key_character(viewItem.shortcut, textField.key.UTF8String);
+        [self.model updateShortcut:viewItem.shortcut keyCharacter:textField.key modifiers:textField.modifierFlags];
 
-        ddb_keyboard_shortcut_modifiers_t modifiers = [KeyboardShortcutConverter.shared ddbModifiersFromAppKitModifiers:textField.modifierFlags];
-        ddb_keyboard_shortcut_set_key_modifiers(viewItem.shortcut, modifiers);
-
-        [self.model applyShortcut:viewItem.shortcut];
         [self.outlineView reloadItem:viewItem];
 
     }

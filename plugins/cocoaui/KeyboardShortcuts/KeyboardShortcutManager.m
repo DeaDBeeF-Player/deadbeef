@@ -35,6 +35,10 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSMenu *menu;
 @property (nonatomic) NSMutableDictionary<NSString *, NSMenuItem *> *mapActionToMenuItem;
 
+// Shortcut display string mapped to all actions,
+// primarily for conflict checking.
+@property (nonatomic) NSMutableDictionary<NSString *, NSArray<NSString *> *> *mapShortcutToActions;
+
 @end
 
 @implementation KeyboardShortcutManager
@@ -53,6 +57,7 @@ extern DB_functions_t *deadbeef;
     ddb_keyboard_shortcut_t *root = ddb_keyboard_shortcuts_get_root ();
 
     self.mapActionToMenuItem = [NSMutableDictionary new];
+    self.mapShortcutToActions = [NSMutableDictionary new];
 
     [self traverseMenuItems:menu.itemArray parent:root];
 
@@ -68,11 +73,25 @@ extern DB_functions_t *deadbeef;
         if (action == NULL) {
             return;
         }
-        if (!ddb_keyboard_shortcut_is_modified (shortcut)) {
-            return;
+        if (ddb_keyboard_shortcut_is_modified (shortcut)) {
+            [self applyShortcut:shortcut];
         }
-        [self applyShortcut:shortcut];
+
+        NSString *keyCharacter = @(ddb_keyboard_shortcut_get_key_character (shortcut) ?: "");
+        NSEventModifierFlags keyModifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers (shortcut)];
+        NSString *shortcutDisplayString = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:keyCharacter modifierMask:keyModifiers];
+
+        if (![shortcutDisplayString isEqualToString:@""]) {
+            NSArray *mappedActions = self.mapShortcutToActions[shortcutDisplayString];
+            if (mappedActions == nil) {
+                self.mapShortcutToActions[shortcutDisplayString] = @[@(action)];
+            }
+            else {
+                self.mapShortcutToActions[shortcutDisplayString] = [mappedActions arrayByAddingObject:@(action)];
+            }
+        }
     });
+
 
     return self;
 }
@@ -80,17 +99,12 @@ extern DB_functions_t *deadbeef;
 - (void)traverseMenuItems:(NSArray<NSMenuItem *> *)items parent:(ddb_keyboard_shortcut_t *)parent {
     for (NSMenuItem *item in items) {
         NSString *title = item.title;
-        NSString *keyCombination;
 
         NSString *selectorString;
         SEL action = item.action;
 
         if (action == nil && item.submenu == nil) {
             continue;
-        }
-
-        if (action != nil && item.submenu == nil) {
-            keyCombination = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:item.keyEquivalent modifierMask:item.keyEquivalentModifierMask];
         }
 
         if (item.submenu == nil && action != nil) {
@@ -100,11 +114,24 @@ extern DB_functions_t *deadbeef;
         ddb_keyboard_shortcut_t *shortcut = ddb_keyboard_shortcut_append (parent);
         ddb_keyboard_shortcut_set_title (shortcut, title.UTF8String);
         if (selectorString != NULL) {
+
             ddb_keyboard_shortcut_set_mac_action (shortcut, selectorString.UTF8String);
-            ddb_keyboard_shortcut_set_key_character (shortcut, item.keyEquivalent.UTF8String);
-            ddb_keyboard_shortcut_modifiers_t modifiers = [KeyboardShortcutConverter.shared ddbModifiersFromAppKitModifiers:item.keyEquivalentModifierMask];
+
+            // menu items can make use of uppercase letters to signify shift key
+            NSEventModifierFlags keyModifiers = item.keyEquivalentModifierMask;
+            NSString *keyCharacter = item.keyEquivalent;
+            if (keyCharacter.length != 0) {
+                unichar uc = [keyCharacter characterAtIndex:0];
+                if (isupper(uc)) {
+                    keyCharacter = keyCharacter.lowercaseString;
+                    keyModifiers |= NSEventModifierFlagShift;
+                }
+            }
+
+            ddb_keyboard_shortcut_set_key_character (shortcut, keyCharacter.UTF8String);
+            ddb_keyboard_shortcut_modifiers_t modifiers = [KeyboardShortcutConverter.shared ddbModifiersFromAppKitModifiers:keyModifiers];
             ddb_keyboard_shortcut_set_key_modifiers (shortcut, modifiers);
-            ddb_keyboard_shortcut_set_default_key_character (shortcut, item.keyEquivalent.UTF8String);
+            ddb_keyboard_shortcut_set_default_key_character (shortcut, keyCharacter.UTF8String);
             ddb_keyboard_shortcut_set_default_key_modifiers (shortcut, modifiers);
 
             self.mapActionToMenuItem[selectorString] = item;
@@ -206,6 +233,66 @@ extern DB_functions_t *deadbeef;
         deadbeef->conf_save ();
         free (jsonString);
     }
+}
+
+- (NSArray<NSString *> *)arrayByRemovingString:(NSArray<NSString *> *)array string:(NSString *)string {
+    NSMutableArray *newArray = [NSMutableArray new];
+    for (NSString *item in array) {
+        if (![item isEqualToString:string]) {
+            [newArray addObject:item];
+        }
+    }
+    return newArray.copy;
+}
+
+- (void)updateShortcut:(ddb_keyboard_shortcut_t *)shortcut keyCharacter:(NSString *)keyCharacter modifiers:(NSEventModifierFlags)modifiers {
+    NSString *oldKeyCharacter = @(ddb_keyboard_shortcut_get_key_character(shortcut) ?: "");
+    NSEventModifierFlags oldModifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers(shortcut)];
+    NSString *oldDisplayString = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:oldKeyCharacter modifierMask:oldModifiers];
+
+    NSString *newDisplayString = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:keyCharacter modifierMask:modifiers];
+
+    if ([oldDisplayString isEqualToString:newDisplayString]) {
+        return;
+    }
+
+
+    NSString *action = @(ddb_keyboard_shortcut_get_mac_action (shortcut));
+
+    if (![oldDisplayString isEqualToString:@""]) {
+        NSArray<NSString *> *oldMappedActions = self.mapShortcutToActions[oldDisplayString];
+        oldMappedActions = [self arrayByRemovingString:oldMappedActions string:action];
+        if (oldMappedActions.count == 0) {
+            self.mapShortcutToActions[oldDisplayString] = nil;
+        }
+        else {
+            self.mapShortcutToActions[oldDisplayString] = oldMappedActions;
+        }
+    }
+
+    if (![newDisplayString isEqualToString:@""]) {
+        NSArray<NSString *> *newMappedActions = self.mapShortcutToActions[newDisplayString];
+        if (newMappedActions == nil) {
+            self.mapShortcutToActions[newDisplayString] = @[action];
+        }
+        else {
+            self.mapShortcutToActions[newDisplayString] = [newMappedActions arrayByAddingObject:action];
+        }
+    }
+
+    ddb_keyboard_shortcut_set_key_character (shortcut, keyCharacter.UTF8String);
+    ddb_keyboard_shortcut_set_key_modifiers (shortcut, [KeyboardShortcutConverter.shared ddbModifiersFromAppKitModifiers: modifiers]);
+
+    [self applyShortcut:shortcut];
+}
+
+- (BOOL)shortcutHasDuplicates:(nonnull ddb_keyboard_shortcut_t *)shortcut {
+    NSString *keyCharacter = @(ddb_keyboard_shortcut_get_key_character(shortcut) ?: "");
+    NSEventModifierFlags modifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers(shortcut)];
+    NSString *displayString = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:keyCharacter modifierMask:modifiers];
+    NSArray *actions = self.mapShortcutToActions[displayString];
+
+    return actions.count > 1;
 }
 
 @end
