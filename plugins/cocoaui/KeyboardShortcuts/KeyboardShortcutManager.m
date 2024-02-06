@@ -59,7 +59,7 @@ extern DB_functions_t *deadbeef;
     self.mapActionToMenuItem = [NSMutableDictionary new];
     self.mapShortcutToActions = [NSMutableDictionary new];
 
-    [self traverseMenuItems:menu.itemArray parent:root];
+    [self readShortcutsFromMenuItems:menu.itemArray parent:root];
 
     char *buffer = malloc (100000);
     deadbeef->conf_get_str ("cocoaui.shortcuts", "", buffer, 100000);
@@ -68,6 +68,7 @@ extern DB_functions_t *deadbeef;
     }
     free (buffer);
 
+    // Apply loaded shortcuts and store conflict information
     ddb_keyboard_shortcut_for_each_recursive (root, ^(ddb_keyboard_shortcut_t *shortcut) {
         const char *action = ddb_keyboard_shortcut_get_mac_action (shortcut);
         if (action == NULL) {
@@ -96,7 +97,7 @@ extern DB_functions_t *deadbeef;
     return self;
 }
 
-- (void)traverseMenuItems:(NSArray<NSMenuItem *> *)items parent:(ddb_keyboard_shortcut_t *)parent {
+- (void)readShortcutsFromMenuItems:(NSArray<NSMenuItem *> *)items parent:(ddb_keyboard_shortcut_t *)parent {
     for (NSMenuItem *item in items) {
         NSString *title = item.title;
 
@@ -138,7 +139,7 @@ extern DB_functions_t *deadbeef;
         }
 
         if (item.submenu != nil) {
-            [self traverseMenuItems:item.submenu.itemArray parent:shortcut];
+            [self readShortcutsFromMenuItems:item.submenu.itemArray parent:shortcut];
         }
     }
 }
