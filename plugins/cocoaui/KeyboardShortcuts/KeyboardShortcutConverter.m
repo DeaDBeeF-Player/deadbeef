@@ -47,6 +47,7 @@
     }
     if (uc == 63272) {
         result = @"⌦";
+        modifierMask &= ~NSEventModifierFlagFunction;
     }
     else if (uc == 0x1b) {
         result = @"⎋";
@@ -56,35 +57,43 @@
     }
     else if (uc == 63276) {
         result = @"⇞"; // pgup
+        modifierMask &= ~NSEventModifierFlagFunction;
     }
     else if (uc == 63277) {
         result = @"⇟"; // pgdn
+        modifierMask &= ~NSEventModifierFlagFunction;
     }
     else if (uc == 63273) {
         result = @"⇱"; // home
+        modifierMask &= ~NSEventModifierFlagFunction;
     }
     else if (uc == 63275) {
         result = @"⇲"; // end
+        modifierMask &= ~NSEventModifierFlagFunction;
     }
     else if (uc == 63232) {
         result = @"↑"; // up arrow
+        modifierMask &= ~NSEventModifierFlagFunction;
     }
     else if (uc == 63233) {
         result = @"↓"; // down arrow
+        modifierMask &= ~NSEventModifierFlagFunction;
     }
     else if (uc == 63234) {
         result = @"←"; // left arrow
+        modifierMask &= ~NSEventModifierFlagFunction;
     }
     else if (uc == 63235) {
         result = @"→"; // right arrow
+        modifierMask &= ~NSEventModifierFlagFunction;
     }
     else if (uc == 0x2327) {
         result = @"⌧"; // clear
     }
-    else if (uc == 0x21e5) {
+    else if (uc == 0x09) {
         result = @"⇥"; // tab
     }
-    else if (uc == 0x21e4) {
+    else if (uc == 0x19) {
         result = @"⇤"; // backtab
     }
     else if (uc == 0x2423 || uc == 0x20) {

@@ -62,13 +62,14 @@
         if (event.modifierFlags & NSEventModifierFlagShift) {
             key = [key lowercaseString];
             unichar uc = [key characterAtIndex:0];
+
+            // uppercase letter: remove shift and lowercase the char
             if (uc < 128 && isupper(uc)) {
-                // ensure the key is lowercased, even if
                 char buf[] = { tolower(uc), 0 };
                 key = [NSString stringWithUTF8String:buf];
+                modifierFlags &= ~NSEventModifierFlagShift;
             }
-            else {
-                // keep the character, but remove shift modifier
+            else if ([key isEqualToString:event.characters])  {
                 modifierFlags &= ~NSEventModifierFlagShift;
             }
         }
