@@ -104,6 +104,14 @@
     else {
         view = [outlineView makeViewWithIdentifier:tableColumn.identifier owner:self];
 
+        int is_modified = ddb_keyboard_shortcut_is_modified (viewItem.shortcut);
+        if (is_modified) {
+            view.textField.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize weight:NSFontWeightBold];
+        }
+        else {
+            view.textField.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+        }
+
         if ([tableColumn.identifier isEqualToString:@"TextCell1"]) {
             view.textField.stringValue = viewItem.displayText;
         }
@@ -133,6 +141,7 @@
         ddb_keyboard_shortcut_set_key_modifiers(viewItem.shortcut, modifiers);
 
         [self.model applyShortcut:viewItem.shortcut];
+        [self.outlineView reloadItem:viewItem];
 
     }
     [self.view.window makeFirstResponder:self.outlineView];
