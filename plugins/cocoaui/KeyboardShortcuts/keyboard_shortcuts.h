@@ -96,4 +96,10 @@ ddb_keyboard_shortcut_is_modified (ddb_keyboard_shortcut_t *shortcut);
 void
 ddb_keyboard_shortcut_for_each_recursive (ddb_keyboard_shortcut_t *item, void (^perform_block)(ddb_keyboard_shortcut_t *shortcut));
 
+void
+ddb_keyboard_shortcut_set_clear (ddb_keyboard_shortcut_t *shortcut);
+
+void
+ddb_keyboard_shortcut_reset_to_default (ddb_keyboard_shortcut_t *shortcut);
+
 #endif /* keyboard_shortcuts_h */

@@ -44,6 +44,27 @@
     [self.outlineView expandItem:nil expandChildren:YES];
 }
 
+- (void)delete:(id)sender {
+    NSInteger row = self.outlineView.selectedRow;
+    if (row == -1) {
+        return;
+    }
+
+    KeyboardShortcutViewItem *viewItem = [self.outlineView itemAtRow:row];
+    if (viewItem != nil) {
+        if (ddb_keyboard_shortcut_is_modified(viewItem.shortcut)
+            && !strcmp (ddb_keyboard_shortcut_get_key_character(viewItem.shortcut), "")) {
+            ddb_keyboard_shortcut_reset_to_default (viewItem.shortcut);
+        }
+        else {
+            ddb_keyboard_shortcut_set_clear (viewItem.shortcut);
+        }
+
+        [self.model applyShortcut:viewItem.shortcut];
+        [self.outlineView reloadItem:viewItem];
+    }
+}
+
 #pragma mark - NSOutlineViewDataSource
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {

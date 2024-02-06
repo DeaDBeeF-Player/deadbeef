@@ -193,3 +193,14 @@ ddb_keyboard_shortcut_for_each_recursive (ddb_keyboard_shortcut_t *item, void (^
     }
 }
 
+void
+ddb_keyboard_shortcut_set_clear (ddb_keyboard_shortcut_t *shortcut) {
+    ddb_keyboard_shortcut_set_key_character (shortcut, "");
+    ddb_keyboard_shortcut_set_key_modifiers (shortcut, 0);
+}
+
+void
+ddb_keyboard_shortcut_reset_to_default (ddb_keyboard_shortcut_t *shortcut) {
+    ddb_keyboard_shortcut_set_key_character (shortcut, shortcut->default_key_character);
+    ddb_keyboard_shortcut_set_key_modifiers (shortcut, shortcut->default_key_modifiers);
+}

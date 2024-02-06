@@ -57,13 +57,13 @@ extern DB_functions_t *deadbeef;
     [self traverseMenuItems:menu.itemArray parent:root];
 
     char *buffer = malloc (100000);
-    deadbeef->conf_get_str("cocoaui.shortcuts", "", buffer, 100000);
+    deadbeef->conf_get_str ("cocoaui.shortcuts", "", buffer, 100000);
     if (*buffer) {
         ddb_keyboard_shortcuts_load (root, buffer);
     }
     free (buffer);
 
-    ddb_keyboard_shortcut_for_each_recursive(root, ^(ddb_keyboard_shortcut_t *shortcut) {
+    ddb_keyboard_shortcut_for_each_recursive (root, ^(ddb_keyboard_shortcut_t *shortcut) {
         const char *action = ddb_keyboard_shortcut_get_mac_action (shortcut);
         if (action == NULL) {
             return;
@@ -129,7 +129,7 @@ extern DB_functions_t *deadbeef;
         do {
             for (KeyboardShortcutViewItem *childViewItem in topLevelItem.children) {
                 if (childViewItem.children == nil) {
-                    if (NULL == ddb_keyboard_shortcut_get_mac_action(childViewItem.shortcut)) {
+                    if (NULL == ddb_keyboard_shortcut_get_mac_action (childViewItem.shortcut)) {
                         continue; // skip empty submenu item
                     }
                     [children addObject:childViewItem];
@@ -194,8 +194,8 @@ extern DB_functions_t *deadbeef;
         return;
     }
 
-    NSString *keyEquivalent = @(ddb_keyboard_shortcut_get_key_character(shortcut) ?: "");
-    NSEventModifierFlags modifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers(shortcut)];
+    NSString *keyEquivalent = @(ddb_keyboard_shortcut_get_key_character (shortcut) ?: "");
+    NSEventModifierFlags modifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers (shortcut)];
 
     menuItem.keyEquivalent = keyEquivalent;
     menuItem.keyEquivalentModifierMask = modifiers;
@@ -203,7 +203,7 @@ extern DB_functions_t *deadbeef;
     char *jsonString = ddb_keyboard_shortcuts_save (ddb_keyboard_shortcuts_get_root ());
     if (jsonString != NULL) {
         deadbeef->conf_set_str ("cocoaui.shortcuts", jsonString);
-        deadbeef->conf_save();
+        deadbeef->conf_save ();
         free (jsonString);
     }
 }
