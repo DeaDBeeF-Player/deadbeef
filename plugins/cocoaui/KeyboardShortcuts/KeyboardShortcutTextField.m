@@ -41,8 +41,47 @@
     }
 }
 
+- (nullable NSEvent *)handleKeyDownEvent:(nonnull NSEvent *)event {
+    NSString *key = event.charactersIgnoringModifiers;
+    NSEventModifierFlags modifierFlags = event.modifierFlags;
+    if (key.length != 1) {
+        self.stringValue = @"";
+        return nil;
+    }
+    if (event.modifierFlags & NSEventModifierFlagShift) {
+        key = [key lowercaseString];
+        unichar uc = [key characterAtIndex:0];
+
+        // uppercase letter: remove shift and lowercase the char
+        if (uc < 128 && isupper(uc)) {
+            char buf[] = { tolower(uc), 0 };
+            key = [NSString stringWithUTF8String:buf];
+            modifierFlags &= ~NSEventModifierFlagShift;
+        }
+        // any non-alpha character which was pressed with shift,
+        // but doesn't require shift for assigning to menu item:
+        // remove shift modifier
+        else if (!isalpha(uc) && [key isEqualToString:event.characters])  {
+            modifierFlags &= ~NSEventModifierFlagShift;
+        }
+    }
+
+    self.key = key;
+    self.modifierFlags = modifierFlags;
+    NSString *displayString = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:key modifierMask:modifierFlags];
+    self.stringValue = displayString;
+    [NSEvent removeMonitor:self.eventMonitor];
+    self.eventMonitor = nil;
+    [self.delegate textFieldDidAssignShortcut:self];
+    return nil;
+}
 
 - (BOOL)becomeFirstResponder {
+    BOOL result = [super becomeFirstResponder];
+    if (!result) {
+        return NO;
+    }
+
     NSEventMask eventMask = (NSEventMaskKeyDown | NSEventMaskFlagsChanged);
     __weak KeyboardShortcutTextField *weakSelf = self;
     self.eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:eventMask handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
@@ -53,37 +92,11 @@
         if (strongSelf == nil) {
             return event;
         }
-        NSString *key = event.charactersIgnoringModifiers;
-        NSEventModifierFlags modifierFlags = event.modifierFlags;
-        if (key.length != 1) {
-            strongSelf.stringValue = @"";
-            return nil;
-        }
-        if (event.modifierFlags & NSEventModifierFlagShift) {
-            key = [key lowercaseString];
-            unichar uc = [key characterAtIndex:0];
 
-            // uppercase letter: remove shift and lowercase the char
-            if (uc < 128 && isupper(uc)) {
-                char buf[] = { tolower(uc), 0 };
-                key = [NSString stringWithUTF8String:buf];
-                modifierFlags &= ~NSEventModifierFlagShift;
-            }
-            else if ([key isEqualToString:event.characters])  {
-                modifierFlags &= ~NSEventModifierFlagShift;
-            }
-        }
-
-        strongSelf.key = key;
-        strongSelf.modifierFlags = modifierFlags;
-        NSString *displayString = [KeyboardShortcutConverter.shared keyCombinationDisplayStringFromKeyEquivalent:key modifierMask:modifierFlags];
-        strongSelf.stringValue = displayString;
-        [NSEvent removeMonitor:strongSelf.eventMonitor];
-        strongSelf.eventMonitor = nil;
-        [self.delegate textFieldDidAssignShortcut:self];
-        return nil;
+        return [strongSelf handleKeyDownEvent:event];
     }];
-    return [super becomeFirstResponder];
+
+    return YES;
 }
 
 @end

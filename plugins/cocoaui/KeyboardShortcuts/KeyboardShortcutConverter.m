@@ -161,7 +161,7 @@
     }
 
     if (modifiers & ddb_keyboard_shortcut_modifiers_shift) {
-        result |= NSEventModifierFlagCommand;
+        result |= NSEventModifierFlagShift;
     }
 
     if (modifiers & ddb_keyboard_shortcut_modifiers_option) {
