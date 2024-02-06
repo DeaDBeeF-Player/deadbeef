@@ -43,15 +43,19 @@ extern DB_functions_t *deadbeef;
 
 @implementation KeyboardShortcutManager
 
++ (KeyboardShortcutManager *)shared {
+    static KeyboardShortcutManager *instance;
+    if (instance == nil) {
+        instance = [KeyboardShortcutManager new];
+    }
+    return instance;
+}
+
 - (void)dealloc {
     ddb_keyboard_shortcuts_deinit ();
 }
 
-- (instancetype)initWithMenu:(NSMenu *)menu {
-    self = [super init];
-    if (self == nil) {
-        return nil;
-    }
+- (void)updateWithMenu:(nonnull NSMenu *)menu {
     self.menu = menu;
 
     ddb_keyboard_shortcut_t *root = ddb_keyboard_shortcuts_get_root ();
@@ -69,8 +73,6 @@ extern DB_functions_t *deadbeef;
     free (buffer);
 
     [self applyAllShortcuts];
-
-    return self;
 }
 
 - (void)saveConfig {

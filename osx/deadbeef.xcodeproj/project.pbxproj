@@ -873,6 +873,7 @@
 		2D29ADFA2B72473B001648B0 /* keyboard_shortcut_serializer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D29ADF82B72473B001648B0 /* keyboard_shortcut_serializer.c */; };
 		2D29AE012B7288C9001648B0 /* BorderedTableRowView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ADFF2B7288C9001648B0 /* BorderedTableRowView.h */; };
 		2D29AE022B7288C9001648B0 /* BorderedTableRowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D29AE002B7288C9001648B0 /* BorderedTableRowView.m */; };
+		2D29AE042B72C682001648B0 /* btnKeyboardTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2D29AE032B72C682001648B0 /* btnKeyboardTemplate.pdf */; };
 		2D2A14BA19B6485200AD1EB7 /* gme.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D2C51562B67B5B800EAC44E /* fileman.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5ED2269BB4300AFF9AE /* fileman.c */; };
@@ -5550,6 +5551,7 @@
 		2D29ADF82B72473B001648B0 /* keyboard_shortcut_serializer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = keyboard_shortcut_serializer.c; sourceTree = "<group>"; };
 		2D29ADFF2B7288C9001648B0 /* BorderedTableRowView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BorderedTableRowView.h; sourceTree = "<group>"; };
 		2D29AE002B7288C9001648B0 /* BorderedTableRowView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BorderedTableRowView.m; sourceTree = "<group>"; };
+		2D29AE032B72C682001648B0 /* btnKeyboardTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = btnKeyboardTemplate.pdf; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		2D2C51572B6BE15800EAC44E /* undostack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undostack.h; sourceTree = "<group>"; };
@@ -12724,22 +12726,23 @@
 		4D2362B218395D0300C9E818 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */,
-				2DB05E76252E3F3E0090635E /* iconPluginsTemplate.pdf */,
-				2DB05EB7252E47A00090635E /* iconNetworkTemplate.pdf */,
-				2DB05EF8252E4A9C0090635E /* iconAppearanceTemplate.pdf */,
-				2DB05F39252E4DDB0090635E /* iconPlaybackTemplate.pdf */,
-				2DB05F7A252E4F160090635E /* iconLibraryTemplate.pdf */,
-				2DB05FBB252E50FC0090635E /* iconDSPTemplate.pdf */,
-				2DB05FFC252E53220090635E /* iconGUISettingsTemplate.pdf */,
+				2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */,
 				2DDBDA2B2436678700C12A75 /* btnduplicateTemplate.pdf */,
+				2D29AE032B72C682001648B0 /* btnKeyboardTemplate.pdf */,
 				4D2A6C9D183BC29400AC6BF5 /* btnnextTemplate.pdf */,
 				4D2A6C9E183BC29400AC6BF5 /* btnpauseTemplate.pdf */,
+				4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */,
 				4D2A6C9F183BC29400AC6BF5 /* btnprevTemplate.pdf */,
 				4D2A6CA0183BC29400AC6BF5 /* btnstopTemplate.pdf */,
-				4D877B35183BBF1F008A114B /* btnplayTemplate.pdf */,
 				2DE7A7B019A689E600F8C0B8 /* bufferingTemplate.pdf */,
-				2D3E0E1B1B39AAC20007ECC3 /* btnBrowseTemplate.pdf */,
+				2DB05EF8252E4A9C0090635E /* iconAppearanceTemplate.pdf */,
+				2DB05FBB252E50FC0090635E /* iconDSPTemplate.pdf */,
+				2DB05FFC252E53220090635E /* iconGUISettingsTemplate.pdf */,
+				2DB05F7A252E4F160090635E /* iconLibraryTemplate.pdf */,
+				2DB05EB7252E47A00090635E /* iconNetworkTemplate.pdf */,
+				2DB05F39252E4DDB0090635E /* iconPlaybackTemplate.pdf */,
+				2DB05E76252E3F3E0090635E /* iconPluginsTemplate.pdf */,
+				2DB05E26252E3CF10090635E /* iconSoundTemplate.pdf */,
 				2D8D96B01D1091F900A5C7E6 /* noartwork.png */,
 			);
 			path = Images;
@@ -16726,6 +16729,7 @@
 				2D9EF3202B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.xib in Resources */,
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				2DD377432740420C007AD315 /* AppearancePreferencesViewController.xib in Resources */,
+				2D29AE042B72C682001648B0 /* btnKeyboardTemplate.pdf in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
 				2DB05FBC252E50FD0090635E /* iconDSPTemplate.pdf in Resources */,
 				2DB05F3A252E4DDB0090635E /* iconPlaybackTemplate.pdf in Resources */,

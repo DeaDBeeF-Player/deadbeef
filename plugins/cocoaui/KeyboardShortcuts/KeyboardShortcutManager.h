@@ -26,9 +26,9 @@
 
 @interface KeyboardShortcutManager : NSObject
 
-- (nonnull instancetype)init NS_UNAVAILABLE;
-- (nonnull instancetype)new NS_UNAVAILABLE;
-- (nonnull instancetype)initWithMenu:(nonnull NSMenu *)menu NS_DESIGNATED_INITIALIZER;
+- (void)updateWithMenu:(nonnull NSMenu *)menu;
+
+@property (class,nonatomic,readonly,nonnull) KeyboardShortcutManager *shared;
 
 - (nullable KeyboardShortcutViewItem *)createViewItems;
 

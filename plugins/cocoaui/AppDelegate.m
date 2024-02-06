@@ -79,7 +79,6 @@ extern DB_functions_t *deadbeef;
 @property (weak) IBOutlet NSMenuItem *designModeMenuItem;
 @property DesignModeState *designModeState;
 
-@property (nonatomic) KeyboardShortcutManager *keyboardShortcutManager;
 @property (nonatomic) KeyboardShortcutEditorWindowController *keyboardShortcutEditorWindowController;
 @property (nonatomic) KeyboardShortcutEditorViewController *keyboardShortcutEditorViewController;
 
@@ -195,7 +194,7 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     self.designModeState = DesignModeState.sharedInstance;
     self.mediaLibraryManager = [MediaLibraryManager new];
     [self initMainMenu];
-    self.keyboardShortcutManager = [[KeyboardShortcutManager alloc] initWithMenu:self.mainMenu];
+    [KeyboardShortcutManager.shared updateWithMenu:self.mainMenu];
     [self initMainWindow];
     [self initSearchWindow];
     [self initLogWindow];
@@ -1035,11 +1034,11 @@ main_cleanup_and_quit (void);
     if (self.keyboardShortcutEditorWindowController == nil) {
         self.keyboardShortcutEditorWindowController = [[KeyboardShortcutEditorWindowController alloc] initWithWindowNibName:@"KeyboardShortcutEditorWindowController"];
         self.keyboardShortcutEditorViewController = [KeyboardShortcutEditorViewController new];
-        self.keyboardShortcutEditorViewController.model = self.keyboardShortcutManager;
+        self.keyboardShortcutEditorViewController.model = KeyboardShortcutManager.shared;
         self.keyboardShortcutEditorWindowController.window.contentView = self.keyboardShortcutEditorViewController.view;
     }
 
-    KeyboardShortcutViewItem *viewItem = [self.keyboardShortcutManager createViewItems];
+    KeyboardShortcutViewItem *viewItem = [KeyboardShortcutManager.shared createViewItems];
     [self.keyboardShortcutEditorViewController updateWithViewItem:viewItem];
 
     [self.keyboardShortcutEditorWindowController showWindow:nil];

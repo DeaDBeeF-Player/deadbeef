@@ -261,13 +261,6 @@ CA
                                 </menu>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="qTo-LZ-5kn"/>
-                            <menuItem title="Keyboard Shortcuts" id="Eoz-QR-Mcq">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="editKeybooardShortcutsAction:" target="494" id="dbP-bd-G8n"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="jyS-QT-AWe"/>
                             <menuItem title="Find" id="6Wn-VH-GCx">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Find" id="d4w-Ze-QDH">

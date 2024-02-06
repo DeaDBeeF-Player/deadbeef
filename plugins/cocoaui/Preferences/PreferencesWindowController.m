@@ -30,6 +30,9 @@
 #import "PreferencesWindowController.h"
 #import "SoundPreferencesViewController.h"
 #import "MediaLibraryPreferencesViewController.h"
+#import "KeyboardShortcutManager.h"
+#import "KeyboardShortcutManager+ViewController.h"
+#import "KeyboardShortcutEditorViewController.h"
 
 @interface PreferencesWindowController ()
 
@@ -42,6 +45,7 @@
 @property (strong) IBOutlet NetworkPreferencesViewController *networkViewController;
 @property (strong) IBOutlet PluginsPreferencesViewController *pluginsViewController;
 @property (strong) IBOutlet MediaLibraryPreferencesViewController *mediaLibraryPreferencesViewController;
+@property (strong) IBOutlet KeyboardShortcutEditorViewController *keyboardShortcutsPreferencesViewController;
 @property (weak) IBOutlet NSView *appearancePaneContainerView;
 
 @property (nonatomic) AppearancePreferencesViewController *appearancePreferencesViewController;
@@ -75,6 +79,10 @@
         [self.toolbar removeItemAtIndex:4];
     }
 
+    self.keyboardShortcutsPreferencesViewController.model = KeyboardShortcutManager.shared;
+    KeyboardShortcutViewItem *viewItem = [KeyboardShortcutManager.shared createViewItems];
+    [self.keyboardShortcutsPreferencesViewController updateWithViewItem:viewItem];
+
     self.appearancePreferencesViewController = [AppearancePreferencesViewController new];
     [self.appearancePaneContainerView addSubview:self.appearancePreferencesViewController.view];
 
@@ -82,8 +90,6 @@
     [self.appearancePreferencesViewController.view.trailingAnchor constraintEqualToAnchor:self.appearancePaneContainerView.trailingAnchor].active = YES;
     [self.appearancePreferencesViewController.view.topAnchor constraintEqualToAnchor:self.appearancePaneContainerView.topAnchor].active = YES;
     [self.appearancePreferencesViewController.view.bottomAnchor constraintEqualToAnchor:self.appearancePaneContainerView.bottomAnchor].active = YES;
-
-
 
     if (self.initialTabIdentifier) {
         _toolbar.selectedItemIdentifier = self.initialTabIdentifier;
@@ -102,6 +108,7 @@
             @"GUI",
             @"Medialib",
             @"Network",
+            @"Hotkeys",
             @"Plugins"];
 }
 
@@ -142,6 +149,10 @@
 
 - (IBAction)medialibAction:(id)sender {
     [self switchToView:self.mediaLibraryPreferencesViewController.view];
+}
+
+- (IBAction)hotkeysAction:(id)sender {
+    [self switchToView:self.keyboardShortcutsPreferencesViewController.view];
 }
 
 - (void)outputDeviceChanged {

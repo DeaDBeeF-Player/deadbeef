@@ -37,6 +37,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.outlineView expandItem:nil expandChildren:YES];
 }
 
 - (void)updateWithViewItem:(KeyboardShortcutViewItem *)viewItem {
