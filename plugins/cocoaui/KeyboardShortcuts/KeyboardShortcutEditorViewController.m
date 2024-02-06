@@ -69,6 +69,15 @@
     }
 }
 
+- (IBAction)resetToDefaultsAction:(id)sender {
+    NSInteger row = self.outlineView.selectedRow;
+    [self.model resetAllShortcutsToDefaults];
+    [self.outlineView reloadData];
+    if (row != -1) {
+        [self.outlineView selectRow:row byExtendingSelection:NO];
+    }
+}
+
 #pragma mark - NSOutlineViewDataSource
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {

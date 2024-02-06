@@ -19,13 +19,13 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView autohidesScrollers="YES" horizontalLineScroll="18" horizontalPageScroll="10" verticalLineScroll="18" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Z7-Yw-vfe">
-                    <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
+                    <rect key="frame" x="0.0" y="0.0" width="480" height="236"/>
                     <clipView key="contentView" drawsBackground="NO" id="Bc2-Nb-vBv">
-                        <rect key="frame" x="1" y="1" width="478" height="255"/>
+                        <rect key="frame" x="1" y="1" width="478" height="219"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="inset" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="18" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="96" outlineTableColumn="9i8-h0-8iH" id="AJe-wv-jtR">
-                                <rect key="frame" x="0.0" y="0.0" width="532" height="255"/>
+                                <rect key="frame" x="0.0" y="0.0" width="532" height="219"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <size key="intercellSpacing" width="17" height="0.0"/>
                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -151,7 +151,7 @@
                         <nil key="backgroundColor"/>
                     </clipView>
                     <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="gQz-6C-y28">
-                        <rect key="frame" x="1" y="256" width="478" height="15"/>
+                        <rect key="frame" x="1" y="220" width="478" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="gWx-Yj-ggJ">
@@ -159,12 +159,24 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="E4b-tf-aUB">
+                    <rect key="frame" x="335" y="237" width="132" height="32"/>
+                    <buttonCell key="cell" type="push" title="Reset to Default" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cZw-EV-mNz">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="resetToDefaultsAction:" target="-2" id="myT-YR-2kz"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="2Z7-Yw-vfe" secondAttribute="bottom" id="ApM-4V-W8d"/>
+                <constraint firstItem="2Z7-Yw-vfe" firstAttribute="top" secondItem="E4b-tf-aUB" secondAttribute="bottom" constant="8" id="C91-Wm-xw4"/>
                 <constraint firstItem="2Z7-Yw-vfe" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="L7d-cE-NBT"/>
+                <constraint firstItem="E4b-tf-aUB" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="8" id="MAc-GU-KHZ"/>
                 <constraint firstAttribute="trailing" secondItem="2Z7-Yw-vfe" secondAttribute="trailing" id="OGJ-Ga-nos"/>
-                <constraint firstItem="2Z7-Yw-vfe" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="yCV-cI-bPo"/>
+                <constraint firstAttribute="trailing" secondItem="E4b-tf-aUB" secondAttribute="trailing" constant="20" symbolic="YES" id="Pnb-vQ-v0A"/>
             </constraints>
             <point key="canvasLocation" x="83" y="-72"/>
         </customView>

@@ -27,6 +27,7 @@
 @protocol KeyboardShortcutModelProtocol
 - (void)updateShortcut:(nonnull ddb_keyboard_shortcut_t *)shortcut keyCharacter:(nonnull NSString *)keyCharacter modifiers:(NSEventModifierFlags)modifiers;
 - (BOOL)shortcutHasDuplicates:(nonnull ddb_keyboard_shortcut_t *)shortcut;
+- (void)resetAllShortcutsToDefaults;
 @end
 
 @interface KeyboardShortcutEditorViewController : NSViewController

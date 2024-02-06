@@ -68,8 +68,23 @@ extern DB_functions_t *deadbeef;
     }
     free (buffer);
 
+    [self applyAllShortcuts];
+
+    return self;
+}
+
+- (void)saveConfig {
+    char *jsonString = ddb_keyboard_shortcuts_save (ddb_keyboard_shortcuts_get_root ());
+    if (jsonString != NULL) {
+        deadbeef->conf_set_str ("cocoaui.shortcuts", jsonString);
+        deadbeef->conf_save ();
+        free (jsonString);
+    }
+}
+
+- (void)applyAllShortcuts {
     // Apply loaded shortcuts and store conflict information
-    ddb_keyboard_shortcut_for_each_recursive (root, ^(ddb_keyboard_shortcut_t *shortcut) {
+    ddb_keyboard_shortcut_for_each_recursive (ddb_keyboard_shortcuts_get_root (), ^(ddb_keyboard_shortcut_t *shortcut) {
         const char *action = ddb_keyboard_shortcut_get_mac_action (shortcut);
         if (action == NULL) {
             return;
@@ -92,9 +107,6 @@ extern DB_functions_t *deadbeef;
             }
         }
     });
-
-
-    return self;
 }
 
 - (void)readShortcutsFromMenuItems:(NSArray<NSMenuItem *> *)items parent:(ddb_keyboard_shortcut_t *)parent {
@@ -115,7 +127,6 @@ extern DB_functions_t *deadbeef;
         ddb_keyboard_shortcut_t *shortcut = ddb_keyboard_shortcut_append (parent);
         ddb_keyboard_shortcut_set_title (shortcut, title.UTF8String);
         if (selectorString != NULL) {
-
             ddb_keyboard_shortcut_set_mac_action (shortcut, selectorString.UTF8String);
 
             // menu items can make use of uppercase letters to signify shift key
@@ -228,12 +239,7 @@ extern DB_functions_t *deadbeef;
     menuItem.keyEquivalent = keyEquivalent;
     menuItem.keyEquivalentModifierMask = modifiers;
 
-    char *jsonString = ddb_keyboard_shortcuts_save (ddb_keyboard_shortcuts_get_root ());
-    if (jsonString != NULL) {
-        deadbeef->conf_set_str ("cocoaui.shortcuts", jsonString);
-        deadbeef->conf_save ();
-        free (jsonString);
-    }
+    [self saveConfig];
 }
 
 - (NSArray<NSString *> *)arrayByRemovingString:(NSArray<NSString *> *)array string:(NSString *)string {
@@ -294,6 +300,16 @@ extern DB_functions_t *deadbeef;
     NSArray *actions = self.mapShortcutToActions[displayString];
 
     return actions.count > 1;
+}
+
+- (void)resetAllShortcutsToDefaults {
+    ddb_keyboard_shortcut_for_each_recursive (ddb_keyboard_shortcuts_get_root(), ^(ddb_keyboard_shortcut_t *shortcut) {
+        ddb_keyboard_shortcut_reset_to_default (shortcut);
+    });
+
+    self.mapShortcutToActions = [NSMutableDictionary new];
+    [self applyAllShortcuts];
+    [self saveConfig];
 }
 
 @end
