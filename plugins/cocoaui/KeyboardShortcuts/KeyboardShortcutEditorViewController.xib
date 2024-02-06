@@ -126,7 +126,7 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView id="A7I-KG-gFi">
-                                                <rect key="frame" x="500" y="0.0" width="16" height="16"/>
+                                                <rect key="frame" x="500" y="0.0" width="13" height="16"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LBK-4K-BpQ">
@@ -150,7 +150,7 @@
                         </subviews>
                         <nil key="backgroundColor"/>
                     </clipView>
-                    <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="gQz-6C-y28">
+                    <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="gQz-6C-y28">
                         <rect key="frame" x="1" y="256" width="478" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>

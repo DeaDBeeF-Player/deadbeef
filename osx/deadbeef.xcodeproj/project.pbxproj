@@ -871,6 +871,8 @@
 		2D28F1271C283CAD004A6E7B /* tns.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0C41C283CAC004A6E7B /* tns.h */; };
 		2D29ADF92B72473B001648B0 /* keyboard_shortcut_serializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ADF72B72473B001648B0 /* keyboard_shortcut_serializer.h */; };
 		2D29ADFA2B72473B001648B0 /* keyboard_shortcut_serializer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D29ADF82B72473B001648B0 /* keyboard_shortcut_serializer.c */; };
+		2D29AE012B7288C9001648B0 /* BorderedTableRowView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ADFF2B7288C9001648B0 /* BorderedTableRowView.h */; };
+		2D29AE022B7288C9001648B0 /* BorderedTableRowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D29AE002B7288C9001648B0 /* BorderedTableRowView.m */; };
 		2D2A14BA19B6485200AD1EB7 /* gme.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D2C51562B67B5B800EAC44E /* fileman.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5ED2269BB4300AFF9AE /* fileman.c */; };
@@ -5546,6 +5548,8 @@
 		2D28F0C41C283CAC004A6E7B /* tns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tns.h; sourceTree = "<group>"; };
 		2D29ADF72B72473B001648B0 /* keyboard_shortcut_serializer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = keyboard_shortcut_serializer.h; sourceTree = "<group>"; };
 		2D29ADF82B72473B001648B0 /* keyboard_shortcut_serializer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = keyboard_shortcut_serializer.c; sourceTree = "<group>"; };
+		2D29ADFF2B7288C9001648B0 /* BorderedTableRowView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BorderedTableRowView.h; sourceTree = "<group>"; };
+		2D29AE002B7288C9001648B0 /* BorderedTableRowView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BorderedTableRowView.m; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		2D2C51572B6BE15800EAC44E /* undostack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undostack.h; sourceTree = "<group>"; };
@@ -9690,6 +9694,8 @@
 			children = (
 				2D9FD9E12607C68500F406D1 /* AlbumArtImageView.h */,
 				2D9FD9E22607C68500F406D1 /* AlbumArtImageView.m */,
+				2D29ADFF2B7288C9001648B0 /* BorderedTableRowView.h */,
+				2D29AE002B7288C9001648B0 /* BorderedTableRowView.m */,
 				2D986140226C815F00BAACB1 /* BrowseButton.h */,
 				2D986141226C816000BAACB1 /* BrowseButton.m */,
 				2D061F7B19E9685E00CE6C29 /* DdbShared.h */,
@@ -14780,6 +14786,7 @@
 				2D78C55927568B4A00F96F9D /* medialibscanner.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
 				2D9EF3182B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.h in Headers */,
+				2D29AE012B7288C9001648B0 /* BorderedTableRowView.h in Headers */,
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
@@ -18462,6 +18469,7 @@
 				2DE0072E1B30B5FE0016DA68 /* ConverterWindowController.m in Sources */,
 				2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */,
 				2D98B6A0273482F700E655AE /* AAPLView.m in Sources */,
+				2D29AE022B7288C9001648B0 /* BorderedTableRowView.m in Sources */,
 				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,
 				2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */,
 				2DC657EC274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */,

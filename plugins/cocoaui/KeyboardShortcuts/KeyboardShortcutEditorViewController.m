@@ -24,6 +24,7 @@
 #import "KeyboardShortcutConverter.h"
 #import "KeyboardShortcutEditorViewController.h"
 #import "KeyboardShortcutTextField.h"
+#import "BorderedTableRowView.h"
 
 @interface KeyboardShortcutEditorViewController () <NSOutlineViewDelegate, NSOutlineViewDataSource, KeyboardShortcutTextFieldDelegate>
 @property (weak) IBOutlet NSOutlineView *outlineView;
@@ -91,6 +92,11 @@
     return viewItem.children != nil;
 }
 
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
+    KeyboardShortcutViewItem *viewItem = item;
+    return viewItem.children == nil;
+}
+
 #pragma mark - NSOutlineViewDelegate
 
 - (nullable NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(nullable NSTableColumn *)tableColumn item:(id)item {
@@ -137,6 +143,17 @@
     }
 
     return view;
+}
+
+- (NSTableRowView *)outlineView:(NSOutlineView *)outlineView rowViewForItem:(id)item {
+    KeyboardShortcutViewItem *viewItem = item;
+
+    if (viewItem.children != nil) {
+        return [BorderedTableRowView new];
+    }
+    else {
+        return [NSTableRowView new];
+    }
 }
 
 #pragma mark - KeyboardShortcutTextFieldDelegate
