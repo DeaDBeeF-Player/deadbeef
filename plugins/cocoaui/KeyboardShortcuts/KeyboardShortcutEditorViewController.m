@@ -63,7 +63,8 @@
             [self.model updateShortcut:viewItem.shortcut keyCharacter:@"" modifiers:0];
         }
 
-        [self.outlineView reloadItem:viewItem];
+        [self.outlineView reloadData];
+        [self.outlineView selectRow:row byExtendingSelection:NO];
     }
 }
 
@@ -141,16 +142,18 @@
 #pragma mark - KeyboardShortcutTextFieldDelegate
 
 - (void)textFieldDidAssignShortcut:(KeyboardShortcutTextField *)textField {
-    NSInteger row = [self.outlineView rowForView:textField];
-    if (row != -1) {
-        KeyboardShortcutViewItem *viewItem = [self.outlineView itemAtRow:row];
-
-        [self.model updateShortcut:viewItem.shortcut keyCharacter:textField.key modifiers:textField.modifierFlags];
-
-        [self.outlineView reloadItem:viewItem];
-
-    }
     [self.view.window makeFirstResponder:self.outlineView];
+
+    NSInteger row = [self.outlineView rowForView:textField];
+    if (row == -1) {
+        return;
+    }
+    KeyboardShortcutViewItem *viewItem = [self.outlineView itemAtRow:row];
+
+    [self.model updateShortcut:viewItem.shortcut keyCharacter:textField.key modifiers:textField.modifierFlags];
+
+    [self.outlineView reloadData];
+    [self.outlineView selectRow:row byExtendingSelection:NO];
 }
 
 @end
