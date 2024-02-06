@@ -86,7 +86,7 @@
         if ([tableColumn.identifier isEqualToString:@"TextCell1"]) {
             view.textField.stringValue = viewItem.displayText;
         }
-        else  {
+        else {
             NSString *keyCharacter = @(ddb_keyboard_shortcut_get_key_character (viewItem.shortcut));
             NSEventModifierFlags keyModifiers = [KeyboardShortcutConverter.shared appKitModifiersFromDdbModifiers:ddb_keyboard_shortcut_get_key_modifiers(viewItem.shortcut)];
 

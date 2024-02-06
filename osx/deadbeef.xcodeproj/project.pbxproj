@@ -869,6 +869,8 @@
 		2D28F1251C283CAD004A6E7B /* syntax.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0C21C283CAC004A6E7B /* syntax.h */; };
 		2D28F1261C283CAD004A6E7B /* tns.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D28F0C31C283CAC004A6E7B /* tns.c */; };
 		2D28F1271C283CAD004A6E7B /* tns.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28F0C41C283CAC004A6E7B /* tns.h */; };
+		2D29ADF92B72473B001648B0 /* keyboard_shortcut_serializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ADF72B72473B001648B0 /* keyboard_shortcut_serializer.h */; };
+		2D29ADFA2B72473B001648B0 /* keyboard_shortcut_serializer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D29ADF82B72473B001648B0 /* keyboard_shortcut_serializer.c */; };
 		2D2A14BA19B6485200AD1EB7 /* gme.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D2A135A19B647CF00AD1EB7 /* gme.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D2A14F119B64F2900AD1EB7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D2C51562B67B5B800EAC44E /* fileman.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5ED2269BB4300AFF9AE /* fileman.c */; };
@@ -5542,6 +5544,8 @@
 		2D28F0C21C283CAC004A6E7B /* syntax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = syntax.h; sourceTree = "<group>"; };
 		2D28F0C31C283CAC004A6E7B /* tns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tns.c; sourceTree = "<group>"; };
 		2D28F0C41C283CAC004A6E7B /* tns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tns.h; sourceTree = "<group>"; };
+		2D29ADF72B72473B001648B0 /* keyboard_shortcut_serializer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = keyboard_shortcut_serializer.h; sourceTree = "<group>"; };
+		2D29ADF82B72473B001648B0 /* keyboard_shortcut_serializer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = keyboard_shortcut_serializer.c; sourceTree = "<group>"; };
 		2D2A135A19B647CF00AD1EB7 /* gme.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = gme.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		2D2C51572B6BE15800EAC44E /* undostack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undostack.h; sourceTree = "<group>"; };
@@ -11200,6 +11204,8 @@
 			children = (
 				2D9EF30D2B6FAF5C0042F6D8 /* keyboard_shortcuts.h */,
 				2D9EF30E2B6FAF5C0042F6D8 /* keyboard_shortcuts.c */,
+				2D29ADF72B72473B001648B0 /* keyboard_shortcut_serializer.h */,
+				2D29ADF82B72473B001648B0 /* keyboard_shortcut_serializer.c */,
 				2DD886582B71056E000434FB /* KeyboardShortcutConverter.h */,
 				2DD886592B71056E000434FB /* KeyboardShortcutConverter.m */,
 				2D9EF3152B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.h */,
@@ -14716,6 +14722,7 @@
 				2DAD80A12416DBB100EB3075 /* CustomToolbarItem.h in Headers */,
 				2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */,
 				2D98B68B272D573700E655AE /* ScopeSettings.h in Headers */,
+				2D29ADF92B72473B001648B0 /* keyboard_shortcut_serializer.h in Headers */,
 				2DD3775B27414BD9007AD315 /* ScopePreferencesWindowController.h in Headers */,
 				2D9EBB7125E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2D524C091B245AE00018C4FA /* DdbTitleFormattingHelpButton.h in Headers */,
@@ -18442,6 +18449,7 @@
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
 				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
+				2D29ADFA2B72473B001648B0 /* keyboard_shortcut_serializer.c in Sources */,
 				2DC6583F274C361C00583E14 /* HolderWidget.m in Sources */,
 				2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */,
 				2DD3776127414BF6007AD315 /* ScopePreferencesViewController.m in Sources */,

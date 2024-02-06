@@ -61,10 +61,10 @@ void
 ddb_keyboard_shortcut_set_title (ddb_keyboard_shortcut_t *shortcut, const char *title);
 
 const char *
-ddb_keyboard_shortcut_get_selector (ddb_keyboard_shortcut_t *shortcut);
+ddb_keyboard_shortcut_get_mac_action (ddb_keyboard_shortcut_t *shortcut);
 
 void
-ddb_keyboard_shortcut_set_selector (ddb_keyboard_shortcut_t *shortcut, const char *selector);
+ddb_keyboard_shortcut_set_mac_action (ddb_keyboard_shortcut_t *shortcut, const char *selector);
 
 const char *
 ddb_keyboard_shortcut_get_key_character (ddb_keyboard_shortcut_t *shortcut);

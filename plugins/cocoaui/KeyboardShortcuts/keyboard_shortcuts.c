@@ -27,7 +27,7 @@
 
 struct ddb_keyboard_shortcut_s {
     char *title; // NOTE: this may be localized
-    char *selector;
+    char *mac_action;
 
     char *key_character;
     ddb_keyboard_shortcut_modifiers_t key_modifiers;
@@ -47,7 +47,7 @@ _deinit_shortcut (ddb_keyboard_shortcut_t *shortcut) {
         _deinit_shortcut(child);
     }
     free (shortcut->title);
-    free (shortcut->selector);
+    free (shortcut->mac_action);
     free (shortcut->key_character);
     free (shortcut->default_key_character);
     free (shortcut);
@@ -112,16 +112,16 @@ ddb_keyboard_shortcut_set_title (ddb_keyboard_shortcut_t *shortcut, const char *
 }
 
 const char *
-ddb_keyboard_shortcut_get_selector (ddb_keyboard_shortcut_t *shortcut) {
-    return shortcut->selector;
+ddb_keyboard_shortcut_get_mac_action (ddb_keyboard_shortcut_t *shortcut) {
+    return shortcut->mac_action;
 }
 
 void
-ddb_keyboard_shortcut_set_selector (ddb_keyboard_shortcut_t *shortcut, const char *selector) {
-    free (shortcut->selector);
-    shortcut->selector = NULL;
+ddb_keyboard_shortcut_set_mac_action (ddb_keyboard_shortcut_t *shortcut, const char *selector) {
+    free (shortcut->mac_action);
+    shortcut->mac_action = NULL;
     if (selector != NULL) {
-        shortcut->selector = strdup (selector);
+        shortcut->mac_action = strdup (selector);
     }
 }
 
