@@ -570,6 +570,9 @@ pl_set_shufflerating (playItem_t *it, int rating);
 int
 pl_items_from_same_album(playItem_t* a, playItem_t* b);
 
+size_t
+plt_get_selected_items(playlist_t *plt, playItem_t ***out_items);
+
 #ifdef __cplusplus
 }
 #endif

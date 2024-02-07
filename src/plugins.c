@@ -597,6 +597,7 @@ static DB_functions_t deadbeef_api = {
     .plt_move_all_items = (void (*) (ddb_playlist_t *to, ddb_playlist_t *from, ddb_playItem_t *insert_after))plt_move_all_items,
     .undo_process = _undo_process,
     .register_for_undo = _register_for_undo,
+    .plt_get_selected_items = (size_t (*) (ddb_playlist_t *plt, ddb_playItem_t ***out_items))plt_get_selected_items,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

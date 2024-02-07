@@ -1484,10 +1484,11 @@ plt_insert_dir_int (
 // no hidden files
 // windows/svr4 unixes: missing dirent[]->d_type
 #if defined(__MINGW32__) || defined(__SVR4)
-        if (namelist[i]->d_name[0] == '.') {
+        if (namelist[i]->d_name[0] == '.')
 #else
-        if (namelist[i]->d_name[0] == '.' || (namelist[i]->d_type != DT_REG && namelist[i]->d_type != DT_UNKNOWN)) {
+        if (namelist[i]->d_name[0] == '.' || (namelist[i]->d_type != DT_REG && namelist[i]->d_type != DT_UNKNOWN))
 #endif
+        {
             continue;
         }
 
@@ -4469,4 +4470,29 @@ pl_items_from_same_album (playItem_t *a, playItem_t *b) {
         }
     }
     return pl_find_meta_raw (a, "album") == pl_find_meta_raw (b, "album") && a_artist == b_artist;
+}
+
+size_t
+plt_get_selected_items(playlist_t *plt, playItem_t ***out_items) {
+    LOCK;
+    int count = plt_getselcount (plt);
+    if (count == 0) {
+        UNLOCK;
+        return 0;
+    }
+
+    playItem_t **items = calloc (count, sizeof (playItem_t *));
+
+    int index = 0;
+    for (playItem_t *item = plt->head[PL_MAIN]; item != NULL; item = item->next[PL_MAIN]) {
+        if (item->selected) {
+            items[index++] = item;
+            pl_item_ref (item);
+        }
+    }
+
+    UNLOCK;
+
+    *out_items = items;
+    return count;
 }

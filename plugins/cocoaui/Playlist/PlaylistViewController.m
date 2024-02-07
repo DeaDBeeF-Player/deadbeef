@@ -32,6 +32,7 @@
 #import "TrackContextMenu.h"
 #import "TrackPropertiesManager.h"
 #import "tftintutil.h"
+#import "MedialibItemDragDropHolder.h"
 
 #include <deadbeef/deadbeef.h>
 #include "utf8.h"
@@ -1542,6 +1543,75 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     }
 
     return self.trackContextMenu;
+}
+
+#pragma mark - Copy & paste
+
+- (void)copyAndDeleteSelected:(BOOL)deleteSelected {
+    ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+
+    ddb_playItem_t **items = NULL;
+    ssize_t count = deadbeef->plt_get_selected_items (plt, &items);
+    if (count == 0) {
+        deadbeef->plt_unref (plt);
+        return;
+    }
+
+    MedialibItemDragDropHolder *holder = [[MedialibItemDragDropHolder alloc] initWithItems:items count:count];
+
+    for (ssize_t index = 0; index < count; index++) {
+        deadbeef->pl_item_unref (items[index]);
+    }
+    free (items);
+
+    NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
+    [pasteboard clearContents];
+    [pasteboard writeObjects:@[holder]];
+
+    if (deleteSelected) {
+        deadbeef->plt_delete_selected (plt);
+    }
+
+    deadbeef->plt_unref (plt);
+
+    if (deleteSelected) {
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    }
+}
+
+- (void)cut:(id)sender {
+    [self copyAndDeleteSelected:YES];
+}
+
+- (void)copy:(id)sender {
+    [self copyAndDeleteSelected:NO];
+}
+
+- (void)paste:(id)sender {
+    NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
+    NSArray *copiedItems = [pasteboard readObjectsForClasses:@[MedialibItemDragDropHolder.class] options:@{}];
+    if (copiedItems != nil) {
+        MedialibItemDragDropHolder *holder = copiedItems.firstObject;
+        ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+        int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
+        if (cursor == -1) {
+            cursor = 0;
+        }
+        ddb_playItem_t *before = deadbeef->plt_get_item_for_idx (plt, cursor, PL_MAIN);
+
+        [self dropPlayItems:(DdbListviewRow_t *)holder.items before:(DdbListviewRow_t)before count:(int)holder.count];
+        if (before != NULL) {
+            deadbeef->pl_item_unref (before);
+        }
+
+        deadbeef->plt_deselect_all (plt);
+        deadbeef->plt_set_cursor (plt, PL_MAIN, (int)(cursor + holder.count));
+        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)self.view, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+
+        // TODO: scroll to cursor
+
+        deadbeef->plt_unref (plt);
+    }
 }
 
 #pragma mark - TrackContextMenuDelegate
