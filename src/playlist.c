@@ -2034,53 +2034,20 @@ length_to_uint8 (size_t len) {
     return (uint8_t)min (0xff, len);
 }
 
-int
-plt_save (
+static int
+_plt_save_to_buffered_writer (
     playlist_t *plt,
     playItem_t *first,
     playItem_t *last,
-    const char *fname,
-    int *pabort,
+    buffered_file_writer_t *writer,
     int (*cb) (playItem_t *it, void *data),
-    void *user_data) {
+    void *user_data
+) {
     LOCK;
-    plt->last_save_modification_idx = plt->modification_idx;
-    const char *ext = strrchr (fname, '.');
-    if (ext) {
-        DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
-        for (int i = 0; plug[i]; i++) {
-            if (plug[i]->extensions && plug[i]->load) {
-                const char **exts = plug[i]->extensions;
-                if (exts && plug[i]->save) {
-                    for (int e = 0; exts[e]; e++) {
-                        if (!strcasecmp (exts[e], ext + 1)) {
-                            int res = plug[i]->save (
-                                (ddb_playlist_t *)plt,
-                                fname,
-                                (DB_playItem_t *)_current_playlist->head[PL_MAIN],
-                                NULL);
-                            UNLOCK;
-                            return res;
-                        }
-                    }
-                }
-            }
-        }
-    }
 
-    char tempfile[PATH_MAX];
-    snprintf (tempfile, sizeof (tempfile), "%s.tmp", fname);
     const char magic[] = "DBPL";
     uint8_t majorver = PLAYLIST_MAJOR_VER;
     uint8_t minorver = PLAYLIST_MINOR_VER;
-    buffered_file_writer_t *writer = NULL;
-    FILE *fp = fopen (tempfile, "w+b");
-    if (!fp) {
-        UNLOCK;
-        return -1;
-    }
-
-    writer = buffered_file_writer_new (fp, 64 * 1024);
 
     if (buffered_file_writer_write (writer, magic, 4) < 0) {
         goto save_fail;
@@ -2248,8 +2215,67 @@ plt_save (
     if (buffered_file_writer_flush (writer) < 0) {
         goto save_fail;
     }
+
+    UNLOCK;
+    return 0;
+
+save_fail:
+    return -1;
+}
+
+int
+plt_save(
+    playlist_t *plt,
+    playItem_t *first,
+    playItem_t *last,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data
+) {
+    LOCK;
+    plt->last_save_modification_idx = plt->modification_idx;
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
+        DB_playlist_t **plug = deadbeef->plug_get_playlist_list ();
+        for (int i = 0; plug[i]; i++) {
+            if (plug[i]->extensions && plug[i]->load) {
+                const char **exts = plug[i]->extensions;
+                if (exts && plug[i]->save) {
+                    for (int e = 0; exts[e]; e++) {
+                        if (!strcasecmp (exts[e], ext + 1)) {
+                            int res = plug[i]->save (
+                                                     (ddb_playlist_t *)plt,
+                                                     fname,
+                                                     (DB_playItem_t *)_current_playlist->head[PL_MAIN],
+                                                     NULL);
+                            UNLOCK;
+                            return res;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    char tempfile[PATH_MAX];
+    snprintf (tempfile, sizeof (tempfile), "%s.tmp", fname);
+    FILE *fp = fopen (tempfile, "w+b");
+    if (!fp) {
+        UNLOCK;
+        return -1;
+    }
+
+
+    buffered_file_writer_t *writer = buffered_file_writer_new (fp, 64 * 1024);
+
+    int result = _plt_save_to_buffered_writer (plt, first, last, writer, cb, user_data);
+
     buffered_file_writer_free (writer);
     writer = NULL;
+    if (result != 0) {
+        goto save_fail;
+    }
     if (EOF == fclose (fp)) {
         fp = NULL;
         goto save_fail;
