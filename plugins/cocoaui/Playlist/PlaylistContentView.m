@@ -11,7 +11,7 @@
 #import "PlaylistGroup.h"
 #import "PlaylistView.h"
 #import "DdbShared.h"
-#import "MedialibItemDragDropHolder.h"
+#import "DdbPlayItemPasteboardSerializer.h"
 #import "PlaylistLocalDragDropHolder.h"
 #include <deadbeef/deadbeef.h>
 #import "UndoIntegration.h"
@@ -62,7 +62,7 @@ static int grouptitleheight = 22;
 
     self.groups_build_idx = -1;
 
-    [self registerForDraggedTypes:@[ddbPlaylistItemsUTIType, ddbMedialibItemUTIType, NSFilenamesPboardType]];
+    [self registerForDraggedTypes:@[ddbPlaylistItemsUTIType, ddbPlaylistDataUTIType, NSFilenamesPboardType]];
 
     _pinnedGroupTitleView = [PinnedGroupTitleView new];
     _pinnedGroupTitleView.hidden = YES;
@@ -187,12 +187,12 @@ static int grouptitleheight = 22;
             free(indices);
         }
    }
-    if ([pboard.types containsObject:ddbMedialibItemUTIType]) {
-        NSArray *classes = @[[MedialibItemDragDropHolder class]];
+    if ([pboard.types containsObject:ddbPlaylistDataUTIType]) {
+        NSArray *classes = @[[DdbPlayItemPasteboardSerializer class]];
         NSDictionary *options = @{};
-        NSArray<MedialibItemDragDropHolder *> *draggedItems = [pboard readObjectsForClasses:classes options:options];
+        NSArray<DdbPlayItemPasteboardSerializer *> *draggedItems = [pboard readObjectsForClasses:classes options:options];
 
-        for (MedialibItemDragDropHolder *holder in draggedItems) {
+        for (DdbPlayItemPasteboardSerializer *holder in draggedItems) {
             if (holder.plt == NULL) {
                 continue;
             }

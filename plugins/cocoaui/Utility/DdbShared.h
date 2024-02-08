@@ -27,7 +27,7 @@
 #import <Foundation/Foundation.h>
 
 extern NSString * const ddbPlaylistItemsUTIType;
-extern NSString * const ddbMedialibItemUTIType;
+extern NSString * const ddbPlaylistDataUTIType;
 
 int
 cocoaui_add_new_playlist (void);

@@ -15,7 +15,7 @@
 #import "MediaLibraryOutlineView.h"
 #import "MediaLibraryItem.h"
 #import "MediaLibraryOutlineViewController.h"
-#import "MedialibItemDragDropHolder.h"
+#import "DdbPlayItemPasteboardSerializer.h"
 #import "TrackContextMenu.h"
 #import "TrackPropertiesWindowController.h"
 #import "UndoIntegration.h"
@@ -95,7 +95,7 @@ _model_listener (struct scriptableModel_t *model, void *user_data) {
     self.outlineView = outlineView;
     self.outlineView.dataSource = self;
     self.outlineView.delegate = self;
-    [self.outlineView registerForDraggedTypes:@[ddbMedialibItemUTIType]];
+    [self.outlineView registerForDraggedTypes:@[ddbPlaylistDataUTIType]];
 
     self.searchField = searchField;
     self.searchField.target = self;
@@ -506,7 +506,7 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
         playItems[count++] = playableItem.playItem;
     }
 
-    return [[MedialibItemDragDropHolder alloc] initWithItems:playItems count:count];
+    return [[DdbPlayItemPasteboardSerializer alloc] initWithItems:playItems count:count];
 }
 
 

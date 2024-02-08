@@ -32,7 +32,7 @@
 #import "TrackContextMenu.h"
 #import "TrackPropertiesManager.h"
 #import "tftintutil.h"
-#import "MedialibItemDragDropHolder.h"
+#import "DdbPlayItemPasteboardSerializer.h"
 
 #include <deadbeef/deadbeef.h>
 #include "utf8.h"
@@ -1557,7 +1557,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         return;
     }
 
-    MedialibItemDragDropHolder *holder = [[MedialibItemDragDropHolder alloc] initWithItems:items count:count];
+    DdbPlayItemPasteboardSerializer *holder = [[DdbPlayItemPasteboardSerializer alloc] initWithItems:items count:count];
 
     for (ssize_t index = 0; index < count; index++) {
         deadbeef->pl_item_unref (items[index]);
@@ -1589,9 +1589,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
 - (void)paste:(id)sender {
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
-    NSArray *copiedItems = [pasteboard readObjectsForClasses:@[MedialibItemDragDropHolder.class] options:@{}];
+    NSArray *copiedItems = [pasteboard readObjectsForClasses:@[DdbPlayItemPasteboardSerializer.class] options:@{}];
     if (copiedItems != nil) {
-        MedialibItemDragDropHolder *holder = copiedItems.firstObject;
+        DdbPlayItemPasteboardSerializer *holder = copiedItems.firstObject;
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
         int cursor = deadbeef->plt_get_cursor (plt, PL_MAIN);
         if (cursor == -1) {

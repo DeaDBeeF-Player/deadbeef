@@ -1,22 +1,22 @@
 //
-//  MedialibItemDragDropHolder.m
+//  DdbPlayItemPasteboardSerializer.m
 //  DeaDBeeF
 //
 //  Created by Oleksiy Yakovenko on 8/28/20.
 //  Copyright © 2020 Oleksiy Yakovenko. All rights reserved.
 //
 
-#import "MedialibItemDragDropHolder.h"
+#import "DdbPlayItemPasteboardSerializer.h"
 #import "DdbShared.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface MedialibItemDragDropHolder()
+@interface DdbPlayItemPasteboardSerializer()
 
 @property (nonatomic,readwrite) ddb_playlist_t *plt;
 @end
 
-@implementation MedialibItemDragDropHolder
+@implementation DdbPlayItemPasteboardSerializer
 
 // NSSecureCoding
 @dynamic supportsSecureCoding;
@@ -110,7 +110,7 @@ extern DB_functions_t *deadbeef;
 
 // NSPasteboardReading
 + (nonnull NSArray<NSPasteboardType> *)readableTypesForPasteboard:(nonnull NSPasteboard *)pasteboard {
-    return @[ddbMedialibItemUTIType];
+    return @[ddbPlaylistDataUTIType];
 }
 
 + (NSPasteboardReadingOptions)readingOptionsForType:(NSPasteboardType)type pasteboard:(NSPasteboard *)pasteboard {
@@ -119,11 +119,11 @@ extern DB_functions_t *deadbeef;
 
 // NSPasteboardWriting
 - (NSArray<NSString *> *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
-    return @[ddbMedialibItemUTIType];
+    return @[ddbPlaylistDataUTIType];
 }
 
 - (id)pasteboardPropertyListForType:(NSString *)type {
-    if( [type isEqualToString:ddbMedialibItemUTIType] ) {
+    if( [type isEqualToString:ddbPlaylistDataUTIType] ) {
 #ifdef MAC_OS_X_VERSION_10_14
         if (@available(macOS 10.13, *)) {
             return [NSKeyedArchiver archivedDataWithRootObject:self requiringSecureCoding:NO error:nil];

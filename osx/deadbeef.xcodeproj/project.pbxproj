@@ -740,8 +740,8 @@
 		2D1E1DCB27B90051004DEF1D /* libavcodec.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1E1DCC27B90051004DEF1D /* libavformat.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */; };
-		2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */; };
+		2D1E215724F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E215524F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h */; };
+		2D1E215824F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E215624F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m */; };
 		2D2092502A9A82E600CDBB2B /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
 		2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D20D12323F099F4008ACBE6 /* NSImage+Additions.m */; };
@@ -5414,8 +5414,8 @@
 		2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alac_plugin.c; sourceTree = "<group>"; };
 		2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = buffered_file_writer.h; sourceTree = "<group>"; };
 		2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = buffered_file_writer.c; sourceTree = "<group>"; };
-		2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MedialibItemDragDropHolder.h; sourceTree = "<group>"; };
-		2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MedialibItemDragDropHolder.m; sourceTree = "<group>"; };
+		2D1E215524F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbPlayItemPasteboardSerializer.h; sourceTree = "<group>"; };
+		2D1E215624F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbPlayItemPasteboardSerializer.m; sourceTree = "<group>"; };
 		2D20924C2A9A077800CDBB2B /* scriptable_tfquery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_tfquery.h; sourceTree = "<group>"; };
 		2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_tfquery.c; sourceTree = "<group>"; };
 		2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSImage+Additions.h"; sourceTree = "<group>"; };
@@ -12163,8 +12163,8 @@
 			isa = PBXGroup;
 			children = (
 				2D3CD9462409A1B7005875A9 /* DdbListviewDelegate.h */,
-				2D1E215524F9826C00E2895D /* MedialibItemDragDropHolder.h */,
-				2D1E215624F9826C00E2895D /* MedialibItemDragDropHolder.m */,
+				2D1E215524F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h */,
+				2D1E215624F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m */,
 				2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */,
 				2D3CD9362409A091005875A9 /* PinnedGroupTitleView.m */,
 				2DDBA24B23E5E66D00051320 /* PlaylistContentView.h */,
@@ -14711,7 +14711,7 @@
 			files = (
 				4DC96E701E4CC9670093CFD3 /* dsp.h in Headers */,
 				2DDD76C825E152BF00FA6FE5 /* DesignModeDefs.h in Headers */,
-				2D1E215724F9826C00E2895D /* MedialibItemDragDropHolder.h in Headers */,
+				2D1E215724F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h in Headers */,
 				2D78C55D27568D9600F96F9D /* medialibtree.h in Headers */,
 				2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */,
 				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
@@ -18417,7 +18417,7 @@
 				2D9EF3102B6FAF5C0042F6D8 /* keyboard_shortcuts.c in Sources */,
 				2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */,
 				4DA72BED1838EAAB00A98C62 /* main.m in Sources */,
-				2D1E215824F9826C00E2895D /* MedialibItemDragDropHolder.m in Sources */,
+				2D1E215824F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m in Sources */,
 				2D651D18227227C300375AE2 /* ScriptableNodeEditorWindowController.m in Sources */,
 				2DEE302829BC8D1900A293AD /* coreaudio.c in Sources */,
 				2D8EE27524D03601005C5B4B /* MediaLibraryOutlineViewController.m in Sources */,

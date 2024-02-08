@@ -1,5 +1,5 @@
 //
-//  MedialibItemDragDropHolder.h
+//  DdbPlayItemPasteboardSerializer.h
 //  DeaDBeeF
 //
 //  Created by Oleksiy Yakovenko on 8/28/20.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #include <deadbeef/deadbeef.h>
 
-@interface MedialibItemDragDropHolder : NSObject<NSPasteboardReading, NSPasteboardWriting, NSSecureCoding>
+@interface DdbPlayItemPasteboardSerializer : NSObject<NSPasteboardReading, NSPasteboardWriting, NSSecureCoding>
 
 @property (nonnull,nonatomic,readonly) ddb_playlist_t *plt;
 

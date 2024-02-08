@@ -26,7 +26,7 @@
 #include <deadbeef/deadbeef.h>
 
 NSString * const ddbPlaylistItemsUTIType = @"org.deadbeef.playlistItems";
-NSString * const ddbMedialibItemUTIType = @"org.deadbeef.medialibItem";
+NSString * const ddbPlaylistDataUTIType = @"org.deadbeef.playlistData";
 
 extern DB_functions_t *deadbeef;
 
