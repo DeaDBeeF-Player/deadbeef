@@ -56,6 +56,7 @@ TEST_C_SOURCES=$(wildcard \
 	src/metadata/*.c \
 	src/scriptable/*.c \
 	src/undo/*.c \
+	src/filereader/*.c \
 	Tests/*.c)
 TEST_C_SOURCES:=$(filter-out src/main.c,$(TEST_C_SOURCES))
 TEST_C_OBJS:=$(addprefix $(BUILD)/,\

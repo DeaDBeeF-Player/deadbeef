@@ -1750,12 +1750,24 @@ typedef struct {
     /// usually from the UI plugin's start method.
     void (*register_for_undo) (ddb_undo_hooks_t *undo_hooks);
 
+    /// Get all items from specified playlist as an array, increase reference counts.
+    /// The resulting array must be freed.
+    /// @return number of resulting items
     size_t (*plt_get_items) (ddb_playlist_t *plt, ddb_playItem_t ***out_items);
+
+    /// Get all selected items from specified playlist as an array, increase reference counts
+    /// The resulting array must be freed.
+    /// @return number of resulting items
     size_t (*plt_get_selected_items) (ddb_playlist_t *plt, ddb_playItem_t ***out_items);
 
+    /// Load playlist from buffer
+    /// @return 0 on success, -1 on error
     int (*plt_load_from_buffer) (ddb_playlist_t *plt, const uint8_t *buffer, size_t size);
-    ssize_t (*plt_save_to_buffer) (ddb_playlist_t *plt, uint8_t **out_buffer);
 
+    /// Save playlist to the buffer.
+    /// The resulting buffer must be freed after use.
+    /// @return buffer size on success, -1 on error
+    ssize_t (*plt_save_to_buffer) (ddb_playlist_t *plt, uint8_t **out_buffer);
 #endif
 } DB_functions_t;
 
