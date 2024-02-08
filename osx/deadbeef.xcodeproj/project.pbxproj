@@ -887,6 +887,7 @@
 		2D30D20D25E2A8930023A299 /* WidgetTopLevelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */; };
 		2D30D20E25E2A8930023A299 /* WidgetTopLevelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */; };
 		2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D35A24D2B74D95B006D9356 /* filereader.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D35A24B2B74D60F006D9356 /* filereader.c */; };
 		2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */; };
 		2D3A4BBD1D6315D6002C7098 /* medialib.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D3A4BB41D631530002C7098 /* medialib.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3CD9352409A091005875A9 /* PinnedGroupTitleView.h */; };
@@ -5560,6 +5561,8 @@
 		2D30D0B325E2A5DD0023A299 /* DesignModeState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeState.m; sourceTree = "<group>"; };
 		2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetTopLevelView.h; sourceTree = "<group>"; };
 		2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetTopLevelView.m; sourceTree = "<group>"; };
+		2D35A24A2B74D60F006D9356 /* filereader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = filereader.h; sourceTree = "<group>"; };
+		2D35A24B2B74D60F006D9356 /* filereader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = filereader.c; sourceTree = "<group>"; };
 		2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakRefWrapper.h; sourceTree = "<group>"; };
 		2D3992E025C2038700CFA936 /* WeakRefWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WeakRefWrapper.m; sourceTree = "<group>"; };
 		2D3A4BB41D631530002C7098 /* medialib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = medialib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9669,6 +9672,15 @@
 			path = DesignMode;
 			sourceTree = "<group>";
 		};
+		2D35A24E2B74DD28006D9356 /* filereader */ = {
+			isa = PBXGroup;
+			children = (
+				2D35A24A2B74D60F006D9356 /* filereader.h */,
+				2D35A24B2B74D60F006D9356 /* filereader.c */,
+			);
+			path = filereader;
+			sourceTree = "<group>";
+		};
 		2D35E30C1AA7AC4B0077FBD1 /* dial68 */ = {
 			isa = PBXGroup;
 			children = (
@@ -11023,6 +11035,7 @@
 		2D92D1ED29B92DF900218F1D /* shared */ = {
 			isa = PBXGroup;
 			children = (
+				2D35A24E2B74DD28006D9356 /* filereader */,
 				2D2C51632B6C085400EAC44E /* undo */,
 				2DB520E52AA8FA4C00B6250A /* scriptable */,
 				2D92D21929B92DF900218F1D /* analyzer */,
@@ -16959,6 +16972,7 @@
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2D92D33D29B9324A00218F1D /* tftintutil.c in Sources */,
 				2DB951C726B0874200602876 /* decodedblock.c in Sources */,
+				2D35A24D2B74D95B006D9356 /* filereader.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
 				2DA21F6029868F9C0077BD4C /* resizable_buffer.c in Sources */,
 				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,

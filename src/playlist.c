@@ -49,6 +49,7 @@
 #include <errno.h>
 #include <math.h>
 #include "buffered_file_writer.h"
+#include "filereader/filereader.h"
 #include "gettext.h"
 #include "playlist.h"
 #include "plmeta.h"
@@ -2397,13 +2398,13 @@ pl_save_all (void) {
 }
 
 static int
-_plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
+_plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_added) {
     int result = -1;
     playItem_t *it = NULL;
     uint8_t majorver;
     uint8_t minorver;
     char magic[4];
-    if (fread (magic, 1, 4, fp) != 4) {
+    if (ddb_file_read (magic, 1, 4, fp) != 4) {
         //        trace ("failed to read magic\n");
         goto load_fail;
     }
@@ -2411,14 +2412,14 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
         //        trace ("bad signature\n");
         goto load_fail;
     }
-    if (fread (&majorver, 1, 1, fp) != 1) {
+    if (ddb_file_read (&majorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
     if (majorver != PLAYLIST_MAJOR_VER) {
         //        trace ("bad majorver=%d\n", majorver);
         goto load_fail;
     }
-    if (fread (&minorver, 1, 1, fp) != 1) {
+    if (ddb_file_read (&minorver, 1, 1, fp) != 1) {
         goto load_fail;
     }
     if (minorver < 1) {
@@ -2426,7 +2427,7 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
         goto load_fail;
     }
     uint32_t cnt;
-    if (fread (&cnt, 1, 4, fp) != 4) {
+    if (ddb_file_read (&cnt, 1, 4, fp) != 4) {
         goto load_fail;
     }
     
@@ -2439,18 +2440,18 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
         int16_t tracknum = 0;
         if (minorver <= 2) {
             // fname
-            if (fread (&l, 1, 2, fp) != 2) {
+            if (ddb_file_read (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
             char uri[l + 1];
-            if (fread (uri, 1, l, fp) != l) {
+            if (ddb_file_read (uri, 1, l, fp) != l) {
                 goto load_fail;
             }
             uri[l] = 0;
             pl_add_meta (it, ":URI", uri);
             // decoder
             uint8_t ll;
-            if (fread (&ll, 1, 1, fp) != 1) {
+            if (ddb_file_read (&ll, 1, 1, fp) != 1) {
                 goto load_fail;
             }
             if (ll >= 20) {
@@ -2458,28 +2459,28 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
             }
             char decoder_id[20] = "";
             if (ll) {
-                if (fread (decoder_id, 1, ll, fp) != ll) {
+                if (ddb_file_read (decoder_id, 1, ll, fp) != ll) {
                     goto load_fail;
                 }
                 decoder_id[ll] = 0;
                 pl_add_meta (it, ":DECODER", decoder_id);
             }
             // tracknum
-            if (fread (&tracknum, 1, 2, fp) != 2) {
+            if (ddb_file_read (&tracknum, 1, 2, fp) != 2) {
                 goto load_fail;
             }
             pl_set_meta_int (it, ":TRACKNUM", tracknum);
         }
         // startsample
-        if (fread (&it->startsample, 1, 4, fp) != 4) {
+        if (ddb_file_read (&it->startsample, 1, 4, fp) != 4) {
             goto load_fail;
         }
         // endsample
-        if (fread (&it->endsample, 1, 4, fp) != 4) {
+        if (ddb_file_read (&it->endsample, 1, 4, fp) != 4) {
             goto load_fail;
         }
         // duration
-        if (fread (&it->_duration, 1, 4, fp) != 4) {
+        if (ddb_file_read (&it->_duration, 1, 4, fp) != 4) {
             goto load_fail;
         }
         char s[100];
@@ -2489,12 +2490,12 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
         if (minorver <= 2) {
             // legacy filetype support
             uint8_t ft;
-            if (fread (&ft, 1, 1, fp) != 1) {
+            if (ddb_file_read (&ft, 1, 1, fp) != 1) {
                 goto load_fail;
             }
             if (ft) {
                 char ftype[ft + 1];
-                if (fread (ftype, 1, ft, fp) != ft) {
+                if (ddb_file_read (ftype, 1, ft, fp) != ft) {
                     goto load_fail;
                 }
                 ftype[ft] = 0;
@@ -2503,14 +2504,14 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
             
             float f;
             
-            if (fread (&f, 1, 4, fp) != 4) {
+            if (ddb_file_read (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
             if (f != 0) {
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, f);
             }
             
-            if (fread (&f, 1, 4, fp) != 4) {
+            if (ddb_file_read (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
             if (f == 0) {
@@ -2520,14 +2521,14 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, f);
             }
             
-            if (fread (&f, 1, 4, fp) != 4) {
+            if (ddb_file_read (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
             if (f != 0) {
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, f);
             }
             
-            if (fread (&f, 1, 4, fp) != 4) {
+            if (ddb_file_read (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
             if (f == 0) {
@@ -2540,7 +2541,7 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
         
         uint32_t flg = 0;
         if (minorver >= 2) {
-            if (fread (&flg, 1, 4, fp) != 4) {
+            if (ddb_file_read (&flg, 1, 4, fp) != 4) {
                 goto load_fail;
             }
         }
@@ -2552,31 +2553,31 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
         pl_set_item_flags (it, flg);
         
         int16_t nm = 0;
-        if (fread (&nm, 1, 2, fp) != 2) {
+        if (ddb_file_read (&nm, 1, 2, fp) != 2) {
             goto load_fail;
         }
         for (int j = 0; j < nm; j++) {
-            if (fread (&l, 1, 2, fp) != 2) {
+            if (ddb_file_read (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
             if (l >= 20000) {
                 goto load_fail;
             }
             char key[l + 1];
-            if (fread (key, 1, l, fp) != l) {
+            if (ddb_file_read (key, 1, l, fp) != l) {
                 goto load_fail;
             }
             key[l] = 0;
-            if (fread (&l, 1, 2, fp) != 2) {
+            if (ddb_file_read (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
             if (l >= 20000) {
                 // skip
-                fseek (fp, l, SEEK_CUR);
+                ddb_file_seek (fp, l, SEEK_CUR);
             }
             else {
                 char value[l + 1];
-                int res = (int)fread (value, 1, l, fp);
+                int res = (int)ddb_file_read (value, 1, l, fp);
                 if (res != l) {
                     //                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
@@ -2612,30 +2613,31 @@ _plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
     // load playlist metadata
     int16_t nm = 0;
     // for backwards format compatibility, don't fail if metadata is not found
-    if (fread (&nm, 1, 2, fp) == 2) {
+    if (ddb_file_read (&nm, 1, 2, fp) == 2) {
         for (int i = 0; i < nm; i++) {
             int16_t l;
-            if (fread (&l, 1, 2, fp) != 2) {
+            if (ddb_file_read (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
             if (l < 0 || l >= 20000) {
                 goto load_fail;
             }
             char key[l + 1];
-            if (fread (key, 1, l, fp) != l) {
+            if (ddb_file_read (key, 1, l, fp) != l) {
                 goto load_fail;
             }
             key[l] = 0;
-            if (fread (&l, 1, 2, fp) != 2) {
+            if (ddb_file_read (&l, 1, 2, fp) != 2) {
                 goto load_fail;
             }
             if (l < 0 || l >= 20000) {
                 // skip
-                fseek (fp, l, SEEK_CUR);
+                // FIXME: error check
+                ddb_file_seek (fp, l, SEEK_CUR);
             }
             else {
                 char value[l + 1];
-                int res = (int)fread (value, 1, l, fp);
+                int res = (int)ddb_file_read (value, 1, l, fp);
                 if (res != l) {
                     //                    trace ("playlist read error: requested %d, got %d\n", l, res);
                     goto load_fail;
@@ -2734,7 +2736,10 @@ plt_load_int (
         return NULL;
     }
 
-    if (0 != _plt_load_from_file(fp, &last_added, plt)) {
+    ddb_file_handle_t fh;
+    ddb_file_init_stdio(&fh, fp);
+
+    if (0 != _plt_load_from_file(plt, &fh, &last_added)) {
         goto load_fail;
     }
 
