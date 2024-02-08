@@ -49,18 +49,26 @@ buffered_file_writer_free (buffered_file_writer_t *writer) {
 
 int
 buffered_file_writer_write (buffered_file_writer_t *writer, const void *bytes, size_t size) {
-    if (size > writer->size - writer->written) {
-        int res = buffered_file_writer_flush (writer);
-        if (res < 0) {
-            return -1;
+    if (writer->fp != NULL) {
+        if (size > writer->size - writer->written) {
+            int res = buffered_file_writer_flush (writer);
+            if (res < 0) {
+                return -1;
+            }
+        }
+        if (size >= writer->size) {
+            size_t res = fwrite (bytes, 1, size, writer->fp);
+            if (res != size) {
+                return -1;
+            }
+            return 0;
         }
     }
-    if (size >= writer->size) {
-        size_t res = fwrite (bytes, 1, size, writer->fp);
-        if (res != size) {
-            return -1;
+    else {
+        if (size > writer->size - writer->written) {
+            writer->size *= 2;
+            writer->buffer = realloc (writer->buffer, writer->size);
         }
-        return 0;
     }
 
     memcpy (writer->buffer + writer->written, bytes, size);
@@ -71,7 +79,7 @@ buffered_file_writer_write (buffered_file_writer_t *writer, const void *bytes, s
 
 int
 buffered_file_writer_flush (buffered_file_writer_t *writer) {
-    if (writer->written == 0) {
+    if (writer->written == 0 || writer->fp == NULL) {
         return 0;
     }
     size_t res = fwrite (writer->buffer, 1, writer->written, writer->fp);
@@ -80,4 +88,14 @@ buffered_file_writer_flush (buffered_file_writer_t *writer) {
     }
     writer->written = 0;
     return 0;
+}
+
+void *
+buffered_file_writer_get_buffer (buffered_file_writer_t *writer) {
+    return writer->buffer;
+}
+
+size_t
+buffered_file_writer_get_size (buffered_file_writer_t *writer) {
+    return writer->written;
 }

@@ -11,8 +11,7 @@
 
 @interface MedialibItemDragDropHolder : NSObject<NSPasteboardReading, NSPasteboardWriting, NSSecureCoding>
 
-@property (nonatomic,readonly) ddb_playItem_t * _Nonnull * _Nullable items;
-@property (nonatomic,readonly) NSInteger count;
+@property (nonnull,nonatomic,readonly) ddb_playlist_t *plt;
 
 - (instancetype _Nonnull)init NS_UNAVAILABLE;
 - (instancetype _Nonnull)initWithItem:(ddb_playItem_t * _Nullable)item;

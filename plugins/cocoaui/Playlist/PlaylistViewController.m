@@ -1599,13 +1599,25 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         }
         ddb_playItem_t *before = deadbeef->plt_get_item_for_idx (plt, cursor, PL_MAIN);
 
-        [self dropPlayItems:(DdbListviewRow_t *)holder.items before:(DdbListviewRow_t)before count:(int)holder.count];
+        ssize_t count = 0;
+        if (holder.plt != NULL) {
+            ddb_playItem_t **items;
+            count = deadbeef->plt_get_items(holder.plt, &items);
+
+            [self dropPlayItems:(DdbListviewRow_t *)items before:(DdbListviewRow_t)before count:(int)count];
+
+            for (ssize_t i = 0; i < count; i++) {
+                deadbeef->pl_item_unref(items[i]);
+            }
+            free (items);
+        }
+
         if (before != NULL) {
             deadbeef->pl_item_unref (before);
         }
 
         deadbeef->plt_deselect_all (plt);
-        deadbeef->plt_set_cursor (plt, PL_MAIN, (int)(cursor + holder.count));
+        deadbeef->plt_set_cursor (plt, PL_MAIN, (int)(cursor + count));
         deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)self.view, DDB_PLAYLIST_CHANGE_SELECTION, 0);
 
         // TODO: scroll to cursor

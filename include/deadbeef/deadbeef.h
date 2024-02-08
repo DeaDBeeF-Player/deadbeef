@@ -1750,7 +1750,11 @@ typedef struct {
     /// usually from the UI plugin's start method.
     void (*register_for_undo) (ddb_undo_hooks_t *undo_hooks);
 
+    size_t (*plt_get_items) (ddb_playlist_t *plt, ddb_playItem_t ***out_items);
     size_t (*plt_get_selected_items) (ddb_playlist_t *plt, ddb_playItem_t ***out_items);
+
+    ssize_t (*plt_save_to_buffer) (ddb_playlist_t *plt, uint8_t **out_buffer);
+
 #endif
 } DB_functions_t;
 

@@ -571,7 +571,13 @@ int
 pl_items_from_same_album(playItem_t* a, playItem_t* b);
 
 size_t
+plt_get_items (playlist_t *plt, playItem_t ***out_items);
+
+size_t
 plt_get_selected_items(playlist_t *plt, playItem_t ***out_items);
+
+ssize_t
+plt_save_to_buffer(playlist_t *plt, uint8_t **out_buffer);
 
 #ifdef __cplusplus
 }

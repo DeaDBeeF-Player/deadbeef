@@ -13,9 +13,7 @@ extern DB_functions_t *deadbeef;
 
 @interface MedialibItemDragDropHolder()
 
-@property (nonatomic,readwrite) ddb_playItem_t **items;
-@property (nonatomic,readwrite) NSInteger count;
-
+@property (nonatomic,readwrite) ddb_playlist_t *plt;
 @end
 
 @implementation MedialibItemDragDropHolder
@@ -43,27 +41,29 @@ extern DB_functions_t *deadbeef;
         return nil;
     }
 
-    if (count > 0) {
-        _count = count;
-        _items = calloc(count, sizeof (ddb_playItem_t *));
-        for (NSInteger i = 0; i < _count; i++) {
-            ddb_playItem_t *item = items[i];
-            deadbeef->pl_item_ref (item);
-            _items[i] = item;
-        }
+
+    if (count == 0) {
+        return self;
     }
+
+    ddb_playlist_t *plt = deadbeef->plt_alloc ("clipboard");
+    ddb_playItem_t *after = NULL;
+    for (NSInteger i = 0; i < count; i++) {
+        deadbeef->plt_insert_item (plt, after, items[i]);
+        after = items[i];
+    }
+
+    self.plt = plt;
 
     return self;
 }
 
-- (void)dealloc {
-    for (NSInteger i = 0; i < _count; i++) {
-        deadbeef->pl_item_unref (_items[i]);
+- (void)dealloc
+{
+    if (self.plt != NULL) {
+        deadbeef->plt_unref (self.plt);
     }
-    free (_items);
-    _items = NULL;
 }
-
 // NSCoding
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -72,35 +72,39 @@ extern DB_functions_t *deadbeef;
         return nil;
     }
 
-    NSData *data = [aDecoder decodeObjectOfClass:[NSArray class] forKey:@"PlayItemListPtr"];
-    const void *bytes = data.bytes;
-
-    memcpy (&_count, bytes, sizeof (NSInteger));
-    if (_count > 0) {
-        _items = calloc(_count, sizeof (ddb_playItem_t *));
-        ddb_playItem_t **items = (ddb_playItem_t **)(bytes + sizeof (NSInteger));
-        for (NSInteger i = 0; i < _count; i++) {
-            ddb_playItem_t *item = items[i];
-            deadbeef->pl_item_ref (item);
-            _items[i] = item;
-        }
-
+    NSData *data = [aDecoder decodeObjectOfClass:NSArray.class forKey:@"DdbPlaylistData"];
+    if (data == nil) {
+        return self;
     }
+
+    // FIXME
+//    ddb_playlist_t *plt = deadbeef->plt_alloc("clipboard");
+//    int res = deadbeef->plt_load_from_buffer (plt, data.bytes, data.length);
+//    if (res == 0) {
+//        self.plt = plt;
+//    }
+//    else {
+//        deadbeef->plt_unref (plt);
+//    }
 
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    NSUInteger length = sizeof (NSInteger) + self.count * sizeof (ddb_playItem_t *);
-    void *bytes = malloc (length);
-    memcpy (bytes, &_count, sizeof (NSInteger));
-    if (self.count > 0) {
-        memcpy (bytes + sizeof (NSInteger), _items, self.count * sizeof (ddb_playItem_t *));
+    if (self.plt == NULL) {
+        return;
     }
 
-    // FIXME: this is a low effort impl, which may fail. Proper implementation needs to serialize into plist.
-    NSData *data = [NSData dataWithBytes:bytes length:length];
-    [aCoder encodeObject:data forKey:@"PlayItemListPtr"];
+    uint8_t *buffer = NULL;
+    ssize_t size = deadbeef->plt_save_to_buffer (self.plt, &buffer);
+
+    if (size == 0) {
+        return;
+    }
+    NSData *data = [NSData dataWithBytes:buffer length:size];
+    free (buffer);
+
+    [aCoder encodeObject:data forKey:@"DdbPlaylistData"];
 }
 
 

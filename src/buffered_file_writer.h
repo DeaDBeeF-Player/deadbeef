@@ -28,6 +28,7 @@
 
 typedef struct _buffered_file_writer_s buffered_file_writer_t;
 
+// Passing fp=NULL will write the whole content to in-memory buffer
 buffered_file_writer_t *
 buffered_file_writer_new (FILE *fp, size_t buffer_size);
 
@@ -39,5 +40,11 @@ buffered_file_writer_write (buffered_file_writer_t *writer, const void *bytes, s
 
 int
 buffered_file_writer_flush (buffered_file_writer_t *writer);
+
+void *
+buffered_file_writer_get_buffer (buffered_file_writer_t *writer);
+
+size_t
+buffered_file_writer_get_size (buffered_file_writer_t *writer);
 
 #endif /* buffered_file_writer_h */

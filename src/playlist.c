@@ -2037,8 +2037,6 @@ length_to_uint8 (size_t len) {
 static int
 _plt_save_to_buffered_writer (
     playlist_t *plt,
-    playItem_t *first,
-    playItem_t *last,
     buffered_file_writer_t *writer,
     int (*cb) (playItem_t *it, void *data),
     void *user_data
@@ -2223,6 +2221,34 @@ save_fail:
     return -1;
 }
 
+ssize_t
+plt_save_to_buffer(
+                   playlist_t *plt,
+                   uint8_t **out_buffer
+                   ) {
+    buffered_file_writer_t *writer = buffered_file_writer_new (NULL, 64 * 1024);
+
+    LOCK;
+
+    int result = _plt_save_to_buffered_writer (plt, writer, NULL, NULL);
+
+    UNLOCK;
+
+    if (result != 0) {
+        buffered_file_writer_free (writer);
+        *out_buffer = NULL;
+        return -1;
+    }
+
+    size_t size = buffered_file_writer_get_size (writer);
+    uint8_t *buffer = malloc(size);
+    memcpy(buffer, buffered_file_writer_get_buffer (writer), size);
+    buffered_file_writer_free (writer);
+
+    *out_buffer = buffer;
+    return size;
+}
+
 int
 plt_save(
     playlist_t *plt,
@@ -2269,7 +2295,7 @@ plt_save(
 
     buffered_file_writer_t *writer = buffered_file_writer_new (fp, 64 * 1024);
 
-    int result = _plt_save_to_buffered_writer (plt, first, last, writer, cb, user_data);
+    int result = _plt_save_to_buffered_writer (plt, writer, cb, user_data);
 
     buffered_file_writer_free (writer);
     writer = NULL;
@@ -2370,85 +2396,10 @@ pl_save_all (void) {
     return err;
 }
 
-static playItem_t *
-plt_load_int (
-    int visibility,
-    playlist_t *plt,
-    playItem_t *after,
-    const char *fname,
-    int *pabort,
-    int (*cb) (playItem_t *it, void *data),
-    void *user_data) {
+static int
+_plt_load_from_file(FILE *fp, playItem_t **last_added, playlist_t *plt) {
+    int result = -1;
     playItem_t *it = NULL;
-    playItem_t *last_added = NULL;
-
-    unsigned undo_enabled = plt->undo_enabled;
-    plt->undo_enabled = 0;
-
-#ifdef __MINGW32__
-    if (!strncmp (fname, "file://", 7)) {
-        fname += 7;
-    }
-    // replace backslashes with normal slashes
-    char fname_conv[strlen (fname) + 1];
-    if (strchr (fname, '\\')) {
-        trace ("plt_load_int: backslash(es) detected: %s\n", fname);
-        strcpy (fname_conv, fname);
-        char *slash_p = fname_conv;
-        while (slash_p = strchr (slash_p, '\\')) {
-            *slash_p = '/';
-            slash_p++;
-        }
-        fname = fname_conv;
-    }
-    // path should start with "X:/", not "/X:/", fixing to avoid file opening problems
-    if (fname[0] == '/' && isalpha (fname[1]) && fname[2] == ':') {
-        fname++;
-    }
-#endif
-
-    // try plugins 1st
-    char *escaped = uri_unescape (fname, (int)strlen (fname));
-    if (escaped) {
-        fname = strdupa (escaped);
-        free (escaped);
-    }
-
-    const char *ext = strrchr (fname, '.');
-    if (ext) {
-        ext++;
-        DB_playlist_t **plug = plug_get_playlist_list ();
-        int p, e;
-        for (p = 0; plug[p]; p++) {
-            for (e = 0; plug[p]->extensions[e]; e++) {
-                if (plug[p]->load && !strcasecmp (ext, plug[p]->extensions[e])) {
-                    DB_playItem_t *loaded_it = NULL;
-                    if (cb || (plug[p]->load && !plug[p]->load2)) {
-                        loaded_it = plug[p]->load (
-                            (ddb_playlist_t *)plt,
-                            (DB_playItem_t *)after,
-                            fname,
-                            pabort,
-                            (int (*) (DB_playItem_t *, void *))cb,
-                            user_data);
-                    }
-                    else if (plug[p]->plugin.api_vminor >= 5 && plug[p]->load2) {
-                        loaded_it =
-                            plug[p]->load2 (visibility, (ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort);
-                    }
-                    plt->undo_enabled = undo_enabled;
-                    return (playItem_t *)loaded_it;
-                }
-            }
-        }
-    }
-    FILE *fp = fopen (fname, "rb");
-    if (!fp) {
-        //        trace ("plt_load: failed to open %s\n", fname);
-        plt->undo_enabled = undo_enabled;
-        return NULL;
-    }
-
     uint8_t majorver;
     uint8_t minorver;
     char magic[4];
@@ -2478,7 +2429,7 @@ plt_load_int (
     if (fread (&cnt, 1, 4, fp) != 4) {
         goto load_fail;
     }
-
+    
     for (uint32_t i = 0; i < cnt; i++) {
         it = pl_item_alloc ();
         if (!it) {
@@ -2549,16 +2500,16 @@ plt_load_int (
                 ftype[ft] = 0;
                 pl_replace_meta (it, ":FILETYPE", ftype);
             }
-
+            
             float f;
-
+            
             if (fread (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
             if (f != 0) {
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, f);
             }
-
+            
             if (fread (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
@@ -2568,14 +2519,14 @@ plt_load_int (
             if (f != 1) {
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, f);
             }
-
+            
             if (fread (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
             if (f != 0) {
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, f);
             }
-
+            
             if (fread (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
@@ -2586,7 +2537,7 @@ plt_load_int (
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, f);
             }
         }
-
+        
         uint32_t flg = 0;
         if (minorver >= 2) {
             if (fread (&flg, 1, 4, fp) != 4) {
@@ -2599,7 +2550,7 @@ plt_load_int (
             }
         }
         pl_set_item_flags (it, flg);
-
+        
         int16_t nm = 0;
         if (fread (&nm, 1, 2, fp) != 2) {
             goto load_fail;
@@ -2651,13 +2602,13 @@ plt_load_int (
             }
         }
         plt_insert_item (plt, plt->tail[PL_MAIN], it);
-        if (last_added) {
-            pl_item_unref (last_added);
+        if (*last_added) {
+            pl_item_unref (*last_added);
         }
-        last_added = it;
+        *last_added = it;
         it = NULL;
     }
-
+    
     // load playlist metadata
     int16_t nm = 0;
     // for backwards format compatibility, don't fail if metadata is not found
@@ -2696,6 +2647,97 @@ plt_load_int (
         }
     }
 
+    result = 0;
+load_fail:
+    if (it) {
+        pl_item_unref (it);
+        it = NULL;
+    }
+    return result;
+}
+
+static playItem_t *
+plt_load_int (
+    int visibility,
+    playlist_t *plt,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data) {
+    playItem_t *last_added = NULL;
+
+    unsigned undo_enabled = plt->undo_enabled;
+    plt->undo_enabled = 0;
+
+#ifdef __MINGW32__
+    if (!strncmp (fname, "file://", 7)) {
+        fname += 7;
+    }
+    // replace backslashes with normal slashes
+    char fname_conv[strlen (fname) + 1];
+    if (strchr (fname, '\\')) {
+        trace ("plt_load_int: backslash(es) detected: %s\n", fname);
+        strcpy (fname_conv, fname);
+        char *slash_p = fname_conv;
+        while (slash_p = strchr (slash_p, '\\')) {
+            *slash_p = '/';
+            slash_p++;
+        }
+        fname = fname_conv;
+    }
+    // path should start with "X:/", not "/X:/", fixing to avoid file opening problems
+    if (fname[0] == '/' && isalpha (fname[1]) && fname[2] == ':') {
+        fname++;
+    }
+#endif
+
+    // try plugins 1st
+    char *escaped = uri_unescape (fname, (int)strlen (fname));
+    if (escaped) {
+        fname = strdupa (escaped);
+        free (escaped);
+    }
+
+    const char *ext = strrchr (fname, '.');
+    if (ext) {
+        ext++;
+        DB_playlist_t **plug = plug_get_playlist_list ();
+        int p, e;
+        for (p = 0; plug[p]; p++) {
+            for (e = 0; plug[p]->extensions[e]; e++) {
+                if (plug[p]->load && !strcasecmp (ext, plug[p]->extensions[e])) {
+                    DB_playItem_t *loaded_it = NULL;
+                    if (cb || (plug[p]->load && !plug[p]->load2)) {
+                        loaded_it = plug[p]->load (
+                            (ddb_playlist_t *)plt,
+                            (DB_playItem_t *)after,
+                            fname,
+                            pabort,
+                            (int (*) (DB_playItem_t *, void *))cb,
+                            user_data);
+                    }
+                    else if (plug[p]->plugin.api_vminor >= 5 && plug[p]->load2) {
+                        loaded_it =
+                            plug[p]->load2 (visibility, (ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort);
+                    }
+                    plt->undo_enabled = undo_enabled;
+                    return (playItem_t *)loaded_it;
+                }
+            }
+        }
+    }
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        //        trace ("plt_load: failed to open %s\n", fname);
+        plt->undo_enabled = undo_enabled;
+        return NULL;
+    }
+
+    if (0 != _plt_load_from_file(fp, &last_added, plt)) {
+        goto load_fail;
+    }
+
     if (fp) {
         fclose (fp);
     }
@@ -2705,10 +2747,6 @@ plt_load_int (
     plt->undo_enabled = undo_enabled;
     return last_added;
 load_fail:
-    if (it) {
-        pl_item_unref (it);
-        it = NULL;
-    }
     //    trace ("playlist load fail (%s)!\n", fname);
     if (fp) {
         fclose (fp);
@@ -4498,10 +4536,10 @@ pl_items_from_same_album (playItem_t *a, playItem_t *b) {
     return pl_find_meta_raw (a, "album") == pl_find_meta_raw (b, "album") && a_artist == b_artist;
 }
 
-size_t
-plt_get_selected_items(playlist_t *plt, playItem_t ***out_items) {
+static size_t
+_plt_get_items (playlist_t *plt, playItem_t ***out_items, int selected) {
     LOCK;
-    int count = plt_getselcount (plt);
+    int count = selected ? plt_getselcount (plt) : plt_get_item_count(plt, PL_MAIN);
     if (count == 0) {
         UNLOCK;
         return 0;
@@ -4511,7 +4549,7 @@ plt_get_selected_items(playlist_t *plt, playItem_t ***out_items) {
 
     int index = 0;
     for (playItem_t *item = plt->head[PL_MAIN]; item != NULL; item = item->next[PL_MAIN]) {
-        if (item->selected) {
+        if (!selected || item->selected) {
             items[index++] = item;
             pl_item_ref (item);
         }
@@ -4521,4 +4559,14 @@ plt_get_selected_items(playlist_t *plt, playItem_t ***out_items) {
 
     *out_items = items;
     return count;
+}
+
+size_t
+plt_get_items (playlist_t *plt, playItem_t ***out_items) {
+    return _plt_get_items (plt, out_items, 0);
+}
+
+size_t
+plt_get_selected_items(playlist_t *plt, playItem_t ***out_items) {
+    return _plt_get_items (plt, out_items, 1);
 }
