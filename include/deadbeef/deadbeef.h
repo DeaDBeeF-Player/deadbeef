@@ -73,7 +73,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // API version history:
-// 1.18 -- deadbeef-1.9.7
+// 1.18 -- deadbeef-1.10.0
 // 1.17 -- deadbeef-1.9.6
 // 1.16 -- deadbeef-1.9.4
 // 1.15 -- deadbeef-1.9.0
@@ -366,7 +366,7 @@ enum {
     DB_PLUGIN_VFS     = 5,
     DB_PLUGIN_PLAYLIST = 6,
     DB_PLUGIN_GUI = 7,
-#if (DDB_API_LEVEL >= 15)
+#if (DDB_API_LEVEL >= 18)
     DB_PLUGIN_MEDIASOURCE = 8,
 #endif
 };
@@ -2313,11 +2313,7 @@ typedef struct DB_playlist_s {
 #endif
 } DB_playlist_t;
 
-// NOTE: Media source API is a work in progress, and is disabled in this version of source code.
-// This is to prevent plugin devs from releasing media source plugins, before this API is finalized.
-// Please use the appropriate development branch to test media source plugins.
-// The media source API is a subject to change.
-#if (DDB_API_LEVEL >= 15)
+#if (DDB_API_LEVEL >= 18)
 
 // Mediasource plugin
 // The purpose is to provide access to external media sources.
