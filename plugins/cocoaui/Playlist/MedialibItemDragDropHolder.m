@@ -91,10 +91,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    for (NSInteger i = 0; i < _count; i++) {
-        deadbeef->pl_item_ref (_items[i]);
-    }
-
     NSUInteger length = sizeof (NSInteger) + self.count * sizeof (ddb_playItem_t *);
     void *bytes = malloc (length);
     memcpy (bytes, &_count, sizeof (NSInteger));
