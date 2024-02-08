@@ -64,6 +64,7 @@ extern DB_functions_t *deadbeef;
         deadbeef->plt_unref (self.plt);
     }
 }
+
 // NSCoding
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {

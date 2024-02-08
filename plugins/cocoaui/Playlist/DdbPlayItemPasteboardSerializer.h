@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #include <deadbeef/deadbeef.h>
 
+/// Serialize/deserialize an array of playItems as playlist.
+/// The resulting items would not be the same memory locations after serialization,
+/// since they go through playlist saving and loading procedure.
 @interface DdbPlayItemPasteboardSerializer : NSObject<NSPasteboardReading, NSPasteboardWriting, NSSecureCoding>
 
 @property (nonnull,nonatomic,readonly) ddb_playlist_t *plt;

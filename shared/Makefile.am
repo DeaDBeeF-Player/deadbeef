@@ -1,4 +1,4 @@
-SUBDIRS = analyzer scope scriptable undo
+SUBDIRS = analyzer scope scriptable undo filereader
 
 noinst_LTLIBRARIES = libmp4tagutil.la libtrkpropertiesutil.la libeqpreset.la libctmap.la libdeletefromdisk.la libtftintutil.la
 

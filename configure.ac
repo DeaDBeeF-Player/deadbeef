@@ -941,6 +941,7 @@ shared/analyzer/Makefile
 shared/scope/Makefile
 shared/scriptable/Makefile
 shared/undo/Makefile
+shared/filereader/Makefile
 external/Makefile
 external/ddb_dsp_libretro/Makefile
 external/ddb_output_pw/Makefile
