@@ -82,6 +82,7 @@ VPATH=src \
 	shared \
 	shared/scriptable \
 	shared/undo \
+	shared/filereader \
 	Tests
 
 $(BUILD)/%.o: %.c
