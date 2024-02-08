@@ -87,7 +87,7 @@ void ddb_file_init_stdio (ddb_file_handle_t *handle, FILE *fp) {
 #pragma mark - buffer
 
 typedef struct {
-    uint8_t *buffer;
+    const uint8_t *buffer;
     size_t size;
 
     size_t pos;
@@ -150,8 +150,10 @@ int64_t _getlength_buffer (ddb_file_handle_t *handle) {
     return impl->size;
 }
 
-void ddb_file_init_buffer (ddb_file_handle_t *handle, uint8_t *buffer, size_t size) {
+void ddb_file_init_buffer (ddb_file_handle_t *handle, const uint8_t *buffer, size_t size) {
     buffer_t *data = calloc (1, sizeof (buffer_t));
+    data->buffer = buffer;
+    data->size = size;
     handle->impl = data;
     handle->deinit = _deinit_buffer;
     handle->read = _read_buffer;

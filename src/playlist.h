@@ -576,6 +576,9 @@ plt_get_items (playlist_t *plt, playItem_t ***out_items);
 size_t
 plt_get_selected_items(playlist_t *plt, playItem_t ***out_items);
 
+int
+plt_load_from_buffer (playlist_t *plt, const uint8_t *buffer, size_t size);
+
 ssize_t
 plt_save_to_buffer(playlist_t *plt, uint8_t **out_buffer);
 

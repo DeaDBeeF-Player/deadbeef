@@ -599,6 +599,7 @@ static DB_functions_t deadbeef_api = {
     .register_for_undo = _register_for_undo,
     .plt_get_items = (size_t (*) (ddb_playlist_t *plt, ddb_playItem_t ***out_items))plt_get_items,
     .plt_get_selected_items = (size_t (*) (ddb_playlist_t *plt, ddb_playItem_t ***out_items))plt_get_selected_items,
+    .plt_load_from_buffer = (int (*) (ddb_playlist_t *plt, const uint8_t *buffer, size_t size))plt_load_from_buffer,
     .plt_save_to_buffer = (ssize_t (*) (ddb_playlist_t *plt, uint8_t **out_buffer))plt_save_to_buffer,
 
 };

@@ -2763,6 +2763,22 @@ load_fail:
     return last_added;
 }
 
+int
+plt_load_from_buffer (playlist_t *plt, const uint8_t *buffer, size_t size) {
+    ddb_file_handle_t fh;
+    ddb_file_init_buffer(&fh, buffer, size);
+
+    playItem_t *last_added = NULL;
+    int res = _plt_load_from_file(plt, &fh, &last_added);
+    if (last_added) {
+        pl_item_unref (last_added);
+    }
+
+    ddb_file_deinit (&fh);
+
+    return res;
+}
+
 playItem_t *
 plt_load (
     playlist_t *plt,

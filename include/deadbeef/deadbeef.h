@@ -1753,6 +1753,7 @@ typedef struct {
     size_t (*plt_get_items) (ddb_playlist_t *plt, ddb_playItem_t ***out_items);
     size_t (*plt_get_selected_items) (ddb_playlist_t *plt, ddb_playItem_t ***out_items);
 
+    int (*plt_load_from_buffer) (ddb_playlist_t *plt, const uint8_t *buffer, size_t size);
     ssize_t (*plt_save_to_buffer) (ddb_playlist_t *plt, uint8_t **out_buffer);
 
 #endif

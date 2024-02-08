@@ -77,15 +77,14 @@ extern DB_functions_t *deadbeef;
         return self;
     }
 
-    // FIXME
-//    ddb_playlist_t *plt = deadbeef->plt_alloc("clipboard");
-//    int res = deadbeef->plt_load_from_buffer (plt, data.bytes, data.length);
-//    if (res == 0) {
-//        self.plt = plt;
-//    }
-//    else {
-//        deadbeef->plt_unref (plt);
-//    }
+    ddb_playlist_t *plt = deadbeef->plt_alloc("clipboard");
+    int res = deadbeef->plt_load_from_buffer (plt, (uint8_t *)data.bytes, data.length);
+    if (res == 0) {
+        self.plt = plt;
+    }
+    else {
+        deadbeef->plt_unref (plt);
+    }
 
     return self;
 }

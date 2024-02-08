@@ -42,7 +42,7 @@ struct ddb_file_handle_s {
 };
 
 void ddb_file_init_stdio (ddb_file_handle_t *handle, FILE *fp);
-void ddb_file_init_buffer (ddb_file_handle_t *handle, uint8_t *buffer, size_t size);
+void ddb_file_init_buffer (ddb_file_handle_t *handle, const uint8_t *buffer, size_t size);
 void ddb_file_deinit (ddb_file_handle_t *handle);
 
 size_t ddb_file_read (void *ptr, size_t size, size_t nmemb, ddb_file_handle_t *handle);
