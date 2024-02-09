@@ -243,6 +243,10 @@ _("Find");
 // xgettext:no-c-format
 _("Show\\/Hide Log window");
 // xgettext:no-c-format
+_("Undo");
+// xgettext:no-c-format
+_("Redo");
+// xgettext:no-c-format
 _("Ask confirmation to delete files from disk");
 // xgettext:no-c-format
 _("Status icon settings:");

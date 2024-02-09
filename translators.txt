@@ -121,6 +121,7 @@ Serbian (latin)
 Swedish
  Martin <brother@bsnet.se>
  Jonatan Nyberg
+ Luna Jernberg <bittin@cafe8bitar.se>
 
 Telugu
  PraveenIlla <mail2ipn@gmail.com>
