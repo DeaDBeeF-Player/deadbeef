@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-09 15:53+0100\n"
+"POT-Creation-Date: 2024-02-09 16:05+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Luna Jernberg <bittin@cafe8bitar.se>, 2024\n"
 "Language-Team: Swedish (http://app.transifex.com/deadbeef-player/deadbeef-player/language/sv/)\n"
@@ -1784,14 +1784,14 @@ msgstr "Ny spellista"
 
 #: ../plugins/gtkui/fileman.c:95
 msgid "Add Folders"
-msgstr ""
+msgstr "Lägg till mappar"
 
 #: ../plugins/gtkui/fileman.c:126
 #: ../plugins/gtkui/medialib/medialibwidget.c:518
 #: ../plugins/gtkui/playlist/mainplaylist.c:107
 #: ../plugins/gtkui/playlist/mainplaylist.c:138
 msgid "Add Files"
-msgstr ""
+msgstr "Lägg till filer"
 
 #: ../plugins/gtkui/fileman.c:204 ../translation/plugins.c:166
 #, no-c-format
@@ -1800,7 +1800,7 @@ msgstr "Lägg till plats"
 
 #: ../plugins/gtkui/fileman.c:358
 msgid "Drag & Drop"
-msgstr ""
+msgstr "Dra & släpp"
 
 #: ../plugins/gtkui/fileman.c:394 ../plugins/gtkui/fileman.c:484
 msgid "Supported sound formats"
@@ -3381,12 +3381,12 @@ msgstr "Visa\\/Dölj loggfönster"
 #: ../translation/plugins.c:246
 #, no-c-format
 msgid "Undo"
-msgstr ""
+msgstr "Ångra"
 
 #: ../translation/plugins.c:248
 #, no-c-format
 msgid "Redo"
-msgstr ""
+msgstr "Gör om"
 
 #: ../translation/plugins.c:250
 #, no-c-format

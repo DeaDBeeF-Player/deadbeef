@@ -13,6 +13,6 @@ while read i; do
     po=po/$i.po
     if ! [[ $(git diff $po | grep '+msgstr') ]]; then
         echo $i unmodified
-        git checkout HEAD $i
+        git checkout HEAD po/$i.po
     fi
 done <po/LINGUAS
