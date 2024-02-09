@@ -141,6 +141,12 @@ extern "C" {
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
 #endif
 
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 18)
+#define DEPRECATED_118 DDB_DEPRECATED("since deadbeef API 1.18")
+#else
+#define DEPRECATED_118
+#endif
+
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 17)
 #define DEPRECATED_117 DDB_DEPRECATED("since deadbeef API 1.17")
 #else
@@ -851,6 +857,7 @@ typedef struct {
 
 // forward decl for plugin struct
 struct DB_plugin_s;
+typedef struct DB_plugin_s DB_plugin_t;
 
 // player api definition
 typedef struct {
@@ -1768,6 +1775,11 @@ typedef struct {
     /// The resulting buffer must be freed after use.
     /// @return buffer size on success, -1 on error
     ssize_t (*plt_save_to_buffer) (ddb_playlist_t *plt, uint8_t **out_buffer);
+
+    /// Register a plugin for async deinitialization.
+    /// The deinit func will be called before unloading a plugin,
+    /// and the caller will wait until completion block is performed.
+    void (*plug_register_for_async_deinit) (DB_plugin_t *plugin, void (*deinit_func)(void (^completion_block)(void)));
 #endif
 } DB_functions_t;
 
@@ -1879,7 +1891,9 @@ enum {
 #endif
 
 #if (DDB_API_LEVEL >= 15)
-    DDB_PLUGIN_FLAG_ASYNC_STOP = 8,
+    // This flag is deprecated, do not use.
+    // It has been superceded by the API call plug_register_for_async_deinit
+    DDB_PLUGIN_FLAG_ASYNC_STOP DEPRECATED_118 = 8,
 #endif
 };
 #endif
@@ -1888,10 +1902,9 @@ enum {
 /// Reserved command IDs, usable with @c plugin.command method.
 /// The commands with numbers 1000 and up are reserved for internal use.
 enum {
-    // Stop plugin asynchronously.
-    // The plugin is expected to handle this command, if it has the flag @c DDB_PLUGIN_FLAG_ASYNC_STOP.
-    // The command 2nd argument is a void (^completion_block)(void).
-    DDB_COMMAND_PLUGIN_ASYNC_STOP = 1000,
+    // This flag is deprecated, do not use.
+    // It has been superceded by the API call plug_register_for_async_deinit
+    DDB_COMMAND_PLUGIN_ASYNC_STOP DEPRECATED_118 = 1000,
 };
 
 typedef struct ddb_response_s {
@@ -1902,7 +1915,7 @@ typedef struct ddb_response_s {
 #endif
 
 // base plugin interface
-typedef struct DB_plugin_s {
+struct DB_plugin_s {
     // type must be one of DB_PLUGIN_ types
     int32_t type;
     // api version
@@ -1974,7 +1987,7 @@ typedef struct DB_plugin_s {
     // plugin configuration dialog is constructed from this data
     // can be NULL
     const char *configdialog;
-} DB_plugin_t;
+};
 
 // file format stuff
 

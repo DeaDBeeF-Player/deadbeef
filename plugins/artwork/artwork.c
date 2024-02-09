@@ -1839,7 +1839,7 @@ artwork_get_actions (DB_playItem_t *it) {
     return &context_action;
 }
 
-static int
+static void
 artwork_plugin_stop (void (^completion_block) (void)) {
     queue_clear ();
     stop_cache_cleaner ();
@@ -1916,25 +1916,12 @@ artwork_plugin_stop (void (^completion_block) (void)) {
         sync_queue = NULL;
         completion_block ();
     });
-
-    return 0;
-}
-
-static int
-_command (int cmd, ...) {
-    if (cmd == DDB_COMMAND_PLUGIN_ASYNC_STOP) {
-        va_list ap;
-        void (^block) (void);
-        va_start (ap, cmd);
-        block = va_arg (ap, void (^) (void));
-        va_end (ap);
-        return artwork_plugin_stop (block);
-    }
-    return -1;
 }
 
 static int
 artwork_plugin_start (void) {
+    deadbeef->plug_register_for_async_deinit(&plugin.plugin.plugin, artwork_plugin_stop);
+
     _get_fetcher_preferences ();
     cache_reset_time = deadbeef->conf_get_int64 ("artwork.cache_reset_time", 0);
 
@@ -1986,7 +1973,6 @@ ddb_artwork_plugin_t plugin = {
     .plugin.plugin.api_vminor = DB_API_VERSION_MINOR,
     .plugin.plugin.version_major = DDB_ARTWORK_MAJOR_VERSION,
     .plugin.plugin.version_minor = DDB_ARTWORK_MINOR_VERSION,
-    .plugin.plugin.flags = DDB_PLUGIN_FLAG_ASYNC_STOP,
     .plugin.plugin.type = DB_PLUGIN_MISC,
     .plugin.plugin.id = "artwork2",
     .plugin.plugin.name = "Album Artwork",
@@ -2012,9 +1998,7 @@ ddb_artwork_plugin_t plugin = {
                                "\n"
                                "3. This notice may not be removed or altered from any source distribution.\n",
     .plugin.plugin.website = "http://deadbeef.sf.net",
-    .plugin.plugin.command = _command,
     .plugin.plugin.start = artwork_plugin_start,
-    // NOTE: stop is handled asynchronously by the command method with DDB_COMMAND_PLUGIN_ASYNC_STOP type
     .plugin.plugin.configdialog = settings_dlg,
     .plugin.plugin.message = artwork_message,
     .plugin.plugin.get_actions = artwork_get_actions,
