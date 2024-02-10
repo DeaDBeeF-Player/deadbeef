@@ -345,9 +345,6 @@ playlist_controller_message (playlist_controller_t *ctl, uint32_t id, uintptr_t 
         }
         break;
     case DB_EV_PLAYLISTCHANGED:
-        if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
-            g_idle_add (playlist_sort_reset_cb, ctl->listview);
-        }
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT ||
             (p1 == DDB_PLAYLIST_CHANGE_SELECTION && (p2 != PL_MAIN || (DdbListview *)ctx != ctl->listview)) ||
             p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
