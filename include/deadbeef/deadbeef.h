@@ -1779,7 +1779,7 @@ typedef struct {
     /// Register a plugin for async deinitialization.
     /// The deinit func will be called before unloading a plugin,
     /// and the caller will wait until completion block is performed.
-    void (*plug_register_for_async_deinit) (DB_plugin_t *plugin, void (*deinit_func)(void (^completion_block)(void)));
+    void (*plug_register_for_async_deinit) (DB_plugin_t *plugin, void (*deinit_func)(void (*completion_callback)(DB_plugin_t *plugin)));
 #endif
 } DB_functions_t;
 

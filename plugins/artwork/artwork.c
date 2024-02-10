@@ -1840,7 +1840,7 @@ artwork_get_actions (DB_playItem_t *it) {
 }
 
 static void
-artwork_plugin_stop (void (^completion_block) (void)) {
+artwork_plugin_stop (void (*completion_callback) (DB_plugin_t *plugin)) {
     queue_clear ();
     stop_cache_cleaner ();
 
@@ -1914,7 +1914,7 @@ artwork_plugin_stop (void (^completion_block) (void)) {
 
         dispatch_release (sync_queue);
         sync_queue = NULL;
-        completion_block ();
+        completion_callback (&plugin.plugin.plugin);
     });
 }
 

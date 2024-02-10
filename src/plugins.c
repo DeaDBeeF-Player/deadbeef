@@ -100,7 +100,7 @@ typedef struct plugin_s {
     void *handle;
     char *filepath;
     DB_plugin_t *plugin;
-    void (*async_deinit)(void (^completion_block)(void));
+    void (*async_deinit)(void (*completion_callback)(DB_plugin_t *plugin));
     struct plugin_s *next;
 } plugin_t;
 
@@ -204,7 +204,7 @@ _register_for_undo (ddb_undo_hooks_t *hooks) {
 }
 
 static void
-_plug_register_for_async_deinit (DB_plugin_t *plugin, void (*deinit_func)(void (^completion_block)(void))) {
+_plug_register_for_async_deinit (DB_plugin_t *plugin, void (*deinit_func)(void (*completion_callback)(DB_plugin_t *plugin))) {
     for (plugin_t *p = plugins; p != NULL; p = p->next) {
         if (p->plugin == plugin) {
             p->async_deinit = deinit_func;
@@ -1389,7 +1389,10 @@ static int _async_stop_count = 0;
 static void (^_async_stop_completion_block)(void);
 
 static void
-_handle_async_stop (void) {
+_handle_async_stop (DB_plugin_t *plugin) {
+    if (plugin != NULL) {
+        trace ("Stopped %s...\n", plugin->name);
+    }
     _async_stop_count -= 1;
     if (_async_stop_count == 0) {
         _plug_unload_stop_complete();
@@ -1458,13 +1461,10 @@ plug_unload_all (void(^completion_block)(void)) {
     for (plugin_t *p = plugins; p; p = p->next) {
         if (p->async_deinit != NULL) {
             _async_stop_count += 1;
-            p->async_deinit(^{
-                trace ("Stopped %s...\n", p->plugin->name);
-                _handle_async_stop();
-            });
+            p->async_deinit(_handle_async_stop);
         }
     }
-    _handle_async_stop();
+    _handle_async_stop(NULL);
 }
 
 void
