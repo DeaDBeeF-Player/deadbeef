@@ -2,11 +2,13 @@
 Type=Application
 Name=DeaDBeeF
 GenericName=Audio Player
+GenericName[ko]=오디오 재생기
 GenericName[pt_BR]=Reprodutor de áudio
 GenericName[ru]=Аудио плеер
 GenericName[zh_CN]=音频播放器
 GenericName[zh_TW]=音樂播放器
-Comment=Listen to music
+Comment=음악을 듣습니다
+Comment[ko]=Escute músicas
 Comment[pt_BR]=Escute músicas
 Comment[ru]=Слушай музыку
 Comment[zh_CN]=倾听音乐
@@ -18,40 +20,46 @@ Actions=Play;Pause;Toggle-Pause;Stop;Next;Prev;
 MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;audio/x-mpegurl;audio/x-scpls;application/x-cue;
 Categories=Audio;AudioVideo;Player;GTK;
 Keywords=Sound;Music;Audio;Player;Musicplayer;MP3;
-Keywords[zh_TW]=Sound;Music;Audio;Player;Musicplayer;MP3;音樂;音樂播放器;播放器;音訊;
+Keywords[zh_TW]=Sound;Music;Audio;Player;Musicplayer;MP3;音樂;音樂播放器;播放器;音訊;소리;음악;오디오;뮤직;음악재생기;음악플레이어;오디오재생기;오디오플레이어;플레이어;
 
 X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Next;Prev;
 X-PulseAudio-Properties=media.role=music
 
 [Desktop Action Play]
 Name=Play
+Name[ko]=재생하기
 Name[zh_CN]=播放
 Name[zh_TW]=播放
 Exec=deadbeef --play
 
 [Desktop Action Pause]
 Name=Pause
+Name[ko]=일시정지
 Name[zh_CN]=暂停
 Name[zh_TW]=暫停
 Exec=deadbeef --pause
 
 [Desktop Action Toggle-Pause]
 Name=Toggle Pause
+Name[ko]=재생/정지
 Name[zh_CN]=播放/暂停
 Name[zh_TW]=播放/暫停
 Exec=deadbeef --toggle-pause
 
 [Desktop Action Stop]
 Name=Stop
+Name[ko]=중지하기
 Name[zh_TW]=停止
 Exec=deadbeef --stop
 
 [Desktop Action Next]
 Name=Next
+Name[ko]=다음
 Name[zh_TW]=下一首
 Exec=deadbeef --next
 
 [Desktop Action Prev]
 Name=Prev
+Name[ko]=이전
 Name[zh_TW]=上一首
 Exec=deadbeef --prev
