@@ -356,7 +356,13 @@ gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length) {
         gtkui_dispatch_on_main(^{
             ddb_undo->set_action_name (_("Drag & Drop"));
 
-            ddb_playItem_t *after = deadbeef->pl_get_prev(data->drop_before, PL_MAIN);
+            ddb_playItem_t *after;
+            if (data->drop_before != NULL) {
+                after = deadbeef->pl_get_prev(data->drop_before, PL_MAIN);
+            }
+            else {
+                after = deadbeef->plt_get_last(plt_curr, PL_MAIN);
+            }
             deadbeef->plt_move_all_items (plt_curr, plt, after);
             if (after != NULL) {
                 deadbeef->pl_item_unref (after);
