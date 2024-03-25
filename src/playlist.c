@@ -3791,6 +3791,10 @@ void
 plt_move_all_items (playlist_t *to, playlist_t *from, playItem_t *insert_after) {
     LOCK;
     playItem_t *it = from->head[PL_MAIN];
+    if (it == NULL) {
+        UNLOCK;
+        return;
+    }
     pl_item_ref(it);
     ddb_undobuffer_group_begin (ddb_undomanager_get_buffer (ddb_undomanager_shared ()));
     while (it != NULL) {
