@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Name=Enqueue in DeaDBeeF
+GenericName=Enqueue
+GenericName[pt_BR]=Colocar
+GenericName[ru]=Добавить в очередь
+GenericName[zh_CN]=音频播放器
+GenericName[zh_TW]=音樂播放器
+Icon=deadbeef
+Exec=deadbeef --queue %F
+Terminal=false
+NoDisplay=true
+MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;audio/x-mpegurl;audio/x-scpls;application/x-cue;inode/directory;
+
+X-PulseAudio-Properties=media.role=music
+X-KDE-StartupNotify=false
