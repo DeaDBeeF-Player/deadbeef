@@ -29,10 +29,16 @@ If you wish to chat with developers, join us on [Discord](https://discord.gg/GTV
 
 ### Linux, BSD and similar (GTK/*NIX version)
 
-* See the README file for detailed instructions, dependencies, etc.
-* Install git, Clang toolchain
+The overall process is simple, but it's hard to figure out the dependencies.
+
+Please consult the [README file](README) in the same folder for more details,
+or visit the [wiki page](https://github.com/DeaDBeeF-Player/deadbeef/wiki/Detailed-Build-Instructions)
+
+If you have the dependencies - follow these simple steps:
+
+* Install Git, Clang toolchain
 * Remember to get submodules: `git submodule update --init`
-* Install dependencies, as listed in the README file
+* Install dependencies
 * Run `./autogen.sh` to bootstrap
 * Run `CC=clang CXX=clang++ ./configure`, followed with `make` and `sudo make install`.
 * For more information about the build process, read the generated INSTALL file and the output of `./configure --help`.
