@@ -1863,6 +1863,11 @@
 		2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */; };
 		2DA3721B2370B854005E64A3 /* NowPlayable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA372192370B854005E64A3 /* NowPlayable.h */; };
 		2DA3721C2370B854005E64A3 /* NowPlayable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA3721A2370B854005E64A3 /* NowPlayable.m */; };
+		2DA37B082BC58B04007B2C3F /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B88C2269F6B900AFF9AE /* support.h */; };
+		2DA37B0A2BC58B04007B2C3F /* pltbrowser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */; };
+		2DA37B0B2BC58B04007B2C3F /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87D2269F6B900AFF9AE /* support.c */; };
+		2DA37B0D2BC58B04007B2C3F /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
+		2DA37B142BC58B51007B2C3F /* pltbrowser_gtk2.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA37B112BC58B04007B2C3F /* pltbrowser_gtk2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DA59D9125D00A8E00947C19 /* M3UTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA59D9025D00A8E00947C19 /* M3UTests.cpp */; };
 		2DA59DD125D00A9A00947C19 /* m3u.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DCB281919E86183008E9DF6 /* m3u.c */; };
 		2DA5A3CC25D01CB800947C19 /* ebur128.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEEB1D9D873E00842D76 /* ebur128.c */; };
@@ -3757,6 +3762,13 @@
 			remoteGlobalIDString = 2DA24B4A19E724C200E34920;
 			remoteInfo = vfs_curl;
 		};
+		2DA37B122BC58B42007B2C3F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2DA37B062BC58B04007B2C3F;
+			remoteInfo = pltbrowser_gtk2;
+		};
 		2DA5A4CE25D01CDA00947C19 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -4362,6 +4374,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2DA37B142BC58B51007B2C3F /* pltbrowser_gtk2.dylib in Copy Plugins */,
 				2D5658372AEE6F620014443E /* medialib.dylib in Copy Plugins */,
 				2DC6574C274428F200583E14 /* ddb_gui_GTK2.dylib in Copy Plugins */,
 				2DC6574D274428F200583E14 /* libwavpacklib.dylib in Copy Plugins */,
@@ -6520,6 +6533,7 @@
 		2DA30E782403292D001BAB8A /* PlaybackPreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaybackPreferencesViewController.m; sourceTree = "<group>"; };
 		2DA372192370B854005E64A3 /* NowPlayable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NowPlayable.h; sourceTree = "<group>"; };
 		2DA3721A2370B854005E64A3 /* NowPlayable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NowPlayable.m; sourceTree = "<group>"; };
+		2DA37B112BC58B04007B2C3F /* pltbrowser_gtk2.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pltbrowser_gtk2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA59D9025D00A8E00947C19 /* M3UTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = M3UTests.cpp; sourceTree = "<group>"; };
 		2DA59E1125D00C6200947C19 /* m3u.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = m3u.h; sourceTree = "<group>"; };
 		2DA5A34825D01CA500947C19 /* libebur128.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libebur128.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7962,6 +7976,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D977F451CA4B1F3006DBE79 /* libcurl.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DA37B0C2BC58B04007B2C3F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DA37B0D2BC58B04007B2C3F /* libjansson.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12562,6 +12584,7 @@
 				2DE77467275E893400890350 /* converter_gtk3.dylib */,
 				2D0AC90C2856450100F6D56A /* IntegrationTests.xctest */,
 				2DC6C609294DE5C700A63CEB /* libgoogletest.dylib */,
+				2DA37B112BC58B04007B2C3F /* pltbrowser_gtk2.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -14239,6 +14262,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DA37B072BC58B04007B2C3F /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DA37B082BC58B04007B2C3F /* support.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DA5A34425D01CA500947C19 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -15665,6 +15696,23 @@
 			productReference = 2DA24B4B19E724C200E34920 /* vfs_curl.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		2DA37B062BC58B04007B2C3F /* pltbrowser_gtk2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2DA37B0E2BC58B04007B2C3F /* Build configuration list for PBXNativeTarget "pltbrowser_gtk2" */;
+			buildPhases = (
+				2DA37B072BC58B04007B2C3F /* Headers */,
+				2DA37B092BC58B04007B2C3F /* Sources */,
+				2DA37B0C2BC58B04007B2C3F /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = pltbrowser_gtk2;
+			productName = pltbrowser;
+			productReference = 2DA37B112BC58B04007B2C3F /* pltbrowser_gtk2.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2DA5A34725D01CA500947C19 /* ebur128 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2DA5A34925D01CA500947C19 /* Build configuration list for PBXNativeTarget "ebur128" */;
@@ -15790,6 +15838,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DA37B132BC58B42007B2C3F /* PBXTargetDependency */,
 				2D56570B2AED367C0014443E /* PBXTargetDependency */,
 				2DC656DF274428F200583E14 /* PBXTargetDependency */,
 				2DC656E1274428F200583E14 /* PBXTargetDependency */,
@@ -16520,6 +16569,7 @@
 				4D9C5B041FDEBACC00D83CEF /* opuslib */,
 				2DFD50941C9715B800961D19 /* psf */,
 				2D62209F1CD933D800EB6D22 /* png */,
+				2DA37B062BC58B04007B2C3F /* pltbrowser_gtk2 */,
 				2DE3B8732269F68B00AFF9AE /* pltbrowser_gtk3 */,
 				2D27AED31D9D86ED00842D76 /* rg_scanner */,
 				2DB96A8919ABB4C600E318A8 /* samplerate */,
@@ -17969,6 +18019,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2DA37B092BC58B04007B2C3F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2DA37B0A2BC58B04007B2C3F /* pltbrowser.c in Sources */,
+				2DA37B0B2BC58B04007B2C3F /* support.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2DA5A34525D01CA500947C19 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -19298,6 +19357,11 @@
 			isa = PBXTargetDependency;
 			target = 2DA24B4A19E724C200E34920 /* vfs_curl */;
 			targetProxy = 2DA24BA119E72A0000E34920 /* PBXContainerItemProxy */;
+		};
+		2DA37B132BC58B42007B2C3F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2DA37B062BC58B04007B2C3F /* pltbrowser_gtk2 */;
+			targetProxy = 2DA37B122BC58B42007B2C3F /* PBXContainerItemProxy */;
 		};
 		2DA5A4CF25D01CDA00947C19 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -22644,6 +22708,105 @@
 			};
 			name = Release;
 		};
+		2DA37B0F2BC58B04007B2C3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DC6565C2744287000583E14 /* gtk2.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = arm64;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK2_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"$(GTK2_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = NO;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2DA37B102BC58B04007B2C3F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DC6565C2744287000583E14 /* gtk2.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = arm64;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK2_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"$(GTK2_LDFLAGS)",
+					"$(JANSSON_LDFLAGS)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = NO;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		2DA5A34A25D01CA500947C19 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -25210,6 +25373,15 @@
 			buildConfigurations = (
 				2DA24B4D19E724C200E34920 /* Debug */,
 				2DA24B4E19E724C200E34920 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2DA37B0E2BC58B04007B2C3F /* Build configuration list for PBXNativeTarget "pltbrowser_gtk2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DA37B0F2BC58B04007B2C3F /* Debug */,
+				2DA37B102BC58B04007B2C3F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
