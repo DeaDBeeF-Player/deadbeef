@@ -516,7 +516,10 @@ read_track_cdtext (CdIo_t *cdio, int track_nr, DB_playItem_t *item)
     int field_type;
     for (field_type = 0; field_type < MAX_CDTEXT_FIELDS; field_type++) {
 #if CDIO_API_VERSION >= 6
-        const char *text = cdtext_get_const (cdtext, field_type, track_nr);
+        const char *text = cdtext_get_const (cdtext, field_type, 0);
+        if (!text) {
+            text = cdtext_get_const (cdtext, field_type, track_nr);
+        }
 #else
         const char *text = cdtext_get_const (field_type, cdtext);
 #endif
