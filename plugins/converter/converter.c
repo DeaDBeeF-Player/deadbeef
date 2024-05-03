@@ -1379,6 +1379,25 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
     DB_fileinfo_t *fileinfo = NULL;
     char input_file_name[PATH_MAX] = "";
 
+#ifdef __APPLE__
+    // Remember/copy the original PATH variable.
+    char *pathenvorig = getenv("PATH");
+    if (pathenvorig == NULL) {
+        return -1;
+    }
+    char *pathenvcopy = strdup(pathenvorig);
+
+    // Add homebrew and macports paths.
+    size_t bufsize = strlen(pathenvcopy) + 100;
+    char *modifiedpath = malloc(bufsize);
+    snprintf(modifiedpath, bufsize, "%s:/opt/homebrew/bin:/opt/local/bin", pathenvcopy);
+    setenv("PATH", modifiedpath, 1);
+    free (modifiedpath);
+    modifiedpath = NULL;
+
+    // Note: the original value of PATH env variable is restored at the end of this function.
+#endif
+
     char *final_path = strdupa (out);
     char *sep = strrchr (final_path, '/');
     if (sep) {
@@ -1503,6 +1522,12 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
 
     err = 0;
 error:
+
+#ifdef __APPLE__
+    setenv("PATH", pathenvcopy, 1);
+    free(pathenvcopy);
+    pathenvcopy = NULL;
+#endif
     if (temp_file != -1 && (!enc_pipe || temp_file != fileno (enc_pipe))) {
         close (temp_file);
         temp_file = -1;
