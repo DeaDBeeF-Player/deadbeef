@@ -2084,18 +2084,18 @@ TEST_F(TitleFormattingTests, test_LongestMid_ReturnsMid) {
     EXPECT_TRUE(!strcmp (buffer, "333"));
 }
 
-TEST_F(TitleFormattingTests, test_LongerFirst_ReturnsFirst) {
-    char *bc = tf_compile("$longer(22,1)");
+TEST_F(TitleFormattingTests, test_LongerFirst_ReturnsTrue) {
+    char *bc = tf_compile("$if($longer(22,1),true,false)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    EXPECT_TRUE(!strcmp (buffer, "22"));
+    EXPECT_TRUE(!strcmp (buffer, "true"));
 }
 
-TEST_F(TitleFormattingTests, test_LongerSecond_ReturnsSecond) {
-    char *bc = tf_compile("$longer(1,22)");
+TEST_F(TitleFormattingTests, test_LongerSecond_ReturnsFalse) {
+    char *bc = tf_compile("$if($longer(1,22),true,false)");
     tf_eval (&ctx, bc, buffer, 1000);
     tf_free (bc);
-    EXPECT_TRUE(!strcmp (buffer, "22"));
+    EXPECT_TRUE(!strcmp (buffer, "false"));
 }
 
 TEST_F(TitleFormattingTests, test_PadcutStrLonger_ReturnsHeadOfStr) {

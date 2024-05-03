@@ -1091,7 +1091,19 @@ tf_func_longer(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
     if (argc != 2) {
         return -1;
     }
-    return tf_func_longest(ctx, argc, arglens, args, out, outlen, fail_on_undef);
+
+    int bool_out = 0;
+
+    const char *arg = args;
+    int len;
+    TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
+    size_t l1 = u8_strlen (out);
+
+    arg += arglens[0];
+    TF_EVAL_CHECK(len, ctx, arg, arglens[1], out, outlen, fail_on_undef);
+    size_t l2 = u8_strlen (out);
+
+    return l1 > l2;
 }
 
 // $pad(expr,len[, char]): If `expr` is shorter than len characters, the function adds `char` characters (if present otherwise
