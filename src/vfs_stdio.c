@@ -212,7 +212,7 @@ stdio_getlength (DB_FILE *stream) {
     return l;
 #else
     if (!f->have_size) {
-        int64_t size = lseek (f->stream, 0, SEEK_END);
+        off_t size = lseek (f->stream, 0, SEEK_END);
         lseek (f->stream, f->offs, SEEK_SET);
 #ifdef USE_BUFFERING
         f->bufremaining = 0;
