@@ -879,7 +879,7 @@ typedef struct {
 
     // streamer access
     /// This function is unsafe, and has been deprecated in favor of @c streamer_get_playing_track_safe
-    DB_playItem_t *(*streamer_get_playing_track) (void) DEPRECATED_16;
+    DB_playItem_t *(*streamer_get_playing_track) (void) DEPRECATED_116;
     DB_playItem_t *(*streamer_get_streaming_track) (void);
     float (*streamer_get_playpos) (void);
     int (*streamer_ok_to_read) (int len);
