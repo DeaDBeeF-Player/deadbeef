@@ -33,14 +33,6 @@
     conf_enable_saving (0);
     self.plugin = (DB_mediasource_t *)plug_get_for_id("medialib");
     self.medialib = (ddb_medialib_plugin_api_t *)self.plugin->get_extended_api();
-    self.scanCompletedExpectation = [[XCTestExpectation alloc] initWithDescription:@"Scan completed"];
-    self.waitCount = 0;
-
-    conf_set_int("medialib.IntegrationTest.enabled", 0);
-    self.source = self.plugin->create_source("IntegrationTest");
-    self.medialib->enable_file_operations(self.source, 0);
-    self.plugin->set_source_enabled(self.source, 1);
-
 }
 
 - (void)tearDown {
@@ -52,13 +44,15 @@
 
 static void
 _listener(ddb_mediasource_event_type_t event, void *user_data) {
-    // The DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE should trigger twice:
-    // on the initial load, and on scan completion.
-    // Wait for the 2nd event.
+    // The DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE should trigger multiple times:
+    // 1. initial setup (enable source)
+    // 2. playlist load
+    // 3. scan completion
+    // We need to wait for the scan completion, so countint to 3.
     if (event == DDB_MEDIASOURCE_EVENT_CONTENT_DID_CHANGE) {
         MediaLibTests *self = (__bridge MediaLibTests *)(user_data);
         self.waitCount += 1;
-        if (self.waitCount == 2) {
+        if (self.waitCount == 3) {
             [self.scanCompletedExpectation fulfill];
         }
     }
@@ -69,7 +63,15 @@ _listener(ddb_mediasource_event_type_t event, void *user_data) {
     snprintf (path, sizeof (path), "%s/TestData/MediaLibrary/MultiArtist", dbplugindir);
     const char *folders[] = { path };
 
+    self.scanCompletedExpectation = [[XCTestExpectation alloc] initWithDescription:@"Scan completed"];
+    self.waitCount = 0;
+
+    conf_set_int("medialib.IntegrationTest.enabled", 0);
+    self.source = self.plugin->create_source("IntegrationTest");
     self.plugin->add_listener(self.source, _listener, (__bridge void *)(self));
+    self.medialib->enable_file_operations(self.source, 0);
+    self.plugin->set_source_enabled(self.source, 1);
+
     self.medialib->set_folders(self.source, folders, 1);
     self.plugin->refresh(self.source);
 
