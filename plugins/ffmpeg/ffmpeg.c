@@ -62,7 +62,7 @@ static int enable_dop = 0;
 
 typedef struct {
     DB_fileinfo_t info;
-    AVCodec *codec;
+    const AVCodec *codec;
     AVCodecContext *codec_context;
     int need_to_free_codec_context;
     AVFormatContext *format_context;
@@ -115,12 +115,20 @@ int is_codec_dsd(enum AVCodecID codec_id) {
 // ensure that the buffer can contain entire frame of frame_size bytes per channel
 static int
 ensure_buffer (ffmpeg_info_t *info, size_t frame_size) {
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 0, 0)
+    if (!info->buffer || info->buffer_size < frame_size * info->codec_context->ch_layout.nb_channels) {
+#else
     if (!info->buffer || info->buffer_size < frame_size * info->codec_context->channels) {
+#endif
         if (info->buffer) {
             free (info->buffer);
             info->buffer = NULL;
         }
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 0, 0)
+        info->buffer_size = frame_size*info->codec_context->ch_layout.nb_channels;
+#else
         info->buffer_size = frame_size*info->codec_context->channels;
+#endif
         info->left_in_buffer = 0;
         int err = posix_memalign ((void **)&info->buffer, 16, info->buffer_size);
         if (err) {
@@ -137,7 +145,7 @@ _get_audio_codec_from_stream(AVFormatContext *format_context, int stream_index, 
     if (format_context->streams[stream_index]->codecpar->codec_type != AVMEDIA_TYPE_AUDIO) {
         return 0;
     }
-    AVCodec *codec = avcodec_find_decoder(format_context->streams[stream_index]->codecpar->codec_id);
+    const AVCodec *codec = avcodec_find_decoder(format_context->streams[stream_index]->codecpar->codec_id);
     if (codec == NULL) {
         return 0;
     }
@@ -154,7 +162,7 @@ _get_audio_codec_from_stream(AVFormatContext *format_context, int stream_index, 
     if (ctx == NULL) {
         return 0;
     }
-    AVCodec *codec = avcodec_find_decoder (ctx->codec_id);
+    const AVCodec *codec = avcodec_find_decoder (ctx->codec_id);
     if (codec == NULL) {
         return 0;
     }
@@ -231,7 +239,11 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     int bps = av_get_bytes_per_sample (info->codec_context->sample_fmt)*8;
     int samplerate = info->codec_context->sample_rate;
 
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 0, 0)
+    if (bps <= 0 || info->codec_context->ch_layout.nb_channels <= 0 || samplerate <= 0) {
+#else
     if (bps <= 0 || info->codec_context->channels <= 0 || samplerate <= 0) {
+#endif
         return -1;
     }
 
@@ -248,7 +260,11 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->plugin = &plugin.decoder;
     _info->readpos = 0;
     _info->fmt.bps = bps;
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 0, 0)
+    _info->fmt.channels = info->codec_context->ch_layout.nb_channels;
+#else
     _info->fmt.channels = info->codec_context->channels;
+#endif
     _info->fmt.samplerate = samplerate;
     if (info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLT || info->codec_context->sample_fmt == AV_SAMPLE_FMT_FLTP) {
         _info->fmt.is_float = 1;
@@ -296,7 +312,9 @@ _free_info_data(ffmpeg_info_t *info) {
         av_packet_unref (&info->pkt);
     }
     if (info->codec_context) {
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 0, 0)
         avcodec_close (info->codec_context);
+#endif
 
         // The ctx is owned by AVFormatContext in legacy mode
         if (info->need_to_free_codec_context) {
@@ -396,7 +414,11 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                         return -1;
                     }
 
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 0, 0)
+                    int chCnt = info->codec_context->ch_layout.nb_channels;
+#else
                     int chCnt = info->codec_context->channels;
+#endif
                     int chSize = info->pkt.size / chCnt;
                     uint32_t *pOut = (uint32_t *)info->buffer;
                     uint8_t  marker = 0x05;
@@ -462,25 +484,30 @@ ffmpeg_read (DB_fileinfo_t *_info, char *bytes, int size) {
                         return -1;
                     }
                     if (av_sample_fmt_is_planar(info->codec_context->sample_fmt)) {
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 0, 0)
+                        int chCnt = info->codec_context->ch_layout.nb_channels;
+#else
+                        int chCnt = info->codec_context->channels;
+#endif
                         out_size = 0;
-                        for (int c = 0; c < info->codec_context->channels; c++) {
+                        for (int c = 0; c < chCnt; c++) {
                             for (int i = 0; i < info->frame->nb_samples; i++) {
                                 if (_info->fmt.bps == 8) {
-                                    info->buffer[i*info->codec_context->channels+c] = ((int8_t *)info->frame->extended_data[c])[i];
+                                    info->buffer[i*chCnt+c] = ((int8_t *)info->frame->extended_data[c])[i];
                                     out_size++;
                                 }
                                 else if (_info->fmt.bps == 16) {
                                     int16_t outsample = ((int16_t *)info->frame->extended_data[c])[i];
-                                    ((int16_t*)info->buffer)[i*info->codec_context->channels+c] = outsample;
+                                    ((int16_t*)info->buffer)[i*chCnt+c] = outsample;
                                     out_size += 2;
                                 }
                                 else if (_info->fmt.bps == 24) {
-                                    memcpy (&info->buffer[(i*info->codec_context->channels+c)*3], &((int8_t*)info->frame->extended_data[c])[i*3], 3);
+                                    memcpy (&info->buffer[(i*chCnt+c)*3], &((int8_t*)info->frame->extended_data[c])[i*3], 3);
                                     out_size += 3;
                                 }
                                 else if (_info->fmt.bps == 32) {
                                     int32_t sample = ((int32_t *)info->frame->extended_data[c])[i];
-                                    ((int32_t*)info->buffer)[i*info->codec_context->channels+c] = sample;
+                                    ((int32_t*)info->buffer)[i*chCnt+c] = sample;
                                     out_size += 4;
                                 }
                             }
@@ -784,7 +811,11 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     trace ("ffmpeg: samplerate is %d\n", samplerate);
     trace ("ffmpeg: duration is %f\n", duration);
 
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 0, 0)
+    if (bps <= 0 || info.codec_context->ch_layout.nb_channels <= 0 || samplerate <= 0) {
+#else
     if (bps <= 0 || info.codec_context->channels <= 0 || samplerate <= 0) {
+#endif
         goto error;
     }
 
@@ -819,7 +850,11 @@ ffmpeg_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
         snprintf (s, sizeof (s), "%d", bps);
         deadbeef->pl_add_meta (it, ":BPS", s);
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 0, 0)
+        snprintf (s, sizeof (s), "%d", info.codec_context->ch_layout.nb_channels);
+#else
         snprintf (s, sizeof (s), "%d", info.codec_context->channels);
+#endif
         deadbeef->pl_add_meta (it, ":CHANNELS", s);
         if (is_codec_dsd(info.codec_context->codec_id)) {
             snprintf (s, sizeof (s), "%d", samplerate * 8);
@@ -904,7 +939,7 @@ ffmpeg_init_exts (void) {
         n = add_new_exts (n, new_exts, ';');
     }
 	else {
-        AVInputFormat *ifmt  = NULL;
+        const AVInputFormat *ifmt  = NULL;
         /*
           * It's quite complicated to enumerate all supported extensions in
          * ffmpeg. If a decoder defines extensions in ffmpeg, the probing
