@@ -50,7 +50,7 @@ int u8_toutf8(char *dest, int32_t sz, uint32_t *src, int32_t srcsz);
 int u8_wc_toutf8(char *dest, uint32_t ch);
 
 /* character number to byte offset */
-int u8_offset(char *str, int32_t charnum);
+int u8_offset(const char *str, int32_t charnum);
 
 /* byte offset to character number */
 int u8_charnum(char *s, int32_t offset);

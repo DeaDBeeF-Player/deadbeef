@@ -875,6 +875,45 @@ tf_func_crlf (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     return 1;
 }
 
+static int
+_escape_size(const char *str) {
+    int bytes = 1;
+    while (*str != 0 && *str != 'm') {
+        str++;
+        bytes++;
+    }
+    return bytes;
+}
+
+static int
+_u8_escaped_offset(const char *str, int32_t charnum) {
+    int size = 0;
+    int32_t bytes = 0;
+    // skip leading sequences
+    while (*str != 0 && *str == '\033') {
+        size = _escape_size(str);
+        str += size;
+        bytes += size;
+    }
+
+    if (*str == 0) {
+        return bytes;
+    }
+
+    size = u8_offset(str, charnum);
+    bytes += size;
+    str += size;
+
+    // skip trailing sequences
+    while (*str != 0 && *str == '\033') {
+        size = _escape_size(str);
+        str += size;
+        bytes += size;
+    }
+
+    return bytes;
+}
+
 // $left(text,n) returns the first n characters of text
 int
 tf_func_left (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const char *args, char *out, int outlen, int fail_on_undef) {
@@ -902,7 +941,8 @@ tf_func_left (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], text, sizeof (text) - 1, fail_on_undef);
 
     // convert num_chars to num_bytes
-    int num_bytes = u8_offset(text, num_chars);
+    // count characters
+    int num_bytes = _u8_escaped_offset(text, num_chars);
 
     int res = u8_strnbcpy (out, text, min(num_bytes, outlen));
     return res;

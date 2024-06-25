@@ -186,7 +186,7 @@ int u8_wc_toutf8(char *dest, uint32_t ch)
 }
 
 /* charnum => byte offset */
-int u8_offset(char *str, int32_t charnum)
+int u8_offset(const char *str, int32_t charnum)
 {
     int32_t offs=0;
 

@@ -1771,7 +1771,18 @@ TEST_F(TitleFormattingTests, test_DimTextExpression_ReturnsTextWithDimEscSequenc
     ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
     tf_free (bc);
     EXPECT_TRUE(ctx.dimmed);
-    EXPECT_TRUE(!strcmp (buffer, "\0331;-3mdim this text\0331;3m"));
+    EXPECT_STREQ(buffer, "\0331;-3mdim this text\0331;3m");
+}
+
+TEST_F(TitleFormattingTests, test_DimInsideCut_ReturnsTextWithDimEscSequence) {
+    pl_add_meta(it, "year", "1980");
+    char *bc = tf_compile("$cut(<%year%>,4)");
+    ctx.flags |= DDB_TF_CONTEXT_TEXT_DIM;
+    tf_eval (&ctx, bc, buffer, 1000);
+    ctx.flags &= ~DDB_TF_CONTEXT_TEXT_DIM;
+    tf_free (bc);
+    EXPECT_TRUE(ctx.dimmed);
+    EXPECT_STREQ(buffer, "\0331;-1m1980\0331;1m");
 }
 
 TEST_F(TitleFormattingTests, test_BrightenTextExpression_ReturnsTextWithBrightenEscSequence) {
