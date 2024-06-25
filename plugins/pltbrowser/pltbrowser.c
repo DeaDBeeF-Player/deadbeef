@@ -187,10 +187,14 @@ fill_pltbrowser_rows (gpointer user_data)
                     playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-pause", 16, 0, NULL);
                 }
                 else if (playback_state == DDB_PLAYBACK_STATE_STOPPED) {
-                    playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-stop", 16, 0, NULL);
+                    playing_pixbuf = NULL;
                 }
                 else {
+#if GTK_CHECK_VERSION(3,0,0)
                     playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-start", 16, 0, NULL);
+#else
+                    playing_pixbuf = gtk_icon_theme_load_icon (icon_theme, "media-playback-start-ltr", 16, 0, NULL);
+#endif
                 }
             }
         }
