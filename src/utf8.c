@@ -117,7 +117,7 @@ int u8_toucs(uint32_t *dest, int32_t sz, const char *src, int32_t srcsz)
    the NUL as well.
    the destination string will never be bigger than the source string.
 */
-int u8_toutf8(char *dest, int32_t sz, uint32_t *src, int32_t srcsz)
+int u8_toutf8(char *dest, int32_t sz, const uint32_t *src, int32_t srcsz)
 {
     uint32_t ch;
     int32_t i = 0;
@@ -199,7 +199,7 @@ int u8_offset(const char *str, int32_t charnum)
 }
 
 /* byte offset => charnum */
-int u8_charnum(char *s, int32_t offset)
+int u8_charnum(const char *s, int32_t offset)
 {
     int32_t charnum = 0, offs=0;
 
@@ -212,7 +212,7 @@ int u8_charnum(char *s, int32_t offset)
 }
 
 /* number of characters, not including a null terminator */
-int u8_strlen(char *s)
+int u8_strlen(const char *s)
 {
     int32_t count = 0;
     int32_t i = 0;
@@ -448,7 +448,7 @@ int u8_escape(char *buf, int32_t sz, const char *src, int32_t escape_quotes)
     return c;
 }
 
-char *u8_strchr(char *s, uint32_t ch, int32_t *charn)
+const char *u8_strchr(const char *s, uint32_t ch, int32_t *charn)
 {
     int32_t i = 0, lasti=0;
     uint32_t c;
@@ -465,7 +465,7 @@ char *u8_strchr(char *s, uint32_t ch, int32_t *charn)
     return NULL;
 }
 
-char *u8_memchr(char *s, uint32_t ch, size_t sz, int32_t *charn)
+const char *u8_memchr(const char *s, uint32_t ch, size_t sz, int32_t *charn)
 {
     int32_t i = 0, lasti=0;
     uint32_t c;
@@ -490,7 +490,7 @@ char *u8_memchr(char *s, uint32_t ch, size_t sz, int32_t *charn)
     return NULL;
 }
 
-int u8_is_locale_utf8(char *locale)
+int u8_is_locale_utf8(const char *locale)
 {
     /* this code based on libutf8 */
     const char* cp = locale;
@@ -509,7 +509,7 @@ int u8_is_locale_utf8(char *locale)
     return 0;
 }
 
-int u8_vprintf(char *fmt, va_list ap)
+int u8_vprintf(const char *fmt, va_list ap)
 {
     int32_t cnt, sz=0;
     char *buf;
@@ -530,7 +530,7 @@ int u8_vprintf(char *fmt, va_list ap)
     return cnt;
 }
 
-int u8_printf(char *fmt, ...)
+int u8_printf(const char *fmt, ...)
 {
     int32_t cnt;
     va_list args;

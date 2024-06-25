@@ -44,7 +44,7 @@
 int u8_toucs(uint32_t *dest, int32_t sz, const char *src, int32_t srcsz);
 
 /* the opposite conversion */
-int u8_toutf8(char *dest, int32_t sz, uint32_t *src, int32_t srcsz);
+int u8_toutf8(char *dest, int32_t sz, const uint32_t *src, int32_t srcsz);
 
 /* single character to UTF-8 */
 int u8_wc_toutf8(char *dest, uint32_t ch);
@@ -53,7 +53,7 @@ int u8_wc_toutf8(char *dest, uint32_t ch);
 int u8_offset(const char *str, int32_t charnum);
 
 /* byte offset to character number */
-int u8_charnum(char *s, int32_t offset);
+int u8_charnum(const char *s, int32_t offset);
 
 /* return next character, updating an index variable */
 uint32_t u8_nextchar(const char *s, int32_t *i);
@@ -100,22 +100,22 @@ int hex_digit(char c);
 
 /* return a pointer to the first occurrence of ch in s, or NULL if not
    found. character index of found character returned in *charn. */
-char *u8_strchr(char *s, uint32_t ch, int32_t *charn);
+const char *u8_strchr(const char *s, uint32_t ch, int32_t *charn);
 
 /* same as the above, but searches a buffer of a given size instead of
    a NUL-terminated string. */
-char *u8_memchr(char *s, uint32_t ch, size_t sz, int32_t *charn);
+const char *u8_memchr(const char *s, uint32_t ch, size_t sz, int32_t *charn);
 
 /* count the number of characters in a UTF-8 string */
-int u8_strlen(char *s);
+int u8_strlen(const char *s);
 
-int u8_is_locale_utf8(char *locale);
+int u8_is_locale_utf8(const char *locale);
 
 /* printf where the format string and arguments may be in UTF-8.
    you can avoid this function and just use ordinary printf() if the current
    locale is UTF-8. */
-int u8_vprintf(char *fmt, va_list ap);
-int u8_printf(char *fmt, ...);
+int u8_vprintf(const char *fmt, va_list ap);
+int u8_printf(const char *fmt, ...);
 
 // validate utf8 string
 // returns 1 if valid, 0 otherwise

@@ -1487,7 +1487,7 @@ tf_func_strchr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const c
     TF_EVAL_CHECK(len, ctx, args, arglens[0], out, outlen, fail_on_undef);
 
     int32_t charpos;
-    char *pos = u8_strchr(out, needle, &charpos);
+    const char *pos = u8_strchr(out, needle, &charpos);
 
     if (!pos) {
         // 0 is used to indicate not found
@@ -1517,7 +1517,7 @@ tf_func_strrchr(ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const 
     uint32_t needle = u8_nextchar(str, &dummy);
 
     int32_t acc = 0, charpos;
-    char *pos = out;
+    const char *pos = out;
     do {
         pos = u8_strchr(pos, needle, &charpos);
         if (pos) {
