@@ -26,13 +26,13 @@
 
 // based on xmms-shn, http://www.etree.org/shnutils/xmms-shn/
 
-#include "bitshift.h"
-#include "shorten.h"
-#include <deadbeef/deadbeef.h>
-#include <deadbeef/strdupa.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <deadbeef/deadbeef.h>
+#include <deadbeef/strdupa.h>
+#include "bitshift.h"
+#include "shorten.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt, ...)

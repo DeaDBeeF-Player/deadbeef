@@ -18,7 +18,7 @@
 #define MASKTABSIZE 33
 ulong masktab[MASKTABSIZE];
 
-void mkmasktab() {
+void mkmasktab(void) {
   int i;
   ulong val = 0;
 
