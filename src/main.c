@@ -126,6 +126,7 @@ char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 char dbcachedir[PATH_MAX];
 char dbruntimedir[PATH_MAX]; // /run/user/<uid>/deadbeef
 char dbresourcedir[PATH_MAX];
+char dbstatedir[PATH_MAX];
 
 char use_gui_plugin[100];
 
@@ -1293,7 +1294,7 @@ main (int argc, char *argv[]) {
 #if __APPLE__
     char appcachepath[PATH_MAX];
     cocoautil_get_cache_path (appcachepath, sizeof (appcachepath));
-    if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/Deadbeef/", appcachepath) > (int)sizeof (dbcachedir)) {
+    if (snprintf (dbcachedir, sizeof (dbcachedir), "%s/Deadbeef", appcachepath) > (int)sizeof (dbcachedir)) {
         trace_err ("fatal: cache path is too long: %s\n", dbcachedir);
         return -1;
     }
@@ -1325,7 +1326,7 @@ main (int argc, char *argv[]) {
     // Get runtime directory
     const char *xdg_runtime = getenv (RUNTIMEDIR);
     if (xdg_runtime) {
-        if (snprintf (dbruntimedir, sizeof (dbruntimedir), "%s/deadbeef/", xdg_runtime) >= (int)sizeof (dbruntimedir)) {
+        if (snprintf (dbruntimedir, sizeof (dbruntimedir), "%s/deadbeef", xdg_runtime) >= (int)sizeof (dbruntimedir)) {
             trace_err ("fatal: cache path is too long: %s\n", dbruntimedir);
             return -1;
         }
@@ -1410,6 +1411,40 @@ main (int argc, char *argv[]) {
             return -1;
         }
     }
+
+    // State directory
+#if __APPLE__
+    char statedir[PATH_MAX];
+    cocoautil_get_application_support_path (statedir, sizeof (statedir));
+    mkdir(statedir, 0755);
+    char temp[PATH_MAX];
+    snprintf(temp, sizeof(temp), "%s/Deadbeef", statedir);
+    mkdir(temp, 0755);
+    if (snprintf (dbstatedir, sizeof (dbstatedir), "%s/Deadbeef/State", statedir) > (int)sizeof (dbstatedir)) {
+        trace_err ("fatal: state path is too long: %s\n", dbstatedir);
+        return -1;
+    }
+#else
+    const char *xdg_state = getenv (STATEDIR);
+    if (xdg_state != NULL) {
+        mkdir (xdg_state, 0755);
+        if (snprintf (dbstatedir, sizeof (dbstatedir), "%s/deadbeef", xdg_state) > (int)sizeof (dbstatedir)) {
+            trace_err ("fatal: state path is too long: %s\n", dbstatedir);
+            return -1;
+        }
+    }
+    else {
+        char temp[PATH_MAX];
+        snprintf(temp, sizeof(temp), "%s/.local/state", homedir);
+        mkdir (temp, 0755);
+        if (snprintf (dbstatedir, sizeof (dbstatedir), "%s/.local/state/deadbeef", homedir) > (int)sizeof (dbstatedir)) {
+            trace_err ("fatal: state path is too long: %s\n", dbstatedir);
+            return -1;
+        }
+    }
+#endif
+    mkdir (dbstatedir, 0755);
+
 
     const char *plugname = "main";
     for (int i = 1; i < argc; i++) {

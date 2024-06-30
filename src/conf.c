@@ -75,45 +75,10 @@ conf_free (void) {
     mutex = 0;
 }
 
-int
-conf_load (void) {
-    size_t l = strlen (dbconfdir);
-    const char configfile[] = "/config";
-    char fname[l + sizeof (configfile)];
-    memcpy (fname, dbconfdir, l);
-    memcpy (fname + l, configfile, sizeof (configfile));
-    FILE *fp = fopen (fname, "rb");
-    if (!fp) {
-        // we're not logging the error when config could not be loaded -- it's the first run
-        fp = fopen (fname, "w+b");
-        if (!fp) {
-            // we do log the error when we could not create the file
-            trace_err ("Configuration file could not be created: %s\n", fname);
-            return -1;
-        }
-        fclose (fp);
-        return 0;
-    }
-    conf_lock ();
-    int line = 0;
-
-    fseek (fp, 0, SEEK_END);
-    l = ftell (fp);
-    rewind (fp);
-
-    uint8_t *buffer = malloc (l + 1);
-    if (l != fread (buffer, 1, l, fp)) {
-        free (buffer);
-        trace_err ("failed to read entire config file to memory\n");
-        fclose (fp);
-        conf_unlock ();
-        return -1;
-    }
-    buffer[l] = 0;
-    fclose (fp);
-    fp = NULL;
-
+static void
+_conf_load_buffer (char *buffer) {
     uint8_t *str = buffer;
+    int line = 0;
 
     while (*str) {
         line++;
@@ -152,28 +117,82 @@ conf_load (void) {
         conf_set_str ((const char *)str, (const char *)value);
         str = estr + 1;
     }
-    changed = 0;
-    free (buffer);
+}
+
+static int
+_conf_load_file(const char *fname) {
+    FILE *fp = fopen (fname, "rb");
+    if (!fp) {
+        // we're not logging the error when config could not be loaded -- it's the first run
+        fp = fopen (fname, "w+b");
+        if (!fp) {
+            // we do log the error when we could not create the file
+            trace_err ("Configuration file could not be created: %s\n", fname);
+            return -1;
+        }
+        fclose (fp);
+        return 0;
+    }
+    fseek (fp, 0, SEEK_END);
+    size_t l = ftell (fp);
+    rewind (fp);
+
+    uint8_t *buffer = malloc (l + 1);
+    if (l != fread (buffer, 1, l, fp)) {
+        free (buffer);
+        trace_err ("failed to read entire config file to memory\n");
+        fclose (fp);
+        return -1;
+    }
+    buffer[l] = 0;
+    fclose (fp);
+    fp = NULL;
+
+    conf_lock ();
+
+    _conf_load_buffer(buffer);
+
     conf_unlock ();
+
+    free (buffer);
+
     return 0;
 }
 
 int
-conf_save (void) {
-    if (disable_saving) {
-        return 0;
+conf_load (void) {
+    char config[PATH_MAX];
+    snprintf(config, sizeof(config), "%s/config", dbconfdir);
+    char secrets[PATH_MAX];
+    snprintf(secrets, sizeof(secrets), "%s/secrets", dbstatedir);
+
+    int config_res = _conf_load_file(config);
+    int secrets_res = _conf_load_file(secrets);
+
+    changed = 0;
+
+    if (0 != config_res || 0 != secrets_res) {
+        return -1;
     }
+
+    return 0;
+}
+
+static int
+_conf_save_with_secrets(int secrets) {
     char tempfile[PATH_MAX];
     char str[PATH_MAX];
     FILE *fp = NULL;
     buffered_file_writer_t *writer = NULL;
 
-    if (!mutex) {
-        return 0;
+    if (!secrets) {
+        snprintf (tempfile, sizeof (tempfile), "%s/config.tmp", dbconfdir);
+        snprintf (str, sizeof (str), "%s/config", dbconfdir);
     }
-
-    snprintf (tempfile, sizeof (tempfile), "%s/config.tmp", dbconfdir);
-    snprintf (str, sizeof (str), "%s/config", dbconfdir);
+    else {
+        snprintf (tempfile, sizeof (tempfile), "%s/secrets.tmp", dbstatedir);
+        snprintf (str, sizeof (str), "%s/secrets", dbstatedir);
+    }
 
     conf_lock ();
 
@@ -182,7 +201,6 @@ conf_save (void) {
         return 0;
     }
 
-    changed = 0;
     fp = fopen (tempfile, "w+b");
     if (!fp) {
         trace_err ("failed to open config file %s for writing\n", tempfile);
@@ -193,6 +211,12 @@ conf_save (void) {
     writer = buffered_file_writer_new (fp, 64 * 1024);
 
     for (DB_conf_item_t *it = conf_items; it; it = it->next) {
+        int is_secret = (strstr (it->key, ".secret.") != NULL);
+
+        if (secrets != is_secret) {
+            continue;
+        }
+
         if (buffered_file_writer_write (writer, it->key, strlen (it->key)) < 0) {
             goto error;
         }
@@ -233,7 +257,30 @@ error:
     if (writer != NULL) {
         buffered_file_writer_free (writer);
     }
+
     return -1;
+}
+
+int
+conf_save (void) {
+    if (disable_saving) {
+        return 0;
+    }
+
+    if (!mutex) {
+        return 0;
+    }
+
+    int res = _conf_save_with_secrets(0);
+    int res_secrets = _conf_save_with_secrets(1);
+
+    changed = 0;
+
+    if (0 != res || 0 != res_secrets) {
+        return -1;
+    }
+
+    return 0;
 }
 
 void

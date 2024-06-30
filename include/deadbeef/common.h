@@ -47,6 +47,7 @@ extern "C" {
 #define CONFIGDIR "APPDATA"
 #define CACHEDIR "LOCALAPPDATA"
 #define RUNTIMEDIR "NORUNTIMEDIR"
+#define STATEDIR "LOCALAPPDATA"
 // used in plugins.c (%s is home directory, %d is arch bit number)
 #define LOCAL_PLUGINS_DIR "%s/AppData/Roaming/deadbeef/plugins"
 #define LOCAL_ARCH_PLUGINS_DIR "%s/AppData/Roaming/deadbeef/plugins%d"
@@ -56,6 +57,7 @@ extern "C" {
 #define CONFIGDIR "XDG_CONFIG_HOME"
 #define CACHEDIR "XDG_CACHE_HOME"
 #define RUNTIMEDIR "XDG_RUNTIME_DIR"
+#define STATEDIR "XDG_STATE_DIR"
 // used in plugins.c (%s is home directory, %d is arch bit number)
 #define LOCAL_PLUGINS_DIR "%s/.local/lib/deadbeef"
 #define LOCAL_ARCH_PLUGINS_DIR "%s/.local/lib%d/deadbeef"
@@ -70,6 +72,7 @@ extern char dbplugindir[PATH_MAX]; // see deadbeef->get_plugin_dir
 extern char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 extern char dbcachedir[PATH_MAX];
 extern char dbresourcedir[PATH_MAX];
+extern char dbstatedir[PATH_MAX];
 
 // parses a list of paths and adds them to playlist
 // 0 - no error, files loaded

@@ -659,6 +659,8 @@ plug_get_system_dir (int dir_id) {
         return dbcachedir;
     case DDB_SYS_DIR_PLUGIN_RESOURCES:
         return dbresourcedir;
+    case DDB_SYS_DIR_STATE:
+        return dbstatedir;
     }
     return NULL;
 }

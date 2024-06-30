@@ -657,6 +657,9 @@ enum ddb_sys_directory_t {
 #if (DDB_API_LEVEL >= 13)
     DDB_SYS_DIR_PLUGIN_RESOURCES = 7,
 #endif
+#if (DDB_API_LEVEL >= 18)
+    DDB_SYS_DIR_STATE = 8,
+#endif
 };
 
 // typecasting macros
