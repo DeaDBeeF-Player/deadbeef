@@ -88,8 +88,8 @@ lfm_send_nowplaying (const char *lfm_nowplaying);
 static void
 lfm_update_auth (void) {
     deadbeef->conf_lock ();
-    const char *user = deadbeef->conf_get_str_fast ("lastfm.login", "");
-    const char *pass = deadbeef->conf_get_str_fast ("lastfm.password", "");
+    const char *user = deadbeef->conf_get_str_fast ("lastfm.secret.login", "");
+    const char *pass = deadbeef->conf_get_str_fast ("lastfm.secret.password", "");
     if (strcmp (user, lfm_user) || strcmp (pass, lfm_pass)) {
         strcpy (lfm_user, user);
         strcpy (lfm_pass, pass);
@@ -750,11 +750,37 @@ lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return 0;
 }
 
+static void
+_migrate_secrets(void) {
+    const char *user = deadbeef->conf_get_str_fast ("lastfm.secret.login", NULL);
+    const char *pass = deadbeef->conf_get_str_fast ("lastfm.secret.password", NULL);
+
+    if (user == NULL) {
+        user = deadbeef->conf_get_str_fast ("lastfm.login", NULL);
+        if (user != NULL) {
+            deadbeef->conf_set_str("lastfm.secret.login", user);
+            deadbeef->conf_remove_items("lastfm.login");
+        }
+    }
+
+    if (pass == NULL) {
+        pass = deadbeef->conf_get_str_fast ("lastfm.password", NULL);
+        if (pass != NULL) {
+            deadbeef->conf_set_str("lastfm.secret.password", pass);
+            deadbeef->conf_remove_items("lastfm.password");
+        }
+    }
+
+    deadbeef->conf_save();
+}
+
 static int
 lastfm_start (void) {
     terminate = 0;
     request_queue = dispatch_queue_create("LastfmRequestQueue", NULL);
     sync_queue = dispatch_queue_create("LastfmSyncQueue", NULL);
+
+    _migrate_secrets();
 
     return 0;
 }
@@ -873,8 +899,8 @@ lfm_get_actions (DB_playItem_t *it)
 static const char settings_dlg[] =
     "property \"Enable scrobbler\" checkbox lastfm.enable 0;"
     "property \"Disable nowplaying\" checkbox lastfm.disable_np 0;"
-    "property Username entry lastfm.login \"\";\n"
-    "property Password password lastfm.password \"\";"
+    "property Username entry lastfm.secret.login \"\";\n"
+    "property Password password lastfm.secret.password \"\";"
     "property \"Scrobble URL\" entry lastfm.scrobbler_url \""SCROBBLER_URL_LFM"\";"
     "property \"Prefer Album Artist over Artist field\" checkbox lastfm.prefer_album_artist 0;"
     "property \"Send MusicBrainz ID\" checkbox lastfm.mbid 0;"
