@@ -178,10 +178,6 @@ ml_filter_int (ddb_file_found_data_t *data, time_t mtime, scanner_state_t *state
 
     deadbeef->metacache_remove_string (s);
 
-    if (res) {
-        printf("%s\n", data->filename);
-    }
-
     return res;
 }
 

@@ -1015,6 +1015,7 @@ plt_insert_file_int (
         return NULL;
     }
 
+    printf("%s\n", fname);
     // check if that is supported container format
     if (!plt->ignore_archives) {
         DB_vfs_t **vfsplugs = plug_get_vfs_list ();
