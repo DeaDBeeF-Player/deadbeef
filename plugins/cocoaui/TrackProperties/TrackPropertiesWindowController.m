@@ -227,7 +227,11 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }
     deadbeef->pl_unlock ();
 
-    [store addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:@(title), @"title", @(key), @"key", values, @"values", nil]];
+    [store addObject:@{
+        @"title": @(title),
+        @"key": @(key),
+        @"values": values
+    }];
 }
 
 
