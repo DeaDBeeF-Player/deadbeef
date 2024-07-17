@@ -6,8 +6,9 @@
 //  Copyright © 2021 Oleksiy Yakovenko. All rights reserved.
 //
 
-#import "AAPLNSView.h"
-#import "AAPLView.h"
+#include <deadbeef/deadbeef.h>
+#import <QuartzCore/CAMetalLayer.h>
+#import "MetalView.h"
 #import "ScopePreferencesViewController.h"
 #import "ScopePreferencesWindowController.h"
 #import "ScopeShaderTypes.h"
@@ -15,7 +16,6 @@
 #import "ShaderRenderer.h"
 #import "ShaderRendererTypes.h"
 #import "VisualizationSettingsUtil.h"
-#include <deadbeef/deadbeef.h>
 #include "scope.h"
 
 extern DB_functions_t *deadbeef;
@@ -23,7 +23,7 @@ extern DB_functions_t *deadbeef;
 static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
 static void *kIsVisibleContext = &kIsVisibleContext;
 
-@interface ScopeVisualizationViewController() <AAPLViewDelegate, ShaderRendererDelegate>
+@interface ScopeVisualizationViewController() <MetalViewDelegate, CALayerDelegate, ShaderRendererDelegate>
 
 @property (nonatomic) BOOL isListening;
 @property (nonatomic) ScopeScaleMode scaleMode;
@@ -65,27 +65,25 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 }
 
 - (void)loadView {
-    self.view = [[AAPLNSView alloc] initWithFrame:NSZeroRect];
+    MetalView *metalView = [MetalView new];
+    metalView.delegate = self;
+    self.view = metalView;
+    self.view.wantsLayer = YES;
+    self.view.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
+    [self setupMetalRenderer];
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
     [super loadView];
 }
 
 - (void)setupMetalRenderer {
-    id<MTLDevice> device = MTLCreateSystemDefaultDevice();
+    CAMetalLayer *metalLayer = (CAMetalLayer *)self.view.layer;
+    self.view.layer.delegate = self;
+    metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+    metalLayer.device = MTLCreateSystemDefaultDevice();
+    metalLayer.framebufferOnly = YES;
 
-    AAPLView *view = (AAPLView *)self.view;
-
-    // Set the device for the layer so the layer can create drawable textures that can be rendered to
-    // on this device.
-    view.metalLayer.device = device;
-
-    // Set this class as the delegate to receive resize and render callbacks.
-    view.delegate = self;
-
-    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
-
-    _renderer = [[ShaderRenderer alloc] initWithMetalDevice:device
-                                        drawablePixelFormat:view.metalLayer.pixelFormat
+    _renderer = [[ShaderRenderer alloc] initWithMetalDevice:metalLayer.device
+                                        drawablePixelFormat:metalLayer.pixelFormat
                                          fragmentShaderName:@"scopeFragmentShader"
     ];
     _renderer.delegate = self;
@@ -264,7 +262,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     }
 }
 
-- (BOOL)updateDrawDataWithViewParams:(AAPLViewParams)params {
+- (BOOL)updateDrawDataWithViewParams:(ShaderRendererParams)params {
     self.isVisible = params.isVisible;
     [self updateVisListening];
 
@@ -370,24 +368,31 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     self.view.needsDisplay = YES;
 }
 
-#pragma mark - AAPLViewDelegate
+#pragma mark - MetalViewDelegate
 
-- (void)drawableResize:(CGSize)size {
+- (void)metalViewDidResize:(NSView *)view {
+    NSSize size = [self.view convertSizeToBacking:self.view.bounds.size];
     [_renderer drawableResize:size];
 }
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer viewParams:(AAPLViewParams)params
-{
+#pragma mark - CALayerDelegate
+
+- (void)displayLayer:(CALayer *)layer {
+    ShaderRendererParams params = {
+        .backingScaleFactor = self.view.window.screen.backingScaleFactor,
+        .isVisible = self.view.window.isVisible,
+        .bounds = self.view.bounds
+    };
     if (![self updateDrawDataWithViewParams:params]) {
         return;
     }
 
-    [_renderer renderToMetalLayer:layer viewParams:params];
+    [_renderer renderToMetalLayer:(CAMetalLayer *)layer viewParams:params];
 }
 
 #pragma mark - ShaderRendererDelegate
 
-- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(AAPLViewParams)viewParams {
+- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
     float scale = (float)(viewParams.backingScaleFactor / [self scaleFactorForBackingScaleFactor:viewParams.backingScaleFactor]);
 
     struct ScopeFragParams params;

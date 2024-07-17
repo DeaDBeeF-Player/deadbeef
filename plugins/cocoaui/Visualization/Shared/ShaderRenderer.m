@@ -109,7 +109,7 @@
     _viewportSize = drawableSize;
 }
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer viewParams:(AAPLViewParams)viewParams {
+- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer viewParams:(ShaderRendererParams)viewParams {
     if (_viewportSize.width == 0 || _viewportSize.height == 0) {
         return;
     }
@@ -119,6 +119,7 @@
     // Create a new command buffer for each render pass to the current drawable.
     id <MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
 
+    metalLayer.drawableSize = _viewportSize;
     id<CAMetalDrawable> currentDrawable = [metalLayer nextDrawable];
 
     // If the current drawable is nil, skip rendering this frame

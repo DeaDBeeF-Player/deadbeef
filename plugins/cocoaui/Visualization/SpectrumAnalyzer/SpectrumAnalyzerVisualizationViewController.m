@@ -1,6 +1,7 @@
 #include <assert.h>
-#import "AAPLNSView.h"
-#import "AAPLView.h"
+#include <deadbeef/deadbeef.h>
+#import <QuartzCore/CAMetalLayer.h>
+#import "MetalView.h"
 #import "ShaderRenderer.h"
 #import "SpectrumAnalyzerPreferencesWindowController.h"
 #import "SpectrumAnalyzerPreferencesViewController.h"
@@ -20,7 +21,7 @@ extern DB_functions_t *deadbeef;
 static NSString * const kWindowIsVisibleKey = @"view.window.isVisible";
 static void *kIsVisibleContext = &kIsVisibleContext;
 
-@interface SpectrumAnalyzerVisualizationViewController() <AAPLViewDelegate, ShaderRendererDelegate> {
+@interface SpectrumAnalyzerVisualizationViewController() <MetalViewDelegate, CALayerDelegate, ShaderRendererDelegate> {
     ShaderRenderer *_renderer;
     ddb_analyzer_t _analyzer;
     ddb_analyzer_draw_data_t _draw_data;
@@ -84,7 +85,12 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 - (void)loadView {
     self.labelsView = [SpectrumAnalyzerLabelsView new];
-    self.visualizationView = [[AAPLNSView alloc] initWithFrame:NSZeroRect];
+    MetalView *metalView = [MetalView new];
+    metalView.delegate = self;
+    self.visualizationView = metalView;
+    self.visualizationView.wantsLayer = YES;
+    self.visualizationView.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
+    [self setupMetalRenderer];
 
     self.labelsView.translatesAutoresizingMaskIntoConstraints = NO;
     self.visualizationView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -125,19 +131,14 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 - (void)setupMetalRenderer {
     id<MTLDevice> device = MTLCreateSystemDefaultDevice();
 
-    AAPLView *view = (AAPLView *)self.visualizationView;
-
-    // Set the device for the layer so the layer can create drawable textures that can be rendered to
-    // on this device.
-    view.metalLayer.device = device;
-
-    // Set this class as the delegate to receive resize and render callbacks.
-    view.delegate = self;
-
-    view.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+    CAMetalLayer *metalLayer = (CAMetalLayer *)self.visualizationView.layer;
+    metalLayer.delegate = self;
+    metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm;
+    metalLayer.device = MTLCreateSystemDefaultDevice();
+    metalLayer.framebufferOnly = YES;
 
     _renderer = [[ShaderRenderer alloc] initWithMetalDevice:device
-                                        drawablePixelFormat:view.metalLayer.pixelFormat
+                                        drawablePixelFormat:metalLayer.pixelFormat
                                          fragmentShaderName:@"spectrumFragmentShader"
     ];
     _renderer.delegate = self;
@@ -397,23 +398,46 @@ static inline vector_float4 vec4color (NSColor *color) {
     return (vector_float4){ (float)components[0], (float)components[1], (float)components[2], (float)components[3] };
 }
 
-#pragma mark - AAPLViewDelegate
+//#pragma mark - AAPLViewDelegate
+//
+//- (void)drawableResize:(CGSize)size {
+//    CGFloat scale = self.view.window.backingScaleFactor;
+//    @synchronized (self) {
+//        ddb_analyzer_get_draw_data(&_analyzer, self.visualizationView.bounds.size.width * scale, self.visualizationView.bounds.size.height * scale, &_draw_data);
+//    }
+//    [_renderer drawableResize:size];
+//}
+//
+//- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer viewParams:(AAPLViewParams)params {
+//    [_renderer renderToMetalLayer:layer viewParams:params];
+//}
 
-- (void)drawableResize:(CGSize)size {
-    CGFloat scale = self.view.window.backingScaleFactor;
+#pragma mark - MetalViewDelegate
+
+- (void)metalViewDidResize:(NSView *)view {
+    NSSize size = [self.view convertSizeToBacking:self.visualizationView.bounds.size];
     @synchronized (self) {
-        ddb_analyzer_get_draw_data(&_analyzer, self.visualizationView.bounds.size.width * scale, self.visualizationView.bounds.size.height * scale, &_draw_data);
+        ddb_analyzer_get_draw_data(&_analyzer, size.width, size.height, &_draw_data);
     }
+
     [_renderer drawableResize:size];
 }
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer viewParams:(AAPLViewParams)params {
-    [_renderer renderToMetalLayer:layer viewParams:params];
+#pragma mark - CALayerDelegate
+
+- (void)displayLayer:(CALayer *)layer {
+    ShaderRendererParams params = {
+        .backingScaleFactor = self.view.window.screen.backingScaleFactor,
+        .isVisible = self.visualizationView.window.isVisible,
+        .bounds = self.visualizationView.bounds
+    };
+
+    [_renderer renderToMetalLayer:(CAMetalLayer *)layer viewParams:params];
 }
 
 #pragma mark - ShaderRendererDelegate
 
-- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(AAPLViewParams)viewParams {
+- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
 
     struct SpectrumFragParams params;
 

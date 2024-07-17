@@ -24,26 +24,27 @@
 #import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
 #import <simd/simd.h>
-#import "AAPLView.h"
 
-NS_ASSUME_NONNULL_BEGIN
+typedef struct {
+    CGFloat backingScaleFactor;
+    BOOL isVisible;
+    CGRect bounds;
+} ShaderRendererParams;
 
 @protocol ShaderRendererDelegate
-- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id <MTLDevice>)device encoder:(id <MTLRenderCommandEncoder>)encoder viewParams:(AAPLViewParams)params;
+- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(nonnull id <MTLDevice>)device encoder:(nonnull id <MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)params;
 @end
 
 @interface ShaderRenderer : NSObject
 
-@property (weak,nonatomic) id<ShaderRendererDelegate> delegate;
+@property (nullable,weak,nonatomic) id<ShaderRendererDelegate> delegate;
 
 - (nonnull instancetype)initWithMetalDevice:(nonnull id<MTLDevice>)device
                         drawablePixelFormat:(MTLPixelFormat)drawablePixelFormat
-                         fragmentShaderName:(NSString *)fragmentShaderName;
+                         fragmentShaderName:(nonnull NSString *)fragmentShaderName;
 
 - (void)drawableResize:(CGSize)drawableSize;
 
-- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer viewParams:(AAPLViewParams)params;
+- (void)renderToMetalLayer:(nonnull CAMetalLayer *)metalLayer viewParams:(ShaderRendererParams)params;
 
 @end
-
-NS_ASSUME_NONNULL_END
