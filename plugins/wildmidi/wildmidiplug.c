@@ -25,8 +25,6 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-
-
 #include <stdlib.h>
 #include <string.h>
 #include <deadbeef/deadbeef.h>
@@ -37,10 +35,9 @@
 #endif
 #include "../../gettext.h"
 
-extern DB_decoder_t wmidi_plugin;
+static DB_decoder_t wmidi_plugin;
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-//#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&wmidi_plugin.plugin, 0, __VA_ARGS__); }
 
 static DB_functions_t *deadbeef;
 
@@ -160,6 +157,14 @@ wmidi_init_conf (void) {
     if (WM_Initialized) {
         return 0;
     }
+
+    if (deadbeef->conf_get_int ("wildmidi.trace", 0)) {
+        wmidi_plugin.plugin.flags |= DDB_PLUGIN_FLAG_LOGGING;
+    }
+    else {
+        wmidi_plugin.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
+    }
+
     char config_files[1000];
     deadbeef->conf_get_str ("wildmidi.config", DEFAULT_TIMIDITY_CONFIG, config_files, sizeof (config_files));
     char config[1024] = "";
@@ -189,7 +194,7 @@ wmidi_init_conf (void) {
         WildMidi_Init (config, 44100, 0);
     }
     else {
-        fprintf (stderr, _("wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings."));
+        trace(_("wildmidi: freepats config file not found. Please install timidity-freepats package, or specify path to freepats.cfg in the plugin settings.\n"));
         return -1;
     }
     return 0;
@@ -218,9 +223,11 @@ static const char *exts[] = { "mid","midi",NULL };
 
 static const char settings_dlg[] =
     "property \"Timidity++ bank configuration file\" file wildmidi.config \"" DEFAULT_TIMIDITY_CONFIG "\";\n"
+    "property \"Enable logging\" checkbox wildmidi.trace 0;\n"
 ;
+
 // define plugin interface
-DB_decoder_t wmidi_plugin = {
+static DB_decoder_t wmidi_plugin = {
     DDB_PLUGIN_SET_API_VERSION
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.version_major = 1,
