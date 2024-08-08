@@ -746,6 +746,14 @@ lfm_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     case DB_EV_SONGCHANGED:
         lastfm_songchanged ((ddb_event_trackchange_t *)ctx, 0);
         break;
+    case DB_EV_CONFIGCHANGED:
+        if (deadbeef->conf_get_int ("lastfm.trace", 0)) {
+            plugin.plugin.flags |= DDB_PLUGIN_FLAG_LOGGING;
+        }
+        else {
+            plugin.plugin.flags &= ~DDB_PLUGIN_FLAG_LOGGING;
+        }
+        break;
     }
     return 0;
 }
@@ -905,6 +913,7 @@ static const char settings_dlg[] =
     "property \"Prefer Album Artist over Artist field\" checkbox lastfm.prefer_album_artist 0;"
     "property \"Send MusicBrainz ID\" checkbox lastfm.mbid 0;"
     "property \"Submit tracks shorter than 30 seconds (not recommended)\" checkbox lastfm.submit_tiny_tracks 0;"
+    "property \"Enable logging\" checkbox lastfm.trace 0;\n";
 ;
 
 // define plugin interface
@@ -913,7 +922,6 @@ static DB_misc_t plugin = {
     .plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_MISC,
-//    .plugin.flags = DDB_PLUGIN_FLAG_LOGGING,
     .plugin.name = "last.fm scrobbler",
     .plugin.descr = "Sends played songs information to your last.fm account, or other service that use AudioScrobbler protocol",
     .plugin.copyright =
