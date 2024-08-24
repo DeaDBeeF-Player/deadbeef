@@ -2398,7 +2398,7 @@ pl_save_all (void) {
 }
 
 static int
-_plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_added) {
+_plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, playItem_t **last_added) {
     int result = -1;
     playItem_t *it = NULL;
     uint8_t majorver;
@@ -2430,7 +2430,13 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
     if (ddb_file_read (&cnt, 1, 4, fp) != 4) {
         goto load_fail;
     }
-    
+
+    char dname[PATH_MAX] = "";
+    char *slash = strrchr (fname, '/');
+    if (slash && fname) {
+        strncpy (dname, fname, slash - fname);
+    }
+
     for (uint32_t i = 0; i < cnt; i++) {
         it = pl_item_alloc ();
         if (!it) {
@@ -2438,6 +2444,7 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
         }
         uint16_t l;
         int16_t tracknum = 0;
+        char true_uri[PATH_MAX];
         if (minorver <= 2) {
             // fname
             if (ddb_file_read (&l, 1, 2, fp) != 2) {
@@ -2448,7 +2455,13 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
                 goto load_fail;
             }
             uri[l] = 0;
-            pl_add_meta (it, ":URI", uri);
+            if (dname[0] && is_relative_path (uri)) {
+                snprintf (true_uri, sizeof (true_uri), "%s/%s", dname, uri);
+                pl_add_meta (it, ":URI", true_uri);
+            }
+            else {
+                pl_add_meta (it, ":URI", uri);
+            }
             // decoder
             uint8_t ll;
             if (ddb_file_read (&ll, 1, 1, fp) != 1) {
@@ -2594,7 +2607,9 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
                         // some values are stored twice:
                         // once in legacy format, and once in metadata format
                         // here, we delete what was set from legacy, and overwrite with metadata
-                        pl_replace_meta (it, key, value);
+                        if (strcmp (key, ":URI") != 0) {
+                            pl_replace_meta (it, key, value);
+                        }
                     }
                 }
                 else {
@@ -2739,7 +2754,7 @@ plt_load_int (
     ddb_file_handle_t fh;
     ddb_file_init_stdio(&fh, fp);
 
-    if (0 != _plt_load_from_file(plt, &fh, &last_added)) {
+    if (0 != _plt_load_from_file(plt, fname, &fh, &last_added)) {
         goto load_fail;
     }
 
@@ -2769,7 +2784,7 @@ plt_load_from_buffer (playlist_t *plt, const uint8_t *buffer, size_t size) {
     ddb_file_init_buffer(&fh, buffer, size);
 
     playItem_t *last_added = NULL;
-    int res = _plt_load_from_file(plt, &fh, &last_added);
+    int res = _plt_load_from_file(plt, NULL, &fh, &last_added);
     if (last_added) {
         pl_item_unref (last_added);
     }

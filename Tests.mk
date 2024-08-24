@@ -11,6 +11,7 @@ STATIC_DEPS:=$(ORIGIN)/static-deps
 STATIC_ROOT:=$(STATIC_DEPS)/lib-x86-64
 INCLUDE=-I external/googletest/googletest \
 	-I external/googletest/googletest/include \
+	-I external/googletest/googlemock/include \
 	-I external/mp4p/include \
 	-I plugins/libparser \
 	-I shared \
