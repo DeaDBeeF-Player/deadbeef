@@ -11,6 +11,7 @@
 #include "plmeta.h"
 #include "plugins.h"
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 TEST(PlaylistTests, test_SearchForValueInSingleValueItems_FindsTheItem) {
     playlist_t *plt = plt_alloc("test");
@@ -44,6 +45,32 @@ TEST(PlaylistTests, test_SearchFor2ndValueInMultiValueItems_FindsTheItem) {
     EXPECT_TRUE(plt->head[PL_MAIN]->selected);
 
     plt_unref (plt);
+}
+
+using ::testing::StartsWith;
+TEST (PlaylistTests, test_LoadDBPLWithRelativepaths) {
+    ddb_playlist_t *plt = deadbeef->plt_alloc ("test");
+
+    char dname[PATH_MAX];
+    snprintf (dname, sizeof (dname), "%s/TestData", dbplugindir);
+    char fname[] = "RelativePaths.dbpl";
+    char plt_path[PATH_MAX];
+    snprintf (plt_path, sizeof (plt_path), "%s/%s", dname, fname);
+
+    ddb_playItem_t *after = deadbeef->plt_load2 (-1, plt, NULL, plt_path, NULL, NULL, NULL);
+
+    ASSERT_TRUE (after);
+    EXPECT_EQ (deadbeef->plt_get_item_count (plt, PL_MAIN), 8);
+
+    ddb_playItem_t **its;
+    size_t n_its = deadbeef->plt_get_items (plt, &its);
+    for (size_t k = 0; k < n_its; k++) {
+        EXPECT_THAT (deadbeef->pl_find_meta (its[k], ":URI"), StartsWith (dname));
+        deadbeef->pl_item_unref (its[k]);
+    }
+    free (its);
+
+    deadbeef->plt_unref (plt);
 }
 
 #pragma mark - IsRelativePathPosix
