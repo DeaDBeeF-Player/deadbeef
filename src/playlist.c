@@ -2680,6 +2680,9 @@ load_fail:
         pl_item_unref (it);
         it = NULL;
     }
+    if (dname) {
+        free (dname);
+    }
     return result;
 }
 
