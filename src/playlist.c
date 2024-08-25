@@ -2397,14 +2397,12 @@ pl_save_all (void) {
     return err;
 }
 
-static char *
-_interpret_relative_path(const char *dname, const char *uri) {
+static int
+_interpret_relative_path(const char *dname, const char *uri, char *true_uri, size_t count) {
     if (dname && is_relative_path (uri)) {
-        char *true_uri = calloc (PATH_MAX, sizeof(char));
-        snprintf (true_uri, PATH_MAX, "%s/%s", dname, uri);
-        return true_uri;
+        return snprintf (true_uri, count, "%s/%s", dname, uri);
     } else {
-        return strndup(uri, strlen(uri));
+        return snprintf (true_uri, count, "%s", uri);
     }
 }
 
@@ -2447,6 +2445,7 @@ _plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, 
     if (slash && fname) {
         dname = strndup (fname, slash - fname);
     }
+    char *true_uri = calloc(PATH_MAX, sizeof(char));
 
     for (uint32_t i = 0; i < cnt; i++) {
         it = pl_item_alloc ();
@@ -2465,9 +2464,8 @@ _plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, 
                 goto load_fail;
             }
             uri[l] = 0;
-            char *true_uri = _interpret_relative_path(dname, uri);
+            _interpret_relative_path(dname, uri, true_uri, PATH_MAX);
             pl_add_meta (it, ":URI", true_uri);
-            free (true_uri);
             // decoder
             uint8_t ll;
             if (ddb_file_read (&ll, 1, 1, fp) != 1) {
@@ -2616,9 +2614,8 @@ _plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, 
                         if (strcmp (key, ":URI") != 0) {
                             pl_replace_meta (it, key, value);
                         } else {
-                            char *true_uri = _interpret_relative_path(dname, value);
+                            _interpret_relative_path(dname, value, true_uri, PATH_MAX);
                             pl_replace_meta (it, key, true_uri);
-                            free (true_uri);
                         }
                     }
                 }
@@ -2683,6 +2680,7 @@ load_fail:
     if (dname) {
         free (dname);
     }
+    free (true_uri);
     return result;
 }
 
