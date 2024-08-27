@@ -2413,6 +2413,11 @@ _plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, 
     uint8_t majorver;
     uint8_t minorver;
     char magic[4];
+
+    char *dname = NULL;
+    char *true_uri = calloc(PATH_MAX, sizeof(char));
+    // must be allocated here to be unconditionally free() at the end of the function
+
     if (ddb_file_read (magic, 1, 4, fp) != 4) {
         //        trace ("failed to read magic\n");
         goto load_fail;
@@ -2440,12 +2445,10 @@ _plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, 
         goto load_fail;
     }
 
-    char *dname = NULL;
     char *slash = strrchr (fname, '/');
     if (slash && fname) {
         dname = strndup (fname, slash - fname);
     }
-    char *true_uri = calloc(PATH_MAX, sizeof(char));
 
     for (uint32_t i = 0; i < cnt; i++) {
         it = pl_item_alloc ();
@@ -2677,9 +2680,7 @@ load_fail:
         pl_item_unref (it);
         it = NULL;
     }
-    if (dname) {
-        free (dname);
-    }
+    free (dname);
     free (true_uri);
     return result;
 }
