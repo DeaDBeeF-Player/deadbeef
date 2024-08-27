@@ -26,6 +26,7 @@ TEST(PlaylistTests, test_SearchForValueInSingleValueItems_FindsTheItem) {
     EXPECT_TRUE(plt->head[PL_SEARCH] != NULL);
     EXPECT_TRUE(plt->head[PL_MAIN]->selected);
 
+    pl_item_unref(it);
     plt_unref (plt);
 }
 
@@ -44,6 +45,7 @@ TEST(PlaylistTests, test_SearchFor2ndValueInMultiValueItems_FindsTheItem) {
     EXPECT_TRUE(plt->head[PL_SEARCH] != NULL);
     EXPECT_TRUE(plt->head[PL_MAIN]->selected);
 
+    pl_item_unref(it);
     plt_unref (plt);
 }
 
