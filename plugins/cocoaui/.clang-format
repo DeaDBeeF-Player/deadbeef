@@ -23,7 +23,6 @@ AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: false
 BinPackArguments: false
 BinPackParameters: false
-BinPackParameters: false
 BreakBeforeBinaryOperators: All
 BreakBeforeTernaryOperators: true
 ColumnLimit: 0
