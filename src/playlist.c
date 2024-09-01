@@ -2272,10 +2272,10 @@ plt_save(
                     for (int e = 0; exts[e]; e++) {
                         if (!strcasecmp (exts[e], ext + 1)) {
                             int res = plug[i]->save (
-                                                     (ddb_playlist_t *)plt,
-                                                     fname,
-                                                     (DB_playItem_t *)_current_playlist->head[PL_MAIN],
-                                                     NULL);
+                                (ddb_playlist_t *)plt,
+                                fname,
+                                (DB_playItem_t *)first,
+                                (DB_playItem_t *)last);
                             UNLOCK;
                             return res;
                         }
