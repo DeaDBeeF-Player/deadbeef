@@ -31,11 +31,11 @@
 #include <string.h>
 #include "threading.h"
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#    include <config.h>
 #endif
 
 intptr_t
-thread_start (void (*fn)(void *ctx), void *ctx) {
+thread_start (void (*fn) (void *ctx), void *ctx) {
     pthread_t tid;
     pthread_attr_t attr;
     int s = pthread_attr_init (&attr);
@@ -44,7 +44,7 @@ thread_start (void (*fn)(void *ctx), void *ctx) {
         return 0;
     }
 
-    s = pthread_create (&tid, &attr, (void *(*)(void *))fn, (void*)ctx);
+    s = pthread_create (&tid, &attr, (void *(*)(void *))fn, (void *)ctx);
     if (s != 0) {
         fprintf (stderr, "pthread_create failed: %s\n", strerror (s));
         return 0;
@@ -58,7 +58,7 @@ thread_start (void (*fn)(void *ctx), void *ctx) {
 }
 
 intptr_t
-thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
+thread_start_low_priority (void (*fn) (void *ctx), void *ctx) {
 #if defined(__linux__) && !defined(ANDROID)
     pthread_t tid;
     pthread_attr_t attr;
@@ -67,7 +67,7 @@ thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
         fprintf (stderr, "pthread_attr_init failed: %s\n", strerror (s));
         return 0;
     }
-#if !STATICLINK && __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 4
+#    if !STATICLINK && __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 4
     int policy;
     s = pthread_attr_getschedpolicy (&attr, &policy);
     if (s != 0) {
@@ -75,21 +75,21 @@ thread_start_low_priority (void (*fn)(void *ctx), void *ctx) {
         return 0;
     }
     int minprio = sched_get_priority_min (policy);
-#endif
+#    endif
 
-    s = pthread_create (&tid, &attr, (void *(*)(void *))fn, (void*)ctx);
+    s = pthread_create (&tid, &attr, (void *(*)(void *))fn, (void *)ctx);
     if (s != 0) {
         fprintf (stderr, "pthread_create failed: %s\n", strerror (s));
         return 0;
     }
-#if !STATICLINK && __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 4
+#    if !STATICLINK && __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 4
     s = pthread_setschedprio (tid, minprio);
     if (s != 0) {
         fprintf (stderr, "pthread_setschedprio failed: %s\n", strerror (s));
         pthread_cancel (tid);
         return 0;
     }
-#endif
+#    endif
 
     s = pthread_attr_destroy (&attr);
     if (s != 0) {
@@ -132,7 +132,7 @@ thread_exit (void *retval) {
 uintptr_t
 mutex_create_nonrecursive (void) {
     pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));
-    pthread_mutexattr_t attr = {0};
+    pthread_mutexattr_t attr = { 0 };
     pthread_mutexattr_init (&attr);
     pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_NORMAL);
     int err = pthread_mutex_init (mtx, &attr);
@@ -148,7 +148,7 @@ mutex_create_nonrecursive (void) {
 uintptr_t
 mutex_create (void) {
     pthread_mutex_t *mtx = malloc (sizeof (pthread_mutex_t));
-    pthread_mutexattr_t attr = {0};
+    pthread_mutexattr_t attr = { 0 };
     pthread_mutexattr_init (&attr);
     pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE);
     int err = pthread_mutex_init (mtx, &attr);

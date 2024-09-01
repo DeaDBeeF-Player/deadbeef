@@ -34,7 +34,8 @@
 static playItem_t *playqueue[100];
 static int playqueue_count = 0;
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(...) \
+    { fprintf (stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
 static void
@@ -44,7 +45,7 @@ playqueue_send_trackinfochanged (playItem_t *track) {
     if (track) {
         pl_item_ref (track);
     }
-    messagepump_push_event ((ddb_event_t*)ev, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
+    messagepump_push_event ((ddb_event_t *)ev, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
 }
 
 int
@@ -87,7 +88,7 @@ playqueue_pop (void) {
         return;
     }
     playItem_t *it = playqueue[0];
-    memmove (&playqueue[0], &playqueue[1], (playqueue_count-1) * sizeof (playItem_t*));
+    memmove (&playqueue[0], &playqueue[1], (playqueue_count - 1) * sizeof (playItem_t *));
     playqueue_count--;
     pl_item_unref (it);
     pl_unlock ();
@@ -101,8 +102,8 @@ playqueue_remove (playItem_t *it) {
         int i;
         for (i = 0; i < playqueue_count; i++) {
             if (playqueue[i] == it) {
-                if (i < playqueue_count-1) {
-                    memmove (&playqueue[i], &playqueue[i+1], (playqueue_count-i) * sizeof (playItem_t*));
+                if (i < playqueue_count - 1) {
+                    memmove (&playqueue[i], &playqueue[i + 1], (playqueue_count - i) * sizeof (playItem_t *));
                     messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_PLAYQUEUE, 0);
                 }
                 else {
@@ -164,8 +165,8 @@ void
 playqueue_remove_nth (int n) {
     pl_lock ();
     playItem_t *it = playqueue[n];
-    if (n < playqueue_count-1) {
-        memmove (playqueue + n, playqueue + n + 1, (playqueue_count-n) * sizeof (playItem_t*));
+    if (n < playqueue_count - 1) {
+        memmove (playqueue + n, playqueue + n + 1, (playqueue_count - n) * sizeof (playItem_t *));
     }
     playqueue_count--;
 
@@ -182,11 +183,11 @@ playqueue_insert_at (int n, playItem_t *it) {
     }
     pl_lock ();
     if (n == playqueue_count) {
-        playqueue_push(it);
+        playqueue_push (it);
         pl_unlock ();
         return;
     }
-    memmove (playqueue+n+1, playqueue+n, (playqueue_count - n) * sizeof (playItem_t *));
+    memmove (playqueue + n + 1, playqueue + n, (playqueue_count - n) * sizeof (playItem_t *));
     playqueue[n] = it;
     pl_item_ref (it);
     playqueue_count++;

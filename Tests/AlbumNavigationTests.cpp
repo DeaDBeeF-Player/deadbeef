@@ -37,53 +37,53 @@ mainloop (void *ctx) {
             if (!term) {
                 DB_output_t *output = plug_get_output ();
                 switch (msg) {
-                    case DB_EV_TERMINATE:
-                        term = 1;
-                        break;
-                    case DB_EV_PLAY_CURRENT:
+                case DB_EV_TERMINATE:
+                    term = 1;
+                    break;
+                case DB_EV_PLAY_CURRENT:
+                    streamer_play_current_track ();
+                    break;
+                case DB_EV_PLAY_NUM:
+                    streamer_set_nextsong (p1, 0);
+                    break;
+                case DB_EV_STOP:
+                    streamer_set_nextsong (-1, 0);
+                    break;
+                case DB_EV_NEXT:
+                    streamer_move_to_nextsong (1);
+                    break;
+                case DB_EV_PREV:
+                    streamer_move_to_prevsong (1);
+                    break;
+                case DB_EV_PAUSE:
+                    if (output->state () != DDB_PLAYBACK_STATE_PAUSED) {
+                        output->pause ();
+                        messagepump_push (DB_EV_PAUSED, 0, 1, 0);
+                    }
+                    break;
+                case DB_EV_TOGGLE_PAUSE:
+                    if (output->state () != DDB_PLAYBACK_STATE_PLAYING) {
                         streamer_play_current_track ();
-                        break;
-                    case DB_EV_PLAY_NUM:
-                        streamer_set_nextsong (p1, 0);
-                        break;
-                    case DB_EV_STOP:
-                        streamer_set_nextsong (-1, 0);
-                        break;
-                    case DB_EV_NEXT:
-                        streamer_move_to_nextsong (1);
-                        break;
-                    case DB_EV_PREV:
-                        streamer_move_to_prevsong (1);
-                        break;
-                    case DB_EV_PAUSE:
-                        if (output->state () != DDB_PLAYBACK_STATE_PAUSED) {
-                            output->pause ();
-                            messagepump_push (DB_EV_PAUSED, 0, 1, 0);
-                        }
-                        break;
-                    case DB_EV_TOGGLE_PAUSE:
-                        if (output->state () != DDB_PLAYBACK_STATE_PLAYING) {
-                            streamer_play_current_track ();
-                        }
-                        else {
-                            output->pause ();
-                            messagepump_push (DB_EV_PAUSED, 0, 1, 0);
-                        }
-                        break;
-                    case DB_EV_PLAY_RANDOM:
-                        streamer_move_to_randomsong (1);
-                        break;
-                    case DB_EV_SEEK: {
-                        int32_t pos = (int32_t)p1;
-                        if (pos < 0) {
-                            pos = 0;
-                        }
-                        streamer_set_seek (p1 / 1000.f);
-                    } break;
-                    case DB_EV_SONGSTARTED:
-                        break;
-                    case DB_EV_TRACKINFOCHANGED:
-                        break;
+                    }
+                    else {
+                        output->pause ();
+                        messagepump_push (DB_EV_PAUSED, 0, 1, 0);
+                    }
+                    break;
+                case DB_EV_PLAY_RANDOM:
+                    streamer_move_to_randomsong (1);
+                    break;
+                case DB_EV_SEEK: {
+                    int32_t pos = (int32_t)p1;
+                    if (pos < 0) {
+                        pos = 0;
+                    }
+                    streamer_set_seek (p1 / 1000.f);
+                } break;
+                case DB_EV_SONGSTARTED:
+                    break;
+                case DB_EV_TRACKINFOCHANGED:
+                    break;
                 }
             }
             if (msg >= DB_EV_FIRST && ctx) {

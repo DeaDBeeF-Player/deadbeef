@@ -36,7 +36,7 @@
 #include "undo/undo_playlist.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(fmt, ...)
 
 static void
 plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version);
@@ -53,7 +53,7 @@ plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
             for (playItem_t *it = plt->head[PL_MAIN]; it != NULL; it = it->next[PL_MAIN]) {
                 tracks[index++] = it;
             }
-            undo_remove_items(undobuffer, plt, tracks, count);
+            undo_remove_items (undobuffer, plt, tracks, count);
             free (tracks);
         }
     }
@@ -68,7 +68,7 @@ plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
             for (playItem_t *it = plt->head[PL_MAIN]; it != NULL; it = it->next[PL_MAIN]) {
                 tracks[index++] = it;
             }
-            undo_insert_items(undobuffer, plt, tracks, count);
+            undo_insert_items (undobuffer, plt, tracks, count);
             free (tracks);
         }
         pl_unlock ();
@@ -93,18 +93,18 @@ static ddb_tf_context_t pl_sort_tf_ctx;
 static int
 strcasecmp_numeric (const char *a, const char *b) {
     if (isdigit (*a) && isdigit (*b)) {
-        int anum = *a-'0';
-        const char *ae = a+1;
+        int anum = *a - '0';
+        const char *ae = a + 1;
         while (*ae && isdigit (*ae)) {
             anum *= 10;
-            anum += *ae-'0';
+            anum += *ae - '0';
             ae++;
         }
-        int bnum = *b-'0';
-        const char *be = b+1;
+        int bnum = *b - '0';
+        const char *be = b + 1;
         while (*be && isdigit (*be)) {
             bnum *= 10;
-            bnum += *be-'0';
+            bnum += *be - '0';
             be++;
         }
         if (anum == bnum) {
@@ -112,7 +112,7 @@ strcasecmp_numeric (const char *a, const char *b) {
         }
         return anum - bnum;
     }
-    return u8_strcasecmp (a,b);
+    return u8_strcasecmp (a, b);
 }
 
 static int
@@ -152,9 +152,9 @@ pl_sort_compare_str (playItem_t *a, playItem_t *b) {
         else {
             pl_sort_tf_ctx.id = pl_sort_id;
             pl_sort_tf_ctx.it = (ddb_playItem_t *)a;
-            tf_eval(&pl_sort_tf_ctx, pl_sort_tf_bytecode, tmp1, sizeof(tmp1));
+            tf_eval (&pl_sort_tf_ctx, pl_sort_tf_bytecode, tmp1, sizeof (tmp1));
             pl_sort_tf_ctx.it = (ddb_playItem_t *)b;
-            tf_eval(&pl_sort_tf_ctx, pl_sort_tf_bytecode, tmp2, sizeof(tmp2));
+            tf_eval (&pl_sort_tf_ctx, pl_sort_tf_bytecode, tmp2, sizeof (tmp2));
         }
         int res = strcasecmp_numeric (tmp1, tmp2);
         if (!pl_sort_ascending) {
@@ -191,13 +191,12 @@ plt_sort_random (playlist_t *playlist, int iter) {
     //randomize array
     for (int swap_a = 0; swap_a < playlist_count - 1; swap_a++) {
         //select random item above swap_a-1
-        const int swap_b = (int)(swap_a + (rand() / (float)RAND_MAX * (playlist_count - swap_a)));
+        const int swap_b = (int)(swap_a + (rand () / (float)RAND_MAX * (playlist_count - swap_a)));
 
         //swap a with b
-        playItem_t* const swap_temp = array[swap_a];
+        playItem_t *const swap_temp = array[swap_a];
         array[swap_a] = array[swap_b];
         array[swap_b] = swap_temp;
-
     }
 
     playItem_t *prev = NULL;
@@ -214,7 +213,7 @@ plt_sort_random (playlist_t *playlist, int iter) {
         }
         prev = it;
     }
-    playlist->tail[iter] = array[playlist->count[iter]-1];
+    playlist->tail[iter] = array[playlist->count[iter] - 1];
 
     free (array);
 
@@ -263,19 +262,16 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
         pl_sort_tf_ctx.id = id;
     }
 
-    if (format && id == -1
-        && ((version == 0 && !strcmp (format, "%l"))
-            || (version == 1 && !strcmp (format, "%length%")))
-        ) {
+    if (format && id == -1 &&
+        ((version == 0 && !strcmp (format, "%l")) || (version == 1 && !strcmp (format, "%length%")))) {
         pl_sort_is_duration = 1;
     }
     else {
         pl_sort_is_duration = 0;
     }
-    if (format && id == -1
-        && ((version == 0 && !strcmp (format, "%n"))
-            || (version == 1 && (!strcmp (format, "%track number%") || !strcmp (format, "%tracknumber%"))))
-        ) {
+    if (format && id == -1 &&
+        ((version == 0 && !strcmp (format, "%n")) ||
+         (version == 1 && (!strcmp (format, "%track number%") || !strcmp (format, "%tracknumber%"))))) {
         pl_sort_is_track = 1;
     }
     else {
@@ -313,7 +309,7 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
         prev = it;
     }
 
-    playlist->tail[iter] = array[playlist->count[iter]-1];
+    playlist->tail[iter] = array[playlist->count[iter] - 1];
 
     free (array);
 
@@ -363,15 +359,13 @@ sort_track_array (playlist_t *playlist, playItem_t **tracks, int num_tracks, con
     pl_sort_tf_ctx.idx = -1;
     pl_sort_tf_ctx.id = -1;
 
-    if (format
-        && !strcmp (format, "%length%")) {
+    if (format && !strcmp (format, "%length%")) {
         pl_sort_is_duration = 1;
     }
     else {
         pl_sort_is_duration = 0;
     }
-    if (format
-        && (!strcmp (format, "%track number%") || !strcmp (format, "%tracknumber%"))) {
+    if (format && (!strcmp (format, "%track number%") || !strcmp (format, "%tracknumber%"))) {
         pl_sort_is_track = 1;
     }
     else {

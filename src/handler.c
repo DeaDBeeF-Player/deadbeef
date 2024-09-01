@@ -64,7 +64,7 @@ handler_reset (handler_t *h) {
 
 handler_t *
 handler_alloc (int queue_size) {
-    int sz = sizeof (handler_t) + (queue_size-1) * sizeof (message_t);
+    int sz = sizeof (handler_t) + (queue_size - 1) * sizeof (message_t);
     handler_t *h = malloc (sz);
     memset (h, 0, sz);
     h->queue_size = queue_size;
@@ -149,4 +149,3 @@ handler_hasmessages (handler_t *h) {
     mutex_unlock (h->mutex);
     return res;
 }
-

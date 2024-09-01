@@ -34,10 +34,10 @@ extern "C" {
 #endif
 
 intptr_t
-thread_start (void (*fn)(void *ctx), void *ctx);
+thread_start (void (*fn) (void *ctx), void *ctx);
 
 intptr_t
-thread_start_low_priority (void (*fn)(void *ctx), void *ctx);
+thread_start_low_priority (void (*fn) (void *ctx), void *ctx);
 
 int
 thread_join (intptr_t tid);
@@ -83,4 +83,3 @@ cond_broadcast (uintptr_t cond);
 #endif
 
 #endif
-

@@ -40,7 +40,6 @@ ringbuf_deinit (ringbuf_t *p) {
     memset (p, 0, sizeof (ringbuf_t));
 }
 
-
 void
 ringbuf_flush (ringbuf_t *p) {
     p->cursor = 0;
@@ -76,7 +75,7 @@ ringbuf_write (ringbuf_t *p, char *bytes, size_t size) {
 }
 
 size_t
-ringbuf_read_int (ringbuf_t * restrict p, char *bytes, size_t size, int keep, off_t offset) {
+ringbuf_read_int (ringbuf_t *restrict p, char *bytes, size_t size, int keep, off_t offset) {
     if (p->remaining < size) {
         size = p->remaining;
     }
@@ -109,15 +108,15 @@ ringbuf_read_int (ringbuf_t * restrict p, char *bytes, size_t size, int keep, of
 
 size_t
 ringbuf_read (ringbuf_t *p, char *bytes, size_t size) {
-    return ringbuf_read_int(p, bytes, size, 0, 0);
+    return ringbuf_read_int (p, bytes, size, 0, 0);
 }
 
 size_t
 ringbuf_read_keep (ringbuf_t *p, char *bytes, size_t size) {
-    return ringbuf_read_int(p, bytes, size, 1, 0);
+    return ringbuf_read_int (p, bytes, size, 1, 0);
 }
 
 size_t
 ringbuf_read_keep_offset (ringbuf_t *p, char *bytes, size_t size, off_t offset) {
-    return ringbuf_read_int(p, bytes, size, 1, offset);
+    return ringbuf_read_int (p, bytes, size, 1, offset);
 }

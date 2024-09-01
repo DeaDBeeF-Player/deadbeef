@@ -30,7 +30,7 @@
 #include "plugins.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(fmt, ...)
 
 #if defined(HAVE_XGUI)
 extern int android_use_only_wifi;
@@ -96,7 +96,8 @@ vfs_fopen (const char *fname) {
     return NULL;
 }
 
-void vfs_set_track (DB_FILE *stream, DB_playItem_t *it) {
+void
+vfs_set_track (DB_FILE *stream, DB_playItem_t *it) {
     if (stream->vfs->set_track) {
         stream->vfs->set_track (stream, it);
     }

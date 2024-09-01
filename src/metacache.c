@@ -39,7 +39,7 @@ typedef struct metacache_str_s {
 } metacache_str_t;
 
 typedef struct {
-//    uint32_t hash;
+    //    uint32_t hash;
     metacache_str_t *chain;
 } metacache_hash_t;
 
@@ -52,7 +52,7 @@ metacache_get_hash_sdbm (const char *str, size_t len) {
     uint32_t h = 0;
     int c;
 
-    const char *end = str+len;
+    const char *end = str + len;
 
     while (str < end) {
         c = *str++;
@@ -83,13 +83,13 @@ const char *
 metacache_add_value (const char *value, size_t len) {
     //    printf ("n_strings=%d, n_inserts=%d, n_buckets=%d\n", n_strings, n_inserts, n_buckets);
     uint32_t h = metacache_get_hash_sdbm (value, len);
-    metacache_str_t *data = metacache_find_in_bucket (h & (HASH_SIZE-1), value, len);
+    metacache_str_t *data = metacache_find_in_bucket (h & (HASH_SIZE - 1), value, len);
     n_inserts++;
     if (data) {
         data->refcount++;
         return data->str;
     }
-    metacache_hash_t *bucket = &hash[h & (HASH_SIZE-1)];
+    metacache_hash_t *bucket = &hash[h & (HASH_SIZE - 1)];
     if (!bucket->chain) {
         n_buckets++;
     }
@@ -112,7 +112,7 @@ metacache_add_string (const char *str) {
 void
 metacache_remove_value (const char *value, size_t valuesize) {
     uint32_t h = metacache_get_hash_sdbm (value, valuesize);
-    metacache_hash_t *bucket = &hash[h & (HASH_SIZE-1)];
+    metacache_hash_t *bucket = &hash[h & (HASH_SIZE - 1)];
     metacache_str_t *chain = bucket->chain;
     metacache_str_t *prev = NULL;
     while (chain) {
@@ -142,26 +142,26 @@ metacache_remove_string (const char *str) {
 // DEPRECATED_113
 void
 metacache_ref (const char *str) {
-    uint32_t *refc = (uint32_t *)(str-5);
+    uint32_t *refc = (uint32_t *)(str - 5);
     (*refc)++;
 }
 
 // DEPRECATED_113
 void
 metacache_unref (const char *str) {
-    uint32_t *refc = (uint32_t *)(str-5);
+    uint32_t *refc = (uint32_t *)(str - 5);
     (*refc)--;
 }
 
 const char *
 metacache_get_string (const char *str) {
-    return metacache_get_value (str, strlen (str)+1);
+    return metacache_get_value (str, strlen (str) + 1);
 }
 
 const char *
 metacache_get_value (const char *value, size_t len) {
     uint32_t h = metacache_get_hash_sdbm (value, len);
-    metacache_str_t *data = metacache_find_in_bucket (h & (HASH_SIZE-1), value, len);
+    metacache_str_t *data = metacache_find_in_bucket (h & (HASH_SIZE - 1), value, len);
     n_inserts++;
     if (data) {
         data->refcount++;

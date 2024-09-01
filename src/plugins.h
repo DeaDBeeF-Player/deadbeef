@@ -40,7 +40,7 @@ int
 plug_load_all (void);
 
 void
-plug_unload_all (void(^completion_block)(void));
+plug_unload_all (void (^completion_block) (void));
 
 void
 plug_connect_all (void);
@@ -171,7 +171,7 @@ DB_functions_t *
 plug_get_api (void);
 
 int
-plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle);
+plug_init_plugin (DB_plugin_t *(*loadfunc) (DB_functions_t *), void *handle);
 
 const char *
 plug_get_path_for_plugin_ptr (DB_plugin_t *plugin_ptr);

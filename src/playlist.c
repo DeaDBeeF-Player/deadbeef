@@ -909,7 +909,7 @@ plt_clear (playlist_t *plt) {
         playItem_t *next = it->next[PL_MAIN];
         playItem_t *next_search = it->next[PL_SEARCH];
 
-        undo_remove_items(undobuffer, plt, &it, 1);
+        undo_remove_items (undobuffer, plt, &it, 1);
 
         if (next != NULL) {
             next->prev[PL_MAIN] = NULL;
@@ -1659,7 +1659,7 @@ plt_remove_item (playlist_t *playlist, playItem_t *it) {
 
     // remove from both lists
     LOCK;
-    undo_remove_items(ddb_undomanager_get_buffer(ddb_undomanager_shared()), playlist, &it, 1);
+    undo_remove_items (ddb_undomanager_get_buffer (ddb_undomanager_shared ()), playlist, &it, 1);
 
     for (int iter = PL_MAIN; iter <= PL_SEARCH; iter++) {
         if (it->prev[iter] || it->next[iter] || playlist->head[iter] == it || playlist->tail[iter] == it) {
@@ -1812,7 +1812,7 @@ pl_get_idx_of_iter (playItem_t *it, int iter) {
 playItem_t *
 plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
     LOCK;
-    undo_insert_items(ddb_undomanager_get_buffer(ddb_undomanager_shared()), playlist, &it, 1);
+    undo_insert_items (ddb_undomanager_get_buffer (ddb_undomanager_shared ()), playlist, &it, 1);
     pl_item_ref (it);
     if (!after) {
         it->next[PL_MAIN] = playlist->head[PL_MAIN];
@@ -2040,8 +2040,7 @@ _plt_save_to_buffered_writer (
     playlist_t *plt,
     buffered_file_writer_t *writer,
     int (*cb) (playItem_t *it, void *data),
-    void *user_data
-) {
+    void *user_data) {
     LOCK;
 
     const char magic[] = "DBPL";
@@ -2223,10 +2222,7 @@ save_fail:
 }
 
 ssize_t
-plt_save_to_buffer(
-                   playlist_t *plt,
-                   uint8_t **out_buffer
-                   ) {
+plt_save_to_buffer (playlist_t *plt, uint8_t **out_buffer) {
     buffered_file_writer_t *writer = buffered_file_writer_new (NULL, 64 * 1024);
 
     LOCK;
@@ -2242,8 +2238,8 @@ plt_save_to_buffer(
     }
 
     size_t size = buffered_file_writer_get_size (writer);
-    uint8_t *buffer = malloc(size);
-    memcpy(buffer, buffered_file_writer_get_buffer (writer), size);
+    uint8_t *buffer = malloc (size);
+    memcpy (buffer, buffered_file_writer_get_buffer (writer), size);
     buffered_file_writer_free (writer);
 
     *out_buffer = buffer;
@@ -2251,15 +2247,14 @@ plt_save_to_buffer(
 }
 
 int
-plt_save(
+plt_save (
     playlist_t *plt,
     playItem_t *first,
     playItem_t *last,
     const char *fname,
     int *pabort,
     int (*cb) (playItem_t *it, void *data),
-    void *user_data
-) {
+    void *user_data) {
     LOCK;
     plt->last_save_modification_idx = plt->modification_idx;
     const char *ext = strrchr (fname, '.');
@@ -2272,10 +2267,10 @@ plt_save(
                     for (int e = 0; exts[e]; e++) {
                         if (!strcasecmp (exts[e], ext + 1)) {
                             int res = plug[i]->save (
-                                                     (ddb_playlist_t *)plt,
-                                                     fname,
-                                                     (DB_playItem_t *)_current_playlist->head[PL_MAIN],
-                                                     NULL);
+                                (ddb_playlist_t *)plt,
+                                fname,
+                                (DB_playItem_t *)_current_playlist->head[PL_MAIN],
+                                NULL);
                             UNLOCK;
                             return res;
                         }
@@ -2292,7 +2287,6 @@ plt_save(
         UNLOCK;
         return -1;
     }
-
 
     buffered_file_writer_t *writer = buffered_file_writer_new (fp, 64 * 1024);
 
@@ -2430,7 +2424,7 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
     if (ddb_file_read (&cnt, 1, 4, fp) != 4) {
         goto load_fail;
     }
-    
+
     for (uint32_t i = 0; i < cnt; i++) {
         it = pl_item_alloc ();
         if (!it) {
@@ -2501,16 +2495,16 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
                 ftype[ft] = 0;
                 pl_replace_meta (it, ":FILETYPE", ftype);
             }
-            
+
             float f;
-            
+
             if (ddb_file_read (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
             if (f != 0) {
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMGAIN, f);
             }
-            
+
             if (ddb_file_read (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
@@ -2520,14 +2514,14 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
             if (f != 1) {
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_ALBUMPEAK, f);
             }
-            
+
             if (ddb_file_read (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
             if (f != 0) {
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKGAIN, f);
             }
-            
+
             if (ddb_file_read (&f, 1, 4, fp) != 4) {
                 goto load_fail;
             }
@@ -2538,7 +2532,7 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
                 pl_set_item_replaygain (it, DDB_REPLAYGAIN_TRACKPEAK, f);
             }
         }
-        
+
         uint32_t flg = 0;
         if (minorver >= 2) {
             if (ddb_file_read (&flg, 1, 4, fp) != 4) {
@@ -2551,7 +2545,7 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
             }
         }
         pl_set_item_flags (it, flg);
-        
+
         int16_t nm = 0;
         if (ddb_file_read (&nm, 1, 2, fp) != 2) {
             goto load_fail;
@@ -2609,7 +2603,7 @@ _plt_load_from_file (playlist_t *plt, ddb_file_handle_t *fp, playItem_t **last_a
         *last_added = it;
         it = NULL;
     }
-    
+
     // load playlist metadata
     int16_t nm = 0;
     // for backwards format compatibility, don't fail if metadata is not found
@@ -2737,9 +2731,9 @@ plt_load_int (
     }
 
     ddb_file_handle_t fh;
-    ddb_file_init_stdio(&fh, fp);
+    ddb_file_init_stdio (&fh, fp);
 
-    if (0 != _plt_load_from_file(plt, &fh, &last_added)) {
+    if (0 != _plt_load_from_file (plt, &fh, &last_added)) {
         goto load_fail;
     }
 
@@ -2766,10 +2760,10 @@ load_fail:
 int
 plt_load_from_buffer (playlist_t *plt, const uint8_t *buffer, size_t size) {
     ddb_file_handle_t fh;
-    ddb_file_init_buffer(&fh, buffer, size);
+    ddb_file_init_buffer (&fh, buffer, size);
 
     playItem_t *last_added = NULL;
-    int res = _plt_load_from_file(plt, &fh, &last_added);
+    int res = _plt_load_from_file (plt, &fh, &last_added);
     if (last_added) {
         pl_item_unref (last_added);
     }
@@ -3795,7 +3789,7 @@ plt_move_all_items (playlist_t *to, playlist_t *from, playItem_t *insert_after) 
         UNLOCK;
         return;
     }
-    pl_item_ref(it);
+    pl_item_ref (it);
     ddb_undobuffer_group_begin (ddb_undomanager_get_buffer (ddb_undomanager_shared ()));
     while (it != NULL) {
         playItem_t *next = it->next[PL_MAIN];
@@ -4564,7 +4558,7 @@ pl_items_from_same_album (playItem_t *a, playItem_t *b) {
 static size_t
 _plt_get_items (playlist_t *plt, playItem_t ***out_items, int selected) {
     LOCK;
-    int count = selected ? plt_getselcount (plt) : plt_get_item_count(plt, PL_MAIN);
+    int count = selected ? plt_getselcount (plt) : plt_get_item_count (plt, PL_MAIN);
     if (count == 0) {
         UNLOCK;
         return 0;
@@ -4592,6 +4586,6 @@ plt_get_items (playlist_t *plt, playItem_t ***out_items) {
 }
 
 size_t
-plt_get_selected_items(playlist_t *plt, playItem_t ***out_items) {
+plt_get_selected_items (playlist_t *plt, playItem_t ***out_items) {
     return _plt_get_items (plt, out_items, 1);
 }

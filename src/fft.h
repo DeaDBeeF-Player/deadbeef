@@ -25,8 +25,7 @@
 #define FFT_H
 
 #ifdef __cplusplus
-extern "C" {
-}
+extern "C" {}
 #endif
 
 void

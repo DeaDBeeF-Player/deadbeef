@@ -64,14 +64,27 @@ ddb_dsp_context_t *
 dsp_clone (ddb_dsp_context_t *from);
 
 int
-dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
-           ddb_waveformat_t *out_fmt, char **out_bytes, int *out_numbytes, float *out_dsp_ratio);
+dsp_apply (
+    ddb_waveformat_t *input_fmt,
+    char *input,
+    int inputsize,
+    ddb_waveformat_t *out_fmt,
+    char **out_bytes,
+    int *out_numbytes,
+    float *out_dsp_ratio);
 
 void
 dsp_get_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt);
 
 int
-dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, int inputsize, int output_samplerate, char **out_bytes, int *out_numbytes);
+dsp_apply_simple_downsampler (
+    int input_samplerate,
+    int channels,
+    char *input,
+    int inputsize,
+    int output_samplerate,
+    char **out_bytes,
+    int *out_numbytes);
 
 #ifdef __cplusplus
 }

@@ -191,36 +191,30 @@ messagepump_event_alloc (uint32_t id) {
 void
 messagepump_event_free (ddb_event_t *ev) {
     switch (ev->event) {
-    case DB_EV_SONGCHANGED:
-        {
-            ddb_event_trackchange_t *tc = (ddb_event_trackchange_t*)ev;
-            if (tc->from) {
-                pl_item_unref ((playItem_t *)tc->from);
-            }
-            if (tc->to) {
-                pl_item_unref ((playItem_t *)tc->to);
-            }
+    case DB_EV_SONGCHANGED: {
+        ddb_event_trackchange_t *tc = (ddb_event_trackchange_t *)ev;
+        if (tc->from) {
+            pl_item_unref ((playItem_t *)tc->from);
         }
-        break;
+        if (tc->to) {
+            pl_item_unref ((playItem_t *)tc->to);
+        }
+    } break;
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGFINISHED:
     case DB_EV_TRACKINFOCHANGED:
-    case DB_EV_CURSOR_MOVED:
-        {
-            ddb_event_track_t *tc = (ddb_event_track_t*)ev;
-            if (tc->track) {
-                pl_item_unref ((playItem_t *)tc->track);
-            }
+    case DB_EV_CURSOR_MOVED: {
+        ddb_event_track_t *tc = (ddb_event_track_t *)ev;
+        if (tc->track) {
+            pl_item_unref ((playItem_t *)tc->track);
         }
-        break;
-    case DB_EV_SEEKED:
-        {
-            ddb_event_playpos_t *tc = (ddb_event_playpos_t*)ev;
-            if (tc->track) {
-                pl_item_unref ((playItem_t *)tc->track);
-            }
+    } break;
+    case DB_EV_SEEKED: {
+        ddb_event_playpos_t *tc = (ddb_event_playpos_t *)ev;
+        if (tc->track) {
+            pl_item_unref ((playItem_t *)tc->track);
         }
-        break;
+    } break;
     }
     free (ev);
 }
@@ -229,4 +223,3 @@ int
 messagepump_push_event (ddb_event_t *ev, uint32_t p1, uint32_t p2) {
     return messagepump_push (ev->event, (uintptr_t)ev, p1, p2);
 }
-

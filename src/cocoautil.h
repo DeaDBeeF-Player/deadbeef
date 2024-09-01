@@ -39,4 +39,4 @@ int
 cocoautil_get_application_support_path (char *s, size_t size);
 
 void
-cocoautil_get_cache_path(char *buffer, size_t size);
+cocoautil_get_cache_path (char *buffer, size_t size);

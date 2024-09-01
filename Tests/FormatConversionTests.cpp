@@ -25,54 +25,46 @@
 #include "premix.h"
 #include <gtest/gtest.h>
 
-TEST(FormatConversionTests, testConvertFromStereoToBackLeftBackRight_AllSamplesDiscarded) {
+TEST (FormatConversionTests, testConvertFromStereoToBackLeftBackRight_AllSamplesDiscarded) {
     int16_t samples[4] = { 0x1000, 0x2000, 0x3000, 0x4000 };
     int16_t outsamples[4] = { 0, 0, 0, 0 };
 
-    ddb_waveformat_t inputfmt = {
-        .bps = 16,
-        .channels = 2,
-        .samplerate = 44100,
-        .channelmask = DDB_SPEAKER_FRONT_LEFT|DDB_SPEAKER_FRONT_RIGHT
-    };
+    ddb_waveformat_t inputfmt = { .bps = 16,
+                                  .channels = 2,
+                                  .samplerate = 44100,
+                                  .channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT };
 
-    ddb_waveformat_t outputfmt = {
-        .bps = 16,
-        .channels = 2,
-        .samplerate = 44100,
-        .channelmask = DDB_SPEAKER_BACK_LEFT|DDB_SPEAKER_BACK_RIGHT
-    };
+    ddb_waveformat_t outputfmt = { .bps = 16,
+                                   .channels = 2,
+                                   .samplerate = 44100,
+                                   .channelmask = DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_BACK_RIGHT };
 
     int res = pcm_convert (&inputfmt, (const char *)samples, &outputfmt, (char *)outsamples, sizeof (samples));
-    EXPECT_TRUE(res == 8);
-    EXPECT_TRUE(outsamples[0] == 0);
-    EXPECT_TRUE(outsamples[1] == 0);
-    EXPECT_TRUE(outsamples[2] == 0);
-    EXPECT_TRUE(outsamples[3] == 0);
+    EXPECT_TRUE (res == 8);
+    EXPECT_TRUE (outsamples[0] == 0);
+    EXPECT_TRUE (outsamples[1] == 0);
+    EXPECT_TRUE (outsamples[2] == 0);
+    EXPECT_TRUE (outsamples[3] == 0);
 }
 
-TEST(FormatConversionTests, testConvertFromStereoToBackLeftFrontRight_LeftChannelDiscarded) {
+TEST (FormatConversionTests, testConvertFromStereoToBackLeftFrontRight_LeftChannelDiscarded) {
     int16_t samples[4] = { 0x1000, 0x2000, 0x3000, 0x4000 };
     int16_t outsamples[4] = { 0, 0, 0, 0 };
 
-    ddb_waveformat_t inputfmt = {
-        .bps = 16,
-        .channels = 2,
-        .samplerate = 44100,
-        .channelmask = DDB_SPEAKER_FRONT_LEFT|DDB_SPEAKER_FRONT_RIGHT
-    };
+    ddb_waveformat_t inputfmt = { .bps = 16,
+                                  .channels = 2,
+                                  .samplerate = 44100,
+                                  .channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT };
 
-    ddb_waveformat_t outputfmt = {
-        .bps = 16,
-        .channels = 2,
-        .samplerate = 44100,
-        .channelmask = DDB_SPEAKER_BACK_LEFT|DDB_SPEAKER_FRONT_RIGHT
-    };
+    ddb_waveformat_t outputfmt = { .bps = 16,
+                                   .channels = 2,
+                                   .samplerate = 44100,
+                                   .channelmask = DDB_SPEAKER_BACK_LEFT | DDB_SPEAKER_FRONT_RIGHT };
 
     int res = pcm_convert (&inputfmt, (const char *)samples, &outputfmt, (char *)outsamples, sizeof (samples));
-    EXPECT_TRUE(res == 8);
-    EXPECT_TRUE(outsamples[0] == 0);
-    EXPECT_TRUE(outsamples[1] == 0x2000);
-    EXPECT_TRUE(outsamples[2] == 0);
-    EXPECT_TRUE(outsamples[3] == 0x4000);
+    EXPECT_TRUE (res == 8);
+    EXPECT_TRUE (outsamples[0] == 0);
+    EXPECT_TRUE (outsamples[1] == 0x2000);
+    EXPECT_TRUE (outsamples[2] == 0);
+    EXPECT_TRUE (outsamples[3] == 0x4000);
 }

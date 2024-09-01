@@ -85,14 +85,14 @@ typedef struct playlist_s {
     int cue_samplerate;
 
     int search_cmpidx;
-    
+
     unsigned fast_mode : 1;
     unsigned files_adding : 1;
     unsigned recalc_seltime : 1;
     unsigned loading_cue : 1;
     unsigned ignore_archives : 1;
     unsigned follow_symlinks : 1;
-    unsigned undo_enabled: 1;
+    unsigned undo_enabled : 1;
 } playlist_t;
 
 // global playlist control functions
@@ -201,10 +201,10 @@ void
 plt_clear (playlist_t *plt);
 
 int
-plt_add_dir (playlist_t *plt, const char *dirname, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_add_dir (playlist_t *plt, const char *dirname, int (*cb) (playItem_t *it, void *data), void *user_data);
 
 int
-plt_add_file (playlist_t *plt, const char *fname, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_add_file (playlist_t *plt, const char *fname, int (*cb) (playItem_t *it, void *data), void *user_data);
 
 int
 pl_add_files_begin (playlist_t *plt);
@@ -213,10 +213,22 @@ void
 pl_add_files_end (void);
 
 playItem_t *
-plt_insert_dir (playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_insert_dir (
+    playlist_t *plt,
+    playItem_t *after,
+    const char *dirname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data);
 
 playItem_t *
-plt_insert_file (playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_insert_file (
+    playlist_t *playlist,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data);
 
 playItem_t *
 pl_insert_item (playItem_t *after, playItem_t *it);
@@ -273,7 +285,14 @@ int
 pl_get_idx_of_iter (playItem_t *it, int iter);
 
 playItem_t *
-plt_insert_cue_from_buffer (playlist_t *plt, playItem_t *after, playItem_t *origin, const uint8_t *buffer, int buffersize, int numsamples, int samplerate);
+plt_insert_cue_from_buffer (
+    playlist_t *plt,
+    playItem_t *after,
+    playItem_t *origin,
+    const uint8_t *buffer,
+    int buffersize,
+    int numsamples,
+    int samplerate);
 
 playItem_t *
 plt_insert_cue (playlist_t *plt, playItem_t *after, playItem_t *origin, int numsamples, int samplerate);
@@ -298,7 +317,14 @@ void
 pl_crop_selected (void);
 
 int
-plt_save (playlist_t *plt, playItem_t *first, playItem_t *last, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_save (
+    playlist_t *plt,
+    playItem_t *first,
+    playItem_t *last,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data);
 
 int
 plt_save_n (int n);
@@ -310,7 +336,13 @@ int
 pl_save_all (void);
 
 playItem_t *
-plt_load (playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*cb)(playItem_t *it, void *data), void *user_data);
+plt_load (
+    playlist_t *plt,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*cb) (playItem_t *it, void *data),
+    void *user_data);
 
 int
 pl_load_all (void);
@@ -460,34 +492,76 @@ int
 plt_save_config (playlist_t *plt);
 
 int
-listen_file_added (int (*callback)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+listen_file_added (int (*callback) (ddb_fileadd_data_t *data, void *user_data), void *user_data);
 
 void
 unlisten_file_added (int id);
 
 int
-listen_file_add_beginend (void (*callback_begin) (ddb_fileadd_data_t *data, void *user_data), void (*callback_end)(ddb_fileadd_data_t *data, void *user_data), void *user_data);
+listen_file_add_beginend (
+    void (*callback_begin) (ddb_fileadd_data_t *data, void *user_data),
+    void (*callback_end) (ddb_fileadd_data_t *data, void *user_data),
+    void *user_data);
 
 void
 unlisten_file_add_beginend (int id);
 
 playItem_t *
-plt_load2 (int visibility, playlist_t *plt, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+plt_load2 (
+    int visibility,
+    playlist_t *plt,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data);
 
 int
-plt_add_file2 (int visibility, playlist_t *plt, const char *fname, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+plt_add_file2 (
+    int visibility,
+    playlist_t *plt,
+    const char *fname,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data);
 
 int
-plt_add_dir2 (int visibility, playlist_t *plt, const char *dirname, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+plt_add_dir2 (
+    int visibility,
+    playlist_t *plt,
+    const char *dirname,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data);
 
 playItem_t *
-plt_insert_file2 (int visibility, playlist_t *playlist, playItem_t *after, const char *fname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+plt_insert_file2 (
+    int visibility,
+    playlist_t *playlist,
+    playItem_t *after,
+    const char *fname,
+    int *pabort,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data);
 
 playItem_t *
-plt_insert_dir2 (int visibility, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(playItem_t *it, void *user_data), void *user_data);
+plt_insert_dir2 (
+    int visibility,
+    playlist_t *plt,
+    playItem_t *after,
+    const char *dirname,
+    int *pabort,
+    int (*callback) (playItem_t *it, void *user_data),
+    void *user_data);
 
 playItem_t *
-plt_insert_dir3 (int visibility, uint32_t flags, playlist_t *plt, playItem_t *after, const char *dirname, int *pabort, int (*callback)(ddb_insert_file_result_t result, const char *fname, void *user_data), void *user_data);
+plt_insert_dir3 (
+    int visibility,
+    uint32_t flags,
+    playlist_t *plt,
+    playItem_t *after,
+    const char *dirname,
+    int *pabort,
+    int (*callback) (ddb_insert_file_result_t result, const char *fname, void *user_data),
+    void *user_data);
 
 int
 plt_add_files_begin (playlist_t *plt, int visibility);
@@ -520,7 +594,7 @@ void
 pl_configchanged (void);
 
 int
-register_fileadd_filter (int (*callback)(ddb_file_found_data_t *data, void *user_data), void *user_data);
+register_fileadd_filter (int (*callback) (ddb_file_found_data_t *data, void *user_data), void *user_data);
 
 void
 unregister_fileadd_filter (int id);
@@ -550,10 +624,10 @@ void
 pl_set_selected_in_playlist (playlist_t *playlist, playItem_t *it, int sel);
 
 playItem_t *
-plt_get_head_item(playlist_t *p, int iter);
+plt_get_head_item (playlist_t *p, int iter);
 
 playItem_t *
-plt_get_tail_item(playlist_t *p, int iter);
+plt_get_tail_item (playlist_t *p, int iter);
 
 int
 pl_get_played (playItem_t *it);
@@ -568,19 +642,19 @@ void
 pl_set_shufflerating (playItem_t *it, int rating);
 
 int
-pl_items_from_same_album(playItem_t* a, playItem_t* b);
+pl_items_from_same_album (playItem_t *a, playItem_t *b);
 
 size_t
 plt_get_items (playlist_t *plt, playItem_t ***out_items);
 
 size_t
-plt_get_selected_items(playlist_t *plt, playItem_t ***out_items);
+plt_get_selected_items (playlist_t *plt, playItem_t ***out_items);
 
 int
 plt_load_from_buffer (playlist_t *plt, const uint8_t *buffer, size_t size);
 
 ssize_t
-plt_save_to_buffer(playlist_t *plt, uint8_t **out_buffer);
+plt_save_to_buffer (playlist_t *plt, uint8_t **out_buffer);
 
 #ifdef __cplusplus
 }

@@ -97,7 +97,7 @@ streamreader_configchanged (void) {
 int
 streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t *fileinfo, uint64_t mutex) {
     int size = BLOCK_SIZE;
-    int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps>>3);
+    int samplesize = fileinfo->fmt.channels * (fileinfo->fmt.bps >> 3);
 
     // NOTE: samplesize has to be checked to protect against faulty input plugins
 
@@ -152,7 +152,7 @@ streamreader_read_block (streamblock_t *block, playItem_t *track, DB_fileinfo_t 
     memcpy (&block->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
     block->track = track;
     if (block->track != NULL) {
-        pl_item_ref(block->track);
+        pl_item_ref (block->track);
     }
 
     if (size > 0) {
@@ -193,7 +193,7 @@ streamreader_silence_block (streamblock_t *block, playItem_t *track, DB_fileinfo
     memcpy (&block->fmt, &fileinfo->fmt, sizeof (ddb_waveformat_t));
     block->track = track;
     if (block->track != NULL) {
-        pl_item_ref(block->track);
+        pl_item_ref (block->track);
     }
     block->is_silent_header = 1;
 
@@ -241,7 +241,7 @@ static void
 _streamreader_release_block (streamblock_t *block) {
     block->pos = -1;
     if (block->track != NULL) {
-        pl_item_unref(block->track);
+        pl_item_unref (block->track);
     }
     block->track = NULL;
     block->queued = 0;
@@ -268,14 +268,13 @@ streamreader_next_block (void) {
     }
 }
 
-
 void
 streamreader_reset (void) {
     streamblock_t *b = blocks;
     while (b) {
         b->pos = -1;
         if (b->track != NULL) {
-            pl_item_unref(b->track);
+            pl_item_unref (b->track);
             b->track = NULL;
         }
         b->queued = 0;

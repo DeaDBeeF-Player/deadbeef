@@ -27,7 +27,8 @@
 #include <unistd.h>
 #include <deadbeef/deadbeef.h>
 
-#define trace(...) { fprintf(stderr, __VA_ARGS__); }
+#define trace(...) \
+    { fprintf (stderr, __VA_ARGS__); }
 
 #define FAKEIN_NUMSAMPLES 44100 * 5 // 5 sec
 static int _sleep;
@@ -44,7 +45,7 @@ typedef struct {
     float *samples;
 } fakein_info_t;
 
-static const char * exts[] = { "fake", NULL };
+static const char *exts[] = { "fake", NULL };
 
 static DB_fileinfo_t *
 fakein_open (uint32_t hints) {
@@ -61,7 +62,7 @@ fakein_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.bps = 32;
     _info->fmt.is_float = 1;
     _info->fmt.channels = 2;
-    _info->fmt.samplerate  = 44100;
+    _info->fmt.samplerate = 44100;
     for (int i = 0; i < _info->fmt.channels; i++) {
         _info->fmt.channelmask |= 1 << i;
     }
@@ -71,7 +72,7 @@ fakein_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->startsample = 0;
     info->endsample = FAKEIN_NUMSAMPLES - 1;
 
-    info->samples = calloc (FAKEIN_NUMSAMPLES,  2 * sizeof (float));
+    info->samples = calloc (FAKEIN_NUMSAMPLES, 2 * sizeof (float));
 
     const char *type = deadbeef->pl_find_meta (it, "title");
     if (!strcmp (type, "sine")) {
@@ -103,7 +104,6 @@ fakein_free (DB_fileinfo_t *_info) {
         free (info);
     }
 }
-
 
 static int
 fakein_read (DB_fileinfo_t *_info, char *bytes, int size) {
@@ -154,7 +154,7 @@ fakein_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
     char title[100];
     strcpy (title, fname);
-    *(strrchr(title, '.')) = 0;
+    *(strrchr (title, '.')) = 0;
     deadbeef->pl_add_meta (it, "title", title);
 
     // now the track is ready, insert into playlist
@@ -165,8 +165,7 @@ fakein_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 // define plugin interface
 static DB_decoder_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 0,
+    DB_PLUGIN_SET_API_VERSION.plugin.version_major = 0,
     .plugin.version_minor = 1,
     .plugin.type = DB_PLUGIN_DECODER,
     .plugin.name = "fakein",

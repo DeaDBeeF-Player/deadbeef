@@ -36,15 +36,14 @@
 #include "playmodes.h"
 #include <gtest/gtest.h>
 
-extern "C" DB_plugin_t * fakein_load (DB_functions_t *api);
-extern "C" DB_plugin_t * fakeout_load (DB_functions_t *api);
+extern "C" DB_plugin_t *
+fakein_load (DB_functions_t *api);
+extern "C" DB_plugin_t *
+fakeout_load (DB_functions_t *api);
 
-
-
-class StreamerTests: public ::testing::Test {
+class StreamerTests : public ::testing::Test {
 protected:
-
-    void SetUp() override {
+    void SetUp () override {
         ddb_logger_init ();
         conf_init ();
         conf_enable_saving (0);
@@ -63,24 +62,23 @@ protected:
 
         streamer_init ();
 
-        streamer_set_repeat(DDB_REPEAT_OFF);
+        streamer_set_repeat (DDB_REPEAT_OFF);
         count_played = 0;
 
         _mainloop_tid = thread_start (mainloop_wrapper, this);
     }
 
-    void TearDown() override {
+    void TearDown () override {
         deadbeef->sendmessage (DB_EV_TERMINATE, 0, 0, 0);
         thread_join (_mainloop_tid);
 
         _fakeout->stop ();
         streamer_free ();
-        conf_free();
-        ddb_logger_free();
+        conf_free ();
+        ddb_logger_free ();
     }
 
 protected:
-
     DB_plugin_t *_fakein;
     DB_output_t *_fakeout;
     uintptr_t _mainloop_tid;
@@ -105,22 +103,21 @@ protected:
     }
 
     // super oversimplified mainloop
-    static void
-    mainloop_wrapper (void *ctx) {
+    static void mainloop_wrapper (void *ctx) {
         StreamerTests *self = (StreamerTests *)ctx;
-        self->mainloop();
+        self->mainloop ();
     }
 
-    static void (*_trackinfochanged_handler)(ddb_event_track_t *ev, StreamerTests *self);
+    static void (*_trackinfochanged_handler) (ddb_event_track_t *ev, StreamerTests *self);
 
-    void mainloop() {
+    void mainloop () {
         for (;;) {
             uint32_t msg;
             uintptr_t ctx;
             uint32_t p1;
             uint32_t p2;
             int term = 0;
-            while (messagepump_pop(&msg, &ctx, &p1, &p2) != -1) {
+            while (messagepump_pop (&msg, &ctx, &p1, &p2) != -1) {
                 if (!term) {
                     DB_output_t *output = plug_get_output ();
                     switch (msg) {
@@ -160,15 +157,13 @@ protected:
                     case DB_EV_PLAY_RANDOM:
                         streamer_move_to_randomsong (1);
                         break;
-                    case DB_EV_SEEK:
-                        {
-                            int32_t pos = (int32_t)p1;
-                            if (pos < 0) {
-                                pos = 0;
-                            }
-                            streamer_set_seek (p1 / 1000.f);
+                    case DB_EV_SEEK: {
+                        int32_t pos = (int32_t)p1;
+                        if (pos < 0) {
+                            pos = 0;
                         }
-                        break;
+                        streamer_set_seek (p1 / 1000.f);
+                    } break;
                     case DB_EV_SONGSTARTED:
                         count_played++;
                         break;
@@ -190,14 +185,13 @@ protected:
         }
     }
 
-    void
-    wait_until_stopped (void) {
+    void wait_until_stopped (void) {
         // wait until finished!
         bool finished = false;
 
         while (!finished) {
-            playItem_t *streaming_track = streamer_get_streaming_track();
-            playItem_t *playing_track = streamer_get_playing_track();
+            playItem_t *streaming_track = streamer_get_streaming_track ();
+            playItem_t *playing_track = streamer_get_playing_track ();
             if (!streaming_track && !playing_track) {
                 finished = true;
             }
@@ -205,19 +199,19 @@ protected:
                 pl_item_unref (streaming_track);
             }
             if (playing_track) {
-                pl_item_unref(playing_track);
+                pl_item_unref (playing_track);
             }
         }
     }
 };
 
-void (*StreamerTests::_trackinfochanged_handler)(ddb_event_track_t *ev, StreamerTests *self);
+void (*StreamerTests::_trackinfochanged_handler) (ddb_event_track_t *ev, StreamerTests *self);
 
-TEST_F(StreamerTests, test_Play2TracksNoLoop_Sends2SongChanged) {
+TEST_F (StreamerTests, test_Play2TracksNoLoop_Sends2SongChanged) {
     playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
-//    DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL);
-//    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, _sinewave, "/square.fake", NULL, NULL, NULL);
+    //    DB_playItem_t *_sinewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL);
+    //    DB_playItem_t *_squarewave = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, _sinewave, "/square.fake", NULL, NULL, NULL);
 
     plt_set_curr (plt);
 
@@ -229,8 +223,7 @@ TEST_F(StreamerTests, test_Play2TracksNoLoop_Sends2SongChanged) {
     plt_set_curr (NULL);
     deadbeef->plt_unref ((ddb_playlist_t *)plt);
 
-
-    EXPECT_TRUE(count_played = 2);
+    EXPECT_TRUE (count_played = 2);
 }
 
 // This test is a complicated
@@ -239,14 +232,15 @@ TEST_F(StreamerTests, test_Play2TracksNoLoop_Sends2SongChanged) {
 // Start track B
 // Monitor trackinfochanged events, and make sure that track A is never in "playing" state after track B started "buffering"
 
-TEST_F(StreamerTests, test_SwitchBetweenTracks_DoesNotJumpBackToPrevious) {
+TEST_F (StreamerTests, test_SwitchBetweenTracks_DoesNotJumpBackToPrevious) {
     // for this test, we want "loop single" mode, to make sure first track is playing when we start the 2nd one.
-    streamer_set_repeat(DDB_REPEAT_SINGLE);
+    streamer_set_repeat (DDB_REPEAT_SINGLE);
 
     playlist_t *plt = plt_alloc ("testplt");
     // create two test fake tracks
     switchtest_tracks[0] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, NULL, "/sine.fake", NULL, NULL, NULL);
-    switchtest_tracks[1] = deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, switchtest_tracks[0], "/square.fake", NULL, NULL, NULL);
+    switchtest_tracks[1] =
+        deadbeef->plt_insert_file2 (0, (ddb_playlist_t *)plt, switchtest_tracks[0], "/square.fake", NULL, NULL, NULL);
 
     plt_set_curr (plt);
 
@@ -281,13 +275,13 @@ TEST_F(StreamerTests, test_SwitchBetweenTracks_DoesNotJumpBackToPrevious) {
     plt_set_curr (NULL);
     deadbeef->plt_unref ((ddb_playlist_t *)plt);
 
-    EXPECT_TRUE(switchtest_counts[0] == 0);
-    EXPECT_TRUE(count_played = 2);
+    EXPECT_TRUE (switchtest_counts[0] == 0);
+    EXPECT_TRUE (count_played = 2);
 }
 
-TEST_F(StreamerTests, test_nextTrack_currentWasDeleted_picksNextTrack) {
-    streamer_set_repeat(DDB_REPEAT_OFF);
-    streamer_set_shuffle(DDB_SHUFFLE_OFF);
+TEST_F (StreamerTests, test_nextTrack_currentWasDeleted_picksNextTrack) {
+    streamer_set_repeat (DDB_REPEAT_OFF);
+    streamer_set_shuffle (DDB_SHUFFLE_OFF);
     ddb_playlist_t *plt = deadbeef->plt_alloc ("testplt");
 
     ddb_playItem_t *tracks[5] = {
@@ -308,23 +302,22 @@ TEST_F(StreamerTests, test_nextTrack_currentWasDeleted_picksNextTrack) {
     streamer_yield ();
     fakeout_consume (44100 * 4 * 2);
 
-    ddb_playItem_t *curr = deadbeef->streamer_get_streaming_track();
-    EXPECT_EQ(curr, tracks[2]);
+    ddb_playItem_t *curr = deadbeef->streamer_get_streaming_track ();
+    EXPECT_EQ (curr, tracks[2]);
 
-    deadbeef->plt_remove_item(plt, tracks[2]);
+    deadbeef->plt_remove_item (plt, tracks[2]);
 
-    streamer_move_to_nextsong(0);
+    streamer_move_to_nextsong (0);
     streamer_yield ();
     fakeout_consume (44100 * 4 * 2);
 
-    curr = deadbeef->streamer_get_streaming_track();
+    curr = deadbeef->streamer_get_streaming_track ();
 
-    EXPECT_EQ(deadbeef->plt_get_item_count(plt, PL_MAIN), 4);
-    EXPECT_EQ(curr, tracks[1]); // the list is reversed
+    EXPECT_EQ (deadbeef->plt_get_item_count (plt, PL_MAIN), 4);
+    EXPECT_EQ (curr, tracks[1]); // the list is reversed
 
-    deadbeef->pl_item_unref(curr);
+    deadbeef->pl_item_unref (curr);
 
     plt_set_curr (NULL);
-    deadbeef->plt_unref(plt);
+    deadbeef->plt_unref (plt);
 }
-

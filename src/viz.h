@@ -26,7 +26,7 @@
 #include <deadbeef/deadbeef.h>
 
 void
-viz_process (char * restrict bytes, int bytes_size, DB_output_t *output, int fft_size, int wave_size);
+viz_process (char *restrict bytes, int bytes_size, DB_output_t *output, int fft_size, int wave_size);
 
 void
 viz_init (void);
@@ -38,13 +38,13 @@ void
 viz_reset (void);
 
 void
-viz_waveform_listen (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
+viz_waveform_listen (void *ctx, void (*callback) (void *ctx, const ddb_audio_data_t *data));
 
 void
 viz_waveform_unlisten (void *ctx);
 
 void
-viz_spectrum_listen (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data));
+viz_spectrum_listen (void *ctx, void (*callback) (void *ctx, const ddb_audio_data_t *data));
 
 void
 viz_spectrum_unlisten (void *ctx);

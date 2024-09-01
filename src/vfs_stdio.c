@@ -35,19 +35,19 @@
 #include <unistd.h>
 
 #if !defined(__linux__)
-#define O_LARGEFILE 0
+#    define O_LARGEFILE 0
 #endif
 
 #if !defined(__linux__) || !defined(__GLIBC__)
-#define off64_t off_t
-#define lseek64 lseek
+#    define off64_t off_t
+#    define lseek64 lseek
 #endif
 
 //#define USE_STDIO
 #define USE_BUFFERING
 
 #ifndef USE_STDIO
-#define BUFSIZE 1024
+#    define BUFSIZE 1024
 #endif
 
 static DB_functions_t *deadbeef;
@@ -58,11 +58,11 @@ typedef struct {
 #else
     int stream;
     int64_t offs;
-#ifdef USE_BUFFERING
+#    ifdef USE_BUFFERING
     uint8_t buffer[BUFSIZE];
     uint8_t *bufptr;
     int bufremaining;
-#endif
+#    endif
     int have_size;
     size_t size;
 #endif
@@ -90,7 +90,7 @@ stdio_open (const char *fname) {
     memset (fp, 0, sizeof (STDIO_FILE));
     fp->vfs = &plugin;
     fp->stream = file;
-    return (DB_FILE*)fp;
+    return (DB_FILE *)fp;
 }
 
 static void
@@ -105,7 +105,7 @@ stdio_close (DB_FILE *stream) {
 }
 
 #ifndef USE_STDIO
-#ifdef USE_BUFFERING
+#    ifdef USE_BUFFERING
 static int
 fillbuffer (STDIO_FILE *f) {
     assert (f->bufremaining >= 0);
@@ -119,7 +119,7 @@ fillbuffer (STDIO_FILE *f) {
     }
     return f->bufremaining;
 }
-#endif
+#    endif
 #endif
 
 static size_t
@@ -127,12 +127,12 @@ stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
     assert (stream);
     assert (ptr);
 #ifdef USE_STDIO
-    return fread (ptr, size, nmemb, ((STDIO_FILE*)stream)->stream);
+    return fread (ptr, size, nmemb, ((STDIO_FILE *)stream)->stream);
 #else
-    STDIO_FILE *f = (STDIO_FILE*)stream;
+    STDIO_FILE *f = (STDIO_FILE *)stream;
 
     size_t nb = size * nmemb;
-#ifdef USE_BUFFERING
+#    ifdef USE_BUFFERING
     while (nb > 0) {
         if (fillbuffer (f) <= 0) {
             break;
@@ -149,14 +149,14 @@ stdio_read (void *ptr, size_t size, size_t nmemb, DB_FILE *stream) {
         nb -= r;
     }
     size_t ret = ((size * nmemb) - nb) / size;
-#else
+#    else
     ssize_t ret = read (f->stream, ptr, nb);
     if (ret < 0) {
         return -1;
     }
     f->offs += ret;
     ret = ret / size;
-#endif
+#    endif
     return ret;
 #endif
 }
@@ -170,17 +170,17 @@ stdio_seek (DB_FILE *stream, int64_t offset, int whence) {
     // convert offset to absolute
     if (whence == SEEK_CUR) {
         whence = SEEK_SET;
-        offset = ((STDIO_FILE*)stream)->offs + offset;
+        offset = ((STDIO_FILE *)stream)->offs + offset;
     }
     off64_t res = lseek64 (((STDIO_FILE *)stream)->stream, offset, whence);
     if (res == -1) {
         return -1;
     }
-//    printf ("lseek res: %lld (%lld, %d, prev=%lld)\n", res, offset, whence,  ((STDIO_FILE*)stream)->offs);
-    ((STDIO_FILE*)stream)->offs = res;
-#ifdef USE_BUFFERING
-    ((STDIO_FILE*)stream)->bufremaining = 0;
-#endif
+    //    printf ("lseek res: %lld (%lld, %d, prev=%lld)\n", res, offset, whence,  ((STDIO_FILE*)stream)->offs);
+    ((STDIO_FILE *)stream)->offs = res;
+#    ifdef USE_BUFFERING
+    ((STDIO_FILE *)stream)->bufremaining = 0;
+#    endif
 #endif
     return 0;
 }
@@ -189,9 +189,9 @@ static int64_t
 stdio_tell (DB_FILE *stream) {
     assert (stream);
 #ifdef USE_STDIO
-    return ftell (((STDIO_FILE*)stream)->stream);
+    return ftell (((STDIO_FILE *)stream)->stream);
 #else
-    return ((STDIO_FILE*)stream)->offs;
+    return ((STDIO_FILE *)stream)->offs;
 #endif
 }
 
@@ -199,7 +199,7 @@ static void
 stdio_rewind (DB_FILE *stream) {
     assert (stream);
 #ifdef USE_STDIO
-    rewind (((STDIO_FILE*)stream)->stream);
+    rewind (((STDIO_FILE *)stream)->stream);
 #else
     stdio_seek (stream, 0, SEEK_SET);
 #endif
@@ -219,9 +219,9 @@ stdio_getlength (DB_FILE *stream) {
     if (!f->have_size) {
         off64_t size = lseek64 (f->stream, 0, SEEK_END);
         lseek64 (f->stream, f->offs, SEEK_SET);
-#ifdef USE_BUFFERING
+#    ifdef USE_BUFFERING
         f->bufremaining = 0;
-#endif
+#    endif
         f->have_size = 1;
         f->size = size;
     }
@@ -241,36 +241,34 @@ stdio_is_streaming (void) {
 
 // standard stdio vfs
 static DB_vfs_t plugin = {
-    DB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
+    DB_PLUGIN_SET_API_VERSION.plugin.version_major = 1,
     .plugin.version_minor = 0,
     .plugin.type = DB_PLUGIN_VFS,
     .plugin.name = "stdio vfs",
     .plugin.id = "vfs_stdio",
-    .plugin.descr = "Standard IO plugin\nUsed for reading normal local files\nIt is statically linked, so you can't delete it.",
-    .plugin.copyright = 
-        "standard file vfs implementation\n"
-        "\n"
-        "Copyright (C) 2009-2015 Oleksiy Yakovenko\n"
-        "\n"
-        "This software is provided 'as-is', without any express or implied\n"
-        "warranty.  In no event will the authors be held liable for any damages\n"
-        "arising from the use of this software.\n"
-        "\n"
-        "Permission is granted to anyone to use this software for any purpose,\n"
-        "including commercial applications, and to alter it and redistribute it\n"
-        "freely, subject to the following restrictions:\n"
-        "\n"
-        "1. The origin of this software must not be misrepresented; you must not\n"
-        " claim that you wrote the original software. If you use this software\n"
-        " in a product, an acknowledgment in the product documentation would be\n"
-        " appreciated but is not required.\n"
-        "2. Altered source versions must be plainly marked as such, and must not be\n"
-        " misrepresented as being the original software.\n"
-        "3. This notice may not be removed or altered from any source distribution.\n"
-        "\n"
-        "Oleksiy Yakovenko waker@users.sourceforge.net\n"
-    ,
+    .plugin.descr =
+        "Standard IO plugin\nUsed for reading normal local files\nIt is statically linked, so you can't delete it.",
+    .plugin.copyright = "standard file vfs implementation\n"
+                        "\n"
+                        "Copyright (C) 2009-2015 Oleksiy Yakovenko\n"
+                        "\n"
+                        "This software is provided 'as-is', without any express or implied\n"
+                        "warranty.  In no event will the authors be held liable for any damages\n"
+                        "arising from the use of this software.\n"
+                        "\n"
+                        "Permission is granted to anyone to use this software for any purpose,\n"
+                        "including commercial applications, and to alter it and redistribute it\n"
+                        "freely, subject to the following restrictions:\n"
+                        "\n"
+                        "1. The origin of this software must not be misrepresented; you must not\n"
+                        " claim that you wrote the original software. If you use this software\n"
+                        " in a product, an acknowledgment in the product documentation would be\n"
+                        " appreciated but is not required.\n"
+                        "2. Altered source versions must be plainly marked as such, and must not be\n"
+                        " misrepresented as being the original software.\n"
+                        "3. This notice may not be removed or altered from any source distribution.\n"
+                        "\n"
+                        "Oleksiy Yakovenko waker@users.sourceforge.net\n",
     .plugin.website = "http://deadbeef.sf.net",
     .open = stdio_open,
     .close = stdio_close,
@@ -288,4 +286,3 @@ stdio_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN (&plugin);
 }
-

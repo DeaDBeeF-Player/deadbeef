@@ -49,17 +49,16 @@ static char *init_buffer_ptr;
 static char *init_buffer_info;
 static char *init_buffer_info_ptr;
 
-
 #ifdef ANDROID
-#include <android/log.h>
+#    include <android/log.h>
 static void
 console_write (const char *text) {
-    __android_log_write(ANDROID_LOG_INFO,ANDROID_LOGGER_TAG,text);
+    __android_log_write (ANDROID_LOG_INFO, ANDROID_LOGGER_TAG, text);
 }
 #else
 static void
 console_write (const char *text) {
-    fwrite (text, strlen(text), 1, stderr);
+    fwrite (text, strlen (text), 1, stderr);
     fflush (stderr);
 }
 #endif
@@ -86,12 +85,12 @@ _log_internal (DB_plugin_t *plugin, uint32_t layers, const char *text) {
             *init_buffer_info_ptr = 0;
         }
     }
-    mutex_unlock(_mutex);
+    mutex_unlock (_mutex);
 }
 
 static int
 _is_log_visible (DB_plugin_t *plugin, uint32_t layers) {
-    if (plugin && !(plugin->flags&DDB_PLUGIN_FLAG_LOGGING)) {
+    if (plugin && !(plugin->flags & DDB_PLUGIN_FLAG_LOGGING)) {
         return 0;
     }
     if (layers && !(layers & _log_layers)) {
@@ -107,9 +106,9 @@ ddb_logger_init (void) {
     if (!_mutex) {
         return -1;
     }
-    init_buffer = calloc(1, INIT_BUFFER_SIZE);
+    init_buffer = calloc (1, INIT_BUFFER_SIZE);
     init_buffer_ptr = init_buffer;
-    init_buffer_info = calloc(1, INIT_BUFFER_SIZE);
+    init_buffer_info = calloc (1, INIT_BUFFER_SIZE);
     init_buffer_info_ptr = init_buffer_info;
     return 0;
 }
@@ -136,7 +135,7 @@ ddb_logger_free (void) {
         ddb_logger_stop_buffering ();
 
         while (_loggers) {
-            ddb_log_viewer_unregister(_loggers->log, _loggers->ctx);
+            ddb_log_viewer_unregister (_loggers->log, _loggers->ctx);
         }
 
         mutex_free (_mutex);
@@ -146,27 +145,27 @@ ddb_logger_free (void) {
 
 void
 ddb_log_detailed (DB_plugin_t *plugin, uint32_t layers, const char *fmt, ...) {
-    if (!_is_log_visible(plugin, layers)) {
+    if (!_is_log_visible (plugin, layers)) {
         return;
     }
 
     char text[2048];
     va_list ap;
-    va_start(ap, fmt);
-    (void) vsnprintf(text, sizeof (text), fmt, ap);
-    va_end(ap);
+    va_start (ap, fmt);
+    (void)vsnprintf (text, sizeof (text), fmt, ap);
+    va_end (ap);
 
     _log_internal (plugin, layers, text);
 }
 
 void
 ddb_vlog_detailed (DB_plugin_t *plugin, uint32_t layers, const char *fmt, va_list ap) {
-    if (!_is_log_visible(plugin, layers)) {
+    if (!_is_log_visible (plugin, layers)) {
         return;
     }
 
     char text[2048];
-    (void) vsnprintf(text, sizeof (text), fmt, ap);
+    (void)vsnprintf (text, sizeof (text), fmt, ap);
 
     _log_internal (plugin, layers, text);
 }
@@ -175,9 +174,9 @@ void
 ddb_log (const char *fmt, ...) {
     char text[2048];
     va_list ap;
-    va_start(ap, fmt);
-    (void) vsnprintf(text, sizeof (text), fmt, ap);
-    va_end(ap);
+    va_start (ap, fmt);
+    (void)vsnprintf (text, sizeof (text), fmt, ap);
+    va_end (ap);
 
     _log_internal (NULL, 0, text);
 }
@@ -185,18 +184,20 @@ ddb_log (const char *fmt, ...) {
 void
 ddb_vlog (const char *fmt, va_list ap) {
     char text[2048];
-    (void) vsnprintf(text, sizeof (text), fmt, ap);
+    (void)vsnprintf (text, sizeof (text), fmt, ap);
 
     _log_internal (NULL, 0, text);
 }
 
 void
-ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx) {
-    mutex_lock(_mutex);
+ddb_log_viewer_register (
+    void (*callback) (DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx),
+    void *ctx) {
+    mutex_lock (_mutex);
 
     for (logger_t *l = _loggers; l; l = l->next) {
         if (l->log == callback && l->ctx == ctx) {
-            mutex_unlock(_mutex);
+            mutex_unlock (_mutex);
             return;
         }
     }
@@ -222,12 +223,14 @@ ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, 
 
     ddb_logger_stop_buffering ();
 
-    mutex_unlock(_mutex);
+    mutex_unlock (_mutex);
 }
 
 void
-ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx) {
-    mutex_lock(_mutex);
+ddb_log_viewer_unregister (
+    void (*callback) (DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx),
+    void *ctx) {
+    mutex_lock (_mutex);
     logger_t *prev = NULL;
     for (logger_t *l = _loggers; l; l = l->next) {
         if (l->log == callback && l->ctx == ctx) {
@@ -242,5 +245,5 @@ ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers
         }
         prev = l;
     }
-    mutex_unlock(_mutex);
+    mutex_unlock (_mutex);
 }

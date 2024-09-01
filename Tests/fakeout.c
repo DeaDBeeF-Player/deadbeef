@@ -24,14 +24,14 @@
 #include <stdint.h>
 #include <unistd.h>
 #ifdef __linux__
-#include <sys/prctl.h>
+#    include <sys/prctl.h>
 #endif
 #include <stdio.h>
 #include <string.h>
 #include <deadbeef/deadbeef.h>
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(fmt, ...)
 
 static DB_output_t plugin;
 static DB_functions_t *deadbeef;
@@ -121,7 +121,7 @@ int
 fakeout_stop (void) {
     state = DDB_PLAYBACK_STATE_STOPPED;
     deadbeef->streamer_reset (1);
-    fakeout_free();
+    fakeout_free ();
     return 0;
 }
 
@@ -217,7 +217,11 @@ static DB_output_t plugin = {
     .pause = fakeout_pause,
     .unpause = fakeout_unpause,
     .state = fakeout_get_state,
-    .fmt = {.samplerate = 44100, .channels = 2, .bps = 32, .is_float = 1, .channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT}
+    .fmt = { .samplerate = 44100,
+            .channels = 2,
+            .bps = 32,
+            .is_float = 1,
+            .channelmask = DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT }
 };
 
 /////////////////////

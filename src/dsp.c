@@ -142,7 +142,7 @@ streamer_set_dsp_chain_real (ddb_dsp_context_t *chain) {
     _eq = NULL;
 
     streamer_dsp_postinit ();
-    streamer_dsp_chain_save();
+    streamer_dsp_chain_save ();
 
     streamer_unlock ();
 
@@ -313,7 +313,6 @@ streamer_dsp_postinit (void) {
             _eq->next = _current_dsp_chain;
             _current_dsp_chain = _eq;
         }
-
     }
     ddb_dsp_context_t *ctx = _current_dsp_chain;
     while (ctx) {
@@ -328,7 +327,6 @@ streamer_dsp_postinit (void) {
     else if (!ctx) {
         _dsp_on = 0;
     }
-
 }
 
 void
@@ -361,32 +359,37 @@ streamer_dsp_init (void) {
 
         // 0.4.4 was writing buggy settings, need to multiply by 2 to compensate
         conf_get_str ("eq.preamp", "0", s, sizeof (s));
-        snprintf (s, sizeof (s), "%f", atof(s)*2);
+        snprintf (s, sizeof (s), "%f", atof (s) * 2);
         _eqplug->set_param (_eq, 0, s);
         for (int i = 0; i < 18; i++) {
             char key[100];
             snprintf (key, sizeof (key), "eq.band%d", i);
             conf_get_str (key, "0", s, sizeof (s));
-            snprintf (s, sizeof (s), "%f", atof(s)*2);
-            _eqplug->set_param (_eq, 1+i, s);
+            snprintf (s, sizeof (s), "%f", atof (s) * 2);
+            _eqplug->set_param (_eq, 1 + i, s);
         }
         // delete obsolete settings
         conf_remove_items ("eq.");
     }
 }
 
-
 int
-dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
-           ddb_waveformat_t *out_fmt, char **out_bytes, int *out_numbytes, float *out_dsp_ratio) {
+dsp_apply (
+    ddb_waveformat_t *input_fmt,
+    char *input,
+    int inputsize,
+    ddb_waveformat_t *out_fmt,
+    char **out_bytes,
+    int *out_numbytes,
+    float *out_dsp_ratio) {
 
     *out_dsp_ratio = 1;
 
     if (input_fmt->flags & DDB_WAVEFORMAT_FLAG_IS_DOP) {
-        memcpy(out_fmt, input_fmt, sizeof(ddb_waveformat_t));
+        memcpy (out_fmt, input_fmt, sizeof (ddb_waveformat_t));
         *out_bytes = ensure_dsp_temp_buffer (inputsize);
         *out_numbytes = inputsize;
-        memcpy(*out_bytes, input, inputsize);
+        memcpy (*out_bytes, input, inputsize);
         return 1;
     }
 
@@ -407,7 +410,7 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
     dspfmt.channels = dspfmt_ch;
     dspfmt.channelmask = 0;
     for (int i = 0; i < dspfmt_ch; i++) {
-        dspfmt.channelmask |= (1<<i);
+        dspfmt.channelmask |= (1 << i);
     }
 
     int can_bypass = 0;
@@ -442,11 +445,11 @@ dsp_apply (ddb_waveformat_t *input_fmt, char *input, int inputsize,
     int dspsamplesize = dspfmt_ch * sizeof (float);
 
     // make *MAX_DSP_RATIO sized buffer for float data
-    int tempbuf_size = inputsize/inputsamplesize * dspsamplesize * MAX_DSP_RATIO;
+    int tempbuf_size = inputsize / inputsamplesize * dspsamplesize * MAX_DSP_RATIO;
     char *tempbuf = ensure_dsp_temp_buffer (tempbuf_size);
 
     // convert to float
-    /*int tempsize = */pcm_convert (input_fmt, input, &dspfmt, tempbuf, inputsize);
+    /*int tempsize = */ pcm_convert (input_fmt, input, &dspfmt, tempbuf, inputsize);
     int nframes = inputsize / inputsamplesize;
     ddb_dsp_context_t *dsp = _current_dsp_chain;
     float ratio = 1.f;
@@ -496,7 +499,14 @@ dsp_get_output_format (ddb_waveformat_t *in_fmt, ddb_waveformat_t *out_fmt) {
 // Only int16 is supported, any number of channels
 // Returns number of bytes consumed from input.
 int
-dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, int inputsize, int output_samplerate, char **out_bytes, int *out_numbytes) {
+dsp_apply_simple_downsampler (
+    int input_samplerate,
+    int channels,
+    char *input,
+    int inputsize,
+    int output_samplerate,
+    char **out_bytes,
+    int *out_numbytes) {
     if (input_samplerate == output_samplerate) {
         *out_bytes = input;
         *out_numbytes = inputsize;
@@ -526,9 +536,9 @@ dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, i
         int nframes = inputsize / 2 / channels;
         int16_t *in = (int16_t *)input;
         int16_t *out = (int16_t *)bytes;
-        for (int f = 0; f < nframes/2; f++) {
+        for (int f = 0; f < nframes / 2; f++) {
             for (int c = 0; c < channels; c++) {
-                out[f*channels+c] = (in[f*2*channels+c] + in[(f*2+1)*channels+c]) >> 1;
+                out[f * channels + c] = (in[f * 2 * channels + c] + in[(f * 2 + 1) * channels + c]) >> 1;
             }
         }
         return inputsize;
@@ -553,12 +563,11 @@ dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, i
         assert (inputsize % (2 * channels) == 0);
         int16_t *in = (int16_t *)input;
         int16_t *out = (int16_t *)bytes;
-        for (int f = 0; f < nframes/4; f++) {
+        for (int f = 0; f < nframes / 4; f++) {
             for (int c = 0; c < channels; c++) {
-                out[f*channels+c] = (in[f*4*channels+c]
-                                    + in[(f*4+1)*channels+c]
-                                    + in[(f*4+2)*channels+c]
-                                    + in[(f*4+3)*channels+c]) >> 2;
+                out[f * channels + c] = (in[f * 4 * channels + c] + in[(f * 4 + 1) * channels + c] +
+                                         in[(f * 4 + 2) * channels + c] + in[(f * 4 + 3) * channels + c]) >>
+                                        2;
             }
         }
         return inputsize;
@@ -568,6 +577,6 @@ dsp_apply_simple_downsampler (int input_samplerate, int channels, char *input, i
         *out_bytes = input;
         *out_numbytes = inputsize;
     }
-    
+
     return inputsize;
 }

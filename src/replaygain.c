@@ -63,7 +63,7 @@ replaygain_apply_with_settings (ddb_replaygain_settings_t *settings, ddb_wavefor
 
 void
 replaygain_apply (ddb_waveformat_t *fmt, char *bytes, int numbytes) {
-    replaygain_apply_with_settings(&current_settings, fmt, bytes, numbytes);
+    replaygain_apply_with_settings (&current_settings, fmt, bytes, numbytes);
 }
 
 void
@@ -95,20 +95,20 @@ replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
 
     if (settings->processing_flags & DDB_RG_PROCESSING_GAIN) {
         if (albumgain) {
-            settings->albumgain = db_to_amp((float)atof (albumgain));
+            settings->albumgain = db_to_amp ((float)atof (albumgain));
             settings->has_album_gain = 1;
         }
         else if (trackgain) {
-            settings->albumgain = db_to_amp((float)atof (trackgain));
+            settings->albumgain = db_to_amp ((float)atof (trackgain));
             settings->has_album_gain = 1;
         }
 
         if (trackgain) {
-            settings->trackgain = db_to_amp((float)atof (trackgain));
+            settings->trackgain = db_to_amp ((float)atof (trackgain));
             settings->has_track_gain = 1;
         }
         else if (albumgain) {
-            settings->trackgain = db_to_amp((float)atof (albumgain));
+            settings->trackgain = db_to_amp ((float)atof (albumgain));
             settings->has_track_gain = 1;
         }
     }
@@ -155,7 +155,8 @@ get_int_volume (ddb_replaygain_settings_t *settings) {
     case DDB_RG_SOURCE_MODE_TRACK:
         if (!settings->has_track_gain) {
             vol = (int)(settings->preamp_without_rg * 1000);
-        } else {
+        }
+        else {
             vol = (int)(settings->preamp_with_rg * settings->trackgain * 1000);
         }
         if (settings->processing_flags & DDB_RG_PROCESSING_PREVENT_CLIPPING) {
@@ -166,8 +167,9 @@ get_int_volume (ddb_replaygain_settings_t *settings) {
         break;
     case DDB_RG_SOURCE_MODE_ALBUM:
         if (!settings->has_album_gain) {
-            vol = (int)(settings->preamp_without_rg *  1000);
-        } else {
+            vol = (int)(settings->preamp_without_rg * 1000);
+        }
+        else {
             vol = (int)(settings->preamp_with_rg * settings->albumgain * 1000);
         }
         if (settings->processing_flags & DDB_RG_PROCESSING_PREVENT_CLIPPING) {
@@ -188,7 +190,7 @@ apply_replay_gain_int8 (ddb_replaygain_settings_t *settings, char *bytes, int si
     if (vol < 0) {
         return;
     }
-    int8_t *s = (int8_t*)bytes;
+    int8_t *s = (int8_t *)bytes;
     for (int j = 0; j < size; j++) {
         int32_t sample = ((int8_t)(*s)) * vol / 1000;
         if (sample > 0x7f) {
@@ -208,8 +210,8 @@ apply_replay_gain_int16 (ddb_replaygain_settings_t *settings, char *bytes, int s
     if (vol < 0) {
         return;
     }
-    int16_t *s = (int16_t*)bytes;
-    for (int j = 0; j < size/2; j++) {
+    int16_t *s = (int16_t *)bytes;
+    for (int j = 0; j < size / 2; j++) {
         int32_t sample = ((int32_t)(*s)) * vol / 1000;
         if (sample > 0x7fff) {
             sample = 0x7fff;
@@ -228,9 +230,9 @@ apply_replay_gain_int24 (ddb_replaygain_settings_t *settings, char *bytes, int s
     if (vol < 0) {
         return;
     }
-    char *s = (char*)bytes;
-    for (int j = 0; j < size/3; j++) {
-        int32_t sample = ((unsigned char)s[0]) | ((unsigned char)s[1]<<8) | ((signed char)s[2]<<16);
+    char *s = (char *)bytes;
+    for (int j = 0; j < size / 3; j++) {
+        int32_t sample = ((unsigned char)s[0]) | ((unsigned char)s[1] << 8) | ((signed char)s[2] << 16);
         sample = (int32_t)(sample * vol / 1000);
         if (sample > 0x7fffff) {
             sample = 0x7fffff;
@@ -238,9 +240,9 @@ apply_replay_gain_int24 (ddb_replaygain_settings_t *settings, char *bytes, int s
         else if (sample < -0x800000) {
             sample = -0x800000;
         }
-        s[0] = (sample&0x0000ff);
-        s[1] = (sample&0x00ff00)>>8;
-        s[2] = (sample&0xff0000)>>16;
+        s[0] = (sample & 0x0000ff);
+        s[1] = (sample & 0x00ff00) >> 8;
+        s[2] = (sample & 0xff0000) >> 16;
         s += 3;
     }
 }
@@ -251,8 +253,8 @@ apply_replay_gain_int32 (ddb_replaygain_settings_t *settings, char *bytes, int s
     if (vol < 0) {
         return;
     }
-    int32_t *s = (int32_t*)bytes;
-    for (int j = 0; j < size/4; j++) {
+    int32_t *s = (int32_t *)bytes;
+    for (int j = 0; j < size / 4; j++) {
         int64_t sample = ((int32_t)(*s)) * vol / 1000;
         *s = (int32_t)sample;
         s++;
@@ -267,7 +269,8 @@ apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int
     case DDB_RG_SOURCE_MODE_TRACK:
         if (!settings->has_track_gain) {
             vol = settings->preamp_without_rg;
-        } else {
+        }
+        else {
             vol = settings->preamp_with_rg * settings->trackgain;
         }
         if (settings->processing_flags & DDB_RG_PROCESSING_PREVENT_CLIPPING) {
@@ -279,7 +282,8 @@ apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int
     case DDB_RG_SOURCE_MODE_ALBUM:
         if (!settings->has_album_gain) {
             vol = settings->preamp_without_rg;
-        } else {
+        }
+        else {
             vol = settings->preamp_with_rg * settings->albumgain;
         }
         if (settings->processing_flags & DDB_RG_PROCESSING_PREVENT_CLIPPING) {
@@ -296,8 +300,8 @@ apply_replay_gain_float32 (ddb_replaygain_settings_t *settings, char *bytes, int
         return;
     }
 
-    float *s = (float*)bytes;
-    for (int j = 0; j < size/4; j++) {
+    float *s = (float *)bytes;
+    for (int j = 0; j < size / 4; j++) {
         float sample = ((float)*s) * vol;
         if (sample > 1.f) {
             sample = 1.f;

@@ -1108,7 +1108,7 @@ main_cleanup_and_quit (void) {
 #endif
 
         pl_free (); // may access conf_*
-        ddb_undomanager_free(ddb_undomanager_shared());
+        ddb_undomanager_free (ddb_undomanager_shared ());
 
         conf_free ();
 
@@ -1127,7 +1127,6 @@ main_cleanup_and_quit (void) {
 
         exit (0);
     });
-
 }
 
 static void
@@ -1416,10 +1415,10 @@ main (int argc, char *argv[]) {
 #if __APPLE__
     char statedir[PATH_MAX];
     cocoautil_get_application_support_path (statedir, sizeof (statedir));
-    mkdir(statedir, 0755);
+    mkdir (statedir, 0755);
     char temp[PATH_MAX];
-    snprintf(temp, sizeof(temp), "%s/Deadbeef", statedir);
-    mkdir(temp, 0755);
+    snprintf (temp, sizeof (temp), "%s/Deadbeef", statedir);
+    mkdir (temp, 0755);
     if (snprintf (dbstatedir, sizeof (dbstatedir), "%s/Deadbeef/State", statedir) > (int)sizeof (dbstatedir)) {
         trace_err ("fatal: state path is too long: %s\n", dbstatedir);
         return -1;
@@ -1435,16 +1434,16 @@ main (int argc, char *argv[]) {
     }
     else {
         char temp[PATH_MAX];
-        snprintf(temp, sizeof(temp), "%s/.local/state", homedir);
+        snprintf (temp, sizeof (temp), "%s/.local/state", homedir);
         mkdir (temp, 0755);
-        if (snprintf (dbstatedir, sizeof (dbstatedir), "%s/.local/state/deadbeef", homedir) > (int)sizeof (dbstatedir)) {
+        if (snprintf (dbstatedir, sizeof (dbstatedir), "%s/.local/state/deadbeef", homedir) >
+            (int)sizeof (dbstatedir)) {
             trace_err ("fatal: state path is too long: %s\n", dbstatedir);
             return -1;
         }
     }
 #endif
     mkdir (dbstatedir, 0755);
-
 
     const char *plugname = "main";
     for (int i = 1; i < argc; i++) {

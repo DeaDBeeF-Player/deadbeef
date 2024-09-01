@@ -120,7 +120,7 @@ _conf_load_buffer (char *buffer) {
 }
 
 static int
-_conf_load_file(const char *fname) {
+_conf_load_file (const char *fname) {
     FILE *fp = fopen (fname, "rb");
     if (!fp) {
         // we're not logging the error when config could not be loaded -- it's the first run
@@ -150,7 +150,7 @@ _conf_load_file(const char *fname) {
 
     conf_lock ();
 
-    _conf_load_buffer(buffer);
+    _conf_load_buffer (buffer);
 
     conf_unlock ();
 
@@ -162,12 +162,12 @@ _conf_load_file(const char *fname) {
 int
 conf_load (void) {
     char config[PATH_MAX];
-    snprintf(config, sizeof(config), "%s/config", dbconfdir);
+    snprintf (config, sizeof (config), "%s/config", dbconfdir);
     char secrets[PATH_MAX];
-    snprintf(secrets, sizeof(secrets), "%s/secrets", dbstatedir);
+    snprintf (secrets, sizeof (secrets), "%s/secrets", dbstatedir);
 
-    int config_res = _conf_load_file(config);
-    int secrets_res = _conf_load_file(secrets);
+    int config_res = _conf_load_file (config);
+    int secrets_res = _conf_load_file (secrets);
 
     changed = 0;
 
@@ -179,7 +179,7 @@ conf_load (void) {
 }
 
 static int
-_conf_save_with_secrets(int secrets) {
+_conf_save_with_secrets (int secrets) {
     char tempfile[PATH_MAX];
     char str[PATH_MAX];
     FILE *fp = NULL;
@@ -271,8 +271,8 @@ conf_save (void) {
         return 0;
     }
 
-    int res = _conf_save_with_secrets(0);
-    int res_secrets = _conf_save_with_secrets(1);
+    int res = _conf_save_with_secrets (0);
+    int res_secrets = _conf_save_with_secrets (1);
 
     changed = 0;
 

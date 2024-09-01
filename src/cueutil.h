@@ -38,7 +38,13 @@
 //  `namelist` and `n` is the scandir output.
 //  The `dirname`, `namelist` and `n` can be either all set to NULL, otherwise they all must be valid values.
 playItem_t *
-plt_load_cue_file (playlist_t *playlist, playItem_t *after, const char *fullname, const char *dirname, struct dirent **namelist, int n);
+plt_load_cue_file (
+    playlist_t *playlist,
+    playItem_t *after,
+    const char *fullname,
+    const char *dirname,
+    struct dirent **namelist,
+    int n);
 
 // This is a more internal function, to load cuesheet from buffer.
 // Semantics are the same as `plt_load_cue_file`.
@@ -51,5 +57,15 @@ plt_load_cue_file (playlist_t *playlist, playItem_t *after, const char *fullname
 //  `buffer`: pointer to the string containing cuesheet.
 //  `buffersize`: size of the buffer.
 playItem_t *
-plt_load_cuesheet_from_buffer (playlist_t *playlist, playItem_t *after, const char *fname, playItem_t *embedded_origin, int64_t embedded_numsamples, int embedded_samplerate, const uint8_t *buffer, int buffersize, const char *dirname, struct dirent **namelist, int n);
-
+plt_load_cuesheet_from_buffer (
+    playlist_t *playlist,
+    playItem_t *after,
+    const char *fname,
+    playItem_t *embedded_origin,
+    int64_t embedded_numsamples,
+    int embedded_samplerate,
+    const uint8_t *buffer,
+    int buffersize,
+    const char *dirname,
+    struct dirent **namelist,
+    int n);

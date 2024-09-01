@@ -52,10 +52,14 @@ void
 ddb_vlog (const char *fmt, va_list ap);
 
 void
-ddb_log_viewer_register (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
+ddb_log_viewer_register (
+    void (*callback) (DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx),
+    void *ctx);
 
 void
-ddb_log_viewer_unregister (void (*callback)(DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx), void *ctx);
+ddb_log_viewer_unregister (
+    void (*callback) (DB_plugin_t *plugin, uint32_t layers, const char *text, void *ctx),
+    void *ctx);
 
 #ifdef __cplusplus
 }

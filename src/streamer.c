@@ -946,12 +946,12 @@ streamer_song_removed_notify (playItem_t *it) {
         streamer_set_next_track_to_play (NULL);
         next = get_next_track (it, shuffle, repeat);
         if (next == it) {
-            pl_item_unref(next);
+            pl_item_unref (next);
             next = NULL;
         }
         prev = get_prev_track (it, shuffle, repeat);
         if (prev == it) {
-            pl_item_unref(prev);
+            pl_item_unref (prev);
             prev = NULL;
         }
         streamer_set_next_track_to_play (next);

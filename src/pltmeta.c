@@ -32,8 +32,10 @@
 #include "metacache.h"
 #include "pltmeta.h"
 
-#define LOCK {pl_lock();}
-#define UNLOCK {pl_unlock();}
+#define LOCK \
+    { pl_lock (); }
+#define UNLOCK \
+    { pl_unlock (); }
 
 void
 plt_add_meta (playlist_t *it, const char *key, const char *value) {
@@ -222,7 +224,6 @@ plt_delete_metadata (playlist_t *it, DB_metaInfo_t *meta) {
         m = m->next;
     }
 }
-
 
 void
 plt_delete_all_meta (playlist_t *it) {

@@ -33,4 +33,3 @@ char dbpixmapdir[PATH_MAX]; // see deadbeef->get_pixmap_dir
 char dbcachedir[PATH_MAX];
 char dbresourcedir[PATH_MAX];
 char dbstatedir[PATH_MAX]; // $HOME/.local/state/deadbeef
-

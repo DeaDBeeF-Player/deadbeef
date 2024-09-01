@@ -36,7 +36,7 @@ static dispatch_queue_t process_queue;
 // Listeners
 typedef struct wavedata_listener_s {
     void *ctx;
-    void (*callback)(void *ctx, const ddb_audio_data_t *data);
+    void (*callback) (void *ctx, const ddb_audio_data_t *data);
     struct wavedata_listener_s *next;
 } wavedata_listener_t;
 
@@ -64,8 +64,8 @@ _init_buffers (int fft_size) {
     if (fft_size != _fft_size) {
         _free_buffers ();
         if (fft_size != 0) {
-            _freq_data = calloc(fft_size * DDB_FREQ_MAX_CHANNELS, sizeof (float));
-            _audio_data = calloc(fft_size * 2 * DDB_FREQ_MAX_CHANNELS, sizeof (float));
+            _freq_data = calloc (fft_size * DDB_FREQ_MAX_CHANNELS, sizeof (float));
+            _audio_data = calloc (fft_size * 2 * DDB_FREQ_MAX_CHANNELS, sizeof (float));
         }
         _fft_size = fft_size;
     }
@@ -73,20 +73,20 @@ _init_buffers (int fft_size) {
 
 void
 viz_init (void) {
-    sync_queue = dispatch_queue_create("Viz Sync Queue", NULL);
-    process_queue = dispatch_queue_create("Viz Process Queue", NULL);
+    sync_queue = dispatch_queue_create ("Viz Sync Queue", NULL);
+    process_queue = dispatch_queue_create ("Viz Process Queue", NULL);
 }
 
 void
 viz_free (void) {
-    dispatch_release(process_queue);
-    dispatch_release(sync_queue);
-    _free_buffers();
+    dispatch_release (process_queue);
+    dispatch_release (sync_queue);
+    _free_buffers ();
 }
 
 void
-viz_waveform_listen (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) {
-    dispatch_sync(sync_queue, ^{
+viz_waveform_listen (void *ctx, void (*callback) (void *ctx, const ddb_audio_data_t *data)) {
+    dispatch_sync (sync_queue, ^{
         wavedata_listener_t *l = malloc (sizeof (wavedata_listener_t));
         memset (l, 0, sizeof (wavedata_listener_t));
         l->ctx = ctx;
@@ -98,7 +98,7 @@ viz_waveform_listen (void *ctx, void (*callback)(void *ctx, const ddb_audio_data
 
 void
 viz_waveform_unlisten (void *ctx) {
-    dispatch_sync(sync_queue, ^{
+    dispatch_sync (sync_queue, ^{
         wavedata_listener_t *l, *prev = NULL;
         for (l = waveform_listeners; l; prev = l, l = l->next) {
             if (l->ctx == ctx) {
@@ -116,8 +116,8 @@ viz_waveform_unlisten (void *ctx) {
 }
 
 void
-viz_spectrum_listen (void *ctx, void (*callback)(void *ctx, const ddb_audio_data_t *data)) {
-    dispatch_sync(sync_queue, ^{
+viz_spectrum_listen (void *ctx, void (*callback) (void *ctx, const ddb_audio_data_t *data)) {
+    dispatch_sync (sync_queue, ^{
         wavedata_listener_t *l = malloc (sizeof (wavedata_listener_t));
         memset (l, 0, sizeof (wavedata_listener_t));
         l->ctx = ctx;
@@ -129,7 +129,7 @@ viz_spectrum_listen (void *ctx, void (*callback)(void *ctx, const ddb_audio_data
 
 void
 viz_spectrum_unlisten (void *ctx) {
-    dispatch_sync(sync_queue, ^{
+    dispatch_sync (sync_queue, ^{
         wavedata_listener_t *l, *prev = NULL;
         for (l = spectrum_listeners; l; prev = l, l = l->next) {
             if (l->ctx == ctx) {
@@ -148,15 +148,15 @@ viz_spectrum_unlisten (void *ctx) {
 
 void
 viz_reset (void) {
-    dispatch_sync(sync_queue, ^{
+    dispatch_sync (sync_queue, ^{
         _need_reset = 1;
     });
 }
 
 void
-viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int fft_size, int wave_size) {
-    dispatch_sync(sync_queue, ^{
-        _init_buffers(fft_size);
+viz_process (char *restrict _bytes, int _bytes_size, DB_output_t *output, int fft_size, int wave_size) {
+    dispatch_sync (sync_queue, ^{
+        _init_buffers (fft_size);
         if (!waveform_listeners && !spectrum_listeners) {
             return;
         }
@@ -165,7 +165,7 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         if (output->fmt.flags & DDB_WAVEFORMAT_FLAG_IS_DOP) {
             bytes = NULL;
         }
-        
+
         // convert to float
         ddb_waveformat_t *out_fmt = calloc (1, sizeof (ddb_waveformat_t));
         out_fmt->bps = 32;
@@ -180,8 +180,8 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
         const int output_nframes = fft_nframes > wave_size ? fft_nframes : wave_size;
 
         const int final_output_size = output_nframes * out_fmt->channels * sizeof (float);
-        const int final_input_size = output_nframes * output->fmt.channels * (output->fmt.bps/8);
-        float *data = calloc(1, final_output_size);
+        const int final_input_size = output_nframes * output->fmt.channels * (output->fmt.bps / 8);
+        float *data = calloc (1, final_output_size);
 
         if (bytes != NULL) {
             // take only as much bytes as we have available.
@@ -191,7 +191,7 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
             pcm_convert (&output->fmt, bytes, out_fmt, (char *)data, convert_size);
         }
 
-        ddb_audio_data_t *waveform_data = calloc(1, sizeof(ddb_audio_data_t));
+        ddb_audio_data_t *waveform_data = calloc (1, sizeof (ddb_audio_data_t));
         waveform_data->fmt = out_fmt;
         waveform_data->data = data;
         waveform_data->nframes = wave_size;
@@ -220,11 +220,7 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
                     fft_calculate (&_audio_data[_fft_size * 2 * c], &_freq_data[_fft_size * c], _fft_size);
                 }
             }
-            ddb_audio_data_t spectrum_data = {
-                .fmt = out_fmt,
-                .data = _freq_data,
-                .nframes = _fft_size
-            };
+            ddb_audio_data_t spectrum_data = { .fmt = out_fmt, .data = _freq_data, .nframes = _fft_size };
             for (wavedata_listener_t *l = spectrum_listeners; l; l = l->next) {
                 l->callback (l->ctx, &spectrum_data);
             }
@@ -240,7 +236,5 @@ viz_process (char * restrict _bytes, int _bytes_size, DB_output_t *output, int f
             free (out_fmt);
             free (waveform_data);
         });
-
     });
 }
-
