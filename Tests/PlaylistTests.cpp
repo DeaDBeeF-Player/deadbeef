@@ -49,8 +49,8 @@ TEST(PlaylistTests, test_SearchFor2ndValueInMultiValueItems_FindsTheItem) {
     plt_unref (plt);
 }
 
-using ::testing::StartsWith;
 TEST (PlaylistTests, test_LoadDBPLWithRelativepaths) {
+    using ::testing::StartsWith;
     ddb_playlist_t *plt = deadbeef->plt_alloc ("test");
 
     char dname[PATH_MAX];
