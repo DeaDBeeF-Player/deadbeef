@@ -176,6 +176,9 @@ plug_init_plugin (DB_plugin_t* (*loadfunc)(DB_functions_t *), void *handle);
 const char *
 plug_get_path_for_plugin_ptr (DB_plugin_t *plugin_ptr);
 
+void
+plug_remove_plugin (void *p);
+
 #ifdef __cplusplus
 }
 #endif

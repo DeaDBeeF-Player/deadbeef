@@ -77,6 +77,7 @@ protected:
         streamer_free ();
         conf_free();
         ddb_logger_free();
+        plug_remove_plugin((DB_plugin_t *)_fakeout);
     }
 
 protected:
