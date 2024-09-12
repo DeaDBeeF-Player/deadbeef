@@ -99,7 +99,7 @@ $(BUILD)/runtests: $(TEST_C_OBJS) $(GOOGLE_TEST_OBJS) $(TEST_CPP_OBJS)
 	$(CXX) $(LDFLAGS) $(TEST_C_OBJS) $(GOOGLE_TEST_OBJS) $(TEST_CPP_OBJS) $(LIBRARIES) -o $@
 
 runtests: $(BUILD)/runtests
-	mkdir $(BUILD)/Tests
+	mkdir -p $(BUILD)/Tests
 	cp -r Tests/TestData $(BUILD)/Tests/
 	cp -r Tests/PresetManagerData $(BUILD)/Tests/
 	cd $(BUILD) ; ./runtests
