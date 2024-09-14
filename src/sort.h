@@ -24,6 +24,10 @@
 #ifndef __deadbeef__sort__
 #define __deadbeef__sort__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "playlist.h"
 
 void
@@ -34,5 +38,9 @@ sort_track_array (playlist_t *playlist, playItem_t **tracks, int num_tracks, con
 
 void
 plt_autosort (playlist_t *plt);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* defined(__deadbeef__sort__) */
