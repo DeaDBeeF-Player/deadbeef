@@ -76,11 +76,11 @@ TEST(PlaylistTests, test_PlaylistSort) {
     EXPECT_STREQ(plt_find_meta(plt, "autosort_tf"), sort_tf);
 
     playItem_t *head = plt_get_head_item(plt, PL_MAIN);
-    ASSERT_STREQ("A", pl_find_meta_raw(head, "artist"));
+    EXPECT_STREQ("A", pl_find_meta_raw(head, "artist"));
     pl_item_unref(head);
 
     tail = plt_get_tail_item(plt, PL_MAIN);
-    ASSERT_STREQ("C", pl_find_meta_raw(tail, "artist"));
+    EXPECT_STREQ("C", pl_find_meta_raw(tail, "artist"));
 
     pl_item_unref(tail);
 
@@ -119,11 +119,11 @@ TEST(PlaylistTests, test_PlaylistAutosort) {
     EXPECT_STREQ(plt_find_meta(plt, "autosort_tf"), sort_tf);
 
     playItem_t *head = plt_get_head_item(plt, PL_MAIN);
-    ASSERT_STREQ("A", pl_find_meta_raw(head, "artist"));
+    EXPECT_STREQ("A", pl_find_meta_raw(head, "artist"));
     pl_item_unref(head);
 
     tail = plt_get_tail_item(plt, PL_MAIN);
-    ASSERT_STREQ("C", pl_find_meta_raw(tail, "artist"));
+    EXPECT_STREQ("C", pl_find_meta_raw(tail, "artist"));
 
     pl_item_unref(tail);
 
