@@ -36,7 +36,7 @@ CFLAGS=-fblocks -fcommon -O3 -gdwarf $(INCLUDE) \
 	-DXCTEST \
 	-DGOOGLETEST_STATIC
 LIBRARIES=-lmad -lmpg123 -lcurl -ldispatch -lpthread -lBlocksRuntime -lm -ljansson -ldl
-LDFLAGS=-L$(STATIC_ROOT)/lib -L$(STATIC_ROOT)/lib/x86_64-linux-gnu
+LDFLAGS=-L$(STATIC_ROOT)/lib -L$(STATIC_ROOT)/lib/x86_64-linux-gnu -fuse-ld=lld
 
 
 TEST_C_SOURCES=$(wildcard \
