@@ -47,9 +47,16 @@ bool CdfmLoader::load(const std::string &filename, const CFileProvider &fp)
   restartpos = 0; flags = Standard; bpm = 0;
   init_trackord();
   f->readString(songinfo, 33);
+  if (*songinfo > 32 || *songinfo < 0) {
+    fp.close(f); return false;
+  }
   initspeed = f->readInt(1);
-  for(i = 0; i < 32; i++)
+  for(i = 0; i < 32; i++) {
     f->readString(instname[i], 12);
+    if (*instname[i] > 11 || *instname[i] < 0) {
+      fp.close(f); return false;
+    }
+  }
   for(i = 0; i < 32; i++) {
     inst[i].data[1] = f->readInt(1);
     inst[i].data[2] = f->readInt(1);
@@ -68,8 +75,14 @@ bool CdfmLoader::load(const std::string &filename, const CFileProvider &fp)
     ;
   length = i;
   npats = f->readInt(1);
+  if (npats > 64) {
+    fp.close(f); return false;	// or: realloc_patterns(npats, 64, 9);
+  }
   for(i = 0; i < npats; i++) {
     n = f->readInt(1);
+    if (n >= npats) {
+      fp.close(f); return false;
+    }
     for(r = 0; r < 64; r++)
       for(c = 0; c < 9; c++) {
 	note = f->readInt(1);
@@ -106,8 +119,7 @@ bool CdfmLoader::load(const std::string &filename, const CFileProvider &fp)
 std::string CdfmLoader::gettype()
 {
 	char tmpstr[20];
-
-	sprintf(tmpstr,"Digital-FM %d.%d",header.hiver,header.lover);
+	snprintf(tmpstr,sizeof(tmpstr),"Digital-FM %d.%d",header.hiver,header.lover);
 	return std::string(tmpstr);
 }
 

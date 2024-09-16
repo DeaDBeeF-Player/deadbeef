@@ -39,10 +39,14 @@ bool CfmcLoader::load(const std::string &filename, const CFileProvider &fp)
   // read header
   f->readString(header.id, 4);
   f->readString(header.title, 21);
+  header.title[20] = 0;
   header.numchan = f->readInt(1);
 
   // 'FMC!' - signed ?
-  if (strncmp(header.id,"FMC!",4)) { fp.close(f); return false; }
+  if (memcmp(header.id, "FMC!", 4) ||
+      header.numchan < 1 || header.numchan > 32) {
+    fp.close(f); return false;
+  }
 
   // init CmodPlayer
   realloc_instruments(32);
@@ -89,6 +93,7 @@ bool CfmcLoader::load(const std::string &filename, const CFileProvider &fp)
     instruments[i].pitch_shift = f->readInt(1);
 
     f->readString(instruments[i].name, 21);
+    instruments[i].name[20] = 0;
   }
 
   // load tracks
@@ -140,20 +145,19 @@ bool CfmcLoader::load(const std::string &filename, const CFileProvider &fp)
   for (i=0;i<31;i++)
     buildinst(i);
 
-  // order length
-  for (i=0;i<256;i++)
-    {
-      if (order[i] >= 0xFE)
-	{
-	  length = i;
-	  break;
-	}
-    }
-
   // data for Protracker
-  activechan = (0xffffffff >> (32 - header.numchan)) << (32 - header.numchan);
+  activechan = (0xffffffffUL >> (32 - header.numchan)) << (32 - header.numchan);
   nop = t / header.numchan;
+  if (!nop) return false; // truncated file, no track data
   restartpos = 0;
+
+  // order length
+  for (length = 0; length < 256; length++) {
+    if (order[length] >= 0xFE) // end marker
+      break;
+    else if (order[length] >= nop /* or 64*/) // invalid pattern
+      return false;
+  }
 
   // flags
   flags = Faust;
@@ -180,7 +184,7 @@ std::string CfmcLoader::gettitle()
 
 std::string CfmcLoader::getinstrument(unsigned int n)
 {
-  return std::string(instruments[n].name);
+  return n < 32 ? std::string(instruments[n].name) : std::string();
 }
 
 unsigned int CfmcLoader::getinstruments()

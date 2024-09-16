@@ -23,6 +23,7 @@
 #define H_ADPLUG_A2MLOADER
 
 #include "protrack.h"
+#include "sixdepack.h"
 
 class Ca2mLoader: public CmodPlayer
 {
@@ -38,46 +39,17 @@ public:
   std::string gettype()
     { return std::string("AdLib Tracker 2"); }
   std::string gettitle()
-    { if(*songname) return std::string(songname,1,*songname); else return std::string(); }
+    { return std::string(songname + 1, *songname); }
   std::string getauthor()
-    { if(*author) return std::string(author,1,*author); else return std::string(); }
+    { return std::string(author + 1, *author); }
   unsigned int getinstruments()
-    { return 250; }
+    { return NUMINST; }
   std::string getinstrument(unsigned int n)
-    { return std::string(instname[n],1,*instname[n]); }
+  { return n < NUMINST ? std::string(instname[n] + 1, *instname[n]) : std::string(); }
 
 private:
-
-#define ADPLUG_A2M_COPYRANGES		6
-#define ADPLUG_A2M_FIRSTCODE		257
-#define ADPLUG_A2M_MINCOPY		3
-#define ADPLUG_A2M_MAXCOPY		255
-#define ADPLUG_A2M_CODESPERRANGE	(ADPLUG_A2M_MAXCOPY - ADPLUG_A2M_MINCOPY + 1)
-#define ADPLUG_A2M_MAXCHAR		(ADPLUG_A2M_FIRSTCODE + ADPLUG_A2M_COPYRANGES * ADPLUG_A2M_CODESPERRANGE - 1)
-#define ADPLUG_A2M_TWICEMAX		(2 * ADPLUG_A2M_MAXCHAR + 1)
-
-  static const unsigned int MAXFREQ, MINCOPY, MAXCOPY, COPYRANGES,
-    CODESPERRANGE, TERMINATE, FIRSTCODE, MAXCHAR, SUCCMAX, TWICEMAX, ROOT,
-    MAXBUF, MAXDISTANCE, MAXSIZE;
-
-  static const unsigned short bitvalue[14];
-  static const signed short copybits[ADPLUG_A2M_COPYRANGES],
-    copymin[ADPLUG_A2M_COPYRANGES];
-
-  void inittree();
-  void updatefreq(unsigned short a,unsigned short b);
-  void updatemodel(unsigned short code);
-  unsigned short inputcode(unsigned short bits);
-  unsigned short uncompress();
-  void decode();
-  unsigned short sixdepak(unsigned short *source,unsigned char *dest,unsigned short size);
-
-  char songname[43], author[43], instname[250][33];
-
-  unsigned short ibitcount, ibitbuffer, ibufcount, obufcount, input_size,
-    output_size, leftc[ADPLUG_A2M_MAXCHAR+1], rghtc[ADPLUG_A2M_MAXCHAR+1],
-    dad[ADPLUG_A2M_TWICEMAX+1], freq[ADPLUG_A2M_TWICEMAX+1], *wdbuf;
-  unsigned char *obuf, *buf;
+  enum {NUMINST = 250, INSTDATASIZE = 13};
+  char songname[43], author[43], instname[NUMINST][33];
 };
 
 #endif

@@ -39,8 +39,8 @@ public:
 	{ return 31; }
 	std::string getinstrument(unsigned int n)
 	{
-	  if(n < 29)
-	    return std::string(instname[n],1,16);
+	  if (n < 29)
+	    return std::string(&instname[n][1], 16);
 	  else
 	    return std::string("-broken-");
 	}

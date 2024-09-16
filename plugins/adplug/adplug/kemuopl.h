@@ -23,7 +23,11 @@
 #ifndef H_ADPLUG_KEMUOPL
 #define H_ADPLUG_KEMUOPL
 
+#define CKEMUOPL_MULTIINSTANCE 1
+
 #include "opl.h"
+#include <string.h>
+
 extern "C" {
 #include "adlibemu.h"
 }
@@ -31,31 +35,21 @@ extern "C" {
 class CKemuopl: public Copl
 {
 public:
-  CKemuopl(int rate, bool bit16, bool usestereo)
-    : use16bit(bit16), stereo(usestereo)
-    {
-      adlibinit(rate, usestereo ? 2 : 1, bit16 ? 2 : 1);
-      currType = TYPE_OPL2;
-    };
+  CKemuopl(int rate, bool bit16, bool usestereo);
+  virtual ~CKemuopl();
 
-  void update(short *buf, int samples)
-    {
-      if(use16bit) samples *= 2;
-      if(stereo) samples *= 2;
-      adlibgetsample(buf, samples);
-    }
 
-  // template methods
-  void write(int reg, int val)
-    {
-      if(currChip == 0)
-	adlib0(reg, val);
-    };
+  void update(short *buf, int samples);
+  void write(int reg, int val);
 
-  void init() {};
+  void init();
 
 private:
-  bool	use16bit,stereo;
+  bool             use16bit, stereo;
+  int              sampleerate;
+  adlibemu_context ctx[2];
+  short            *mixbuf0, *mixbuf1, *mixbuf2;
+  int              mixbufSamples;
 };
 
 #endif

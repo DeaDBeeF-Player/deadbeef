@@ -88,5 +88,6 @@ private:
   static const unsigned short bmf_notes_2[12];
   static const unsigned char bmf_default_instrument[13];
 
-  int             __bmf_convert_stream(unsigned char *stream, int channel);
+  long int        __bmf_convert_stream(const unsigned char *stream, int channel,
+                                       unsigned long stream_size);
 };

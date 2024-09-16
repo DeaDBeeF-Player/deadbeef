@@ -19,6 +19,7 @@
  * amd.h - AMD Loader by Simon Peter <dn.tlp@gmx.net>
  */
 
+#include "strnlen.h"
 #include "protrack.h"
 
 class CamdLoader: public CmodPlayer
@@ -34,16 +35,16 @@ public:
 	float getrefresh();
 
 	std::string gettype()
-	{ return std::string("AMUSIC Adlib Tracker"); };
+	{ return std::string("AMUSIC Adlib Tracker"); }
 	std::string gettitle()
-	{ return std::string(songname,0,24); };
+	{ return std::string(songname, strnlen(songname, sizeof(songname))); }
 	std::string getauthor()
-	{ return std::string(author,0,24); };
+	{ return std::string(author, strnlen(author, sizeof(author))); }
 	unsigned int getinstruments()
-	{ return 26; };
+	{ return 26; }
 	std::string getinstrument(unsigned int n)
-	{ return std::string(instname[n],0,23); };
+	{ return n < getinstruments() ? std::string(instname[n], strnlen(instname[n], sizeof(instname[n]))) : std::string(); }
 
 private:
-	char songname[24],author[24],instname[26][23];
+	char songname[24], author[24], instname[26][23];
 };

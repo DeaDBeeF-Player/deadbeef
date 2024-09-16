@@ -25,8 +25,6 @@
 */
 
 #include <cstring>
-#include <stdlib.h>
-#include <string.h>
 
 #include "cff.h"
 
@@ -39,122 +37,116 @@ CPlayer *CcffLoader::factory(Copl *newopl)
 
 bool CcffLoader::load(const std::string &filename, const CFileProvider &fp)
 {
-  binistream *f = fp.open(filename); if(!f) return false;
-  const unsigned char conv_inst[11] = { 2,1,10,9,4,3,6,5,0,8,7 };
-  const unsigned short conv_note[12] = { 0x16B, 0x181, 0x198, 0x1B0, 0x1CA, 0x1E5, 0x202, 0x220, 0x241, 0x263, 0x287, 0x2AE };
+  static const unsigned char conv_inst[11] = {
+    2, 1, 10, 9, 4, 3, 6, 5, 0, 8, 7
+  };
+  static const unsigned short conv_note[12] = {
+    0x16B, 0x181, 0x198, 0x1B0, 0x1CA, 0x1E5,
+    0x202, 0x220, 0x241, 0x263, 0x287, 0x2AE
+  };
 
-  int i,j,k,t=0;
+  binistream *f = fp.open(filename);
+  if (!f) return false;
 
   // '<CUD-FM-File>' - signed ?
-  f->readString(header.id, 16);
-  header.version = f->readInt(1); header.size = f->readInt(2);
-  header.packed = f->readInt(1); f->readString((char *)header.reserved, 12);
-  if (memcmp(header.id,"<CUD-FM-File>""\x1A\xDE\xE0",16))
-    { fp.close(f); return false; }
+  f->readString(header.id, sizeof(header.id));
+  header.version = f->readInt(1);
+  header.size = f->readInt(2);
+  header.packed = f->readInt(1);
+  f->ignore(sizeof(header.reserved));
 
-  unsigned char *module = new unsigned char [0x10000];
+  if (memcmp(header.id, "<CUD-FM-File>\x1A\xDE\xE0", sizeof(header.id)) ||
+      header.size < 16 /* for unpacker's id; real minimum is bigger */) {
+    fp.close(f);
+    return false;
+  }
 
-  // packed ?
-  if (header.packed)
-    {
+  // always allocate padding needed for unpacker
+  unsigned char *module = new unsigned char[header.size + 8];
+  size_t module_size = header.size;
+  f->readString((char *)module, header.size);
+  fp.close(f);
+
+  // unpack
+  if (header.packed) {
+      unsigned char *packed_module = module;
+      memset(packed_module + header.size, 0, 8);
+      module = new unsigned char[0x10000];
+
       cff_unpacker *unpacker = new cff_unpacker;
-
-      unsigned char *packed_module = new unsigned char [header.size + 4];
-
-      memset(packed_module,0,header.size + 4);
-
-      f->readString((char *)packed_module, header.size);
-      fp.close(f);
-
-      if (!unpacker->unpack(packed_module,module))
-	{
-	  delete unpacker;
-	  delete [] packed_module;
-	  delete [] module;
-	  return false;
-	}
-
+      module_size = unpacker->unpack(packed_module,module);
       delete unpacker;
       delete [] packed_module;
+  }
 
-      if (memcmp(&module[0x5E1],"CUD-FM-File - SEND A POSTCARD -",31))
-	{
-	  delete [] module;
-	  return false;
-	}
-    }
-  else
-    {
-      f->readString((char *)module, header.size);
-      fp.close(f);
-    }
+  if (module_size < 0x669 + 64 * 9 * 3 ||
+      memcmp(&module[0x5E1], "CUD-FM-File - SEND A POSTCARD -", 31)) {
+    delete [] module;
+    return false;
+  }
 
   // init CmodPlayer
   realloc_instruments(47);
   realloc_order(64);
-  realloc_patterns(36,64,9);
+  realloc_patterns(36, 64, 9);
   init_notetable(conv_note);
   init_trackord();
 
   // load instruments
-  for (i=0;i<47;i++)
-    {
-      memcpy(&instruments[i],&module[i*32],sizeof(cff_instrument));
+  for (int i = 0; i < 47; i++) {
+    memcpy(&instruments[i], &module[i * 32], sizeof(cff_instrument) - 1);
+    instruments[i].name[20] = 0;
 
-      for (j=0;j<11;j++)
-	inst[i].data[conv_inst[j]] = instruments[i].data[j];
-
-      instruments[i].name[20] = 0;
-    }
+    for (int j = 0; j < 11; j++)
+      inst[i].data[conv_inst[j]] = instruments[i].data[j];
+  }
 
   // number of patterns
   nop = module[0x5E0];
+  if (nop < 1 || nop > 36 || (size_t)0x669 + nop * 64 * 9 * 3 > module_size) {
+    delete [] module;
+    return false;
+  }
 
   // load title & author
-  memcpy(song_title,&module[0x614],20);
-  memcpy(song_author,&module[0x600],20);
+  memcpy(song_title, &module[0x614], sizeof(song_title));
+  memcpy(song_author, &module[0x600], sizeof(song_author));
 
   // load order
-  memcpy(order,&module[0x628],64);
+  memcpy(order, &module[0x628], 64);
 
   // load tracks
-  for (i=0;i<nop;i++)
-    {
-      unsigned char old_event_byte2[9];
+ cff_event (*events)[64][9] = (cff_event (*)[64][9]) &module[0x669];
+  for (int i = 0, t = 0; i < nop; i++) {
+      unsigned char old_event_byte2[9] = {};
 
-      memset(old_event_byte2,0,9);
-
-      for (j=0;j<9;j++)
-	{
-	  for (k=0;k<64;k++)
-	    {
-	      cff_event *event = (cff_event *)&module[0x669 + ((i*64+k)*9+j)*3];
+      for (int j = 0; j < 9; j++, t++) {
+	  for (int k = 0; k < 64; k++) {
+	      cff_event *event = &events[i][k][j];
 
 	      // convert note
 	      if (event->byte0 == 0x6D)
 		tracks[t][k].note = 127;
 	      else
-		if (event->byte0)
-		  tracks[t][k].note = event->byte0;
+		tracks[t][k].note = event->byte0;
 
 	      if (event->byte2)
 		old_event_byte2[j] = event->byte2;
 
 	      // convert effect
-	      switch (event->byte1)
-		{
+	      switch (event->byte1) {
 		case 'I': // set instrument
-		  tracks[t][k].inst = event->byte2 + 1;
+		  if (event->byte2 < 47) // ignore invalid instruments
+		    tracks[t][k].inst = event->byte2 + 1;
 		  tracks[t][k].param1 = tracks[t][k].param2 = 0;
 		  break;
 
 		case 'H': // set tempo
 		  tracks[t][k].command = 7;
-		  if (event->byte2 < 16)
-		    {
+		  if (event->byte2 < 16) {
 		      tracks[t][k].param1 = 0x07;
 		      tracks[t][k].param2 = 0x0D;
-		    }
+		  }
 		  break;
 
 		case 'A': // set speed
@@ -213,30 +205,25 @@ bool CcffLoader::load(const std::string &filename, const CFileProvider &fp)
 
 		case 'D': // fine volume slide
 		  tracks[t][k].command = 14;
-		  if (old_event_byte2[j] & 15)
-		    {
+		  if (old_event_byte2[j] & 15) {
 		      // slide down
 		      tracks[t][k].param1 = 5;
 		      tracks[t][k].param2 = old_event_byte2[j] & 15;
-		    }
-		  else
-		    {
+		  } else {
 		      // slide up
 		      tracks[t][k].param1 = 4;
 		      tracks[t][k].param2 = old_event_byte2[j] >> 4;
-		    }
+		  }
 		  break;
 
 		case 'J': // arpeggio
 		  tracks[t][k].param1  = old_event_byte2[j] >> 4;
 		  tracks[t][k].param2  = old_event_byte2[j] & 15;
 		  break;
-		}
-	    }
-
-	  t++;
-	}
-    }
+	      }
+	  }
+      }
+  }
 
   delete [] module;
 
@@ -244,14 +231,14 @@ bool CcffLoader::load(const std::string &filename, const CFileProvider &fp)
   restartpos = 0;
 
   // order length
-  for (i=0;i<64;i++)
-    {
-      if (order[i] >= 0x80)
-	{
-	  length = i;
-	  break;
-	}
-    }
+  if (order[0] >= 0x36) // empty order list or invalid pattern
+    return false;
+  for (length = 1; length < 64; length++) {
+    if (order[length] & 0x80) // end marker, keep length
+      break;
+    if (order[length] >= 36) // invalid pattern number
+      return false;
+  }
 
   // default tempo
   bpm = 0x7D;
@@ -266,13 +253,12 @@ void CcffLoader::rewind(int subsong)
   CmodPlayer::rewind(subsong);
 
   // default instruments
-  for (int i=0;i<9;i++)
-    {
+  for (int i = 0; i < 9; i++) {
       channel[i].inst = i;
 
       channel[i].vol1 = 63 - (inst[i].data[10] & 63);
       channel[i].vol2 = 63 - (inst[i].data[9] & 63);
-    }
+  }
 }
 
 std::string CcffLoader::gettype()
@@ -285,17 +271,20 @@ std::string CcffLoader::gettype()
 
 std::string CcffLoader::gettitle()
 {
-  return std::string(song_title,20);
+  return std::string(song_title, sizeof(song_title));
 }
 
 std::string CcffLoader::getauthor()
 {
-  return std::string(song_author,20);
+  return std::string(song_author, sizeof(song_author));
 }
 
 std::string CcffLoader::getinstrument(unsigned int n)
 {
-  return std::string(instruments[n].name);
+  if (n < getinstruments())
+    return std::string(instruments[n].name);
+  else
+    return std::string();
 }
 
 unsigned int CcffLoader::getinstruments()
@@ -303,9 +292,7 @@ unsigned int CcffLoader::getinstruments()
   return 47;
 }
 
-/* -------- Private Methods ------------------------------- */
-
-#ifdef _WIN32
+#if defined(_WIN32) && defined(_MSC_VER)
 #pragma warning(disable:4244)
 #pragma warning(disable:4018)
 #endif
@@ -313,9 +300,9 @@ unsigned int CcffLoader::getinstruments()
 /*
   Lempel-Ziv-Tyr ;-)
 */
-long CcffLoader::cff_unpacker::unpack(unsigned char *ibuf, unsigned char *obuf)
+size_t CcffLoader::cff_unpacker::unpack(unsigned char *ibuf, unsigned char *obuf)
 {
-  if (memcmp(ibuf,"YsComp""\x07""CUD1997""\x1A\x04",16))
+  if (memcmp(ibuf, "YsComp\007CUD1997\x1A\x04", 16))
     return 0;
 
   input = ibuf + 16;
@@ -323,148 +310,118 @@ long CcffLoader::cff_unpacker::unpack(unsigned char *ibuf, unsigned char *obuf)
 
   output_length = 0;
 
-  heap = (unsigned char *)malloc(0x10000);
-  dictionary = (unsigned char **)malloc(sizeof(unsigned char *)*0x8000);
+  heap = new unsigned char[0x10000];
+  dictionary = new unsigned char *[0x8000];
 
-  memset(heap,0,0x10000);
-  memset(dictionary,0,0x8000);
-
-  cleanup();
-  if(!startup())
-    goto out;
+  if(!start_block())
+    goto fail;
 
   // LZW
-  while (1)
-    {
-      new_code = get_code();
+  for (;;) {
+    switch (unsigned long new_code = get_code()) {
+    case 0x00: // end of data
+      goto done;
 
-      // 0x00: end of data
-      if (new_code == 0)
-	break;
+    case 0x01: // end of block
+      if (!start_block()) goto fail;
+      break;
 
-      // 0x01: end of block
-      if (new_code == 1)
-	{
-	  cleanup();
-	  if(!startup())
-	    goto out;
+    case 0x02: // expand code length
+      code_length++;
+      if (code_length > 16) goto fail;
+      break;
 
-	  continue;
-	}
+    case 0x03: { // RLE
+	unsigned char repeat_length = get_code(2) + 1;
 
-      // 0x02: expand code length
-      if (new_code == 2)
-	{
-	  code_length++;
+	unsigned char length = 4 << get_code(2);
+	size_t repeat_counter = get_code(length);
 
-	  continue;
-	}
+	size_t end = output_length + repeat_counter * repeat_length;
+	if (repeat_length > output_length ||
+	    repeat_counter > 0x10000 || end > 0x10000)
+	  goto fail;
 
-      // 0x03: RLE
-      if (new_code == 3)
-	{
-	  unsigned char old_code_length = code_length;
+	while (output_length < end)
+	  put_string(&output[output_length - repeat_length], repeat_length);
 
-	  code_length = 2;
+	if (!start_string()) goto fail;
+      }
+      break;
 
-	  unsigned char repeat_length = get_code() + 1;
-
-	  code_length = 4 << get_code();
-
-	  unsigned long repeat_counter = get_code();
-
-	  if(output_length + repeat_counter * repeat_length > 0x10000) {
-	    output_length = 0;
-	    goto out;
-	  }
-
-	  for (unsigned int i=0;i<repeat_counter*repeat_length;i++)
-	  {
-	    output[output_length] = output[output_length - repeat_length];
-	    output_length++;
-	  }
-
-	  code_length = old_code_length;
-
-	  if(!startup())
-	    goto out;
-
-	  continue;
-	}
-
-      if (new_code >= (0x104 + dictionary_length))
-	{
+    default:
+      if (new_code >= 0x104 + dictionary_length) {
 	  // dictionary <- old.code.string + old.code.char
 	  the_string[++the_string[0]] = the_string[1];
-	}
-      else
-	{
+      } else {
 	  // dictionary <- old.code.string + new.code.char
 	  unsigned char temp_string[256];
 
-	  translate_code(new_code,temp_string);
+	  translate_code(new_code, temp_string);
 
 	  the_string[++the_string[0]] = temp_string[1];
-	}
+      }
 
       expand_dictionary(the_string);
 
       // output <- new.code.string
-      translate_code(new_code,the_string);
-
-      if(output_length + the_string[0] > 0x10000) {
-	output_length = 0;
-	goto out;
-      }
-
-      for (int i=0;i<the_string[0];i++)
-	output[output_length++] = the_string[i+1];
-
-      old_code = new_code;
+      translate_code(new_code, the_string);
+      if (!put_string()) goto fail;
+      break;
     }
-
- out:
-  free(heap);
-  free(dictionary);
+  }
+ fail:
+  output_length = 0;
+ done:
+  delete [] heap;
+  delete [] dictionary;
   return output_length;
 }
 
-unsigned long CcffLoader::cff_unpacker::get_code()
+/* -------- Private cff_unpacker Methods ------------------------------- */
+
+unsigned long CcffLoader::cff_unpacker::get_code(unsigned char bitlength)
 {
   unsigned long code;
+  // shifts of bits_buffer by 32 can be undefined (with 32 bit long)
+  unsigned long long bits = bits_buffer;
 
-  while (bits_left < code_length)
-    {
-      bits_buffer |= ((*input++) << bits_left);
-      bits_left += 8;
-    }
+  while (bits_left < bitlength) {
+    bits |= (unsigned long long)*input++ << bits_left;
+    bits_left += 8;
+  }
 
-  code = bits_buffer & ((1 << code_length) - 1);
+  code = bits & ((1ULL << bitlength) - 1);
 
-  bits_buffer >>= code_length;
-  bits_left -= code_length;
+  bits_buffer = (unsigned long)(bits >> bitlength);
+  bits_left -= bitlength;
 
   return code;
 }
 
 void CcffLoader::cff_unpacker::translate_code(unsigned long code, unsigned char *string)
 {
-  unsigned char translated_string[256];
-
-  if (code >= 0x104)
-    {
-      memcpy(translated_string,dictionary[code - 0x104],(*(dictionary[code - 0x104])) + 1);
-    }
-  else
-    {
-      translated_string[0] = 1;
-      translated_string[1] = (code - 4) & 0xFF;
-    }
-
-  memcpy(string,translated_string,256);
+  if (code >= 0x104 + dictionary_length) { // invalid code
+    string[0] = string[1] = 0;
+  } else if (code >= 0x104) { // dictionary entry
+    memcpy(string, dictionary[code - 0x104], dictionary[code - 0x104][0] + 1);
+  } else { // single character
+    string[0] = 1;
+    string[1] = (code - 4) & 0xFF;
+  }
 }
 
-void CcffLoader::cff_unpacker::cleanup()
+bool CcffLoader::cff_unpacker::put_string(unsigned char *string, size_t length)
+{
+  if (output_length + length > 0x10000) return false;
+
+  memcpy(&output[output_length], string, length);
+  output_length += length;
+
+  return true;
+}
+
+bool CcffLoader::cff_unpacker::start_block()
 {
   code_length = 9;
 
@@ -473,40 +430,27 @@ void CcffLoader::cff_unpacker::cleanup()
 
   heap_length = 0;
   dictionary_length = 0;
+
+  return start_string();
 }
 
-int CcffLoader::cff_unpacker::startup()
+bool CcffLoader::cff_unpacker::start_string()
 {
-  old_code = get_code();
-
-  translate_code(old_code,the_string);
-
-  if(output_length + the_string[0] > 0x10000) {
-    output_length = 0;
-    return 0;
-  }
-
-  for (int i=0;i<the_string[0];i++)
-    output[output_length++] = the_string[i+1];
-
-  return 1;
+  translate_code(get_code(), the_string);
+  return put_string();
 }
 
 void CcffLoader::cff_unpacker::expand_dictionary(unsigned char *string)
 {
-  if (string[0] >= 0xF0)
+  if (string[0] >= 0xF0 || heap_length + string[0] + 1 > 0x10000)
     return;
 
-  memcpy(&heap[heap_length],string,string[0] + 1);
-
-  dictionary[dictionary_length] = &heap[heap_length];
-
-  dictionary_length++;
-
-  heap_length += (string[0] + 1);
+  memcpy(&heap[heap_length], string, string[0] + 1);
+  dictionary[dictionary_length++] = &heap[heap_length];
+  heap_length += string[0] + 1;
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(_MSC_VER)
 #pragma warning(default:4244)
 #pragma warning(default:4018)
 #endif

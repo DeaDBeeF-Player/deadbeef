@@ -64,7 +64,7 @@
 // so any that aren't overridden are still available for use with these default
 // patches.  The Word Rescue CMFs are good examples of songs that rely on these
 // default patches.
-uint8_t cDefaultPatches[] =
+static const uint8_t cDefaultPatches[] =
 "\x01\x11\x4F\x00\xF1\xD2\x53\x74\x00\x00\x06"
 "\x07\x12\x4F\x00\xF2\xF2\x60\x72\x00\x00\x08"
 "\x31\xA1\x1C\x80\x51\x54\x03\x67\x00\x00\x0E"
@@ -209,6 +209,10 @@ bool CcmfPlayer::load(const std::string &filename, const CFileProvider &fp)
 	// Load the MIDI data into memory
   f->seek(this->cmfHeader.iMusicOffset);
   this->iSongLen = fp.filesize(f) - this->cmfHeader.iMusicOffset;
+  if (this->iSongLen <= 0) { // invalid offset value
+    fp.close(f);
+    return false;
+  }
   this->data = new unsigned char[this->iSongLen];
   f->readString((char *)data, this->iSongLen);
 
@@ -225,7 +229,7 @@ bool CcmfPlayer::update()
 
 	// Read in the next event
 	while (!this->iDelayRemaining) {
-		uint8_t iCommand = this->data[this->iPlayPointer++];
+		uint8_t iCommand = this->iPlayPointer < this->iSongLen ? this->data[this->iPlayPointer++] : 0;
 		if ((iCommand & 0x80) == 0) {
 			// Running status, use previous command
 			this->iPlayPointer--;
@@ -236,12 +240,14 @@ bool CcmfPlayer::update()
 		uint8_t iChannel = iCommand & 0x0F;
 		switch (iCommand & 0xF0) {
 			case 0x80: { // Note off (two data bytes)
+				if (this->iPlayPointer > this->iSongLen - 2) break;
 				uint8_t iNote = this->data[this->iPlayPointer++];
 				uint8_t iVelocity = this->data[this->iPlayPointer++]; // release velocity
 				this->cmfNoteOff(iChannel, iNote, iVelocity);
 				break;
 			}
 			case 0x90: { // Note on (two data bytes)
+				if (this->iPlayPointer > this->iSongLen - 2) break;
 				uint8_t iNote = this->data[this->iPlayPointer++];
 				uint8_t iVelocity = this->data[this->iPlayPointer++]; // attack velocity
 				if (iVelocity) {
@@ -272,29 +278,34 @@ bool CcmfPlayer::update()
 				break;
 			}
 			case 0xA0: { // Polyphonic key pressure (two data bytes)
+				if (this->iPlayPointer > this->iSongLen - 2) break;
 				uint8_t iNote = this->data[this->iPlayPointer++];
 				uint8_t iPressure = this->data[this->iPlayPointer++];
 				AdPlug_LogWrite("CMF: Key pressure not yet implemented! (wanted ch%d/note %d set to %d)\n", iChannel, iNote, iPressure);
 				break;
 			}
 			case 0xB0: { // Controller (two data bytes)
+				if (this->iPlayPointer > this->iSongLen - 2) break;
 				uint8_t iController = this->data[this->iPlayPointer++];
 				uint8_t iValue = this->data[this->iPlayPointer++];
 				this->MIDIcontroller(iChannel, iController, iValue);
 				break;
 			}
 			case 0xC0: { // Instrument change (one data byte)
+				if (this->iPlayPointer >= this->iSongLen) break;
 				uint8_t iNewInstrument = this->data[this->iPlayPointer++];
 				this->chMIDI[iChannel].iPatch = iNewInstrument;
 				AdPlug_LogWrite("CMF: Remembering MIDI channel %d now uses patch %d\n", iChannel, iNewInstrument);
 				break;
 			}
 			case 0xD0: { // Channel pressure (one data byte)
+				if (this->iPlayPointer >= this->iSongLen) break;
 				uint8_t iPressure = this->data[this->iPlayPointer++];
 				AdPlug_LogWrite("CMF: Channel pressure not yet implemented! (wanted ch%d set to %d)\n", iChannel, iPressure);
 				break;
 			}
 			case 0xE0: { // Pitch bend (two data bytes)
+				if (this->iPlayPointer > this->iSongLen - 2) break;
 				uint8_t iLSB = this->data[this->iPlayPointer++];
 				uint8_t iMSB = this->data[this->iPlayPointer++];
 				uint16_t iValue = (iMSB << 7) | iLSB;
@@ -307,26 +318,31 @@ bool CcmfPlayer::update()
 			case 0xF0: // System message (arbitrary data bytes)
 				switch (iCommand) {
 					case 0xF0: { // Sysex
-						uint8_t iNextByte;
+						uint8_t iNextByte = 0;
 						AdPlug_LogWrite("Sysex message: ");
-						do {
+						 while ((iNextByte & 0x80) == 0 && this->iPlayPointer < this->iSongLen) {
 							iNextByte = this->data[this->iPlayPointer++];
 							AdPlug_LogWrite("%02X", iNextByte);
-						} while ((iNextByte & 0x80) == 0);
+						}
 						AdPlug_LogWrite("\n");
 						// This will have read in the terminating EOX (0xF7) message too
 						break;
 					}
 					case 0xF1: // MIDI Time Code Quarter Frame
-						this->data[this->iPlayPointer++]; // message data (ignored)
+						if (this->iPlayPointer < this->iSongLen)
+							(void)this->data[this->iPlayPointer++]; // message data (ignored)
 						break;
 					case 0xF2: // Song position pointer
-						this->data[this->iPlayPointer++]; // message data (ignored)
-						this->data[this->iPlayPointer++];
+						if (this->iPlayPointer < this->iSongLen - 1) {
+							(void)this->data[this->iPlayPointer++]; // message data (ignored)
+							(void)this->data[this->iPlayPointer++];
+						}
 						break;
 					case 0xF3: // Song select
-						this->data[this->iPlayPointer++]; // message data (ignored)
-						AdPlug_LogWrite("CMF: MIDI Song Select is not implemented.\n");
+						if (this->iPlayPointer < this->iSongLen - 1) {
+							(void)this->data[this->iPlayPointer++]; // message data (ignored)
+							AdPlug_LogWrite("CMF: MIDI Song Select is not implemented.\n");
+						}
 						break;
 					case 0xF6: // Tune request
 						break;
@@ -348,6 +364,7 @@ bool CcmfPlayer::update()
 						this->iPlayPointer = 0; // for repeat in endless-play mode
 						break;
 					case 0xFF: { // System reset, used as meta-events in a MIDI file
+						if (this->iPlayPointer >= this->iSongLen) break;
 						uint8_t iEvent = this->data[this->iPlayPointer++];
 						switch (iEvent) {
 							case 0x2F: // end of track
@@ -489,7 +506,7 @@ uint32_t CcmfPlayer::readMIDINumber()
 {
 	uint32_t iValue = 0;
 	for (int i = 0; i < 4; i++) {
-		uint8_t iNext = this->data[this->iPlayPointer++];
+		uint8_t iNext = this->iPlayPointer < this->iSongLen ? this->data[this->iPlayPointer++] : 0;
 		iValue <<= 7;
 		iValue |= (iNext & 0x7F); // ignore the MSB
 		if ((iNext & 0x80) == 0) break; // last byte has the MSB unset

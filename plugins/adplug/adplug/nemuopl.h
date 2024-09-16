@@ -40,6 +40,7 @@ public:
 
 private:
   opl3_chip*	opl;
+  int			samplerate;
 };
 
 #endif

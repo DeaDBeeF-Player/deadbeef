@@ -73,7 +73,9 @@ bool CsngPlayer::update()
   if(!header.compressed)
     opl->write(data[pos].reg, data[pos].val);
 
-  if(data[pos].val) del = data[pos].val - 1; pos++;
+  if(data[pos].val) del = data[pos].val - 1;
+  pos++;
+
   if(pos >= header.length) { songend = true; pos = header.loop; }
   return !songend;
 }
