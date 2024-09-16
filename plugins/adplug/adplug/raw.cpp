@@ -51,7 +51,9 @@ bool CrawPlayer::load(const std::string &filename, const CFileProvider &fp)
 
   // load section
   this->clock = f->readInt(2); // clock speed
-  this->length = (fp.filesize(f) - 10) / 2; // Wraithverge: total data-size.
+  this->length = fp.filesize(f);
+  if (this->length <= 10) { fp.close (f); return false; }
+  this->length = (this->length - 10) / 2; // Wraithverge: total data-size.
   this->data = new Tdata [this->length];
   bool tagdata = false;
   title[0] = 0;
@@ -133,7 +135,6 @@ bool CrawPlayer::update()
 
   do {
     setspeed = false;
-
     if (this->pos >= this->length) return false;
 
     switch(this->data[this->pos].command) {
@@ -144,6 +145,7 @@ bool CrawPlayer::update()
     case 2:
       if (!this->data[this->pos].param) {
         pos++;
+        if (this->pos >= this->length) return false;
         this->speed = this->data[this->pos].param + (this->data[this->pos].command << 8);
         setspeed = true;
       } else

@@ -48,8 +48,8 @@ int
 adplug_stop (void);
 
 static const char settings_dlg[] =
-    "property \"Prefer Ken emu over Satoh (surround won't work)\" checkbox adplug.use_ken 0;\n"
-    "property \"Enable surround\" checkbox adplug.surround 1;\n"
+    "property \"Sample rate (real OPL is 49716Hz)\" entry adplug.samplerate 49716;\n"
+    "property \"Synth engine\" select[5] adplug.synth 0 \"Nuked OPL3\" \"DOSBox OPL3 emulator\" \"Tatsuyuki Satoh's OPL2 emulator\" \"Ken Silverman's OPL emulator\" \"Simon Peter's OPL emulator\";\n"
 ;
 
 // define plugin interface
@@ -64,6 +64,7 @@ DB_decoder_t adplug_plugin = {
     .plugin.copyright = 
     "ADPLUG DeaDBeeF Player Plugin\n"
     "Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>\n"
+    "Copyright (C) 2024 Thomas Jepp <tom@tomjepp.co.uk>\n"
     "\n"
     "This software is provided 'as-is', without any express or implied\n"
     "warranty.  In no event will the authors be held liable for any damages\n"
@@ -86,8 +87,8 @@ DB_decoder_t adplug_plugin = {
     "\n"
     "\n"
     "adplug (modified)\n"
-    "Copyright (C) 1999 - 2006 Simon Peter, <dn.tlp@gmx.net>, et al.\n"
-    "deadbeef-related modifications (c) 2009-2014 Oleksiy Yakovenko\n"
+    "Copyright (C) 1999 - 2017 Simon Peter, et al.\n"
+    "deadbeef-related modifications (c) 2009-2014 Oleksiy Yakovenko, 2024 Thomas Jepp\n"
     "\n"
     "This library is free software; you can redistribute it and/or\n"
     "modify it under the terms of the GNU Lesser General Public\n"

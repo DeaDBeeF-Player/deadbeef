@@ -29,7 +29,8 @@ CNemuopl::CNemuopl(int rate)
 {
   opl = new opl3_chip();
   OPL3_Reset(opl, rate);
-  currType = TYPE_OPL2;
+  currType = TYPE_OPL3;
+  samplerate = rate;
 }
 
 CNemuopl::~CNemuopl()
@@ -47,4 +48,8 @@ void CNemuopl::write(int reg, int val)
   OPL3_WriteRegBuffered(opl, (currChip << 8) | reg, val);
 }
 
-void CNemuopl::init() {}
+void CNemuopl::init()
+{
+  OPL3_Reset(opl, samplerate);
+  currChip = 0;
+}

@@ -43,7 +43,7 @@ class CmtkLoader: public ChscPlayer
   unsigned int getinstruments()
     { return 128; };
   std::string getinstrument(unsigned int n)
-    { return std::string(instname[n]); };
+    { return n < 128 ? std::string(instname[n]) : std::string(); };
 
  private:
   char title[34],composer[34],instname[0x80][34];

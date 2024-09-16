@@ -38,7 +38,7 @@ protected:
   //
   bool		  xadplayer_load()
     {
-      if(xad.fmt == FLASH)
+      if (xad.fmt == FLASH && tune_size >= 0x633 + 18)
 	return true;
       else
 	return false;
@@ -48,10 +48,4 @@ protected:
   float           xadplayer_getrefresh();
   std::string     xadplayer_gettype();
   unsigned int    xadplayer_getinstruments();
-
-private:
-  static const unsigned char flash_adlib_registers[99];
-  static const unsigned short flash_notes_encoded[268];
-  static const unsigned short flash_notes[12];
-  static const unsigned char flash_default_instrument[8];
 };

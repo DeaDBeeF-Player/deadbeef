@@ -28,8 +28,7 @@
 #ifndef H_ADPLUG_MDIPLAYER
 #define H_ADPLUG_MDIPLAYER
 
-#include "player.h"
-#include "adlib.h"
+#include "composer.h"
 
 #define MIDI_CHUNK_SIZE	4	/* FOURCC size */
 #define MIDI_HEAD_SIZE	6	/* MThd data size */
@@ -62,23 +61,22 @@
 #define ADLIB_RHYTHM	2
 #define ADLIB_PITCH		3
 
-class CmdiPlayer: public CPlayer
+class CmdiPlayer: public CcomposerBackend
 {
 public:
 	static CPlayer *factory(Copl *newopl);
 
 	CmdiPlayer(Copl *newopl)
-		: CPlayer(newopl), drv(0), data(0)
+		: CcomposerBackend(newopl), data(0)
 		{ }
 	~CmdiPlayer()
 	{
 		if(data) delete [] data;
-		if (drv) drv->~CadlibDriver();
 	};
 
 	bool load(const std::string &filename, const CFileProvider &fp);
 	bool update();
-	void rewind(int subsong);
+	void frontend_rewind(int subsong);
 
 	float getrefresh()
 	{
@@ -87,14 +85,13 @@ public:
 
 	std::string gettype()
 	{
-		return std::string("AdLib MIDIPlay File");
+		return std::string("AdLib Visual Composer: MIDIPlay File");
 	}
 
 private:
 	void SetTempo(uint32_t tempo);
 	uint32_t GetVarVal();
 	void executeCommand();
-	CadlibDriver *drv;
 
 protected:
 	unsigned long	pos, size;

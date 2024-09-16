@@ -34,12 +34,14 @@ class CrixPlayer: public CPlayer
   bool update();
   void rewind(int subsong);
   float getrefresh();
-  uint32_t getsubsongs();
+  unsigned int getsubsongs();
+  unsigned int getsubsong();
 
   std::string gettype()
     { return std::string("Softstar RIX OPL Music Format"); };
 
  protected:	
+  int song = 0;
   typedef struct {
     uint8_t v[14];
   } ADDT;
@@ -64,7 +66,7 @@ class CrixPlayer: public CPlayer
   static const uint8_t ad_C0_offs[18];
   static const uint8_t modify[28];
   static const uint8_t bd_reg_data[124];
-  static uint8_t for40reg[18];
+  uint8_t for40reg[18];
   static const uint16_t mus_time;
   uint32_t I,T;
   uint16_t mus_block;

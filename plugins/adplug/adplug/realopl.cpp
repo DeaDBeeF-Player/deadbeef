@@ -46,8 +46,8 @@
   # define INP inb
   # define OUTP(reg,val) outb(val,reg)
 #else // no support on other platforms
-  # define INP(reg)   0
-  # define OUTP(reg, val)
+  static inline int INP(int reg) { return 0; }
+  static inline void OUTP(int reg, int val) { };
 #endif
 
 #include "realopl.h"

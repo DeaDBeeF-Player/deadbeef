@@ -75,8 +75,8 @@ channelSlots[] = { {0, 3}, {1, 4}, {2, 5}, {6, 9}, {7, 10}, {8, 11}, {12, 15}, {
 
 /*
 Note that
- op_table[chan]     == slotRegisterOffets[channelSlots[chan].slotOp1]
- op_table[chan] + 3 == slotRegisterOffets[channelSlots[chan].slotOp2]
+ op_table[chan]     == slotRegisterOffsets[channelSlots[chan].slotOp1]
+ op_table[chan] + 3 == slotRegisterOffsets[channelSlots[chan].slotOp2]
 However, the slot-numbers are needed for rhythm mode, thus the extra tables.
 */
 
@@ -197,7 +197,7 @@ bool CcmfmacsoperaPlayer::loadInstruments(binistream* f, int nrOfInstruments)
 	};
 
 	for (int i = 0; i < nrOfInstruments; ++i) {
-		for (int j = 0; j < sizeof(loadOffsets)/sizeof(loadOffsets[0]); ++j) {
+		for (unsigned int j = 0; j < sizeof(loadOffsets)/sizeof(loadOffsets[0]); ++j) {
 			int v = f->readInt(2);
 			if (loadOffsets[j] >= 0 ) {
 				*(int16_t*)((char*)&instruments[i] + loadOffsets[j]) = v;
@@ -403,16 +403,16 @@ void CcmfmacsoperaPlayer::setVolume(int channelNr, int vol)
 bool CcmfmacsoperaPlayer::advanceRow()
 {
 	for (;;) {
-		if (currentRow < 0 || ++currentRow >= 64) {
+		if (++currentRow >= 64) {
 			// next pattern
 			currentRow = 0;
 			currentPatternIndex = 0;
 
 			do {
-				currentOrderIndex++;
+				currentOrderIndex++; // overflows ~0 into 0 when needed
 
 				// check bounds
-				if (currentOrderIndex < 0 || currentOrderIndex >= sizeof(patternOrder) / sizeof(patternOrder[0]))
+				if (currentOrderIndex >= (sizeof(patternOrder) / sizeof(patternOrder[0])))
 					return false;
 
 				// end of song?
@@ -421,13 +421,13 @@ bool CcmfmacsoperaPlayer::advanceRow()
 
 			} while (patternOrder[currentOrderIndex] >= patterns.size()); // loop to skip invalid pattern references
 
-			AdPlug_LogWrite("order %d, pattern %d\n", currentOrderIndex, patternOrder[currentOrderIndex]);
+			AdPlug_LogWrite("order %u, pattern %d\n", currentOrderIndex, patternOrder[currentOrderIndex]);
 		}
 
 		// check for pattern break
 		const Pattern &p = patterns[patternOrder[currentOrderIndex]];
 		if (currentPatternIndex < p.size() && p[currentPatternIndex].row == currentRow && p[currentPatternIndex].note == 1) {
-			currentRow = -1;
+			currentRow = 64;
 		}
 		else // no pattern break, done!
 			break;
@@ -459,7 +459,7 @@ void CcmfmacsoperaPlayer::processNoteEvent(const CcmfmacsoperaPlayer::NoteEvent 
 
 bool CcmfmacsoperaPlayer::update()
 {
-	AdPlug_LogWrite( "%2d: ", currentRow);
+	AdPlug_LogWrite( "%2u: ", currentRow);
 
 	const Pattern& p = patterns[patternOrder[currentOrderIndex]];
 
@@ -491,8 +491,8 @@ bool CcmfmacsoperaPlayer::update()
 
 void CcmfmacsoperaPlayer::resetPlayer()
 {
-	currentRow = -1;
-	currentOrderIndex = -1;
+	currentRow = 64;
+	currentOrderIndex = ~0;
 	advanceRow();
 }
 

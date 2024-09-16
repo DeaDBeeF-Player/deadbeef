@@ -107,7 +107,7 @@ void CxadhypPlayer::xadplayer_update()
 
   hyp.pointer += 3;
 
-  if (hyp.pointer >= tune_size)
+  if (hyp.pointer > tune_size - 9)
   {
     hyp.pointer = 0x69;
     plr.looping = 1;

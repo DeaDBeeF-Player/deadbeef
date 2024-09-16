@@ -41,6 +41,9 @@ private:
   char			*music;
   unsigned int		last, notenum;
   bool			songend;
+  struct {
+    unsigned char	value[11];
+  } inst[9];
 
   void play_note(int c, int note, int octv);
 };

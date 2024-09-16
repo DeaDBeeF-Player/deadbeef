@@ -1,6 +1,7 @@
 /*
     DeaDBeeF ADPLUG plugin
     Copyright (C) 2009-2014 Oleksiy Yakovenko <waker@users.sourceforge.net>
+    Copyright (C) 2024 Thomas Jepp <tom@tomjepp.co.uk>
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -27,8 +28,12 @@
 #include <deadbeef/deadbeef.h>
 #include <deadbeef/strdupa.h>
 #include "adplug.h"
+#include "opl.h"
 #include "emuopl.h"
 #include "kemuopl.h"
+#include "nemuopl.h"
+#include "temuopl.h"
+#include "wemuopl.h"
 #include "surroundopl.h"
 #include "silentopl.h"
 
@@ -66,35 +71,67 @@ adplug_open (uint32_t hints) {
     return _info;
 }
 
+Copl*
+adplug_create_opl(int samplerate, bool is16bit, bool stereo) {
+    COPLprops aprops, bprops;
+    int synth = deadbeef->conf_get_int("adplug.synth", 0);
+    
+    Copl* opl;
+
+    switch (synth) {
+        case 0: // NukedOPL3
+        default:
+            opl = new CNemuopl(samplerate);
+            trace("adplug: created CNemuopl instance\n");
+            break;
+            
+        case 1: // DOSBox OPL3
+            opl = new CWemuopl(samplerate, is16bit, stereo);
+            trace("adplug: created CWemuopl instance\n");
+            break;
+            
+        case 2: // Tatsuyuki Satoh's OPL2 emulator
+            opl = new CTemuopl(samplerate, is16bit, stereo);
+            trace("adplug: created CTemuopl instance\n");
+            break;
+            
+        case 3: // Ken Silverman's OPL emulator
+            aprops.opl = new CKemuopl(samplerate, is16bit, false);
+            aprops.use16bit = is16bit;
+            aprops.stereo = false;
+            bprops.opl = new CKemuopl(samplerate, is16bit, false);
+            bprops.use16bit = is16bit;
+            bprops.stereo = false;
+            opl = new CSurroundopl(&aprops, &bprops, is16bit);
+            trace("adplug: created CKemuopl instance\n");
+            break;
+            
+        case 4: // Simon Peter's OPL emulator
+            aprops.opl = new CEmuopl(samplerate, is16bit, false);
+            aprops.use16bit = is16bit;
+            aprops.stereo = false;
+            bprops.opl = new CEmuopl(samplerate, is16bit, false);
+            bprops.use16bit = is16bit;
+            bprops.stereo = false;
+            opl = new CSurroundopl(&aprops, &bprops, is16bit);
+            trace("adplug: created Cemuopl instance\n");
+            break;
+        
+    }
+    
+    return opl;
+}
+
 int
 adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // prepare to decode the track
     // return -1 on failure
     adplug_info_t *info = (adplug_info_t *)_info;
 
-    int samplerate = deadbeef->conf_get_int ("synth.samplerate", 44100);
+    int samplerate = deadbeef->conf_get_int ("adplug.samplerate", 49716);
     int bps = 16; // NOTE: there's no need to support 8bit input, because adplug simply downgrades 16bit signal to 8bits
     int channels = 2;
-    if (deadbeef->conf_get_int ("adplug.surround", 1)) {
-        if (deadbeef->conf_get_int ("adplug.use_ken", 0)) {
-            Copl *a = new CKemuopl(samplerate, bps == 16, false);
-            Copl *b = new CKemuopl(samplerate, bps == 16, false);
-            info->opl = new CSurroundopl(a, b, bps == 16);
-        }
-        else {
-            Copl *a = new CEmuopl(samplerate, bps == 16, false);
-            Copl *b = new CEmuopl(samplerate, bps == 16, false);
-            info->opl = new CSurroundopl(a, b, bps == 16);
-        }
-    }
-    else {
-        if (deadbeef->conf_get_int ("adplug.use_ken", 0)) {
-            info->opl = new CKemuopl (samplerate, bps == 16, channels == 2);
-        }
-        else {
-            info->opl = new CEmuopl (samplerate, bps == 16, channels == 2);
-        }
-    }
+    info->opl = adplug_create_opl(samplerate, bps == 16, channels == 2);
     deadbeef->pl_lock ();
     const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
     deadbeef->pl_unlock ();
@@ -119,7 +156,7 @@ adplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.channelmask = _info->fmt.channels == 1 ? DDB_SPEAKER_FRONT_LEFT : (DDB_SPEAKER_FRONT_LEFT | DDB_SPEAKER_FRONT_RIGHT);
     _info->readpos = 0;
 
-    trace ("adplug_init ok (songlength=%d, duration=%f, totalsamples=%d)\n", info->decoder->songlength (info->subsong), deadbeef->pl_get_item_duration (it), info->totalsamples);
+    trace ("adplug_init ok (samplerate=%d, bps=%d, channels=%d, songlength=%d, duration=%f, totalsamples=%d)\n", samplerate, bps, channels, info->decoder->songlength (info->subsong), deadbeef->pl_get_item_duration (it), info->totalsamples);
 
     return 0;
 }
