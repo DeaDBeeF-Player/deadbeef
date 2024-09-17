@@ -2445,8 +2445,8 @@ _plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, 
         goto load_fail;
     }
 
-    char *slash = strrchr (fname, '/');
-    if (slash && fname) {
+    char *slash = fname ? strrchr (fname, '/') : NULL;
+    if (slash) {
         dname = strndup (fname, slash - fname);
     }
 
