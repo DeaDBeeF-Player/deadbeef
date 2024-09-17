@@ -41,7 +41,7 @@
  * and more.
  */
 
-#include <string.h>
+#include <cstring>
 
 #include "imf.h"
 #include "database.h"
@@ -55,11 +55,11 @@ CPlayer *CimfPlayer::factory(Copl *newopl)
 
 bool CimfPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
-  binistream *f = fp.open(filename); if(!f) return false;
-  unsigned long fsize, flsize, mfsize = 0;
-  unsigned int i;
+  binistream *f = fp.open(filename);
+  if (!f) return false;
 
   // file validation section
+  unsigned long hdr_size = 0;
   {
     char	header[5];
     int		version;
@@ -67,8 +67,8 @@ bool CimfPlayer::load(const std::string &filename, const CFileProvider &fp)
     f->readString(header, 5);
     version = f->readInt(1);
 
-    if(strncmp(header, "ADLIB", 5) || version != 1) {
-      if(!fp.extension(filename, ".imf") && !fp.extension(filename, ".wlf")) {
+    if (memcmp(header, "ADLIB", 5) || version != 1) {
+      if (!fp.extension(filename, ".imf") && !fp.extension(filename, ".wlf")) {
 	// It's no IMF file at all
 	fp.close(f);
 	return false;
@@ -79,45 +79,73 @@ bool CimfPlayer::load(const std::string &filename, const CFileProvider &fp)
       track_name = f->readString('\0');
       game_name = f->readString('\0');
       f->ignore(1);
-      mfsize = f->pos() + 2;
+      hdr_size = f->pos();
     }
   }
 
-  // load section
-  if(mfsize)
-    fsize = f->readInt(4);
-  else
-    fsize = f->readInt(2);
-  flsize = fp.filesize(f);
-  if(!fsize) {		// footerless file (raw music data)
-    if(mfsize)
-      f->seek(-4, binio::Add);
-    else
-      f->seek(-2, binio::Add);
-    size = (flsize - mfsize) / 4;
-  } else		// file has got a footer
-    size = fsize / 4;
+  // determine data size
+  unsigned long file_size = fp.filesize(f);
+  int len_size = hdr_size ? 4 : 2;
+  unsigned long song_size = f->readInt(len_size);
 
+  if (!song_size) {	// raw music data (no length field, no footer)
+    f->seek(-len_size, binio::Add);
+    len_size = 0;
+    song_size = file_size - hdr_size;
+    // some IMF files end *before* the last time value (either format)
+    if (song_size & 2) song_size += 2;
+  }
+
+  hdr_size += len_size;
+
+  // validity check
+  if (hdr_size + 4 > file_size || song_size & 3 // too short || invalid length
+      || (song_size > file_size - hdr_size && // truncated song data
+	  song_size != file_size + 2 - hdr_size)) { // allow trunc. final time
+    fp.close(f);
+    return false;
+  }
+
+  // read song data
+  size = song_size / 4;
   data = new Sdata[size];
-  for(i = 0; i < size; i++) {
-    data[i].reg = f->readInt(1); data[i].val = f->readInt(1);
+  for (unsigned long i = 0; i < size; i++) {
+    data[i].reg = f->readInt(1);
+    data[i].val = f->readInt(1);
     data[i].time = f->readInt(2);
   }
 
   // read footer, if any
-  if(fsize && (fsize < flsize - 2 - mfsize)) {
-    if(f->readInt(1) == 0x1a) {
+  if (song_size < file_size - hdr_size) {
+    unsigned long footerlen = file_size - hdr_size - song_size;
+    char signature = f->readInt(1);
+
+    if (signature == 0x1a && footerlen <= 1 + 3 * 256 + 9) {
       // Adam Nielsen's footer format
       track_name = f->readString();
       author_name = f->readString();
       remarks = f->readString();
+      // f->ignore(9); // tagging program
     } else {
       // Generic footer
-      unsigned long footerlen = flsize - fsize - 2 - mfsize;
-
       footer = new char[footerlen + 1];
-      f->readString(footer, footerlen);
+      footer[0] = signature;
+      f->readString(&footer[1], footerlen);
       footer[footerlen] = '\0';	// Make ASCIIZ string
+
+      if (footerlen == 88 && // maybe Muse tag data
+	  !footer[17] && !footer[81] && track_name.empty()) {
+	// For the lack of a better test assume it's Muse data if the size
+	// is correct and both string fields end with NUL. Format is:
+	//  2 Bytes: unknown
+	// 16 Bytes: title
+	// 64 Bytes: remarks (usually source file)
+	//  6 Bytes: unknown data
+	track_name = std::string(&footer[2]);
+	remarks = std::string(&footer[18]);
+	delete[] footer;
+	footer = 0;
+      }
     }
   }
 
@@ -152,31 +180,18 @@ void CimfPlayer::rewind(int subsong)
 
 std::string CimfPlayer::gettitle()
 {
-  std::string	title;
+  if (game_name.empty()) return track_name;
+  if (track_name.empty()) return game_name;
 
-  title = track_name;
-
-  if(!track_name.empty() && !game_name.empty())
-    title += " - ";
-
-  title += game_name;
-
-  return title;
+  return track_name + " - " + game_name;
 }
 
 std::string CimfPlayer::getdesc()
 {
-  std::string	desc;
+  if (footer)
+    return std::string(footer);
 
-  if(footer)
-    desc = std::string(footer);
-
-  if(!remarks.empty() && footer)
-    desc += "\n\n";
-
-  desc += remarks;
-
-  return desc;
+  return remarks;
 }
 
 /*** private methods *************************************/

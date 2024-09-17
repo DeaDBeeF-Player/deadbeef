@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Adplug - Replayer for many OPL2/OPL3 audio file formats.
  * Copyright (C) 1999 - 2008 Simon Peter <dn.tlp@gmx.net>, et al.
  * 
@@ -40,7 +40,11 @@
 
 #ifdef DEBUG
 #include "debug.h"
+#else
+#define AdPlug_LogWrite
 #endif
+
+#include "load_helper.h"
 
 const uint8_t CheradPlayer::slot_offset[HERAD_NUM_VOICES] = {
 	0, 1, 2, 8, 9, 10, 16, 17, 18
@@ -65,9 +69,9 @@ std::string CheradPlayer::gettype()
 {
 	char scomp[12 + 1] = "";
 	if (comp > HERAD_COMP_NONE)
-		sprintf(scomp, ", %s packed", (comp == HERAD_COMP_HSQ ? "HSQ" : "SQX"));
+		snprintf(scomp, sizeof(scomp), ", %s packed", (comp == HERAD_COMP_HSQ ? "HSQ" : "SQX"));
 	char type[40 + 1];
-	sprintf(type, "HERAD System %s (version %d%s)", (AGD ? "AGD" : "SDB"), (v2 ? 2 : 1), scomp);
+	snprintf(type, sizeof(type), "HERAD System %s (version %d%s)", (AGD ? "AGD" : "SDB"), (v2 ? 2 : 1), scomp);
 	return std::string(type);
 }
 
@@ -79,18 +83,17 @@ bool isHSQ(uint8_t * data, int size)
 	// data[3] - word CompSize
 	// data[4]
 	// data[5] - byte Checksum
-	if ( data[2] != 0 )
+	if (data[2] != 0)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: Is not HSQ, wrong check byte.\n");
-		#endif
 		return false;
 	}
-	if ( *(uint16_t *)(data + 3) != size )
+
+	const uint16_t temp_size = u16_unaligned(data + 3);
+
+	if (temp_size != size)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: Is not HSQ, wrong compressed size.\n");
-		#endif
 		return false;
 	}
 	uint8_t checksum = 0;
@@ -98,11 +101,9 @@ bool isHSQ(uint8_t * data, int size)
 	{
 		checksum += data[i];
 	}
-	if ( checksum != 0xAB )
+	if (checksum != 0xAB)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: Is not HSQ, wrong checksum.\n");
-		#endif
 		return false;
 	}
 	return true;
@@ -116,18 +117,14 @@ bool isSQX(uint8_t * data)
 	// data[3] - byte SQX flag #2
 	// data[4] - byte SQX flag #3
 	// data[5] - byte CntOffPart
-	if ( data[2] > 2 || data[3] > 2 || data[4] > 2 )
+	if (data[2] > 2 || data[3] > 2 || data[4] > 2)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: Is not SQX, wrong flags.\n");
-		#endif
 		return false;
 	}
-	if ( data[5] == 0 || data[5] > 15 )
+	if (data[5] == 0 || data[5] > 15)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: Is not SQX, wrong bit count.\n");
-		#endif
 		return false;
 	}
 	return true;
@@ -138,7 +135,7 @@ uint16_t HSQ_decompress(uint8_t * data, int size, uint8_t * out)
 	uint32_t queue = 1;
 	int8_t bit;
 	int16_t offset;
-	uint16_t count, out_size = *(uint16_t *)data;
+	uint16_t count, out_size = u16_unaligned(data);
 	uint8_t * src = data;
 	uint8_t * dst = out;
 
@@ -148,7 +145,7 @@ uint16_t HSQ_decompress(uint8_t * data, int size, uint8_t * out)
 		// get next bit of the queue
 		if (queue == 1)
 		{
-			queue = *(uint16_t *)src | 0x10000;
+			queue = u16_unaligned(src) | 0x10000;
 			src += 2;
 		}
 		bit = queue & 1;
@@ -164,7 +161,7 @@ uint16_t HSQ_decompress(uint8_t * data, int size, uint8_t * out)
 			// get next bit of the queue
 			if (queue == 1)
 			{
-				queue = *(uint16_t *)src | 0x10000;
+				queue = u16_unaligned(src) | 0x10000;
 				src += 2;
 			}
 			bit = queue & 1;
@@ -174,7 +171,7 @@ uint16_t HSQ_decompress(uint8_t * data, int size, uint8_t * out)
 			{
 				// count = next 3 bits of the input
 				// offset = next 13 bits of the input minus 8192
-				count = *(uint16_t *)src;
+				count = u16_unaligned(src);
 				offset = (count >> 3) - 8192;
 				count &= 7;
 				src += 2;
@@ -194,7 +191,7 @@ uint16_t HSQ_decompress(uint8_t * data, int size, uint8_t * out)
 				// count = next bit of the queue * 2 + next bit of the queue
 				if (queue == 1)
 				{
-					queue = *(uint16_t *)src | 0x10000;
+					queue = u16_unaligned(src) | 0x10000;
 					src += 2;
 				}
 				bit = queue & 1;
@@ -202,7 +199,7 @@ uint16_t HSQ_decompress(uint8_t * data, int size, uint8_t * out)
 				count = bit << 1;
 				if (queue == 1)
 				{
-					queue = *(uint16_t *)src | 0x10000;
+					queue = u16_unaligned(src) | 0x10000;
 					src += 2;
 				}
 				bit = queue & 1;
@@ -233,7 +230,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 	uint8_t * dst = out;
 	bool done = false;
 
-	*(uint16_t *)dst = *(uint16_t *)src;
+	std::memcpy(dst, src, sizeof(uint16_t));
 	src += 6;
 	uint16_t queue = 1;
 	uint8_t bit, bit_p;
@@ -243,7 +240,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 		queue >>= 1;
 		if (queue == 0)
 		{
-			queue = *(uint16_t *)src;
+			queue = u16_unaligned(src);
 			src += 2;
 			bit_p = bit;
 			bit = queue & 1;
@@ -264,7 +261,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 				queue >>= 1;
 				if (queue == 0)
 				{
-					queue = *(uint16_t *)src;
+					queue = u16_unaligned(src);
 					src += 2;
 					bit_p = bit;
 					bit = queue & 1;
@@ -282,7 +279,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 					queue >>= 1;
 					if (queue == 0)
 					{
-						queue = *(uint16_t *)src;
+						queue = u16_unaligned(src);
 						src += 2;
 						bit_p = bit;
 						bit = queue & 1;
@@ -303,7 +300,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 				}
 				break;
 			case 2:
-				count = *(uint16_t *)src;
+				count = u16_unaligned(src);
 				offset = (count >> data[5]) - (1 << (16 - data[5]));
 				count &= (1 << data[5]) - 1;
 				src += 2;
@@ -335,7 +332,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 			queue >>= 1;
 			if (queue == 0)
 			{
-				queue = *(uint16_t *)src;
+				queue = u16_unaligned(src);
 				src += 2;
 				bit_p = bit;
 				bit = queue & 1;
@@ -356,7 +353,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 					queue >>= 1;
 					if (queue == 0)
 					{
-						queue = *(uint16_t *)src;
+						queue = u16_unaligned(src);
 						src += 2;
 						bit_p = bit;
 						bit = queue & 1;
@@ -374,7 +371,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 						queue >>= 1;
 						if (queue == 0)
 						{
-							queue = *(uint16_t *)src;
+							queue = u16_unaligned(src);
 							src += 2;
 							bit_p = bit;
 							bit = queue & 1;
@@ -395,7 +392,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 					}
 					break;
 				case 2:
-					count = *(uint16_t *)src;
+					count = u16_unaligned(src);
 					offset = (count >> data[5]) - (1 << (16 - data[5]));
 					count &= (1 << data[5]) - 1;
 					src += 2;
@@ -434,7 +431,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 					queue >>= 1;
 					if (queue == 0)
 					{
-						queue = *(uint16_t *)src;
+						queue = u16_unaligned(src);
 						src += 2;
 						bit_p = bit;
 						bit = queue & 1;
@@ -452,7 +449,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 						queue >>= 1;
 						if (queue == 0)
 						{
-							queue = *(uint16_t *)src;
+							queue = u16_unaligned(src);
 							src += 2;
 							bit_p = bit;
 							bit = queue & 1;
@@ -473,7 +470,7 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 					}
 					break;
 				case 2:
-					count = *(uint16_t *)src;
+					count = u16_unaligned(src);
 					offset = (count >> data[5]) - (1 << (16 - data[5]));
 					count &= (1 << data[5]) - 1;
 					src += 2;
@@ -504,6 +501,89 @@ uint16_t SQX_decompress(uint8_t * data, int size, uint8_t * out)
 	return dst - out;
 }
 
+bool CheradPlayer::validEvent(int i, uint16_t * offset, bool v2)
+{
+	while (*offset < track[i].size && (track[i].data[(*offset)++] & 0x80) > 0);
+	if (*offset >= track[i].size)
+	{
+		AdPlug_LogWrite("HERAD: Reading out of range.\n");
+		return false;
+	}
+
+	uint8_t status = track[i].data[(*offset)++];
+	uint8_t check;
+
+	if (status < 0x80)
+	{
+		AdPlug_LogWrite("HERAD: Unexpected status.\n");
+		return false;
+	}
+	else if (status < 0x90 && v2)
+	{
+		check = track[i].data[(*offset)++];
+		if (check > 0x7F)
+		{
+			AdPlug_LogWrite("HERAD: Unexpected param.\n");
+			return false;
+		}
+	}
+	else if (status < 0xC0)
+	{
+		check = track[i].data[(*offset)++];
+		if (check > 0x7F)
+		{
+			AdPlug_LogWrite("HERAD: Unexpected param 1.\n");
+			return false;
+		}
+		check = track[i].data[(*offset)++];
+		if (check > 0x7F)
+		{
+			AdPlug_LogWrite("HERAD: Unexpected param 2.\n");
+			return false;
+		}
+	}
+	else if (status < 0xF0)
+	{
+		check = track[i].data[(*offset)++];
+		if (check > 0x7F)
+		{
+			AdPlug_LogWrite("HERAD: Unexpected param.\n");
+			return false;
+		}
+	}
+	else if (status == 0xFF)
+	{
+		*offset = track[i].size;
+	}
+
+	return true;
+}
+
+uint8_t CheradPlayer::validTracks()
+{
+	for (int i = 0; i < nTracks; i++)
+	{
+		uint16_t of_v1 = 0, of_v2 = 0;
+
+		while (of_v1 < track[i].size || of_v2 < track[i].size)
+		{
+			if (of_v1 < track[i].size)
+			{
+				if (!validEvent(i, &of_v1, false))
+					return 1;
+			}
+
+			if (of_v2 < track[i].size)
+			{
+				if (!validEvent(i, &of_v2, true))
+					return 2;
+			}
+		}
+	}
+
+	return 0;
+}
+
 bool CheradPlayer::load(const std::string &filename, const CFileProvider &fp)
 {
 	binistream *f = fp.open(filename); if(!f) return false;
@@ -515,26 +595,20 @@ bool CheradPlayer::load(const std::string &filename, const CFileProvider &fp)
 		!fp.extension(filename, ".agd") &&
 		!fp.extension(filename, ".ha2"))
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: Unsupported file extension.\n");
-		#endif
 		fp.close(f);
 		return false;
 	}
 	int size = fp.filesize(f);
 	if (size < HERAD_MIN_SIZE)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: File size is too small.\n");
-		#endif
 		fp.close(f);
 		return false;
 	}
 	if (size > HERAD_MAX_SIZE)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: File size is too big.\n");
-		#endif
 		fp.close(f);
 		return false;
 	}
@@ -573,50 +647,40 @@ bool CheradPlayer::load(const std::string &filename, const CFileProvider &fp)
 	uint16_t offset;
 	if (size < HERAD_HEAD_SIZE)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: File size is too small.\n");
-		#endif
 		goto failure;
 	}
-	if ( size < *(uint16_t *)data )
+	if (size < u16_unaligned(data))
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: Incorrect offset / file size.\n");
-		#endif
 		goto failure;
 	}
-	nInsts = (size - *(uint16_t *)data) / HERAD_INST_SIZE;
-	if ( nInsts == 0 )
+	nInsts = (size - u16_unaligned(data)) / HERAD_INST_SIZE;
+	if (nInsts == 0)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: M32 files are not supported.\n");
-		#endif
 		goto failure;
 	}
-	offset = *(uint16_t *)(data + 2);
-	if ( offset != 0x32 && offset != 0x52 )
+	offset = u16_unaligned(data + 2);
+	if (offset != 0x32 && offset != 0x52)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: Wrong first track offset.\n");
-		#endif
 		goto failure;
 	}
 	AGD = offset == 0x52;
-	wLoopStart = *(uint16_t *)(data + 0x2C);
-	wLoopEnd = *(uint16_t *)(data + 0x2E);
-	wLoopCount = *(uint16_t *)(data + 0x30);
-	wSpeed = *(uint16_t *)(data + 0x32);
+	wLoopStart = u16_unaligned(data + 0x2C);
+	wLoopEnd = u16_unaligned(data + 0x2E);
+	wLoopCount = u16_unaligned(data + 0x30);
+	wSpeed = u16_unaligned(data + 0x32);
 	if (wSpeed == 0)
 	{
-		#ifdef DEBUG
 		AdPlug_LogWrite("HERAD: Speed is not defined.\n");
-		#endif
 		goto failure;
 	}
 	nTracks = 0;
 	for (int i = 0; i < HERAD_MAX_TRACKS; i++)
 	{
-		if ( *(uint16_t *)(data + 2 + i * 2) == 0 )
+		if (u16_unaligned(data + 2 + i * 2) == 0)
 			break;
 		nTracks++;
 	}
@@ -624,22 +688,28 @@ bool CheradPlayer::load(const std::string &filename, const CFileProvider &fp)
 	chn = new herad_chn[nTracks];
 	for (int i = 0; i < nTracks; i++)
 	{
-		offset = *(uint16_t *)(data + 2 + i * 2) + 2;
-		uint16_t next = (i < HERAD_MAX_TRACKS - 1 ? *(uint16_t *)(data + 2 + (i + 1) * 2) + 2 : *(uint16_t *)data);
-		if (next <= 2) next = *(uint16_t *)data;
+		offset = u16_unaligned(data + 2 + i * 2) + 2;
+		uint16_t next = (i < HERAD_MAX_TRACKS - 1) ? u16_unaligned(data + 2 + (i + 1) * 2) + 2 : u16_unaligned(data);
+		if (next <= 2) next = u16_unaligned(data);
 
 		track[i].size = next - offset;
 		track[i].data = new uint8_t[track[i].size];
 		memcpy(track[i].data, data + offset, track[i].size);
 	}
 	inst = new herad_inst[nInsts];
-	offset = *(uint16_t *)data;
-	v2 = true;
+	offset = u16_unaligned(data);
+	v2 = false;
 	for (int i = 0; i < nInsts; i++)
 	{
 		memcpy(inst[i].data, data + offset + i * HERAD_INST_SIZE, HERAD_INST_SIZE);
-		if (v2 && inst[i].param.mode == HERAD_INSTMODE_SDB1)
-			v2 = false;
+		if (!v2 && inst[i].param.mode == HERAD_INSTMODE_KMAP)
+			v2 = true;
+	}
+	if (!v2)
+	{
+		// Aggressive detection for HERAD version 2 without keymap instruments
+		// (if version 1 event parser reports error, it's version 2)
+		v2 = (validTracks() == 1);
 	}
 	delete[] data;
 	goto good;
@@ -659,9 +729,9 @@ void CheradPlayer::rewind(int subsong)
 	wTime = 0;
 	songend = false;
 
-	ticks_pos = -1; // there's always 1 excess tick at start
+	ticks_pos = ~0; // there's always 1 excess tick at start
 	total_ticks = 0;
-	loop_pos = -1;
+	loop_pos = ~0;
 	loop_times = 1;
 
 	for (int i = 0; i < nTracks; i++)

@@ -193,8 +193,10 @@ void CxadhybridPlayer::xadplayer_update()
 			// is slide ?
 			if (slide)
 			{
-				hyb.channel[i].freq_slide = (((slide >> 3) * -1) * (slide & 7)) << 1;
-    
+				// Looks bogus. Should values 0..8 really result
+				// in 0 or is bit 3 supposed to be a sign?
+				hyb.channel[i].freq_slide = -(slide >> 3) * (slide & 7) * 2;
+				// And this statement is dead anyway.
 				if (slide & 0x80) slide = -(slide & 7);
 			}
 

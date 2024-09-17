@@ -37,7 +37,7 @@ protected:
   //
   bool		    xadplayer_load()
     {
-      if(xad.fmt == HYP)
+      if (xad.fmt == HYP && tune_size >= 0x69 + 9)
 	return true;
       else
 	return false;

@@ -42,21 +42,29 @@
 // one block is too high and the adjacent block is too low ;-)
 #define NEWBLOCK_LIMIT  32
 
+struct COPLprops {
+	Copl *opl;
+	bool use16bit; // false == 8bit
+	bool stereo; // false == mono
+};
+
 class CSurroundopl: public Copl
 {
 	private:
-		bool use16bit;
+		COPLprops oplA, oplB;
 		short bufsize;
 		short *lbuf, *rbuf;
-		Copl *a, *b;
+		bool output16bit;
 		uint8_t iFMReg[2][256];
 		uint8_t iTweakedFMReg[2][256];
 		uint8_t iCurrentTweakedBlock[2][9]; // Current value of the Block in the tweaked OPL chip
 		uint8_t iCurrentFNum[2][9];         // Current value of the FNum in the tweaked OPL chip
+		double offset;                      // User configurable frequency offset for surroundopl
 
 	public:
 
-		CSurroundopl(Copl *a, Copl *b, bool use16bit);
+		// Takes ownership of a->opl and b->opl
+		CSurroundopl(COPLprops *a, COPLprops *b, bool output16bit);
 		~CSurroundopl();
 
 		void update(short *buf, int samples);
@@ -64,6 +72,7 @@ class CSurroundopl: public Copl
 
 		void init();
 		void setchip(int n);
+		void set_offset(double offset);
 };
 
 #endif

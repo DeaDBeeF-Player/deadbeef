@@ -64,7 +64,13 @@ bool Cdro2Player::load(const std::string &filename, const CFileProvider &fp)
 		return false;
 	}
 
-	this->iLength = f->readInt(4) * 2; // stored in file as number of byte pairs
+	this->iLength = f->readInt(4);
+	if (this->iLength >= 1<<30 ||
+	    this->iLength > fp.filesize(f) - f->pos()) {
+		fp.close(f);
+		return false;
+	}
+	this->iLength *= 2; // stored in file as number of byte p
 	f->ignore(4);	// Length in milliseconds
 	f->ignore(1);	/// OPL type (0 == OPL2, 1 == Dual OPL2, 2 == OPL3)
 	int iFormat = f->readInt(1);
@@ -135,8 +141,8 @@ end_section:
 bool Cdro2Player::update()
 {
 	while (this->iPos < this->iLength) {
-		int iIndex = this->data[this->iPos++];
-		int iValue = this->data[this->iPos++];
+		unsigned int iIndex = this->data[this->iPos++];
+		unsigned int iValue = this->data[this->iPos++];
 
 		// Short delay
 		if (iIndex == this->iCmdDelayS) {
@@ -157,7 +163,7 @@ bool Cdro2Player::update()
 			} else {
 			  this->opl->setchip(0);
 			}
-			if (iIndex > this->iConvTableLen) {
+			if (iIndex >= this->iConvTableLen) {
 				printf("DRO2: Error - index beyond end of codemap table!  Corrupted .dro?\n");
 				return false; // EOF
 			}

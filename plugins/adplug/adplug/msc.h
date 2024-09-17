@@ -58,7 +58,7 @@ class CmscPlayer: public CPlayer
   };
 
   // file data
-  char *		desc;		// song desctiption
+  char *		desc;		// song description
   unsigned short	version;	// file version
   unsigned short	nr_blocks;	// number of music blocks
   unsigned short	block_len;	// maximal block length

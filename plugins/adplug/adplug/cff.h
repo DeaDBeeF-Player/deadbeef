@@ -43,35 +43,36 @@ class CcffLoader: public CmodPlayer
     {
     public:
 
-      long unpack(unsigned char *ibuf, unsigned char *obuf);
+      size_t unpack(unsigned char *ibuf, unsigned char *obuf);
 
     private:
 
-      unsigned long get_code();
-      void translate_code(unsigned long code, unsigned char *string);
+      unsigned long get_code(unsigned char bitlength);
+      unsigned long get_code() { return get_code(code_length); }
 
-      void cleanup();
-      int startup();
+      void translate_code(unsigned long code, unsigned char *string);
+      bool put_string(unsigned char *string, size_t length);
+      bool put_string() { return put_string(&the_string[1], the_string[0]); }
+
+      bool start_block();
+      bool start_string();
 
       void expand_dictionary(unsigned char *string);
 
       unsigned char *input;
       unsigned char *output;
 
-      long output_length;
+      size_t output_length;
 
       unsigned char code_length;
-
+      unsigned char bits_left;
       unsigned long bits_buffer;
-      unsigned int bits_left;
 
       unsigned char *heap;
       unsigned char **dictionary;
 
       unsigned int heap_length;
       unsigned int dictionary_length;
-
-      unsigned long old_code,new_code;
 
       unsigned char the_string[256];
     };

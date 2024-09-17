@@ -82,7 +82,13 @@ bool CxadPlayer::load(const std::string &filename, const CFileProvider &fp)
 	else
 	{
 		// get file size
-		tune_size = fp.filesize(f) - 80;
+		tune_size = fp.filesize(f);
+		if (tune_size <= 80)
+		{
+			fp.close(f);
+			return false;
+		}
+		tune_size -= 80;
 	}
 
 	// load()

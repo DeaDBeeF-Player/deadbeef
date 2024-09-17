@@ -42,7 +42,7 @@ class CEmuopl: public Copl
  private:
   bool		use16bit, stereo;
   FM_OPL	*opl[2];				// OPL2 emulator data
-  short		*mixbuf0, *mixbuf1;
+  short		*mixbuf0, *mixbuf1, *mixbuf2;
   int		mixbufSamples;
 };
 

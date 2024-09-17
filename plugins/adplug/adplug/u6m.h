@@ -32,7 +32,7 @@ class Cu6mPlayer: public CPlayer
  public:
   static CPlayer *factory(Copl *newopl);
 
-  Cu6mPlayer(Copl *newopl) : CPlayer(newopl), song_data(0)
+  Cu6mPlayer(Copl *newopl) : CPlayer(newopl), song_data(0), song_size(0)
     {
     };
 
@@ -62,20 +62,20 @@ class Cu6mPlayer: public CPlayer
 
   struct subsong_info   // information about a subsong
   {
-    int continue_pos;
+    size_t continue_pos;
+    size_t subsong_start;
     int subsong_repetitions;
-    int subsong_start;
   };
 
   struct dict_entry   // dictionary entry
   {
     unsigned char root;
-    int codeword;
+    short int codeword;
   };
 
   struct data_block   // 
   {
-    long size;
+    size_t size;
     unsigned char *data;
   };
 
@@ -101,17 +101,16 @@ class Cu6mPlayer: public CPlayer
 
 
   // class variables
-  long played_ticks;
-
   unsigned char* song_data;   // the uncompressed .m file (the "song")
+  size_t song_size;           // allocated size of song_data
   bool driver_active;         // flag to prevent reentrancy
-  bool songend;				// indicates song end
-  int song_pos;               // current offset within the song
-  int loop_position;          // position of the loop point
+  bool songend;	              // indicates song end
+  size_t song_pos;            // current offset within the song
+  size_t loop_position;       // position of the loop point
   int read_delay;             // delay (in timer ticks) before further song data is read
   std::stack<subsong_info> subsong_stack;
 
-  int instrument_offsets[9];  // offsets of the adlib instrument data
+  size_t instrument_offsets[9]; // offsets of the adlib instrument data
   // vibrato ("vb")
   unsigned char vb_current_value[9];
   unsigned char vb_double_amplitude[9];
@@ -128,7 +127,7 @@ class Cu6mPlayer: public CPlayer
 
   // protected functions used by update()
   void command_loop();
-  unsigned char read_song_byte();
+  int read_song_byte();
   signed char read_signed_song_byte();
   void dec_clip(int&);
   byte_pair expand_freq_byte(unsigned char);
@@ -161,8 +160,8 @@ class Cu6mPlayer: public CPlayer
 
   // protected functions used by load()
   bool lzw_decompress(data_block source, data_block dest);
-  int get_next_codeword (long& bits_read, unsigned char *source, int codeword_size);
-  void output_root(unsigned char root, unsigned char *destination, long& position);
+  int get_next_codeword(unsigned long& bits_read, data_block& source, int codeword_size);
+  bool output_root(unsigned char root, data_block& destination, size_t& position);
   void get_string(int codeword, MyDict& dictionary, std::stack<unsigned char>& root_stack);
 };
 

@@ -85,16 +85,16 @@ public:
 	bool    rhythmMode;
 	bool    songDone;
 
-	int     nrOfPatterns;
-	int16_t patternOrder[99];
-	int     nrOfOrders;
+	int      nrOfPatterns;
+	uint16_t patternOrder[99];
+	int      nrOfOrders;
 
 	std::vector<Instrument> instruments;
 	std::vector<Pattern> patterns;
 	
-	int currentOrderIndex;
-	int currentRow;
-	int currentPatternIndex;
+	unsigned int currentOrderIndex;
+	unsigned int currentRow;
+	unsigned int currentPatternIndex;
 	
     const Instrument* channelCurrentInstrument[11];
 	int current0xBx[9];

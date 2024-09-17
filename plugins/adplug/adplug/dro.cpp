@@ -73,6 +73,10 @@ bool CdroPlayer::load(const std::string &filename, const CFileProvider &fp)
 
 	f->ignore(4);	// Length in milliseconds
 	this->iLength = f->readInt(4); // stored in file as number of bytes
+	if (this->iLength < 3 || this->iLength > fp.filesize(f) - f->pos()) {
+		fp.close(f);
+		return false;
+	}
 
 	this->data = new uint8_t[this->iLength];
 
@@ -92,7 +96,7 @@ bool CdroPlayer::load(const std::string &filename, const CFileProvider &fp)
 	}
 
 	// Read the OPL data.
-	for (; (int)i < this->iLength; i++) {
+	for (; i < this->iLength; i++) {
 		this->data[i]=f->readInt(1);
 	}
 
@@ -143,19 +147,21 @@ end_section:
 
 bool CdroPlayer::update()
 {
-	int iIndex;
-	int iValue;
+	unsigned int iIndex;
+	unsigned int iValue;
 	while (this->iPos < this->iLength) {
 		iIndex = this->data[this->iPos++];
 
 		// Short delay
 		if (iIndex == this->iCmdDelayS) {
+			if (this->iPos >= this->iLength) return false;
 			iValue = this->data[this->iPos++];
 			this->iDelay = iValue + 1;
 			return true;
 
 		// Long delay
 		} else if (iIndex == this->iCmdDelayL) {
+			if (this->iPos + 1 >= this->iLength) return false;
 			iValue = this->data[this->iPos] | (this->data[this->iPos + 1] << 8);
 			this->iPos += 2;
 			this->iDelay = (iValue + 1);
@@ -168,8 +174,10 @@ bool CdroPlayer::update()
 		// Normal write
 		} else {
 			if (iIndex == 0x04) {
+				if (this->iPos+1 >= this->iLength) return false;
 				iIndex = this->data[this->iPos++];
 			}
+			else if (this->iPos >= this->iLength) return false;
 			iValue = this->data[this->iPos++];
 			this->opl->write(iIndex, iValue);
 		}

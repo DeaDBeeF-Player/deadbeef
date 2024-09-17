@@ -31,111 +31,116 @@ CPlayer *CmtkLoader::factory(Copl *newopl)
 
 bool CmtkLoader::load(const std::string &filename, const CFileProvider &fp)
 {
-  binistream *f = fp.open(filename); if(!f) return false;
+  binistream *f = fp.open(filename);
+  if (!f) return false;
+
   struct {
     char id[18];
-    unsigned short crc,size;
+    unsigned short crc, size;
   } header;
   struct mtkdata {
-    char songname[34],composername[34],instname[0x80][34];
-    unsigned char insts[0x80][12],order[0x80],dummy,patterns[0x32][0x40][9];
+    struct { char dummy, str[33]; } songname, composername, instname[0x80];
+    unsigned char insts[0x80][12], order[0x80], dummy;
+    // followed by pattern data:
+    // hscnote patterns[50][64*9];
   } *data;
-  unsigned char *cmp,*org;
-  unsigned int i;
-  unsigned long cmpsize,cmpptr=0,orgptr=0;
-  unsigned short ctrlbits=0,ctrlmask=0,cmd,cnt,offs;
+  unsigned int i, cnt;
 
   // read header
-  f->readString(header.id, 18);
+  f->readString(header.id, sizeof(header.id));
   header.crc = f->readInt(2);
   header.size = f->readInt(2);
 
   // file validation section
-  if(strncmp(header.id,"mpu401tr\x92kk\xeer@data",18))
-    { fp.close(f); return false; }
+  if (memcmp(header.id, "mpu401tr\x92kk\xeer@data", sizeof(header.id)) ||
+      header.size < sizeof(*data)) {
+    fp.close(f); return false;
+  }
 
-  // load section
-  cmpsize = fp.filesize(f) - 22;
-  cmp = new unsigned char[cmpsize];
-  org = new unsigned char[header.size];
-  for(i = 0; i < cmpsize; i++) cmp[i] = f->readInt(1);
-  fp.close(f);
+  // load & decompress section
+  unsigned short ctrlbits = 0, ctrlmask = 0;
+  unsigned char *org = new unsigned char[header.size];
+  for (size_t orgptr = 0; orgptr < header.size; orgptr += cnt) {
+    if (f->error()) goto err;
 
-  while(cmpptr < cmpsize) {	// decompress
     ctrlmask >>= 1;
-    if(!ctrlmask) {
-      ctrlbits = cmp[cmpptr] + (cmp[cmpptr + 1] << 8);
-      cmpptr += 2;
+    if (!ctrlmask) {
+      ctrlbits = f->readInt(2);
       ctrlmask = 0x8000;
     }
-    if(!(ctrlbits & ctrlmask)) {	// uncompressed data
-      if(orgptr >= header.size)
-	goto err;
 
-      org[orgptr] = cmp[cmpptr];
-      orgptr++; cmpptr++;
+    if (!(ctrlbits & ctrlmask)) {	// uncompressed data
+      org[orgptr] = f->readInt(1);
+      cnt = 1;
       continue;
     }
 
     // compressed data
-    cmd = (cmp[cmpptr] >> 4) & 0x0f;
-    cnt = cmp[cmpptr] & 0x0f;
-    cmpptr++;
-    switch(cmd) {
-    case 0:
-      if(orgptr + cnt > header.size) goto err;
-      cnt += 3;
-      memset(&org[orgptr],cmp[cmpptr],cnt);
-      cmpptr++; orgptr += cnt;
+    unsigned offs;
+    unsigned char cmd = f->readInt(1);
+    cnt = (cmd & 0x0f) + 3;
+
+    switch (cmd >> 4) {
+    case 0:	// repeat a byte 3..18 times
+    repeat_byte:
+      if (orgptr + cnt > header.size) goto err;
+      memset(&org[orgptr], f->readInt(1), cnt);
       break;
 
-    case 1:
-      if(orgptr + cnt > header.size) goto err;
-      cnt += (cmp[cmpptr] << 4) + 19;
-      memset(&org[orgptr],cmp[++cmpptr],cnt);
-      cmpptr++; orgptr += cnt;
+    case 1:	// repeat a byte 19..4114 times
+      cnt += (f->readInt(1) << 4) + 16;
+      goto repeat_byte;
+
+    case 2:	// copy range (16..271 bytes)
+      offs = cnt + (f->readInt(1) << 4);
+      cnt = f->readInt(1) + 16;
+    copy_range:
+      if (orgptr + cnt > header.size || offs > orgptr) goto err;
+      // may overlap, can't use memcpy()
+      for (i = 0; i < cnt; i++)
+        org[orgptr + i] = org[orgptr - offs + i];
       break;
 
-    case 2:
-      if(orgptr + cnt > header.size) goto err;
-      offs = (cnt+3) + (cmp[cmpptr] << 4);
-      cnt = cmp[++cmpptr] + 16; cmpptr++;
-      memcpy(&org[orgptr],&org[orgptr - offs],cnt);
-      orgptr += cnt;
-      break;
-
-    default:
-      if(orgptr + cmd > header.size) goto err;
-      offs = (cnt+3) + (cmp[cmpptr++] << 4);
-      memcpy(&org[orgptr],&org[orgptr-offs],cmd);
-      orgptr += cmd;
-      break;
+    default:	// copy range (3..15 bytes)
+      offs = cnt + (f->readInt(1) << 4);
+      cnt = cmd >> 4;
+      goto copy_range;
     }
   }
-  delete [] cmp;
-  data = (struct mtkdata *) org;
+  if (f->error() || !f->ateof()) goto err;
+  fp.close(f);
 
   // convert to HSC replay data
-  memset(title,0,34); strncpy(title,data->songname+1,33);
-  memset(composer,0,34); strncpy(composer,data->composername+1,33);
-  memset(instname,0,0x80*34);
-  for(i=0;i<0x80;i++)
-    strncpy(instname[i],data->instname[i]+1,33);
-  memcpy(instr,data->insts,0x80 * 12);
-  memcpy(song,data->order,0x80);
-  memcpy(patterns,data->patterns,header.size-6084);
-  for (i=0;i<128;i++) {				// correct instruments
+  data = (struct mtkdata *) org;
+  strncpy(title, data->songname.str, sizeof(title) - 1);
+  title[sizeof(title) - 1] = 0;
+  strncpy(composer, data->composername.str, sizeof(composer) - 1);
+  composer[sizeof(composer) - 1] = 0;
+
+  for (i = 0; i < 0x80; i++) {
+    strncpy(instname[i], data->instname[i].str, sizeof(instname[i]) - 1);
+    instname[i][sizeof(instname[i]) - 1] = 0;
+  }
+
+  memcpy(instr, data->insts, sizeof(instr));
+  for (i = 0; i < 0x80; i++) {		// correct instruments
     instr[i][2] ^= (instr[i][2] & 0x40) << 1;
     instr[i][3] ^= (instr[i][3] & 0x40) << 1;
     instr[i][11] >>= 4;		// make unsigned
   }
+
+  memcpy(song, data->order, sizeof(song));
+
+  cnt = header.size - sizeof(*data); // was off by 1
+  if (cnt > sizeof(patterns)) cnt = sizeof(patterns); // fail?
+  memcpy(patterns, org + sizeof(*data), cnt);
 
   delete [] org;
   rewind(0);
   return true;
 
  err:
-  delete [] cmp;
+  fp.close(f);
   delete [] org;
   return false;
 }

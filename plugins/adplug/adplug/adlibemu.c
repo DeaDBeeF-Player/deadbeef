@@ -50,6 +50,30 @@ I'm not sure about a few things in my code:
 #include <math.h>
 #include <string.h>
 
+#include "adlibemu.h"
+
+#define nlvol          ctx->nlvol
+#define nrvol          ctx->nrvol
+#define nlplc          ctx->nlplc
+#define nrplc          ctx->nrplc
+#define rend           ctx->rend
+
+#define AMPSCALE       ctx->AMPSCALE
+#define numspeakers    ctx->numspeakers
+#define bytespersample ctx->bytespersample
+#define recipsamp      ctx->recipsamp
+#define cell           ctx->cell
+#define wavtable       ctx->wavtable
+#define nfrqmul        ctx->nfrqmul
+#define adlibreg       ctx->adlibreg
+#define ksl            ctx->ksl
+#define odrumstat      ctx->odrumstat
+#define rptr           ctx->rptr
+#define nrptr          ctx->nrptr
+#define rbuf           ctx->rbuf
+#define snd            ctx->snd
+#define initfirstime   ctx->initfirstime
+
 #if !defined(max) && !defined(__cplusplus)
 #define max(a,b)  (((a) > (b)) ? (a) : (b))
 #endif
@@ -58,10 +82,7 @@ I'm not sure about a few things in my code:
 #endif
 
 #define PI 3.141592653589793
-#define MAXCELLS 18
-#define WAVPREC 2048
 
-static float AMPSCALE=(8192.0);
 #define FRQSCALE (49716/512.0)
 
 //Constants for Ken's Awe32, on a PII-266 (Ken says: Use these for KSM's!)
@@ -74,39 +95,21 @@ static float AMPSCALE=(8192.0);
 //#define MFBFACTOR 0.5    //How much feedback goes back into modulator
 //#define ADJUSTSPEED 0.85 //0<=x<=1  Simulate finite rate of change of state
 
-typedef struct
-{
-    float val, t, tinc, vol, sustain, amp, mfb;
-    float a0, a1, a2, a3, decaymul, releasemul;
-    short *waveform;
-    long wavemask;
-    void (*cellfunc)(void *, float);
-    unsigned char flags, dum0, dum1, dum2;
-} celltype;
+static const float kslmul[4] = {0.0,0.5,0.25,1.0};
+static const float frqmul[16] = {.5,1,2,3,4,5,6,7,8,9,10,10,12,12,15,15};
+static const unsigned char modulatorbase[9] = {0,1,2,8,9,10,16,17,18};
+static const unsigned char base2cell[22] = {0,1,2,0,1,2,0,0,3,4,5,3,4,5,0,0,6,7,8,6,7,8};
 
-static long numspeakers, bytespersample;
-static float recipsamp;
-static celltype cell[MAXCELLS];
-static signed short wavtable[WAVPREC*3];
-static float kslmul[4] = {0.0,0.5,0.25,1.0};
-static float frqmul[16] = {.5,1,2,3,4,5,6,7,8,9,10,10,12,12,15,15}, nfrqmul[16];
-static unsigned char adlibreg[256], ksl[8][16];
-static unsigned char modulatorbase[9] = {0,1,2,8,9,10,16,17,18};
-static unsigned char odrumstat = 0;
-static unsigned char base2cell[22] = {0,1,2,0,1,2,0,0,3,4,5,3,4,5,0,0,6,7,8,6,7,8};
+static const float lvol[9] = {1,1,1,1,1,1,1,1,1};  //Volume multiplier on left speaker  -- never modified by adplug
+static const float rvol[9] = {1,1,1,1,1,1,1,1,1};  //Volume multiplier on right speaker -- never modified by adplug
+static const long lplc[9] = {0,0,0,0,0,0,0,0,0};   //Samples to delay on left speaker   -- never modified by adplug
+static const long rplc[9] = {0,0,0,0,0,0,0,0,0};   //Samples to delay on right speaker  -- never modified by adplug
 
-float lvol[9] = {1,1,1,1,1,1,1,1,1};  //Volume multiplier on left speaker
-float rvol[9] = {1,1,1,1,1,1,1,1,1};  //Volume multiplier on right speaker
-long lplc[9] = {0,0,0,0,0,0,0,0,0};   //Samples to delay on left speaker
-long rplc[9] = {0,0,0,0,0,0,0,0,0};   //Samples to delay on right speaker
-
-long nlvol[9], nrvol[9];
-long nlplc[9], nrplc[9];
-long rend = 0;
-#define FIFOSIZ 256
-static float *rptr[9], *nrptr[9];
-static float rbuf[9][FIFOSIZ*2];
-static float snd[FIFOSIZ*2];
+static const long waveform[8] = {WAVPREC,WAVPREC>>1,WAVPREC,(WAVPREC*3)>>2,0,0,(WAVPREC*5)>>2,WAVPREC<<1};
+static const long wavemask[8] = {WAVPREC-1,WAVPREC-1,(WAVPREC>>1)-1,(WAVPREC>>1)-1,WAVPREC-1,((WAVPREC*3)>>2)-1,WAVPREC>>1,WAVPREC-1};
+static const long wavestart[8] = {0,WAVPREC>>1,0,WAVPREC>>2,0,0,0,WAVPREC>>3};
+static const float attackconst[4] = {1/2.82624,1/2.25280,1/1.88416,1/1.59744};
+static const float decrelconst[4] = {1/39.28064,1/31.41608,1/26.17344,1/22.44608};
 
 #ifndef USING_ASM
 #define _inline
@@ -129,8 +132,8 @@ static void ftol(float f, long *a) {
 #endif
 
 #define ctc ((celltype *)c)      //A rare attempt to make code easier to read!
-void docell4 (void *c, float modulator) { (void)c; (void)modulator; }
-void docell3 (void *c, float modulator)
+static void docell4 (void *c, float modulator) { (void)c; (void)modulator; }
+static void docell3 (void *c, float modulator)
 {
     long i;
 
@@ -138,13 +141,13 @@ void docell3 (void *c, float modulator)
     ctc->t += ctc->tinc;
     ctc->val += (ctc->amp*ctc->vol*((float)ctc->waveform[i&ctc->wavemask])-ctc->val)*ADJUSTSPEED;
 }
-void docell2 (void *c, float modulator)
+static void docell2 (void *c, float modulator)
 {
     long i;
 
     ftol(ctc->t+modulator,&i);
 
-    if (*(long *)&ctc->amp <= 0x37800000)
+    if (ctc->amp <= 0.000015258789062f)
     {
 	ctc->amp = 0;
 	ctc->cellfunc = docell4;
@@ -154,13 +157,13 @@ void docell2 (void *c, float modulator)
     ctc->t += ctc->tinc;
     ctc->val += (ctc->amp*ctc->vol*((float)ctc->waveform[i&ctc->wavemask])-ctc->val)*ADJUSTSPEED;
 }
-void docell1 (void *c, float modulator)
+static void docell1 (void *c, float modulator)
 {
     long i;
 
     ftol(ctc->t+modulator,&i);
 
-    if ((*(long *)&ctc->amp) <= (*(long *)&ctc->sustain))
+    if (ctc->amp <= ctc->sustain)
     {
 	if (ctc->flags&32)
 	{
@@ -176,14 +179,14 @@ void docell1 (void *c, float modulator)
     ctc->t += ctc->tinc;
     ctc->val += (ctc->amp*ctc->vol*((float)ctc->waveform[i&ctc->wavemask])-ctc->val)*ADJUSTSPEED;
 }
-void docell0 (void *c, float modulator)
+static void docell0 (void *c, float modulator)
 {
     long i;
 
     ftol(ctc->t+modulator,&i);
 
     ctc->amp = ((ctc->a3*ctc->amp + ctc->a2)*ctc->amp + ctc->a1)*ctc->amp + ctc->a0;
-    if ((*(long *)&ctc->amp) > 0x3f800000)
+    if (ctc->amp > 1.0f)
     {
 	ctc->amp = 1;
 	ctc->cellfunc = docell1;
@@ -193,13 +196,8 @@ void docell0 (void *c, float modulator)
     ctc->val += (ctc->amp*ctc->vol*((float)ctc->waveform[i&ctc->wavemask])-ctc->val)*ADJUSTSPEED;
 }
 
-
-static long waveform[8] = {WAVPREC,WAVPREC>>1,WAVPREC,(WAVPREC*3)>>2,0,0,(WAVPREC*5)>>2,WAVPREC<<1};
-static long wavemask[8] = {WAVPREC-1,WAVPREC-1,(WAVPREC>>1)-1,(WAVPREC>>1)-1,WAVPREC-1,((WAVPREC*3)>>2)-1,WAVPREC>>1,WAVPREC-1};
-static long wavestart[8] = {0,WAVPREC>>1,0,WAVPREC>>2,0,0,0,WAVPREC>>3};
-static float attackconst[4] = {1/2.82624,1/2.25280,1/1.88416,1/1.59744};
-static float decrelconst[4] = {1/39.28064,1/31.41608,1/26.17344,1/22.44608};
-void cellon (long i, long j, celltype *c, unsigned char iscarrier)
+static void cellon (adlibemu_context *ctx, long i, long j, celltype *c, unsigned char iscarrier)
+#define cellon(i,j,c,iscarrier) cellon(ctx,i,j,c,iscarrier)
 {
     long frn, oct, toff;
     float f;
@@ -231,7 +229,8 @@ void cellon (long i, long j, celltype *c, unsigned char iscarrier)
 }
 
 //This function (and bug fix) written by Chris Moeller
-void cellfreq (signed long i, signed long j, celltype *c)
+static void cellfreq (adlibemu_context *ctx, signed long i, signed long j, celltype *c)
+#define cellfreq(i,j,c) cellfreq(ctx,i,j,c)
 {
     long frn, oct;
 
@@ -243,10 +242,11 @@ void cellfreq (signed long i, signed long j, celltype *c)
 		      (float)kslmul[adlibreg[j+0x40]>>6]*ksl[oct][frn>>6]) * -.125 - 14);
 }
 
-static long initfirstime = 0;
-void adlibinit (long dasamplerate, long danumspeakers, long dabytespersample)
+void adlibinit (adlibemu_context *ctx, long dasamplerate, long danumspeakers, long dabytespersample)
 {
     long i, j, frn, oct;
+
+    AMPSCALE=(8192.0);
 
     memset((void *)adlibreg,0,sizeof(adlibreg));
     memset((void *)cell,0,sizeof(celltype)*MAXCELLS);
@@ -308,7 +308,7 @@ void adlibinit (long dasamplerate, long danumspeakers, long dabytespersample)
     }
 }
 
-void adlib0 (long i, long v)
+void adlib0 (adlibemu_context *ctx, long i, long v)
 {
     unsigned char tmp = adlibreg[i];
     adlibreg[i] = v;
@@ -436,11 +436,11 @@ static void clipit16(float f,short *a) {
 }
 #endif
 
-void adlibsetvolume(int i) {
+void adlibsetvolume(adlibemu_context *ctx,int i) {
     AMPSCALE=i;
 }
 
-void adlibgetsample (unsigned char *sndptr, long numbytes)
+void adlibgetsample (adlibemu_context *ctx, unsigned char *sndptr, long numbytes)
 {
     long i, j, k=0, ns, endsamples, rptrs, numsamples;
     celltype *cptr;

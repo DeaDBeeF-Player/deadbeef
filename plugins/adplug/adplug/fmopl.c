@@ -78,11 +78,11 @@ static int opl_dbg_maxchip,opl_dbg_chip;
 
 /* -------------------- quality selection --------------------- */
 
-/* sinwave entries */
+/* sine wave entries */
 /* used static memory = SIN_ENT * 4 (byte) */
 #define SIN_ENT 2048
 
-/* output level entries (envelope,sinwave) */
+/* output level entries (envelope,sine wave) */
 /* envelope counter lower bits */
 #define ENV_BITS 16
 /* envelope output entries */
@@ -185,13 +185,13 @@ static const INT32 SL_TABLE[16]={
 };
 #undef SC
 
-#define TL_MAX (EG_ENT*2) /* limit(tl + ksr + envelope) + sinwave */
+#define TL_MAX (EG_ENT*2) /* limit(tl + ksr + envelope) + sine wave */
 /* TotalLevel : 48 24 12  6  3 1.5 0.75 (dB) */
 /* TL_TABLE[ 0      to TL_MAX          ] : plus  section */
 /* TL_TABLE[ TL_MAX to TL_MAX+TL_MAX-1 ] : minus section */
 static INT32 *TL_TABLE;
 
-/* pointers to TL_TABLE with sinwave output offset */
+/* pointers to TL_TABLE with sine wave output offset */
 static INT32 **SIN_TABLE;
 
 /* LFO table */
@@ -365,15 +365,15 @@ INLINE UINT32 OPL_CALC_SLOT( OPL_SLOT *SLOT )
 	return SLOT->TLL+ENV_CURVE[SLOT->evc>>ENV_BITS]+(SLOT->ams ? ams : 0);
 }
 
-/* set algorythm connection */
-static void set_algorythm( OPL_CH *CH)
+/* set algorithm connection */
+static void set_algorithm( OPL_CH *CH)
 {
 	INT32 *carrier = &outd[0];
 	CH->connect1 = CH->CON ? carrier : &feedback2;
 	CH->connect2 = carrier;
 }
 
-/* ---------- frequency counter for operater update ---------- */
+/* ---------- frequency counter for operator update ---------- */
 INLINE void CALC_FCSLOT(OPL_CH *CH,OPL_SLOT *SLOT)
 {
 	int ksr;
@@ -501,7 +501,7 @@ INLINE void OPL_CALC_CH( OPL_CH *CH )
 	}
 }
 
-/* ---------- calcrate rythm block ---------- */
+/* ---------- calcrate rhythm block ---------- */
 #define WHITE_NOISE_db 6.0
 INLINE void OPL_CALC_RH( OPL_CH *CH )
 {
@@ -657,7 +657,7 @@ static int OPLOpenTable( void )
 		TL_TABLE[t] = TL_TABLE[TL_MAX+t] = 0;
 	}
 
-	/* make sinwave table (total level offet) */
+	/* make sine wave table (total level offset) */
 	/* degree 0 = degree 180                   = off */
 	SIN_TABLE[0] = SIN_TABLE[SIN_ENT/2]         = &TL_TABLE[EG_ENT-1];
 	for (s = 1;s <= SIN_ENT/4;s++){
@@ -718,8 +718,8 @@ static void OPLCloseTable( void )
 	free(VIB_TABLE);
 }
 
-/* CSM Key Controll */
-INLINE void CSMKeyControll(OPL_CH *CH)
+/* CSM Key Control */
+INLINE void CSMKeyControl(OPL_CH *CH)
 {
 	OPL_SLOT *slot1 = &CH->SLOT[SLOT1];
 	OPL_SLOT *slot2 = &CH->SLOT[SLOT2];
@@ -736,7 +736,7 @@ INLINE void CSMKeyControll(OPL_CH *CH)
 }
 
 /* ---------- opl initialize ---------- */
-static void OPL_initalize(FM_OPL *OPL)
+static void OPL_initialize(FM_OPL *OPL)
 {
 	int fn;
 
@@ -765,7 +765,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 
 	switch(r&0xe0)
 	{
-	case 0x00: /* 00-1f:controll */
+	case 0x00: /* 00-1f:control */
 		switch(r&0x1f)
 		{
 		case 0x01:
@@ -829,7 +829,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 					LOG(LOG_WAR,("OPL:write unmapped KEYBOARD port\n"));
 			}
 			return;
-		case 0x07:	/* DELTA-T controll : START,REC,MEMDATA,REPT,SPOFF,x,x,RST */
+		case 0x07:	/* DELTA-T control : START,REC,MEMDATA,REPT,SPOFF,x,x,RST */
 			if(OPL->type&OPL_TYPE_ADPCM)
 				YM_DELTAT_ADPCM_Write(OPL->deltat,r-0x07,v);
 			return;
@@ -898,14 +898,14 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 		case 0xbd:
 			/* amsep,vibdep,r,bd,sd,tom,tc,hh */
 			{
-			UINT8 rkey = OPL->rythm^v;
+			UINT8 rkey = OPL->rhythm^v;
 			OPL->ams_table = &AMS_TABLE[v&0x80 ? AMS_ENT : 0];
 			OPL->vib_table = &VIB_TABLE[v&0x40 ? VIB_ENT : 0];
-			OPL->rythm  = v&0x3f;
-			if(OPL->rythm&0x20)
+			OPL->rhythm  = v&0x3f;
+			if(OPL->rhythm&0x20)
 			{
 #if 0
-				usrintf_showmessage("OPL Rythm mode select");
+				usrintf_showmessage("OPL Rhythm mode select");
 #endif
 				/* BD key on/off */
 				if(rkey&0x10)
@@ -998,7 +998,7 @@ static void OPLWriteReg(FM_OPL *OPL, int r, int v)
 		int feedback = (v>>1)&7;
 		CH->FB   = feedback ? (8+1) - feedback : 0;
 		CH->CON = v&1;
-		set_algorythm(CH);
+		set_algorithm(CH);
 		}
 		return;
 	case 0xe0: /* wave type */
@@ -1052,7 +1052,7 @@ void YM3812UpdateOne(FM_OPL *OPL, INT16 *buffer, int length)
 	OPLSAMPLE *buf = buffer;
 	UINT32 amsCnt  = OPL->amsCnt;
 	UINT32 vibCnt  = OPL->vibCnt;
-	UINT8 rythm = OPL->rythm&0x20;
+	UINT8 rhythm = OPL->rhythm&0x20;
 	OPL_CH *CH,*R_CH;
 
 	if( (void *)OPL != cur_chip ){
@@ -1060,7 +1060,7 @@ void YM3812UpdateOne(FM_OPL *OPL, INT16 *buffer, int length)
 		/* channel pointers */
 		S_CH = OPL->P_CH;
 		E_CH = &S_CH[9];
-		/* rythm slot */
+		/* rhythm slot */
 		SLOT7_1 = &S_CH[7].SLOT[SLOT1];
 		SLOT7_2 = &S_CH[7].SLOT[SLOT2];
 		SLOT8_1 = &S_CH[8].SLOT[SLOT1];
@@ -1071,7 +1071,7 @@ void YM3812UpdateOne(FM_OPL *OPL, INT16 *buffer, int length)
 		ams_table = OPL->ams_table;
 		vib_table = OPL->vib_table;
 	}
-	R_CH = rythm ? &S_CH[6] : E_CH;
+	R_CH = rhythm ? &S_CH[6] : E_CH;
     for( i=0; i < length ; i++ )
 	{
 		/*            channel A         channel B         channel C      */
@@ -1083,7 +1083,7 @@ void YM3812UpdateOne(FM_OPL *OPL, INT16 *buffer, int length)
 		for(CH=S_CH ; CH < R_CH ; CH++)
 			OPL_CALC_CH(CH);
 		/* Rythn part */
-		if(rythm)
+		if(rhythm)
 			OPL_CALC_RH(S_CH);
 		/* limit check */
 		data = Limit( outd[0] , OPL_MAXOUT, OPL_MINOUT );
@@ -1113,7 +1113,7 @@ void Y8950UpdateOne(FM_OPL *OPL, INT16 *buffer, int length)
 	OPLSAMPLE *buf = buffer;
 	UINT32 amsCnt  = OPL->amsCnt;
 	UINT32 vibCnt  = OPL->vibCnt;
-	UINT8 rythm = OPL->rythm&0x20;
+	UINT8 rhythm = OPL->rhythm&0x20;
 	OPL_CH *CH,*R_CH;
 	YM_DELTAT *DELTAT = OPL->deltat;
 
@@ -1125,7 +1125,7 @@ void Y8950UpdateOne(FM_OPL *OPL, INT16 *buffer, int length)
 		/* channel pointers */
 		S_CH = OPL->P_CH;
 		E_CH = &S_CH[9];
-		/* rythm slot */
+		/* rhythm slot */
 		SLOT7_1 = &S_CH[7].SLOT[SLOT1];
 		SLOT7_2 = &S_CH[7].SLOT[SLOT2];
 		SLOT8_1 = &S_CH[8].SLOT[SLOT1];
@@ -1136,7 +1136,7 @@ void Y8950UpdateOne(FM_OPL *OPL, INT16 *buffer, int length)
 		ams_table = OPL->ams_table;
 		vib_table = OPL->vib_table;
 	}
-	R_CH = rythm ? &S_CH[6] : E_CH;
+	R_CH = rhythm ? &S_CH[6] : E_CH;
     for( i=0; i < length ; i++ )
 	{
 		/*            channel A         channel B         channel C      */
@@ -1151,7 +1151,7 @@ void Y8950UpdateOne(FM_OPL *OPL, INT16 *buffer, int length)
 		for(CH=S_CH ; CH < R_CH ; CH++)
 			OPL_CALC_CH(CH);
 		/* Rythn part */
-		if(rythm)
+		if(rhythm)
 			OPL_CALC_RH(S_CH);
 		/* limit check */
 		data = Limit( outd[0] , OPL_MAXOUT, OPL_MINOUT );
@@ -1181,7 +1181,7 @@ void OPLResetChip(FM_OPL *OPL)
 	OPLWriteReg(OPL,0x03,0); /* Timer2 */
 	OPLWriteReg(OPL,0x04,0); /* IRQ mask clear */
 	for(i = 0xff ; i >= 0x20 ; i-- ) OPLWriteReg(OPL,i,0);
-	/* reset OPerator paramater */
+	/* reset OPerator parameter */
 	for( c = 0 ; c < OPL->max_ch ; c++ )
 	{
 		OPL_CH *CH = &OPL->P_CH[c];
@@ -1217,7 +1217,7 @@ FM_OPL *OPLCreate(int type, int clock, int rate)
 	char *ptr;
 	FM_OPL *OPL;
 	int state_size;
-	int max_ch = 9; /* normaly 9 channels */
+	int max_ch = 9; /* normally 9 channels */
 
 	if( OPL_LockTable() ==-1) return NULL;
 	/* allocate OPL state space */
@@ -1241,8 +1241,8 @@ FM_OPL *OPLCreate(int type, int clock, int rate)
 	OPL->clock = clock;
 	OPL->rate  = rate;
 	OPL->max_ch = max_ch;
-	/* init grobal tables */
-	OPL_initalize(OPL);
+	/* init global tables */
+	OPL_initialize(OPL);
 	/* reset chip */
 	OPLResetChip(OPL);
 #ifdef OPL_OUTPUT_LOG
@@ -1269,6 +1269,10 @@ FM_OPL *OPLCreate(int type, int clock, int rate)
 /* ----------  Destroy one of vietual YM3812 ----------       */
 void OPLDestroy(FM_OPL *OPL)
 {
+	if(!OPL)
+	{
+		return;
+	}
 #ifdef OPL_OUTPUT_LOG
 	if(opl_dbg_fp)
 	{
@@ -1385,13 +1389,13 @@ int OPLTimerOver(FM_OPL *OPL,int c)
 	else
 	{	/* Timer A */
 		OPL_STATUS_SET(OPL,0x40);
-		/* CSM mode key,TL controll */
+		/* CSM mode key,TL control */
 		if( OPL->mode & 0x80 )
 		{	/* CSM mode total level latch and auto key on */
 			int ch;
 			if(OPL->UpdateHandler) OPL->UpdateHandler(OPL->UpdateParam,0);
 			for(ch=0;ch<9;ch++)
-				CSMKeyControll( &OPL->P_CH[ch] );
+				CSMKeyControl( &OPL->P_CH[ch] );
 		}
 	}
 	/* reload timer */

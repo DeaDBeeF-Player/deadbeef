@@ -30,29 +30,14 @@
  */
 
 #include <cstring>
+#include <cassert>
 #include "a2m.h"
 
-const unsigned int Ca2mLoader::MAXFREQ = 2000,
-Ca2mLoader::MINCOPY = ADPLUG_A2M_MINCOPY,
-Ca2mLoader::MAXCOPY = ADPLUG_A2M_MAXCOPY,
-Ca2mLoader::COPYRANGES = ADPLUG_A2M_COPYRANGES,
-Ca2mLoader::CODESPERRANGE = ADPLUG_A2M_CODESPERRANGE,
-Ca2mLoader::TERMINATE = 256,
-Ca2mLoader::FIRSTCODE = ADPLUG_A2M_FIRSTCODE,
-Ca2mLoader::MAXCHAR = FIRSTCODE + COPYRANGES * CODESPERRANGE - 1,
-Ca2mLoader::SUCCMAX = MAXCHAR + 1,
-Ca2mLoader::TWICEMAX = ADPLUG_A2M_TWICEMAX,
-Ca2mLoader::ROOT = 1, Ca2mLoader::MAXBUF = 42 * 1024,
-Ca2mLoader::MAXDISTANCE = 21389, Ca2mLoader::MAXSIZE = 21389 + MAXCOPY;
-
-const unsigned short Ca2mLoader::bitvalue[14] =
-  {1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192};
-
-const signed short Ca2mLoader::copybits[COPYRANGES] =
-  {4, 6, 8, 10, 12, 14};
-
-const signed short Ca2mLoader::copymin[COPYRANGES] =
-  {0, 16, 80, 336, 1360, 5456};
+// Limit length byte not to exceed size of the string
+#define fixstringlength(s) __fixlength((s)[0], sizeof(s) - 1);
+static void __fixlength(char &len, size_t max) {
+  if ((unsigned char)len > max) len = (char)max;
+}
 
 CPlayer *Ca2mLoader::factory(Copl *newopl)
 {
@@ -61,186 +46,228 @@ CPlayer *Ca2mLoader::factory(Copl *newopl)
 
 bool Ca2mLoader::load(const std::string &filename, const CFileProvider &fp)
 {
-  binistream *f = fp.open(filename); if(!f) return false;
-  char id[10];
-  int i,j,k,t;
+  binistream *f = fp.open(filename); if (!f) return false;
+  unsigned int i;
+  int j, k, t;
   unsigned int l;
-  unsigned char *org = NULL, *orgptr, flags = 0, numpats, version;
-  unsigned long crc, alength;
+  unsigned char *org, *orgptr, flags = 0;
+  unsigned long alength;
   unsigned short len[9], *secdata, *secptr;
-  const unsigned char convfx[16] = {0,1,2,23,24,3,5,4,6,9,17,13,11,19,7,14};
-  const unsigned char convinf1[16] = {0,1,2,6,7,8,9,4,5,3,10,11,12,13,14,15};
-  const unsigned char newconvfx[] = {0,1,2,3,4,5,6,23,24,21,10,11,17,13,7,19,
-				     255,255,22,25,255,15,255,255,255,255,255,
-				     255,255,255,255,255,255,255,255,14,255};
+  static const unsigned char convfx[16] = {
+	0, 1, 2, 23, 24, 3, 5, 4, 6, 9, 17, 13, 11, 19, 7, 14
+  };
+  static const unsigned char convinf1[16] = {
+	0, 1, 2, 6, 7, 8, 9, 4, 5, 3, 10, 11, 12, 13, 14, 15
+  };
+  static const unsigned char newconvfx[] = {
+	0, 1, 2, 3, 4, 5, 6, 23, 24, 21, 10, 11, 17, 13, 7, 19,
+	255, 255, 22, 25, 255, 15, 255, 255, 255, 255, 255,
+	255, 255, 255, 255, 255, 255, 255, 255, 14, 255
+  };
 
   // read header
-  f->readString(id, 10); crc = f->readInt(4);
-  version = f->readInt(1); numpats = f->readInt(1);
+  char id[10];
+  f->readString(id, sizeof(id));
+  /*unsigned long crc = */ f->readInt(4);
+  unsigned char version = f->readInt(1);
+  unsigned char numpats = f->readInt(1);
 
   // file validation section
-  if(strncmp(id,"_A2module_",10) || (version != 1 && version != 5 &&
-				     version != 4 && version != 8)) {
+  if (memcmp(id, "_A2module_", sizeof(id)) ||
+      (version != 1 && version != 5 && version != 4 && version != 8) ||
+      numpats < 1 || numpats > 64) {
     fp.close(f);
     return false;
   }
 
+  nop = numpats;
+  length = 128;
+  restartpos = 0;
+
   // load, depack & convert section
-  nop = numpats; length = 128; restartpos = 0;
-  if(version < 5) {
-    for(i=0;i<5;i++) len[i] = f->readInt(2);
+  if (version < 5) {
+    for (i = 0; i < 5; i++) len[i] = f->readInt(2);
     t = 9;
   } else {	// version >= 5
-    for(i=0;i<9;i++) len[i] = f->readInt(2);
+    for (i = 0; i < 9; i++) len[i] = f->readInt(2);
     t = 18;
   }
 
   // block 0
-  secdata = new unsigned short [len[0] / 2];
-  if(version == 1 || version == 5) {
-    for(i=0;i<len[0]/2;i++) secdata[i] = f->readInt(2);
-    org = new unsigned char [MAXBUF]; orgptr = org;
-    sixdepak(secdata,org,len[0]);
+  size_t needed = sizeof(songname) + sizeof(author) + sizeof(instname)
+    + NUMINST * INSTDATASIZE + length + 2 + (version >= 5);
+  if (version == 1 || version == 5) {
+    // needed bytes are used, so don't allocate or decode more than that.
+    orgptr = org = new unsigned char [needed];
+    secdata = new unsigned short [len[0] / 2];
+
+    for (i = 0; i < len[0] / 2; i++) secdata[i] = f->readInt(2);
+
+    // What if len[0] is odd: ignore, skip extra byte, or fail?
+    l = Sixdepak::decode(secdata, len[0], org, needed);
+
+    delete [] secdata;
   } else {
-    orgptr = (unsigned char *)secdata;
-    for(i=0;i<len[0];i++) orgptr[i] = f->readInt(1);
+    orgptr = org = new unsigned char [len[0]];
+
+    for(l = 0; l < len[0]; l++) orgptr[l] = f->readInt(1);
   }
-  memcpy(songname,orgptr,43); orgptr += 43;
-  memcpy(author,orgptr,43); orgptr += 43;
-  memcpy(instname,orgptr,250*33); orgptr += 250*33;
+  if (l < needed) {
+    // Block is too short; fail.
+    delete [] org;
+    fp.close(f);
+    return false;
+  }
 
-  for(i=0;i<250;i++) {	// instruments
-    inst[i].data[0] = *(orgptr+i*13+10);
-    inst[i].data[1] = *(orgptr+i*13);
-    inst[i].data[2] = *(orgptr+i*13+1);
-    inst[i].data[3] = *(orgptr+i*13+4);
-    inst[i].data[4] = *(orgptr+i*13+5);
-    inst[i].data[5] = *(orgptr+i*13+6);
-    inst[i].data[6] = *(orgptr+i*13+7);
-    inst[i].data[7] = *(orgptr+i*13+8);
-    inst[i].data[8] = *(orgptr+i*13+9);
-    inst[i].data[9] = *(orgptr+i*13+2);
-    inst[i].data[10] = *(orgptr+i*13+3);
+  memcpy(songname, orgptr, sizeof(songname));
+  orgptr += sizeof(songname);
+  fixstringlength(songname);
+  memcpy(author, orgptr, sizeof(author));
+  orgptr += sizeof(author);
+  fixstringlength(author);
+  memcpy(instname, orgptr, sizeof(instname));
+  orgptr += sizeof(instname);
 
-    if(version < 5)
-      inst[i].misc = *(orgptr+i*13+11);
+  for (i = 0; i < NUMINST; i++) {  // instrument data
+    fixstringlength(instname[i]);
+
+    inst[i].data[0] = orgptr[i * INSTDATASIZE + 10];
+    inst[i].data[1] = orgptr[i * INSTDATASIZE + 0];
+    inst[i].data[2] = orgptr[i * INSTDATASIZE + 1];
+    inst[i].data[3] = orgptr[i * INSTDATASIZE + 4];
+    inst[i].data[4] = orgptr[i * INSTDATASIZE + 5];
+    inst[i].data[5] = orgptr[i * INSTDATASIZE + 6];
+    inst[i].data[6] = orgptr[i * INSTDATASIZE + 7];
+    inst[i].data[7] = orgptr[i * INSTDATASIZE + 8];
+    inst[i].data[8] = orgptr[i * INSTDATASIZE + 9];
+    inst[i].data[9] = orgptr[i * INSTDATASIZE + 2];
+    inst[i].data[10] = orgptr[i * INSTDATASIZE + 3];
+
+    if (version < 5)
+      inst[i].misc = orgptr[i * INSTDATASIZE + 11];
     else {	// version >= 5 -> OPL3 format
-      int pan = *(orgptr+i*13+11);
+      int pan = orgptr[i * INSTDATASIZE + 11];
 
-      if(pan)
+      if (pan)
 	inst[i].data[0] |= (pan & 3) << 4;	// set pan
       else
-	inst[i].data[0] |= 48;			// enable both speakers
+	inst[i].data[0] |= 0x30;		// enable both speakers
     }
 
-    inst[i].slide = *(orgptr+i*13+12);
+    inst[i].slide = orgptr[i * INSTDATASIZE + 12];
   }
+  orgptr += NUMINST * INSTDATASIZE;
 
-  orgptr += 250*13;
-  memcpy(order,orgptr,128); orgptr += 128;
-  bpm = *orgptr; orgptr++;
-  initspeed = *orgptr; orgptr++;
-  if(version >= 5) flags = *orgptr;
-  if(version == 1 || version == 5) delete [] org;
-  delete [] secdata;
+  memcpy(order, orgptr, length);
+  orgptr += length;
+  for (i = 0; i < length; i++)
+    if ((order[i] & 0x7f) >= numpats) {		// invalid pattern in order list
+      // What to do in this case in not defined in documentation? There are songs that contain this fault.
+      // We have two options:
+      //  1. allocate an empty pattern and redirect to this - more work and lots of quirks
+      //  2. adjust order list to point to pattern 0 / jump to order 0 instead
+      order[i] &= 0x80; // make it point to pattern 0 / jump to order 0
+    }
+
+  bpm = *orgptr++;
+  initspeed = *orgptr++;
+  if (version >= 5) flags = *orgptr;
+
+  delete [] org;
 
   // blocks 1-4 or 1-8
+  unsigned char ppb = version < 5 ? 16 : 8; // patterns per block
+  unsigned char blocks = (numpats + ppb - 1) / ppb; // excluding block 0
   alength = len[1];
-  for(i = 0; i < (version < 5 ? numpats / 16 : numpats / 8); i++)
-    alength += len[i+2];
+  for (i = 2; i <= blocks; i++)
+    alength += len[i];
 
-  secdata = new unsigned short [alength / 2];
-  if(version == 1 || version == 5) {
-    for(l=0;l<alength/2;l++) secdata[l] = f->readInt(2);
-    org = new unsigned char [MAXBUF * (numpats / (version == 1 ? 16 : 8) + 1)];
+  needed = numpats * 64 * t * 4;
+  if (version == 1 || version == 5) {
+    org = new unsigned char [needed];
+    secdata = new unsigned short [alength / 2];
+
+    for (l = 0; l < alength / 2; l++)
+      secdata[l] = f->readInt(2);
+
     orgptr = org; secptr = secdata;
-    orgptr += sixdepak(secptr,orgptr,len[1]); secptr += len[1] / 2;
-    if(version == 1) {
-      if(numpats > 16)
-	orgptr += sixdepak(secptr,orgptr,len[2]); secptr += len[2] / 2;
-      if(numpats > 32)
-	orgptr += sixdepak(secptr,orgptr,len[3]); secptr += len[3] / 2;
-      if(numpats > 48)
-	sixdepak(secptr,orgptr,len[4]);
-    } else {
-      if(numpats > 8)
-	orgptr += sixdepak(secptr,orgptr,len[2]); secptr += len[2] / 2;
-      if(numpats > 16)
-	orgptr += sixdepak(secptr,orgptr,len[3]); secptr += len[3] / 2;
-      if(numpats > 24)
-	orgptr += sixdepak(secptr,orgptr,len[4]); secptr += len[4] / 2;
-      if(numpats > 32)
-	orgptr += sixdepak(secptr,orgptr,len[5]); secptr += len[5] / 2;
-      if(numpats > 40)
-	orgptr += sixdepak(secptr,orgptr,len[6]); secptr += len[6] / 2;
-      if(numpats > 48)
-	orgptr += sixdepak(secptr,orgptr,len[7]); secptr += len[7] / 2;
-      if(numpats > 56)
-	sixdepak(secptr,orgptr,len[8]);
+    for (i = 1; i <= blocks; i++) {
+      orgptr += Sixdepak::decode(secptr, len[i], orgptr, org + needed - orgptr);
+      secptr += len[i] / 2;
     }
     delete [] secdata;
   } else {
-    org = (unsigned char *)secdata;
-    for(l=0;l<alength;l++) org[l] = f->readInt(1);
+    org = new unsigned char [alength];
+    f->readString((char *)org, alength);
+    orgptr = org + alength;
   }
 
-  if(version < 5) {
-    for(i=0;i<numpats;i++)
-      for(j=0;j<64;j++)
-	for(k=0;k<9;k++) {
-	  struct Tracks	*track = &tracks[i * 9 + k][j];
-	  unsigned char	*o = &org[i*64*t*4+j*t*4+k*4];
+  if (orgptr - org < (signed long)needed) {
+    delete [] org;
+    fp.close(f);
+    return false;
+  }
+
+  if (version < 5) {
+    for (i = 0; i < numpats; i++)	// pattern
+      for (j = 0; j < 64; j++)		// row
+	for(k = 0; k < t /*9*/; k++) {	// channel
+	  struct Tracks	*track = &tracks[i * t + k][j];
+	  unsigned char	*o = &org[(i * 64 * t + j * t + k) * 4];
 
 	  track->note = o[0] == 255 ? 127 : o[0];
-	  track->inst = o[1];
-	  track->command = convfx[o[2]];
+	  track->inst = o[1] <= NUMINST ? o[1] : 0; // ignore invalid instrument
+	  track->command = o[2] < sizeof(convfx) ? convfx[o[2]] : 255;
 	  track->param2 = o[3] & 0x0f;
-	  if(track->command != 14)
-	    track->param1 = o[3] >> 4;
-	  else {
-	    track->param1 = convinf1[o[3] >> 4];
-	    if(track->param1 == 15 && !track->param2) {	// convert key-off
-	      track->command = 8;
-	      track->param1 = 0;
-	      track->param2 = 0;
-	    }
-	  }
-	  if(track->command == 14) {
+	  track->param1 = o[3] >> 4;
+
+	  if (track->command == 14) {
+	    track->param1 = convinf1[track->param1];
 	    switch(track->param1) {
 	    case 2: // convert define waveform
 	      track->command = 25;
 	      track->param1 = track->param2;
 	      track->param2 = 0xf;
 	      break;
+
 	    case 8: // convert volume slide up
 	      track->command = 26;
 	      track->param1 = track->param2;
 	      track->param2 = 0;
 	      break;
+
 	    case 9: // convert volume slide down
 	      track->command = 26;
 	      track->param1 = 0;
+	      break;
+
+	    case 15: // convert key-off
+	      if(!track->param2) {
+		track->command = 8;
+		track->param1 = 0;
+		// param2 is already zero
+	      }
 	      break;
 	    }
 	  }
 	}
   } else {	// version >= 5
-    realloc_patterns(64, 64, 18);
+    realloc_patterns(numpats, 64, t);
 
-    for(i=0;i<numpats;i++)
-      for(j=0;j<18;j++)
-	for(k=0;k<64;k++) {
-	  struct Tracks	*track = &tracks[i * 18 + j][k];
-	  unsigned char	*o = &org[i*64*t*4+j*64*4+k*4];
+    for (i = 0; i < numpats; i++)	// pattern
+      for (j = 0; j < t /*18*/; j++)	// channel
+	for (k = 0; k < 64; k++) {	// row
+	  struct Tracks	*track = &tracks[i * t + j][k];
+	  unsigned char	*o = &org[(i * 64 * t + j * 64 + k) * 4];
 
 	  track->note = o[0] == 255 ? 127 : o[0];
-	  track->inst = o[1];
-	  track->command = newconvfx[o[2]];
+	  track->inst = o[1] <= NUMINST ? o[1] : 0; // ignore invalid instrument
+	  track->command = o[2] < sizeof(newconvfx) ? newconvfx[o[2]] : 255;
 	  track->param1 = o[3] >> 4;
 	  track->param2 = o[3] & 0x0f;
 
 	  // Convert '&' command
-	  if(o[2] == 36)
+	  if (o[2] == 36)
 	    switch(track->param1) {
 	    case 0:	// pattern delay (frames)
 	      track->command = 29;
@@ -259,17 +286,16 @@ bool Ca2mLoader::load(const std::string &filename, const CFileProvider &fp)
 
   init_trackord();
 
-  if(version == 1 || version == 5)
-    delete [] org;
-  else
-    delete [] secdata;
+  delete [] org;
 
   // Process flags
-  if(version >= 5) {
+  if (version >= 5) {
     CmodPlayer::flags |= Opl3;				// All versions >= 5 are OPL3
-    if(flags & 8) CmodPlayer::flags |= Tremolo;		// Tremolo depth
-    if(flags & 16) CmodPlayer::flags |= Vibrato;	// Vibrato depth
+    if (flags & 8) CmodPlayer::flags |= Tremolo;	// Tremolo depth
+    if (flags & 16) CmodPlayer::flags |= Vibrato;	// Vibrato depth
   }
+
+  // Note: crc value is not checked.
 
   fp.close(f);
   rewind(0);
@@ -278,212 +304,8 @@ bool Ca2mLoader::load(const std::string &filename, const CFileProvider &fp)
 
 float Ca2mLoader::getrefresh()
 {
-	if(tempo != 18)
-		return (float) (tempo);
-	else
+	if (tempo == 18)
 		return 18.2f;
-}
-
-/*** private methods *************************************/
-
-void Ca2mLoader::inittree()
-{
-	unsigned short i;
-
-	for(i=2;i<=TWICEMAX;i++) {
-		dad[i] = i / 2;
-		freq[i] = 1;
-	}
-
-	for(i=1;i<=MAXCHAR;i++) {
-		leftc[i] = 2 * i;
-		rghtc[i] = 2 * i + 1;
-	}
-}
-
-void Ca2mLoader::updatefreq(unsigned short a,unsigned short b)
-{
-	do {
-		freq[dad[a]] = freq[a] + freq[b];
-		a = dad[a];
-		if(a != ROOT)
-		{
-			if(leftc[dad[a]] == a)
-			{
-				b = rghtc[dad[a]];
-			}
-			else
-			{
-				b = leftc[dad[a]];
-			}
-		}
-	} while(a != ROOT);
-
-	if(freq[ROOT] == MAXFREQ)
-		for(a=1;a<=TWICEMAX;a++)
-			freq[a] >>= 1;
-}
-
-void Ca2mLoader::updatemodel(unsigned short code)
-{
-	unsigned short a=code+SUCCMAX,b,c,code1,code2;
-
-	freq[a]++;
-	if(dad[a] != ROOT) {
-		code1 = dad[a];
-		if(leftc[code1] == a)
-			updatefreq(a,rghtc[code1]);
-		else
-			updatefreq(a,leftc[code1]);
-
-		do {
-			code2 = dad[code1];
-			if(leftc[code2] == code1)
-				b = rghtc[code2];
-			else
-				b = leftc[code2];
-
-			if(freq[a] > freq[b]) {
-				if(leftc[code2] == code1)
-					rghtc[code2] = a;
-				else
-					leftc[code2] = a;
-
-				if(leftc[code1] == a) {
-					leftc[code1] = b;
-					c = rghtc[code1];
-				} else {
-					rghtc[code1] = b;
-					c = leftc[code1];
-				}
-
-				dad[b] = code1;
-				dad[a] = code2;
-				updatefreq(b,c);
-				a = b;
-			}
-
-			a = dad[a];
-			code1 = dad[a];
-		} while(code1 != ROOT);
-	}
-}
-
-unsigned short Ca2mLoader::inputcode(unsigned short bits)
-{
-	unsigned short i,code=0;
-
-	for(i=1;i<=bits;i++) {
-		if(!ibitcount) {
-			if(ibitcount == MAXBUF)
-				ibufcount = 0;
-			ibitbuffer = wdbuf[ibufcount];
-			ibufcount++;
-			ibitcount = 15;
-		} else
-			ibitcount--;
-
-		if(ibitbuffer > 0x7fff)
-			code |= bitvalue[i-1];
-		ibitbuffer <<= 1;
-	}
-
-	return code;
-}
-
-unsigned short Ca2mLoader::uncompress()
-{
-	unsigned short a=1;
-
-	do {
-		if(!ibitcount) {
-			if(ibufcount == MAXBUF)
-				ibufcount = 0;
-			ibitbuffer = wdbuf[ibufcount];
-			ibufcount++;
-			ibitcount = 15;
-		} else
-			ibitcount--;
-
-		if(ibitbuffer > 0x7fff)
-			a = rghtc[a];
-		else
-			a = leftc[a];
-		ibitbuffer <<= 1;
-	} while(a <= MAXCHAR);
-
-	a -= SUCCMAX;
-	updatemodel(a);
-	return a;
-}
-
-void Ca2mLoader::decode()
-{
-	unsigned short i,j,k,t,c,count=0,dist,len,index;
-
-	inittree();
-	c = uncompress();
-
-	while(c != TERMINATE) {
-		if(c < 256) {
-			obuf[obufcount] = (unsigned char)c;
-			obufcount++;
-			if(obufcount == MAXBUF) {
-				output_size = MAXBUF;
-				obufcount = 0;
-			}
-
-			buf[count] = (unsigned char)c;
-			count++;
-			if(count == MAXSIZE)
-				count = 0;
-		} else {
-			t = c - FIRSTCODE;
-			index = t / CODESPERRANGE;
-			len = t + MINCOPY - index * CODESPERRANGE;
-			dist = inputcode(copybits[index]) + len + copymin[index];
-
-			j = count;
-			k = count - dist;
-			if(count < dist)
-				k += MAXSIZE;
-
-			for(i=0;i<=len-1;i++) {
-				obuf[obufcount] = buf[k];
-				obufcount++;
-				if(obufcount == MAXBUF) {
-					output_size = MAXBUF;
-					obufcount = 0;
-				}
-
-				buf[j] = buf[k];
-				j++; k++;
-				if(j == MAXSIZE) j = 0;
-				if(k == MAXSIZE) k = 0;
-			}
-
-			count += len;
-			if(count >= MAXSIZE)
-				count -= MAXSIZE;
-		}
-		c = uncompress();
-	}
-	output_size = obufcount;
-}
-
-unsigned short Ca2mLoader::sixdepak(unsigned short *source, unsigned char *dest,
-				    unsigned short size)
-{
-	if((unsigned int)size + 4096 > MAXBUF)
-		return 0;
-
-	buf = new unsigned char [MAXSIZE];
-	input_size = size;
-	ibitcount = 0; ibitbuffer = 0;
-	obufcount = 0; ibufcount = 0;
-	wdbuf = source; obuf = dest;
-
-	decode();
-	delete [] buf;
-	return output_size;
+	else
+		return (float) (tempo);
 }

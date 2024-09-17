@@ -29,14 +29,7 @@
 
 #include "player.h"
 
-#if !defined(UINT8_MAX)
-typedef signed char    int8_t;
-typedef short          int16_t;
-typedef int            int32_t;
-typedef unsigned char  uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int   uint32_t;
-#endif
+#include <stdint.h> // for uintxx_t
 
 #define VGM_GZIP_MIN	8		// minimum size for GZip header
 #define VGM_HEADER_MIN	84		// minimum size for header (till YM3812 clock field)

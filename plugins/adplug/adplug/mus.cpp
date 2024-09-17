@@ -30,6 +30,7 @@
  */
 
 #include <cstring>
+#include <algorithm>
 #include <stdio.h>
 
 #include "mus.h"
@@ -50,10 +51,10 @@ std::string CmusPlayer::gettype()
 	char tmpstr[30];
 
 	if (isIMS)
-		sprintf(tmpstr, "IMPlay Song Format v%d.%d", majorVersion, minorVersion);
+		snprintf(tmpstr, sizeof(tmpstr), "IMPlay Song v%d.%d", majorVersion, minorVersion);
 	else
-		sprintf(tmpstr, "AdLib MIDI Format v%d.%d", majorVersion, minorVersion);
-	return std::string(tmpstr);
+		snprintf(tmpstr, sizeof(tmpstr), "MIDI Format v%d.%d", majorVersion, minorVersion);
+	return std::string("AdLib Visual Composer: ") + std::string(tmpstr);
 }
 
 bool CmusPlayer::load(const std::string &filename, const CFileProvider &fp)
@@ -61,8 +62,17 @@ bool CmusPlayer::load(const std::string &filename, const CFileProvider &fp)
 	binistream *f = fp.open(filename); if(!f) return false;
 
 	// file validation
-	if (!fp.extension(filename, ".mus") &&
-		!fp.extension(filename, ".ims"))
+	static const char * musicExt[] = { KNOWN_MUS_EXT, NULL };
+	size_t ex;
+	for (ex = 0; musicExt[ex] != NULL; ex++)
+	{
+		std::string ext = ".";
+		ext.append(musicExt[ex]);
+
+		if (fp.extension(filename, ext))
+			break;
+	}
+	if (musicExt[ex] == NULL)
 	{
 		fp.close(f);
 		return false;
@@ -116,15 +126,15 @@ bool CmusPlayer::load(const std::string &filename, const CFileProvider &fp)
 		isIMS = true;
 		nrTimbre = f->readInt(2);
 		// validate post-data size
-		if (fp.filesize(f) >= (unsigned)(HEADER_LEN + dataSize) + 4 + nrTimbre * TIMBRE_NAME_SIZE)
+		if (fp.filesize(f) >= (unsigned)(HEADER_LEN + dataSize) + 4 + nrTimbre * INS_MAX_NAME_SIZE)
 		{
 			insts = new mus_inst[nrTimbre];
 			// read timbre names
 			for (int i = 0; i < nrTimbre; i++)
 			{
-				f->readString(insts[i].name, TIMBRE_NAME_SIZE);
-				insts[i].name[TIMBRE_NAME_SIZE - 1] = 0;
-				insts[i].loaded = false;
+				f->readString(insts[i].name, INS_MAX_NAME_SIZE);
+				insts[i].name[INS_MAX_NAME_SIZE - 1] = 0;
+				insts[i].backend_index = -1;
 			}
 		}
 		else
@@ -132,93 +142,94 @@ bool CmusPlayer::load(const std::string &filename, const CFileProvider &fp)
 	}
 
 	fp.close(f);
-	bool bankload;
+	bool bankload = false;
 	if (!insts)
 	{
+		static const char * timbreExt[] = { KNOWN_SND_EXT, NULL };
+		static const char * timbreName[] = { KNOWN_SND_NAME, NULL };
+
 		// load SND timbre bank
-		bankload = LoadTimbreBank(filename.substr(0, filename.length() - 3).append("snd"), fp);
-		#ifndef DOS
-		#ifndef WIN32
-		if (!bankload) // for case-sensitive file systems
-			bankload = LoadTimbreBank(filename.substr(0, filename.length() - 3).append("SND"), fp);
-		#endif
-		#endif
-		if (!bankload)
-			bankload = LoadTimbreBank(filename.substr(0, filename.length() - 3).append("tim"), fp);
-		#ifndef DOS
-		#ifndef WIN32
-		if (!bankload) // for case-sensitive file systems
-			bankload = LoadTimbreBank(filename.substr(0, filename.length() - 3).append("TIM"), fp);
-		#endif
-		#endif
-		if (!bankload)
+		for (size_t nm = 0; timbreName[nm] != NULL && !bankload; nm++)
 		{
-			// fetch default bank
-			size_t np = filename.find_last_of("/");
-			if (np == std::string::npos)
-				np = filename.find_last_of("\\");
-			if (np != std::string::npos)
-				bankload = LoadTimbreBank(filename.substr(0, np + 1).append("timbres.snd"), fp);
-			#ifndef DOS
-			#ifndef WIN32
-			if (!bankload) // for case-sensitive file systems
-				bankload = LoadTimbreBank(filename.substr(0, np + 1).append("TIMBRES.SND"), fp);
-			#endif
-			#endif
-			if (!bankload)
-				bankload = LoadTimbreBank(filename.substr(0, np + 1).append("timbres.tim"), fp);
-			#ifndef DOS
-			#ifndef WIN32
-			if (!bankload) // for case-sensitive file systems
-				bankload = LoadTimbreBank(filename.substr(0, np + 1).append("TIMBRES.TIM"), fp);
-			#endif
-			#endif
+			for (size_t ex = 0; timbreExt[ex] != NULL && !bankload; ex++)
+			{
+				std::string fn;
+				std::string nam = timbreName[nm];
+				std::string ext = timbreExt[ex];
+
+				size_t np = filename.find_last_of("/");
+				if (np == std::string::npos)
+					np = filename.find_last_of("\\");
+				if (np == std::string::npos)
+					np = -1;
+
+				if (nam.empty())
+					fn = filename.substr(0, filename.length() - 3).append(ext);
+				else
+					fn = filename.substr(0, np + 1).append(nam + "." + ext);
+
+				bankload = LoadTimbreBank(fn, fp);
+
+				#if !defined(DOS) && !defined(WIN32)
+				if (bankload)
+					break;
+
+				// for case-sensitive file systems
+				std::transform(nam.begin(), nam.end(), nam.begin(), ::toupper);
+				std::transform(ext.begin(), ext.end(), ext.begin(), ::toupper);
+
+				if (nam.empty())
+					fn = filename.substr(0, filename.length() - 3).append(ext);
+				else
+					fn = filename.substr(0, np + 1).append(nam + "." + ext);
+
+				bankload = LoadTimbreBank(fn, fp);
+				#endif
+			}
 		}
 	}
 	else if (isIMS)	// fetch timbre data from BNK banks
 	{
+		static const char * bankName[] = { KNOWN_BNK_NAME, NULL };
+		bnk_return_failure = true;
+
 		// fetch bank of the song
-		bankload = FetchTimbreData(filename.substr(0, filename.length() - 3).append("bnk"), fp);
-		#ifndef DOS
-		#ifndef WIN32
-		if (!bankload) // for case-sensitive file systems
-			bankload = FetchTimbreData(filename.substr(0, filename.length() - 3).append("BNK"), fp);
-		#endif
-		#endif
-		if (!bankload)
+		for (size_t nm = 0; bankName[nm] != NULL && !InstsLoaded(); nm++)
 		{
-			// fetch other default banks
+			std::string fn;
+			std::string nam = bankName[nm];
+			std::string ext = "bnk";
+
 			size_t np = filename.find_last_of("/");
 			if (np == std::string::npos)
 				np = filename.find_last_of("\\");
-			if (np != std::string::npos)
-			{
-				if (!InstsLoaded())
-				{
-					// fetch IMPlay bank
-					bankload = FetchTimbreData(filename.substr(0, np + 1).append("implay.bnk"), fp);
-					#ifndef DOS
-					#ifndef WIN32
-					if (!bankload) // for case-sensitive file systems
-						bankload = FetchTimbreData(filename.substr(0, np + 1).append("IMPLAY.BNK"), fp);
-					#endif
-					#endif
-				}
-				if (!InstsLoaded())
-				{
-					// fetch standard bank
-					bankload = FetchTimbreData(filename.substr(0, np + 1).append("standard.bnk"), fp);
-					#ifndef DOS
-					#ifndef WIN32
-					if (!bankload) // for case-sensitive file systems
-						bankload = FetchTimbreData(filename.substr(0, np + 1).append("STANDARD.BNK"), fp);
-					#endif
-					#endif
-				}
-			}
+			if (np == std::string::npos)
+				np = -1;
+
+			if (nam.empty())
+				fn = filename.substr(0, filename.length() - 3).append(ext);
+			else
+				fn = filename.substr(0, np + 1).append(nam + "." + ext);
+
+			bankload = FetchTimbreData(fn, fp);
+
+			#if !defined(DOS) && !defined(WIN32)
+			if (bankload)
+				continue;
+
+			// for case-sensitive file systems
+			std::transform(nam.begin(), nam.end(), nam.begin(), ::toupper);
+			std::transform(ext.begin(), ext.end(), ext.begin(), ::toupper);
+
+			if (nam.empty())
+				fn = filename.substr(0, filename.length() - 3).append(ext);
+			else
+				fn = filename.substr(0, np + 1).append(nam + "." + ext);
+
+			bankload = FetchTimbreData(fn, fp);
+			#endif
 		}
 	}
-	drv = new CadlibDriver(opl);
 	rewind(0);
 	return true;
 }
@@ -227,7 +238,7 @@ bool CmusPlayer::InstsLoaded()
 {
 	if (!insts) return false;
 	for (int i = 0; i < nrTimbre; i++)
-		if (!insts[i].loaded)
+		if (insts[i].backend_index < 0)
 			return false;
 	return true;
 }
@@ -257,8 +268,8 @@ bool CmusPlayer::LoadTimbreBank(const std::string fname, const CFileProvider &fp
 	uint16_t offsetDef = static_cast<uint16_t>(f->readInt(2));
 	// validate header and data size
 	if (vMaj != 1 || vMin != 0 ||
-		offsetDef != SND_HEADER_LEN + nrTimbre * TIMBRE_NAME_SIZE ||
-		fp.filesize(f) < SND_HEADER_LEN + nrTimbre * TIMBRE_NAME_SIZE + nrTimbre * TIMBRE_DEF_SIZE)
+		offsetDef != SND_HEADER_LEN + nrTimbre * INS_MAX_NAME_SIZE ||
+		fp.filesize(f) < SND_HEADER_LEN + nrTimbre * INS_MAX_NAME_SIZE + nrTimbre * TIMBRE_DEF_SIZE)
 	{
 		nrTimbre = 0;
 		fp.close(f);
@@ -271,14 +282,19 @@ bool CmusPlayer::LoadTimbreBank(const std::string fname, const CFileProvider &fp
 	// read timbre names
 	for (int i = 0; i < nrTimbre; i++)
 	{
-		f->readString(insts[i].name, TIMBRE_NAME_SIZE);
-		insts[i].name[TIMBRE_NAME_SIZE - 1] = 0;
+		f->readString(insts[i].name, INS_MAX_NAME_SIZE);
+		insts[i].name[INS_MAX_NAME_SIZE - 1] = 0;
 	}
 	// read timbre data
 	for (int i = 0; i < nrTimbre; i++)
 	{
-		f->readString((char *)insts[i].data, TIMBRE_DEF_LEN * 2);
-		insts[i].loaded = true;
+		uint8_t data[ADLIB_INST_LEN];
+		for (unsigned int j = 0; j < sizeof(data); j++)
+		{
+			uint16_t val = static_cast<uint16_t>(f->readInt(2));
+			data[j] = val & 0xFF;
+		}
+		insts[i].backend_index = load_instrument_data(&data[0], sizeof(data));
 	}
 	fp.close(f);
 	return true;
@@ -286,123 +302,42 @@ bool CmusPlayer::LoadTimbreBank(const std::string fname, const CFileProvider &fp
 
 bool CmusPlayer::FetchTimbreData(const std::string fname, const CFileProvider &fp)
 {
-	binistream *f = fp.open(fname);
-	if (!f) {
+	SBnkHeader bnk_header;
+	binistream *bnk_file = fp.open(fname.c_str());
+	if (!bnk_file) {
 		#ifdef DEBUG
 		AdPlug_LogWrite("Instrument bank not found: %s\n", fname.c_str());
 		#endif
 		return false;
 	}
-	// file validation
-	if (fp.filesize(f) < BNK_HEADER_SIZE)
-	{
-		fp.close(f);
-		#ifdef DEBUG
-		AdPlug_LogWrite("Instrument bank size is wrong.");
-		#endif
-		return false;
-	}
-	// check bank version
-	if (f->readInt(1) != 1 ||
-		f->readInt(1) != 0)
-	{
-		fp.close(f);
-		#ifdef DEBUG
-		AdPlug_LogWrite("Instrument bank version is wrong.");
-		#endif
-		return false;
-	}
-	// check bank signature
-	char signature[BNK_SIGNATURE_LEN + 1];
-	signature[BNK_SIGNATURE_LEN] = 0;
-	f->readString(signature, BNK_SIGNATURE_LEN);
-	if (strcmp(signature, "ADLIB-"))
-	{
-		fp.close(f);
-		#ifdef DEBUG
-		AdPlug_LogWrite("Instrument bank signature is wrong.");
-		#endif
-		return false;
-	}
-	uint16_t numUsed = static_cast<uint16_t>(f->readInt(2));
-	uint16_t numInst = static_cast<uint16_t>(f->readInt(2));
-	uint32_t offsetName = static_cast<uint32_t>(f->readInt(4));
-	uint32_t offsetData = static_cast<uint32_t>(f->readInt(4));
-	// validate header and data size
-	if (numUsed == 0 ||
-		numInst == 0 ||
-		numUsed > numInst ||
-		offsetName == 0 ||
-		offsetData == 0 ||
-		offsetName > offsetData ||
-		offsetName > BNK_HEADER_SIZE || /* often 0x1C, also can be 0x14 */
-		fp.filesize(f) < offsetData + numInst * BNK_INST_SIZE)
-	{
-		fp.close(f);
-		#ifdef DEBUG
-		AdPlug_LogWrite("Instrument bank format is incorrect.");
-		#endif
-		return false;
-	}
-	f->seek(offsetName);
-	uint8_t * names = new uint8_t[numInst * BNK_NAME_SIZE];
-	f->readString((char *)names, numInst * BNK_NAME_SIZE);
 
-	f->seek(offsetData);
-	uint8_t * instData = new uint8_t[numInst * BNK_INST_SIZE];
-	f->readString((char *)instData, numInst * BNK_INST_SIZE);
-
-	fp.close(f);
-
-	uint16_t index;
-	bool match;
-	for (int i = 0; i < numUsed; i++)
+	load_bnk_info(bnk_file, bnk_header);
+	for (int i = 0; i < nrTimbre; i++)
 	{
-		index = *(uint16_t *)(names + i * BNK_NAME_SIZE);
-		for (int j = 0; j < nrTimbre; j++)
-		{
-			match = true;
-			for (int k = 0; k < TIMBRE_NAME_SIZE; k++)
-			{
-				if (k > 0 && insts[j].name[k - 1] == 0)
-					break;
-				if (tolower(insts[j].name[k]) != tolower(names[i * BNK_NAME_SIZE + 3 + k]))
-				{
-					match = false;
-					break;
-				}
-			}
-			if (match && !insts[j].loaded && index < numInst)
-			{
-				for (int k = 0; k < TIMBRE_DEF_LEN; k++)
-				{
-					insts[j].data[k] = instData[index * BNK_INST_SIZE + 2 + k];
-				}
-				insts[j].loaded = true;
-			}
-		}
-		if (InstsLoaded())
-			break;
+		if (insts[i].backend_index >= 0)
+			continue;
+
+		insts[i].backend_index = load_bnk_instrument(bnk_file, bnk_header, std::string(insts[i].name));
 	}
-	delete[] names;
-	delete[] instData;
+	fp.close(bnk_file);
 	return true;
 }
 
-void CmusPlayer::rewind(int subsong)
+void CmusPlayer::frontend_rewind(int subsong)
 {
 	SetTempo(basicTempo, tickBeat);
 	pos = 0; songend = false;
-	opl->init();
-	if (drv) drv->SoundWarmInit();
+
+	SetRhythmMode(soundMode);
+	SetPitchRange(pitchBRange);
 
 	for (int i = 0; i < MAX_VOICES; i++)
+	{
 		volume[i] = 0;
+		SetDefaultInstrument(i);
+	}
 	counter = 0;
 	ticks = 0;
-
-	if (drv) drv->SetMode(soundMode);
-	if (drv) drv->SetPitchRange(pitchBRange);
 }
 
 /*
@@ -484,69 +419,75 @@ void CmusPlayer::executeCommand()
 		case NOTE_ON_BYTE:
 			haut = data[pos++];
 			vol = data[pos++];
-			if (voice > MAX_VOICES - 1)
+			if (voice >= MAX_VOICES)
 				break;
 			if (!vol)
 			{
-				if (drv) drv->NoteOff(voice);
+				NoteOff(voice);
 			}
 			else
 			{
 				if (vol != volume[voice])
 				{
-					if (drv) drv->SetVoiceVolume(voice, vol);
+					SetVolume(voice, vol);
 					volume[voice] = vol;
 				}
-				if (drv) drv->NoteOn(voice, haut);
+				NoteOn(voice, haut);
 			}
 			break;
 		case NOTE_OFF_BYTE:
 			haut = data[pos++];
 			vol = data[pos++];
-			if (voice > MAX_VOICES - 1)
+			if (voice >= MAX_VOICES)
 				break;
-			if (drv) drv->NoteOff(voice);
+			NoteOff(voice);
 			if (isIMS && vol)
 			{
 				if (vol != volume[voice])
 				{
-					if (drv) drv->SetVoiceVolume(voice, vol);
+					SetVolume(voice, vol);
 					volume[voice] = vol;
 				}
-				if (drv) drv->NoteOn(voice, haut);
+				NoteOn(voice, haut);
 			}
 			break;
 		case AFTER_TOUCH_BYTE:
 			vol = data[pos++];
-			if (voice > MAX_VOICES - 1)
+			if (voice >= MAX_VOICES)
 				break;
 			if (vol != volume[voice])
 			{
-				if (drv) drv->SetVoiceVolume(voice, vol);
+				SetVolume(voice, vol);
 				volume[voice] = vol;
 			}
 			break;
 		case PROG_CHANGE_BYTE:
 			timbre = data[pos++];
-			if (voice > MAX_VOICES - 1)
+			if (voice >= MAX_VOICES)
 				break;
-			if (insts &&
-				timbre < nrTimbre &&
-				insts[timbre].loaded)
+			if (insts)
 			{
-				if (drv) drv->SetVoiceTimbre(voice, &insts[timbre].data[0]);
+				if (timbre < nrTimbre && insts[timbre].backend_index >= 0)
+					SetInstrument(voice, insts[timbre].backend_index);
+				else
+				{
+				#ifdef DEBUG
+					AdPlug_LogWrite("Timbre not found: %d\n", timbre);
+				#endif
+					SetDefaultInstrument(voice);
+				}
 			}
 			#ifdef DEBUG
 			else
-				AdPlug_LogWrite("Timbre not found: %d\n", timbre);
+				AdPlug_LogWrite("Unexpected: insts is NULL, timbre %d\n", timbre);
 			#endif
 			break;
 		case PITCH_BEND_BYTE:
 			pitch = data[pos++];
 			pitch |= data[pos++] << 7;
-			if (voice > MAX_VOICES - 1)
+			if (voice >= MAX_VOICES)
 				break;
-			if (drv) drv->SetVoicePitch(voice, pitch);
+			ChangePitch(voice, pitch);
 			break;
 		case CONTROL_CHANGE_BYTE:
 			/* unused */

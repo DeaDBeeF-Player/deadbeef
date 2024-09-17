@@ -29,10 +29,10 @@ class CjbmPlayer: public CPlayer
  public:
   static CPlayer *factory(Copl *newopl);
 
-  CjbmPlayer(Copl *newopl) : CPlayer(newopl), m(0)
+  CjbmPlayer(Copl *newopl) : CPlayer(newopl), m(0), sequences(0)
     { }
   ~CjbmPlayer()
-    { if(m != NULL) delete [] m; }
+    { delete[] sequences; delete[] m; }
 
   bool load(const std::string &filename, const CFileProvider &fp);
   bool update();
