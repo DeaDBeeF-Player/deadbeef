@@ -27,6 +27,10 @@
 #ifndef __PLMETA_H
 #define __PLMETA_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void
 plt_add_meta (playlist_t *it, const char *key, const char *value);
 
@@ -62,5 +66,9 @@ plt_delete_metadata (playlist_t *it, DB_metaInfo_t *meta);
 
 void
 plt_delete_all_meta (playlist_t *it);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
