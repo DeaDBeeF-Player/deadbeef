@@ -10,7 +10,7 @@ jobs:
   build_linux:
     name: CI for Linux
     runs-on: ubuntu-latest
-    container: ubuntu:18.04
+    container: ubuntu:16.04
     steps:
     - name: Install dependencies for Linux
       run: |
@@ -33,9 +33,9 @@ jobs:
           gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
           gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
       run: TRAVIS_OS_NAME=linux travis/upload.sh
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: linux
-        path: portable_out/build/*.tar.bz2
+#    - name: Upload artifact
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: linux
+#        path: portable_out/build/*.tar.bz2
 
