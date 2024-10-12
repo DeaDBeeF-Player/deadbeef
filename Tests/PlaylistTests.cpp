@@ -8,8 +8,11 @@
 
 #include <deadbeef/deadbeef.h>
 #include <deadbeef/common.h>
+#include "messagepump.h"
 #include "plmeta.h"
+#include "pltmeta.h"
 #include "plugins.h"
+#include "sort.h"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -47,6 +50,88 @@ TEST(PlaylistTests, test_SearchFor2ndValueInMultiValueItems_FindsTheItem) {
 
     pl_item_unref(it);
     plt_unref (plt);
+}
+
+TEST(PlaylistTests, test_PlaylistSort) {
+    messagepump_init();
+
+    const char sort_tf[] = "%artist%";
+
+    playlist_t *plt = plt_alloc("test");
+
+    playItem_t *it_A = pl_item_alloc();
+    playItem_t *it_B = pl_item_alloc();
+    playItem_t *it_C = pl_item_alloc();
+
+    pl_add_meta(it_A, "artist", "A");
+    pl_add_meta(it_B, "artist", "B");
+    pl_add_meta(it_C, "artist", "C");
+
+    playItem_t *tail = plt_insert_item(plt, NULL, it_A);
+    tail = plt_insert_item(plt, tail, it_C);
+    tail = plt_insert_item(plt, tail, it_B);
+
+    plt_sort_v2(plt, PL_MAIN, -1, sort_tf, DDB_SORT_ASCENDING);
+
+    EXPECT_STREQ(plt_find_meta(plt, "autosort_tf"), sort_tf);
+
+    playItem_t *head = plt_get_head_item(plt, PL_MAIN);
+    EXPECT_STREQ("A", pl_find_meta_raw(head, "artist"));
+    pl_item_unref(head);
+
+    tail = plt_get_tail_item(plt, PL_MAIN);
+    EXPECT_STREQ("C", pl_find_meta_raw(tail, "artist"));
+
+    pl_item_unref(tail);
+
+    pl_item_unref(it_A);
+    pl_item_unref(it_B);
+    pl_item_unref(it_C);
+
+    plt_unref(plt);
+}
+
+TEST(PlaylistTests, test_PlaylistAutosort) {
+    messagepump_init();
+
+    const char sort_tf[] = "%artist%";
+
+    playlist_t *plt = plt_alloc("test");
+    plt_add_meta(plt, "autosort_enabled", "1");
+    plt_add_meta(plt, "autosort_mode", "tf");
+    plt_add_meta(plt, "autosort_tf", "%artist%");
+    plt_add_meta(plt, "autosort_ascending", "1");
+
+    playItem_t *it_A = pl_item_alloc();
+    playItem_t *it_B = pl_item_alloc();
+    playItem_t *it_C = pl_item_alloc();
+
+    pl_add_meta(it_A, "artist", "A");
+    pl_add_meta(it_B, "artist", "B");
+    pl_add_meta(it_C, "artist", "C");
+
+    playItem_t *tail = plt_insert_item(plt, NULL, it_A);
+    tail = plt_insert_item(plt, tail, it_C);
+    tail = plt_insert_item(plt, tail, it_B);
+
+    plt_autosort(plt);
+
+    EXPECT_STREQ(plt_find_meta(plt, "autosort_tf"), sort_tf);
+
+    playItem_t *head = plt_get_head_item(plt, PL_MAIN);
+    EXPECT_STREQ("A", pl_find_meta_raw(head, "artist"));
+    pl_item_unref(head);
+
+    tail = plt_get_tail_item(plt, PL_MAIN);
+    EXPECT_STREQ("C", pl_find_meta_raw(tail, "artist"));
+
+    pl_item_unref(tail);
+
+    pl_item_unref(it_A);
+    pl_item_unref(it_B);
+    pl_item_unref(it_C);
+
+    plt_unref(plt);
 }
 
 TEST (PlaylistTests, test_LoadDBPLWithRelativepaths) {
