@@ -3,19 +3,18 @@ name: Build for Linux
 on: [ push, pull_request ]
 
 env:
-  ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+  DEBIAN_FRONTEND: noninteractive
 
 jobs:
   build_linux:
     name: CI for Linux
     runs-on: ubuntu-latest
-    container: ubuntu:16.04
+    container: ubuntu:20.04
     steps:
     - name: Install dependencies for Linux
       run: |
         apt-get -qq update
-        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync
+        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync libglib2.0-dev-bin
         sed -i 's/mozilla\/DST_Root_CA_X3\.crt/\!mozilla\/DST_Root_CA_X3\.crt/' /etc/ca-certificates.conf
         update-ca-certificates
     - name: Checkout for Linux
@@ -33,9 +32,9 @@ jobs:
           gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
           gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
       run: TRAVIS_OS_NAME=linux travis/upload.sh
-#    - name: Upload artifact
-#      uses: actions/upload-artifact@v4
-#      with:
-#        name: linux
-#        path: portable_out/build/*.tar.bz2
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux
+        path: portable_out/build/*.tar.bz2
 
