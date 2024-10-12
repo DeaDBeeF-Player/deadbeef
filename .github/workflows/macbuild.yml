@@ -23,5 +23,10 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: mac
-        path: osx/build/Release/*.zip
+        name: deadbeef-macos-universal
+        path: osx/build/Release/DeaDBeeF.app
+    - name: Upload logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs
+        path: osx/build/Release/*.log
