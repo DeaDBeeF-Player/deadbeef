@@ -10,7 +10,7 @@ jobs:
   build_linux:
     name: CI for Linux
     runs-on: ubuntu-latest
-    container: ubuntu:16.04
+    container: ubuntu:18.04
     steps:
     - name: Install dependencies for Linux
       run: |
