@@ -37,9 +37,9 @@ public:
 	unsigned int getinstruments()
 	{ return 32; };
 	std::string getinstrument(unsigned int n)
-	{ if(*instname[n]) return std::string(instname[n],1,*instname[n]); else return std::string(); };
+	{ if (n < 32 && *instname[n]) return std::string(instname[n] + 1, *instname[n]); else return std::string(); };
 	std::string getdesc()
-	{ return std::string(songinfo,1,*songinfo); };
+	{ return std::string(songinfo + 1, *songinfo); };
 
 private:
 	struct {

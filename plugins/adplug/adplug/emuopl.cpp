@@ -39,6 +39,7 @@ CEmuopl::~CEmuopl()
   if(mixbufSamples) {
     delete [] mixbuf0;
     delete [] mixbuf1;
+    delete [] mixbuf2;
   }
 }
 
@@ -48,12 +49,13 @@ void CEmuopl::update(short *buf, int samples)
 
   //ensure that our mix buffers are adequately sized
   if(mixbufSamples < samples) {
-    if(mixbufSamples) { delete[] mixbuf0; delete[] mixbuf1; }
+    if(mixbufSamples) { delete[] mixbuf0; delete[] mixbuf1; delete[] mixbuf2; }
     mixbufSamples = samples;
 
     //*2 = make room for stereo, if we need it
     mixbuf0 = new short[samples*2]; 
     mixbuf1 = new short[samples*2];
+    mixbuf2 = new short[samples*2];
   }
 
   //data should be rendered to outbuf
@@ -68,9 +70,7 @@ void CEmuopl::update(short *buf, int samples)
   short *tempbuf=mixbuf0;
   short *tempbuf2=mixbuf1;
   if(use16bit) outbuf = buf;
-  else outbuf = mixbuf1;
-  //...there is a potentially confusing situation where mixbuf1 can be aliased.
-  //beware. it is a little loony.
+  else outbuf = mixbuf2;
 
   //all of the following rendering code produces 16bit output
 

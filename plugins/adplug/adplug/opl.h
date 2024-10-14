@@ -41,7 +41,7 @@ class Copl
   virtual void write(int reg, int val) = 0;	// combined register select + data write
   virtual void setchip(int n)			// select OPL chip
     {
-      if(n < 2)
+      if(n >= 0 && n < 2)
 	currChip = n;
     }
 
@@ -60,6 +60,9 @@ class Copl
 
   // Emulation only: fill buffer
   virtual void update(short *buf, int samples) {}
+  
+  // Set surroundopl offset
+  virtual void set_offset(double offset) {}
 
  protected:
   int		currChip;		// currently selected OPL chip number

@@ -31,9 +31,10 @@ class CWemuopl: public Copl
 {
 public:
   CWemuopl(int rate, bool bit16, bool usestereo)
+    : use16bit(bit16), stereo(usestereo), sampleerate(rate)
     {
       opl.adlib_init(rate, usestereo ? 2 : 1, bit16 ? 2 : 1);
-      currType = TYPE_OPL2;
+      currType = TYPE_OPL3;
     };
 
   void update(short *buf, int samples)
@@ -47,10 +48,15 @@ public:
       opl.adlib_write((currChip << 8) | reg, val);
     };
 
-  void init() {};
+  void init() {
+    opl.adlib_init(sampleerate, stereo ? 2 : 1, use16bit ? 2 : 1);
+    currChip = 0;
+  };
 
 private:
   OPLChipClass	opl;
+  bool	use16bit,stereo;
+  int	sampleerate;
 };
 
 #endif

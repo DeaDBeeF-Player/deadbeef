@@ -44,7 +44,7 @@
  * support the multiple loop situation you describe, and
  * neither do any BAM-creation programs. Then both loops point
  * to the same label, the inner loop's counter is just allowed
- * to clobber the outer loop's counter. No stack is neccisary.
+ * to clobber the outer loop's counter. No stack is necessary.
  */
 
 #include <string.h>

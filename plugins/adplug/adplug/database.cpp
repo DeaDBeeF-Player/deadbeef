@@ -78,8 +78,11 @@ bool CAdPlugDatabase::load(binistream &f)
   length = f.readInt(4);
 
   // read records
-  for(unsigned long i = 0; i < length; i++)
-    insert(CRecord::factory(f));
+  for(unsigned long i = 0; i < length; i++) {
+    CRecord *rec = CRecord::factory(f);
+    if (!insert(rec))
+      delete rec;
+  }
 
   return true;
 }
@@ -301,7 +304,7 @@ bool CAdPlugDatabase::CRecord::user_write(std::ostream &out)
   default: out << "*** Unknown ***"; break;
   }
   out << std::endl;
-  out << "Key: " << std::hex << key.crc16 << ":" << key.crc32 << std::dec << std::endl;
+  out << "Key: " << std::hex << key.crc16 << ":" << key.crc32 << std::dec << std::dec << std::endl;
   out << "File type: " << filetype << std::endl;
   out << "Comment: " << comment << std::endl;
 

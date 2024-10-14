@@ -36,7 +36,6 @@ bool CmkjPlayer::load(const std::string &filename, const CFileProvider &fp)
   char	id[6];
   float	ver;
   int	i, j;
-  short	inst[8];
 
   // file validation
   f->readString(id, 6);
@@ -46,24 +45,35 @@ bool CmkjPlayer::load(const std::string &filename, const CFileProvider &fp)
 
   // load
   maxchannel = f->readInt(2);
-  opl->init(); opl->write(1, 32);
+  if (maxchannel > 9 || maxchannel < 0) {
+    fp.close(f);
+    return false;
+  }
+  // load and store the channel instruments.
   for(i = 0; i < maxchannel; i++) {
-    for(j = 0; j < 8; j++) inst[j] = f->readInt(2);
-    opl->write(0x20+op_table[i],inst[4]);
-    opl->write(0x23+op_table[i],inst[0]);
-    opl->write(0x40+op_table[i],inst[5]);
-    opl->write(0x43+op_table[i],inst[1]);
-    opl->write(0x60+op_table[i],inst[6]);
-    opl->write(0x63+op_table[i],inst[2]);
-    opl->write(0x80+op_table[i],inst[7]);
-    opl->write(0x83+op_table[i],inst[3]);
+	for (j = 0; j < 8; j++) {
+	  inst[i].value[j] = f->readInt(2);
+	}
   }
   maxnotes = f->readInt(2);
+  if (maxnotes < 1 ||
+      // Larger values would need code changes to avoid integer overflows:
+      maxnotes > 0x7fff / (maxchannel + 1) ||
+      // That's what gets actually accessed in update(): [yeah, it's weird]
+      maxnotes - 1 + 3 * maxchannel > (maxchannel + 1) * maxnotes) {
+    fp.close(f);
+    return false;
+  }
+  delete[] songbuf;
   songbuf = new short [(maxchannel+1)*maxnotes];
   for(i = 0; i < maxchannel; i++) channel[i].defined = f->readInt(2);
   for(i = 0; i < (maxchannel + 1) * maxnotes; i++)
     songbuf[i] = f->readInt(2);
 
+  if (f->error()) {
+    fp.close(f);
+    return false;
+  }
   AdPlug_LogWrite("CmkjPlayer::load(\"%s\"): loaded file ver %.2f, %d channels,"
 		  " %d notes/channel.\n", filename.c_str(), ver, maxchannel,
 		  maxnotes);
@@ -109,18 +119,26 @@ bool CmkjPlayer::update()
       case 15: opl->write(0xa0 + c,0x63); opl->write(0xb0 + c,0x22 + 4 * channel[c].octave); break;
       case 255:	// delay
 	channel[c].songptr += maxchannel;
+        if (songbuf[channel[c].songptr] < 0)
+          goto bad_data; // avoid integer overflow
 	channel[c].pstat = songbuf[channel[c].songptr];
 	break;
       case 254:	// set octave
 	channel[c].songptr += maxchannel;
+        if ((songbuf[channel[c].songptr] | 7) != 7)
+          goto bad_data; // value out of range
 	channel[c].octave = songbuf[channel[c].songptr];
 	break;
       case 253:	// set speed
 	channel[c].songptr += maxchannel;
+        if (songbuf[channel[c].songptr] < 0)
+          goto bad_data; // avoid integer overflow
 	channel[c].speed = songbuf[channel[c].songptr];
 	break;
       case 252:	// set waveform
 	channel[c].songptr += maxchannel;
+        if (((songbuf[channel[c].songptr] - 300) | 0xff) != 0xff)
+          goto bad_data; // value out of range
 	channel[c].waveform = songbuf[channel[c].songptr] - 300;
 	if(c > 2)
 	  opl->write(0xe0 + c + (c+6),channel[c].waveform);
@@ -128,6 +146,7 @@ bool CmkjPlayer::update()
 	  opl->write(0xe0 + c,channel[c].waveform);
 	break;
       case 251:	// song end
+      bad_data:
 	for(i = 0; i < maxchannel; i++) channel[i].songptr = i;
 	songend = true;
 	return false;
@@ -147,12 +166,22 @@ void CmkjPlayer::rewind(int subsong)
 {
   int i;
 
+  opl->init(); opl->write(1, 32);
   for(i = 0; i < maxchannel; i++) {
     channel[i].pstat = 0;
     channel[i].speed = 0;
     channel[i].waveform = 0;
     channel[i].songptr = i;
     channel[i].octave = 4;
+    // Set up channel instruments
+    opl->write(0x20+op_table[i],inst[i].value[4]);
+    opl->write(0x23+op_table[i],inst[i].value[0]);
+    opl->write(0x40+op_table[i],inst[i].value[5]);
+    opl->write(0x43+op_table[i],inst[i].value[1]);
+    opl->write(0x60+op_table[i],inst[i].value[6]);
+    opl->write(0x63+op_table[i],inst[i].value[2]);
+    opl->write(0x80+op_table[i],inst[i].value[7]);
+    opl->write(0x83+op_table[i],inst[i].value[3]);
   }
 
   songend = false;

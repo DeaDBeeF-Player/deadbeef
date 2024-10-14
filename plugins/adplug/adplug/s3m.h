@@ -60,7 +60,7 @@ class Cs3mPlayer: public CPlayer
  protected:
   struct s3mheader {
     char name[28];				// song name
-    unsigned char kennung,typ,dummy[2];
+    unsigned char id,type,dummy[2];
     unsigned short ordnum,insnum,patnum,flags,cwtv,ffi;
     char scrm[4];
     unsigned char gv,is,it,mv,uc,dp,dummy2[8];
@@ -76,11 +76,11 @@ class Cs3mPlayer: public CPlayer
     char dummy2[12], name[28],scri[4];
   } inst[99];
 
-  struct {
+  struct s3mevent {
     unsigned char note,oct,instrument,volume,command,info;
   } pattern[99][64][32];
 
-  struct {
+  struct s3mchan {
     unsigned short freq,nextfreq;
     unsigned char oct,vol,inst,fx,info,dualinfo,key,nextoct,trigger,note;
   } channel[9];
@@ -89,12 +89,9 @@ class Cs3mPlayer: public CPlayer
   unsigned char orders[256];
   unsigned char crow,ord,speed,tempo,del,songend,loopstart,loopcnt;
 
- private:
-  static const signed char chnresolv[];
-  static const unsigned short notetable[12];
-  static const unsigned char vibratotab[32];
+  size_t load_pattern(int pat, binistream *f, size_t length);
 
-  void load_header(binistream *f, s3mheader *h);
+ private:
   void setvolume(unsigned char chan);
   void setfreq(unsigned char chan);
   void playnote(unsigned char chan);

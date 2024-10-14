@@ -37,6 +37,9 @@
 #define HIBYTE(val)	(val >> 8)
 #define LOBYTE(val)	(val & 0xff)
 
+#define INDEX_OK(ptr, idx) \
+  (((char*)(ptr) - filedata) + ((idx)+1) * sizeof(*(ptr)) <= filesize)
+
 static const unsigned short notetable[12] =	// D00 note table
   {340,363,385,408,432,458,485,514,544,577,611,647};
 
@@ -58,17 +61,33 @@ bool Cd00Player::load(const std::string &filename, const CFileProvider &fp)
   binistream	*f = fp.open(filename); if(!f) return false;
   d00header	*checkhead;
   d00header1	*ch;
-  unsigned long	filesize;
   int		i,ver1=0;
   char		*str;
+  int		headerstart=0;
 
   // file validation section
   checkhead = new d00header;
   f->readString((char *)checkhead, sizeof(d00header));
 
+  // Check for reheadered old-style song
+  if (strncmp(checkhead->id,"JCH\x26\x02\x66",6) == 0 && checkhead->version & 0x80) {
+    delete checkhead;
+    if(!fp.extension(filename, ".d00")) { fp.close(f); return false; }
+    ch = new d00header1;
+    // If this is a reheadered old song, the old header begins 0x6b
+    // into the file.
+    f->seek(0x6b); f->readString((char *)ch, sizeof(d00header1));
+
+    if(ch->version > 1 || !ch->subsongs)
+      { delete ch; fp.close(f); return false; }
+    delete ch;
+    ver1 = 1;
+    // Set the header position so we seek to the right place later
+    headerstart=0x6b;
   // Check for version 2-4 header
-  if(strncmp(checkhead->id,"JCH\x26\x02\x66",6) || checkhead->type ||
-     !checkhead->subsongs || checkhead->soundcard) {
+  } else if(strncmp(checkhead->id,"JCH\x26\x02\x66",6) || checkhead->type ||
+     !checkhead->subsongs || checkhead->soundcard ||
+     checkhead->version < 2 || checkhead->version > 4) {
     // Check for version 0 or 1 header (and .d00 file extension)
     delete checkhead;
     if(!fp.extension(filename, ".d00")) { fp.close(f); return false; }
@@ -85,29 +104,41 @@ bool Cd00Player::load(const std::string &filename, const CFileProvider &fp)
 		  filename.c_str(), ver1 ? "Old" : "New");
 
   // load section
-  filesize = fp.filesize(f); f->seek(0);
+  filesize = fp.filesize(f); f->seek(headerstart);
   filedata = new char [filesize + 1];			// 1 byte is needed for old-style DataInfo block
   f->readString((char *)filedata, filesize);
   filedata[filesize] = 0;
   fp.close(f);
   if(!ver1) {	// version 2 and above
     header = (struct d00header *)filedata;
+    if (filesize < sizeof(d00header) ||
+	filesize < LE_WORD(&header->infoptr) ||
+	filesize < LE_WORD(&header->instptr) ||
+	filesize < LE_WORD(&header->seqptr))
+      return false;
     version = header->version;
     datainfo = (char *)filedata + LE_WORD(&header->infoptr);
     inst = (struct Sinsts *)((char *)filedata + LE_WORD(&header->instptr));
     seqptr = (unsigned short *)((char *)filedata + LE_WORD(&header->seqptr));
-    for(i=31;i>=0;i--)	// erase whitespace
+    header->songname[31] = '\0';
+    for(i=30;i>=0;i--)	// erase whitespace
       if(header->songname[i] == ' ')
 	header->songname[i] = '\0';
       else
 	break;
-    for(i=31;i>=0;i--)
+    header->author[31] = '\0';
+    for(i=30;i>=0;i--)
       if(header->author[i] == ' ')
 	header->author[i] = '\0';
       else
 	break;
   } else {	// version 1
     header1 = (struct d00header1 *)filedata;
+    if (filesize < sizeof(d00header1) ||
+	filesize <= LE_WORD(&header1->infoptr) ||
+	filesize <= LE_WORD(&header1->instptr) ||
+	filesize <= LE_WORD(&header1->seqptr))
+      return false;
     version = header1->version;
     datainfo = (char *)filedata + LE_WORD(&header1->infoptr);
     inst = (struct Sinsts *)((char *)filedata + LE_WORD(&header1->instptr));
@@ -120,10 +151,12 @@ bool Cd00Player::load(const std::string &filename, const CFileProvider &fp)
     header1->speed = 70;		// v0 files default to 70Hz
     break;
   case 1:
+    if (filesize <= LE_WORD(&header1->lpulptr)) return false;
     levpuls = (struct Slevpuls *)((char *)filedata + LE_WORD(&header1->lpulptr));
     spfx = 0;
     break;
   case 2:
+    if (filesize <= LE_WORD(&header->spfxptr)) return false;
     levpuls = (struct Slevpuls *)((char *)filedata + LE_WORD(&header->spfxptr));
     spfx = 0;
     break;
@@ -132,6 +165,7 @@ bool Cd00Player::load(const std::string &filename, const CFileProvider &fp)
     levpuls = 0;
     break;
   case 4:
+    if (filesize <= LE_WORD(&header->spfxptr)) return false;
     spfx = (struct Sspfx *)((char *)filedata + LE_WORD(&header->spfxptr));
     levpuls = 0;
     break;
@@ -140,8 +174,6 @@ bool Cd00Player::load(const std::string &filename, const CFileProvider &fp)
     while((*str == '\xff' || *str == ' ') && str >= datainfo) {
       *str = '\0'; str--;
     }
-  else	// old-style block
-    memset((char *)filedata+filesize,0,1);
 
   rewind(0);
   return true;
@@ -152,16 +184,20 @@ bool Cd00Player::update()
   unsigned char	c,cnt,trackend=0,fx,note;
   unsigned short ord,*patt,buf,fxop,pattpos;
 
-  // effect handling (timer dependant)
+  // effect handling (timer dependent)
   for(c=0;c<9;c++) {
     channel[c].slideval += channel[c].slide; setfreq(c);	// sliding
     vibrato(c);	// vibrato
 
-    if(channel[c].spfx != 0xffff) {	// SpFX
+    if (channel[c].spfx != 0xffff) do {	// SpFX
       if(channel[c].fxdel)
 	channel[c].fxdel--;
       else {
 	channel[c].spfx = LE_WORD(&spfx[channel[c].spfx].ptr);
+	if (channel[c].spfx == 0xffff || !INDEX_OK(spfx, channel[c].spfx)) {
+	  channel[c].spfx = 0xffff;
+	  break;
+	}
 	channel[c].fxdel = spfx[channel[c].spfx].duration;
 	channel[c].inst = LE_WORD(&spfx[channel[c].spfx].instnr) & 0xfff;
 	if(spfx[channel[c].spfx].modlev != 0xff)
@@ -176,16 +212,16 @@ bool Cd00Player::update()
       }
       channel[c].modvol += spfx[channel[c].spfx].modlevadd; channel[c].modvol &= 63;
       setvolume(c);
-    }
+    } while (0);
 
     if(channel[c].levpuls != 0xff) {	// Levelpuls
       if(channel[c].frameskip)
 	channel[c].frameskip--;
-      else {
+      else if (INDEX_OK(inst, channel[c].inst)) {
 	channel[c].frameskip = inst[channel[c].inst].timer;
 	if(channel[c].fxdel)
 	  channel[c].fxdel--;
-	else {
+	else if (INDEX_OK(levpuls, channel[c].levpuls)) {
 	  channel[c].levpuls = levpuls[channel[c].levpuls].ptr - 1;
 	  channel[c].fxdel = levpuls[channel[c].levpuls].duration;
 	  if(levpuls[channel[c].levpuls].level != 0xff)
@@ -230,25 +266,38 @@ bool Cd00Player::update()
 	continue;
       }
     readorder:	// process arrangement (orderlist)
+      if (!INDEX_OK(channel[c].order, channel[c].ordpos)) {
+	channel[c].seqend = 1; continue;
+      }
       ord = LE_WORD(&channel[c].order[channel[c].ordpos]);
       switch(ord) {
       case 0xfffe: channel[c].seqend = 1; continue;	// end of arrangement stream
       case 0xffff:		// jump to order
-	channel[c].ordpos = LE_WORD(&channel[c].order[channel[c].ordpos + 1]);
 	channel[c].seqend = 1;
+	if (!INDEX_OK(channel[c].order, channel[c].ordpos + 1)) continue;
+	channel[c].ordpos = LE_WORD(&channel[c].order[channel[c].ordpos + 1]);
 	goto readorder;
       default:
 	if(ord >= 0x9000) {	// set speed
 	  channel[c].speed = ord & 0xff;
-	  ord = LE_WORD(&channel[c].order[channel[c].ordpos - 1]);
+	  if (channel[c].ordpos > 0)
+	    ord = LE_WORD(&channel[c].order[channel[c].ordpos - 1]);
+	  else
+	    ord = 0;
 	  channel[c].ordpos++;
 	} else
 	  if(ord >= 0x8000) {	// transpose track
 	    channel[c].transpose = ord & 0xff;
 	    if(ord & 0x100)
 	      channel[c].transpose = -channel[c].transpose;
+	    if (!INDEX_OK(channel[c].order, channel[c].ordpos + 1)) {
+	      channel[c].seqend = 1; continue;
+	    }
 	    ord = LE_WORD(&channel[c].order[++channel[c].ordpos]);
 	  }
+	if (!INDEX_OK(seqptr, ord) || LE_WORD(&seqptr[ord]) + 2U > filesize) {
+	  channel[c].seqend = 1; continue;
+	}
 	patt = (unsigned short *)((char *)filedata + LE_WORD(&seqptr[ord]));
 	break;
       }
@@ -256,7 +305,8 @@ bool Cd00Player::update()
     readseq:	// process sequence (pattern)
       if(!version)	// v0: always initialize rhcnt
 	channel[c].rhcnt = channel[c].irhcnt;
-      pattpos = LE_WORD(&patt[channel[c].pattpos]);
+      pattpos = INDEX_OK(patt, channel[c].pattpos) ?
+	LE_WORD(&patt[channel[c].pattpos]) : 0xffff;
       if(pattpos == 0xffff) {	// pattern ended?
 	channel[c].pattpos = 0;
 	channel[c].ordpos++;
@@ -266,7 +316,9 @@ bool Cd00Player::update()
       note = LOBYTE(pattpos);
       fx = pattpos >> 12;
       fxop = pattpos & 0x0fff;
-      channel[c].pattpos++; pattpos = LE_WORD(&patt[channel[c].pattpos]);
+      channel[c].pattpos++;
+      pattpos = INDEX_OK(patt, channel[c].pattpos) ?
+	LE_WORD(&patt[channel[c].pattpos]) : 0;
       channel[c].nextnote = LOBYTE(pattpos) & 0x7f;
       if(version ? cnt < 0x40 : !fx) {	// note event
 	switch(note) {
@@ -296,7 +348,8 @@ bool Cd00Player::update()
 	      note += channel[c].transpose;
 	    channel[c].note = note;	// remember note for SpFX
 
-	    if(channel[c].ispfx != 0xffff && cnt < 0x20) {	// reset SpFX
+	    if (channel[c].ispfx != 0xffff && cnt < 0x20 &&
+		INDEX_OK(spfx, channel[c].ispfx)) {	// reset SpFX
 	      channel[c].spfx = channel[c].ispfx;
 	      if(LE_WORD(&spfx[channel[c].spfx].instnr) & 0x8000)	// locked frequency
 		note = spfx[channel[c].spfx].halfnote;
@@ -310,7 +363,9 @@ bool Cd00Player::update()
 		channel[c].modvol = inst[channel[c].inst].data[7] & 63;
 	    }
 
-	    if(channel[c].ilevpuls != 0xff && cnt < 0x20) {	// reset LevelPuls
+	    if (channel[c].ilevpuls != 0xff && cnt < 0x20 &&
+		INDEX_OK(levpuls, channel[c].ilevpuls) &&
+		INDEX_OK(inst, channel[c].inst)) {	// reset LevelPuls
 	      channel[c].levpuls = channel[c].ilevpuls;
 	      channel[c].fxdel = levpuls[channel[c].levpuls].duration;
 	      channel[c].frameskip = inst[channel[c].inst].timer;
@@ -377,6 +432,11 @@ bool Cd00Player::update()
 	  channel[c].ispfx = 0xffff;
 	  channel[c].spfx = 0xffff;
 	  channel[c].inst = fxop;
+	  if (!INDEX_OK(inst, fxop)) {
+	    channel[c].modvol = 0;
+	    channel[c].levpuls = channel[c].ilevpuls = 0xff;
+	    break;
+	  }
 	  channel[c].modvol = inst[fxop].data[7] & 63;
 	  if(version < 3 && version && inst[fxop].tunelev)	// Set LevelPuls
 	    channel[c].ilevpuls = inst[fxop].tunelev - 1;
@@ -412,48 +472,44 @@ void Cd00Player::rewind(int subsong)
   struct Stpoin {
     unsigned short ptr[9];
     unsigned char volume[9],dummy[5];
-  } *tpoin;
-  int i;
+  } tpoin;
 
-  if(subsong == -1) subsong = cursubsong;
+  if(subsong < 0) subsong = cursubsong;
 
-  if(version > 1) {	// do nothing if subsong > number of subsongs
-    if(subsong >= header->subsongs)
-      return;
-  } else
-    if(subsong >= header1->subsongs)
-      return;
-
-  memset(channel,0,sizeof(channel));
-  if(version > 1)
-    tpoin = (struct Stpoin *)((char *)filedata + LE_WORD(&header->tpoin));
+  size_t dataofs = subsong * sizeof(Stpoin)
+    + LE_WORD(&(version > 1 ? header->tpoin : header1->tpoin));
+  if ((unsigned int)subsong < getsubsongs() && dataofs + sizeof(Stpoin) <= filesize)
+    memcpy(&tpoin, filedata + dataofs, sizeof(Stpoin));
   else
-    tpoin = (struct Stpoin *)((char *)filedata + LE_WORD(&header1->tpoin));
-  for(i=0;i<9;i++) {
-    if(LE_WORD(&tpoin[subsong].ptr[i])) {	// track enabled
+    memset(&tpoin, 0, sizeof(Stpoin));
+
+  memset(channel, 0, sizeof(channel));
+
+  for (int i = 0; i < 9; i++) {
+    if (LE_WORD(&tpoin.ptr[i]) &&	// track enabled
+	LE_WORD(&tpoin.ptr[i]) + 4U <= filesize) {
       channel[i].speed = LE_WORD((unsigned short *)
-				 ((char *)filedata + LE_WORD(&tpoin[subsong].ptr[i])));
+				 ((char *)filedata + LE_WORD(&tpoin.ptr[i])));
       channel[i].order = (unsigned short *)
-	((char *)filedata + LE_WORD(&tpoin[subsong].ptr[i]) + 2);
+	((char *)filedata + LE_WORD(&tpoin.ptr[i]) + 2);
     } else {					// track disabled
       channel[i].speed = 0;
       channel[i].order = 0;
     }
     channel[i].ispfx = 0xffff; channel[i].spfx = 0xffff;	// no SpFX
     channel[i].ilevpuls = 0xff; channel[i].levpuls = 0xff;	// no LevelPuls
-    channel[i].cvol = tpoin[subsong].volume[i] & 0x7f;	// our player may savely ignore bit 7
+    channel[i].cvol = tpoin.volume[i] & 0x7f;	// our player may safely ignore bit 7
     channel[i].vol = channel[i].cvol;			// initialize volume
   }
   songend = 0;
   opl->init(); opl->write(1,32);	// reset OPL chip
-  cursubsong = subsong;
+  cursubsong = subsong > 0xff ? 0xff : subsong;
 }
 
 std::string Cd00Player::gettype()
 {
   char	tmpstr[40];
-
-  sprintf(tmpstr,"EdLib packed (version %d)",version > 1 ? header->version : header1->version);
+  snprintf(tmpstr, sizeof(tmpstr), "EdLib packed (version %d)", version > 1 ? header->version : header1->version);
   return std::string(tmpstr);
 }
 
@@ -479,6 +535,7 @@ void Cd00Player::setvolume(unsigned char chan)
 {
   unsigned char	op = op_table[chan];
   unsigned short	insnr = channel[chan].inst;
+  if (!INDEX_OK(inst, insnr)) return;
 
   opl->write(0x43 + op,(int)(63-((63-(inst[insnr].data[2] & 63))/63.0)*(63-channel[chan].vol)) +
 	     (inst[insnr].data[2] & 192));
@@ -493,7 +550,8 @@ void Cd00Player::setfreq(unsigned char chan)
 {
   unsigned short freq = channel[chan].freq;
 
-  if(version == 4)	// v4: apply instrument finetune
+  if (version == 4 &&	// v4: apply instrument finetune
+      INDEX_OK(inst, channel[chan].inst))
     freq += inst[channel[chan].inst].tunelev;
 
   freq += channel[chan].slideval;
@@ -508,6 +566,7 @@ void Cd00Player::setinst(unsigned char chan)
 {
   unsigned char	op = op_table[chan];
   unsigned short	insnr = channel[chan].inst;
+  if (!INDEX_OK(inst, insnr)) return;
 
   // set instrument data
   opl->write(0x63 + op, inst[insnr].data[0]);

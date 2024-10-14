@@ -26,7 +26,7 @@
 
 #include "player.h"
 
-class AdlibDriver;
+class AdLibDriver;
 
 class CadlPlayer: public CPlayer
 {
@@ -50,33 +50,22 @@ class CadlPlayer: public CPlayer
   unsigned int getsubsong() { return cursubsong; }
   std::string gettype();
 
+  void playSoundEffect(uint16_t track, uint8_t volume = 0xFF);
+
  private:
+  enum { _musicEnabled = 1, _sfxEnabled = 1 };
+
   int numsubsongs, cursubsong;
 
-  AdlibDriver *_driver;
+  AdLibDriver *_driver;
 
   uint8_t  _version;
-  uint8_t  _trackEntries[120];
-  uint16_t _trackEntries16[250];
+  uint8_t  _trackEntries[500];
   uint8_t *_soundDataPtr;
-  int _sfxPlayingSound;
-
-  uint8_t _sfxPriority;
-  uint8_t _sfxFourthByteOfSong;
-
-  int _numSoundTriggers;
-  const int *_soundTriggers;
-
-  static const int _kyra1NumSoundTriggers;
-  static const int _kyra1SoundTriggers[];
 
   bool init();
-  void process();
   void playTrack(uint16_t track);
-  void playSoundEffect(uint16_t track);
-  void play(uint16_t track);
-  void unk1();
-  void unk2();
+  void play(uint16_t track, uint8_t volume);
 };
 
 #endif

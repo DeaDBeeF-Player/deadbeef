@@ -45,17 +45,9 @@ bool CxsmPlayer::load(const std::string &filename, const CFileProvider &fp)
 
   // read and set instruments
   for(i = 0; i < 9; i++) {
-    opl->write(0x20 + op_table[i], f->readInt(1));
-    opl->write(0x23 + op_table[i], f->readInt(1));
-    opl->write(0x40 + op_table[i], f->readInt(1));
-    opl->write(0x43 + op_table[i], f->readInt(1));
-    opl->write(0x60 + op_table[i], f->readInt(1));
-    opl->write(0x63 + op_table[i], f->readInt(1));
-    opl->write(0x80 + op_table[i], f->readInt(1));
-    opl->write(0x83 + op_table[i], f->readInt(1));
-    opl->write(0xe0 + op_table[i], f->readInt(1));
-    opl->write(0xe3 + op_table[i], f->readInt(1));
-    opl->write(0xc0 + op_table[i], f->readInt(1));
+	for (j = 0; j < 11; j++) {
+	  inst[i].value[j] = f->readInt(1);
+	}
     f->ignore(5);
   }
 
@@ -98,8 +90,23 @@ bool CxsmPlayer::update()
 
 void CxsmPlayer::rewind(int subsong)
 {
+  int i;
   notenum = last = 0;
   songend = false;
+  opl->init(); opl->write(1, 32);
+  for (i = 0; i < 9; i++) {
+    opl->write(0x20 + op_table[i], inst[i].value[0]);
+    opl->write(0x23 + op_table[i], inst[i].value[1]);
+	opl->write(0x40 + op_table[i], inst[i].value[2]);
+	opl->write(0x43 + op_table[i], inst[i].value[3]);
+	opl->write(0x60 + op_table[i], inst[i].value[4]);
+	opl->write(0x63 + op_table[i], inst[i].value[5]);
+	opl->write(0x80 + op_table[i], inst[i].value[6]);
+	opl->write(0x83 + op_table[i], inst[i].value[7]);
+	opl->write(0xe0 + op_table[i], inst[i].value[8]);
+	opl->write(0xe3 + op_table[i], inst[i].value[9]);
+	opl->write(0xc0 + op_table[i], inst[i].value[10]);
+  }
 }
 
 float CxsmPlayer::getrefresh()

@@ -31,16 +31,9 @@
 #include "dmo.h"
 #include "debug.h"
 
-#define LOWORD(l) ((l) & 0xffff)
-#define HIWORD(l) ((l) >> 16)
-#define LOBYTE(w) ((w) & 0xff)
-#define HIBYTE(w) ((w) >> 8)
-
 #define ARRAY_AS_DWORD(a, i) \
 ((a[i + 3] << 24) + (a[i + 2] << 16) + (a[i + 1] << 8) + a[i])
 #define ARRAY_AS_WORD(a, i)	((a[i + 1] << 8) + a[i])
-
-#define CHARP_AS_WORD(p)	(((*(p + 1)) << 8) + (*p))
 
 /* -------- Public Methods -------------------------------- */
 
@@ -51,31 +44,19 @@ CPlayer *CdmoLoader::factory(Copl *newopl)
 
 bool CdmoLoader::load(const std::string &filename, const CFileProvider &fp)
 {
-  int i,j;
-  binistream *f;
+  int i;
+
+  binistream *f = fp.open(filename);
+  if (!f) return false;
 
   // check header
-  dmo_unpacker *unpacker = new dmo_unpacker;
+  dmo_unpacker unpacker;
   unsigned char chkhdr[16];
-
-  if(!fp.extension(filename, ".dmo"))
-    {
-      delete unpacker;
-      return false;
-    }
-
-  f = fp.open(filename);
-  if(!f)
-    {
-      delete unpacker;
-      return false;
-    }
 
   f->readString((char *)chkhdr, 16);
 
-  if (!unpacker->decrypt(chkhdr, 16))
+  if (!unpacker.decrypt(chkhdr, 16))
     {
-      delete unpacker;
       fp.close(f);
       return false;
     }
@@ -91,21 +72,19 @@ bool CdmoLoader::load(const std::string &filename, const CFileProvider &fp)
   fp.close(f);
 
   // decrypt
-  unpacker->decrypt(packed_module,packed_length);
+  unpacker.decrypt(packed_module, packed_length);
 
   long unpacked_length = 0x2000 * ARRAY_AS_WORD(packed_module, 12);
   unsigned char *module = new unsigned char [unpacked_length];
 
   // unpack
-  if (!unpacker->unpack(packed_module+12,module,unpacked_length))
+  if (!unpacker.unpack(packed_module, packed_length, module, unpacked_length))
     {
-      delete unpacker;
       delete [] packed_module;
       delete [] module;
       return false;
     }
 
-  delete unpacker;
   delete [] packed_module;
 
   // "TwinTeam" - signed ?
@@ -123,6 +102,7 @@ bool CdmoLoader::load(const std::string &filename, const CFileProvider &fp)
 
   uf.ignore(22);				// ignore DMO header ID string
   uf.readString(header.name, 28);
+  header.name[27] = 0;				// ensure termination
 
   uf.ignore(2);				// _unk_1
   header.ordnum  = uf.readInt(2);
@@ -131,6 +111,11 @@ bool CdmoLoader::load(const std::string &filename, const CFileProvider &fp)
   uf.ignore(2);				// _unk_2
   header.is      = uf.readInt(2);
   header.it      = uf.readInt(2);
+
+  if (header.ordnum >= 256 || header.insnum > 99 || header.patnum > 99) {
+    delete [] module;
+    return false;
+  }
 
   memset(header.chanset,0xFF,32);
 
@@ -154,6 +139,7 @@ bool CdmoLoader::load(const std::string &filename, const CFileProvider &fp)
       memset(&inst[i],0,sizeof(s3minst));
 
       uf.readString(inst[i].name, 28);
+      inst[i].name[27] = 0;
 
       inst[i].volume = uf.readInt(1);
       inst[i].dsk    = uf.readInt(1);
@@ -181,36 +167,7 @@ bool CdmoLoader::load(const std::string &filename, const CFileProvider &fp)
   for (i = 0; i < header.patnum; i++) {
     long cur_pos = uf.pos();
 
-    for (j = 0; j < 64; j++) {
-      while (1) {
-	unsigned char token = uf.readInt(1);
-
-	if (!token)
-	  break;
-
-	unsigned char chan = token & 31;
-
-	// note + instrument ?
-	if (token & 32) {
-	  unsigned char bufbyte = uf.readInt(1);
-
-	  pattern[i][j][chan].note = bufbyte & 15;
-	  pattern[i][j][chan].oct = bufbyte >> 4;
-	  pattern[i][j][chan].instrument = uf.readInt(1);
-	}
-
-	// volume ?
-	if (token & 64)
-	  pattern[i][j][chan].volume = uf.readInt(1);
-
-	// command ?
-	if (token & 128) {
-	  pattern[i][j][chan].command = uf.readInt(1);
-	  pattern[i][j][chan].info = uf.readInt(1);
-	}
-      }
-    }
-
+    load_pattern(i, &uf, my_patlen[i]);
     uf.seek(cur_pos + my_patlen[i]);
   }
 
@@ -238,41 +195,21 @@ std::string CdmoLoader::getauthor()
 
 unsigned short CdmoLoader::dmo_unpacker::brand(unsigned short range)
 {
-  unsigned short ax,bx,cx,dx;
+  bseed *= 0x08088405U;
+  bseed++;
 
-  ax = LOWORD(bseed);
-  bx = HIWORD(bseed);
-  cx = ax;
-  ax = LOWORD(cx * 0x8405);
-  dx = HIWORD(cx * 0x8405);
-  cx <<= 3;
-  cx = (((HIBYTE(cx) + LOBYTE(cx)) & 0xFF) << 8) + LOBYTE(cx);
-  dx += cx;
-  dx += bx;
-  bx <<= 2;
-  dx += bx;
-  dx = (((HIBYTE(dx) + LOBYTE(bx)) & 0xFF) << 8) + LOBYTE(dx);
-  bx <<= 5;
-  dx = (((HIBYTE(dx) + LOBYTE(bx)) & 0xFF) << 8) + LOBYTE(dx);
-  ax += 1;
-  if (!ax) dx += 1;
-
-  // leave it that way or amd64 might get it wrong
-  bseed = dx;
-  bseed <<= 16;
-  bseed += ax;
-
-  return HIWORD(HIWORD(LOWORD(bseed) * range) + HIWORD(bseed) * range);
+  return (uint64_t)bseed * range >> 32;
 }
 
-bool CdmoLoader::dmo_unpacker::decrypt(unsigned char *buf, long len)
+bool CdmoLoader::dmo_unpacker::decrypt(unsigned char *buf, size_t len)
 {
-  unsigned long seed = 0;
-  int i;
+  if (len < headersize)
+    return false;
 
   bseed = ARRAY_AS_DWORD(buf, 0);
 
-  for (i=0; i < ARRAY_AS_WORD(buf, 4) + 1; i++)
+  uint32_t seed = 0;
+  for (int i = 0; i <= ARRAY_AS_WORD(buf, 4); i++)
     seed += brand(0xffff);
 
   bseed = seed ^ ARRAY_AS_DWORD(buf, 6);
@@ -280,143 +217,109 @@ bool CdmoLoader::dmo_unpacker::decrypt(unsigned char *buf, long len)
   if (ARRAY_AS_WORD(buf, 10) != brand(0xffff))
     return false;
 
-  for (i=0;i<(len-12);i++)
-    buf[12+i] ^= brand(0x100);
+  for (size_t i = headersize; i < len; i++)
+    buf[i] ^= brand(0x100);
 
   buf[len - 2] = buf[len - 1] = 0;
 
   return true;
 }
 
-short CdmoLoader::dmo_unpacker::unpack_block(unsigned char *ibuf, long ilen, unsigned char *obuf)
+long CdmoLoader::dmo_unpacker::unpack_block(unsigned char *ibuf, size_t ilen,
+					    unsigned char *obuf, size_t olen)
 {
-  unsigned char code,par1,par2;
-  unsigned short ax,bx,cx;
-
-  unsigned char *ipos = ibuf;
-  unsigned char *opos = obuf;
+  size_t ipos = 0, opos = 0;
 
   // LZ77 child
-  while (ipos - ibuf < ilen)
-    {
-      code = *ipos++;
+  while (ipos < ilen) {
+    size_t cpy = 0, ofs = 0, lit = 0;
+    unsigned char code, par1, par2;
 
-      // 00xxxxxx: copy (xxxxxx + 1) bytes
-      if ((code >> 6) == 0)
-	{
-	  cx = (code & 0x3F) + 1;
+    code = ibuf[ipos++];
+    par1 = ipos < ilen ? ibuf[ipos] : 0;
+    par2 = ipos + 1 < ilen ? ibuf[ipos + 1] : 0;
+    switch (code >> 6) {
+    case 0:
+      // 00xxxxxx: use (X + 1) literal bytes
+      lit = (code & 0x3F) + 1;
+      break;
 
-	  if(opos + cx >= oend)
-	    return -1;
+    case 1:
+      // 01xxxxxx xxxyyyyy: copy (Y + 3) bytes from offset (X + 1)
+      ipos++; // for par1
+      ofs = ((code & 0x3F) << 3) + ((par1 & 0xE0) >> 5) + 1;
+      cpy = (par1 & 0x1F) + 3;
+      break;
 
-	  for (int i=0;i<cx;i++)
-	    *opos++ = *ipos++;
+    case 2:
+      // 10xxxxxx xyyyzzzz: copy (Y + 3) bytes from offset(X + 1);
+      // use Z literal bytes
+      ipos++; // for par1
+      ofs = ((code & 0x3F) << 1) + (par1 >> 7) + 1;
+      cpy = ((par1 & 0x70) >> 4) + 3;
+      lit = par1 & 0x0F;
+      break;
 
-	  continue;
-	}
-
-      // 01xxxxxx xxxyyyyy: copy (Y + 3) bytes from (X + 1)
-      if ((code >> 6) == 1)
-	{
-	  par1 = *ipos++;
-
-	  ax = ((code & 0x3F) << 3) + ((par1 & 0xE0) >> 5) + 1;
-	  cx = (par1 & 0x1F) + 3;
-
-	  if(opos + cx >= oend)
-	    return -1;
-
-	  for(int i=0;i<cx;i++)
-	  {
-	    *opos = *(opos - ax);
-	    opos++;
-	  }
-
-	  continue;
-	}
-
-      // 10xxxxxx xyyyzzzz: copy (Y + 3) bytes from (X + 1); copy Z bytes
-      if ((code >> 6) == 2)
-	{
-	  int i;
-
-	  par1 = *ipos++;
-
-	  ax = ((code & 0x3F) << 1) + (par1 >> 7) + 1;
-	  cx = ((par1 & 0x70) >> 4) + 3;
-	  bx = par1 & 0x0F;
-
-	  if(opos + bx + cx >= oend)
-	    return -1;
-
-	  for(i=0;i<cx;i++)
-	  {
-	    *opos = *(opos - ax);
-	    opos++;
-	  }
-
-	  for (i=0;i<bx;i++)
-	    *opos++ = *ipos++;
-
-	  continue;
-	}
-
-      // 11xxxxxx xxxxxxxy yyyyzzzz: copy (Y + 4) from X; copy Z bytes
-      if ((code >> 6) == 3)
-	{
-	  int i;
-
-	  par1 = *ipos++;
-	  par2 = *ipos++;
-
-	  bx = ((code & 0x3F) << 7) + (par1 >> 1);
-	  cx = ((par1 & 0x01) << 4) + (par2 >> 4) + 4;
-	  ax = par2 & 0x0F;
-
-	  if(opos + ax + cx >= oend)
-	    return -1;
-
-	  for(i=0;i<cx;i++)
-	  {
-	    *opos = *(opos - bx);
-	    opos++;
-	  }
-
-	  for (i=0;i<ax;i++)
-	    *opos++ = *ipos++;
-
-	  continue;
-	}
+    case 3:
+      // 11xxxxxx xxxxxxxy yyyyzzzz: copy (Y + 4) from offset X;
+      // use Z literal bytes
+      ipos += 2; // for par1 and par2
+      ofs = ((code & 0x3F) << 7) + (par1 >> 1);
+      cpy = ((par1 & 0x01) << 4) + (par2 >> 4) + 4;
+      lit = par2 & 0x0F;
+      break;
     }
 
-  return opos - obuf;
+    // check lengths and offset
+    if (ipos + lit > ilen || opos + cpy + lit > olen || ofs > opos)
+      return -1;
+
+    // copy - can't use memcpy() because source and destination may overlap
+    for (size_t i = 0; i < cpy; i++)
+      obuf[opos + i] = obuf[opos - ofs + i];
+    opos += cpy;
+
+    // copy literal bytes
+    while (lit--)
+      obuf[opos++] = ibuf[ipos++];
+  }
+
+  return opos;
 }
 
-long CdmoLoader::dmo_unpacker::unpack(unsigned char *ibuf, unsigned char *obuf,
-				      unsigned long outputsize)
+size_t CdmoLoader::dmo_unpacker::unpack(unsigned char *ibuf, size_t inputsize,
+					unsigned char *obuf, size_t outputsize)
 {
-  long			olen = 0;
-  unsigned short	block_count = CHARP_AS_WORD(ibuf);
+  if (inputsize < headersize + 2)
+    return 0;
 
-  ibuf += 2;
-  unsigned char *block_length = ibuf;
-  ibuf += 2 * block_count;
+  unsigned short block_count = ARRAY_AS_WORD(ibuf, headersize);
+  unsigned block_start = headersize + 2 + 2 * block_count;
 
-  oend = obuf + outputsize;
+  if (inputsize < block_start)
+    return 0;
 
-  for (int i=0;i<block_count;i++)
-    {
-      unsigned short bul = CHARP_AS_WORD(ibuf);
+  unsigned char *block_length = &ibuf[headersize + 2];
+  ibuf += block_start;
+  inputsize -= block_start;
 
-      if(unpack_block(ibuf + 2,CHARP_AS_WORD(block_length) - 2,obuf) != bul)
-	return 0;
+  size_t olen = 0;
+  for (int i = 0; i < block_count; i++) {
+    unsigned short blen = ARRAY_AS_WORD(block_length, 2 * i);
+    if (blen < 2 || blen > inputsize)
+      return 0;
 
-      obuf += bul;
-      olen += bul;
+    unsigned short bul = ARRAY_AS_WORD(ibuf, 0);
 
-      ibuf += CHARP_AS_WORD(block_length);
-      block_length += 2;
-    }
+    if (unpack_block(ibuf + 2, blen - 2, obuf, outputsize - olen) != bul)
+      return 0;
+
+    obuf += bul;
+    olen += bul;
+
+    ibuf += blen;
+    inputsize -= blen;
+  }
 
   return olen;
 }

@@ -56,6 +56,11 @@ public:
 		return std::string("God of Thunder Music");
 	}
 
+	unsigned int getspeed()
+	{
+		return (int)rate;
+	}
+
 protected:
 	unsigned long	pos, size;
 	unsigned short	del;

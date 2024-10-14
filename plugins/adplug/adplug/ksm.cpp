@@ -98,7 +98,7 @@ bool CksmPlayer::load(const std::string &filename, const CFileProvider &fp)
 
 bool CksmPlayer::update()
 {
-    int quanter,chan = 0,drumnum = 0,freq,track,volevel,volval;
+  int quanter,chan,drumnum,freq,track,volevel,volval;
   unsigned int i,j,bufnum;
   unsigned long temp,templong;
 
@@ -181,6 +181,7 @@ bool CksmPlayer::update()
 		    case 13: drumnum = 4; chan = 8; break;
 		    case 14: drumnum = 2; chan = 8; break;
 		    case 15: drumnum = 1; chan = 7; freq -= 2048; break;
+		    default: drumnum = 0; chan = 0; break; // should not be reachable
 		    }
 		  databuf[bufnum] = (char)0, bufnum++;
 		  databuf[bufnum] = (unsigned char)(0xa0+chan); bufnum++;
@@ -240,21 +241,21 @@ void CksmPlayer::rewind(int subsong)
   if (trchan[11] == 1) {
     for(i=0;i<11;i++)
       instbuf[i] = inst[trinst[11]][i];
-    instbuf[1] = ((instbuf[1]&192)|(trvol[11])^63);
+    instbuf[1] = ((instbuf[1]&192)|(trvol[11]^63));
     setinst(6,instbuf[0],instbuf[1],instbuf[2],instbuf[3],instbuf[4],instbuf[5],instbuf[6],instbuf[7],instbuf[8],instbuf[9],instbuf[10]);
     for(i=0;i<5;i++)
       instbuf[i] = inst[trinst[12]][i];
     for(i=5;i<11;i++)
       instbuf[i] = inst[trinst[15]][i];
-    instbuf[1] = ((instbuf[1]&192)|(trvol[12])^63);
-    instbuf[6] = ((instbuf[6]&192)|(trvol[15])^63);
+    instbuf[1] = ((instbuf[1]&192)|(trvol[12]^63));
+    instbuf[6] = ((instbuf[6]&192)|(trvol[15]^63));
     setinst(7,instbuf[0],instbuf[1],instbuf[2],instbuf[3],instbuf[4],instbuf[5],instbuf[6],instbuf[7],instbuf[8],instbuf[9],instbuf[10]);
     for(i=0;i<5;i++)
       instbuf[i] = inst[trinst[14]][i];
     for(i=5;i<11;i++)
       instbuf[i] = inst[trinst[13]][i];
-    instbuf[1] = ((instbuf[1]&192)|(trvol[14])^63);
-    instbuf[6] = ((instbuf[6]&192)|(trvol[13])^63);
+    instbuf[1] = ((instbuf[1]&192)|(trvol[14]^63));
+    instbuf[6] = ((instbuf[6]&192)|(trvol[13]^63));
     setinst(8,instbuf[0],instbuf[1],instbuf[2],instbuf[3],instbuf[4],instbuf[5],instbuf[6],instbuf[7],instbuf[8],instbuf[9],instbuf[10]);
   }
 

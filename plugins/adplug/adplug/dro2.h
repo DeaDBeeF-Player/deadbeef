@@ -33,13 +33,13 @@ class Cdro2Player: public CPlayer
 {
 	protected:
 		uint8_t iCmdDelayS, iCmdDelayL;
-		int iConvTableLen;
+		uint8_t iConvTableLen;
 		uint8_t *piConvTable;
 
 		uint8_t *data;
-		int iLength;
-		int iPos;
-		int iDelay;
+		unsigned int iLength;
+		unsigned int iPos;
+		unsigned int iDelay;
 
 	private:
 		char title[40];

@@ -38,6 +38,7 @@
 #include "hsc.h"
 #include "amd.h"
 #include "a2m.h"
+#include "a2m-v2.h"
 #include "imf.h"
 #include "sng.h"
 #include "adtrack.h"
@@ -56,7 +57,7 @@
 #include "dtm.h"
 #include "fmc.h"
 #include "mtk.h"
-#include "rad.h"
+#include "rad2.h"
 #include "raw.h"
 #include "sa2.h"
 #include "bmf.h"
@@ -82,6 +83,9 @@
 #include "vgm.h"
 #include "sop.h"
 #include "herad.h"
+#include "coktel.h"
+#include "pis.h"
+#include "mtr.h"
 
 /***** CAdPlug *****/
 
@@ -91,16 +95,19 @@ const CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(CsngPlayer::factory, "SNGPlay", ".sng\0"),
   CPlayerDesc(CimfPlayer::factory, "Apogee IMF", ".imf\0.wlf\0.adlib\0"),
   CPlayerDesc(Ca2mLoader::factory, "Adlib Tracker 2", ".a2m\0"),
+  CPlayerDesc(Ca2mv2Player::factory, "Adlib Tracker 2", ".a2m\0.a2t\0"),
   CPlayerDesc(CadtrackLoader::factory, "Adlib Tracker", ".sng\0"),
   CPlayerDesc(CamdLoader::factory, "AMUSIC", ".amd\0"),
+  CPlayerDesc(CamdLoader::factory, "XMS-Tracker", ".xms\0"),
   CPlayerDesc(CbamPlayer::factory, "Bob's Adlib Music", ".bam\0"),
   CPlayerDesc(CcmfPlayer::factory, "Creative Music File", ".cmf\0"),
+  CPlayerDesc(CcoktelPlayer::factory, "Coktel Vision Adlib Music", ".adl\0"),
   CPlayerDesc(Cd00Player::factory, "Packed EdLib", ".d00\0"),
   CPlayerDesc(CdfmLoader::factory, "Digital-FM", ".dfm\0"),
   CPlayerDesc(ChspLoader::factory, "HSC Packed", ".hsp\0"),
   CPlayerDesc(CksmPlayer::factory, "Ken Silverman Music", ".ksm\0"),
   CPlayerDesc(CmadLoader::factory, "Mlat Adlib Tracker", ".mad\0"),
-  CPlayerDesc(CmusPlayer::factory, "AdLib MIDI/IMS Format", ".mus\0.ims\0"),
+  CPlayerDesc(CmusPlayer::factory, "AdLib MIDI/IMS Format", ".mus\0.mdy\0.ims\0"),
   CPlayerDesc(CmdiPlayer::factory, "AdLib MIDIPlay File", ".mdi\0"),
   CPlayerDesc(CmidPlayer::factory, "MIDI", ".mid\0.sci\0.laa\0"),
   CPlayerDesc(CmkjPlayer::factory, "MKJamz", ".mkj\0"),
@@ -110,7 +117,8 @@ const CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(CdtmLoader::factory, "DeFy Adlib Tracker", ".dtm\0"),
   CPlayerDesc(CfmcLoader::factory, "Faust Music Creator", ".sng\0"),
   CPlayerDesc(CmtkLoader::factory, "MPU-401 Trakker", ".mtk\0"),
-  CPlayerDesc(CradLoader::factory, "Reality Adlib Tracker", ".rad\0"),
+  CPlayerDesc(CmtrLoader::factory, "Master Tracker", ".mtr\0"),
+  CPlayerDesc(Crad2Player::factory, "Reality Adlib Tracker", ".rad\0"),
   CPlayerDesc(CrawPlayer::factory, "Raw AdLib Capture", ".rac\0.raw\0"),
   CPlayerDesc(Csa2Loader::factory, "Surprise! Adlib Tracker", ".sat\0.sa2\0"),
   CPlayerDesc(CxadbmfPlayer::factory, "BMF Adlib Tracker", ".xad\0.bmf\0"),
@@ -125,8 +133,9 @@ const CPlayerDesc CAdPlug::allplayers[] = {
   CPlayerDesc(CxsmPlayer::factory, "eXtra Simple Music", ".xsm\0"),
   CPlayerDesc(CdroPlayer::factory, "DOSBox Raw OPL v0.1", ".dro\0"),
   CPlayerDesc(Cdro2Player::factory, "DOSBox Raw OPL v2.0", ".dro\0"),
+  CPlayerDesc(CpisPlayer::factory, "Beni Tracker PIS Player", ".pis\0"),
   CPlayerDesc(CmscPlayer::factory, "Adlib MSC Player", ".msc\0"),
-  CPlayerDesc(CrixPlayer::factory, "Softstar RIX OPL Music", ".rix\0"),
+  CPlayerDesc(CrixPlayer::factory, "Softstar RIX OPL Music", ".rix\0.mkf\0"),
   CPlayerDesc(CadlPlayer::factory, "Westwood ADL", ".adl\0"),
   CPlayerDesc(CjbmPlayer::factory, "JBM Adlib Music", ".jbm\0"),
   CPlayerDesc(CgotPlayer::factory, "God of Thunder Music", ".got\0"),

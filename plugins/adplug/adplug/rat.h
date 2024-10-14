@@ -109,13 +109,7 @@ protected:
   void            xadplayer_rewind(int subsong);
   void            xadplayer_update();
   float           xadplayer_getrefresh();
-  std::string	    xadplayer_gettype();
+  std::string     xadplayer_gettype();
   std::string     xadplayer_gettitle();
   unsigned int    xadplayer_getinstruments();
-  //
-private:
-  static const unsigned char rat_adlib_bases[18];
-  static const unsigned short rat_notes[16];
-
-  unsigned char   __rat_calc_volume(unsigned char ivol, unsigned char cvol, unsigned char gvol);
 };

@@ -47,4 +47,8 @@ private:
 	struct {
 		short defined,songptr,octave,waveform,pstat,speed,delay;
 	} channel[9];
+	struct {
+		short	value[8];
+	} inst[9];
+
 };
