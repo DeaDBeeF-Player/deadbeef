@@ -437,11 +437,7 @@ static inline vector_float4 vec4color (NSColor *color) {
 
 #pragma mark - ShaderRendererDelegate
 
-- (BOOL)canDraw {
-    return _draw_data.bars != NULL;
-}
-
-- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
+- (BOOL)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
 
     struct SpectrumFragParams params;
 
@@ -462,8 +458,14 @@ static inline vector_float4 vec4color (NSColor *color) {
     assert(sizeof(struct SpectrumFragBar) == sizeof (ddb_analyzer_draw_bar_t));
 
     // bar data
+    if (_draw_data.bars == NULL) {
+        char bytes[12] = {0};
+        [encoder setFragmentBytes:bytes length:12 atIndex:1];
 
-    if (_draw_data.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
+        // This buffer is unused in this scenario, but necessary to shut up API validator
+        [encoder setFragmentBytes:bytes length:4 atIndex:2];
+    }
+    else if (_draw_data.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
         // In this scenario, the buffer is too large, need to use MTLBuffer.
         id<MTLBuffer> buffer = [device newBufferWithBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) options:0];
 
@@ -482,5 +484,7 @@ static inline vector_float4 vec4color (NSColor *color) {
         // This buffer is unused in this scenario, but necessary to shut up API validator
         [encoder setFragmentBytes:_draw_data.bars length:4 atIndex:2];
     }
+
+    return YES;
 }
 @end

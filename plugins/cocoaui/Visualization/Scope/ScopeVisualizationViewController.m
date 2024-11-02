@@ -392,11 +392,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 #pragma mark - ShaderRendererDelegate
 
-- (BOOL)canDraw {
-    return _draw_data.points != NULL;
-}
-
-- (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
+- (BOOL)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
     float scale = (float)(viewParams.backingScaleFactor / [self scaleFactorForBackingScaleFactor:viewParams.backingScaleFactor]);
 
     struct ScopeFragParams params;
@@ -416,11 +412,19 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     params.scale = scale;
     [encoder setFragmentBytes:&params length:sizeof (params) atIndex:0];
 
-    // Metal documentation states that MTLBuffer should be used for buffers larger than 4K in size.
-    // Alternative is to use setFragmentBytes, which also works, but could have compatibility issues on older hardware.
-    id<MTLBuffer> buffer = [device newBufferWithBytes:_draw_data.points length:_draw_data.point_count * sizeof (ddb_scope_point_t) * params.channels options:0];
+    if (_draw_data.points == NULL) {
+        char bytes[12] = {0};
+        [encoder setFragmentBytes:bytes length:12 atIndex:1];
+    }
+    else {
+        // Metal documentation states that MTLBuffer should be used for buffers larger than 4K in size.
+        // Alternative is to use setFragmentBytes, which also works, but could have compatibility issues on older hardware.
+        id<MTLBuffer> buffer = [device newBufferWithBytes:_draw_data.points length:_draw_data.point_count * sizeof (ddb_scope_point_t) * params.channels options:0];
 
-    [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
+        [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
+    }
+
+    return YES;
 }
 
 @end

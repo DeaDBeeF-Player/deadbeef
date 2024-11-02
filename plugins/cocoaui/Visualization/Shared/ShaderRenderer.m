@@ -110,9 +110,6 @@
 }
 
 - (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer viewParams:(ShaderRendererParams)viewParams {
-    if (![self.delegate canDraw]) {
-        return;
-    }
     if (_viewportSize.width == 0 || _viewportSize.height == 0) {
         return;
     }
@@ -159,22 +156,23 @@
 
     [renderEncoder setRenderPipelineState:_pipelineState];
 
-    // Pass in the parameter data.
-    [renderEncoder setVertexBytes:quadVertices
-                           length:sizeof(quadVertices)
-                          atIndex:ShaderRendererVertexInputIndexVertices];
-
     vector_uint2 vp = { (uint)_viewportSize.width, (uint)_viewportSize.height };
-    [renderEncoder setVertexBytes:&vp
-                           length:sizeof(vp)
-                          atIndex:ShaderRendererVertexInputIndexViewportSize];
+    if ([self.delegate applyFragParamsWithViewport:vp device:_device encoder:renderEncoder viewParams:viewParams]) {
+        // Pass in the parameter data.
+        [renderEncoder setVertexBytes:quadVertices
+                               length:sizeof(quadVertices)
+                              atIndex:ShaderRendererVertexInputIndexVertices];
 
-    [self.delegate applyFragParamsWithViewport:vp device:_device encoder:renderEncoder viewParams:viewParams];
+        [renderEncoder setVertexBytes:&vp
+                               length:sizeof(vp)
+                              atIndex:ShaderRendererVertexInputIndexViewportSize];
 
-    // Draw the triangle.
-    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip
-                      vertexStart:0
-                      vertexCount:4];
+        // Draw the triangle.
+        [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip
+                          vertexStart:0
+                          vertexCount:4];
+
+    }
 
     // end
 
