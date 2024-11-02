@@ -32,6 +32,7 @@ typedef struct {
 } ShaderRendererParams;
 
 @protocol ShaderRendererDelegate
+- (BOOL)canDraw;
 - (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(nonnull id <MTLDevice>)device encoder:(nonnull id <MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)params;
 @end
 

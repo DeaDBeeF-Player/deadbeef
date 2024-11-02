@@ -110,6 +110,9 @@
 }
 
 - (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer viewParams:(ShaderRendererParams)viewParams {
+    if (![self.delegate canDraw]) {
+        return;
+    }
     if (_viewportSize.width == 0 || _viewportSize.height == 0) {
         return;
     }
@@ -132,7 +135,6 @@
 
     id <MTLRenderCommandEncoder> renderEncoder =
     [commandBuffer renderCommandEncoderWithDescriptor:_drawableRenderDescriptor];
-    renderEncoder.label = @"MyRenderEncoder";
 
     // begin
 

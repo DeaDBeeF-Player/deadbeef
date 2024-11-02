@@ -392,6 +392,10 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 #pragma mark - ShaderRendererDelegate
 
+- (BOOL)canDraw {
+    return _draw_data.points != NULL;
+}
+
 - (void)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
     float scale = (float)(viewParams.backingScaleFactor / [self scaleFactorForBackingScaleFactor:viewParams.backingScaleFactor]);
 
