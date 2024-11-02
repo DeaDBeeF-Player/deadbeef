@@ -1783,6 +1783,13 @@ typedef struct {
     /// The deinit func will be called before unloading a plugin,
     /// and the caller will wait until completion block is performed.
     void (*plug_register_for_async_deinit) (DB_plugin_t *plugin, void (*deinit_func)(void (*completion_callback)(DB_plugin_t *plugin)));
+
+    /// Apply autosort to specified playlist, if it's enabled.
+    /// Every time a playlist is sorted via plt_sort or similar,
+    /// the chosen sort settings are saved in the playlist's metadata.
+    /// When plt_autosort is called, the playlist is re-sorted with those saved settings.
+    /// Usually it should be called by UI code, when appropriate.
+    void (*plt_autosort)(ddb_playlist_t *plt);
 #endif
 } DB_functions_t;
 

@@ -613,6 +613,7 @@ static DB_functions_t deadbeef_api = {
     .plt_load_from_buffer = (int (*) (ddb_playlist_t *plt, const uint8_t *buffer, size_t size))plt_load_from_buffer,
     .plt_save_to_buffer = (ssize_t (*) (ddb_playlist_t *plt, uint8_t **out_buffer))plt_save_to_buffer,
     .plug_register_for_async_deinit = _plug_register_for_async_deinit,
+    .plt_autosort = (void (*)(ddb_playlist_t *plt))plt_autosort,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
