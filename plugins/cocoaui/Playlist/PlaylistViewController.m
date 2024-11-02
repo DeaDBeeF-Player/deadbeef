@@ -1370,7 +1370,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 -(void)externalDropItems:(NSArray *)paths after:(DdbListviewRow_t)_after  completionBlock:(nonnull void (^) (void))completionBlock {
     ddb_playlist_t *plt = deadbeef->plt_alloc("drag-drop-playlist");
     ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
-    if (!deadbeef->plt_add_files_begin (plt, 0)) {
+    if (!deadbeef->plt_add_files_begin (plt_curr, 0)) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             DB_playItem_t *first = NULL;
             DB_playItem_t *after = NULL;
@@ -1407,7 +1407,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             if (after) {
                 deadbeef->pl_item_unref (after);
             }
-            deadbeef->plt_add_files_end (plt, 0);
+            deadbeef->plt_add_files_end (plt_curr, 0);
             if (abort) {
                 deadbeef->plt_unref (plt);
                 deadbeef->plt_unref (plt_curr);

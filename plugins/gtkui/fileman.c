@@ -78,7 +78,7 @@ gtkui_add_dirs (GSList *lst) {
     ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
     ddb_playlist_t *plt = deadbeef->plt_alloc ("add-dirs");
 
-    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
+    if (deadbeef->plt_add_files_begin (plt_curr, 0) < 0) {
         deadbeef->plt_unref (plt);
         deadbeef->plt_unref (plt_curr);
         g_slist_free (lst);
@@ -99,7 +99,7 @@ gtkui_add_dirs (GSList *lst) {
             }
 
             deadbeef->plt_save_config (plt_curr);
-            deadbeef->plt_add_files_end (plt, 0);
+            deadbeef->plt_add_files_end (plt_curr, 0);
             deadbeef->plt_unref (plt_curr);
             deadbeef->plt_unref (plt);
             g_slist_free (lst);
@@ -112,7 +112,7 @@ gtkui_add_files (struct _GSList *lst) {
     ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
     ddb_playlist_t *plt = deadbeef->plt_alloc ("add-files");
 
-    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
+    if (deadbeef->plt_add_files_begin (plt_curr, 0) < 0) {
         g_slist_free (lst);
         deadbeef->plt_unref (plt_curr);
         deadbeef->plt_unref (plt);
@@ -131,7 +131,7 @@ gtkui_add_files (struct _GSList *lst) {
             }
 
             deadbeef->plt_save_config (plt_curr);
-            deadbeef->plt_add_files_end (plt, 0);
+            deadbeef->plt_add_files_end (plt_curr, 0);
             deadbeef->plt_unref (plt_curr);
             deadbeef->plt_unref (plt);
         });
@@ -154,7 +154,7 @@ gtkui_add_location (const char *path, const char *custom_title) {
     ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
     ddb_playlist_t *plt = deadbeef->plt_alloc ("add-location");
 
-    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
+    if (deadbeef->plt_add_files_begin (plt_curr, 0) < 0) {
         deadbeef->plt_unref (plt);
         deadbeef->plt_unref (plt_curr);
         return;
@@ -177,7 +177,7 @@ gtkui_add_location (const char *path, const char *custom_title) {
         }
 
         if (it == NULL) {
-            deadbeef->plt_add_files_end (plt, 0);
+            deadbeef->plt_add_files_end (plt_curr, 0);
 
             free (path_copy);
             free (custom_title_copy);
@@ -202,7 +202,7 @@ gtkui_add_location (const char *path, const char *custom_title) {
 
             deadbeef->plt_save_config (plt_curr);
             ddb_undo->set_action_name (_("Add Location"));
-            deadbeef->plt_add_files_end (plt, 0);
+            deadbeef->plt_add_files_end (plt_curr, 0);
 
             free (path_copy);
             free (custom_title_copy);
@@ -338,7 +338,7 @@ gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length) {
     ddb_playlist_t *plt = deadbeef->plt_alloc ("receive-drag-drop");
     ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
 
-    if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
+    if (deadbeef->plt_add_files_begin (plt_curr, 0) < 0) {
         if (data->drop_before) {
             deadbeef->pl_item_unref (data->drop_before);
         }
@@ -369,7 +369,7 @@ gtkui_receive_fm_drop (DB_playItem_t *before, char *mem, int length) {
             }
 
             deadbeef->plt_save_config (plt_curr);
-            deadbeef->plt_add_files_end (plt, 0);
+            deadbeef->plt_add_files_end (plt_curr, 0);
             set_dnd_cursor (first);
 
             if (first != NULL) {
