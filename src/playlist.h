@@ -424,9 +424,6 @@ void
 plt_sort (playlist_t *plt, int iter, int id, const char *format, int order);
 
 void
-plt_sort_random (playlist_t *plt, int iter);
-
-void
 pl_items_copy_junk (struct playItem_s *from, struct playItem_s *first, struct playItem_s *last);
 
 struct DB_metaInfo_s *

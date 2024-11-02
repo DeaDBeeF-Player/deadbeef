@@ -510,7 +510,7 @@ main_cleanup_and_quit (void);
         NSArray* files = openDlg.URLs;
         ddb_playlist_t *plt = deadbeef->plt_alloc ("add-folders");
         ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
-        if (!deadbeef->plt_add_files_begin (plt, 0)) {
+        if (!deadbeef->plt_add_files_begin (plt_curr, 0)) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 for (NSUInteger i = 0; i < files.count; i++) {
                     NSString *fileName = [files[i] path];
@@ -527,13 +527,13 @@ main_cleanup_and_quit (void);
                         }
                         deadbeef->pl_save_current();
                         ddb_undo->set_action_name ("Add Folders");
-                        deadbeef->plt_add_files_end (plt, 0);
+                        deadbeef->plt_add_files_end (plt_curr, 0);
                         deadbeef->plt_unref (plt);
                         deadbeef->plt_unref (plt_curr);
                     });
                 }
                 else {
-                    deadbeef->plt_add_files_end (plt, 0);
+                    deadbeef->plt_add_files_end (plt_curr, 0);
                     deadbeef->plt_unref (plt);
                     deadbeef->plt_unref (plt_curr);
                 }

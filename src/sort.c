@@ -39,10 +39,10 @@
 #define trace(fmt,...)
 
 static void
-plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version);
+plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version, int is_autosorting);
 
-void
-plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
+static void
+plt_sort_v2_internal (playlist_t *plt, int iter, int id, const char *format, int order, int is_autosorting) {
     ddb_undobuffer_t *undobuffer = ddb_undomanager_get_buffer (ddb_undomanager_shared ());
     if (plt->undo_enabled) {
         pl_lock ();
@@ -58,7 +58,7 @@ plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
         }
     }
 
-    plt_sort_internal (plt, iter, id, format, order, 1);
+    plt_sort_internal (plt, iter, id, format, order, 1, is_autosorting);
 
     if (plt->undo_enabled) {
         int count = plt->count[PL_MAIN];
@@ -75,10 +75,15 @@ plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
     }
 }
 
+void
+plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
+    plt_sort_v2_internal(plt, iter, id, format, order, 0);
+}
+
 // sort for title formatting v1
 void
 plt_sort (playlist_t *playlist, int iter, int id, const char *format, int order) {
-    plt_sort_internal (playlist, iter, id, format, order, 0);
+    plt_sort_internal (playlist, iter, id, format, order, 0, 0);
 }
 
 static int pl_sort_is_duration;
@@ -171,9 +176,8 @@ qsort_cmp_func (const void *a, const void *b) {
     return pl_sort_compare_str (aa, bb);
 }
 
-void
+static void
 plt_sort_random (playlist_t *playlist, int iter) {
-    plt_replace_meta (playlist, "autosort_mode", "random");
     if (!playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
     }
@@ -225,17 +229,23 @@ plt_sort_random (playlist_t *playlist, int iter) {
 
 // version 0: title formatting v1
 // version 1: title formatting v2
-void
-plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version) {
+static void
+plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version, int is_autosorting) {
     if (order == DDB_SORT_RANDOM) {
+        if (!is_autosorting) {
+            plt_replace_meta (playlist, "autosort_mode", "random");
+        }
         plt_sort_random (playlist, iter);
         return;
     }
     int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
-    plt_set_meta_int (playlist, "autosort_ascending", ascending);
-    if (version != 0 && format != NULL) {
-        plt_replace_meta (playlist, "autosort_mode", "tf");
-        plt_replace_meta (playlist, "autosort_tf", format);
+    if (!is_autosorting)
+    {
+        plt_set_meta_int (playlist, "autosort_ascending", ascending);
+        if (version != 0 && format != NULL) {
+            plt_replace_meta (playlist, "autosort_mode", "tf");
+            plt_replace_meta (playlist, "autosort_tf", format);
+        }
     }
 
     if (format == NULL || id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
@@ -409,10 +419,10 @@ plt_autosort (playlist_t *plt) {
         if (!fmt) {
             return;
         }
-        plt_sort_v2 (plt, PL_MAIN, -1, fmt, ascending ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING);
+        plt_sort_v2_internal (plt, PL_MAIN, -1, fmt, ascending ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING, 1);
     }
     else if (!strcmp (autosort_mode, "random")) {
-        plt_sort_v2 (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM);
+        plt_sort_v2_internal (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM, 1);
     }
 
     plt_save_config (plt);
