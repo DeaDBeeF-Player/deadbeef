@@ -97,3 +97,4 @@ plugins/gtkui/gtkui-gresources.c
 build/
 dist/
 testbuild/
+.DS_Store
