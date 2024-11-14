@@ -512,6 +512,8 @@ static char sb_text[512];
         char scale[10];
         deadbeef->conf_get_str ("playback.volume.scale", "dB", scale, sizeof(scale));
 
+        menu.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+
         self.volumeDbScaleItem.state = !strcmp (scale, "dB") ? NSControlStateValueOn : NSControlStateValueOff;
         self.volumeLinearScaleItem.state = !strcmp (scale, "linear") ? NSControlStateValueOn : NSControlStateValueOff;
         self.volumeCubicScaleItem.state = !strcmp (scale, "cubic") ? NSControlStateValueOn : NSControlStateValueOff;

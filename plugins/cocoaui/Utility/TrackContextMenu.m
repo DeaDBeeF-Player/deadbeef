@@ -64,6 +64,7 @@ extern DB_functions_t *deadbeef;
 - (instancetype)initWithView:(NSView *)view {
     self = [super initWithTitle:@""];
     self.view = view;
+    self.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
     return self;
 }
 
@@ -112,6 +113,8 @@ extern DB_functions_t *deadbeef;
     self.reloadMetadataItem.target = self;
 
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
+    rgMenu.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+
     rgMenu.autoenablesItems = NO;
 
     self.rgScanPerFileItem = [rgMenu addItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@""];
