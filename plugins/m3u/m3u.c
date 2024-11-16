@@ -543,6 +543,10 @@ m3uplug_save_m3u (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
     }
     fclose (fp);
 
+    if (it != NULL) {
+        deadbeef->pl_item_unref (it);
+    }
+
     deadbeef->tf_free (tf);
     return 0;
 }
@@ -615,17 +619,19 @@ m3uplug_save_pls (const char *fname, DB_playItem_t *first, DB_playItem_t *last) 
 
 int
 m3uplug_save (ddb_playlist_t *plt, const char *fname, DB_playItem_t *first, DB_playItem_t *last) {
+    int res = -1;
     const char *e = strrchr (fname, '.');
     if (!e) {
-        return -1;
+        return res;
     }
+
     if (!strcasecmp (e, ".m3u") || !strcasecmp (e, ".m3u8")) {
-        return m3uplug_save_m3u (fname, first, last);
+        res = m3uplug_save_m3u (fname, first, last);
     }
     else if (!strcasecmp (e, ".pls")) {
-        return m3uplug_save_pls (fname, first, last);
+        res = m3uplug_save_pls (fname, first, last);
     }
-    return -1;
+    return res;
 }
 
 static const char * exts[] = { "m3u", "m3u8", "pls", NULL };

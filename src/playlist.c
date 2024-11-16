@@ -2271,11 +2271,32 @@ plt_save(
                 if (exts && plug[i]->save) {
                     for (int e = 0; exts[e]; e++) {
                         if (!strcasecmp (exts[e], ext + 1)) {
+                            if (first == NULL) {
+                                first = plt_get_first(plt, PL_MAIN);
+                            }
+                            else {
+                                pl_item_ref(first);
+                            }
+                            if (last == NULL) {
+                                last = plt_get_last(plt, PL_MAIN);
+                            }
+                            else {
+                                pl_item_ref(last);
+                            }
+
                             int res = plug[i]->save (
                                 (ddb_playlist_t *)plt,
                                 fname,
                                 (DB_playItem_t *)first,
                                 (DB_playItem_t *)last);
+
+                            if (first != NULL) {
+                                pl_item_unref(first);
+                            }
+                            if (last != NULL) {
+                                pl_item_unref(last);
+                            }
+
                             UNLOCK;
                             return res;
                         }
