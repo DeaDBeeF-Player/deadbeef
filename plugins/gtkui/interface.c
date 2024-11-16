@@ -5587,6 +5587,7 @@ create_log_window (void)
   GtkWidget *scrolledwindow14;
   GtkWidget *logwindow_textview;
   GtkWidget *hbox140;
+  GtkWidget *autoopen_button;
   GtkWidget *log_clear;
 
   log_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -5620,12 +5621,19 @@ create_log_window (void)
   gtk_box_pack_start (GTK_BOX (vbox49), hbox140, FALSE, FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (hbox140), 5);
 
+  autoopen_button = gtk_check_button_new_with_mnemonic (_("Auto-open this window on errors"));
+  gtk_widget_show (autoopen_button);
+  gtk_box_pack_start (GTK_BOX (hbox140), autoopen_button, FALSE, FALSE, 0);
+
   log_clear = gtk_button_new_with_mnemonic (_("Clear"));
   gtk_widget_show (log_clear);
   gtk_box_pack_end (GTK_BOX (hbox140), log_clear, FALSE, FALSE, 0);
 
   g_signal_connect ((gpointer) log_window, "key_press_event",
                     G_CALLBACK (on_log_window_key_press_event),
+                    NULL);
+  g_signal_connect ((gpointer) autoopen_button, "toggled",
+                    G_CALLBACK (on_autoopen_button_toggled),
                     NULL);
   g_signal_connect ((gpointer) log_clear, "clicked",
                     G_CALLBACK (on_log_clear_clicked),
@@ -5637,6 +5645,7 @@ create_log_window (void)
   GLADE_HOOKUP_OBJECT (log_window, scrolledwindow14, "scrolledwindow14");
   GLADE_HOOKUP_OBJECT (log_window, logwindow_textview, "logwindow_textview");
   GLADE_HOOKUP_OBJECT (log_window, hbox140, "hbox140");
+  GLADE_HOOKUP_OBJECT (log_window, autoopen_button, "autoopen_button");
   GLADE_HOOKUP_OBJECT (log_window, log_clear, "log_clear");
 
   return log_window;

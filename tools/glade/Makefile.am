@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = glade po omf-install
+SUBDIRS = glade omf-install
 
 Developmentdir = $(datadir)/applications
 Development_in_files = glade-2.desktop.in
@@ -34,9 +34,7 @@ EXTRA_DIST = \
 	examples/editor/src/interface.h \
 	examples/editor/src/main.c \
 	examples/editor/src/support.c \
-	examples/editor/src/support.h \
-	examples/editor/po/ChangeLog \
-	examples/editor/po/POTFILES.in
+	examples/editor/src/support.h
 
 pixmapsdir = $(datadir)/pixmaps
 pixmaps_DATA = glade-2.png

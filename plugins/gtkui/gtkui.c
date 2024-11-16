@@ -81,6 +81,9 @@
     { fprintf (stderr, __VA_ARGS__); }
 //#define trace(fmt,...)
 
+static const char conf_autoopen_key[] = "gtkui.log.autoopen";
+static const int conf_autoopen_default = 1;
+
 ddb_gtkui_t plugin;
 DB_functions_t *deadbeef;
 
@@ -1352,6 +1355,10 @@ gtkui_show_log_window_internal (gboolean show) {
     GtkWidget *menuitem = lookup_widget (mainwin, "view_log");
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuitem), show);
 
+    int autoshow = deadbeef->conf_get_int(conf_autoopen_key, conf_autoopen_default);
+    GtkWidget *autoshow_button = lookup_widget(logwindow, "autoopen_button");
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(autoshow_button), autoshow);
+
 #if GTK_CHECK_VERSION(3, 10, 0)
 #    if USE_GTK_APPLICATION
     GSimpleAction *act = deadbeef_app_get_log_action (gapp);
@@ -1436,7 +1443,9 @@ logwindow_addtext_cb (gpointer data) {
         GtkTextMark *mark = gtk_text_buffer_create_mark (buffer, NULL, &iter, FALSE);
         gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (textview), mark);
     }
-    if (!w_logviewer_is_present () && addtext->layers == DDB_LOG_LAYER_DEFAULT)
+    int autoshow = deadbeef->conf_get_int(conf_autoopen_key, conf_autoopen_default);
+
+    if (!w_logviewer_is_present () && autoshow && addtext->layers == DDB_LOG_LAYER_DEFAULT)
         gtkui_show_log_window_internal (TRUE);
     free (addtext->str);
     free (addtext);

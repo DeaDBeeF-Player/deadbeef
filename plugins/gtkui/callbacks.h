@@ -1519,3 +1519,7 @@ on_mainwin_undo_activate               (GtkMenuItem     *menuitem,
 void
 on_mainwin_redo_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data);
+
+void
+on_autoopen_button_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);

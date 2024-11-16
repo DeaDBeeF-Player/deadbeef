@@ -69,6 +69,8 @@
     }
 #define PL_NEXT(it, iter) (deadbeef->pl_get_next (it, iter))
 
+static const char conf_autoopen_key[] = "gtkui.log.autoopen";
+
 DdbListview *last_playlist;
 extern DB_functions_t *deadbeef; // defined in gtkui.c
 
@@ -725,4 +727,13 @@ on_mainwin_redo_activate               (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
 {
     gtkui_undostack_perform_redo ();
+}
+
+void
+on_autoopen_button_toggled             (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (togglebutton);
+    deadbeef->conf_set_int(conf_autoopen_key, active);
+    deadbeef->conf_save();
 }

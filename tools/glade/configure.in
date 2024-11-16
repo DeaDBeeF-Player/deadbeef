@@ -84,7 +84,6 @@ glade/gbwidgets/Makefile
 glade/data/Makefile
 glade/data/gtk/Makefile
 omf-install/Makefile
-po/Makefile.in
 ])
 
 dnl doc/it/Makefile
