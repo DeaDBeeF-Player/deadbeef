@@ -157,6 +157,27 @@ static __inline void fpu_restore(fpu_control fpu){
 
 #endif /* Special MSVC x64 implementation */
 
+#if defined(__aarch64__)
+
+#  define FPU_CONTROL
+
+#include <arm_neon.h>
+
+typedef int16_t fpu_control;
+
+static inline int ftoi(float f) {
+    float32x2_t fvec = vld1_f32(&f);
+    int32x2_t ivec = vcvt_s32_f32(fvec);
+    return vget_lane_s32(ivec, 0);
+}
+
+static inline void fpu_setround(fpu_control *fpu){
+}
+
+static inline void fpu_restore(fpu_control fpu){
+}
+
+#endif
 
 /* If no special implementation was found for the current compiler / platform,
    use the default implementation here: */
