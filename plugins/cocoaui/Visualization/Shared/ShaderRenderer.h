@@ -32,7 +32,7 @@ typedef struct {
 } ShaderRendererParams;
 
 @protocol ShaderRendererDelegate
-- (BOOL)applyFragParamsWithViewport:(vector_uint2)viewport device:(nonnull id <MTLDevice>)device encoder:(nonnull id <MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)params;
+- (BOOL)applyFragParamsWithViewport:(vector_uint2)viewport device:(nonnull id <MTLDevice>)device commandBuffer:(nonnull id<MTLCommandBuffer>)commandBuffer encoder:(nonnull id <MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)params;
 @end
 
 @interface ShaderRenderer : NSObject

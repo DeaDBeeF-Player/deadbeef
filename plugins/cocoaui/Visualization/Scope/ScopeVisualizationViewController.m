@@ -9,6 +9,7 @@
 #include <deadbeef/deadbeef.h>
 #import <QuartzCore/CAMetalLayer.h>
 #import "MetalView.h"
+#import "MetalBufferLoop.h"
 #import "ScopePreferencesViewController.h"
 #import "ScopePreferencesWindowController.h"
 #import "ScopeShaderTypes.h"
@@ -33,6 +34,8 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 @property (nonatomic) NSColor *backgroundColor;
 
 @property (atomic) BOOL isVisible;
+
+@property (nonatomic) MetalBufferLoop *bufferLoop;
 
 @end
 
@@ -87,6 +90,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
                                          fragmentShaderName:@"scopeFragmentShader"
     ];
     _renderer.delegate = self;
+    self.bufferLoop = [[MetalBufferLoop alloc] initWithMetalDevice:metalLayer.device bufferCount:3];
 }
 
 - (void)viewDidLoad {
@@ -392,7 +396,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
 #pragma mark - ShaderRendererDelegate
 
-- (BOOL)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
+- (BOOL)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device commandBuffer:(id<MTLCommandBuffer>)commandBuffer encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
     float scale = (float)(viewParams.backingScaleFactor / [self scaleFactorForBackingScaleFactor:viewParams.backingScaleFactor]);
 
     struct ScopeFragParams params;
@@ -413,16 +417,19 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
     [encoder setFragmentBytes:&params length:sizeof (params) atIndex:0];
 
     if (_draw_data.points == NULL) {
-        char bytes[12] = {0};
-        [encoder setFragmentBytes:bytes length:12 atIndex:1];
-    }
-    else {
-        // Metal documentation states that MTLBuffer should be used for buffers larger than 4K in size.
-        // Alternative is to use setFragmentBytes, which also works, but could have compatibility issues on older hardware.
-        id<MTLBuffer> buffer = [device newBufferWithBytes:_draw_data.points length:_draw_data.point_count * sizeof (ddb_scope_point_t) * params.channels options:0];
-
+        id<MTLBuffer> buffer = [self.bufferLoop nextBufferForSize:12];
         [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
     }
+    else {
+        NSUInteger size = _draw_data.point_count * sizeof (ddb_scope_point_t) * params.channels;
+        id<MTLBuffer> buffer = [self.bufferLoop nextBufferForSize:size];
+        memcpy (buffer.contents, _draw_data.points, size);
+        [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
+    }
+
+    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> _Nonnull completedCommandBuffer) {
+        [self.bufferLoop signalCompletion];
+    }];
 
     return YES;
 }

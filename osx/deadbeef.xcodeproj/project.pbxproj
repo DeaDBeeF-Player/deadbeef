@@ -742,6 +742,8 @@
 		2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1E215724F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E215524F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h */; };
 		2D1E215824F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E215624F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m */; };
+		2D208EAF2CE8D5FA002E4892 /* MetalBufferLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D208EAE2CE8D5FA002E4892 /* MetalBufferLoop.m */; };
+		2D208EB02CE8D5FA002E4892 /* MetalBufferLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D208EAD2CE8D5FA002E4892 /* MetalBufferLoop.h */; };
 		2D2092502A9A82E600CDBB2B /* libjansson.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DA84F7B24F58894003507A2 /* libjansson.dylib */; };
 		2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */; };
 		2D20D12523F099F4008ACBE6 /* NSImage+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D20D12323F099F4008ACBE6 /* NSImage+Additions.m */; };
@@ -5448,6 +5450,8 @@
 		2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = buffered_file_writer.c; sourceTree = "<group>"; };
 		2D1E215524F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbPlayItemPasteboardSerializer.h; sourceTree = "<group>"; };
 		2D1E215624F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbPlayItemPasteboardSerializer.m; sourceTree = "<group>"; };
+		2D208EAD2CE8D5FA002E4892 /* MetalBufferLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetalBufferLoop.h; sourceTree = "<group>"; };
+		2D208EAE2CE8D5FA002E4892 /* MetalBufferLoop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetalBufferLoop.m; sourceTree = "<group>"; };
 		2D20924C2A9A077800CDBB2B /* scriptable_tfquery.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_tfquery.h; sourceTree = "<group>"; };
 		2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_tfquery.c; sourceTree = "<group>"; };
 		2D20D12223F099F4008ACBE6 /* NSImage+Additions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSImage+Additions.h"; sourceTree = "<group>"; };
@@ -8436,6 +8440,10 @@
 		0D568539271DC6550026F700 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				2D208EAD2CE8D5FA002E4892 /* MetalBufferLoop.h */,
+				2D208EAE2CE8D5FA002E4892 /* MetalBufferLoop.m */,
+				2D5F86AD2C480776000457B3 /* MetalView.h */,
+				2D5F86AE2C480776000457B3 /* MetalView.m */,
 				2D98B66E272B272300E655AE /* ScopeShaderTypes.h */,
 				2D7C1FAB2946001B00163538 /* ShaderRenderer.h */,
 				2D7C1FAC2946001B00163538 /* ShaderRenderer.m */,
@@ -8446,8 +8454,6 @@
 				2D98B67E272B272300E655AE /* VisualizationShaders.metal */,
 				0D56853A271DC6670026F700 /* VisualizationViewController.h */,
 				0D56853B271DC6670026F700 /* VisualizationViewController.m */,
-				2D5F86AD2C480776000457B3 /* MetalView.h */,
-				2D5F86AE2C480776000457B3 /* MetalView.m */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -14838,6 +14844,7 @@
 				2DD8865A2B71056E000434FB /* KeyboardShortcutConverter.h in Headers */,
 				2D72F6FF277BA9D800868136 /* DdbVolumeBar.h in Headers */,
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
+				2D208EB02CE8D5FA002E4892 /* MetalBufferLoop.h in Headers */,
 				2DB1641A24FAB13400034E11 /* MediaLibraryManager.h in Headers */,
 				2D30D0B425E2A5DD0023A299 /* DesignModeState.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
@@ -18594,6 +18601,7 @@
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D29ADFA2B72473B001648B0 /* keyboard_shortcut_serializer.c in Sources */,
 				2DC6583F274C361C00583E14 /* HolderWidget.m in Sources */,
+				2D208EAF2CE8D5FA002E4892 /* MetalBufferLoop.m in Sources */,
 				2D71C26B1DC88E5C00247CEF /* ScriptableTableDataSource.m in Sources */,
 				2DD3776127414BF6007AD315 /* ScopePreferencesViewController.m in Sources */,
 				2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */,

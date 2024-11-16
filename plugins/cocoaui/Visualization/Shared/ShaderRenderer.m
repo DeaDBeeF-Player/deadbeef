@@ -23,23 +23,31 @@
 
 #import <Metal/Metal.h>
 #import <QuartzCore/CAMetalLayer.h>
+#import "MetalBufferLoop.h"
 #import "ShaderRenderer.h"
 #import "ShaderRendererTypes.h"
 
-@implementation ShaderRenderer {
-    // renderer global ivars
-    id <MTLDevice>              _device;
-    id <MTLCommandQueue>        _commandQueue;
-    id <MTLRenderPipelineState> _pipelineState;
+@interface ShaderRenderer() {
+   // renderer global ivars
+   id <MTLDevice>              _device;
+   id <MTLCommandQueue>        _commandQueue;
+   id <MTLRenderPipelineState> _pipelineState;
 
-    // Render pass descriptor which creates a render command encoder to draw to the drawable
-    // textures
-    MTLRenderPassDescriptor *_drawableRenderDescriptor;
+   // Render pass descriptor which creates a render command encoder to draw to the drawable
+   // textures
+   MTLRenderPassDescriptor *_drawableRenderDescriptor;
 
-    CGSize _viewportSize;
+   CGSize _viewportSize;
 
-    NSUInteger _frameNum;
+   NSUInteger _frameNum;
 }
+
+@property (nonatomic) MetalBufferLoop *bufferLoop;
+@property (nonatomic) MetalBufferLoop *vpBufferLoop;
+
+@end
+
+@implementation ShaderRenderer
 
 - (nonnull instancetype)initWithMetalDevice:(nonnull id<MTLDevice>)device
                         drawablePixelFormat:(MTLPixelFormat)drawablePixelFormat
@@ -51,6 +59,9 @@
         _frameNum = 0;
 
         _device = device;
+
+        _bufferLoop = [[MetalBufferLoop alloc] initWithMetalDevice:device bufferCount:3];
+        _vpBufferLoop = [[MetalBufferLoop alloc] initWithMetalDevice:device bufferCount:3];
 
         _commandQueue = [_device newCommandQueue];
 
@@ -157,15 +168,20 @@
     [renderEncoder setRenderPipelineState:_pipelineState];
 
     vector_uint2 vp = { (uint)_viewportSize.width, (uint)_viewportSize.height };
-    if ([self.delegate applyFragParamsWithViewport:vp device:_device encoder:renderEncoder viewParams:viewParams]) {
-        // Pass in the parameter data.
-        [renderEncoder setVertexBytes:quadVertices
-                               length:sizeof(quadVertices)
-                              atIndex:ShaderRendererVertexInputIndexVertices];
+    if ([self.delegate applyFragParamsWithViewport:vp device:_device commandBuffer:commandBuffer encoder:renderEncoder viewParams:viewParams]) {
+        id<MTLBuffer> buffer = [self.bufferLoop nextBufferForSize:sizeof(quadVertices)];
+        memcpy (buffer.contents, quadVertices, sizeof(quadVertices));
+        [renderEncoder setVertexBuffer:buffer offset:0 atIndex:ShaderRendererVertexInputIndexVertices];
 
-        [renderEncoder setVertexBytes:&vp
-                               length:sizeof(vp)
-                              atIndex:ShaderRendererVertexInputIndexViewportSize];
+        id<MTLBuffer> vpBuffer = [self.vpBufferLoop nextBufferForSize:sizeof(vp)];
+        memcpy (vpBuffer.contents, &vp, sizeof(vp));
+
+        [renderEncoder setVertexBuffer:vpBuffer offset:0 atIndex:ShaderRendererVertexInputIndexViewportSize];
+
+        [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> _Nonnull completedCommandBuffer) {
+            [self.bufferLoop signalCompletion];
+            [self.vpBufferLoop signalCompletion];
+        }];
 
         // Draw the triangle.
         [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip

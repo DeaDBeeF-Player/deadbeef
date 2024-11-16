@@ -2,6 +2,7 @@
 #include <deadbeef/deadbeef.h>
 #import <QuartzCore/CAMetalLayer.h>
 #import "MetalView.h"
+#import "MetalBufferLoop.h"
 #import "ShaderRenderer.h"
 #import "SpectrumAnalyzerPreferencesWindowController.h"
 #import "SpectrumAnalyzerPreferencesViewController.h"
@@ -36,6 +37,8 @@ static void *kIsVisibleContext = &kIsVisibleContext;
 
 @property (nonatomic) BOOL isListening;
 
+@property (nonatomic) MetalBufferLoop *bufferLoop;
+@property (nonatomic) MetalBufferLoop *lookupBufferLoop;
 
 @end
 
@@ -142,6 +145,9 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
                                          fragmentShaderName:@"spectrumFragmentShader"
     ];
     _renderer.delegate = self;
+
+    self.bufferLoop = [[MetalBufferLoop alloc] initWithMetalDevice:device bufferCount:3];
+    self.lookupBufferLoop = [[MetalBufferLoop alloc] initWithMetalDevice:device bufferCount:3];
 }
 
 - (void)viewDidLoad {
@@ -437,7 +443,7 @@ static inline vector_float4 vec4color (NSColor *color) {
 
 #pragma mark - ShaderRendererDelegate
 
-- (BOOL)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
+- (BOOL)applyFragParamsWithViewport:(vector_uint2)viewport device:(id<MTLDevice>)device commandBuffer:(id<MTLCommandBuffer>)commandBuffer encoder:(id<MTLRenderCommandEncoder>)encoder viewParams:(ShaderRendererParams)viewParams {
 
     struct SpectrumFragParams params;
 
@@ -459,31 +465,40 @@ static inline vector_float4 vec4color (NSColor *color) {
 
     // bar data
     if (_draw_data.bars == NULL) {
-        char bytes[12] = {0};
-        [encoder setFragmentBytes:bytes length:12 atIndex:1];
-
-        // This buffer is unused in this scenario, but necessary to shut up API validator
-        [encoder setFragmentBytes:bytes length:4 atIndex:2];
+        // unused / empty
+        NSUInteger size = 12;
+        id<MTLBuffer> buffer = [self.bufferLoop nextBufferForSize:size];
+        [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
+        id<MTLBuffer> lookupBuffer = [self.lookupBufferLoop nextBufferForSize:4];
+        [encoder setFragmentBuffer:lookupBuffer offset:0 atIndex:2];
     }
     else if (_draw_data.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
-        // In this scenario, the buffer is too large, need to use MTLBuffer.
-        id<MTLBuffer> buffer = [device newBufferWithBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) options:0];
-
+        NSUInteger size = _draw_data.bar_count * sizeof (struct SpectrumFragBar);
+        id<MTLBuffer> buffer = [self.bufferLoop nextBufferForSize:size];
+        memcpy (buffer.contents, _draw_data.bars, size);
         [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
 
+        NSUInteger lookupSize = _draw_data.bar_index_for_x_coordinate_table_size * sizeof (int);
+        id<MTLBuffer> lookupBuffer = [self.lookupBufferLoop nextBufferForSize:lookupSize];
         if (_draw_data.bar_index_for_x_coordinate_table != NULL) {
-            id<MTLBuffer> lookupBuffer = [device newBufferWithBytes:_draw_data.bar_index_for_x_coordinate_table length:_draw_data.bar_index_for_x_coordinate_table_size * sizeof (int) options:0];
-            [encoder setFragmentBuffer:lookupBuffer offset:0 atIndex:2];
+            memcpy (lookupBuffer.contents, _draw_data.bar_index_for_x_coordinate_table, lookupSize);
         }
+        [encoder setFragmentBuffer:lookupBuffer offset:0 atIndex:2];
     }
     else {
-        // The buffer is not bigger than ~2.5KB (211 bars * 12 bytes),
-        // therefore it should be safe to use setFragmentBytes.
-        [encoder setFragmentBytes:_draw_data.bars length:_draw_data.bar_count * sizeof (struct SpectrumFragBar) atIndex:1];
-
-        // This buffer is unused in this scenario, but necessary to shut up API validator
-        [encoder setFragmentBytes:_draw_data.bars length:4 atIndex:2];
+        NSUInteger size = _draw_data.bar_count * sizeof (struct SpectrumFragBar);
+        id<MTLBuffer> buffer = [self.bufferLoop nextBufferForSize:size];
+        memcpy (buffer.contents, _draw_data.bars, size);
+        [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
+        // unused / empty
+        id<MTLBuffer> lookupBuffer = [self.lookupBufferLoop nextBufferForSize:4];
+        [encoder setFragmentBuffer:lookupBuffer offset:0 atIndex:2];
     }
+
+    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> _Nonnull completedCommandBuffer) {
+        [self.bufferLoop signalCompletion];
+        [self.lookupBufferLoop signalCompletion];
+    }];
 
     return YES;
 }
