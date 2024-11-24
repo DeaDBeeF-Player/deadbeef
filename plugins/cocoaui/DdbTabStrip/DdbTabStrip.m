@@ -160,6 +160,9 @@ static const int close_btn_left_offs = 8;
 }
 
 - (NSColor *)tabBackgroundColor {
+    if (@available(macOS 13.0, *)) {
+        return NSColor.selectedTextBackgroundColor;
+    }
     NSString *osxMode = [NSUserDefaults.standardUserDefaults stringForKey:@"AppleInterfaceStyle"];
     BOOL isKey = self.window.isKeyWindow;
     if ([osxMode isEqualToString:@"Dark"]) {
