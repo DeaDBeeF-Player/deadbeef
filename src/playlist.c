@@ -1876,10 +1876,6 @@ pl_item_copy (playItem_t *out, playItem_t *it) {
     out->endsample64 = it->endsample64;
     out->shufflerating = it->shufflerating;
     out->_duration = it->_duration;
-    out->next[PL_MAIN] = it->next[PL_MAIN];
-    out->prev[PL_MAIN] = it->prev[PL_MAIN];
-    out->next[PL_SEARCH] = it->next[PL_SEARCH];
-    out->prev[PL_SEARCH] = it->prev[PL_SEARCH];
 
     for (DB_metaInfo_t *meta = it->meta; meta; meta = meta->next) {
         pl_add_meta_copy (out, meta);
@@ -3886,10 +3882,6 @@ plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, 
         if (items[i]) {
             playItem_t *new_it = pl_item_alloc ();
             pl_item_copy (new_it, items[i]);
-            new_it->next[PL_MAIN] = NULL;
-            new_it->prev[PL_MAIN] = NULL;
-            new_it->next[PL_SEARCH] = NULL;
-            new_it->prev[PL_SEARCH] = NULL;
             pl_insert_item (after, new_it);
             pl_item_unref (new_it);
             after = new_it;

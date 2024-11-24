@@ -1078,6 +1078,12 @@ typedef struct {
     DB_playItem_t * (*pl_item_alloc_init) (const char *fname, const char *decoder_id);
     void (*pl_item_ref) (DB_playItem_t *it);
     void (*pl_item_unref) (DB_playItem_t *it);
+
+    // Copy playlist item with metadata.
+    // NOTE: There's a behavior change from 1.9.6 to the next version:
+    // The older version was copying the previous/next pointers into the original linked lists (both main and search).
+    // This was required by some ancient version of deadbeef,
+    // but in the current one it causes a crash bug / data corruption under certain circumstances.
     void (*pl_item_copy) (DB_playItem_t *out, DB_playItem_t *in);
 
     // request lock for adding files to playlist
