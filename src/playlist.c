@@ -3886,6 +3886,10 @@ plt_copy_items (playlist_t *to, int iter, playlist_t *from, playItem_t *before, 
         if (items[i]) {
             playItem_t *new_it = pl_item_alloc ();
             pl_item_copy (new_it, items[i]);
+            new_it->next[PL_MAIN] = NULL;
+            new_it->prev[PL_MAIN] = NULL;
+            new_it->next[PL_SEARCH] = NULL;
+            new_it->prev[PL_SEARCH] = NULL;
             pl_insert_item (after, new_it);
             pl_item_unref (new_it);
             after = new_it;
