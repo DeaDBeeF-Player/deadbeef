@@ -93,17 +93,19 @@
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(windowDidBecomeOrResignKey:)
                                                name:NSWindowDidBecomeKeyNotification
-                                             object:self.window];
+                                             object:nil];
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(windowDidBecomeOrResignKey:)
                                                name:NSWindowDidResignKeyNotification
-                                             object:self.window];
+                                             object:nil];
 
     return self;
 }
 
 - (void)windowDidBecomeOrResignKey:(NSNotification *)notification {
-    self.needsDisplay = YES;
+    if (notification.object == self.window) {
+        self.needsDisplay = YES;
+    }
 }
 
 - (void)drawColumnHeader:(DdbListviewCol_t)col inRect:(NSRect)rect {

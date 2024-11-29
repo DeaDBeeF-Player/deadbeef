@@ -232,6 +232,9 @@
 }
 
 - (void)becameKey:(NSNotification *)notification {
+    if (notification.object != self.window) {
+        return;
+    }
     [CATransaction begin];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
     self.isKey = YES;
@@ -242,6 +245,9 @@
 }
 
 - (void)resignedKey:(NSNotification *)notification {
+    if (notification.object != self.window) {
+        return;
+    }
     [CATransaction begin];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
     self.isKey = NO;
