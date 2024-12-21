@@ -7,9 +7,19 @@ _("Custom properties (overrides existing ones):");
 _("Use PipeWire volume control");
 // plugins/adplug/plugin.c
 // xgettext:no-c-format
-_("Prefer Ken emu over Satoh (surround won't work)");
+_("Sample rate (real OPL is 49716Hz)");
 // xgettext:no-c-format
-_("Enable surround");
+_("Synth engine");
+// xgettext:no-c-format
+_("Nuked OPL3");
+// xgettext:no-c-format
+_("DOSBox OPL3 emulator");
+// xgettext:no-c-format
+_("Tatsuyuki Satoh's OPL2 emulator");
+// xgettext:no-c-format
+_("Ken Silverman's OPL emulator");
+// xgettext:no-c-format
+_("Simon Peter's OPL emulator");
 // plugins/alsa/alsa.c
 // xgettext:no-c-format
 _("Use ALSA resampling");
@@ -408,6 +418,8 @@ _("Prefer Album Artist over Artist field");
 _("Send MusicBrainz ID");
 // xgettext:no-c-format
 _("Submit tracks shorter than 30 seconds (not recommended)");
+// xgettext:no-c-format
+_("Enable logging");
 // plugins/mono2stereo/mono2stereo.c
 // xgettext:no-c-format
 _("Left mix");
@@ -485,9 +497,6 @@ _("Bits per sample");
 _("Default song length (sec)");
 // xgettext:no-c-format
 _("Mono synth");
-// plugins/sndfile/sndfile.c
-// xgettext:no-c-format
-_("Enable logging");
 // plugins/supereq/supereq.c
 // xgettext:no-c-format
 _("Preamp");

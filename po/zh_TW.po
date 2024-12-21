@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-09 15:53+0100\n"
+"POT-Creation-Date: 2024-12-21 11:58+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: 鍾宏慶 <earlycat@gmail.com>, 2019-2020,2022\n"
 "Language-Team: Chinese (Taiwan) (http://app.transifex.com/deadbeef-player/deadbeef-player/language/zh_TW/)\n"
@@ -26,88 +26,88 @@ msgstr ""
 "Language: zh_TW\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../src/main.c:139
+#: ../src/main.c:140
 #, c-format
 msgid "Usage: deadbeef [options] [--] [file(s)]\n"
 msgstr "使用方法：deadbeef [選項] [--] [檔案（複數）]\n"
 
-#: ../src/main.c:140
+#: ../src/main.c:141
 #, c-format
 msgid "Options:\n"
 msgstr "選項：\n"
 
-#: ../src/main.c:141
+#: ../src/main.c:142
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
 msgstr "   --help  或  -h     顯示說明（本訊息）並結束\n"
 
-#: ../src/main.c:142
+#: ../src/main.c:143
 #, c-format
 msgid "   --quit             Quit player\n"
 msgstr "   --quit             結束播放器\n"
 
-#: ../src/main.c:143
+#: ../src/main.c:144
 #, c-format
 msgid "   --version          Print version info and exit\n"
 msgstr "   --version          顯示版本資料並結束\n"
 
-#: ../src/main.c:144
+#: ../src/main.c:145
 #, c-format
 msgid "   --play             Start playback\n"
 msgstr "   --play             開始播放\n"
 
-#: ../src/main.c:145
+#: ../src/main.c:146
 #, c-format
 msgid "   --stop             Stop playback\n"
 msgstr "   --stop             停止播放\n"
 
-#: ../src/main.c:146
+#: ../src/main.c:147
 #, c-format
 msgid "   --pause            Pause playback\n"
 msgstr "   --pause            暫停播放\n"
 
-#: ../src/main.c:147
+#: ../src/main.c:148
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
 msgstr "   --toggle-pause     切換暫停狀態\n"
 
-#: ../src/main.c:148
+#: ../src/main.c:149
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
 msgstr "   --play-pause       如停止則開始播放，否則切換暫停狀態\n"
 
-#: ../src/main.c:149
+#: ../src/main.c:150
 #, c-format
 msgid "   --next             Next song in playlist\n"
 msgstr "   --next             播放清單下一首歌\n"
 
-#: ../src/main.c:150
+#: ../src/main.c:151
 #, c-format
 msgid "   --prev             Previous song in playlist\n"
 msgstr "   --prev             播放清單上一首歌\n"
 
-#: ../src/main.c:151
+#: ../src/main.c:152
 #, c-format
 msgid "   --random           Random song in playlist\n"
 msgstr "   --random           播放清單隨機歌曲\n"
 
-#: ../src/main.c:152
+#: ../src/main.c:153
 #, c-format
 msgid "   --queue            Append file(s) to existing playlist\n"
 msgstr "   --queue            將檔案附加至播放清單\n"
 
-#: ../src/main.c:153
+#: ../src/main.c:154
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"
 msgstr "   --gui 擴充  告訴程式您想使用哪個圖形界面，預設是 \"GTK2\"\n\n"
 
-#: ../src/main.c:154
+#: ../src/main.c:155
 #, c-format
 msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
 msgstr "   --nowplaying FMT   將格式化的歌曲名輸出至 stdout\n"
 
-#: ../src/main.c:157
+#: ../src/main.c:158
 #, c-format
 msgid ""
 "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
@@ -115,106 +115,106 @@ msgid ""
 "                      copy[r]ight, [e]lapsed\n"
 msgstr "                      FMT %%-句法：[a]藝人, [t]歌名, [b]專輯,\n                      [l]長度, [n]曲目, [y]年份, [c]評語,\n                      [r]版權, [e]已過時間\n"
 
-#: ../src/main.c:160
+#: ../src/main.c:161
 #, c-format
 msgid ""
 "                      example: --nowplaying \"%%a - %%t\" should print "
 "\"artist - title\"\n"
 msgstr "--nowplaying \"%%a - %%t\" 會顯示 \"藝人 - 歌名\"\n"
 
-#: ../src/main.c:163
+#: ../src/main.c:164
 #, c-format
 msgid "                      for more info, see %s\n"
 msgstr "更多資訊請見 %s\n"
 
-#: ../src/main.c:165
+#: ../src/main.c:166
 #, c-format
 msgid "                      NOTE: --nowplaying is deprecated.\n"
 msgstr "注意：--nowplaying 已經被遺棄。\n"
 
-#: ../src/main.c:168
+#: ../src/main.c:169
 #, c-format
 msgid ""
 "   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
 "title formatting\n"
 msgstr "--nowplaying-tf FMT 會使用新的標題格式將格式化的歌名輸出至 stdout\n"
 
-#: ../src/main.c:171
+#: ../src/main.c:172
 #, c-format
 msgid ""
 "                      FMT syntax: http://github.com/DeaDBeeF-"
 "Player/deadbeef/wiki/Title-formatting-2.0\n"
 msgstr "                      FMT 語法：http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
 
-#: ../src/main.c:174
+#: ../src/main.c:175
 #, c-format
 msgid ""
 "                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
 "should print \"artist - title\"\n"
 msgstr "例如：--nowplaying-tf \"%%artist%% - %%title%%\" 會顯示 \"藝人 - 歌名\"\n"
 
-#: ../src/main.c:175
+#: ../src/main.c:176
 #, c-format
 msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
 msgstr "--volume [NUM]     顯示或設定 deadbeef 的音量\n"
 
-#: ../src/main.c:178
+#: ../src/main.c:179
 #, c-format
 msgid ""
 "                      The NUM parameter can be specified in percents "
 "(absolute value or increment/decrement)\n"
 msgstr ""
 
-#: ../src/main.c:179
+#: ../src/main.c:180
 #, c-format
 msgid "                      or in dB [-50, 0] (if with suffix).\n"
 msgstr ""
 
-#: ../src/main.c:180
+#: ../src/main.c:181
 #, c-format
 msgid ""
 "                      Examples: --volume 80, --volume +10, --volume -5 or "
 "--volume -20dB\n"
 msgstr ""
 
-#: ../src/main.c:183
+#: ../src/main.c:184
 #, c-format
 msgid ""
 "   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
 "send commands to deadbeef itself.\n"
 msgstr ""
 
-#: ../src/main.c:184
+#: ../src/main.c:185
 #, c-format
 msgid ""
 "                      To get plugin specific commands use --plugin=[PLUG] "
 "--help\n"
 msgstr ""
 
-#: ../src/main.c:187
+#: ../src/main.c:188
 #, c-format
 msgid ""
 "   --plugin-list      List all available plugins including indication for "
 "plugins that support commands.\n"
 msgstr ""
 
-#: ../src/playlist.c:525 ../src/playlist.c:2806
+#: ../src/playlist.c:525 ../src/playlist.c:2850
 msgid "Default"
 msgstr "預設"
 
-#: ../src/playlist.c:3479 ../plugins/gtkui/widgets.c:2719
+#: ../src/playlist.c:3523 ../plugins/gtkui/widgets.c:2719
 msgid "Mono"
 msgstr "單聲道"
 
-#: ../src/playlist.c:3479
+#: ../src/playlist.c:3523
 msgid "Stereo"
 msgstr "立體聲"
 
-#: ../src/playlist.c:4026
+#: ../src/playlist.c:4074
 msgid "Yes"
 msgstr "是"
 
-#: ../src/playlist.c:4026
+#: ../src/playlist.c:4074
 msgid "No"
 msgstr "否"
 
@@ -305,7 +305,7 @@ msgstr "編輯編碼器預設值"
 
 #: ../plugins/converter/converter.glade.h:25
 #: ../plugins/converter/interface.c:418 ../plugins/gtkui/deadbeef.glade.h:72
-#: ../plugins/gtkui/gtkui.c:603 ../plugins/gtkui/interface.c:1358
+#: ../plugins/gtkui/gtkui.c:606 ../plugins/gtkui/interface.c:1358
 #: ../plugins/gtkui/interface.c:4033 ../plugins/gtkui/widgets.c:1650
 #: ../plugins/shellexecui/interface.c:163
 #: ../plugins/shellexecui/shellexec.glade.h:7
@@ -521,7 +521,7 @@ msgid "This action will delete the selected preset. Are you sure?"
 msgstr "此舉會刪除所選預設值。確定嗎？"
 
 #: ../plugins/converter/convgui.c:1091 ../plugins/converter/convgui.c:1687
-#: ../plugins/gtkui/gtkui.c:638 ../plugins/gtkui/gtkui.c:1762
+#: ../plugins/gtkui/gtkui.c:641 ../plugins/gtkui/gtkui.c:1771
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:71
 #: ../plugins/gtkui/prefwin/prefwin.c:141 ../plugins/gtkui/trkproperties.c:119
 msgid "Warning"
@@ -552,9 +552,9 @@ msgid "DSP Presets"
 msgstr "DSP 預設值"
 
 #: ../plugins/converter/convgui.c:1792 ../plugins/converter/convgui.c:1800
-#: ../plugins/gtkui/actionhandlers.c:310 ../plugins/gtkui/callbacks.c:545
+#: ../plugins/gtkui/actionhandlers.c:310 ../plugins/gtkui/callbacks.c:547
 #: ../plugins/gtkui/deadbeef.glade.h:62 ../plugins/gtkui/interface.c:999
-#: ../translation/plugins.c:176
+#: ../translation/plugins.c:186
 #, no-c-format
 msgid "Help"
 msgstr "說明"
@@ -629,7 +629,7 @@ msgstr "新增資料夾至播放清單…"
 msgid "help.txt"
 msgstr "help.txt"
 
-#: ../plugins/gtkui/actionhandlers.c:497 ../translation/plugins.c:222
+#: ../plugins/gtkui/actionhandlers.c:497 ../translation/plugins.c:232
 #, no-c-format
 msgid "Load Playlist"
 msgstr "載入播放清單"
@@ -638,17 +638,17 @@ msgstr "載入播放清單"
 msgid "Save Playlist As"
 msgstr "儲存播放清單"
 
-#: ../plugins/gtkui/callbacks.c:318
+#: ../plugins/gtkui/callbacks.c:320
 #, c-format
 msgid "About DeaDBeeF %s"
 msgstr "關於 DeaDBeeF %s"
 
-#: ../plugins/gtkui/callbacks.c:329
+#: ../plugins/gtkui/callbacks.c:331
 #, c-format
 msgid "DeaDBeeF %s ChangeLog"
 msgstr "DeaDBeeF %s 更新日誌"
 
-#: ../plugins/gtkui/callbacks.c:535
+#: ../plugins/gtkui/callbacks.c:537
 #, c-format
 msgid "DeaDBeeF Translators"
 msgstr "DeaDBeeF 譯者"
@@ -795,7 +795,7 @@ msgid "Custom"
 msgstr "自訂"
 
 #: ../plugins/gtkui/deadbeef.glade.h:27 ../plugins/gtkui/interface.c:305
-#: ../plugins/gtkui/interface.c:1852 ../translation/plugins.c:212
+#: ../plugins/gtkui/interface.c:1852 ../translation/plugins.c:222
 #, no-c-format
 msgid "Preferences"
 msgstr "偏好設定"
@@ -908,13 +908,13 @@ msgid "Search"
 msgstr "搜尋"
 
 #: ../plugins/gtkui/deadbeef.glade.h:54 ../plugins/gtkui/interface.c:817
-#: ../translation/plugins.c:351
+#: ../translation/plugins.c:361
 #, no-c-format
 msgid "Stop"
 msgstr "停止"
 
 #: ../plugins/gtkui/deadbeef.glade.h:55 ../plugins/gtkui/interface.c:825
-#: ../translation/plugins.c:349
+#: ../translation/plugins.c:359
 #, no-c-format
 msgid "Play"
 msgstr "播放"
@@ -924,19 +924,19 @@ msgid "Pause"
 msgstr "暫停"
 
 #: ../plugins/gtkui/deadbeef.glade.h:57 ../plugins/gtkui/interface.c:841
-#: ../translation/plugins.c:353
+#: ../translation/plugins.c:363
 #, no-c-format
 msgid "Previous"
 msgstr "上一首"
 
 #: ../plugins/gtkui/deadbeef.glade.h:58 ../plugins/gtkui/interface.c:849
-#: ../translation/plugins.c:355
+#: ../translation/plugins.c:365
 #, no-c-format
 msgid "Next"
 msgstr "下一首"
 
 #: ../plugins/gtkui/deadbeef.glade.h:59 ../plugins/gtkui/interface.c:857
-#: ../translation/plugins.c:367
+#: ../translation/plugins.c:377
 #, no-c-format
 msgid "Play Random"
 msgstr "隨機播放"
@@ -946,13 +946,13 @@ msgid "About"
 msgstr "關於"
 
 #: ../plugins/gtkui/deadbeef.glade.h:61 ../plugins/gtkui/interface.c:879
-#: ../translation/plugins.c:162
+#: ../translation/plugins.c:172
 #, no-c-format
 msgid "Quit"
 msgstr "結束"
 
 #: ../plugins/gtkui/deadbeef.glade.h:63 ../plugins/gtkui/interface.c:1072
-#: ../plugins/gtkui/plmenu.c:644 ../translation/plugins.c:174
+#: ../plugins/gtkui/plmenu.c:644 ../translation/plugins.c:184
 #, no-c-format
 msgid "Track Properties"
 msgstr "曲目屬性"
@@ -1155,7 +1155,7 @@ msgid "\"Stop after current album\" option will switch off after triggering"
 msgstr "「播放完此專輯後停止」選項在觸發後將會自動關閉"
 
 #: ../plugins/gtkui/deadbeef.glade.h:119 ../plugins/gtkui/interface.c:2166
-#: ../translation/plugins.c:180
+#: ../translation/plugins.c:190
 #, no-c-format
 msgid "Playback"
 msgstr "播放"
@@ -1226,7 +1226,7 @@ msgstr "播放器"
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/deadbeef.glade.h:136 ../plugins/gtkui/interface.c:2373
-#: ../translation/plugins.c:439
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "用滑鼠中鍵關閉播放清單"
@@ -1256,7 +1256,7 @@ msgstr "群組間隔："
 msgid "pixels"
 msgstr "像素"
 
-#: ../plugins/gtkui/deadbeef.glade.h:143 ../plugins/gtkui/gtkui.c:1498
+#: ../plugins/gtkui/deadbeef.glade.h:143 ../plugins/gtkui/gtkui.c:1507
 #: ../plugins/gtkui/interface.c:2411 ../plugins/gtkui/interface.c:2856
 msgid "Playlist"
 msgstr "播放清單"
@@ -1565,7 +1565,7 @@ msgid "Strip APEv2"
 msgstr "砍掉 APEv2"
 
 #: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:4669
-#: ../translation/plugins.c:529
+#: ../translation/plugins.c:538
 #, no-c-format
 msgid "ID3v2 version"
 msgstr "ID3v2 版本"
@@ -1635,7 +1635,7 @@ msgstr "此對話框允許為任意音軌自訂標題。這功能在廣播電台
 
 #: ../plugins/gtkui/deadbeef.glade.h:235 ../plugins/gtkui/interface.c:5441
 #: ../plugins/shellexecui/interface.c:70
-#: ../plugins/shellexecui/shellexec.glade.h:5 ../translation/plugins.c:156
+#: ../plugins/shellexecui/shellexec.glade.h:5 ../translation/plugins.c:166
 #, no-c-format
 msgid "Edit"
 msgstr "編輯(_E)"
@@ -1661,66 +1661,70 @@ msgid "Field value:"
 msgstr "欄位值:"
 
 #: ../plugins/gtkui/deadbeef.glade.h:241 ../plugins/gtkui/interface.c:5545
-#: ../plugins/gtkui/interface.c:5890
+#: ../plugins/gtkui/interface.c:5899
 msgid "Use ; character to separate multiple values."
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:242 ../plugins/gtkui/interface.c:5594
+#: ../plugins/gtkui/deadbeef.glade.h:242 ../plugins/gtkui/interface.c:5595
 msgid "DeaDBeeF Log"
 msgstr "DeaDBeeF 日誌"
 
-#: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5623
+#: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5624
+msgid "Auto-open this window on errors"
+msgstr ""
+
+#: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5628
 msgid "Clear"
 msgstr "清除"
 
-#: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5660
+#: ../plugins/gtkui/deadbeef.glade.h:245 ../plugins/gtkui/interface.c:5669
 msgid "ReplayGain Scan Progress"
 msgstr "音量標準化掃描進度"
 
-#: ../plugins/gtkui/deadbeef.glade.h:245 ../plugins/gtkui/interface.c:5671
+#: ../plugins/gtkui/deadbeef.glade.h:246 ../plugins/gtkui/interface.c:5680
 msgid "Current File:"
 msgstr "當前檔案："
 
-#: ../plugins/gtkui/deadbeef.glade.h:246 ../plugins/gtkui/interface.c:5689
-#: ../plugins/gtkui/interface.c:5749 ../plugins/gtkui/rg.c:310
+#: ../plugins/gtkui/deadbeef.glade.h:247 ../plugins/gtkui/interface.c:5698
+#: ../plugins/gtkui/interface.c:5758 ../plugins/gtkui/rg.c:310
 msgid "Status"
 msgstr "狀態"
 
-#: ../plugins/gtkui/deadbeef.glade.h:247
+#: ../plugins/gtkui/deadbeef.glade.h:248
 #: ../plugins/gtkui/gtkui_deletefromdisk.c:67
-#: ../plugins/gtkui/interface.c:5696 ../plugins/gtkui/interface.c:5760
+#: ../plugins/gtkui/interface.c:5705 ../plugins/gtkui/interface.c:5769
 msgid "Cancel"
 msgstr "取消"
 
-#: ../plugins/gtkui/deadbeef.glade.h:248 ../plugins/gtkui/interface.c:5728
+#: ../plugins/gtkui/deadbeef.glade.h:249 ../plugins/gtkui/interface.c:5737
 msgid "ReplayGain Scan Results"
 msgstr "音量標準化掃描結果"
 
-#: ../plugins/gtkui/deadbeef.glade.h:249 ../plugins/gtkui/interface.c:5756
+#: ../plugins/gtkui/deadbeef.glade.h:250 ../plugins/gtkui/interface.c:5765
 msgid "Update File Tags"
 msgstr "更新檔案標籤"
 
-#: ../plugins/gtkui/deadbeef.glade.h:250 ../plugins/gtkui/interface.c:5787
+#: ../plugins/gtkui/deadbeef.glade.h:251 ../plugins/gtkui/interface.c:5796
 msgid "Copy report"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:251 ../plugins/gtkui/interface.c:5795
+#: ../plugins/gtkui/deadbeef.glade.h:252 ../plugins/gtkui/interface.c:5804
 msgid "Only show plugins with configuration"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:252 ../plugins/gtkui/interface.c:5836
+#: ../plugins/gtkui/deadbeef.glade.h:253 ../plugins/gtkui/interface.c:5845
 msgid "Edit Multiple Tracks"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:253 ../plugins/gtkui/interface.c:5848
+#: ../plugins/gtkui/deadbeef.glade.h:254 ../plugins/gtkui/interface.c:5857
 msgid "Field Name:"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:254 ../plugins/gtkui/interface.c:5873
+#: ../plugins/gtkui/deadbeef.glade.h:255 ../plugins/gtkui/interface.c:5882
 msgid "Single Value"
 msgstr ""
 
-#: ../plugins/gtkui/deadbeef.glade.h:255 ../plugins/gtkui/interface.c:5886
+#: ../plugins/gtkui/deadbeef.glade.h:256 ../plugins/gtkui/interface.c:5895
 msgid "Individual Values"
 msgstr ""
 
@@ -1761,7 +1765,7 @@ msgid "Import Foobar2000 Preset"
 msgstr "匯入 Foobar2000 預設值"
 
 #. plugins/notify/notify.c
-#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:423
+#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:435
 #, no-c-format
 msgid "Enable"
 msgstr "啟用"
@@ -1778,8 +1782,8 @@ msgstr "前級放大器歸零"
 msgid "Zero Bands"
 msgstr "頻帶歸零"
 
-#: ../plugins/gtkui/fileman.c:50 ../plugins/gtkui/gtkui.c:787
-#: ../plugins/pltbrowser/pltbrowser.c:65 ../translation/plugins.c:226
+#: ../plugins/gtkui/fileman.c:50 ../plugins/gtkui/gtkui.c:790
+#: ../plugins/pltbrowser/pltbrowser.c:65 ../translation/plugins.c:236
 #, no-c-format
 msgid "New Playlist"
 msgstr "新播放清單"
@@ -1795,180 +1799,180 @@ msgstr ""
 msgid "Add Files"
 msgstr ""
 
-#: ../plugins/gtkui/fileman.c:204 ../translation/plugins.c:166
+#: ../plugins/gtkui/fileman.c:204 ../translation/plugins.c:176
 #, no-c-format
 msgid "Add Location"
 msgstr "添加位置"
 
-#: ../plugins/gtkui/fileman.c:358
+#: ../plugins/gtkui/fileman.c:357
 msgid "Drag & Drop"
 msgstr ""
 
-#: ../plugins/gtkui/fileman.c:394 ../plugins/gtkui/fileman.c:484
+#: ../plugins/gtkui/fileman.c:401 ../plugins/gtkui/fileman.c:491
 msgid "Supported sound formats"
 msgstr "支援的音訊格式"
 
-#: ../plugins/gtkui/fileman.c:418 ../plugins/gtkui/fileman.c:495
+#: ../plugins/gtkui/fileman.c:425 ../plugins/gtkui/fileman.c:502
 msgid "All files (*)"
 msgstr "所有檔案（*）"
 
-#: ../plugins/gtkui/fileman.c:529 ../plugins/gtkui/fileman.c:573
+#: ../plugins/gtkui/fileman.c:536 ../plugins/gtkui/fileman.c:580
 msgid "Supported playlist formats"
 msgstr "已支援的播放清單格式"
 
-#: ../plugins/gtkui/fileman.c:536
+#: ../plugins/gtkui/fileman.c:543
 msgid "All files"
 msgstr "所有檔案"
 
-#: ../plugins/gtkui/fileman.c:579
+#: ../plugins/gtkui/fileman.c:586
 msgid "Other files (*)"
 msgstr "其他檔案（*）"
 
-#: ../plugins/gtkui/fileman.c:590
+#: ../plugins/gtkui/fileman.c:597
 msgid "DeaDBeeF playlist files (*.dbpl)"
 msgstr "DeaDBeeF 播放清單（*.dbpl）"
 
-#: ../plugins/gtkui/fileman.c:634
+#: ../plugins/gtkui/fileman.c:641
 msgid "Follow symlinks"
 msgstr "跟隨符號連結"
 
-#: ../plugins/gtkui/gtkui.c:170 ../src/tf.c:2795
+#: ../plugins/gtkui/gtkui.c:173 ../src/tf.c:2847
 #, c-format
 msgid "1 day %d:%02d:%02d"
 msgstr "1 天 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:173 ../src/tf.c:2798
+#: ../plugins/gtkui/gtkui.c:176 ../src/tf.c:2850
 #, c-format
 msgid "%d days %d:%02d:%02d"
 msgstr "%d 天 %d:%02d:%02d"
 
-#: ../plugins/gtkui/gtkui.c:218
+#: ../plugins/gtkui/gtkui.c:221
 msgid "total playtime"
 msgstr "總播放時數"
 
-#: ../plugins/gtkui/gtkui.c:426 ../plugins/gtkui/gtkui.c:437
+#: ../plugins/gtkui/gtkui.c:429 ../plugins/gtkui/gtkui.c:440
 msgid "Paused"
 msgstr "已暫停"
 
-#: ../plugins/gtkui/gtkui.c:427 ../plugins/gtkui/gtkui.c:437
+#: ../plugins/gtkui/gtkui.c:430 ../plugins/gtkui/gtkui.c:440
 msgid "bit"
 msgstr "位元"
 
-#: ../plugins/gtkui/gtkui.c:428 ../plugins/gtkui/gtkui.c:434
+#: ../plugins/gtkui/gtkui.c:431 ../plugins/gtkui/gtkui.c:437
 msgid "selection playtime"
 msgstr "已選項目的播放長度"
 
-#: ../plugins/gtkui/gtkui.c:433 ../plugins/gtkui/gtkui.c:438
+#: ../plugins/gtkui/gtkui.c:436 ../plugins/gtkui/gtkui.c:441
 msgid "Stopped"
 msgstr "已停止"
 
-#: ../plugins/gtkui/gtkui.c:600 ../plugins/gtkui/pltmenu.c:133
+#: ../plugins/gtkui/gtkui.c:603 ../plugins/gtkui/pltmenu.c:133
 msgid "Rename Playlist"
 msgstr "重新命名播放清單"
 
-#: ../plugins/gtkui/gtkui.c:633
+#: ../plugins/gtkui/gtkui.c:636
 msgid "Removing playlist"
 msgstr "移除播放清單"
 
-#: ../plugins/gtkui/gtkui.c:636
+#: ../plugins/gtkui/gtkui.c:639
 #, c-format
 msgid "Do you really want to remove the playlist '%s'?"
 msgstr "真的要移除播放清單 '%s'?"
 
-#: ../plugins/gtkui/gtkui.c:790 ../plugins/pltbrowser/pltbrowser.c:68
+#: ../plugins/gtkui/gtkui.c:793 ../plugins/pltbrowser/pltbrowser.c:68
 #, c-format
 msgid "New Playlist (%d)"
 msgstr "新播放清單（%d）"
 
 #. register widget types
-#: ../plugins/gtkui/gtkui.c:1497
+#: ../plugins/gtkui/gtkui.c:1506
 msgid "Playlist with tabs"
 msgstr "播放清單 (含分頁)"
 
-#: ../plugins/gtkui/gtkui.c:1501
+#: ../plugins/gtkui/gtkui.c:1510
 msgid "Splitter (top and bottom)"
 msgstr "分隔線（上與下）"
 
-#: ../plugins/gtkui/gtkui.c:1502
+#: ../plugins/gtkui/gtkui.c:1511
 msgid "Splitter (left and right)"
 msgstr "分隔線（左與右）"
 
-#: ../plugins/gtkui/gtkui.c:1504
+#: ../plugins/gtkui/gtkui.c:1513
 msgid "Tabs"
 msgstr "分頁"
 
-#: ../plugins/gtkui/gtkui.c:1505
+#: ../plugins/gtkui/gtkui.c:1514
 msgid "Playlist tabs"
 msgstr "播放清單分頁"
 
-#: ../plugins/gtkui/gtkui.c:1507
+#: ../plugins/gtkui/gtkui.c:1516
 msgid "Selection properties"
 msgstr "歌曲屬性"
 
-#: ../plugins/gtkui/gtkui.c:1512
+#: ../plugins/gtkui/gtkui.c:1521
 msgid "Album art display"
 msgstr "顯示專輯封面"
 
-#: ../plugins/gtkui/gtkui.c:1513
+#: ../plugins/gtkui/gtkui.c:1522
 msgid "Oscilloscope"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1514
+#: ../plugins/gtkui/gtkui.c:1523
 msgid "Spectrum"
 msgstr "頻譜"
 
-#: ../plugins/gtkui/gtkui.c:1515
+#: ../plugins/gtkui/gtkui.c:1524
 msgid "HBox"
 msgstr "HBox"
 
-#: ../plugins/gtkui/gtkui.c:1516
+#: ../plugins/gtkui/gtkui.c:1525
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1517 ../plugins/gtkui/widgets.c:3789
+#: ../plugins/gtkui/gtkui.c:1526 ../plugins/gtkui/widgets.c:3789
 #: ../plugins/gtkui/widgets.c:3876
 msgid "Button"
 msgstr "按鈕"
 
-#: ../plugins/gtkui/gtkui.c:1518
+#: ../plugins/gtkui/gtkui.c:1527
 msgid "Seekbar"
 msgstr "進度條"
 
-#: ../plugins/gtkui/gtkui.c:1519
+#: ../plugins/gtkui/gtkui.c:1528
 msgid "Playback controls"
 msgstr "播放控制按鈕"
 
-#: ../plugins/gtkui/gtkui.c:1520
+#: ../plugins/gtkui/gtkui.c:1529
 msgid "Volume bar"
 msgstr "音量條"
 
-#: ../plugins/gtkui/gtkui.c:1521
+#: ../plugins/gtkui/gtkui.c:1530
 msgid "Chiptune voices"
 msgstr "電子合成音"
 
-#: ../plugins/gtkui/gtkui.c:1522
+#: ../plugins/gtkui/gtkui.c:1531
 msgid "Log viewer"
 msgstr "日誌檢視器"
 
-#: ../plugins/gtkui/gtkui.c:1523
+#: ../plugins/gtkui/gtkui.c:1532
 msgid "Media library viewer"
 msgstr ""
 
-#: ../plugins/gtkui/gtkui.c:1731
+#: ../plugins/gtkui/gtkui.c:1740
 msgid "Failed while reading help file"
 msgstr "未能讀取說明檔案"
 
-#: ../plugins/gtkui/gtkui.c:1741
+#: ../plugins/gtkui/gtkui.c:1750
 msgid "Failed to load help file"
 msgstr "未能載入說明檔案"
 
-#: ../plugins/gtkui/gtkui.c:1759
+#: ../plugins/gtkui/gtkui.c:1768
 msgid ""
 "The player is currently running background tasks. If you quit now, the tasks"
 " will be cancelled or interrupted. This may result in data loss."
 msgstr "播放器正在背景執行中。如果您現在退出，程式將會被取消或中斷。這可能導致資料遺失。"
 
-#: ../plugins/gtkui/gtkui.c:1761
+#: ../plugins/gtkui/gtkui.c:1770
 msgid "Do you still want to quit?"
 msgstr "仍然要退出？"
 
@@ -2057,7 +2061,7 @@ msgstr "曲目"
 
 #: ../plugins/gtkui/interface.c:2068 ../plugins/gtkui/playlist/plcommon.c:896
 #: ../plugins/gtkui/widgets.c:3222 ../plugins/gtkui/widgets.c:3884
-#: ../translation/plugins.c:114
+#: ../translation/plugins.c:124
 #, no-c-format
 msgid "None"
 msgstr "無"
@@ -2131,8 +2135,8 @@ msgstr "曲目"
 #: ../plugins/gtkui/playlist/mainplaylist.c:239
 #: ../plugins/gtkui/playlist/plcommon.c:81
 #: ../plugins/gtkui/playlist/searchplaylist.c:194
-#: ../plugins/pltbrowser/pltbrowser.c:407
-#: ../plugins/pltbrowser/pltbrowser.c:864
+#: ../plugins/pltbrowser/pltbrowser.c:411
+#: ../plugins/pltbrowser/pltbrowser.c:868
 msgid "Duration"
 msgstr "長度"
 
@@ -2141,7 +2145,7 @@ msgid "Item Index"
 msgstr "項目索引"
 
 #: ../plugins/gtkui/playlist/plcommon.c:74
-#: ../plugins/pltbrowser/pltbrowser.c:405
+#: ../plugins/pltbrowser/pltbrowser.c:409
 msgid "Playing"
 msgstr "正在播放"
 
@@ -2207,12 +2211,12 @@ msgstr ""
 msgid "Play Later"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:501 ../translation/plugins.c:333
+#: ../plugins/gtkui/plmenu.c:501 ../translation/plugins.c:343
 #, no-c-format
 msgid "Remove from Playback Queue"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:522 ../translation/plugins.c:271
+#: ../plugins/gtkui/plmenu.c:522 ../translation/plugins.c:281
 #, no-c-format
 msgid "Reload Metadata"
 msgstr "重整音樂資料"
@@ -2229,7 +2233,7 @@ msgstr ""
 msgid "_Paste"
 msgstr ""
 
-#: ../plugins/gtkui/plmenu.c:610 ../translation/plugins.c:164
+#: ../plugins/gtkui/plmenu.c:610 ../translation/plugins.c:174
 #, no-c-format
 msgid "Delete from Disk"
 msgstr ""
@@ -2290,7 +2294,7 @@ msgid "Updating File Tags Progress"
 msgstr "更新檔案標籤進度"
 
 #: ../plugins/gtkui/rg.c:309 ../plugins/gtkui/selpropertieswidget.c:310
-#: ../plugins/gtkui/trkproperties.c:442 ../plugins/pltbrowser/pltbrowser.c:850
+#: ../plugins/gtkui/trkproperties.c:442 ../plugins/pltbrowser/pltbrowser.c:854
 msgid "Name"
 msgstr "名稱"
 
@@ -2327,7 +2331,7 @@ msgid "Search [(%list_total% results)]"
 msgstr "尋找 [（共%list_total% 項結果）]"
 
 #: ../plugins/gtkui/selpropertieswidget.c:265 ../plugins/gtkui/widgets.c:2155
-#: ../plugins/pltbrowser/pltbrowser.c:806
+#: ../plugins/pltbrowser/pltbrowser.c:810
 msgid "Show Column Headers"
 msgstr "顯示欄位名稱"
 
@@ -2478,12 +2482,12 @@ msgstr ""
 msgid "Auto"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2732 ../translation/plugins.c:83
+#: ../plugins/gtkui/widgets.c:2732 ../translation/plugins.c:93
 #, no-c-format
 msgid "1x"
 msgstr "1 倍"
 
-#: ../plugins/gtkui/widgets.c:2734 ../translation/plugins.c:85
+#: ../plugins/gtkui/widgets.c:2734 ../translation/plugins.c:95
 #, no-c-format
 msgid "2x"
 msgstr "2 倍"
@@ -2492,7 +2496,7 @@ msgstr "2 倍"
 msgid "3x"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:2738 ../translation/plugins.c:87
+#: ../plugins/gtkui/widgets.c:2738 ../translation/plugins.c:97
 #, no-c-format
 msgid "4x"
 msgstr "4 倍"
@@ -2636,21 +2640,21 @@ msgid " (playing)"
 msgstr "（播放中）"
 
 #. NOTE: localizable because of the "d" suffix for days
-#: ../plugins/pltbrowser/pltbrowser.c:213
+#: ../plugins/pltbrowser/pltbrowser.c:217
 #, c-format
 msgid "%dd %d:%02d:%02d"
 msgstr "%d 天 %d:%02d:%02d"
 
-#: ../plugins/pltbrowser/pltbrowser.c:406
-#: ../plugins/pltbrowser/pltbrowser.c:859
+#: ../plugins/pltbrowser/pltbrowser.c:410
+#: ../plugins/pltbrowser/pltbrowser.c:863
 msgid "Items"
 msgstr "項目"
 
-#: ../plugins/pltbrowser/pltbrowser.c:853
+#: ../plugins/pltbrowser/pltbrowser.c:857
 msgid "♫"
 msgstr "♫"
 
-#: ../plugins/pltbrowser/pltbrowser.c:911
+#: ../plugins/pltbrowser/pltbrowser.c:915
 msgid "Playlist browser"
 msgstr "播放清單概覽"
 
@@ -2787,18 +2791,17 @@ msgstr "指令不能留白\n"
 msgid "Invalid Values"
 msgstr "無效的數值"
 
-#: ../plugins/wildmidi/wildmidiplug.c:192
-#, c-format
+#: ../plugins/wildmidi/wildmidiplug.c:197
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
-"package, or specify path to freepats.cfg in the plugin settings."
-msgstr "wildmidi：找不到 freepats 設定檔案。請安裝 timidity-freepats 套件，或在外掛程式設定指定 freepats.cfg 的路徑。"
+"package, or specify path to freepats.cfg in the plugin settings.\n"
+msgstr ""
 
-#: ../src/tf.c:2237
+#: ../src/tf.c:2289
 msgid "mono"
 msgstr "單聲道"
 
-#: ../src/tf.c:2240 ../src/tf.c:2244
+#: ../src/tf.c:2292 ../src/tf.c:2296
 msgid "stereo"
 msgstr "立體聲"
 
@@ -2877,1170 +2880,1194 @@ msgstr ""
 #. plugins/adplug/plugin.c
 #: ../translation/plugins.c:10
 #, no-c-format
-msgid "Prefer Ken emu over Satoh (surround won't work)"
-msgstr "優先使用 Ken emu 取代 Satoh（環繞音效將無效）"
+msgid "Sample rate (real OPL is 49716Hz)"
+msgstr ""
 
 #: ../translation/plugins.c:12
 #, no-c-format
-msgid "Enable surround"
-msgstr "開啟環繞音效"
+msgid "Synth engine"
+msgstr ""
+
+#: ../translation/plugins.c:14
+#, no-c-format
+msgid "Nuked OPL3"
+msgstr ""
+
+#: ../translation/plugins.c:16
+#, no-c-format
+msgid "DOSBox OPL3 emulator"
+msgstr ""
+
+#: ../translation/plugins.c:18
+#, no-c-format
+msgid "Tatsuyuki Satoh's OPL2 emulator"
+msgstr ""
+
+#: ../translation/plugins.c:20
+#, no-c-format
+msgid "Ken Silverman's OPL emulator"
+msgstr ""
+
+#: ../translation/plugins.c:22
+#, no-c-format
+msgid "Simon Peter's OPL emulator"
+msgstr ""
 
 #. plugins/alsa/alsa.c
-#: ../translation/plugins.c:15
+#: ../translation/plugins.c:25
 #, no-c-format
 msgid "Use ALSA resampling"
 msgstr "使用 ALSA 再取樣"
 
-#: ../translation/plugins.c:17
+#: ../translation/plugins.c:27
 #, no-c-format
 msgid "Preferred buffer size"
 msgstr "偏好的緩衝區大小"
 
-#: ../translation/plugins.c:19
+#: ../translation/plugins.c:29
 #, no-c-format
 msgid "Preferred period size"
 msgstr "偏好的間隔大小"
 
 #. plugins/artwork/artwork.c
-#: ../translation/plugins.c:22
+#: ../translation/plugins.c:32
 #, no-c-format
 msgid "Refresh Cover Art"
 msgstr ""
 
-#: ../translation/plugins.c:24
+#: ../translation/plugins.c:34
 #, no-c-format
 msgid "Fetch from embedded tags"
 msgstr "由內置標籤取得"
 
-#: ../translation/plugins.c:26
+#: ../translation/plugins.c:36
 #, no-c-format
 msgid "Fetch from local folder"
 msgstr "由本機資料夾取得"
 
-#: ../translation/plugins.c:28
+#: ../translation/plugins.c:38
 #, no-c-format
 msgid "Fetch from Last.fm"
 msgstr "從 Last.fm 取得"
 
-#: ../translation/plugins.c:30
+#: ../translation/plugins.c:40
 #, no-c-format
 msgid "Fetch from MusicBrainz"
 msgstr "從 MusicBrainz 取得"
 
-#: ../translation/plugins.c:32
+#: ../translation/plugins.c:42
 #, no-c-format
 msgid "Fetch from Albumart.org"
 msgstr "從 Albumart.org 取得"
 
-#: ../translation/plugins.c:34
+#: ../translation/plugins.c:44
 #, no-c-format
 msgid "Fetch from World of Spectrum (AY files)"
 msgstr ""
 
-#: ../translation/plugins.c:36
+#: ../translation/plugins.c:46
 #, no-c-format
 msgid "Save downloaded files to music folders"
 msgstr ""
 
-#: ../translation/plugins.c:38
+#: ../translation/plugins.c:48
 #, no-c-format
 msgid "When no artwork is found"
 msgstr "當找不到封面"
 
-#: ../translation/plugins.c:40
+#: ../translation/plugins.c:50
 #, no-c-format
 msgid "leave blank"
 msgstr "保留為空白"
 
-#: ../translation/plugins.c:42
+#: ../translation/plugins.c:52
 #, no-c-format
 msgid "use DeaDBeeF default cover"
 msgstr "使用 DeaDBeeF 預設封面"
 
-#: ../translation/plugins.c:44
+#: ../translation/plugins.c:54
 #, no-c-format
 msgid "display custom image"
 msgstr "顯示自訂影像"
 
-#: ../translation/plugins.c:46
+#: ../translation/plugins.c:56
 #, no-c-format
 msgid "Custom image path"
 msgstr "自訂影像路徑"
 
-#: ../translation/plugins.c:48
+#: ../translation/plugins.c:58
 #, no-c-format
 msgid "Save to file name"
 msgstr ""
 
-#: ../translation/plugins.c:50
+#: ../translation/plugins.c:60
 #, no-c-format
 msgid "Search masks (; separated)"
 msgstr ""
 
-#: ../translation/plugins.c:52
+#: ../translation/plugins.c:62
 #, no-c-format
 msgid "Search folders (; separated)"
 msgstr ""
 
-#: ../translation/plugins.c:54
+#: ../translation/plugins.c:64
 #, no-c-format
 msgid "Cache refresh (hrs)"
 msgstr ""
 
-#: ../translation/plugins.c:56
+#: ../translation/plugins.c:66
 #, no-c-format
 msgid "Simplified cache file names"
 msgstr ""
 
-#: ../translation/plugins.c:58
+#: ../translation/plugins.c:68
 #, no-c-format
 msgid "Image size"
 msgstr ""
 
 #. plugins/cdda/cdda.c
-#: ../translation/plugins.c:61
+#: ../translation/plugins.c:71
 #, no-c-format
 msgid "CD drive to load"
 msgstr "要載入的 CD 光碟機"
 
-#: ../translation/plugins.c:63
+#: ../translation/plugins.c:73
 #, no-c-format
 msgid "Audio CD Drive"
 msgstr "音訊 CD 光碟機"
 
-#: ../translation/plugins.c:65
+#: ../translation/plugins.c:75
 #, no-c-format
 msgid "File"
 msgstr "檔案"
 
-#: ../translation/plugins.c:67
+#: ../translation/plugins.c:77
 #, no-c-format
 msgid "Add Audio CD"
 msgstr "新增音樂 CD"
 
-#: ../translation/plugins.c:69
+#: ../translation/plugins.c:79
 #, no-c-format
 msgid "Use CDDB/GnuDb"
 msgstr ""
 
-#: ../translation/plugins.c:71
+#: ../translation/plugins.c:81
 #, no-c-format
 msgid "Prefer CD-Text over CDDB"
 msgstr "優先使用 CD-Text 而非 CDDB"
 
-#: ../translation/plugins.c:73
+#: ../translation/plugins.c:83
 #, no-c-format
 msgid "CDDB url (e.g. 'gnudb.gnudb.org')"
 msgstr ""
 
-#: ../translation/plugins.c:75
+#: ../translation/plugins.c:85
 #, no-c-format
 msgid "CDDB port number (e.g. '8880')"
 msgstr ""
 
-#: ../translation/plugins.c:77
+#: ../translation/plugins.c:87
 #, no-c-format
 msgid "Use CDDB protocol"
 msgstr "使用 CDDB 協定"
 
-#: ../translation/plugins.c:79
+#: ../translation/plugins.c:89
 #, no-c-format
 msgid "Enable NRG image support"
 msgstr "啟用支援 NRG 影像"
 
-#: ../translation/plugins.c:81
+#: ../translation/plugins.c:91
 #, no-c-format
 msgid "Drive speed for normal playback"
 msgstr "光碟機正常播放速率"
 
-#: ../translation/plugins.c:89
+#: ../translation/plugins.c:99
 #, no-c-format
 msgid "8x"
 msgstr "8 倍"
 
-#: ../translation/plugins.c:91
+#: ../translation/plugins.c:101
 #, no-c-format
 msgid "16x"
 msgstr "16 倍"
 
-#: ../translation/plugins.c:93
+#: ../translation/plugins.c:103
 #, no-c-format
 msgid "Max"
 msgstr "最大"
 
-#: ../translation/plugins.c:95
+#: ../translation/plugins.c:105
 #, no-c-format
 msgid "Use cdparanoia error correction when ripping"
 msgstr "轉錄時使用 cdparanoia 修正錯誤"
 
 #. plugins/converter/convgui.c
-#: ../translation/plugins.c:98
+#: ../translation/plugins.c:108
 #, no-c-format
 msgid "Convert"
 msgstr "轉檔"
 
 #. plugins/dsp_libsrc/src.c
-#: ../translation/plugins.c:101
+#: ../translation/plugins.c:111
 #, no-c-format
 msgid "Autodetect samplerate from output device"
 msgstr "從輸出設備自動偵測取樣率"
 
-#: ../translation/plugins.c:103
+#: ../translation/plugins.c:113
 #, no-c-format
 msgid "Set samplerate directly"
 msgstr "直接設定取樣率"
 
-#: ../translation/plugins.c:105
+#: ../translation/plugins.c:115
 #, no-c-format
 msgid "Quality / Algorithm"
 msgstr "品質 / 演算法"
 
 #. plugins/dumb/cdumb.c
-#: ../translation/plugins.c:108
+#: ../translation/plugins.c:118
 #, no-c-format
 msgid "Resampling quality"
 msgstr "重新取樣品質"
 
-#: ../translation/plugins.c:110
+#: ../translation/plugins.c:120
 #, no-c-format
 msgid "Internal DUMB volume"
 msgstr ""
 
-#: ../translation/plugins.c:112
+#: ../translation/plugins.c:122
 #, no-c-format
 msgid "Volume ramping"
 msgstr ""
 
-#: ../translation/plugins.c:116
+#: ../translation/plugins.c:126
 #, no-c-format
 msgid "On/Off Only"
 msgstr "僅 開/關"
 
-#: ../translation/plugins.c:118
+#: ../translation/plugins.c:128
 #, no-c-format
 msgid "Full"
 msgstr "完整"
 
-#: ../translation/plugins.c:120
+#: ../translation/plugins.c:130
 #, no-c-format
 msgid "8-bit output"
 msgstr "8位元輸出"
 
 #. plugins/ffmpeg/ffmpeg.c
-#: ../translation/plugins.c:123
+#: ../translation/plugins.c:133
 #, no-c-format
 msgid "Use all extensions supported by ffmpeg"
 msgstr "使用 ffmpeg 支援的所有擴充"
 
-#: ../translation/plugins.c:125
+#: ../translation/plugins.c:135
 #, no-c-format
 msgid "File Extensions (separate with ';')"
 msgstr "檔案副檔名（以 ; 分隔）"
 
-#: ../translation/plugins.c:127
+#: ../translation/plugins.c:137
 #, no-c-format
 msgid "Enable DoP output"
 msgstr ""
 
 #. plugins/flac/flac.c
-#: ../translation/plugins.c:130
+#: ../translation/plugins.c:140
 #, no-c-format
 msgid "Ignore bad header errors"
 msgstr "忽略錯誤標頭訊息"
 
-#: ../translation/plugins.c:132
+#: ../translation/plugins.c:142
 #, no-c-format
 msgid "Ignore unparsable stream errors"
 msgstr "忽略無法剖析串流錯誤"
 
 #. plugins/gme/cgme.c
-#: ../translation/plugins.c:135
+#: ../translation/plugins.c:145
 #, no-c-format
 msgid "Max song length (in minutes)"
 msgstr "歌曲最大長度（分鐘）"
 
-#: ../translation/plugins.c:137
+#: ../translation/plugins.c:147
 #, no-c-format
 msgid "Fadeout length (seconds)"
 msgstr "淡出長度 （單位：秒）"
 
-#: ../translation/plugins.c:139
+#: ../translation/plugins.c:149
 #, no-c-format
 msgid "Play loops nr. of times (if available)"
 msgstr "循環播放次數（若支援）"
 
-#: ../translation/plugins.c:141
+#: ../translation/plugins.c:151
 #, no-c-format
 msgid "ColecoVision BIOS (for SGC file format)"
 msgstr ""
 
 #. plugins/gtkui/gtkui.c
-#: ../translation/plugins.c:144
+#: ../translation/plugins.c:154
 #, no-c-format
 msgid "ReplayGain"
 msgstr "音量標準化"
 
-#: ../translation/plugins.c:146
+#: ../translation/plugins.c:156
 #, no-c-format
 msgid "Remove ReplayGain Information"
 msgstr "移除音量標準化資訊"
 
-#: ../translation/plugins.c:148
+#: ../translation/plugins.c:158
 #, no-c-format
 msgid "Scan Selection As Albums (By Tags)"
 msgstr "將掃描選取項目視為專輯（依標籤）"
 
-#: ../translation/plugins.c:150
+#: ../translation/plugins.c:160
 #, no-c-format
 msgid "Scan Selection As Single Album"
 msgstr "將掃描選取項目視為專輯"
 
-#: ../translation/plugins.c:152
+#: ../translation/plugins.c:162
 #, no-c-format
 msgid "Scan Per-file Track Gain"
 msgstr "掃描每首曲目"
 
-#: ../translation/plugins.c:154
+#: ../translation/plugins.c:164
 #, no-c-format
 msgid "Scan Per-file Track Gain If Not Scanned"
 msgstr ""
 
-#: ../translation/plugins.c:158
+#: ../translation/plugins.c:168
 #, no-c-format
 msgid "Deselect All"
 msgstr "反向全選"
 
-#: ../translation/plugins.c:160
+#: ../translation/plugins.c:170
 #, no-c-format
 msgid "Select All"
 msgstr "全選"
 
-#: ../translation/plugins.c:168
+#: ../translation/plugins.c:178
 #, no-c-format
 msgid "Add Folder(s)"
 msgstr "添加目錄"
 
-#: ../translation/plugins.c:170
+#: ../translation/plugins.c:180
 #, no-c-format
 msgid "Add File(s)"
 msgstr "添加檔案"
 
-#: ../translation/plugins.c:172
+#: ../translation/plugins.c:182
 #, no-c-format
 msgid "Open File(s)"
 msgstr "開啟檔案"
 
-#: ../translation/plugins.c:178
+#: ../translation/plugins.c:188
 #, no-c-format
 msgid "Show Help Page"
 msgstr "顯示說明頁"
 
-#: ../translation/plugins.c:182
+#: ../translation/plugins.c:192
 #, no-c-format
 msgid "Cycle Repeat Mode"
 msgstr "循環重複模式"
 
-#: ../translation/plugins.c:184
+#: ../translation/plugins.c:194
 #, no-c-format
 msgid "Repeat - Off"
 msgstr "重播 - 關"
 
-#: ../translation/plugins.c:186
+#: ../translation/plugins.c:196
 #, no-c-format
 msgid "Repeat - Single Track"
 msgstr "重播 - 單曲"
 
-#: ../translation/plugins.c:188
+#: ../translation/plugins.c:198
 #, no-c-format
 msgid "Repeat - All"
 msgstr "重播 - 全部"
 
-#: ../translation/plugins.c:190
+#: ../translation/plugins.c:200
 #, no-c-format
 msgid "Cycle Shuffle Mode"
 msgstr "循環跳躍播放模式"
 
-#: ../translation/plugins.c:192
+#: ../translation/plugins.c:202
 #, no-c-format
 msgid "Shuffle - Random Tracks"
 msgstr "跳躍 - 隨機曲目"
 
-#: ../translation/plugins.c:194
+#: ../translation/plugins.c:204
 #, no-c-format
 msgid "Shuffle - Albums"
 msgstr "跳躍 - 專輯"
 
-#: ../translation/plugins.c:196
+#: ../translation/plugins.c:206
 #, no-c-format
 msgid "Shuffle - Tracks"
 msgstr "跳躍 - 曲目"
 
-#: ../translation/plugins.c:198
+#: ../translation/plugins.c:208
 #, no-c-format
 msgid "Shuffle - Off"
 msgstr "跳躍 - 關閉"
 
-#: ../translation/plugins.c:200
+#: ../translation/plugins.c:210
 #, no-c-format
 msgid "Toggle Cursor Follows Playback"
 msgstr "隨播放移動游標"
 
-#: ../translation/plugins.c:202
+#: ../translation/plugins.c:212
 #, no-c-format
 msgid "Toggle Scroll Follows Playback"
 msgstr "隨播放捲動"
 
-#: ../translation/plugins.c:204
+#: ../translation/plugins.c:214
 #, no-c-format
 msgid "View"
 msgstr "檢視"
 
-#: ../translation/plugins.c:206
+#: ../translation/plugins.c:216
 #, no-c-format
 msgid "Show\\/Hide menu"
 msgstr "顯示\\/隱藏 選單"
 
-#: ../translation/plugins.c:208
+#: ../translation/plugins.c:218
 #, no-c-format
 msgid "Show\\/Hide statusbar"
 msgstr "顯示\\/隱藏 狀態列"
 
-#: ../translation/plugins.c:210
+#: ../translation/plugins.c:220
 #, no-c-format
 msgid "Toggle Design Mode"
 msgstr "切換為設計模式"
 
-#: ../translation/plugins.c:214
+#: ../translation/plugins.c:224
 #, no-c-format
 msgid "Sort Custom"
 msgstr "自訂排序"
 
-#: ../translation/plugins.c:216
+#: ../translation/plugins.c:226
 #, no-c-format
 msgid "Crop Selected"
 msgstr "剪下選取項目"
 
-#: ../translation/plugins.c:218
+#: ../translation/plugins.c:228
 #, no-c-format
 msgid "Remove Track(s) from Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:220
+#: ../translation/plugins.c:230
 #, no-c-format
 msgid "Save Playlist"
 msgstr "儲存播放清單"
 
-#: ../translation/plugins.c:224
+#: ../translation/plugins.c:234
 #, no-c-format
 msgid "Remove Current Playlist"
 msgstr "移除現有播放清單"
 
-#: ../translation/plugins.c:228
+#: ../translation/plugins.c:238
 #, no-c-format
 msgid "Rename Current Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:230
+#: ../translation/plugins.c:240
 #, no-c-format
 msgid "Show\\/Hide Equalizer"
 msgstr "顯示\\/隱藏 等化器"
 
-#: ../translation/plugins.c:232
+#: ../translation/plugins.c:242
 #, no-c-format
 msgid "Hide Equalizer"
 msgstr "隱藏等化器"
 
-#: ../translation/plugins.c:234
+#: ../translation/plugins.c:244
 #, no-c-format
 msgid "Show Equalizer"
 msgstr "顯示等化器"
 
-#: ../translation/plugins.c:236
+#: ../translation/plugins.c:246
 #, no-c-format
 msgid "Show\\/Hide Player Window"
 msgstr "顯示\\/隱藏 播放器視窗"
 
-#: ../translation/plugins.c:238
+#: ../translation/plugins.c:248
 #, no-c-format
 msgid "Hide Player Window"
 msgstr "隱藏播放器視窗"
 
-#: ../translation/plugins.c:240
+#: ../translation/plugins.c:250
 #, no-c-format
 msgid "Show Player Window"
 msgstr "顯示播放器視窗"
 
-#: ../translation/plugins.c:242
+#: ../translation/plugins.c:252
 #, no-c-format
 msgid "Find"
 msgstr "尋找"
 
-#: ../translation/plugins.c:244
+#: ../translation/plugins.c:254
 #, no-c-format
 msgid "Show\\/Hide Log window"
 msgstr "顯示\\/隱藏 日誌視窗"
 
-#: ../translation/plugins.c:246
+#: ../translation/plugins.c:256
 #, no-c-format
 msgid "Undo"
 msgstr ""
 
-#: ../translation/plugins.c:248
+#: ../translation/plugins.c:258
 #, no-c-format
 msgid "Redo"
 msgstr ""
 
-#: ../translation/plugins.c:250
+#: ../translation/plugins.c:260
 #, no-c-format
 msgid "Ask confirmation to delete files from disk"
 msgstr "自磁碟刪除檔案要先確認"
 
-#: ../translation/plugins.c:252
+#: ../translation/plugins.c:262
 #, no-c-format
 msgid "Status icon settings:"
 msgstr ""
 
-#: ../translation/plugins.c:254
+#: ../translation/plugins.c:264
 #, no-c-format
 msgid "Status icon volume control sensitivity"
 msgstr "狀態圖示音量控制敏感度"
 
-#: ../translation/plugins.c:256
+#: ../translation/plugins.c:266
 #, no-c-format
 msgid "Custom status icon"
 msgstr "自訂狀態圖示"
 
-#: ../translation/plugins.c:258
+#: ../translation/plugins.c:268
 #, no-c-format
 msgid "Misc:"
 msgstr ""
 
-#: ../translation/plugins.c:260
+#: ../translation/plugins.c:270
 #, no-c-format
 msgid "Add separators between plugin context menu items"
 msgstr "在外掛選單項目之間加入分隔符號"
 
-#: ../translation/plugins.c:262
+#: ../translation/plugins.c:272
 #, no-c-format
 msgid "Use unicode chars instead of images for track state"
 msgstr "以萬國碼取代圖片顯示曲目狀態"
 
-#: ../translation/plugins.c:264
+#: ../translation/plugins.c:274
 #, no-c-format
 msgid "Disable seekbar overlay text"
 msgstr "禁用進度條的覆蓋文字"
 
 #. plugins/hotkeys/hotkeys.c
-#: ../translation/plugins.c:267
+#: ../translation/plugins.c:277
 #, no-c-format
 msgid "Previous or Restart Current Track"
 msgstr ""
 
-#: ../translation/plugins.c:269
+#: ../translation/plugins.c:279
 #, no-c-format
 msgid "Duplicate Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:273
+#: ../translation/plugins.c:283
 #, no-c-format
 msgid "Jump to Currently Playing Track"
 msgstr ""
 
-#: ../translation/plugins.c:275
+#: ../translation/plugins.c:285
 #, no-c-format
 msgid "Skip to"
 msgstr "跳至"
 
-#: ../translation/plugins.c:277
+#: ../translation/plugins.c:287
 #, no-c-format
 msgid "Previous Genre"
 msgstr ""
 
-#: ../translation/plugins.c:279
+#: ../translation/plugins.c:289
 #, no-c-format
 msgid "Previous Composer"
 msgstr ""
 
-#: ../translation/plugins.c:281
+#: ../translation/plugins.c:291
 #, no-c-format
 msgid "Previous Artist"
 msgstr ""
 
-#: ../translation/plugins.c:283
+#: ../translation/plugins.c:293
 #, no-c-format
 msgid "Previous Album"
 msgstr ""
 
-#: ../translation/plugins.c:285
+#: ../translation/plugins.c:295
 #, no-c-format
 msgid "Next Genre"
 msgstr ""
 
-#: ../translation/plugins.c:287
+#: ../translation/plugins.c:297
 #, no-c-format
 msgid "Next Composer"
 msgstr ""
 
-#: ../translation/plugins.c:289
+#: ../translation/plugins.c:299
 #, no-c-format
 msgid "Next Artist"
 msgstr ""
 
-#: ../translation/plugins.c:291
+#: ../translation/plugins.c:301
 #, no-c-format
 msgid "Next Album"
 msgstr ""
 
-#: ../translation/plugins.c:293
+#: ../translation/plugins.c:303
 #, no-c-format
 msgid "Next Playlist"
 msgstr "下一個播放清單"
 
-#: ../translation/plugins.c:295
+#: ../translation/plugins.c:305
 #, no-c-format
 msgid "Previous Playlist"
 msgstr ""
 
-#: ../translation/plugins.c:297
+#: ../translation/plugins.c:307
 #, no-c-format
 msgid "Switch to Playlist 10"
 msgstr ""
 
-#: ../translation/plugins.c:299
+#: ../translation/plugins.c:309
 #, no-c-format
 msgid "Switch to Playlist 9"
 msgstr ""
 
-#: ../translation/plugins.c:301
+#: ../translation/plugins.c:311
 #, no-c-format
 msgid "Switch to Playlist 8"
 msgstr ""
 
-#: ../translation/plugins.c:303
+#: ../translation/plugins.c:313
 #, no-c-format
 msgid "Switch to Playlist 7"
 msgstr ""
 
-#: ../translation/plugins.c:305
+#: ../translation/plugins.c:315
 #, no-c-format
 msgid "Switch to Playlist 6"
 msgstr ""
 
-#: ../translation/plugins.c:307
+#: ../translation/plugins.c:317
 #, no-c-format
 msgid "Switch to Playlist 5"
 msgstr ""
 
-#: ../translation/plugins.c:309
+#: ../translation/plugins.c:319
 #, no-c-format
 msgid "Switch to Playlist 4"
 msgstr ""
 
-#: ../translation/plugins.c:311
+#: ../translation/plugins.c:321
 #, no-c-format
 msgid "Switch to Playlist 3"
 msgstr ""
 
-#: ../translation/plugins.c:313
+#: ../translation/plugins.c:323
 #, no-c-format
 msgid "Switch to Playlist 2"
 msgstr ""
 
-#: ../translation/plugins.c:315
+#: ../translation/plugins.c:325
 #, no-c-format
 msgid "Switch to Playlist 1"
 msgstr ""
 
-#: ../translation/plugins.c:317
+#: ../translation/plugins.c:327
 #, no-c-format
 msgid "Sort Randomize"
 msgstr "亂數排序"
 
-#: ../translation/plugins.c:319
+#: ../translation/plugins.c:329
 #, no-c-format
 msgid "Sort by Date"
 msgstr ""
 
-#: ../translation/plugins.c:321
+#: ../translation/plugins.c:331
 #, no-c-format
 msgid "Sort by Artist"
 msgstr ""
 
-#: ../translation/plugins.c:323
+#: ../translation/plugins.c:333
 #, no-c-format
 msgid "Sort by Album"
 msgstr ""
 
-#: ../translation/plugins.c:325
+#: ../translation/plugins.c:335
 #, no-c-format
 msgid "Sort by Track Number"
 msgstr ""
 
-#: ../translation/plugins.c:327
+#: ../translation/plugins.c:337
 #, no-c-format
 msgid "Sort by Title"
 msgstr ""
 
-#: ../translation/plugins.c:329
+#: ../translation/plugins.c:339
 #, no-c-format
 msgid "Invert Selection"
 msgstr "反轉選擇"
 
-#: ../translation/plugins.c:331
+#: ../translation/plugins.c:341
 #, no-c-format
 msgid "Clear Playlist"
 msgstr "清除播放清單"
 
-#: ../translation/plugins.c:335
+#: ../translation/plugins.c:345
 #, no-c-format
 msgid "Add to Playback Queue"
 msgstr ""
 
-#: ../translation/plugins.c:337
+#: ../translation/plugins.c:347
 #, no-c-format
 msgid "Add to Front of Playback Queue"
 msgstr ""
 
-#: ../translation/plugins.c:339
+#: ../translation/plugins.c:349
 #, no-c-format
 msgid "Toggle in Playback Queue"
 msgstr ""
 
-#: ../translation/plugins.c:341
+#: ../translation/plugins.c:351
 #, no-c-format
 msgid "Move"
 msgstr "移動"
 
-#: ../translation/plugins.c:343
+#: ../translation/plugins.c:353
 #, no-c-format
 msgid "Move Tracks Down"
 msgstr "下移音軌"
 
-#: ../translation/plugins.c:345
+#: ../translation/plugins.c:355
 #, no-c-format
 msgid "Move Tracks Up"
 msgstr "上移音軌"
 
-#: ../translation/plugins.c:347
+#: ../translation/plugins.c:357
 #, no-c-format
 msgid "Toggle Mute"
 msgstr "切換靜音"
 
-#: ../translation/plugins.c:357
+#: ../translation/plugins.c:367
 #, no-c-format
 msgid "Toggle Pause"
 msgstr "切換暫停"
 
-#: ../translation/plugins.c:359
+#: ../translation/plugins.c:369
 #, no-c-format
 msgid "Play\\/Pause"
 msgstr "播放/暫停"
 
-#: ../translation/plugins.c:361
+#: ../translation/plugins.c:371
 #, no-c-format
 msgid "Play Next Album"
 msgstr ""
 
-#: ../translation/plugins.c:363
+#: ../translation/plugins.c:373
 #, no-c-format
 msgid "Play Previous Album"
 msgstr ""
 
-#: ../translation/plugins.c:365
+#: ../translation/plugins.c:375
 #, no-c-format
 msgid "Play Random Album"
 msgstr ""
 
-#: ../translation/plugins.c:369
+#: ../translation/plugins.c:379
 #, no-c-format
 msgid "Seek 1s Forward"
 msgstr "快進 1 秒"
 
-#: ../translation/plugins.c:371
+#: ../translation/plugins.c:381
 #, no-c-format
 msgid "Seek 1s Backward"
 msgstr "倒回 1 秒"
 
-#: ../translation/plugins.c:373
+#: ../translation/plugins.c:383
 #, no-c-format
 msgid "Seek 5s Forward"
 msgstr "快進 5 秒"
 
-#: ../translation/plugins.c:375
+#: ../translation/plugins.c:385
 #, no-c-format
 msgid "Seek 5s Backward"
 msgstr "倒回 5 秒"
 
-#: ../translation/plugins.c:377
+#: ../translation/plugins.c:387
 #, no-c-format
 msgid "Seek 1% Forward"
 msgstr "快進 1%"
 
-#: ../translation/plugins.c:379
+#: ../translation/plugins.c:389
 #, no-c-format
 msgid "Seek 1% Backward"
 msgstr "倒回 1%"
 
-#: ../translation/plugins.c:381
+#: ../translation/plugins.c:391
 #, no-c-format
 msgid "Seek 5% Forward"
 msgstr "快進 5%"
 
-#: ../translation/plugins.c:383
+#: ../translation/plugins.c:393
 #, no-c-format
 msgid "Seek 5% Backward"
 msgstr "倒回 5%"
 
-#: ../translation/plugins.c:385
+#: ../translation/plugins.c:395
 #, no-c-format
 msgid "Volume Up"
 msgstr "提昇音量"
 
-#: ../translation/plugins.c:387
+#: ../translation/plugins.c:397
 #, no-c-format
 msgid "Volume Down"
 msgstr "降低音量"
 
-#: ../translation/plugins.c:389
+#: ../translation/plugins.c:399
 #, no-c-format
 msgid "Toggle Stop After Current Track"
 msgstr "播放當前曲目後停止"
 
-#: ../translation/plugins.c:391
+#: ../translation/plugins.c:401
 #, no-c-format
 msgid "Toggle Stop After Current Album"
 msgstr "播放完此專輯後停止"
 
 #. plugins/lastfm/lastfm.c
-#: ../translation/plugins.c:394
+#: ../translation/plugins.c:404
 #, no-c-format
 msgid "Lookup on Last.fm"
 msgstr ""
 
-#: ../translation/plugins.c:396
+#: ../translation/plugins.c:406
 #, no-c-format
 msgid "Enable scrobbler"
 msgstr "偏用歌曲記錄"
 
-#: ../translation/plugins.c:398
+#: ../translation/plugins.c:408
 #, no-c-format
 msgid "Disable nowplaying"
 msgstr "停用正在播放"
 
-#: ../translation/plugins.c:400
+#: ../translation/plugins.c:410
 #, no-c-format
 msgid "Username"
 msgstr "使用者名稱"
 
-#: ../translation/plugins.c:402
+#: ../translation/plugins.c:412
 #, no-c-format
 msgid "Password"
 msgstr "密碼"
 
-#: ../translation/plugins.c:404
+#: ../translation/plugins.c:414
 #, no-c-format
 msgid "Scrobble URL"
 msgstr "Scrobble 網址"
 
-#: ../translation/plugins.c:406
+#: ../translation/plugins.c:416
 #, no-c-format
 msgid "Prefer Album Artist over Artist field"
 msgstr "以專輯作者取代作者欄"
 
-#: ../translation/plugins.c:408
+#: ../translation/plugins.c:418
 #, no-c-format
 msgid "Send MusicBrainz ID"
 msgstr "送出 MusicBrainz ID"
 
-#: ../translation/plugins.c:410
+#: ../translation/plugins.c:420
 #, no-c-format
 msgid "Submit tracks shorter than 30 seconds (not recommended)"
 msgstr ""
 
+#: ../translation/plugins.c:422
+#, no-c-format
+msgid "Enable logging"
+msgstr "啟用日誌記錄"
+
 #. plugins/mono2stereo/mono2stereo.c
-#: ../translation/plugins.c:413
+#: ../translation/plugins.c:425
 #, no-c-format
 msgid "Left mix"
 msgstr "左側混音"
 
-#: ../translation/plugins.c:415
+#: ../translation/plugins.c:427
 #, no-c-format
 msgid "Right mix"
 msgstr "右側混音"
 
 #. plugins/mp3/mp3.c
-#: ../translation/plugins.c:418
+#: ../translation/plugins.c:430
 #, no-c-format
 msgid "Force 16 bit output"
 msgstr "強制 16 位元輸出"
 
-#: ../translation/plugins.c:420
+#: ../translation/plugins.c:432
 #, no-c-format
 msgid "Backend"
 msgstr "後端"
 
-#: ../translation/plugins.c:425
+#: ../translation/plugins.c:437
 #, no-c-format
 msgid "Notification title format"
 msgstr "通告標題格式"
 
-#: ../translation/plugins.c:427
+#: ../translation/plugins.c:439
 #, no-c-format
 msgid "Notification content format"
 msgstr "通告內容格式"
 
-#: ../translation/plugins.c:429
+#: ../translation/plugins.c:441
 #, no-c-format
 msgid "Show album art"
 msgstr "顯示專輯封面"
 
-#: ../translation/plugins.c:431
+#: ../translation/plugins.c:443
 #, no-c-format
 msgid "Album art size (px)"
 msgstr "專輯封面尺寸（像素）"
 
-#: ../translation/plugins.c:433
+#: ../translation/plugins.c:445
 #, no-c-format
 msgid "Don't reuse notifications (KDE quirk)"
 msgstr ""
 
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:436
+#: ../translation/plugins.c:448
 #, no-c-format
 msgid "Device file"
 msgstr "裝置檔案"
 
-#: ../translation/plugins.c:441
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "Highlight current playlist"
 msgstr "突顯目前的播放清單"
 
-#: ../translation/plugins.c:443
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "Play on double-click"
 msgstr "雙擊播放"
 
 #. plugins/portaudio/portaudio.c
-#: ../translation/plugins.c:446
+#: ../translation/plugins.c:458
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
 msgstr ""
 
-#: ../translation/plugins.c:448
+#: ../translation/plugins.c:460
 #, no-c-format
 msgid "Device name encoding"
 msgstr "裝置名稱編碼"
 
-#: ../translation/plugins.c:450
+#: ../translation/plugins.c:462
 #, no-c-format
 msgid "ASCII / UTF-8"
 msgstr "ASCII / UTF-8"
 
-#: ../translation/plugins.c:452
+#: ../translation/plugins.c:464
 #, no-c-format
 msgid "cp1250"
 msgstr "cp1250"
 
-#: ../translation/plugins.c:454
+#: ../translation/plugins.c:466
 #, no-c-format
 msgid "Defined below"
 msgstr "在下面定義"
 
-#: ../translation/plugins.c:456
+#: ../translation/plugins.c:468
 #, no-c-format
 msgid "Custom device name encoding"
 msgstr "自訂裝置名稱編碼"
 
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:459
+#: ../translation/plugins.c:471
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr "PulseAudio 伺服器（預設為空）"
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:462
+#: ../translation/plugins.c:474
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr "預設歌曲長度（分鐘）"
 
-#: ../translation/plugins.c:464
+#: ../translation/plugins.c:476
 #, no-c-format
 msgid "Samplerate"
 msgstr "取樣率"
 
-#: ../translation/plugins.c:466
+#: ../translation/plugins.c:478
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr "跳過歌曲如果時間短於（秒）"
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "設定自訂 shell 指令"
 
 #. plugins/shn/shnplugin.c
-#: ../translation/plugins.c:472
+#: ../translation/plugins.c:484
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "相對搜索表格路徑"
 
-#: ../translation/plugins.c:474
+#: ../translation/plugins.c:486
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "絕對搜索表格路徑"
 
-#: ../translation/plugins.c:476
+#: ../translation/plugins.c:488
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "置換音訊位元組（如聽到的只是雜訊則切換）"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:479
+#: ../translation/plugins.c:491
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "啟用 HVSC 歌曲長度資料庫"
 
-#: ../translation/plugins.c:481
+#: ../translation/plugins.c:493
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr "Songlengths.md5/.txt 的完整路徑"
 
-#: ../translation/plugins.c:483
+#: ../translation/plugins.c:495
 #, no-c-format
 msgid "Bits per sample"
 msgstr "取樣位元"
 
-#: ../translation/plugins.c:485
+#: ../translation/plugins.c:497
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "預設歌曲長度（秒）"
 
-#: ../translation/plugins.c:487
+#: ../translation/plugins.c:499
 #, no-c-format
 msgid "Mono synth"
 msgstr "單聲道合成器"
 
-#. plugins/sndfile/sndfile.c
-#: ../translation/plugins.c:490
-#, no-c-format
-msgid "Enable logging"
-msgstr "啟用日誌記錄"
-
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:493
+#: ../translation/plugins.c:502
 #, no-c-format
 msgid "Preamp"
 msgstr "前級放大器"
 
-#: ../translation/plugins.c:495
+#: ../translation/plugins.c:504
 #, no-c-format
 msgid "1.2K"
 msgstr ""
 
-#: ../translation/plugins.c:497
+#: ../translation/plugins.c:506
 #, no-c-format
 msgid "1.8K"
 msgstr ""
 
-#: ../translation/plugins.c:499
+#: ../translation/plugins.c:508
 #, no-c-format
 msgid "2.5K"
 msgstr ""
 
-#: ../translation/plugins.c:501
+#: ../translation/plugins.c:510
 #, no-c-format
 msgid "3.5K"
 msgstr ""
 
-#: ../translation/plugins.c:503
+#: ../translation/plugins.c:512
 #, no-c-format
 msgid "5K"
 msgstr ""
 
-#: ../translation/plugins.c:505
+#: ../translation/plugins.c:514
 #, no-c-format
 msgid "7K"
 msgstr ""
 
-#: ../translation/plugins.c:507
+#: ../translation/plugins.c:516
 #, no-c-format
 msgid "10K"
 msgstr ""
 
-#: ../translation/plugins.c:509
+#: ../translation/plugins.c:518
 #, no-c-format
 msgid "14K"
 msgstr ""
 
-#: ../translation/plugins.c:511
+#: ../translation/plugins.c:520
 #, no-c-format
 msgid "20K"
 msgstr ""
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:514
+#: ../translation/plugins.c:523
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Timidity++ 樂器庫設定檔案"
 
 #. src/scriptable/scriptable_encoder.c
-#: ../translation/plugins.c:517
+#: ../translation/plugins.c:526
 #, no-c-format
 msgid "File extension"
 msgstr ""
 
-#: ../translation/plugins.c:519
+#: ../translation/plugins.c:528
 #, no-c-format
 msgid "Encoder command line"
 msgstr ""
 
-#: ../translation/plugins.c:521
+#: ../translation/plugins.c:530
 #, no-c-format
 msgid "Data transfer method"
 msgstr ""
 
-#: ../translation/plugins.c:523
+#: ../translation/plugins.c:532
 #, no-c-format
 msgid "Pipe (stdin)"
 msgstr ""
 
-#: ../translation/plugins.c:525
+#: ../translation/plugins.c:534
 #, no-c-format
 msgid "Temporary file"
 msgstr ""
 
-#: ../translation/plugins.c:527
+#: ../translation/plugins.c:536
 #, no-c-format
 msgid "Source file"
 msgstr ""
 
-#: ../translation/plugins.c:531
+#: ../translation/plugins.c:540
 #, no-c-format
 msgid "Write ID3v2 tag"
 msgstr ""
 
-#: ../translation/plugins.c:533
+#: ../translation/plugins.c:542
 #, no-c-format
 msgid "Write ID3v1 tag"
 msgstr ""
 
-#: ../translation/plugins.c:535
+#: ../translation/plugins.c:544
 #, no-c-format
 msgid "Write APEv2 tag"
 msgstr ""
 
-#: ../translation/plugins.c:537
+#: ../translation/plugins.c:546
 #, no-c-format
 msgid "Write FLAC tag"
 msgstr ""
 
-#: ../translation/plugins.c:539
+#: ../translation/plugins.c:548
 #, no-c-format
 msgid "Write OggVorbis tag"
 msgstr ""
 
-#: ../translation/plugins.c:541
+#: ../translation/plugins.c:550
 #, no-c-format
 msgid "Write MP4 tag"
 msgstr ""
