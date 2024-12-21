@@ -1,3 +1,30 @@
+version 1.10.0
+	Fixed: Memory leak affecting DSD (Toad King)
+	Fixed: deadbeef.desktop format violations (Viorel Munteanu)
+	Fixed: Spectrum analyzer drawing bugs
+	Fixed: Scope drawing bugs
+	Fixed: Finding album art image in ogg files
+	Fixed: Deadlock (hang) when clearing a playlist
+	Fixed: A number of issues with album art
+	Fixed: A number of issues with OSD notifications
+	Fixed: Toggle-pause behavior to do nothing when playback is stopped
+	Fixed: CDText issues (Warepire)
+	Fixed: Implementation of $longer title formatting function
+	Fixed: Handling of escape sequences in $cut title formatting function
+	Fixed: Current track playback indication in playlist browser
+	Fixed: Crash and memory leak when saving M3U playlists
+	Fixed: Crash after drag-dropping from search window
+	Added: Media library: find music in specified folders, and display in a tree
+	Added: Undo/redo playlist editing operations
+	Added: Commands for navigating to next/previous/random album with respect to shuffle mode (Robin Seth Ekman)
+	Added: TORY frame support for ID3v2.3
+	Added: FFMPEG 7 support (Christopher Snowhill)
+	Added: Separate config file for storing secrets (lastfm password)
+	Added: Support for relative paths when loading DBPL playlists (Robin Ekman)
+	Added: EAC3 support to ffmpeg plugin
+	Added: Updated adplug library to latest upstream version (Thomas Jepp)
+	Added: An option to disable log window auto showing after errors
+
 version 1.9.6
 	Fixed: Drawing spectrum analyzer in discrete frequencies mode
 	Fixed: Handling the option to enter archives when scanning folders (fudanchii)
