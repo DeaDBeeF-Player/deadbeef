@@ -41,6 +41,10 @@ plugins/gtkui/search.c
 plugins/gtkui/selpropertieswidget.c
 plugins/gtkui/trkproperties.c
 plugins/gtkui/widgets.c
+plugins/gtkui/scriptable/gtkScriptable.c
+plugins/gtkui/scriptable/gtkScriptableListEditViewController.c
+plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c
+plugins/gtkui/undointegration.c
 plugins/hotkeys/actionhandlers.c
 plugins/notify/notify.c
 plugins/pltbrowser/pltbrowser.c
