@@ -5,7 +5,7 @@ pkglib_LTLIBRARIES = dca.la
 dca_la_SOURCES = dcaplug.c\
 	libdca/audio_out.h\
 	libdca/bitstream.c\
-	libdca/bitstream.h
+	libdca/bitstream.h\
 	libdca/dca.h\
 	libdca/dca_internal.h\
 	libdca/downmix.c\
@@ -25,6 +25,7 @@ dca_la_SOURCES = dcaplug.c\
 dca_la_LDFLAGS = -module -avoid-version
 dca_la_LIBADD = $(LDADD) -lm
 
-dca_la_CFLAGS = $(CFLAGS) -fPIC -std=c99 -I@top_srcdir@/include -Ilibdca
+dcapath=@top_srcdir@/plugins/dca
+dca_la_CFLAGS = $(CFLAGS) -fPIC -std=c99 -I@top_srcdir@/include -I$(dcapath)/libdca
 
 endif

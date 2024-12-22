@@ -91,6 +91,9 @@ psf_la_SOURCES = plugin.c\
 psf_la_LDFLAGS = -module -avoid-version $(ZLIB_LIBS)
 
 psf_la_LIBADD = $(LDADD)
-psf_la_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -Wall -DHAS_PSXCPU=1 -Iaosdk -I.. -Iaosdk/eng_ssf -Iaosdk/eng_qsf -Iaosdk/eng_dsf -lm -fPIC -I@top_srcdir@/include
+
+psfpath=@top_srcdir@/plugins/psf
+
+psf_la_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -Wall -DHAS_PSXCPU=1 -I$(psfpath)/aosdk -I$(psfpath)/.. -I$(psfpath)/aosdk/eng_ssf -I$(psfpath)/aosdk/eng_qsf -I$(psfpath)/aosdk/eng_dsf -lm -fPIC -I@top_srcdir@/include
 endif
 

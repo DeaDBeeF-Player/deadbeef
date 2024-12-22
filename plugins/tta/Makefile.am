@@ -12,6 +12,7 @@ tta_la_SOURCES =\
 
 tta_la_LDFLAGS = -module -avoid-version
 
-tta_la_CFLAGS = $(CFLAGS) -std=c99 -fPIC -I@top_srcdir@/include -Ilibtta
+ttapath=@top_srcdir@/plugins/tta
+tta_la_CFLAGS = $(CFLAGS) -std=c99 -fPIC -I@top_srcdir@/include -I$(ttapath)/libtta
 endif
 
