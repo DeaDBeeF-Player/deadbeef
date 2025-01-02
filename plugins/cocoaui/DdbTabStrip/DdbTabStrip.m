@@ -410,6 +410,7 @@ static const int close_btn_left_offs = 8;
     }
 
     [NSGraphicsContext.currentContext saveGraphicsState];
+    [NSBezierPath clipRect:self.frame];
 
     // draw selected
     // calc position for drawin selected tab
