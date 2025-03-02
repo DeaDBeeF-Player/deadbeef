@@ -3,20 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# JungHee Lee <daemul72@gmail.com>, 2021
-# JungHee Lee <daemul72@gmail.com>, 2020
-# JungHee Lee <daemul72@gmail.com>, 2019-2020
+# Junghee Lee <daemul72@gmail.com>, 2021
+# Junghee Lee <daemul72@gmail.com>, 2020
+# Junghee Lee <daemul72@gmail.com>, 2019-2020
 # ieukori <ieukori@gmail.com>, 2016
-# JungHee Lee <daemul72@gmail.com>, 2020-2023
-# JungHee Lee <daemul72@gmail.com>, 2020-2022
-# JungHee Lee <daemul72@gmail.com>, 2021-2024
+# Junghee Lee <daemul72@gmail.com>, 2020-2023
+# Junghee Lee <daemul72@gmail.com>, 2020-2022
+# Junghee Lee <daemul72@gmail.com>, 2021-2024
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-21 11:58+0100\n"
+"POT-Creation-Date: 2025-03-02 23:44+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: JungHee Lee <daemul72@gmail.com>, 2021-2024\n"
+"Last-Translator: Junghee Lee <daemul72@gmail.com>, 2021-2024\n"
 "Language-Team: Korean (http://app.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2615,6 +2615,64 @@ msgstr "_큐빅 스케일"
 msgid "Voices:"
 msgstr "음성:"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:568
+#, c-format
+msgid "%s (Copy)"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:632
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:639
+msgid "Can't do that"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
+msgid "Preset with this name already exists."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
+msgid "Try a different name."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
+msgid "This name is not allowed."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+msgid "Reset"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "닫기"
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
+#, no-c-format
+msgid "Undo"
+msgstr "실행취소"
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
+#, no-c-format
+msgid "Redo"
+msgstr "다시실행"
+
 #: ../plugins/hotkeys/actionhandlers.c:824
 #, c-format
 msgid "Copy of %s"
@@ -2660,11 +2718,6 @@ msgstr "재생목록 찾아보기"
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
 msgstr "사용자 지정 셸 명령"
-
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "닫기"
 
 #: ../plugins/shellexecui/interface.c:149
 #: ../plugins/shellexecui/shellexec.glade.h:6
@@ -3405,16 +3458,6 @@ msgstr "찾기"
 #, no-c-format
 msgid "Show\\/Hide Log window"
 msgstr "로그 창 표시\\/숨김"
-
-#: ../translation/plugins.c:256
-#, no-c-format
-msgid "Undo"
-msgstr "실행취소"
-
-#: ../translation/plugins.c:258
-#, no-c-format
-msgid "Redo"
-msgstr "다시실행"
 
 #: ../translation/plugins.c:260
 #, no-c-format

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-21 11:58+0100\n"
+"POT-Creation-Date: 2025-03-02 23:44+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>, 2021-2024\n"
 "Language-Team: Dutch (http://app.transifex.com/deadbeef-player/deadbeef-player/language/nl/)\n"
@@ -1666,7 +1666,7 @@ msgstr "DeaDBeeF-logboek"
 
 #: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5624
 msgid "Auto-open this window on errors"
-msgstr ""
+msgstr "Venster automatisch openen bij foutmeldingen"
 
 #: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5628
 msgid "Clear"
@@ -2612,6 +2612,64 @@ msgstr "Kubis_che schaal"
 msgid "Voices:"
 msgstr "Stemmen:"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:568
+#, c-format
+msgid "%s (Copy)"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:632
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:639
+msgid "Can't do that"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
+msgid "Preset with this name already exists."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
+msgid "Try a different name."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
+msgid "This name is not allowed."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+msgid "Reset"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "Sluiten"
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
+#, no-c-format
+msgid "Undo"
+msgstr "Ongedaan maken"
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
+#, no-c-format
+msgid "Redo"
+msgstr "Herhalen"
+
 #: ../plugins/hotkeys/actionhandlers.c:824
 #, c-format
 msgid "Copy of %s"
@@ -2657,11 +2715,6 @@ msgstr "Afspeellijstverkenner"
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
 msgstr "Aangepaste shell-opdrachten"
-
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "Sluiten"
 
 #: ../plugins/shellexecui/interface.c:149
 #: ../plugins/shellexecui/shellexec.glade.h:6
@@ -2790,7 +2843,7 @@ msgstr "Ongeldige waarden"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings.\n"
-msgstr ""
+msgstr "wildmidi: het freepats-configuratiebestand is niet aangetroffen. Installeer het pakket ‘timidity-freepats’ of voer de locatie van freepats.cfg in in de plug-in-instellingen.\n"
 
 #: ../src/tf.c:2289
 msgid "mono"
@@ -2876,37 +2929,37 @@ msgstr "PipeWire-volumebediening gebruiken"
 #: ../translation/plugins.c:10
 #, no-c-format
 msgid "Sample rate (real OPL is 49716Hz)"
-msgstr ""
+msgstr "Samplesnelheid (daadwerkelijke OPL is 49716Hz)"
 
 #: ../translation/plugins.c:12
 #, no-c-format
 msgid "Synth engine"
-msgstr ""
+msgstr "Synth-aandrijving"
 
 #: ../translation/plugins.c:14
 #, no-c-format
 msgid "Nuked OPL3"
-msgstr ""
+msgstr "Nuked OPL3"
 
 #: ../translation/plugins.c:16
 #, no-c-format
 msgid "DOSBox OPL3 emulator"
-msgstr ""
+msgstr "DOSBox OPL3-emulator"
 
 #: ../translation/plugins.c:18
 #, no-c-format
 msgid "Tatsuyuki Satoh's OPL2 emulator"
-msgstr ""
+msgstr "Tatsuyuki Satoh's OPL2-emulator"
 
 #: ../translation/plugins.c:20
 #, no-c-format
 msgid "Ken Silverman's OPL emulator"
-msgstr ""
+msgstr "Ken Silverman's OPL-emulator"
 
 #: ../translation/plugins.c:22
 #, no-c-format
 msgid "Simon Peter's OPL emulator"
-msgstr ""
+msgstr "Simon Peter's OPL-emulator"
 
 #. plugins/alsa/alsa.c
 #: ../translation/plugins.c:25
@@ -3402,16 +3455,6 @@ msgstr "Zoeken"
 #, no-c-format
 msgid "Show\\/Hide Log window"
 msgstr "Logboekvenster tonen/verbergen"
-
-#: ../translation/plugins.c:256
-#, no-c-format
-msgid "Undo"
-msgstr "Ongedaan maken"
-
-#: ../translation/plugins.c:258
-#, no-c-format
-msgid "Redo"
-msgstr "Herhalen"
 
 #: ../translation/plugins.c:260
 #, no-c-format
