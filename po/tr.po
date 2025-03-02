@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-21 11:58+0100\n"
+"POT-Creation-Date: 2025-03-02 23:44+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Numan Demirdöğen <if.gnu.linux@gmail.com>, 2016\n"
 "Language-Team: Turkish (http://app.transifex.com/deadbeef-player/deadbeef-player/language/tr/)\n"
@@ -2618,6 +2618,64 @@ msgstr ""
 msgid "Voices:"
 msgstr "Sesler:"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:568
+#, c-format
+msgid "%s (Copy)"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:632
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:639
+msgid "Can't do that"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
+msgid "Preset with this name already exists."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
+msgid "Try a different name."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
+msgid "This name is not allowed."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+msgid "Reset"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "Kapat"
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
+#, no-c-format
+msgid "Undo"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
+#, no-c-format
+msgid "Redo"
+msgstr ""
+
 #: ../plugins/hotkeys/actionhandlers.c:824
 #, c-format
 msgid "Copy of %s"
@@ -2663,11 +2721,6 @@ msgstr "Çalma listesi tarayıcısı"
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
 msgstr "Özel Kabuk Komutları"
-
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "Kapat"
 
 #: ../plugins/shellexecui/interface.c:149
 #: ../plugins/shellexecui/shellexec.glade.h:6
@@ -3408,16 +3461,6 @@ msgstr "Bul"
 #, no-c-format
 msgid "Show\\/Hide Log window"
 msgstr "Günlük Penceresini Göster\\/Gizle"
-
-#: ../translation/plugins.c:256
-#, no-c-format
-msgid "Undo"
-msgstr ""
-
-#: ../translation/plugins.c:258
-#, no-c-format
-msgid "Redo"
-msgstr ""
 
 #: ../translation/plugins.c:260
 #, no-c-format

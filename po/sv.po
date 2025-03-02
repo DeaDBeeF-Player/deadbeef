@@ -8,13 +8,14 @@
 # Jonatan Nyberg, 2018-2021
 # efef6ec5b435a041fce803c7f8af77d2_2341d43, 2017-2018
 # Luna Jernberg <droidbittin@gmail.com>, 2024
+# Luna Jernberg <droidbittin@gmail.com>, 2024
 # Martin Bagge <brother@bsnet.se>, 2010
 # Martin Bagge <brother@bsnet.se>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-21 11:58+0100\n"
+"POT-Creation-Date: 2025-03-02 23:44+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Luna Jernberg <droidbittin@gmail.com>, 2024\n"
 "Language-Team: Swedish (http://app.transifex.com/deadbeef-player/deadbeef-player/language/sv/)\n"
@@ -1669,7 +1670,7 @@ msgstr "DeaDBeeF-logg"
 
 #: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5624
 msgid "Auto-open this window on errors"
-msgstr ""
+msgstr "Öppna det här fönstret automatiskt om fel inträffar"
 
 #: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5628
 msgid "Clear"
@@ -2615,6 +2616,64 @@ msgstr "_Kubisk skala"
 msgid "Voices:"
 msgstr "Röster:"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:568
+#, c-format
+msgid "%s (Copy)"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:632
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:639
+msgid "Can't do that"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
+msgid "Preset with this name already exists."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
+msgid "Try a different name."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
+msgid "This name is not allowed."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+msgid "Reset"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "Stäng"
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
+#, no-c-format
+msgid "Undo"
+msgstr "Ångra"
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
+#, no-c-format
+msgid "Redo"
+msgstr "Gör om"
+
 #: ../plugins/hotkeys/actionhandlers.c:824
 #, c-format
 msgid "Copy of %s"
@@ -2660,11 +2719,6 @@ msgstr "Spellistsbläddrare"
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
 msgstr "Anpassade skalkommandon"
-
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "Stäng"
 
 #: ../plugins/shellexecui/interface.c:149
 #: ../plugins/shellexecui/shellexec.glade.h:6
@@ -2793,7 +2847,7 @@ msgstr "Ogiltiga värden"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings.\n"
-msgstr ""
+msgstr "wildmidi: freepats konfigurationsfil hittades inte. Installera timidity-freepats paketet eller ange sökväg till freepats.cfg i inställningarna för insticksmodulen.\n"
 
 #: ../src/tf.c:2289
 msgid "mono"
@@ -2879,37 +2933,37 @@ msgstr "Använd PipeWire volymkontroll"
 #: ../translation/plugins.c:10
 #, no-c-format
 msgid "Sample rate (real OPL is 49716Hz)"
-msgstr ""
+msgstr "Samplingshastighet (verklig OPL är 49716Hz) "
 
 #: ../translation/plugins.c:12
 #, no-c-format
 msgid "Synth engine"
-msgstr ""
+msgstr "Synth motor"
 
 #: ../translation/plugins.c:14
 #, no-c-format
 msgid "Nuked OPL3"
-msgstr ""
+msgstr "Nuked OPL3"
 
 #: ../translation/plugins.c:16
 #, no-c-format
 msgid "DOSBox OPL3 emulator"
-msgstr ""
+msgstr "DOSBox OPL3 emulator"
 
 #: ../translation/plugins.c:18
 #, no-c-format
 msgid "Tatsuyuki Satoh's OPL2 emulator"
-msgstr ""
+msgstr "Tatsuyuki Satoh's OPL2 emulator"
 
 #: ../translation/plugins.c:20
 #, no-c-format
 msgid "Ken Silverman's OPL emulator"
-msgstr ""
+msgstr "Ken Silverman's OPL emulator"
 
 #: ../translation/plugins.c:22
 #, no-c-format
 msgid "Simon Peter's OPL emulator"
-msgstr ""
+msgstr "Simon Peter's OPL emulator"
 
 #. plugins/alsa/alsa.c
 #: ../translation/plugins.c:25
@@ -3405,16 +3459,6 @@ msgstr "Hitta"
 #, no-c-format
 msgid "Show\\/Hide Log window"
 msgstr "Visa\\/Dölj loggfönster"
-
-#: ../translation/plugins.c:256
-#, no-c-format
-msgid "Undo"
-msgstr "Ångra"
-
-#: ../translation/plugins.c:258
-#, no-c-format
-msgid "Redo"
-msgstr "Gör om"
 
 #: ../translation/plugins.c:260
 #, no-c-format

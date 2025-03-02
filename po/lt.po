@@ -7,14 +7,14 @@
 # Algimantas Margevičius <margevicius.algimantas@gmail.com>, 2012
 # Moo, 2017,2023
 # Moo, 2017-2022
-# Moo, 2023-2024
+# Moo, 2023-2025
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-21 11:58+0100\n"
+"POT-Creation-Date: 2025-03-02 23:44+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Moo, 2023-2024\n"
+"Last-Translator: Moo, 2023-2025\n"
 "Language-Team: Lithuanian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/lt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -651,11 +651,11 @@ msgstr "DeaDBeeF vertėjai"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:371
 msgid "Playing Track"
-msgstr ""
+msgstr "Atkuriamas takelis"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:375
 msgid "Selected Track"
-msgstr ""
+msgstr "Pasirinktas takelis"
 
 #: ../plugins/gtkui/ctmapping.c:130
 msgid "Content-Type"
@@ -2613,6 +2613,64 @@ msgstr ""
 msgid "Voices:"
 msgstr "Balsai:"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:568
+#, c-format
+msgid "%s (Copy)"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:632
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:639
+msgid "Can't do that"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
+msgid "Preset with this name already exists."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
+msgid "Try a different name."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
+msgid "This name is not allowed."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+msgid "Reset"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "Užverti"
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
+#, no-c-format
+msgid "Undo"
+msgstr "Atšaukti"
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
+#, no-c-format
+msgid "Redo"
+msgstr "Grąžinti"
+
 #: ../plugins/hotkeys/actionhandlers.c:824
 #, c-format
 msgid "Copy of %s"
@@ -2658,11 +2716,6 @@ msgstr "Grojaraščio naršyklė"
 #: ../plugins/shellexecui/shellexec.glade.h:1
 msgid "Custom Shell Commands"
 msgstr "Pasirinktinės apvalkalo komandos"
-
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "Užverti"
 
 #: ../plugins/shellexecui/interface.c:149
 #: ../plugins/shellexecui/shellexec.glade.h:6
@@ -3403,16 +3456,6 @@ msgstr "Rasti"
 #, no-c-format
 msgid "Show\\/Hide Log window"
 msgstr "Rodyti\\/slėpti žurnalo langą"
-
-#: ../translation/plugins.c:256
-#, no-c-format
-msgid "Undo"
-msgstr ""
-
-#: ../translation/plugins.c:258
-#, no-c-format
-msgid "Redo"
-msgstr ""
 
 #: ../translation/plugins.c:260
 #, no-c-format
