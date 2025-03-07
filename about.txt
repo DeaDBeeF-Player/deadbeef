@@ -1,7 +1,7 @@
 💛💙
 
 DeaDBeeF - The Music Player
-Copyright © 2009-2023  Oleksiy Yakovenko and contributors
+Copyright © 2009-2025 Oleksiy Yakovenko and contributors
 https://deadbeef.sourceforge.io
 
 Some of the most significant contributors in alphabetical order:
