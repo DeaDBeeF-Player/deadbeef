@@ -9,6 +9,7 @@
 #import "NowPlayable.h"
 #import <MediaPlayer/MediaPlayer.h>
 #include <deadbeef/deadbeef.h>
+#import "Weakify.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -58,11 +59,11 @@ extern DB_functions_t *deadbeef;
     [commandCenter.changePlaybackPositionCommand addTarget:self action:@selector(changePlaybackPositionCommand:)];
     commandCenter.changePlaybackPositionCommand.enabled = YES;
 
-    __weak NowPlayable *weakSelf = self;
+    weakify(self);
 
     self.updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        NowPlayable *nowPlayable = weakSelf;
-        if (!nowPlayable) {
+        strongify(self);
+        if (!self) {
             return;
         }
 
@@ -93,9 +94,9 @@ extern DB_functions_t *deadbeef;
                 .it = it
             };
 
-            deadbeef->tf_eval (&ctx, nowPlayable.artist_tf, text, sizeof (text));
+            deadbeef->tf_eval (&ctx, self.artist_tf, text, sizeof (text));
             info[MPMediaItemPropertyArtist] = @(text);
-            deadbeef->tf_eval (&ctx, nowPlayable.album_tf, text, sizeof (text));
+            deadbeef->tf_eval (&ctx, self.album_tf, text, sizeof (text));
             info[MPMediaItemPropertyAlbumTitle] = @(text);
 
             deadbeef->pl_item_unref (it);

@@ -8,6 +8,7 @@
 
 #import "VisualizationViewController.h"
 #include <deadbeef/deadbeef.h>
+#import "Weakify.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -46,7 +47,7 @@ static void *kIsVisibleContext = &kIsVisibleContext;
         return;
     }
 
-    __weak VisualizationViewController *weakSelf = self;
+    weakify(self);
     if (self.tickTimer != nil) {
         return;
     }
@@ -54,26 +55,26 @@ static void *kIsVisibleContext = &kIsVisibleContext;
     _coolDown = 60;
 
     self.tickTimer = [NSTimer timerWithTimeInterval:1/30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        VisualizationViewController *strongSelf = weakSelf;
-        if (!strongSelf.view.window.isVisible) {
-            [strongSelf.tickTimer invalidate];
-            strongSelf.tickTimer = nil;
+        strongify(self);
+        if (!self.view.window.isVisible) {
+            [self.tickTimer invalidate];
+            self.tickTimer = nil;
         }
 
         if (deadbeef->get_output()->state() == DDB_PLAYBACK_STATE_PLAYING) {
-            strongSelf->_coolDown = 60;
+            self->_coolDown = 60;
         }
-        else if (strongSelf->_coolDown > 0) {
-            strongSelf->_coolDown -= 1;
+        else if (self->_coolDown > 0) {
+            self->_coolDown -= 1;
         }
 
-        if (strongSelf->_coolDown <= 0) {
-            [strongSelf.tickTimer invalidate];
-            strongSelf.tickTimer = nil;
+        if (self->_coolDown <= 0) {
+            [self.tickTimer invalidate];
+            self.tickTimer = nil;
             return;
         }
 
-        [strongSelf draw];
+        [self draw];
     }];
 
     [NSRunLoop.mainRunLoop addTimer:self.tickTimer forMode:NSRunLoopCommonModes];

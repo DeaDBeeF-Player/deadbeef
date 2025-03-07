@@ -888,6 +888,7 @@
 		2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */; };
 		2D30D20D25E2A8930023A299 /* WidgetTopLevelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */; };
 		2D30D20E25E2A8930023A299 /* WidgetTopLevelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */; };
+		2D3104502D7B51C600B2E846 /* Weakify.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D31044F2D7B51C300B2E846 /* Weakify.h */; };
 		2D3138251D08AB3400CBD871 /* artwork.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D621F831CD92C9000EB6D22 /* artwork.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D35A24D2B74D95B006D9356 /* filereader.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D35A24B2B74D60F006D9356 /* filereader.c */; };
 		2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */; };
@@ -5597,6 +5598,7 @@
 		2D30D0B325E2A5DD0023A299 /* DesignModeState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeState.m; sourceTree = "<group>"; };
 		2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetTopLevelView.h; sourceTree = "<group>"; };
 		2D30D20B25E2A8930023A299 /* WidgetTopLevelView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetTopLevelView.m; sourceTree = "<group>"; };
+		2D31044F2D7B51C300B2E846 /* Weakify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Weakify.h; sourceTree = "<group>"; };
 		2D35A24A2B74D60F006D9356 /* filereader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = filereader.h; sourceTree = "<group>"; };
 		2D35A24B2B74D60F006D9356 /* filereader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = filereader.c; sourceTree = "<group>"; };
 		2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakRefWrapper.h; sourceTree = "<group>"; };
@@ -9807,6 +9809,7 @@
 				2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */,
 				2DAA402B269AF864006D2754 /* TrackPositionFormatter.h */,
 				2DAA402C269AF864006D2754 /* TrackPositionFormatter.m */,
+				2D31044F2D7B51C300B2E846 /* Weakify.h */,
 				2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */,
 				2D3992E025C2038700CFA936 /* WeakRefWrapper.m */,
 			);
@@ -14907,6 +14910,7 @@
 				2DB951B626B07E7B00602876 /* decodedblock.h in Headers */,
 				2DDD796325E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2DC65827274AB03800583E14 /* LyricsWidget.h in Headers */,
+				2D3104502D7B51C600B2E846 /* Weakify.h in Headers */,
 				2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */,
 				2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */,
 				2DD3774627404401007AD315 /* AppearancePreferencesViewController.h in Headers */,

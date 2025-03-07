@@ -23,6 +23,7 @@
 
 #import "KeyboardShortcutTextField.h"
 #import "KeyboardShortcutConverter.h"
+#import "Weakify.h"
 
 @interface KeyboardShortcutTextField()
 @property (nonatomic) id eventMonitor;
@@ -82,17 +83,17 @@
     }
 
     NSEventMask eventMask = (NSEventMaskKeyDown | NSEventMaskFlagsChanged);
-    __weak KeyboardShortcutTextField *weakSelf = self;
+    weakify(self);
     self.eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:eventMask handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
-        KeyboardShortcutTextField *strongSelf = weakSelf;
+        strongify(self);
         if (event.type != NSEventTypeKeyDown) {
             return event;
         }
-        if (strongSelf == nil) {
+        if (self == nil) {
             return event;
         }
 
-        return [strongSelf handleKeyDownEvent:event];
+        return [self handleKeyDownEvent:event];
     }];
 
     return YES;

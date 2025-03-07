@@ -19,6 +19,7 @@
 #import "TrackContextMenu.h"
 #import "TrackPropertiesWindowController.h"
 #import "UndoIntegration.h"
+#import "Weakify.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -221,10 +222,10 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
 
     // Restore selected/expanded state
     // Defer one frame, since the row indexes are unavailable immediately.
-    __weak MediaLibraryOutlineViewController *weakSelf = self;
+    weakify(self);
     dispatch_async(dispatch_get_main_queue(), ^{
-        MediaLibraryOutlineViewController *strongSelf = weakSelf;
-        if (strongSelf == nil || strongSelf.medialibPlugin == NULL) {
+        strongify(self);
+        if (self == nil || self.medialibPlugin == NULL) {
             return;
         }
         [self applyStoredState];

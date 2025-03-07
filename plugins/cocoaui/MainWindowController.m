@@ -36,6 +36,8 @@
 #import "ScriptableSelectViewController.h"
 #import "SidebarSplitViewController.h"
 #import "TrackPositionFormatter.h"
+#import "Weakify.h"
+
 #include <sys/time.h>
 
 extern DB_functions_t *deadbeef;
@@ -175,18 +177,18 @@ extern DB_functions_t *deadbeef;
         return;
     }
 
-    __weak MainWindowController *weakSelf = self;
+    weakify(self);
     _updateTimer = [NSTimer timerWithTimeInterval:1.0f/10.0f repeats:YES block:^(NSTimer * _Nonnull timer) {
-        MainWindowController *strongSelf = weakSelf;
-        if (strongSelf == nil) {
+        strongify(self);
+        if (self == nil) {
             return;
         }
 
-        [strongSelf frameUpdate];
+        [self frameUpdate];
 
         if (deadbeef->get_output()->state() != DDB_PLAYBACK_STATE_PLAYING) {
-            [strongSelf->_updateTimer invalidate];
-            strongSelf->_updateTimer = nil;
+            [self->_updateTimer invalidate];
+            self->_updateTimer = nil;
         }
     }];
 

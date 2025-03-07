@@ -28,6 +28,7 @@
 #import "PlaylistContextMenu.h"
 #import "RenamePlaylistViewController.h"
 #import "TrackPropertiesWindowController.h"
+#import "Weakify.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -862,17 +863,17 @@ static const int close_btn_left_offs = 8;
 
     NSPoint coord = sender.draggingLocation;
     coord = [self convertPoint:coord fromView:nil];
-    __weak DdbTabStrip *weakSelf = self;
+    weakify(self);
     self.pickDragTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:NO block:^(NSTimer * _Nonnull timer) {
-        DdbTabStrip *tabStrip = weakSelf;
-        if (tabStrip == nil) {
+        strongify(self);
+        if (self == nil) {
             return;
         }
-        int tabUnderCursor = [tabStrip tabUnderCursor: coord.x];
+        int tabUnderCursor = [self tabUnderCursor: coord.x];
         if (tabUnderCursor != -1) {
             deadbeef->plt_set_curr_idx (tabUnderCursor);
         }
-        tabStrip.pickDragTimer = nil;
+        self.pickDragTimer = nil;
     }];
 
     return NSDragOperationNone;

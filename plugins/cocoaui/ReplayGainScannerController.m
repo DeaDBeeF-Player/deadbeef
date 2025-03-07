@@ -22,6 +22,8 @@
 */
 
 #import "ReplayGainScannerController.h"
+#import "Weakify.h"
+
 #include "rg_scanner.h"
 #include <sys/time.h>
 
@@ -163,16 +165,16 @@ static NSMutableArray *g_rgControllers;
     [self progress:0];
 
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    __weak ReplayGainScannerController *weakSelf = self;
+    weakify(self);
     dispatch_async(aQueue, ^{
-        ReplayGainScannerController *strongSelf = weakSelf;
+        strongify(self);
         if (self == nil) {
             return;
         }
         _rg->scan (&self->_rg_settings);
         deadbeef->background_job_decrement ();
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (strongSelf.abort_flag) {
+            if (self.abort_flag) {
                 [self dismissController:self];
                 return;
             }
@@ -195,31 +197,31 @@ static NSMutableArray *g_rgControllers;
     _updateTagsProgressWindow.isVisible = YES;
     _abortTagWriting = NO;
 
-    __weak ReplayGainScannerController *weakSelf = self;
+    weakify(self);
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
-        ReplayGainScannerController *strongSelf = weakSelf;
-        if (strongSelf == nil) {
+        strongify(self);
+        if (self == nil) {
             return;
         }
-        for (int i = 0; i < strongSelf->_rg_settings.num_tracks; i++) {
-            _rg->remove (strongSelf->_rg_settings.tracks[i]);
-            if (strongSelf.abortTagWriting) {
+        for (int i = 0; i < self->_rg_settings.num_tracks; i++) {
+            _rg->remove (self->_rg_settings.tracks[i]);
+            if (self.abortTagWriting) {
                 break;
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 // progress
                 deadbeef->pl_lock ();
-                NSString *path = @(deadbeef->pl_find_meta_raw (strongSelf->_rg_settings.tracks[i], ":URI"));
+                NSString *path = @(deadbeef->pl_find_meta_raw (self->_rg_settings.tracks[i], ":URI"));
                 deadbeef->pl_unlock ();
-                strongSelf.updateTagsProgressText.stringValue = path;
-                strongSelf.updateTagsProgressIndicator.doubleValue = (double)i/strongSelf->_rg_settings.num_tracks*100;
+                self.updateTagsProgressText.stringValue = path;
+                self.updateTagsProgressIndicator.doubleValue = (double)i/self->_rg_settings.num_tracks*100;
             });
         }
         deadbeef->pl_save_all ();
         deadbeef->background_job_decrement ();
         dispatch_async(dispatch_get_main_queue(), ^{
-            [strongSelf.updateTagsProgressWindow close];
+            [self.updateTagsProgressWindow close];
             [self dismissController:self];
         });
     });
@@ -299,38 +301,38 @@ static NSMutableArray *g_rgControllers;
     _abortTagWriting = NO;
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 
-    __weak ReplayGainScannerController *weakSelf = self;
+    weakify(self);
 
     dispatch_async(aQueue, ^{
-        ReplayGainScannerController *strongSelf = weakSelf;
-        if (strongSelf == nil) {
+        strongify(self);
+        if (self == nil) {
             return;
         }
-        for (int i = 0; i < strongSelf->_rg_settings.num_tracks; i++) {
-            if (strongSelf.abortTagWriting) {
+        for (int i = 0; i < self->_rg_settings.num_tracks; i++) {
+            if (self.abortTagWriting) {
                 break;
             }
 
-            if (strongSelf->_rg_settings.results[i].scan_result == DDB_RG_SCAN_RESULT_SUCCESS) {
+            if (self->_rg_settings.results[i].scan_result == DDB_RG_SCAN_RESULT_SUCCESS) {
                 deadbeef->pl_lock ();
-                NSString *path = @(deadbeef->pl_find_meta_raw (strongSelf->_rg_settings.tracks[i], ":URI"));
+                NSString *path = @(deadbeef->pl_find_meta_raw (self->_rg_settings.tracks[i], ":URI"));
                 deadbeef->pl_unlock ();
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    strongSelf.updateTagsProgressText.stringValue = path;
-                    strongSelf.updateTagsProgressIndicator.doubleValue = (double)i/strongSelf->_rg_settings.num_tracks*100;
+                    self.updateTagsProgressText.stringValue = path;
+                    self.updateTagsProgressIndicator.doubleValue = (double)i/self->_rg_settings.num_tracks*100;
                 });
 
                 uint32_t flags = (1<<DDB_REPLAYGAIN_TRACKGAIN)|(1<<DDB_REPLAYGAIN_TRACKPEAK);
-                if (strongSelf->_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
+                if (self->_rg_settings.mode != DDB_RG_SCAN_MODE_TRACK) {
                     flags |= (1<<DDB_REPLAYGAIN_ALBUMGAIN)|(1<<DDB_REPLAYGAIN_ALBUMPEAK);
                 }
-                _rg->apply (strongSelf->_rg_settings.tracks[i], flags, strongSelf->_rg_settings.results[i].track_gain, strongSelf->_rg_settings.results[i].track_peak, strongSelf->_rg_settings.results[i].album_gain, strongSelf->_rg_settings.results[i].album_peak);
+                _rg->apply (self->_rg_settings.tracks[i], flags, self->_rg_settings.results[i].track_gain, self->_rg_settings.results[i].track_peak, self->_rg_settings.results[i].album_gain, self->_rg_settings.results[i].album_peak);
             }
         }
         deadbeef->pl_save_all ();
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.window endSheet:strongSelf.updateTagsProgressWindow returnCode:NSModalResponseOK];
+            [self.window endSheet:self.updateTagsProgressWindow returnCode:NSModalResponseOK];
             [self dismissController:self];
         });
     });

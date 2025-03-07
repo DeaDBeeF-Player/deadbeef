@@ -28,6 +28,7 @@
 #include "medialibcommon.h"
 #include "medialibfilesystem.h"
 #include "medialibsource.h"
+#import "Weakify.h"
 
 struct ml_watch_s {
     void *watch; // strong DdbMLWatch *
@@ -89,9 +90,9 @@ _FSEventStreamCallback(ConstFSEventStreamRef streamRef, void * __nullable client
 
 - (void)streamCallback {
    [_debounceTimer invalidate];
-    __weak DdbMLWatch *weakSelf = self;
+    weakify(self);
     _debounceTimer = [NSTimer timerWithTimeInterval:5 repeats:NO block:^(NSTimer * _Nonnull timer) {
-        DdbMLWatch *self = weakSelf;
+        strongify(self);
         if (self != nil) {
             self->_callback(self->_userData);
             self->_debounceTimer = nil;

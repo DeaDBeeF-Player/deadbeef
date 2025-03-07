@@ -33,6 +33,7 @@
 #import "TrackPropertiesManager.h"
 #import "tftintutil.h"
 #import "DdbPlayItemPasteboardSerializer.h"
+#import "Weakify.h"
 
 #include <deadbeef/deadbeef.h>
 #include "utf8.h"
@@ -909,17 +910,17 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
             if (self.view.window.isVisible
                 && deadbeef->get_output()->state() == DDB_PLAYBACK_STATE_PLAYING) {
-                __weak PlaylistViewController *weakSelf = self;
+                weakify(self);
                 self.playPosUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:ctx.update/1000.0 repeats:NO block:^(NSTimer * _Nonnull timer) {
-                    PlaylistViewController *strongSelf = weakSelf;
-                    if (strongSelf == nil) {
+                    strongify(self);
+                    if (self == nil) {
                         return;
                     }
                     ddb_playlist_t *curr = deadbeef->plt_get_curr ();
-                    DB_playItem_t *trk = deadbeef->pl_get_for_idx_and_iter (ctx.idx, [strongSelf playlistIter]);
+                    DB_playItem_t *trk = deadbeef->pl_get_for_idx_and_iter (ctx.idx, [self playlistIter]);
 
-                    if (ctx.plt == curr && trk == strongSelf.playPosUpdateTrack) {
-                        PlaylistView *lv = (PlaylistView *)strongSelf.view;
+                    if (ctx.plt == curr && trk == self.playPosUpdateTrack) {
+                        PlaylistView *lv = (PlaylistView *)self.view;
                         [lv.contentView drawRow:(int)idx];
                     }
                     if (trk) {
