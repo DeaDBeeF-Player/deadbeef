@@ -30,6 +30,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSMenuItem *addToFrontOfQueueItem;
 @property (nonatomic) NSMenuItem *addToQueueItem;
 @property (nonatomic) NSMenuItem *removeFromQueueItem;
+@property (nonatomic) NSMenuItem *removeFromPlaylistItem;
 @property (nonatomic) NSMenuItem *convertItem;
 
 @property (nonatomic) NSMenuItem *rgScanPerFileItem;
@@ -138,6 +139,10 @@ extern DB_functions_t *deadbeef;
 
     self.removeFromQueueItem = [self addItemWithTitle:@"Remove from Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""];
     self.removeFromQueueItem.target = self;
+
+    self.removeFromPlaylistItem = [self addItemWithTitle:@"Delete" action:@selector(delete:) keyEquivalent:@"\b"];
+    self.removeFromPlaylistItem.target = self;
+    self.removeFromPlaylistItem.keyEquivalentModifierMask = 0;
 
     [self addItem:NSMenuItem.separatorItem];
 
@@ -564,6 +569,14 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
 
 - (void)trackProperties {
     [((id<TrackContextMenuDelegate>)self.delegate) trackContextMenuShowTrackProperties:self];
+}
+
+- (void)delete:(id)sender {
+    [self forEachTrack:^BOOL(DB_playItem_t *it) {
+        deadbeef->plt_remove_item(self.playlist, it);
+        return YES;
+    }];
+    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
 @end
