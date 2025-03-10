@@ -2413,8 +2413,6 @@
 		2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDBA26223E5F14A00051320 /* PlaylistHeaderView.h */; };
 		2DDBA26523E5F14A00051320 /* PlaylistHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDBA26323E5F14A00051320 /* PlaylistHeaderView.m */; };
 		2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 2DDBDA2B2436678700C12A75 /* btnduplicateTemplate.pdf */; };
-		2DDD764425E1506100FA6FE5 /* metadata.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD764225E1506100FA6FE5 /* metadata.h */; };
-		2DDD764525E1506100FA6FE5 /* metadata.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD764325E1506100FA6FE5 /* metadata.c */; };
 		2DDD76C825E152BF00FA6FE5 /* DesignModeDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD76C625E152BF00FA6FE5 /* DesignModeDefs.h */; };
 		2DDD76C925E152BF00FA6FE5 /* DesignModeDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD76C625E152BF00FA6FE5 /* DesignModeDefs.h */; };
 		2DDD778E25E153D000FA6FE5 /* WidgetFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */; };
@@ -6933,8 +6931,6 @@
 		2DDBA26223E5F14A00051320 /* PlaylistHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlaylistHeaderView.h; sourceTree = "<group>"; };
 		2DDBA26323E5F14A00051320 /* PlaylistHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistHeaderView.m; sourceTree = "<group>"; };
 		2DDBDA2B2436678700C12A75 /* btnduplicateTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = btnduplicateTemplate.pdf; sourceTree = "<group>"; };
-		2DDD764225E1506100FA6FE5 /* metadata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metadata.h; sourceTree = "<group>"; };
-		2DDD764325E1506100FA6FE5 /* metadata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = metadata.c; sourceTree = "<group>"; };
 		2DDD76C625E152BF00FA6FE5 /* DesignModeDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignModeDefs.h; sourceTree = "<group>"; };
 		2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetFactory.h; sourceTree = "<group>"; };
 		2DDD778D25E153D000FA6FE5 /* WidgetFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WidgetFactory.m; sourceTree = "<group>"; };
@@ -11002,7 +10998,6 @@
 				2D6E2CFF26AC3022008FCD4B /* Apple */,
 				4D1B3ED71837EC44003E6066 /* ConvertUTF */,
 				4D1B3F861837EC44003E6066 /* md5 */,
-				2DDD764125E1506100FA6FE5 /* metadata */,
 				2D135EE6226E388E00BAAE84 /* scriptable */,
 				2D7387D329BE5DA1003E3126 /* undo */,
 				2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */,
@@ -12259,15 +12254,6 @@
 			path = Playlist;
 			sourceTree = "<group>";
 		};
-		2DDD764125E1506100FA6FE5 /* metadata */ = {
-			isa = PBXGroup;
-			children = (
-				2DDD764225E1506100FA6FE5 /* metadata.h */,
-				2DDD764325E1506100FA6FE5 /* metadata.c */,
-			);
-			path = metadata;
-			sourceTree = "<group>";
-		};
 		2DDFABC92438E56000E13E85 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -13496,7 +13482,6 @@
 				2DC657EB274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */,
 				2DC657D52749581900583E14 /* DdbTabStripViewController.h in Headers */,
 				2DC657CD2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
-				2DDD764425E1506100FA6FE5 /* metadata.h in Headers */,
 				2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
 				2D7387ED29BE5DA2003E3126 /* undobuffer.h in Headers */,
@@ -17062,7 +17047,6 @@
 				2D01D7D91AB2219C00BCD3C4 /* messagepump.c in Sources */,
 				2D01D7D81AB2219C00BCD3C4 /* junklib.c in Sources */,
 				2D01D7D31AB2219C00BCD3C4 /* escape.c in Sources */,
-				2DDD764525E1506100FA6FE5 /* metadata.c in Sources */,
 				2D01D7DA1AB2219C00BCD3C4 /* metacache.c in Sources */,
 				2D92D1D429B92A8300218F1D /* viz.c in Sources */,
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
