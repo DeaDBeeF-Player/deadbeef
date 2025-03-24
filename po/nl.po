@@ -4,16 +4,16 @@
 # 
 # Translators:
 # Glenn de Groot, 2010
-# Heimen Stoffels <vistausss@fastmail.com>, 2021-2024
+# Heimen Stoffels <vistausss@fastmail.com>, 2021-2025
 # Heimen Stoffels <vistausss@fastmail.com>, 2019-2021
 # Pjotr, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-02 23:44+0100\n"
+"POT-Creation-Date: 2025-03-24 22:55+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>, 2021-2024\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>, 2021-2025\n"
 "Language-Team: Dutch (http://app.transifex.com/deadbeef-player/deadbeef-player/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2615,34 +2615,34 @@ msgstr "Stemmen:"
 #: ../plugins/gtkui/scriptable/gtkScriptable.c:33
 #, c-format
 msgid "Edit %s"
-msgstr ""
+msgstr "%s bewerken"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:568
 #, c-format
 msgid "%s (Copy)"
-msgstr ""
+msgstr "%s (kopie)"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:632
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:639
 msgid "Can't do that"
-msgstr ""
+msgstr "Mislukt"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
 msgid "Preset with this name already exists."
-msgstr ""
+msgstr "Er is al een voorinstelling met die naam."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
 msgid "Try a different name."
-msgstr ""
+msgstr "Kies een andere naam."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
 msgid "This name is not allowed."
-msgstr ""
+msgstr "Deze naam is niet toegestaan."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
 msgid "Reset"
-msgstr ""
+msgstr "Standaardwaarden"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
 #: ../plugins/shellexecui/interface.c:88
@@ -2653,7 +2653,7 @@ msgstr "Sluiten"
 #: ../plugins/gtkui/undointegration.c:70
 #, c-format
 msgid "Undo %s"
-msgstr ""
+msgstr "%s ongedaan maken"
 
 #: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
 #, no-c-format
@@ -2663,7 +2663,7 @@ msgstr "Ongedaan maken"
 #: ../plugins/gtkui/undointegration.c:77
 #, c-format
 msgid "Redo %s"
-msgstr ""
+msgstr "%s opnieuw uitvoeren"
 
 #: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
 #, no-c-format

@@ -7,7 +7,7 @@
 # Grzegorz Gibas <amigib@gmail.com>, 2010
 # Jakub Wasylków <kuba_160@protonmail.com>, 2017
 # Jakub Wasylków <kuba_160@protonmail.com>, 2017
-# Jakub Wasylków <kuba_160@protonmail.com>, 2017-2024
+# Jakub Wasylków <kuba_160@protonmail.com>, 2017-2025
 # Łukasz Jasiński <alvarus@alvarus.org>, 2010
 # marcin mikołajczak <me@mkljczk.pl>, 2016
 # Marcin Mikołajczak <m4sk1n@vivaldi.net>, 2016
@@ -30,9 +30,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-02 23:44+0100\n"
+"POT-Creation-Date: 2025-03-24 22:55+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Jakub Wasylków <kuba_160@protonmail.com>, 2017-2024\n"
+"Last-Translator: Jakub Wasylków <kuba_160@protonmail.com>, 2017-2025\n"
 "Language-Team: Polish (http://app.transifex.com/deadbeef-player/deadbeef-player/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1685,7 +1685,7 @@ msgstr "DeaDBeeF Log"
 
 #: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5624
 msgid "Auto-open this window on errors"
-msgstr ""
+msgstr "Otwórz te okno automatycznie kiedy wystąpią błędy"
 
 #: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5628
 msgid "Clear"
@@ -2634,34 +2634,34 @@ msgstr "Głosy:"
 #: ../plugins/gtkui/scriptable/gtkScriptable.c:33
 #, c-format
 msgid "Edit %s"
-msgstr ""
+msgstr "Edytuj %s"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:568
 #, c-format
 msgid "%s (Copy)"
-msgstr ""
+msgstr "%s (Kopiuj)"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:632
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:639
 msgid "Can't do that"
-msgstr ""
+msgstr "Akcja niedostępna"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
 msgid "Preset with this name already exists."
-msgstr ""
+msgstr "Ustawienie o tej nazwie już istnieje."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
 msgid "Try a different name."
-msgstr ""
+msgstr "Spróbuj inną nazwę."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
 msgid "This name is not allowed."
-msgstr ""
+msgstr "Ta nazwa nie jest dozwolona."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
 msgid "Reset"
-msgstr ""
+msgstr "Resetuj"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
 #: ../plugins/shellexecui/interface.c:88
@@ -2672,7 +2672,7 @@ msgstr "Zamknij"
 #: ../plugins/gtkui/undointegration.c:70
 #, c-format
 msgid "Undo %s"
-msgstr ""
+msgstr "Cofnij %s"
 
 #: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
 #, no-c-format
@@ -2682,7 +2682,7 @@ msgstr "Cofnij"
 #: ../plugins/gtkui/undointegration.c:77
 #, c-format
 msgid "Redo %s"
-msgstr ""
+msgstr "Ponów %s"
 
 #: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
 #, no-c-format
@@ -2862,7 +2862,7 @@ msgstr "Nieprawidłowe wartości"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings.\n"
-msgstr ""
+msgstr "wildmidi: plik konfiguracyjny freepats nie został znaleziony. Zainstaluj pakiet timidity-freepats lub wskaż właściwą ścieżkę do pliku freepats.cfg w ustawieniach wtyczek.\n"
 
 #: ../src/tf.c:2289
 msgid "mono"
@@ -2948,37 +2948,37 @@ msgstr "Użyj kontrolera głośności PipeWire"
 #: ../translation/plugins.c:10
 #, no-c-format
 msgid "Sample rate (real OPL is 49716Hz)"
-msgstr ""
+msgstr "Częstotliwość próbkowania (rzeczywisty OPL ma 49716Hz)"
 
 #: ../translation/plugins.c:12
 #, no-c-format
 msgid "Synth engine"
-msgstr ""
+msgstr "Silnik syntezatora"
 
 #: ../translation/plugins.c:14
 #, no-c-format
 msgid "Nuked OPL3"
-msgstr ""
+msgstr "Nuked OPL3"
 
 #: ../translation/plugins.c:16
 #, no-c-format
 msgid "DOSBox OPL3 emulator"
-msgstr ""
+msgstr "Emulator DOSBox OPL3"
 
 #: ../translation/plugins.c:18
 #, no-c-format
 msgid "Tatsuyuki Satoh's OPL2 emulator"
-msgstr ""
+msgstr "Emulator Tatsuyuki Satoh OPL2"
 
 #: ../translation/plugins.c:20
 #, no-c-format
 msgid "Ken Silverman's OPL emulator"
-msgstr ""
+msgstr "Emulator Ken Silverman OPL"
 
 #: ../translation/plugins.c:22
 #, no-c-format
 msgid "Simon Peter's OPL emulator"
-msgstr ""
+msgstr "Emulator Simon Peter OPL"
 
 #. plugins/alsa/alsa.c
 #: ../translation/plugins.c:25
@@ -3892,7 +3892,7 @@ msgstr "Rozmiar okładki albumu (px)"
 #: ../translation/plugins.c:445
 #, no-c-format
 msgid "Don't reuse notifications (KDE quirk)"
-msgstr ""
+msgstr "Nie używaj ponownie powiadomień (poprawka do KDE)"
 
 #. plugins/oss/oss.c
 #: ../translation/plugins.c:448

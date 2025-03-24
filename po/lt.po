@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-02 23:44+0100\n"
+"POT-Creation-Date: 2025-03-24 22:55+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Moo, 2023-2025\n"
 "Language-Team: Lithuanian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/lt/)\n"
@@ -2033,19 +2033,19 @@ msgstr "Išjungta"
 
 #: ../plugins/gtkui/interface.c:1917
 msgid "8 bit"
-msgstr ""
+msgstr "8 bitų"
 
 #: ../plugins/gtkui/interface.c:1918
 msgid "16 bit"
-msgstr ""
+msgstr "16 bitų"
 
 #: ../plugins/gtkui/interface.c:1919
 msgid "24 bit"
-msgstr ""
+msgstr "24 bitų"
 
 #: ../plugins/gtkui/interface.c:1920
 msgid "32 bit"
-msgstr ""
+msgstr "32 bitų"
 
 #: ../plugins/gtkui/interface.c:2051
 msgid "By playback order"
@@ -2092,7 +2092,7 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:125
 msgid "All Music"
-msgstr ""
+msgstr "Visa muzika"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:129
 msgid "Media library is disabled"
@@ -2104,15 +2104,15 @@ msgstr "Įkeliama..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:136
 msgid "Scanning..."
-msgstr ""
+msgstr "Peržiūrima..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:139
 msgid "Indexing..."
-msgstr ""
+msgstr "Indeksuojama..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:142
 msgid "Saving..."
-msgstr ""
+msgstr "Įrašoma..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:815
 msgid "Media Library plugin is unavailable."
@@ -2643,7 +2643,7 @@ msgstr ""
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
 msgid "Reset"
-msgstr ""
+msgstr "Atstatyti"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
 #: ../plugins/shellexecui/interface.c:88
@@ -2654,7 +2654,7 @@ msgstr "Užverti"
 #: ../plugins/gtkui/undointegration.c:70
 #, c-format
 msgid "Undo %s"
-msgstr ""
+msgstr "Atšaukti %s"
 
 #: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
 #, no-c-format
@@ -2664,7 +2664,7 @@ msgstr "Atšaukti"
 #: ../plugins/gtkui/undointegration.c:77
 #, c-format
 msgid "Redo %s"
-msgstr ""
+msgstr "Grąžinti %s"
 
 #: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
 #, no-c-format
@@ -2919,12 +2919,12 @@ msgstr ""
 #: ../translation/plugins.c:5
 #, no-c-format
 msgid "Custom properties (overrides existing ones):"
-msgstr ""
+msgstr "Tinkintos savybės (nustelbia esamas):"
 
 #: ../translation/plugins.c:7
 #, no-c-format
 msgid "Use PipeWire volume control"
-msgstr ""
+msgstr "Naudoti PipeWire garsio reguliavimą"
 
 #. plugins/adplug/plugin.c
 #: ../translation/plugins.c:10
@@ -2982,7 +2982,7 @@ msgstr "Pageidaujamas periodo dydis"
 #: ../translation/plugins.c:32
 #, no-c-format
 msgid "Refresh Cover Art"
-msgstr ""
+msgstr "Iš naujo įkelti viršelio iliustraciją"
 
 #: ../translation/plugins.c:34
 #, no-c-format
@@ -3098,7 +3098,7 @@ msgstr "Pridėti garso CD"
 #: ../translation/plugins.c:79
 #, no-c-format
 msgid "Use CDDB/GnuDb"
-msgstr ""
+msgstr "Naudoti CDDB/GnuDb"
 
 #: ../translation/plugins.c:81
 #, no-c-format
@@ -3108,12 +3108,12 @@ msgstr "Jei įmanoma naudoti CD-tekstą, o ne CDDB"
 #: ../translation/plugins.c:83
 #, no-c-format
 msgid "CDDB url (e.g. 'gnudb.gnudb.org')"
-msgstr ""
+msgstr "CDDB url (pvz., „gnudb.gnudb.org“)"
 
 #: ../translation/plugins.c:85
 #, no-c-format
 msgid "CDDB port number (e.g. '8880')"
-msgstr ""
+msgstr "CDDB prievado numeris (pvz., „8880“)"
 
 #: ../translation/plugins.c:87
 #, no-c-format
@@ -3706,17 +3706,17 @@ msgstr "Atkurti\\/Pristabdyti"
 #: ../translation/plugins.c:371
 #, no-c-format
 msgid "Play Next Album"
-msgstr ""
+msgstr "Atkurti kitą albumą"
 
 #: ../translation/plugins.c:373
 #, no-c-format
 msgid "Play Previous Album"
-msgstr ""
+msgstr "Atkurti ankstesnį albumą"
 
 #: ../translation/plugins.c:375
 #, no-c-format
 msgid "Play Random Album"
-msgstr ""
+msgstr "Atkurti atsitiktinį albumą"
 
 #: ../translation/plugins.c:379
 #, no-c-format
@@ -4059,7 +4059,7 @@ msgstr ""
 #: ../translation/plugins.c:528
 #, no-c-format
 msgid "Encoder command line"
-msgstr ""
+msgstr "Koduotuvo komandų eilutė"
 
 #: ../translation/plugins.c:530
 #, no-c-format

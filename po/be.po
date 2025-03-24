@@ -7,7 +7,7 @@
 # DeadMetaler <dead.666@bk.ru>, 2018-2020
 # Макс Крапіўка, 2018
 # Viačasłaŭ <viachaslavic@outlook.com>, 2023
-# Viačasłaŭ <viachaslavic@outlook.com>, 2024
+# Viačasłaŭ <viachaslavic@outlook.com>, 2024-2025
 # Yauhen Bugamol, 2013
 # Yauhen Bugamol, 2013
 # Źmicier Turok <nashtlumach@gmail.com>, 2017,2019-2020
@@ -23,9 +23,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-02 23:44+0100\n"
+"POT-Creation-Date: 2025-03-24 22:55+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Viačasłaŭ <viachaslavic@outlook.com>, 2024\n"
+"Last-Translator: Viačasłaŭ <viachaslavic@outlook.com>, 2024-2025\n"
 "Language-Team: Belarusian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/be/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1476,7 +1476,7 @@ msgid ""
 "or the Revert button to undo your changes.\n"
 "The changes will NOT be saved\n"
 "if you don't press Apply."
-msgstr "Націсьніце кнопку «Ужыць», каб захаваць зьмены,\nабо кнопку «Адрабіць», каб адкінуць зьмены.\nЗьмены НЯ будуць захаваныя,\nкалі не націсьнеце на «Ужыць»."
+msgstr "Націсьніце кнопку «Ужыць», каб захаваць зьмены,\nабо кнопку «Вярнуць», каб адрабіць зьмены.\nЗьмены НЯ будуць захаваныя,\nкалі не націсьнеце на «Ужыць»."
 
 #: ../plugins/gtkui/deadbeef.glade.h:196 ../plugins/gtkui/interface.c:3177
 msgid "_Defaults"
@@ -1678,7 +1678,7 @@ msgstr "Журнал DeaDBeeF"
 
 #: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5624
 msgid "Auto-open this window on errors"
-msgstr ""
+msgstr "Аўтаматычна адкрываць гэтае акно пры памылках"
 
 #: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5628
 msgid "Clear"
@@ -2641,20 +2641,20 @@ msgstr ""
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
 msgid "Preset with this name already exists."
-msgstr ""
+msgstr "Набор наладаў з такой назвай ужо існуе."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
 msgid "Try a different name."
-msgstr ""
+msgstr "Паспрабуйце іншую назву."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
 msgid "This name is not allowed."
-msgstr ""
+msgstr "Гэта назва недапушчальная."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
 msgid "Reset"
-msgstr ""
+msgstr "Скінуць "
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
 #: ../plugins/shellexecui/interface.c:88
@@ -2665,7 +2665,7 @@ msgstr "Закрыць"
 #: ../plugins/gtkui/undointegration.c:70
 #, c-format
 msgid "Undo %s"
-msgstr ""
+msgstr "Адрабіць %s"
 
 #: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
 #, no-c-format
@@ -2675,7 +2675,7 @@ msgstr "Адрабіць"
 #: ../plugins/gtkui/undointegration.c:77
 #, c-format
 msgid "Redo %s"
-msgstr ""
+msgstr "Узнавіць %s"
 
 #: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
 #, no-c-format
@@ -2946,32 +2946,32 @@ msgstr ""
 #: ../translation/plugins.c:12
 #, no-c-format
 msgid "Synth engine"
-msgstr ""
+msgstr "Рухавік сынтэзу"
 
 #: ../translation/plugins.c:14
 #, no-c-format
 msgid "Nuked OPL3"
-msgstr ""
+msgstr "Nuked OPL3"
 
 #: ../translation/plugins.c:16
 #, no-c-format
 msgid "DOSBox OPL3 emulator"
-msgstr ""
+msgstr "Эмулятар OPL3 ад DOSBox"
 
 #: ../translation/plugins.c:18
 #, no-c-format
 msgid "Tatsuyuki Satoh's OPL2 emulator"
-msgstr ""
+msgstr "Эмулятар OPL2 ад Tatsuyuki Satoh"
 
 #: ../translation/plugins.c:20
 #, no-c-format
 msgid "Ken Silverman's OPL emulator"
-msgstr ""
+msgstr "Эмулятар OPL ад Ken Silverman"
 
 #: ../translation/plugins.c:22
 #, no-c-format
 msgid "Simon Peter's OPL emulator"
-msgstr ""
+msgstr "Эмулятар OPL ад Simon Peter"
 
 #. plugins/alsa/alsa.c
 #: ../translation/plugins.c:25

@@ -5,15 +5,15 @@
 # Translators:
 # heskjestad, 2021-2023
 # heskjestad, 2024
-# heskjestad, 2023-2024
+# heskjestad, 2023-2025
 # heskjestad, 2019-2021
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-02 23:44+0100\n"
+"POT-Creation-Date: 2025-03-24 22:55+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: heskjestad, 2023-2024\n"
+"Last-Translator: heskjestad, 2023-2025\n"
 "Language-Team: Norwegian Bokmål (http://app.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2615,34 +2615,34 @@ msgstr "Stemmer: "
 #: ../plugins/gtkui/scriptable/gtkScriptable.c:33
 #, c-format
 msgid "Edit %s"
-msgstr ""
+msgstr "Rediger %s"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:568
 #, c-format
 msgid "%s (Copy)"
-msgstr ""
+msgstr "%s (Kopier)"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:632
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:639
 msgid "Can't do that"
-msgstr ""
+msgstr "Ikke mulig"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
 msgid "Preset with this name already exists."
-msgstr ""
+msgstr "Fant et oppsett med samme navn."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
 msgid "Try a different name."
-msgstr ""
+msgstr "Forsøk et annet navn."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
 msgid "This name is not allowed."
-msgstr ""
+msgstr "Dette navnet kan ikke brukes."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
 msgid "Reset"
-msgstr ""
+msgstr "Tilbakestill"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
 #: ../plugins/shellexecui/interface.c:88
@@ -2653,7 +2653,7 @@ msgstr "Lukk"
 #: ../plugins/gtkui/undointegration.c:70
 #, c-format
 msgid "Undo %s"
-msgstr ""
+msgstr "Angre %s"
 
 #: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
 #, no-c-format
@@ -2663,7 +2663,7 @@ msgstr "Angre"
 #: ../plugins/gtkui/undointegration.c:77
 #, c-format
 msgid "Redo %s"
-msgstr ""
+msgstr "Gjør om %s"
 
 #: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
 #, no-c-format
