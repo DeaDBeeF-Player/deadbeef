@@ -305,7 +305,11 @@ _free_info_data(ffmpeg_info_t *info) {
         avcodec_free_frame(&info->frame);
     }
     if (info->buffer) {
+#ifdef __MINGW32__
+        __mingw_aligned_free (info->buffer);
+#else
         free (info->buffer);
+#endif
     }
     // free everything allocated in _init and _read
     if (info->have_packet) {

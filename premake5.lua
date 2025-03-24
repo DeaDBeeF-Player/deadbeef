@@ -28,7 +28,7 @@ newoption {
 
 if _OPTIONS["standard"] ~= nil then
   plugins_to_disable = {"plugin-converter", "plugin-converter_gtk2",
-                        "plugin-converter_gtk3","plugin-ffmpeg","plugin-waveout",
+                        "plugin-converter_gtk3", "plugin-waveout",
                         "plugin-wildmidi", "plugin-soundtouch", "plugin-sid", "plugin-gme",
                         "plugin-mms", "plugin-cdda", "plugin-sc68", "plugin-vtx",
                         "plugin-notify"}
@@ -742,7 +742,8 @@ project "ffmpeg"
     "plugins/ffmpeg/*.c",
   }
   pkgconfig ("libavformat")
-  -- links {"avcodec", "pthread", "avformat", "avcodec", "avutil", "z", "opencore-amrnb", "opencore-amrwb", "opus"}
+  pkgconfig ("libavcodec")
+  pkgconfig ("libavutil")
 end
 
 if option ("plugin-vorbis", "vorbisfile vorbis ogg") then
