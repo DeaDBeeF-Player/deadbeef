@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Alexey Yakovenko <wakeroid@gmail.com>, 2016,2022-2023
+# Alexey Yakovenko <wakeroid@gmail.com>, 2016,2022-2023,2025
 # f977cb811fcf66493f48eac227fd7473_b98aa5d <2419f1d8d12d92441152e78ae3e3bde0_722180>, 2021
 # Gilah <superdj243@gmail.com>, 2021
 # Evolve32 <evolve32@yandex.ru>, 2014
@@ -18,9 +18,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-02 23:44+0100\n"
+"POT-Creation-Date: 2025-03-24 22:55+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Yarema aka Knedlyk <yupadmin@gmail.com>, 2010\n"
+"Last-Translator: Alexey Yakovenko <wakeroid@gmail.com>, 2016,2022-2023,2025\n"
 "Language-Team: Ukrainian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/uk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -41,7 +41,7 @@ msgstr "Опції:\n"
 #: ../src/main.c:142
 #, c-format
 msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  або  -h     Показати цю допомогу (це повідомлення) і вийти\n"
+msgstr "   --help  або  -h     Показати допомогу (це повідомлення) і вийти\n"
 
 #: ../src/main.c:143
 #, c-format
@@ -66,18 +66,18 @@ msgstr "   --stop             Зупинити програвання\n"
 #: ../src/main.c:147
 #, c-format
 msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Призупинити програвання\n"
+msgstr "   --pause            Пауза програвання\n"
 
 #: ../src/main.c:148
 #, c-format
 msgid "   --toggle-pause     Toggle pause\n"
-msgstr "   --toggle-pause     перемикання паузи\n"
+msgstr "   --toggle-pause     Перемикнути паузу\n"
 
 #: ../src/main.c:149
 #, c-format
 msgid ""
 "   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Почати програвання якщо зупинено, включити паузу в протилежному випадку\n"
+msgstr "   --play-pause       Почати програвання якщо зупинено, інакше перемикнути паузу\n"
 
 #: ../src/main.c:150
 #, c-format
@@ -1499,7 +1499,7 @@ msgstr "Ліцензія"
 #: ../plugins/gtkui/deadbeef.glade.h:201 ../plugins/gtkui/interface.c:3273
 #: ../plugins/gtkui/interface.c:4993
 msgid "Reset to defaults"
-msgstr "Скинути до типових"
+msgstr "Скинути до замовчувань"
 
 #: ../plugins/gtkui/deadbeef.glade.h:202 ../plugins/gtkui/interface.c:3290
 msgid "Version: "
@@ -1513,7 +1513,7 @@ msgstr "URL:"
 #: ../plugins/gtkui/interface.c:5363 ../plugins/gtkui/interface.c:5391
 #: ../plugins/gtkui/plmenu.c:631
 msgid "Set Custom Title"
-msgstr "Встановити свій заголовок"
+msgstr "Встановити користувацький заголовок"
 
 #: ../plugins/gtkui/deadbeef.glade.h:206 ../plugins/gtkui/interface.c:4269
 msgid "Group By ..."
@@ -1531,40 +1531,40 @@ msgstr "<b>Формат</b>"
 msgid ""
 "Ascending\n"
 "Descending"
-msgstr "В порядку зростання\nВ порядку спадання"
+msgstr "У зростаючому порядку\nУ спадному порядку"
 
 #: ../plugins/gtkui/deadbeef.glade.h:213 ../plugins/gtkui/interface.c:4606
 msgid "Tag Writer Settings"
-msgstr "Налаштування записувача мітки"
+msgstr "Налаштування запису тегів"
 
 #: ../plugins/gtkui/deadbeef.glade.h:214 ../plugins/gtkui/interface.c:4637
 msgid "Write ID3v2"
-msgstr "Вписати ID3v2"
+msgstr "Писати ID3v2"
 
 #: ../plugins/gtkui/deadbeef.glade.h:215 ../plugins/gtkui/interface.c:4641
 #: ../plugins/gtkui/interface.c:4768
 msgid "Write ID3v1"
-msgstr "Вписати ID3v1"
+msgstr "Писати ID3v1"
 
 #: ../plugins/gtkui/deadbeef.glade.h:216 ../plugins/gtkui/interface.c:4645
 #: ../plugins/gtkui/interface.c:4724 ../plugins/gtkui/interface.c:4764
 msgid "Write APEv2"
-msgstr "Вписати APEv2"
+msgstr "Писати APEv2"
 
 #: ../plugins/gtkui/deadbeef.glade.h:217 ../plugins/gtkui/interface.c:4653
 #: ../plugins/gtkui/interface.c:4732
 msgid "Strip ID3v2"
-msgstr "Вирізати ID3v2"
+msgstr "Видалити ID3v2"
 
 #: ../plugins/gtkui/deadbeef.glade.h:218 ../plugins/gtkui/interface.c:4657
 #: ../plugins/gtkui/interface.c:4780
 msgid "Strip ID3v1"
-msgstr "Вирізати  ID3v1"
+msgstr "Видалити  ID3v1"
 
 #: ../plugins/gtkui/deadbeef.glade.h:219 ../plugins/gtkui/interface.c:4661
 #: ../plugins/gtkui/interface.c:4736 ../plugins/gtkui/interface.c:4776
 msgid "Strip APEv2"
-msgstr "Вирізати APEv2"
+msgstr "Видалити APEv2"
 
 #: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:4669
 #: ../translation/plugins.c:538
@@ -1584,11 +1584,11 @@ msgstr "Кодування символів у ID3v1 (типово є iso8859-1)
 
 #: ../plugins/gtkui/deadbeef.glade.h:224 ../plugins/gtkui/interface.c:4720
 msgid "Write ID3v2.4"
-msgstr "Вписати ID3v2.4"
+msgstr "Писати ID3v2.4"
 
 #: ../plugins/gtkui/deadbeef.glade.h:225 ../plugins/gtkui/interface.c:4922
 msgid "Content-Type Mapping"
-msgstr "Відповідність типу вмісту"
+msgstr "Відповідність Content-Type"
 
 #: ../plugins/gtkui/deadbeef.glade.h:226 ../plugins/gtkui/interface.c:4945
 msgid ""
@@ -1596,15 +1596,15 @@ msgid ""
 "DeaDBeeF decoder plugins. For example, mp3 files can have content type "
 "\"audio/x-mpeg\", and need to be decoded by DeaDBeeF's own \"stdmpg\" "
 "plugin, or \"ffmpeg\" plugin."
-msgstr "Ця таблиця встановлює відповідність між потоковими типами вмісту та втулками декодувальника DeaDBeeF. Наприклад, mp3 файли можуть бути типу \"audio/x-mpeg\" і при цьому бути декодованими DeaDBeeF'овим власним \"stdmpg\" плагіном або ж плагіном \"ffmpeg\"."
+msgstr "Ця таблиця встановлює відповідність між потоковими типами вмісту (Content-Type) та декодуючими плагінами DeaDBeeF. Наприклад, mp3 файли можуть бути типу \"audio/x-mpeg\" і при цьому бути декодованими плагіном \"stdmpg\", або ж плагіном \"ffmpeg\"."
 
 #: ../plugins/gtkui/deadbeef.glade.h:227 ../plugins/gtkui/interface.c:5088
 msgid "Content-Type:"
-msgstr "Тип вмісту:"
+msgstr "Content-Type:"
 
 #: ../plugins/gtkui/deadbeef.glade.h:228 ../plugins/gtkui/interface.c:5101
 msgid "Plugins:"
-msgstr "Втулки:"
+msgstr "Плагіни:"
 
 #: ../plugins/gtkui/deadbeef.glade.h:229 ../plugins/gtkui/interface.c:5169
 msgid "Button properties"
@@ -1673,7 +1673,7 @@ msgstr "Журнал DeaDBeeF"
 
 #: ../plugins/gtkui/deadbeef.glade.h:243 ../plugins/gtkui/interface.c:5624
 msgid "Auto-open this window on errors"
-msgstr ""
+msgstr "Авто-відчиняти це вікно при помилках"
 
 #: ../plugins/gtkui/deadbeef.glade.h:244 ../plugins/gtkui/interface.c:5628
 msgid "Clear"
@@ -1792,14 +1792,14 @@ msgstr "Новий список відтворення"
 
 #: ../plugins/gtkui/fileman.c:95
 msgid "Add Folders"
-msgstr ""
+msgstr "Додати Папки"
 
 #: ../plugins/gtkui/fileman.c:126
 #: ../plugins/gtkui/medialib/medialibwidget.c:518
 #: ../plugins/gtkui/playlist/mainplaylist.c:107
 #: ../plugins/gtkui/playlist/mainplaylist.c:138
 msgid "Add Files"
-msgstr ""
+msgstr "Додати файли"
 
 #: ../plugins/gtkui/fileman.c:204 ../translation/plugins.c:176
 #, no-c-format
@@ -1808,7 +1808,7 @@ msgstr "Додати розташування"
 
 #: ../plugins/gtkui/fileman.c:357
 msgid "Drag & Drop"
-msgstr ""
+msgstr "Перетягування та Cкидання"
 
 #: ../plugins/gtkui/fileman.c:401 ../plugins/gtkui/fileman.c:491
 msgid "Supported sound formats"
@@ -2098,31 +2098,31 @@ msgstr "2.4"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:125
 msgid "All Music"
-msgstr ""
+msgstr "Уся музика"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:129
 msgid "Media library is disabled"
-msgstr ""
+msgstr "Медіа бібліотека вимкнена"
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:133
 msgid "Loading..."
-msgstr ""
+msgstr "Завантажується..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:136
 msgid "Scanning..."
-msgstr ""
+msgstr "Сканується..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:139
 msgid "Indexing..."
-msgstr ""
+msgstr "Індексується..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:142
 msgid "Saving..."
-msgstr ""
+msgstr "Зберігається..."
 
 #: ../plugins/gtkui/medialib/medialibwidget.c:815
 msgid "Media Library plugin is unavailable."
-msgstr ""
+msgstr "Плагін медіа бібліотеки недоступен."
 
 #: ../plugins/gtkui/playlist/mainplaylist.c:236
 #: ../plugins/gtkui/playlist/searchplaylist.c:191
@@ -2277,7 +2277,7 @@ msgstr "Ви дійсно впевнені що хочете продовжит�
 
 #: ../plugins/gtkui/prefwin/prefwinmedialib.c:70
 msgid "Select music folders to add"
-msgstr ""
+msgstr "Обрати папки з музыкою для додавання"
 
 #: ../plugins/gtkui/prefwin/prefwinsound.c:69
 msgid "Default Audio Device"
@@ -2622,34 +2622,34 @@ msgstr "Голоси:"
 #: ../plugins/gtkui/scriptable/gtkScriptable.c:33
 #, c-format
 msgid "Edit %s"
-msgstr ""
+msgstr "Редагувати %s"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:568
 #, c-format
 msgid "%s (Copy)"
-msgstr ""
+msgstr "%s (Копіювати)"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:632
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:639
 msgid "Can't do that"
-msgstr ""
+msgstr "Не може бути виконано"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:633
 msgid "Preset with this name already exists."
-msgstr ""
+msgstr "Пресет з такою назвою вже існує."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:634
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:641
 msgid "Try a different name."
-msgstr ""
+msgstr "Спробуйте іншу назву."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:640
 msgid "This name is not allowed."
-msgstr ""
+msgstr "Така назва не дозволена."
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
 msgid "Reset"
-msgstr ""
+msgstr "Скинути"
 
 #: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
 #: ../plugins/shellexecui/interface.c:88
@@ -2660,22 +2660,22 @@ msgstr "Закрити"
 #: ../plugins/gtkui/undointegration.c:70
 #, c-format
 msgid "Undo %s"
-msgstr ""
+msgstr "Скасувати (%s)"
 
 #: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:256
 #, no-c-format
 msgid "Undo"
-msgstr ""
+msgstr "Скасувати"
 
 #: ../plugins/gtkui/undointegration.c:77
 #, c-format
 msgid "Redo %s"
-msgstr ""
+msgstr "Повторити (%s)"
 
 #: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:258
 #, no-c-format
 msgid "Redo"
-msgstr ""
+msgstr "Повторити"
 
 #: ../plugins/hotkeys/actionhandlers.c:824
 #, c-format
@@ -2850,7 +2850,7 @@ msgstr "Невірні значення"
 msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings.\n"
-msgstr ""
+msgstr "wildmidi: конфігураційний файл не знайдено. Будь ласка встановіть пакет freepats, або вкажіть шлях до freepats.cfg в налаштуваннях плагіна.\n"
 
 #: ../src/tf.c:2289
 msgid "mono"
@@ -2936,37 +2936,37 @@ msgstr "Використовувати контроль гучності PipeWir
 #: ../translation/plugins.c:10
 #, no-c-format
 msgid "Sample rate (real OPL is 49716Hz)"
-msgstr ""
+msgstr "Частота дискретизації (справжній OPL - 49716Hz)"
 
 #: ../translation/plugins.c:12
 #, no-c-format
 msgid "Synth engine"
-msgstr ""
+msgstr "Двигун синтезатора"
 
 #: ../translation/plugins.c:14
 #, no-c-format
 msgid "Nuked OPL3"
-msgstr ""
+msgstr "Nuked OPL3"
 
 #: ../translation/plugins.c:16
 #, no-c-format
 msgid "DOSBox OPL3 emulator"
-msgstr ""
+msgstr "Емулятор DOSBox OPL3"
 
 #: ../translation/plugins.c:18
 #, no-c-format
 msgid "Tatsuyuki Satoh's OPL2 emulator"
-msgstr ""
+msgstr "Емулятор Tatsuyuki Satoh OPL2"
 
 #: ../translation/plugins.c:20
 #, no-c-format
 msgid "Ken Silverman's OPL emulator"
-msgstr ""
+msgstr "Емулятор Ken Silverman's OPL"
 
 #: ../translation/plugins.c:22
 #, no-c-format
 msgid "Simon Peter's OPL emulator"
-msgstr ""
+msgstr "Емулятор Simin Peter's OPL"
 
 #. plugins/alsa/alsa.c
 #: ../translation/plugins.c:25
@@ -3707,22 +3707,22 @@ msgstr "Перемикнути паузу"
 #: ../translation/plugins.c:369
 #, no-c-format
 msgid "Play\\/Pause"
-msgstr "Грати\\/Павза"
+msgstr "Грати\\/Пауза"
 
 #: ../translation/plugins.c:371
 #, no-c-format
 msgid "Play Next Album"
-msgstr ""
+msgstr "Грати наступний альбом"
 
 #: ../translation/plugins.c:373
 #, no-c-format
 msgid "Play Previous Album"
-msgstr ""
+msgstr "Грати попередній альбом"
 
 #: ../translation/plugins.c:375
 #, no-c-format
 msgid "Play Random Album"
-msgstr ""
+msgstr "Грати випадковий альбом"
 
 #: ../translation/plugins.c:379
 #, no-c-format
@@ -3798,7 +3798,7 @@ msgstr "Включити скроблер"
 #: ../translation/plugins.c:408
 #, no-c-format
 msgid "Disable nowplaying"
-msgstr "Виключити програвання відразу"
+msgstr "Вимкнути програвання відразу"
 
 #: ../translation/plugins.c:410
 #, no-c-format
