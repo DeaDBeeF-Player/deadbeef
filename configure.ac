@@ -252,7 +252,7 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
 AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
 
 
-AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_shellexec}" = "yes"], [
+AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_shellexec}" = "yes" -o "${enable_listenbrainz}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         JANSSON_CFLAGS="-I../../$LIB/include"
         JANSSON_LIBS=-ljansson
@@ -665,6 +665,13 @@ AS_IF([test "${enable_lfm}" != "no"], [
     ])
 ])
 
+dnl listenbrainz plugin
+AS_IF([test "${enable_listenbrainz}" != "no"], [
+    AS_IF([test "${HAVE_CURL}" = "yes" -a "${enable_lastfm}" != "no"], [
+        HAVE_LISTENBRAINZ=yes
+    ])
+])
+
 dnl shellexec plugin
 AS_IF([test "${enable_shellexec}" != "no"], [
     HAVE_SHELLEXEC=yes
@@ -889,6 +896,7 @@ AM_CONDITIONAL(HAVE_VTX, test "x$HAVE_VTX" = "xyes")
 AM_CONDITIONAL(HAVE_GME, test "x$HAVE_GME" = "xyes")
 AM_CONDITIONAL(HAVE_LIBRETRO, test "x$HAVE_LIBRETRO" = "xyes")
 AM_CONDITIONAL(HAVE_LASTFM, test "x$HAVE_LASTFM" = "xyes")
+AM_CONDITIONAL(HAVE_LISTENBRAINZ, test "x$HAVE_LISTENBRAINZ" = "xyes")
 AM_CONDITIONAL(HAVE_VFS_CURL, test "x$HAVE_VFS_CURL" = "xyes")
 AM_CONDITIONAL(HAVE_HOTKEYS, test "x$HAVE_HOTKEYS" = "xyes")
 AM_CONDITIONAL(HAVE_MP3, test "x$HAVE_MP3" = "xyes")
@@ -1044,6 +1052,7 @@ PRINT_PLUGIN_INFO([gtkui3],[GTK3 user interface],[test "x$HAVE_GTK3" = "xyes"])
 PRINT_PLUGIN_INFO([gtkui],[GTK2 user interface],[test "x$HAVE_GTK2" = "xyes"])
 PRINT_PLUGIN_INFO([hotkeys],[Local and global hotkeys support],[test "x$HAVE_HOTKEYS" = "xyes"])
 PRINT_PLUGIN_INFO([lastfm],[last.fm scrobbler],[test "x$HAVE_LASTFM" = "xyes"])
+PRINT_PLUGIN_INFO([listenbrainz],[listenbrainz scrobbler],[test "x$HAVE_LISTENBRAINZ" = "xyes"])
 PRINT_PLUGIN_INFO([libretro],[Libretro resampler plugin],[test "x$HAVE_LIBRETRO" = "xyes"])
 PRINT_PLUGIN_INFO([m3u],[M3U and PLS playlist support],[test "x$HAVE_M3U" = "xyes"])
 PRINT_PLUGIN_INFO([medialib],[Media library],[test "x$HAVE_MEDIALIB" = "xyes"])
