@@ -108,7 +108,7 @@ filter "platforms:Windows"
 
 -- clang preset in premake5 does not support icon compiling, define it here
 filter 'files:**.rc'
-  buildcommands {'windres -O coff -o "%{cfg.objdir}/%{file.basename}.o" "%{file.relpath}"'}
+  buildcommands {'windres --define VERSION=\"' .. get_version() .. '\" -O coff -o "%{cfg.objdir}/%{file.basename}.o" "%{file.relpath}"'}
   buildoutputs {'%{cfg.objdir}/%{file.basename}.o'}
 
 -- YASM compiling for ffap

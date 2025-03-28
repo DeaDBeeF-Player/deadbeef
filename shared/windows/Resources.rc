@@ -1,4 +1,6 @@
 #include "winver.h"
+#define str(x) stri(x)
+#define stri(x) #x
 
 VS_VERSION_INFO VERSIONINFO
     FILEVERSION    1,0,0,0
@@ -14,7 +16,7 @@ VS_VERSION_INFO VERSIONINFO
             VALUE "LegalCopyright",     "\0"
             VALUE "OriginalFilename",   "deadbeef.exe\0"
             VALUE "ProductName",        "DeaDBeeF\0"
-            VALUE "ProductVersion",     "1.0.0.0\0"
+            VALUE "ProductVersion",     str(VERSION)
         }
     }
     BLOCK "VarFileInfo"
