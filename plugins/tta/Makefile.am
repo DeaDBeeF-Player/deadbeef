@@ -1,4 +1,3 @@
-ttapath=@top_srcdir@/plugins/tta
 EXTRA_DIST = $(ttapath)/README
 
 if HAVE_TTA
