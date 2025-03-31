@@ -25,7 +25,7 @@ mkdir -p $PIXMAPDIR
 
 cp src/deadbeef $OUTDIR
 
-for i in converter pltbrowser shellexecui ; do
+for i in converter pltbrowser shellexecui lyrics ; do
     if [ -f ./plugins/$i/.libs/${i}_gtk2.so ]; then
         cp ./plugins/$i/.libs/${i}_gtk2.so $PLUGDIR/
     else

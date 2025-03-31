@@ -1080,6 +1080,30 @@ project "pltbrowser_gtk3"
   pkgconfig ("gtk+-3.0")
 end
 
+if option ("plugin-lyrics_gtk2", "gtk+-2.0") then
+project "lyrics_gtk2"
+  files {
+    "plugins/lyrics/lyrics.c",
+    "plugins/lyrics/support.c"
+  }
+  includedirs {
+    "plugins/gtkui"
+  }
+  pkgconfig ("gtk+-2.0")
+end
+
+if option ("plugin-lyrics_gtk3", "gtk+-3.0") then
+project "lyrics_gtk3"
+  files {
+    "plugins/lyrics/lyrics.c",
+    "plugins/lyrics/support.c"
+  }
+  includedirs {
+    "plugins/gtkui"
+  }
+  pkgconfig ("gtk+-3.0")
+end
+
 if option ("plugin-shellexecui_gtk2", "gtk+-2.0 jansson") then
 project "shellexecui_gtk2"
   files {

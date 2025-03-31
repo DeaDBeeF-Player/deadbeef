@@ -686,6 +686,13 @@
 		2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
 		2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */; };
 		2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
+		2D02127A2D9AFBB800BAEA12 /* lyrics.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212772D9AFBB800BAEA12 /* lyrics.c */; };
+		2D02127B2D9AFBB800BAEA12 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212792D9AFBB800BAEA12 /* support.c */; };
+		2D02127C2D9AFBB800BAEA12 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0212782D9AFBB800BAEA12 /* support.h */; };
+		2D02127F2D9AFBF000BAEA12 /* lyrics_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D0212712D9AFB1F00BAEA12 /* lyrics_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D02129C2D9B083A00BAEA12 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212792D9AFBB800BAEA12 /* support.c */; };
+		2D02129D2D9B083A00BAEA12 /* lyrics.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212772D9AFBB800BAEA12 /* lyrics.c */; };
+		2D0212A02D9B08D700BAEA12 /* lyrics_gtk2.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D0212982D9B07E600BAEA12 /* lyrics_gtk2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D026DA91CAC5CB900E27961 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D026DAB1CAC5CB900E27961 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAA1CAC5CB900E27961 /* libbz2.dylib */; };
 		2D026DAD1CAC5CDF00E27961 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */; };
@@ -3250,6 +3257,20 @@
 			remoteGlobalIDString = 2D01D7C91AB2216900BCD3C4;
 			remoteInfo = ddbcore;
 		};
+		2D02127D2D9AFBD900BAEA12 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D0212702D9AFB1F00BAEA12;
+			remoteInfo = lyrics_gtk3;
+		};
+		2D02129E2D9B08CB00BAEA12 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D0212972D9B07E600BAEA12;
+			remoteInfo = lyrics_gtk2;
+		};
 		2D05A8D71B4BE630004C913D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
@@ -4394,6 +4415,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2D0212A02D9B08D700BAEA12 /* lyrics_gtk2.dylib in Copy Plugins */,
 				2DA37B142BC58B51007B2C3F /* pltbrowser_gtk2.dylib in Copy Plugins */,
 				2D5658372AEE6F620014443E /* medialib.dylib in Copy Plugins */,
 				2DC6574C274428F200583E14 /* ddb_gui_GTK2.dylib in Copy Plugins */,
@@ -4619,6 +4641,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				2D02127F2D9AFBF000BAEA12 /* lyrics_gtk3.dylib in Copy Plugins */,
 				2D1E1DCB27B90051004DEF1D /* libavcodec.58.dylib in Copy Plugins */,
 				2D1E1DCC27B90051004DEF1D /* libavformat.58.dylib in Copy Plugins */,
 				2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */,
@@ -5390,6 +5413,11 @@
 		2D00FBC42435381E000FC130 /* reloc65.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = reloc65.c; sourceTree = "<group>"; };
 		2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libddbcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testbootstrap.c; sourceTree = "<group>"; };
+		2D0212712D9AFB1F00BAEA12 /* lyrics_gtk3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lyrics_gtk3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D0212772D9AFBB800BAEA12 /* lyrics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lyrics.c; sourceTree = "<group>"; };
+		2D0212782D9AFBB800BAEA12 /* support.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
+		2D0212792D9AFBB800BAEA12 /* support.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = support.c; sourceTree = "<group>"; };
+		2D0212982D9B07E600BAEA12 /* lyrics_gtk2.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lyrics_gtk2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ffmpeg.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D026DAA1CAC5CB900E27961 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -7747,6 +7775,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2D02126F2D9AFB1F00BAEA12 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D0212962D9B07E600BAEA12 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		2D026D861CAC5BBF00E27961 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -9463,6 +9505,17 @@
 				2D00FE8F2435392E000FC130 /* tryopen */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		2D0212762D9AFB9700BAEA12 /* lyrics */ = {
+			isa = PBXGroup;
+			children = (
+				2D0212772D9AFBB800BAEA12 /* lyrics.c */,
+				2D0212782D9AFBB800BAEA12 /* support.h */,
+				2D0212792D9AFBB800BAEA12 /* support.c */,
+			);
+			name = lyrics;
+			path = plugins/lyrics;
 			sourceTree = "<group>";
 		};
 		2D026D9A1CAC5BD300E27961 /* ffmpeg */ = {
@@ -12619,6 +12672,8 @@
 				2D0AC90C2856450100F6D56A /* IntegrationTests.xctest */,
 				2DC6C609294DE5C700A63CEB /* libgoogletest.dylib */,
 				2DA37B112BC58B04007B2C3F /* pltbrowser_gtk2.dylib */,
+				2D0212712D9AFB1F00BAEA12 /* lyrics_gtk3.dylib */,
+				2D0212982D9B07E600BAEA12 /* lyrics_gtk2.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -12729,6 +12784,7 @@
 				2D88E9FB1B2AF6C70072FD43 /* liboggedit */,
 				4D1B514D1837EF9D003E6066 /* libparser */,
 				2D6220A41CD933E100EB6D22 /* libpng */,
+				2D0212762D9AFB9700BAEA12 /* lyrics */,
 				2DCB281819E8616E008E9DF6 /* m3u */,
 				2D887BC524B1C82A0078392F /* medialib */,
 				07765E031C28557900F5F4BC /* mms */,
@@ -13513,6 +13569,21 @@
 				2DC6583E274C361C00583E14 /* HolderWidget.h in Headers */,
 				2D5F05F125E306BC000A588C /* SpectrumAnalyzerWidget.h in Headers */,
 				2DC6C5E2294CE06B00A63CEB /* ChiptuneVoicesWidget.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D02126D2D9AFB1F00BAEA12 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D02127C2D9AFBB800BAEA12 /* support.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D0212942D9B07E600BAEA12 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15124,6 +15195,44 @@
 			productReference = 2D01D7CA1AB2216900BCD3C4 /* libddbcore.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		2D0212702D9AFB1F00BAEA12 /* lyrics_gtk3 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D0212722D9AFB1F00BAEA12 /* Build configuration list for PBXNativeTarget "lyrics_gtk3" */;
+			buildPhases = (
+				2D02126D2D9AFB1F00BAEA12 /* Headers */,
+				2D02126E2D9AFB1F00BAEA12 /* Sources */,
+				2D02126F2D9AFB1F00BAEA12 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = lyrics_gtk3;
+			packageProductDependencies = (
+			);
+			productName = ddb_lyrics;
+			productReference = 2D0212712D9AFB1F00BAEA12 /* lyrics_gtk3.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		2D0212972D9B07E600BAEA12 /* lyrics_gtk2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2D0212992D9B07E600BAEA12 /* Build configuration list for PBXNativeTarget "lyrics_gtk2" */;
+			buildPhases = (
+				2D0212942D9B07E600BAEA12 /* Headers */,
+				2D0212952D9B07E600BAEA12 /* Sources */,
+				2D0212962D9B07E600BAEA12 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = lyrics_gtk2;
+			packageProductDependencies = (
+			);
+			productName = lyrics_gtk2;
+			productReference = 2D0212982D9B07E600BAEA12 /* lyrics_gtk2.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		2D026D881CAC5BBF00E27961 /* ffmpeg */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D026D991CAC5BC000E27961 /* Build configuration list for PBXNativeTarget "ffmpeg" */;
@@ -15406,6 +15515,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D02127E2D9AFBD900BAEA12 /* PBXTargetDependency */,
 				2D48DB8A2269B731002CACFD /* PBXTargetDependency */,
 				2D48DB8C2269B731002CACFD /* PBXTargetDependency */,
 				2DE77495275E8AF300890350 /* PBXTargetDependency */,
@@ -15882,6 +15992,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D02129F2D9B08CB00BAEA12 /* PBXTargetDependency */,
 				2DA37B132BC58B42007B2C3F /* PBXTargetDependency */,
 				2D56570B2AED367C0014443E /* PBXTargetDependency */,
 				2DC656DF274428F200583E14 /* PBXTargetDependency */,
@@ -16363,6 +16474,12 @@
 					2D01D7C91AB2216900BCD3C4 = {
 						CreatedOnToolsVersion = 6.2;
 					};
+					2D0212702D9AFB1F00BAEA12 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					2D0212972D9B07E600BAEA12 = {
+						CreatedOnToolsVersion = 16.3;
+					};
 					2D026D881CAC5BBF00E27961 = {
 						CreatedOnToolsVersion = 6.4;
 					};
@@ -16598,6 +16715,8 @@
 				2D621FE71CD92FA400EB6D22 /* jpeg */,
 				2D5D213F1A4033B0001D5A79 /* lastfm */,
 				2D22F70219E1382C009C631E /* libsidplay2 */,
+				2D0212972D9B07E600BAEA12 /* lyrics_gtk2 */,
+				2D0212702D9AFB1F00BAEA12 /* lyrics_gtk3 */,
 				2DCB281319E86162008E9DF6 /* m3u */,
 				4D32FA1419A6448A000FFDE0 /* mad */,
 				2D3A4BB31D631530002C7098 /* medialib */,
@@ -17070,6 +17189,24 @@
 				2DA21F6029868F9C0077BD4C /* resizable_buffer.c in Sources */,
 				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,
 				2D01D7E11AB2219C00BCD3C4 /* ringbuf.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D02126E2D9AFB1F00BAEA12 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D02127A2D9AFBB800BAEA12 /* lyrics.c in Sources */,
+				2D02127B2D9AFBB800BAEA12 /* support.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2D0212952D9B07E600BAEA12 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D02129C2D9B083A00BAEA12 /* support.c in Sources */,
+				2D02129D2D9B083A00BAEA12 /* lyrics.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19042,6 +19179,16 @@
 			target = 2D01D7C91AB2216900BCD3C4 /* ddbcore */;
 			targetProxy = 2D01D7EB1AB2221E00BCD3C4 /* PBXContainerItemProxy */;
 		};
+		2D02127E2D9AFBD900BAEA12 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D0212702D9AFB1F00BAEA12 /* lyrics_gtk3 */;
+			targetProxy = 2D02127D2D9AFBD900BAEA12 /* PBXContainerItemProxy */;
+		};
+		2D02129F2D9B08CB00BAEA12 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D0212972D9B07E600BAEA12 /* lyrics_gtk2 */;
+			targetProxy = 2D02129E2D9B08CB00BAEA12 /* PBXContainerItemProxy */;
+		};
 		2D05A8D81B4BE630004C913D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 2D05A8281B4BE59D004C913D /* sndfile */;
@@ -20483,6 +20630,136 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
+			};
+			name = Release;
+		};
+		2D0212732D9AFB1F00BAEA12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
+				OTHER_LDFLAGS = "$(GTK3_LDFLAGS)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2D0212742D9AFB1F00BAEA12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DA9777424C5EC26002405DA /* gtk3.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK3_CFLAGS)";
+				OTHER_LDFLAGS = "$(GTK3_LDFLAGS)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		2D02129A2D9B07E600BAEA12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DC6565C2744287000583E14 /* gtk2.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK2_CFLAGS)";
+				OTHER_LDFLAGS = "$(GTK2_LDFLAGS)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		2D02129B2D9B07E600BAEA12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2DC6565C2744287000583E14 /* gtk2.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(GTK2_CFLAGS)";
+				OTHER_LDFLAGS = "$(GTK2_LDFLAGS)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -25128,6 +25405,24 @@
 			buildConfigurations = (
 				2D01D7CC1AB2216900BCD3C4 /* Debug */,
 				2D01D7CD1AB2216900BCD3C4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D0212722D9AFB1F00BAEA12 /* Build configuration list for PBXNativeTarget "lyrics_gtk3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D0212732D9AFB1F00BAEA12 /* Debug */,
+				2D0212742D9AFB1F00BAEA12 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D0212992D9B07E600BAEA12 /* Build configuration list for PBXNativeTarget "lyrics_gtk2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D02129A2D9B07E600BAEA12 /* Debug */,
+				2D02129B2D9B07E600BAEA12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
