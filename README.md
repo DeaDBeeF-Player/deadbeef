@@ -16,7 +16,7 @@ If you wish to chat with developers, join us on [Discord](https://discord.gg/GTV
 
 [![Linux Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Linux/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/linuxbuild.yml)
 [![Windows Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Windows/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/windowsbuild.yml)
-[![macOS Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20macOS/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/macbuild.yml)
+[![macOS Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Mac/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/macbuild.yml)
 
 [Nightly GNU/Linux Builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/master/)
 
