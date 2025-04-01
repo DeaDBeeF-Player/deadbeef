@@ -37,11 +37,31 @@ extern DB_functions_t *deadbeef;
     if (self.track != NULL) {
         // get lyrics from tags
         deadbeef->pl_lock();
-        const char *str = deadbeef->pl_find_meta (self.track, "lyrics");
-        if (str != NULL) {
-            lyrics = @(str);
+
+        // A bit of a hack since deadbeef stores multiline values as 0-separated lines.
+        DB_metaInfo_t *meta = deadbeef->pl_meta_for_key(self.track, "lyrics");
+        if (meta != NULL) {
+            size_t buffer_size = 100000;
+            char *lyrics_buffer = malloc(100000);
+            *lyrics_buffer = 0;
+
+            size_t value_size = meta->valuesize;
+            if (value_size > buffer_size - 1) {
+                value_size = buffer_size - 1;
+            }
+            memcpy(lyrics_buffer, meta->value, value_size);
+            char *p = lyrics_buffer;
+            for (size_t i = 0; i <= value_size; i++, p++) {
+                if (*p == 0) {
+                    *p = '\n';
+                }
+            }
+            lyrics_buffer[value_size] = 0;
+            lyrics = @(lyrics_buffer);
+            free(lyrics_buffer);
         }
-        str = deadbeef->pl_find_meta (self.track, "artist");
+
+        const char *str = deadbeef->pl_find_meta (self.track, "artist");
         if (str != NULL) {
             artist = @(str);
         }
@@ -51,7 +71,6 @@ extern DB_functions_t *deadbeef;
         }
 
         deadbeef->pl_unlock();
-
     }
 
     NSMutableParagraphStyle *paragraphStyle = [NSParagraphStyle.defaultParagraphStyle mutableCopy];
