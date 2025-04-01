@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23727" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23727"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -123,7 +123,7 @@
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="zMC-Ss-j3s">
                                         <rect key="frame" x="18" y="164" width="436" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Enable Japanese SHIFT-JIS detection and recoding" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="j3e-m3-cZP">
+                                        <buttonCell key="cell" type="check" title="Recode Japanese SHIFT-JIS" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="j3e-m3-cZP">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -133,7 +133,7 @@
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="nXp-DV-5XR">
                                         <rect key="frame" x="18" y="144" width="436" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Enable cyrillic CP1251 detection and recoding" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="FIl-Oa-w27">
+                                        <buttonCell key="cell" type="check" title="Recode Cyrillic CP1251" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="FIl-Oa-w27">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -143,7 +143,7 @@
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="0RD-fs-B31">
                                         <rect key="frame" x="18" y="124" width="436" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Enable Chinese CP936 detection and recoding" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="xgh-X2-f08">
+                                        <buttonCell key="cell" type="check" title="Recode Chinese CP936" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="xgh-X2-f08">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -217,11 +217,11 @@
                         </tabViewItem>
                         <tabViewItem label="Playlist" identifier="2" id="Bas-Mn-ob1">
                             <view key="view" id="tbJ-9l-ZFL">
-                                <rect key="frame" x="10" y="33" width="439" height="185"/>
+                                <rect key="frame" x="10" y="33" width="474" height="185"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="mQR-r2-hgB">
-                                        <rect key="frame" x="18" y="164" width="401" height="18"/>
+                                        <rect key="frame" x="18" y="164" width="436" height="18"/>
                                         <buttonCell key="cell" type="check" title="Close playlists with middle mouse button" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="vbQ-dU-f2J">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -231,8 +231,8 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="5ti-KG-6jS">
-                                        <rect key="frame" x="18" y="142" width="401" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Hide the &quot;Delete from Disk&quot; context menu item" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="3fF-la-mG4">
+                                        <rect key="frame" x="18" y="142" width="436" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Hide &quot;Delete from Disk&quot; context menu item" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="3fF-la-mG4">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -241,8 +241,8 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="va0-Vc-fXe">
-                                        <rect key="frame" x="18" y="120" width="401" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Auto-name playlists when adding a single folder" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Ejz-uG-nxa">
+                                        <rect key="frame" x="18" y="120" width="436" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Automatically name playlists when adding a single folder" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Ejz-uG-nxa">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -251,7 +251,7 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-PO-L5O">
-                                        <rect key="frame" x="18" y="63" width="401" height="18"/>
+                                        <rect key="frame" x="18" y="63" width="436" height="18"/>
                                         <buttonCell key="cell" type="check" title="Use Recycle Bin" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="cjY-a5-Gbj">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -261,8 +261,8 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hyY-IL-s4f">
-                                        <rect key="frame" x="18" y="41" width="401" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Display a confirmation warning dialog" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="klO-kO-Na9">
+                                        <rect key="frame" x="18" y="41" width="436" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Display confirmation dialog" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="klO-kO-Na9">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -271,8 +271,8 @@
                                         </connections>
                                     </button>
                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PBl-HV-gCa">
-                                        <rect key="frame" x="18" y="19" width="401" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Skip playing track if it's deleted" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="l1L-sL-vfs">
+                                        <rect key="frame" x="18" y="19" width="436" height="18"/>
+                                        <buttonCell key="cell" type="check" title="Skip the currently playing track if it's deleted" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="l1L-sL-vfs">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -281,7 +281,7 @@
                                         </connections>
                                     </button>
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="gbe-10-ftY">
-                                        <rect key="frame" x="20" y="110" width="399" height="5"/>
+                                        <rect key="frame" x="20" y="110" width="434" height="5"/>
                                     </box>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FW6-jn-RQA">
                                         <rect key="frame" x="18" y="88" width="112" height="16"/>
@@ -322,7 +322,7 @@
                         </tabViewItem>
                         <tabViewItem label="Appearance" identifier="" id="o97-3F-d9E">
                             <view key="view" id="wuF-q5-DhL">
-                                <rect key="frame" x="10" y="33" width="439" height="185"/>
+                                <rect key="frame" x="10" y="33" width="474" height="185"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </view>
                         </tabViewItem>
@@ -342,7 +342,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ySk-s8-tM7">
-                    <rect key="frame" x="240" y="167" width="260" height="21"/>
+                    <rect key="frame" x="183" y="167" width="317" height="21"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="YV9-Zx-yEt">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -363,8 +363,8 @@
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="Rqu-qW-OA7">
-                    <rect key="frame" x="18" y="169" width="214" height="18"/>
-                    <buttonCell key="cell" type="check" title="Add files to the default playlist:" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="cZj-Ac-CB1">
+                    <rect key="frame" x="18" y="169" width="157" height="18"/>
+                    <buttonCell key="cell" type="check" title="Default playlist name:" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="cZj-Ac-CB1">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -873,7 +873,7 @@
                                         <rect key="frame" x="15" y="205" width="444" height="56"/>
                                         <textFieldCell key="cell" id="USw-iz-pYK">
                                             <font key="font" metaFont="label" size="11"/>
-                                            <string key="title">This table defines the binding between network stream content types and DeaDBeeF decoder plugins. For example, mp3 files can have content type "audio/x-mpeg", and need to be decoded by DeaDBeeF's own "stdmpg" plugin, or "ffmpeg" plugin.</string>
+                                            <string key="title">This table defines the mapping between network stream content types and DeaDBeeF decoder plugins. For example, mp3 files can have content type "audio/x-mpeg", and need to be decoded by DeaDBeeF's own "stdmpg" plugin, or "ffmpeg" plugin.</string>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -882,7 +882,7 @@
                                         <rect key="frame" x="17" y="40" width="440" height="157"/>
                                         <clipView key="contentView" id="JU5-t2-anJ">
                                             <rect key="frame" x="1" y="1" width="438" height="155"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" autosaveColumns="NO" rowSizeStyle="automatic" headerView="dQI-1a-EJU" viewBased="YES" id="Bgl-g5-g9B">
                                                     <rect key="frame" x="0.0" y="0.0" width="438" height="130"/>
@@ -904,7 +904,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="oPR-lT-aW9">
-                                                                    <rect key="frame" x="11" y="1" width="121" height="17"/>
+                                                                    <rect key="frame" x="1" y="1" width="121" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f01-xW-vbE">
@@ -939,7 +939,7 @@
                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                             <prototypeCellViews>
                                                                 <tableCellView id="qMd-hB-qUt">
-                                                                    <rect key="frame" x="135" y="1" width="282" height="17"/>
+                                                                    <rect key="frame" x="125" y="1" width="282" height="17"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                     <subviews>
                                                                         <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7wV-L3-U1l">
@@ -1057,7 +1057,7 @@
                     <rect key="frame" x="20" y="20" width="200" height="309"/>
                     <clipView key="contentView" id="Qwb-Aj-8az">
                         <rect key="frame" x="1" y="1" width="198" height="307"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" autosaveName="" rowSizeStyle="automatic" viewBased="YES" id="oDJ-0h-H53">
                                 <rect key="frame" x="0.0" y="0.0" width="198" height="307"/>
@@ -1079,7 +1079,7 @@
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView identifier="PluginName" id="9HD-NU-Iig">
-                                                <rect key="frame" x="11" y="1" width="166" height="17"/>
+                                                <rect key="frame" x="1" y="1" width="166" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Kn-6X-dr9">
@@ -1105,11 +1105,11 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="200" id="2GJ-lW-HZT"/>
                     </constraints>
-                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="7JL-Cd-jgz">
+                    <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="7JL-Cd-jgz">
                         <rect key="frame" x="1" y="295" width="198" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="rFc-DW-Td0">
+                    <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="rFc-DW-Td0">
                         <rect key="frame" x="224" y="17" width="15" height="102"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
@@ -1149,7 +1149,7 @@
                                         <rect key="frame" x="8" y="36" width="433" height="235"/>
                                         <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="c6E-sw-DGw" customClass="FlippedClipView">
                                             <rect key="frame" x="1" y="1" width="431" height="233"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9eO-pn-WbB" customClass="PropertySheetContentView">
                                                     <rect key="frame" x="0.0" y="0.0" width="431" height="233"/>
@@ -1157,11 +1157,11 @@
                                                 </view>
                                             </subviews>
                                         </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="JjP-Kq-V4s">
+                                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="JjP-Kq-V4s">
                                             <rect key="frame" x="1" y="80" width="166" height="15"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Ywy-t2-JeC">
+                                        <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Ywy-t2-JeC">
                                             <rect key="frame" x="393" y="1" width="15" height="219"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
@@ -1185,25 +1185,25 @@
                                     <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GXS-T2-rdA">
                                         <rect key="frame" x="8" y="8" width="433" height="231"/>
                                         <clipView key="contentView" drawsBackground="NO" id="Lle-Gh-L94">
-                                            <rect key="frame" x="1" y="1" width="416" height="229"/>
+                                            <rect key="frame" x="1" y="1" width="431" height="229"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="RAU-kc-ZWb">
-                                                    <rect key="frame" x="0.0" y="0.0" width="416" height="229"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="431" height="229"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    <size key="minSize" width="416" height="229"/>
+                                                    <size key="minSize" width="431" height="229"/>
                                                     <size key="maxSize" width="463" height="10000000"/>
                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 </textView>
                                             </subviews>
                                         </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="x02-aW-8R2">
+                                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="x02-aW-8R2">
                                             <rect key="frame" x="-100" y="-100" width="87" height="18"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="VjM-Ek-iC2">
+                                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="VjM-Ek-iC2">
                                             <rect key="frame" x="417" y="1" width="15" height="229"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
@@ -1258,25 +1258,25 @@
                                     <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jGd-YI-nuw">
                                         <rect key="frame" x="8" y="8" width="433" height="263"/>
                                         <clipView key="contentView" drawsBackground="NO" id="kGi-v7-aYF">
-                                            <rect key="frame" x="1" y="1" width="416" height="261"/>
+                                            <rect key="frame" x="1" y="1" width="431" height="261"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView editable="NO" importsGraphics="NO" verticallyResizable="YES" usesFontPanel="YES" findStyle="panel" continuousSpellChecking="YES" allowsUndo="YES" usesRuler="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="8p1-kz-NZ1">
-                                                    <rect key="frame" x="0.0" y="0.0" width="416" height="261"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="431" height="261"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                    <size key="minSize" width="416" height="261"/>
+                                                    <size key="minSize" width="431" height="261"/>
                                                     <size key="maxSize" width="463" height="10000000"/>
                                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 </textView>
                                             </subviews>
                                         </clipView>
-                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="ACq-4K-UWO">
+                                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="ACq-4K-UWO">
                                             <rect key="frame" x="-100" y="-100" width="87" height="18"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
-                                        <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="1Oa-sp-wEf">
+                                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="1Oa-sp-wEf">
                                             <rect key="frame" x="417" y="1" width="15" height="261"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
@@ -1675,7 +1675,7 @@ Gw
                     <rect key="frame" x="20" y="40" width="480" height="213"/>
                     <clipView key="contentView" id="do0-5z-Q8M">
                         <rect key="frame" x="1" y="1" width="478" height="211"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="none" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowSizeStyle="automatic" viewBased="YES" id="0Ov-kf-8Ci">
                                 <rect key="frame" x="0.0" y="0.0" width="478" height="211"/>
@@ -1697,7 +1697,7 @@ Gw
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
                                         <prototypeCellViews>
                                             <tableCellView identifier="Folder" id="rYj-wb-T8g">
-                                                <rect key="frame" x="11" y="1" width="406" height="17"/>
+                                                <rect key="frame" x="1" y="1" width="406" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o06-ej-KEK">
@@ -1724,11 +1724,11 @@ Gw
                             </tableView>
                         </subviews>
                     </clipView>
-                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="U89-3t-2a6">
+                    <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="U89-3t-2a6">
                         <rect key="frame" x="1" y="197" width="438" height="15"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="ccM-dg-PJS">
+                    <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="ccM-dg-PJS">
                         <rect key="frame" x="224" y="17" width="15" height="102"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>

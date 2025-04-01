@@ -58,24 +58,11 @@ static NSString * const lyricsNotAvailableString = @"Lyrics Not Available";
 }
 
 - (void)fetchFromLyricsOvh {
-    NSString *artist;
-    NSString *title;
-
     ddb_playItem_t *track = self.track;
     deadbeef->pl_item_ref (track);
 
-    deadbeef->pl_lock();
-
-    const char *str = deadbeef->pl_find_meta (self.track, "artist");
-    if (str != NULL) {
-        artist = @(str);
-    }
-    str = deadbeef->pl_find_meta (self.track, "title");
-    if (str != NULL) {
-        title = @(str);
-    }
-
-    deadbeef->pl_unlock();
+    NSString *artist = [self currentArtist];
+    NSString *title = [self currentTitle];
 
     if (artist != nil && title != nil) {
         NSURL *url = [[[NSURL URLWithString:@"https://api.lyrics.ovh/v1"] URLByAppendingPathComponent:artist] URLByAppendingPathComponent:title];
