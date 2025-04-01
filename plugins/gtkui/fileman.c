@@ -47,7 +47,7 @@ gtkpl_add_dirs (ddb_playlist_t *plt, GSList *lst) {
             && deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 1)) {
         char t[1000];
         if (!deadbeef->plt_get_title (plt, t, sizeof (t))) {
-            char *def = _("New Playlist");
+            const char *def = _("New Playlist");
             if (empty || !strncmp (t, def, strlen (def))) {
                 const char *folder = strrchr ((char*)lst->data, G_DIR_SEPARATOR);
                 if (!folder) {

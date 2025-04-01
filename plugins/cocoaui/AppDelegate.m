@@ -507,11 +507,34 @@ main_cleanup_and_quit (void);
     openDlg.canChooseDirectories = YES;
     if ( [openDlg runModal] == NSModalResponseOK )
     {
-        NSArray* files = openDlg.URLs;
-        ddb_playlist_t *plt = deadbeef->plt_alloc ("add-folders");
+        NSArray<NSURL *> *files = openDlg.URLs;
+
         ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
+
+        ddb_playlist_t *plt = deadbeef->plt_alloc ("add-folders");
+
+        BOOL isEmpty = 0 == deadbeef->plt_get_item_count (plt_curr, PL_MAIN);
+
         if (!deadbeef->plt_add_files_begin (plt_curr, 0)) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                if (files.count == 1 && deadbeef->conf_get_int("cocoaui.name_playlist_from_folder", 1)) {
+                    char *title = malloc(1000);
+                    deadbeef->plt_get_title (plt, title, sizeof (title));
+
+                    const char *def = "New Playlist";
+                    BOOL isDefault = !strncmp (title, def, strlen (def));
+
+                    free (title);
+                    title = NULL;
+
+                    if (isEmpty || isDefault) {
+                        NSString *folder_name = files.firstObject.lastPathComponent;
+                        if (folder_name != nil) {
+                            deadbeef->plt_set_title(plt_curr, folder_name.UTF8String);
+                        }
+                    }
+                }
+
                 for (NSUInteger i = 0; i < files.count; i++) {
                     NSString *fileName = [files[i] path];
                     if (fileName) {
