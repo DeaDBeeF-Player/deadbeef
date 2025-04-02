@@ -41,7 +41,8 @@ typedef struct {
     GtkTreeStore *store;
     ddb_medialib_item_t *item_tree;
     gint collapse_expand_select_timeout;
-    int is_reloading;
+    gboolean is_reloading;
+    gboolean has_changed_selection;
     MlCellRendererPixbufDelegate pixbuf_cell_delegate;
 
     GdkPixbuf *folder_icon;
@@ -175,7 +176,7 @@ _reload_content (w_medialib_viewer_t *mlv) {
         free (curr_preset);
     }
 
-    mlv->is_reloading = 1;
+    mlv->is_reloading = TRUE;
     // clear
     GtkTreeIter iter;
     if (gtk_tree_model_iter_children (GTK_TREE_MODEL (store), &iter, &mlv->root_iter)) {
@@ -194,7 +195,7 @@ _reload_content (w_medialib_viewer_t *mlv) {
     // restore selected/expanded state
     _restore_selected_expanded_state_for_iter (mlv, store, &mlv->root_iter);
 
-    mlv->is_reloading = 0;
+    mlv->is_reloading = FALSE;
 }
 
 static gboolean
@@ -310,8 +311,7 @@ _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStor
 static gboolean
 _row_collapse_expand_selection_did_change (void *user_data) {
     w_medialib_viewer_t *mlv = user_data;
-    GtkTreeStore *store = mlv->store;
-    _save_selection_state_with_iter (mlv, store, &mlv->root_iter);
+    mlv->has_changed_selection = TRUE;
     mlv->collapse_expand_select_timeout = 0;
     return FALSE;
 }
@@ -603,16 +603,27 @@ _select_at_position (GtkTreeView *treeview, gint x, gint y) {
 }
 
 static void
+_refresh_mediasource(w_medialib_viewer_t *mlv) {
+    if (mlv->has_changed_selection) {
+        GtkTreeStore *store = mlv->store;
+        _save_selection_state_with_iter (mlv, store, &mlv->root_iter);
+        mlv->has_changed_selection = FALSE;
+    }
+
+    plugin->refresh (mlv->source);
+}
+
+static void
 _trkproperties_did_change_tracks (void *user_data) {
     w_medialib_viewer_t *mlv = user_data;
-    plugin->refresh (mlv->source);
+    _refresh_mediasource(mlv);
 }
 
 static void
 _trkproperties_did_delete_files (void *user_data, int cancelled) {
     if (!cancelled) {
         w_medialib_viewer_t *mlv = user_data;
-        plugin->refresh (mlv->source);
+        _refresh_mediasource(mlv);
     }
 }
 
