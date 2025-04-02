@@ -56,6 +56,8 @@ static void *kPresetCtx = &kPresetCtx;
 
 @property (nonatomic) NSImage *folderImage;
 
+@property (nonatomic) BOOL hasChangedSelection;
+
 @end
 
 @implementation MediaLibraryOutlineViewController
@@ -240,22 +242,19 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     [self.outlineView endUpdates];
 }
 
-- (void)saveSelectionStateWithItem:(MediaLibraryItem *)item {
+- (void)saveSelectionStateWithItem:(MediaLibraryItem *)item rowIndex:(NSInteger)rowIndex {
     const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem == NULL) {
         return;
     }
 
-    NSInteger rowIndex = [self.outlineView rowForItem:item];
-    if (rowIndex != -1) {
-        BOOL selected = [self.outlineView isRowSelected:rowIndex];
-        BOOL expanded = [self.outlineView isItemExpanded:item];
-        self.medialibPlugin->set_tree_item_selected (self.medialibSource, medialibItem, selected ? 1 : 0);
-        self.medialibPlugin->set_tree_item_expanded (self.medialibSource, medialibItem, expanded ? 1 : 0);
-    }
+    BOOL selected = [self.outlineView isRowSelected:rowIndex];
+    BOOL expanded = [self.outlineView isItemExpanded:item];
+    self.medialibPlugin->set_tree_item_selected (self.medialibSource, medialibItem, selected ? 1 : 0);
+    self.medialibPlugin->set_tree_item_expanded (self.medialibSource, medialibItem, expanded ? 1 : 0);
 
     for (NSUInteger i = 0; i < item.numberOfChildren; i++) {
-        [self saveSelectionStateWithItem:item.children[i]];
+        [self saveSelectionStateWithItem:item.children[i] rowIndex:i];
     }
 }
 
@@ -349,7 +348,7 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
         [self updateMedialibStatus];
         break;
     case DDB_MEDIASOURCE_EVENT_OUT_OF_SYNC:
-        self.medialibPlugin->refresh(self.medialibSource);
+        [self refreshMediasource];
         break;
     }
 }
@@ -679,6 +678,14 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     return view;
 }
 
+- (void)refreshMediasource {
+    if (self.hasChangedSelection) {
+        self.hasChangedSelection = NO;
+        [self saveSelectionStateWithItem:self.medialibRootItem rowIndex: 0];
+    }
+    self.medialibPlugin->refresh(self.medialibSource);
+}
+
 - (void)outlineViewItemDidExpand:(NSNotification *)notification {
     NSObject *object = notification.userInfo[@"NSObject"];
     if (![object isKindOfClass:MediaLibraryItem.class]) {
@@ -708,7 +715,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 }
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-    [self saveSelectionStateWithItem:self.medialibRootItem];
+    self.hasChangedSelection = YES;
 }
 
 #pragma mark - MediaLibraryOutlineViewDelegate
@@ -745,19 +752,19 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 }
 
 - (void)trackContextMenuDidReloadMetadata:(TrackContextMenu *)trackContextMenu {
-    self.medialibPlugin->refresh(self.medialibSource);
+    [self refreshMediasource];
 }
 
 - (void)trackContextMenuDidDeleteFiles:(TrackContextMenu *)trackContextMenu cancelled:(BOOL)cancelled {
     if (!cancelled) {
-        self.medialibPlugin->refresh(self.medialibSource);
+        [self refreshMediasource];
     }
 }
 
 #pragma mark - TrackPropertiesWindowControllerDelegate
 
 - (void)trackPropertiesWindowControllerDidUpdateTracks:(TrackPropertiesWindowController *)windowController {
-    self.medialibPlugin->refresh(self.medialibSource);
+    [self refreshMediasource];
 }
 
 - (MediaLibraryItem *)selectedItem {
