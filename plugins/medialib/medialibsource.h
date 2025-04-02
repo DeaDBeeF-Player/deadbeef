@@ -31,7 +31,10 @@
 #define MAX_LISTENERS 10
 
 typedef struct medialib_source_s {
+    /// Tell scanner to abort as quickly as possible
     int scanner_terminate;
+    /// Tell scanner it's not permitted to restart, because source is being deleted
+    int deleting_source;
     dispatch_queue_t scanner_queue;
     dispatch_queue_t sync_queue;
 

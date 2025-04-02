@@ -2424,7 +2424,7 @@ _interpret_relative_path(const char *dname, const char *uri, char *true_uri, siz
 }
 
 static int
-_plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, playItem_t **last_added) {
+_plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, playItem_t **last_added, int *pabort) {
     int result = -1;
     playItem_t *it = NULL;
     uint8_t majorver;
@@ -2469,7 +2469,7 @@ _plt_load_from_file (playlist_t *plt, const char *fname, ddb_file_handle_t *fp, 
 
     for (uint32_t i = 0; i < cnt; i++) {
         it = pl_item_alloc ();
-        if (!it) {
+        if (!it || (pabort != NULL && *pabort)) {
             goto load_fail;
         }
         uint16_t l;
@@ -2768,6 +2768,10 @@ plt_load_int (
                             plug[p]->load2 (visibility, (ddb_playlist_t *)plt, (DB_playItem_t *)after, fname, pabort);
                     }
                     plt->undo_enabled = undo_enabled;
+
+                    if (pabort != NULL && *pabort) {
+                        return NULL;
+                    }
                     return (playItem_t *)loaded_it;
                 }
             }
@@ -2783,7 +2787,7 @@ plt_load_int (
     ddb_file_handle_t fh;
     ddb_file_init_stdio(&fh, fp);
 
-    if (0 != _plt_load_from_file(plt, fname, &fh, &last_added)) {
+    if (0 != _plt_load_from_file(plt, fname, &fh, &last_added, pabort)) {
         goto load_fail;
     }
 
@@ -2813,7 +2817,7 @@ plt_load_from_buffer (playlist_t *plt, const uint8_t *buffer, size_t size) {
     ddb_file_init_buffer(&fh, buffer, size);
 
     playItem_t *last_added = NULL;
-    int res = _plt_load_from_file(plt, NULL, &fh, &last_added);
+    int res = _plt_load_from_file(plt, NULL, &fh, &last_added, NULL);
     if (last_added) {
         pl_item_unref (last_added);
     }
