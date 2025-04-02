@@ -61,7 +61,7 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
 
     gettimeofday (&tm1, NULL);
     if (!source->disable_file_operations) {
-        deadbeef->plt_load2 (-1, plt, NULL, plpath, &source->scanner_terminate, NULL, NULL);
+        deadbeef->plt_load2 (-1, plt, NULL, plpath, &source->deleting_source, NULL, NULL);
     }
     gettimeofday (&tm2, NULL);
     long ms = (tm2.tv_sec * 1000 + tm2.tv_usec / 1000) - (tm1.tv_sec * 1000 + tm1.tv_usec / 1000);
@@ -84,15 +84,9 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
     ml_scanner_configuration_t conf;
     conf.medialib_paths = _ml_source_get_music_paths (source, &conf.medialib_paths_count);
 
-    __block int terminated = 0;
     dispatch_sync (source->sync_queue, ^{
         ml_index (&scanner, &conf, 1);
-        terminated = source->scanner_terminate;
     });
-
-    if (terminated) {
-        return;
-    }
 
     ml_free_music_paths (conf.medialib_paths, conf.medialib_paths_count);
 

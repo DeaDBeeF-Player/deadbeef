@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly) ddb_mediasource_source_t *source;
 @property (nonatomic,readonly) scriptableModel_t *model;
 
+- (void)cleanup;
+
 @end
 
 NS_ASSUME_NONNULL_END

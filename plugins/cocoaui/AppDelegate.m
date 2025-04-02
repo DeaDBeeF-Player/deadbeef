@@ -284,6 +284,7 @@ main_cleanup_and_quit (void);
         [self.mainWindow.window close];
         self.mainWindow = nil;
         [TrackPropertiesManager deinitializeSharedInstance];
+        [self.mediaLibraryManager cleanup];
         self.mediaLibraryManager = nil;
 
         self.designModeState = nil;
