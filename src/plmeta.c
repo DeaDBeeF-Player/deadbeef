@@ -54,7 +54,23 @@ pl_meta_for_key_with_override (playItem_t *it, const char *key) {
         }
         m = m->next;
     }
-    return NULL;}
+    return NULL;
+}
+
+DB_metaInfo_t *
+pl_meta_for_cached_key (playItem_t *it, const char *key) {
+    pl_ensure_lock ();
+    DB_metaInfo_t *m = it->meta;
+
+    m = it->meta;
+    while (m) {
+        if (key == m->key) {
+            return m;
+        }
+        m = m->next;
+    }
+    return NULL;
+}
 
 
 DB_metaInfo_t *

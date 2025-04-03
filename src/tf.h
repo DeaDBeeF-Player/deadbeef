@@ -30,6 +30,12 @@
 extern "C" {
 #endif
 
+void
+tf_init (void);
+
+void
+tf_deinit (void);
+
 // compile the input title formatting string into bytecode
 // script: freeform string with title formatting special characters in it
 // returns the pointer to compiled bytecode, which must be tf_free'd by the caller.

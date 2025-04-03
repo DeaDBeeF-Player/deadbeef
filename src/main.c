@@ -1112,6 +1112,8 @@ main_cleanup_and_quit (void) {
 
         conf_free ();
 
+        tf_deinit ();
+
         trace ("messagepump_free\n");
         messagepump_free ();
         trace ("plug_cleanup\n");
@@ -1606,6 +1608,7 @@ main (int argc, char *argv[]) {
     _touch (crash_marker);
 #endif
 
+    tf_init ();
     pl_init ();
     conf_init ();
     conf_load (); // required by some plugins at startup

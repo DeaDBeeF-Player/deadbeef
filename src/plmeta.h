@@ -72,6 +72,9 @@ pl_meta_for_key (playItem_t *it, const char *key);
 DB_metaInfo_t *
 pl_meta_for_key_with_override (playItem_t *it, const char *key);
 
+DB_metaInfo_t *
+pl_meta_for_cached_key (playItem_t *it, const char *key);
+
 int
 pl_get_meta_with_override (playItem_t *it, const char *key, char *val, size_t size);
 
