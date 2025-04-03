@@ -39,10 +39,10 @@
 #define trace(fmt,...)
 
 static void
-plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version, int is_autosorting);
+plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_context, const char *tf_bytecode, const char *format, int order, int version, int is_autosorting);
 
 static void
-plt_sort_v2_internal (playlist_t *plt, int iter, int id, const char *format, int order, int is_autosorting) {
+plt_sort_v2_internal (playlist_t *plt, int iter, int id, ddb_tf_context_t *tf_context, const char *tf_bytecode, const char *format, int order, int is_autosorting) {
     ddb_undobuffer_t *undobuffer = ddb_undomanager_get_buffer (ddb_undomanager_shared ());
     if (plt->undo_enabled) {
         pl_lock ();
@@ -58,7 +58,7 @@ plt_sort_v2_internal (playlist_t *plt, int iter, int id, const char *format, int
         }
     }
 
-    plt_sort_internal (plt, iter, id, format, order, 1, is_autosorting);
+    plt_sort_internal (plt, iter, id, tf_context, tf_bytecode, format, order, 1, is_autosorting);
 
     if (plt->undo_enabled) {
         int count = plt->count[PL_MAIN];
@@ -77,13 +77,35 @@ plt_sort_v2_internal (playlist_t *plt, int iter, int id, const char *format, int
 
 void
 plt_sort_v2 (playlist_t *plt, int iter, int id, const char *format, int order) {
-    plt_sort_v2_internal(plt, iter, id, format, order, 0);
+    plt_sort_v2_internal(plt, iter, id, NULL, NULL, format, order, 0);
+}
+
+void
+plt_sort_v3 (ddb_tf_context_t *tf_ctx, const char *tf_bytecode, int iter, int id, int order) {
+    playlist_t *plt = NULL;
+    if (tf_ctx != NULL) {
+        plt = (playlist_t *)tf_ctx->plt;
+    }
+    plt_sort_v2_internal(plt, iter, id, tf_ctx, tf_bytecode, NULL, order, 0);
 }
 
 // sort for title formatting v1
 void
 plt_sort (playlist_t *playlist, int iter, int id, const char *format, int order) {
-    plt_sort_internal (playlist, iter, id, format, order, 0, 0);
+    ddb_tf_context_t ctx;
+    ddb_tf_context_t *ctxptr = NULL;
+    char *tf_bytecode = NULL;
+    if (format != NULL) {
+        tf_bytecode = tf_compile (format);
+        ctx._size = sizeof (ctx);
+        ctx.it = NULL;
+        ctx.plt = (ddb_playlist_t *)playlist;
+        ctx.idx = -1;
+        ctx.id = id;
+        ctxptr = &ctx;
+    }
+
+    plt_sort_internal (playlist, iter, id, ctxptr, tf_bytecode, NULL, order, 0, 0);
 }
 
 static int pl_sort_is_duration;
@@ -92,7 +114,7 @@ static int pl_sort_ascending;
 static int pl_sort_id;
 static int pl_sort_version; // 0: use pl_sort_format, 1: use pl_sort_tf_bytecode
 static const char *pl_sort_format;
-static char *pl_sort_tf_bytecode;
+static const char *pl_sort_tf_bytecode;
 static ddb_tf_context_t pl_sort_tf_ctx;
 
 static int
@@ -230,27 +252,31 @@ plt_sort_random (playlist_t *playlist, int iter) {
 // version 0: title formatting v1
 // version 1: title formatting v2
 static void
-plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, int order, int version, int is_autosorting) {
-    if (order == DDB_SORT_RANDOM) {
-        if (!is_autosorting) {
-            plt_replace_meta (playlist, "autosort_mode", "random");
-        }
-        plt_sort_random (playlist, iter);
-        return;
-    }
+plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_context, const char *tf_bytecode, const char *format, int order, int version, int is_autosorting) {
     int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
-    if (!is_autosorting)
-    {
-        plt_set_meta_int (playlist, "autosort_ascending", ascending);
-        if (version != 0 && format != NULL) {
-            plt_replace_meta (playlist, "autosort_mode", "tf");
-            plt_replace_meta (playlist, "autosort_tf", format);
+
+    if (tf_bytecode == NULL) {
+        if (order == DDB_SORT_RANDOM) {
+            if (!is_autosorting) {
+                plt_replace_meta (playlist, "autosort_mode", "random");
+            }
+            plt_sort_random (playlist, iter);
+            return;
+        }
+        if (!is_autosorting)
+        {
+            plt_set_meta_int (playlist, "autosort_ascending", ascending);
+            if (version != 0 && format != NULL) {
+                plt_replace_meta (playlist, "autosort_mode", "tf");
+                plt_replace_meta (playlist, "autosort_tf", format);
+            }
+        }
+
+        if (format == NULL || id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
+            return;
         }
     }
 
-    if (format == NULL || id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
-        return;
-    }
     pl_lock ();
     struct timeval tm1;
     gettimeofday (&tm1, NULL);
@@ -258,19 +284,30 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     trace ("ascending: %d\n", ascending);
     pl_sort_id = id;
 
+
+    char *free_tf_bytecode = NULL;
+
     pl_sort_version = version;
-    if (version == 0) {
-        pl_sort_format = format;
-        pl_sort_tf_bytecode = NULL;
+    if (tf_bytecode == NULL) {
+        if (version == 0) {
+            pl_sort_format = format;
+            pl_sort_tf_bytecode = NULL;
+        }
+        else {
+            pl_sort_format = NULL;
+            free_tf_bytecode = tf_compile (format);
+            pl_sort_tf_bytecode = free_tf_bytecode;
+            pl_sort_tf_ctx._size = sizeof (pl_sort_tf_ctx);
+            pl_sort_tf_ctx.it = NULL;
+            pl_sort_tf_ctx.plt = (ddb_playlist_t *)playlist;
+            pl_sort_tf_ctx.idx = -1;
+            pl_sort_tf_ctx.id = id;
+        }
     }
     else {
         pl_sort_format = NULL;
-        pl_sort_tf_bytecode = tf_compile (format);
-        pl_sort_tf_ctx._size = sizeof (pl_sort_tf_ctx);
-        pl_sort_tf_ctx.it = NULL;
-        pl_sort_tf_ctx.plt = (ddb_playlist_t *)playlist;
-        pl_sort_tf_ctx.idx = -1;
-        pl_sort_tf_ctx.id = id;
+        pl_sort_tf_bytecode = tf_bytecode;
+        memcpy (&pl_sort_tf_ctx, tf_context, tf_context->_size);
     }
 
     if (format && id == -1
@@ -340,7 +377,10 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, const char *format, i
     }
 
     if (version == 1) {
-        tf_free (pl_sort_tf_bytecode);
+        if (free_tf_bytecode != NULL) {
+            tf_free (free_tf_bytecode);
+            free_tf_bytecode = NULL;
+        }
         pl_sort_tf_bytecode = NULL;
         memset (&pl_sort_tf_ctx, 0, sizeof (pl_sort_tf_ctx));
     }
@@ -366,7 +406,8 @@ sort_track_array (playlist_t *playlist, playItem_t **tracks, int num_tracks, con
 
     pl_sort_version = 1;
     pl_sort_format = NULL;
-    pl_sort_tf_bytecode = tf_compile (format);
+    char *tf_bytecode = tf_compile (format);
+    pl_sort_tf_bytecode = tf_bytecode;
     pl_sort_tf_ctx._size = sizeof (pl_sort_tf_ctx);
     pl_sort_tf_ctx.it = NULL;
     pl_sort_tf_ctx.plt = (ddb_playlist_t *)playlist;
@@ -394,7 +435,8 @@ sort_track_array (playlist_t *playlist, playItem_t **tracks, int num_tracks, con
     qsort (tracks, num_tracks, sizeof (playItem_t *), qsort_cmp_func);
 #endif
 
-    tf_free (pl_sort_tf_bytecode);
+    tf_free (tf_bytecode);
+    tf_bytecode = NULL;
     pl_sort_tf_bytecode = NULL;
     memset (&pl_sort_tf_ctx, 0, sizeof (pl_sort_tf_ctx));
 
@@ -419,10 +461,10 @@ plt_autosort (playlist_t *plt) {
         if (!fmt) {
             return;
         }
-        plt_sort_v2_internal (plt, PL_MAIN, -1, fmt, ascending ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING, 1);
+        plt_sort_v2_internal (plt, PL_MAIN, -1, NULL, NULL, fmt, ascending ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING, 1);
     }
     else if (!strcmp (autosort_mode, "random")) {
-        plt_sort_v2_internal (plt, PL_MAIN, -1, NULL, DDB_SORT_RANDOM, 1);
+        plt_sort_v2_internal (plt, PL_MAIN, -1, NULL, NULL, NULL, DDB_SORT_RANDOM, 1);
     }
 
     plt_save_config (plt);

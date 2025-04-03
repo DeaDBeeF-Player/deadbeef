@@ -73,7 +73,10 @@ DB_metaInfo_t *
 pl_meta_for_key_with_override (playItem_t *it, const char *key);
 
 DB_metaInfo_t *
-pl_meta_for_cached_key (playItem_t *it, const char *key);
+pl_meta_for_key_with_override_needs_mutex_lock (playItem_t *it, const char *key, int needs_mutex_lock);
+
+DB_metaInfo_t *
+pl_meta_for_cached_key (playItem_t *it, const char *key, int needs_mutex_lock);
 
 int
 pl_get_meta_with_override (playItem_t *it, const char *key, char *val, size_t size);

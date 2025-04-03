@@ -73,6 +73,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // API version history:
+// 1.19 -- deadbeef-1.10.1
 // 1.18 -- deadbeef-1.10.0
 // 1.17 -- deadbeef-1.9.6
 // 1.16 -- deadbeef-1.9.4
@@ -104,7 +105,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 18
+#define DB_API_VERSION_MINOR 19
 
 #if defined(__clang__)
 
@@ -139,6 +140,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 19)
+#define DEPRECATED_119 DDB_DEPRECATED("since deadbeef API 1.19")
+#else
+#define DEPRECATED_119
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 18)
@@ -1796,6 +1803,11 @@ typedef struct {
     /// When plt_autosort is called, the playlist is re-sorted with those saved settings.
     /// Usually it should be called by UI code, when appropriate.
     void (*plt_autosort)(ddb_playlist_t *plt);
+#endif
+
+#if (DDB_API_LEVEL >= 18)
+    // sort using title formatting v2, with more direct control over tf evaluation
+    void (*plt_sort_v3) (ddb_tf_context_t *tf_ctx, const char *tf_bytecode, int iter, int id, int order);
 #endif
 } DB_functions_t;
 

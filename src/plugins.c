@@ -614,6 +614,8 @@ static DB_functions_t deadbeef_api = {
     .plt_save_to_buffer = (ssize_t (*) (ddb_playlist_t *plt, uint8_t **out_buffer))plt_save_to_buffer,
     .plug_register_for_async_deinit = _plug_register_for_async_deinit,
     .plt_autosort = (void (*)(ddb_playlist_t *plt))plt_autosort,
+
+    .plt_sort_v3 = plt_sort_v3,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

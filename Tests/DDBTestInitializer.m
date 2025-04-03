@@ -14,6 +14,7 @@
 #include "vfs.h"
 #include "plugins.h"
 #include "playmodes.h"
+#include "tf.h"
 
 @implementation DDBTestInitializer
 - (instancetype)init {
@@ -23,6 +24,7 @@
 
     ddb_logger_init ();
     conf_init ();
+    tf_init();
     conf_enable_saving (0);
     streamer_playmodes_init();
     pl_init ();

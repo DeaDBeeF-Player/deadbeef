@@ -232,7 +232,18 @@ _create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, int selected, c
     }
     *curr = 0;
 
-    deadbeef->plt_sort_v2(source->ml_playlist, PL_MAIN, -1, tf_sort, DDB_SORT_ASCENDING);
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .flags = DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_NO_MUTEX_LOCK,
+        .plt = source->ml_playlist,
+        .idx = -1,
+    };
+
+    char *tf_bytecode = deadbeef->tf_compile(tf_sort);
+
+    deadbeef->plt_sort_v3(&ctx, tf_bytecode, PL_MAIN, -1, DDB_SORT_ASCENDING);
+
+    deadbeef->tf_free(tf_bytecode);
 
     _create_sorted_tree(source->ml_playlist, root, selected, NULL, bcs, text_bcs, tfs_count, 0);
 

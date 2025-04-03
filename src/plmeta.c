@@ -35,8 +35,10 @@
 #define UNLOCK {pl_unlock();}
 
 DB_metaInfo_t *
-pl_meta_for_key_with_override (playItem_t *it, const char *key) {
-    pl_ensure_lock ();
+pl_meta_for_key_with_override_needs_mutex_lock (playItem_t *it, const char *key, int needs_mutex_lock) {
+    if (needs_mutex_lock) {
+        pl_ensure_lock ();
+    }
     DB_metaInfo_t *m = it->meta;
 
     // try to find an override
@@ -58,8 +60,15 @@ pl_meta_for_key_with_override (playItem_t *it, const char *key) {
 }
 
 DB_metaInfo_t *
-pl_meta_for_cached_key (playItem_t *it, const char *key) {
-    pl_ensure_lock ();
+pl_meta_for_key_with_override (playItem_t *it, const char *key) {
+    return pl_meta_for_key_with_override_needs_mutex_lock(it, key, 1);
+}
+
+DB_metaInfo_t *
+pl_meta_for_cached_key (playItem_t *it, const char *key, int needs_mutex_lock) {
+    if (needs_mutex_lock) {
+        pl_ensure_lock ();
+    }
     DB_metaInfo_t *m = it->meta;
 
     m = it->meta;
