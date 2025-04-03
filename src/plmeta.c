@@ -71,8 +71,16 @@ pl_meta_for_cached_key (playItem_t *it, const char *key, int needs_mutex_lock) {
     }
     DB_metaInfo_t *m = it->meta;
 
+    int starts_with_colon = key[0] == ':';
+
     m = it->meta;
     while (m) {
+        if (!starts_with_colon && *m->key == ':') {
+            break;
+        }
+        if (*m->key == '!') {
+            break;
+        }
         if (key == m->key) {
             return m;
         }
