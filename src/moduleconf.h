@@ -12,3 +12,4 @@ PLUG(xgui)
 #ifdef GOOGLETEST_STATIC
 PLUG(mp3)
 #endif
+PLUG(core)

@@ -25,7 +25,7 @@
 #endif
 
 #include <string.h>
-#include "../../gettext.h"
+#include "gettext.h"
 #include <deadbeef/deadbeef.h>
 
 extern DB_functions_t *deadbeef;
@@ -657,7 +657,6 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, ddb_action_context_t c
     ddb_playlist_t *plt = deadbeef->action_get_playlist ();
     DB_playItem_t *it;
 
-    int it_count = 0;
     if (ctx == DDB_ACTION_CTX_SELECTION) {
         int it_count = deadbeef->pl_getselcount ();
         if (it_count) {
@@ -683,7 +682,7 @@ action_move_tracks_down_handler (DB_plugin_action_t *act, ddb_action_context_t c
     }
     else if (ctx == DDB_ACTION_CTX_NOWPLAYING) {
         if (playing_track) {
-            it_count = 1;
+            int it_count = 1;
             uint32_t indexes[1];
             indexes[0] = deadbeef->pl_get_idx_of (playing_track);
             DB_playItem_t *drop_before = deadbeef->pl_get_for_idx (indexes[0]+2);
@@ -829,9 +828,9 @@ _copy_playlist (ddb_playlist_t *plt) {
         deadbeef->pl_lock ();
         for (i = 0; i < cnt; i++) {
             char t[100];
-            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (i);
-            deadbeef->plt_get_title (plt, t, sizeof (t));
-            deadbeef->plt_unref (plt);
+            ddb_playlist_t *plt_other = deadbeef->plt_get_for_idx (i);
+            deadbeef->plt_get_title (plt_other, t, sizeof (t));
+            deadbeef->plt_unref (plt_other);
             if (!strcasecmp (t, name)) {
                 break;
             }

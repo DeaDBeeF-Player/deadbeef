@@ -693,6 +693,9 @@
 		2D02129C2D9B083A00BAEA12 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212792D9AFBB800BAEA12 /* support.c */; };
 		2D02129D2D9B083A00BAEA12 /* lyrics.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212772D9AFBB800BAEA12 /* lyrics.c */; };
 		2D0212A02D9B08D700BAEA12 /* lyrics_gtk2.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D0212982D9B07E600BAEA12 /* lyrics_gtk2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D0212F72DA0788200BAEA12 /* coreplugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212F52DA0788200BAEA12 /* coreplugin.c */; };
+		2D0212FC2DA0793600BAEA12 /* actionhandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0212FA2DA0793600BAEA12 /* actionhandlers.h */; };
+		2D0212FD2DA0793600BAEA12 /* actionhandlers.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212FB2DA0793600BAEA12 /* actionhandlers.c */; };
 		2D026DA91CAC5CB900E27961 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D026DAB1CAC5CB900E27961 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAA1CAC5CB900E27961 /* libbz2.dylib */; };
 		2D026DAD1CAC5CDF00E27961 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */; };
@@ -2529,9 +2532,7 @@
 		2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6952269BB4300AFF9AE /* widgets.c */; };
 		2DE3B80B2269BF3100AFF9AE /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B6962269BB4300AFF9AE /* support.h */; };
 		2DE3B81E2269C0EA00AFF9AE /* utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B49E81837EC49003E6066 /* utf8.c */; };
-		2DE3B85E2269CA1500AFF9AE /* actionhandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8422269CA1500AFF9AE /* actionhandlers.h */; };
 		2DE3B8622269CA1500AFF9AE /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8482269CA1500AFF9AE /* hotkeys.h */; };
-		2DE3B8642269CA1500AFF9AE /* actionhandlers.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */; };
 		2DE3B8652269CA1500AFF9AE /* hotkeys.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84F2269CA1500AFF9AE /* hotkeys.c */; };
 		2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
@@ -5418,6 +5419,10 @@
 		2D0212782D9AFBB800BAEA12 /* support.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
 		2D0212792D9AFBB800BAEA12 /* support.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = support.c; sourceTree = "<group>"; };
 		2D0212982D9B07E600BAEA12 /* lyrics_gtk2.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lyrics_gtk2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D0212F42DA0788200BAEA12 /* coreplugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = coreplugin.h; sourceTree = "<group>"; };
+		2D0212F52DA0788200BAEA12 /* coreplugin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = coreplugin.c; sourceTree = "<group>"; };
+		2D0212FA2DA0793600BAEA12 /* actionhandlers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = actionhandlers.h; sourceTree = "<group>"; };
+		2D0212FB2DA0793600BAEA12 /* actionhandlers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = actionhandlers.c; sourceTree = "<group>"; };
 		2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ffmpeg.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D026DAA1CAC5CB900E27961 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -7059,9 +7064,7 @@
 		2DE3B6962269BB4300AFF9AE /* support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
 		2DE3B7B92269BC3500AFF9AE /* ddb_gui_GTK3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ddb_gui_GTK3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = hotkeys.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2DE3B8422269CA1500AFF9AE /* actionhandlers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = actionhandlers.h; sourceTree = "<group>"; };
 		2DE3B8482269CA1500AFF9AE /* hotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hotkeys.h; sourceTree = "<group>"; };
-		2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = actionhandlers.c; sourceTree = "<group>"; };
 		2DE3B84F2269CA1500AFF9AE /* hotkeys.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hotkeys.c; sourceTree = "<group>"; };
 		2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pltbrowser_gtk3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DE3B87D2269F6B900AFF9AE /* support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = support.c; sourceTree = "<group>"; };
@@ -11125,6 +11128,10 @@
 				4D1B49EE1837EC49003E6066 /* volume.h */,
 				2DA21F5D29868F930077BD4C /* resizable_buffer.h */,
 				2DA21F5E29868F930077BD4C /* resizable_buffer.c */,
+				2D0212F42DA0788200BAEA12 /* coreplugin.h */,
+				2D0212F52DA0788200BAEA12 /* coreplugin.c */,
+				2D0212FA2DA0793600BAEA12 /* actionhandlers.h */,
+				2D0212FB2DA0793600BAEA12 /* actionhandlers.c */,
 			);
 			name = src;
 			path = ../src;
@@ -12426,9 +12433,7 @@
 		2DE3B8412269CA1500AFF9AE /* hotkeys */ = {
 			isa = PBXGroup;
 			children = (
-				2DE3B8422269CA1500AFF9AE /* actionhandlers.h */,
 				2DE3B8482269CA1500AFF9AE /* hotkeys.h */,
-				2DE3B84C2269CA1500AFF9AE /* actionhandlers.c */,
 				2DE3B84F2269CA1500AFF9AE /* hotkeys.c */,
 			);
 			name = hotkeys;
@@ -13563,6 +13568,7 @@
 				2DC65808274A876300583E14 /* DeletePlaylistConfirmationController.h in Headers */,
 				2D98B68C272D573700E655AE /* ScopeSettings.h in Headers */,
 				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
+				2D0212FC2DA0793600BAEA12 /* actionhandlers.h in Headers */,
 				2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2DC657F9274A7C4600583E14 /* RenamePlaylistViewController.h in Headers */,
 				2D92D1D529B92A8300218F1D /* viz.h in Headers */,
@@ -14572,7 +14578,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DE3B8622269CA1500AFF9AE /* hotkeys.h in Headers */,
-				2DE3B85E2269CA1500AFF9AE /* actionhandlers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17171,11 +17176,13 @@
 				2D01D7D41AB2219C00BCD3C4 /* conf.c in Sources */,
 				2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */,
 				2D01D7E31AB2219C00BCD3C4 /* threading_pthread.c in Sources */,
+				2D0212FD2DA0793600BAEA12 /* actionhandlers.c in Sources */,
 				2D01D7DF1AB2219C00BCD3C4 /* premix.c in Sources */,
 				2D01D7DC1AB2219C00BCD3C4 /* plmeta.c in Sources */,
 				2D92D33629B931FB00218F1D /* ctmap.c in Sources */,
 				2D01D7D51AB2219C00BCD3C4 /* dsppreset.c in Sources */,
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
+				2D0212F72DA0788200BAEA12 /* coreplugin.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
 				2D7387EB29BE5DA2003E3126 /* undo_playlist.c in Sources */,
@@ -18521,7 +18528,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DE3B8642269CA1500AFF9AE /* actionhandlers.c in Sources */,
 				2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */,
 				2DE3B8652269CA1500AFF9AE /* hotkeys.c in Sources */,
 			);
