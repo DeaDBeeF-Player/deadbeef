@@ -11056,12 +11056,16 @@
 				4D1B3F861837EC44003E6066 /* md5 */,
 				2D135EE6226E388E00BAAE84 /* scriptable */,
 				2D7387D329BE5DA1003E3126 /* undo */,
+				2D0212FA2DA0793600BAEA12 /* actionhandlers.h */,
+				2D0212FB2DA0793600BAEA12 /* actionhandlers.c */,
 				2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */,
 				2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */,
 				2DD9EF0419A5089F00189344 /* cocoautil.h */,
 				2DD9EF0519A5089F00189344 /* cocoautil.m */,
 				4D1B3ECE1837EC44003E6066 /* conf.c */,
 				4D1B3ECF1837EC44003E6066 /* conf.h */,
+				2D0212F42DA0788200BAEA12 /* coreplugin.h */,
+				2D0212F52DA0788200BAEA12 /* coreplugin.c */,
 				2D40208D1F27BD7200D4EA4F /* cueutil.c */,
 				2D40208E1F27BD7200D4EA4F /* cueutil.h */,
 				2DB951B426B07E7B00602876 /* decodedblock.h */,
@@ -11128,10 +11132,6 @@
 				4D1B49EE1837EC49003E6066 /* volume.h */,
 				2DA21F5D29868F930077BD4C /* resizable_buffer.h */,
 				2DA21F5E29868F930077BD4C /* resizable_buffer.c */,
-				2D0212F42DA0788200BAEA12 /* coreplugin.h */,
-				2D0212F52DA0788200BAEA12 /* coreplugin.c */,
-				2D0212FA2DA0793600BAEA12 /* actionhandlers.h */,
-				2D0212FB2DA0793600BAEA12 /* actionhandlers.c */,
 			);
 			name = src;
 			path = ../src;
