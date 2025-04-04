@@ -191,31 +191,31 @@ _metacache_add_uppercase_string(const char *input) {
 void
 tf_init (void) {
     for (int i = 0; i < num_aa_fields; i++) {
-        aa_fields_cached[i] = metacache_add_string (aa_fields[i]);
-        aa_fields_cached[i + num_aa_fields] = _metacache_add_uppercase_string (aa_fields[i]);
+        aa_fields_cached[i*2] = metacache_add_string (aa_fields[i]);
+        aa_fields_cached[i*2+1] = _metacache_add_uppercase_string (aa_fields[i]);
     }
     for (int i = 0; i < num_a_fields; i++) {
-        a_fields_cached[i] = metacache_add_string (a_fields[i]);
-        a_fields_cached[i + num_a_fields] = _metacache_add_uppercase_string (a_fields[i]);
+        a_fields_cached[i*2] = metacache_add_string (a_fields[i]);
+        a_fields_cached[i*2+1] = _metacache_add_uppercase_string (a_fields[i]);
     }
     for (int i = 0; i < num_alb_fields; i++) {
-        alb_fields_cached[i] = metacache_add_string (alb_fields[i]);
-        alb_fields_cached[i + num_alb_fields] = _metacache_add_uppercase_string (alb_fields[i]);
+        alb_fields_cached[i*2] = metacache_add_string (alb_fields[i]);
+        alb_fields_cached[i*2+1] = _metacache_add_uppercase_string (alb_fields[i]);
     }
     for (int i = 0; i < num_title_fields; i++) {
-        title_fields_cached[i] = metacache_add_string (title_fields[i]);
-        title_fields_cached[i + num_title_fields] = _metacache_add_uppercase_string (title_fields[i]);
+        title_fields_cached[i*2] = metacache_add_string (title_fields[i]);
+        title_fields_cached[i*2+1] = _metacache_add_uppercase_string (title_fields[i]);
     }
     for (int i = 0; i < num_genre_fields; i++) {
-        genre_fields_cached[i] = metacache_add_string (genre_fields[i]);
-        genre_fields_cached[i + num_genre_fields] = _metacache_add_uppercase_string (genre_fields[i]);
+        genre_fields_cached[i*2] = metacache_add_string (genre_fields[i]);
+        genre_fields_cached[i*2+1] = _metacache_add_uppercase_string (genre_fields[i]);
     }
     // Special case: "tracknumber" -> "track" mapping
     trknr_fields_cached[0] = metacache_add_string ("track");
     trknr_fields_cached[1] = metacache_add_string ("TRACK");
     for (int i = 0; i < num_disc_fields; i++) {
-        disc_fields_cached[i] = metacache_add_string (disc_fields[i]);
-        disc_fields_cached[i + num_disc_fields] = _metacache_add_uppercase_string (disc_fields[i]);
+        disc_fields_cached[i*2] = metacache_add_string (disc_fields[i]);
+        disc_fields_cached[i*2+1] = _metacache_add_uppercase_string (disc_fields[i]);
     }
 }
 
@@ -3820,7 +3820,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 case 3: // title
                     for (int i = 0; !val && i < num_title_fields * 2; i++) {
                         val = _tf_get_combined_value_cached_key(it, title_fields_cached[i], &needs_free, item_index, 1, needs_mutex_lock);
-                        if (val != NULL && (i == 1 || i == 3)) {
+                        if (val != NULL && i >= 2) {
                             const char *end = NULL;
                             const char *start = _get_title_from_path(val, &end);
 
