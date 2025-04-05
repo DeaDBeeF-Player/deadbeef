@@ -15,6 +15,7 @@
 #include "plugins.h"
 #include "playmodes.h"
 #include "tf.h"
+#include "metacache.h"
 
 @implementation DDBTestInitializer
 - (instancetype)init {
@@ -24,6 +25,7 @@
 
     ddb_logger_init ();
     conf_init ();
+    metacache_init ();
     tf_init();
     conf_enable_saving (0);
     streamer_playmodes_init();
@@ -33,13 +35,6 @@
         exit (1);
     }
 
-#if 0
-    plug_disconnect_all ();
-    plug_unload_all ();
-    pl_free ();
-    conf_free ();
-    ddb_logger_free ();
-#endif
     return self;
 }
 @end

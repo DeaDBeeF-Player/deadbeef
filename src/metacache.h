@@ -27,6 +27,16 @@
 #ifndef __METACACHE_H
 #define __METACACHE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void
+metacache_init (void);
+
+void
+metacache_deinit (void);
+
 // Adds a new NULL-terminated string, or finds an existing one
 const char *
 metacache_add_string (const char *str);
@@ -58,5 +68,9 @@ metacache_ref (const char *str);
 // Decreases reference count of the specified value
 void
 metacache_unref (const char *str);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

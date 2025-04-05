@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "metacache.h"
+#include "threading.h"
 
 typedef struct metacache_str_s {
     struct metacache_str_s *next;
@@ -39,13 +40,25 @@ typedef struct metacache_str_s {
 } metacache_str_t;
 
 typedef struct {
-//    uint32_t hash;
     metacache_str_t *chain;
 } metacache_hash_t;
 
 #define HASH_SIZE 4096
 
 static metacache_hash_t hash[HASH_SIZE];
+
+static uintptr_t _mutex;
+
+void
+metacache_init (void) {
+    _mutex = mutex_create();
+}
+
+void
+metacache_deinit (void) {
+    mutex_free(_mutex);
+    _mutex = 0;
+}
 
 static uint32_t
 metacache_get_hash_sdbm (const char *str, size_t len) {
@@ -64,14 +77,17 @@ metacache_get_hash_sdbm (const char *str, size_t len) {
 
 static metacache_str_t *
 metacache_find_in_bucket (uint32_t h, const char *value, size_t len) {
+    mutex_lock (_mutex);
     metacache_hash_t *bucket = &hash[h];
     metacache_str_t *chain = bucket->chain;
     while (chain) {
         if (chain->value_length == len && !memcmp (chain->str, value, len)) {
+            mutex_unlock (_mutex);
             return chain;
         }
         chain = chain->next;
     }
+    mutex_unlock (_mutex);
     return NULL;
 }
 
@@ -83,10 +99,13 @@ const char *
 metacache_add_value (const char *value, size_t len) {
     //    printf ("n_strings=%d, n_inserts=%d, n_buckets=%d\n", n_strings, n_inserts, n_buckets);
     uint32_t h = metacache_get_hash_sdbm (value, len);
+
+    mutex_lock (_mutex);
     metacache_str_t *data = metacache_find_in_bucket (h & (HASH_SIZE-1), value, len);
     n_inserts++;
     if (data) {
         data->refcount++;
+        mutex_unlock (_mutex);
         return data->str;
     }
     metacache_hash_t *bucket = &hash[h & (HASH_SIZE-1)];
@@ -101,6 +120,7 @@ metacache_add_value (const char *value, size_t len) {
     data->next = bucket->chain;
     bucket->chain = data;
     n_strings++;
+    mutex_unlock (_mutex);
     return data->str;
 }
 
@@ -112,6 +132,9 @@ metacache_add_string (const char *str) {
 void
 metacache_remove_value (const char *value, size_t valuesize) {
     uint32_t h = metacache_get_hash_sdbm (value, valuesize);
+
+    mutex_lock (_mutex);
+
     metacache_hash_t *bucket = &hash[h & (HASH_SIZE-1)];
     metacache_str_t *chain = bucket->chain;
     metacache_str_t *prev = NULL;
@@ -132,6 +155,8 @@ metacache_remove_value (const char *value, size_t valuesize) {
         prev = chain;
         chain = chain->next;
     }
+
+    mutex_unlock (_mutex);
 }
 
 void
@@ -142,15 +167,19 @@ metacache_remove_string (const char *str) {
 // DEPRECATED_113
 void
 metacache_ref (const char *str) {
+    mutex_lock (_mutex);
     uint32_t *refc = (uint32_t *)(str-5);
     (*refc)++;
+    mutex_unlock (_mutex);
 }
 
 // DEPRECATED_113
 void
 metacache_unref (const char *str) {
+    mutex_lock (_mutex);
     uint32_t *refc = (uint32_t *)(str-5);
     (*refc)--;
+    mutex_unlock (_mutex);
 }
 
 const char *
@@ -161,12 +190,16 @@ metacache_get_string (const char *str) {
 const char *
 metacache_get_value (const char *value, size_t len) {
     uint32_t h = metacache_get_hash_sdbm (value, len);
+
+    mutex_lock (_mutex);
     metacache_str_t *data = metacache_find_in_bucket (h & (HASH_SIZE-1), value, len);
     n_inserts++;
     if (data) {
         data->refcount++;
+        mutex_unlock (_mutex);
         return data->str;
     }
 
+    mutex_unlock (_mutex);
     return NULL;
 }

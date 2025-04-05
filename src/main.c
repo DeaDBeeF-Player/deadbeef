@@ -89,6 +89,7 @@
 #include "playqueue.h"
 #include "tf.h"
 #include "logger.h"
+#include "metacache.h"
 
 #ifdef OSX_APPBUNDLE
 #    include "scriptable/scriptable.h"
@@ -1120,6 +1121,8 @@ main_cleanup_and_quit (void) {
         plug_cleanup ();
         trace ("logger_free\n");
 
+        metacache_deinit ();
+
         trace ("💛💙\n");
         ddb_logger_free ();
 
@@ -1608,6 +1611,7 @@ main (int argc, char *argv[]) {
     _touch (crash_marker);
 #endif
 
+    metacache_init ();
     tf_init ();
     pl_init ();
     conf_init ();

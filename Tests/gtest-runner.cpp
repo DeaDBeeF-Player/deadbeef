@@ -10,6 +10,7 @@
 #include "plugins.h"
 #include "playmodes.h"
 #include "tf.h"
+#include "metacache.h"
 
 int main(int argc, char **argv) {
     char buf[PATH_MAX];
@@ -17,6 +18,7 @@ int main(int argc, char **argv) {
 
     snprintf (dbplugindir, sizeof(dbplugindir), "%s/Tests", buf);
 
+    metacache_init ();
     ddb_logger_init ();
     conf_init ();
     conf_enable_saving (0);

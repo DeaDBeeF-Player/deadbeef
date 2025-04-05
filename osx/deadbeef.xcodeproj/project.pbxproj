@@ -696,6 +696,7 @@
 		2D0212F72DA0788200BAEA12 /* coreplugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212F52DA0788200BAEA12 /* coreplugin.c */; };
 		2D0212FC2DA0793600BAEA12 /* actionhandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0212FA2DA0793600BAEA12 /* actionhandlers.h */; };
 		2D0212FD2DA0793600BAEA12 /* actionhandlers.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212FB2DA0793600BAEA12 /* actionhandlers.c */; };
+		2D0214082DA12CA900BAEA12 /* MetacacheTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D0214072DA12CA300BAEA12 /* MetacacheTests.cpp */; };
 		2D026DA91CAC5CB900E27961 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2D026DAB1CAC5CB900E27961 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAA1CAC5CB900E27961 /* libbz2.dylib */; };
 		2D026DAD1CAC5CDF00E27961 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */; };
@@ -5423,6 +5424,7 @@
 		2D0212F52DA0788200BAEA12 /* coreplugin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = coreplugin.c; sourceTree = "<group>"; };
 		2D0212FA2DA0793600BAEA12 /* actionhandlers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = actionhandlers.h; sourceTree = "<group>"; };
 		2D0212FB2DA0793600BAEA12 /* actionhandlers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = actionhandlers.c; sourceTree = "<group>"; };
+		2D0214072DA12CA300BAEA12 /* MetacacheTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MetacacheTests.cpp; sourceTree = "<group>"; };
 		2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ffmpeg.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D026DAA1CAC5CB900E27961 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		2D026DAC1CAC5CDF00E27961 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -11821,6 +11823,7 @@
 				2D7F38021B2858AC00692A7B /* JunklibTests.cpp */,
 				2DA59D9025D00A8E00947C19 /* M3UTests.cpp */,
 				2DAA405A269B6308006D2754 /* MediaLibTests.m */,
+				2D0214072DA12CA300BAEA12 /* MetacacheTests.cpp */,
 				4D6CF18C20EB788A00811034 /* MP3DecoderTests.cpp */,
 				4D6CF17D20EB783900811034 /* MP3ParserTests.cpp */,
 				4DC416FD2180919D0056133E /* PlaylistTests.cpp */,
@@ -18300,6 +18303,7 @@
 				2D78C55F27568F8600F96F9D /* medialibtree.c in Sources */,
 				2D78C55527568B0800F96F9D /* medialibsource.c in Sources */,
 				2DA66EC81EDF4EF800E20989 /* StreamerTests.cpp in Sources */,
+				2D0214082DA12CA900BAEA12 /* MetacacheTests.cpp in Sources */,
 				2D135EF4226E47CE00BAAE84 /* ScriptableTests.cpp in Sources */,
 				2DA80C7426C0708200E8EC7F /* CuesheetTests.cpp in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.cpp in Sources */,
