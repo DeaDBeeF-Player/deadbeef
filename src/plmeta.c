@@ -25,6 +25,7 @@
   Oleksiy Yakovenko waker@users.sourceforge.net
 */
 
+#include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include "plmeta.h"
@@ -136,7 +137,16 @@ pl_add_empty_meta_for_key (playItem_t *it, const char *key) {
     }
     // add
     m = calloc (1, sizeof (DB_metaInfo_t));
-    m->key = metacache_add_string (key);
+
+    char *lc_key = strdup(key);
+
+    if (*key != ':') {
+        for (char *p = lc_key; *p; p++) {
+            *p = (char)tolower(*p);
+        }
+    }
+
+    m->key = metacache_add_string (lc_key);
 
     if (key[0] == ':' || key[0] == '_' || key[0] == '!') {
         if (tail) {
