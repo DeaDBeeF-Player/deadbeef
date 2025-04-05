@@ -166,7 +166,7 @@ static __inline void fpu_restore(fpu_control fpu){
 typedef int16_t fpu_control;
 
 static inline int ftoi(float f) {
-    float32x2_t fvec = vld1_f32(&f);
+    float32x2_t fvec = vdup_n_f32(f);
     int32x2_t ivec = vcvt_s32_f32(fvec);
     return vget_lane_s32(ivec, 0);
 }
