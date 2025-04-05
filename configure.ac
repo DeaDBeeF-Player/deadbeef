@@ -375,6 +375,11 @@ AS_IF([test "${HAVE_SSE2}"], [
     AC_DEFINE(HAVE_SSE2,1,[Support SSE2 instructions])
 ])
 
+AX_CHECK_COMPILER_FLAGS(-msse3, HAVE_SSE3=1, [], -Werror)
+AS_IF([test "${HAVE_SSE3}"], [
+    AC_DEFINE(HAVE_SSE3,1,[Support SSE3 instructions])
+])
+
 dnl curl lib
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_CURL=yes
@@ -932,6 +937,7 @@ AM_CONDITIONAL(PORTABLE, test "x$PORTABLE" = "xyes")
 AM_CONDITIONAL(PORTABLE_FULL, test "x$PORTABLE_FULL" = "xyes")
 AM_CONDITIONAL(USE_ABSTRACT_SOCKET_NAME, test "x$USE_ABSTRACT_SOCKET_NAME" = "xyes")
 AM_CONDITIONAL(HAVE_SSE2, test "${HAVE_SSE2}")
+AM_CONDITIONAL(HAVE_SSE3, test "${HAVE_SSE3}")
 dnl AM_CONDITIONAL(HAVE_STATUSNOTIFIER, test "x$HAVE_STATUSNOTIFIER" = "xyes")
 AM_CONDITIONAL(HAVE_RGSCANNER, test "x$HAVE_RGSCANNER" = "xyes")
 AM_CONDITIONAL(HAVE_SOUNDTOUCH, test "x$HAVE_SOUNDTOUCH" = "xyes")
