@@ -880,6 +880,13 @@ load_plugin (const char *plugdir, char *d_name, int l) {
         return -1;
     }
 
+    int has_lib_prefix = 0 == strncmp(d_name, "lib", min(3, strlen(d_name)));
+#ifndef ANDROID
+    if (has_lib_prefix) {
+        return -1;
+    }
+#endif
+
     trace ("loading plugin %s/%s\n", plugdir, d_name);
     void *handle = dlopen (fullname, RTLD_NOW);
     if (!handle) {
@@ -915,7 +922,7 @@ load_plugin (const char *plugdir, char *d_name, int l) {
         // don't error after failing to load plugins starting with "lib",
         // e.g. attempting to load a plugin from "libmp4ff.so",
         // except android, where all plugins have lib prefix
-        if (android || strlen (d_name) < 3 || memcmp (d_name, "lib", 3)) {
+        if (android || !has_lib_prefix) {
             trace ("dlsym error: %s (%s)\n", dlerror (), d_name + 3);
             return -1;
         }
