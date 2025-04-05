@@ -83,8 +83,8 @@ _FSEventStreamCallback(ConstFSEventStreamRef streamRef, void * __nullable client
 
 - (void)stop {
     [_debounceTimer invalidate];
-    FSEventStreamInvalidate(_eventStream);
     FSEventStreamStop(_eventStream);
+    FSEventStreamInvalidate(_eventStream);
     FSEventStreamRelease(_eventStream);
 }
 
