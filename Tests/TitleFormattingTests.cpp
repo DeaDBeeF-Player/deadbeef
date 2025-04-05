@@ -2838,3 +2838,11 @@ TEST_F(TitleFormattingTests, test_putMetaData) {
     tf_free (bc);
     EXPECT_STREQ(buffer, "TheAlbumArtist");
 }
+
+TEST_F(TitleFormattingTests, test_upperCaseField) {
+    pl_add_meta (it, "track", "5");
+    char *bc = tf_compile("%TRACK NUMBER%");
+    tf_eval (&ctx, bc, buffer, sizeof(buffer));
+    tf_free (bc);
+    EXPECT_STREQ(buffer, "5");
+}

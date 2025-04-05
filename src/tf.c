@@ -3997,15 +3997,27 @@ tf_compile_field (tf_compiler_t *c) {
 
     uint8_t *type_ptr = c->o++;
 
-    const char *fstart = c->i;
     uint8_t *plen = c->o;
     c->o += 1;
+    int index = 0;
+    int should_lowercase = 0;
+    const char *fstart = c->o;
     while (*(c->i)) {
         if (*(c->i) == '%') {
             break;
         }
         else {
-            *(c->o++) = *(c->i++);
+            if (index == 0) {
+                if (*(c->i) != ':') {
+                    should_lowercase = 1;
+                }
+                index++;
+            }
+            char chr = *(c->i++);
+            if (should_lowercase) {
+                chr = (char)tolower(chr);
+            }
+            *(c->o++) = chr;
         }
     }
     if (*(c->i) != '%') {
