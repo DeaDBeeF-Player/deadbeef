@@ -299,6 +299,7 @@ scanner_thread (medialib_source_t *source, ml_scanner_configuration_t conf) {
     dispatch_sync(source->sync_queue, ^{
         deadbeef->plt_unref (source->ml_playlist);
         source->ml_playlist = new_plt;
+        source->playlist_modification_idx++;
         ml_db_free(&source->db);
         memcpy (&source->db, &scanner.db, sizeof (ml_db_t));
 

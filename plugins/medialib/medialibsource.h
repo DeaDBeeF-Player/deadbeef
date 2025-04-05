@@ -52,6 +52,7 @@ typedef struct medialib_source_s {
     int enabled;
 
     ddb_playlist_t *ml_playlist; // this playlist contains the actual data of the media library in plain list
+    int playlist_modification_idx;
 
     // this is the index, which can be rebuilt from the playlist at any given time
     ml_db_t db;
@@ -64,6 +65,9 @@ typedef struct medialib_source_s {
     void *ml_listeners_userdatas[MAX_LISTENERS];
     int _ml_state;
     char source_conf_prefix[100];
+
+    struct scriptableItem_s *last_build_tree_preset;
+    int last_build_tree_playlist_modification_idx;
 } medialib_source_t;
 
 ddb_mediasource_source_t *

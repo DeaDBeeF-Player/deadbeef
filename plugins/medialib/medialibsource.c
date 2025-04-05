@@ -104,6 +104,7 @@ _ml_load_playlist (medialib_source_t *source, const char *plpath) {
 
     dispatch_sync (source->sync_queue, ^{
         source->ml_playlist = plt;
+        source->playlist_modification_idx++;
         memcpy (&source->db, &scanner.db, sizeof (ml_db_t));
     });
 
@@ -199,6 +200,10 @@ ml_free_source (ddb_mediasource_source_t *_source) {
     }
 
     ml_item_state_free (&source->state);
+
+    if (source->last_build_tree_preset) {
+        scriptableItemFree(source->last_build_tree_preset);
+    }
 
     if (source->musicpaths_json) {
         json_decref (source->musicpaths_json);
@@ -300,6 +305,7 @@ ml_refresh (ddb_mediasource_source_t *_source) {
                     source->ml_playlist = deadbeef->plt_alloc ("medialib");
                 }
                 deadbeef->plt_clear (source->ml_playlist);
+                source->playlist_modification_idx++;
                 ml_db_free (&source->db);
                 ml_free_music_paths (conf.medialib_paths, conf.medialib_paths_count);
                 return;
