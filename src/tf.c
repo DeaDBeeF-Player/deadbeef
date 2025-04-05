@@ -3128,7 +3128,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                     aa = val;
                     val = NULL;
-                    for (int i = 0; !val && a_fields[i]; i++) {
+                    for (int i = 0; !val && i < num_a_fields; i++) {
                         val = _tf_get_combined_value (it, a_fields[i], &needs_free, item_index, needs_mutex_lock);
                     }
                     if (val && aa && !strcmp (val, aa)) {
