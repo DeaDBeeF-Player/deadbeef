@@ -576,6 +576,13 @@ hotkeys_reset (void) {
 #endif
 }
 
+// Some 3rd party plugins (mpris) rely on hotkeys plugin having non-null get_actions method.
+// It's already patched, but let's be nice to people who didn't update yet.
+static DB_plugin_action_t *
+hotkeys_get_actions (DB_playItem_t *it) {
+    return NULL;
+}
+
 
 // define plugin interface
 static DB_hotkeys_plugin_t plugin = {
@@ -615,4 +622,5 @@ static DB_hotkeys_plugin_t plugin = {
     .get_action_for_keycombo = hotkeys_get_action_for_keycombo,
     .reset = hotkeys_reset,
     .misc.plugin.message = hotkeys_message,
+    .misc.plugin.get_actions = hotkeys_get_actions,
 };
