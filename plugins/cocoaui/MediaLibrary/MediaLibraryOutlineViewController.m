@@ -204,7 +204,9 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     scriptableItem_t *tfQueryRoot =  self.medialibPlugin->get_queries_scriptable(self.medialibSource);
 
     scriptableModel_t *model = self.mediaLibraryManager.model;
-    NSString *presetName = @(scriptableModelGetAPI(model)->get_active_name(model));
+    char *cPresetName = scriptableModelGetAPI(model)->get_active_name(model);
+    NSString *presetName = @(cPresetName);
+    free (cPresetName);
     scriptableItem_t *preset = NULL;
     if (presetName != nil) {
         preset = scriptableItemSubItemForName(tfQueryRoot, presetName.UTF8String);
