@@ -86,14 +86,14 @@ ml_add_listener (ddb_mediasource_source_t *_source, ddb_medialib_listener_t list
 
     __block int result = -1;
     dispatch_sync (source->sync_queue, ^{
-      for (int i = 0; i < MAX_LISTENERS; i++) {
-          if (!source->ml_listeners[i]) {
-              source->ml_listeners[i] = listener;
-              source->ml_listeners_userdatas[i] = user_data;
-              result = i;
-              return;
-          }
-      }
+        for (int i = 0; i < MAX_LISTENERS; i++) {
+            if (!source->ml_listeners[i]) {
+                source->ml_listeners[i] = listener;
+                source->ml_listeners_userdatas[i] = user_data;
+                result = i;
+                return;
+            }
+        }
     });
     return result;
 }
@@ -103,8 +103,8 @@ ml_remove_listener (ddb_mediasource_source_t *_source, int listener_id) {
     medialib_source_t *source = (medialib_source_t *)_source;
 
     dispatch_sync (source->sync_queue, ^{
-      source->ml_listeners[listener_id] = NULL;
-      source->ml_listeners_userdatas[listener_id] = NULL;
+        source->ml_listeners[listener_id] = NULL;
+        source->ml_listeners_userdatas[listener_id] = NULL;
     });
 }
 
@@ -115,11 +115,11 @@ ml_create_item_tree (ddb_mediasource_source_t *_source, scriptableItem_t *preset
     __block ml_tree_item_t *root = NULL;
 
     dispatch_sync (source->sync_queue, ^{
-      if (!source->enabled) {
-          return;
-      }
+        if (!source->enabled) {
+            return;
+        }
 
-      root = _create_item_tree_from_collection (filter, preset, source);
+        root = _create_item_tree_from_collection (filter, preset, source);
     });
 
     return (ddb_medialib_item_t *)root;
@@ -134,7 +134,7 @@ ml_is_tree_item_selected (ddb_mediasource_source_t *_source, const ddb_medialib_
     const char *path = item->path;
     __block ml_collection_item_state_t state;
     dispatch_sync (source->sync_queue, ^{
-      state = ml_item_state_get (&source->state, path);
+        state = ml_item_state_get (&source->state, path);
     });
     return state.selected;
 }
@@ -145,13 +145,13 @@ ml_set_tree_item_selected (ddb_mediasource_source_t *_source, const ddb_medialib
     ml_tree_item_t *item = (ml_tree_item_t *)_item;
     const char *path = item->path;
     dispatch_sync (source->sync_queue, ^{
-      ml_collection_item_state_t *prev = NULL;
-      ml_collection_item_state_t *state = ml_item_state_find (&source->state, path, &prev);
-      int expanded = 0;
-      if (state != NULL) {
-          expanded = state->expanded;
-      }
-      ml_item_state_update (&source->state, path, state, prev, selected, expanded);
+        ml_collection_item_state_t *prev = NULL;
+        ml_collection_item_state_t *state = ml_item_state_find (&source->state, path, &prev);
+        int expanded = 0;
+        if (state != NULL) {
+            expanded = state->expanded;
+        }
+        ml_item_state_update (&source->state, path, state, prev, selected, expanded);
     });
 }
 
@@ -162,7 +162,7 @@ ml_is_tree_item_expanded (ddb_mediasource_source_t *_source, const ddb_medialib_
     const char *path = item->path;
     __block ml_collection_item_state_t state;
     dispatch_sync (source->sync_queue, ^{
-      state = ml_item_state_get (&source->state, path);
+        state = ml_item_state_get (&source->state, path);
     });
     return state.expanded;
 }
@@ -176,13 +176,13 @@ ml_set_tree_item_expanded (ddb_mediasource_source_t *_source, const ddb_medialib
         return;
     }
     dispatch_sync (source->sync_queue, ^{
-      ml_collection_item_state_t *prev = NULL;
-      ml_collection_item_state_t *state = ml_item_state_find (&source->state, path, &prev);
-      int selected = 0;
-      if (state != NULL) {
-          selected = state->selected;
-      }
-      ml_item_state_update (&source->state, path, state, prev, selected, expanded);
+        ml_collection_item_state_t *prev = NULL;
+        ml_collection_item_state_t *state = ml_item_state_find (&source->state, path, &prev);
+        int selected = 0;
+        if (state != NULL) {
+            selected = state->selected;
+        }
+        ml_item_state_update (&source->state, path, state, prev, selected, expanded);
     });
 }
 
@@ -210,7 +210,7 @@ static void
 ml_enable_saving (ddb_mediasource_source_t *_source, int enable) {
     medialib_source_t *source = (medialib_source_t *)_source;
     dispatch_sync (source->sync_queue, ^{
-      source->disable_file_operations = !enable;
+        source->disable_file_operations = !enable;
     });
 }
 
@@ -219,7 +219,7 @@ ml_folder_count (ddb_mediasource_source_t *_source) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block unsigned res = 0;
     dispatch_sync (source->sync_queue, ^{
-      res = (unsigned)json_array_size (source->musicpaths_json);
+        res = (unsigned)json_array_size (source->musicpaths_json);
     });
     return res;
 }
@@ -228,12 +228,12 @@ static void
 ml_folder_at_index (ddb_mediasource_source_t *_source, int index, char *folder, size_t size) {
     medialib_source_t *source = (medialib_source_t *)_source;
     dispatch_sync (source->sync_queue, ^{
-      json_t *data = json_array_get (source->musicpaths_json, index);
-      *folder = 0;
-      if (json_is_string (data)) {
-          const char *musicdir = json_string_value (data);
-          strncat (folder, musicdir, size);
-      }
+        json_t *data = json_array_get (source->musicpaths_json, index);
+        *folder = 0;
+        if (json_is_string (data)) {
+            const char *musicdir = json_string_value (data);
+            strncat (folder, musicdir, size);
+        }
     });
 }
 
@@ -254,18 +254,18 @@ static void
 ml_set_folders (ddb_mediasource_source_t *_source, const char **folders, size_t count) {
     medialib_source_t *source = (medialib_source_t *)_source;
     dispatch_sync (source->sync_queue, ^{
-      if (!source->musicpaths_json) {
-          source->musicpaths_json = json_array ();
-      }
+        if (!source->musicpaths_json) {
+            source->musicpaths_json = json_array ();
+        }
 
-      json_array_clear (source->musicpaths_json);
-      for (int i = 0; i < count; i++) {
-          json_t *value = json_string (folders[i]);
-          json_array_append (source->musicpaths_json, value);
-          json_decref (value);
-      }
+        json_array_clear (source->musicpaths_json);
+        for (int i = 0; i < count; i++) {
+            json_t *value = json_string (folders[i]);
+            json_array_append (source->musicpaths_json, value);
+            json_decref (value);
+        }
 
-      _save_folders_config (source);
+        _save_folders_config (source);
     });
 }
 
@@ -276,14 +276,14 @@ ml_get_folders (ddb_mediasource_source_t *_source, /* out */ size_t *_count) {
     __block char **folders = NULL;
     __block size_t count = 0;
     dispatch_sync (source->sync_queue, ^{
-      count = json_array_size (source->musicpaths_json);
-      folders = calloc (count, sizeof (char *));
-      for (int i = 0; i < count; i++) {
-          json_t *data = json_array_get (source->musicpaths_json, i);
-          if (json_is_string (data)) {
-              folders[i] = strdup (json_string_value (data));
-          }
-      }
+        count = json_array_size (source->musicpaths_json);
+        folders = calloc (count, sizeof (char *));
+        for (int i = 0; i < count; i++) {
+            json_t *data = json_array_get (source->musicpaths_json, i);
+            if (json_is_string (data)) {
+                folders[i] = strdup (json_string_value (data));
+            }
+        }
     });
 
     *_count = count;
@@ -305,13 +305,13 @@ ml_insert_folder_at_index (ddb_mediasource_source_t *_source, const char *folder
     medialib_source_t *source = (medialib_source_t *)_source;
     __block int notify = 0;
     dispatch_sync (source->sync_queue, ^{
-      json_t *value = json_string (folder);
-      if (-1 != json_array_insert (source->musicpaths_json, index, value)) {
-          notify = 1;
-      }
-      json_decref (value);
-      _save_folders_config (source);
-      ml_source_update_fs_watch (source);
+        json_t *value = json_string (folder);
+        if (-1 != json_array_insert (source->musicpaths_json, index, value)) {
+            notify = 1;
+        }
+        json_decref (value);
+        _save_folders_config (source);
+        ml_source_update_fs_watch (source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
@@ -323,11 +323,11 @@ ml_remove_folder_at_index (ddb_mediasource_source_t *_source, int index) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block int notify = 0;
     dispatch_sync (source->sync_queue, ^{
-      if (-1 != json_array_remove (source->musicpaths_json, index)) {
-          notify = 1;
-      }
-      _save_folders_config (source);
-      ml_source_update_fs_watch (source);
+        if (-1 != json_array_remove (source->musicpaths_json, index)) {
+            notify = 1;
+        }
+        _save_folders_config (source);
+        ml_source_update_fs_watch (source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
@@ -339,13 +339,13 @@ ml_append_folder (ddb_mediasource_source_t *_source, const char *folder) {
     medialib_source_t *source = (medialib_source_t *)_source;
     __block int notify = 0;
     dispatch_sync (source->sync_queue, ^{
-      json_t *value = json_string (folder);
-      if (-1 != json_array_append (source->musicpaths_json, value)) {
-          notify = 1;
-      }
-      json_decref (value);
-      _save_folders_config (source);
-      ml_source_update_fs_watch (source);
+        json_t *value = json_string (folder);
+        if (-1 != json_array_append (source->musicpaths_json, value)) {
+            notify = 1;
+        }
+        json_decref (value);
+        _save_folders_config (source);
+        ml_source_update_fs_watch (source);
     });
     if (notify) {
         ml_notify_listeners (source, DDB_MEDIALIB_MEDIASOURCE_EVENT_FOLDERS_DID_CHANGE);
