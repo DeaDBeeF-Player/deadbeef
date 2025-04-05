@@ -44,8 +44,11 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)cleanup {
-    scriptableModelFree(_model);
-    if (_source) {
+    if (_model != NULL) {
+        scriptableModelFree(_model);
+        _model = NULL;
+    }
+    if (_source != NULL) {
         _medialibPlugin->free_source(_source);
         _source = NULL;
     }
