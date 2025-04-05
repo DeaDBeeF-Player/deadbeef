@@ -33,8 +33,13 @@
 typedef struct medialib_source_s {
     /// Tell scanner to abort as quickly as possible
     int scanner_terminate;
+
     /// Tell scanner it's not permitted to restart, because source is being deleted
     int deleting_source;
+
+    /// Tells that source is being initialized, and should not be interrupted
+    int initializing;
+
     dispatch_queue_t scanner_queue;
     dispatch_queue_t sync_queue;
 

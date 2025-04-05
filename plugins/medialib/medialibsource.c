@@ -220,6 +220,9 @@ ml_set_source_enabled (ddb_mediasource_source_t *_source, int enabled) {
             source->enabled = enabled;
             if (!enabled) {
                 source->scanner_terminate = 1;
+            } else {
+                source->scanner_terminate = 0;
+                source->initializing = 1;
             }
             char conf_name[200];
             snprintf (conf_name, sizeof (conf_name), "%senabled", source->source_conf_prefix);
@@ -237,6 +240,7 @@ ml_set_source_enabled (ddb_mediasource_source_t *_source, int enabled) {
                         deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
                     _ml_load_playlist (source, plpath);
                     dispatch_sync (source->sync_queue, ^{
+                        source->initializing = 0;
                         ml_source_update_fs_watch (source);
                     });
                 });
@@ -272,7 +276,9 @@ ml_refresh (ddb_mediasource_source_t *_source) {
     __block int64_t scanner_current_index = -1;
     dispatch_sync (source->sync_queue, ^{
         // interrupt plt_insert_dir
-        source->scanner_terminate = 1;
+        if (!source->initializing || source->deleting_source) {
+            source->scanner_terminate = 1;
+        }
         // interrupt all queued scanners
         source->scanner_cancel_index = source->scanner_current_index;
         source->scanner_current_index += 1;
