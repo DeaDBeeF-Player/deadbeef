@@ -148,6 +148,9 @@ pl_add_empty_meta_for_key (playItem_t *it, const char *key) {
 
     m->key = metacache_add_string (lc_key);
 
+    free (lc_key);
+    lc_key = NULL;
+
     if (key[0] == ':' || key[0] == '_' || key[0] == '!') {
         if (tail) {
             tail->next = m;
