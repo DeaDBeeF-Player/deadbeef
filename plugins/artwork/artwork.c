@@ -822,6 +822,21 @@ _consume_blob (ddb_cover_info_t *cover, const char *cache_path) {
 // Web cover: save_to_local ? save_to_local&return_path : save_to_cache&return_path
 static void
 process_query (ddb_cover_info_t *cover) {
+    // If all sources are off: just return / do nothing.
+    if (!artwork_enable_local
+        && !artwork_enable_embedded
+        && !artwork_enable_lfm
+        && !artwork_enable_wos
+#    if ENABLE_MUSICBRAINZ
+        && !artwork_enable_mb
+#    endif
+#   if ENABLE_ALBUMART_ORG
+        && !artwork_enable_aao
+#   endif
+        ) {
+        return;
+    }
+
     int islocal = deadbeef->is_local_file (cover->priv->filepath);
 
     struct stat cache_stat;
@@ -1013,6 +1028,8 @@ process_query (ddb_cover_info_t *cover) {
         return;
     }
     else {
+        unlink (cover->priv->track_cache_path);
+        unlink (cover->priv->album_cache_path);
         _touch (cover->priv->album_cache_path);
     }
 #endif
