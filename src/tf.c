@@ -222,25 +222,25 @@ tf_init (void) {
 void
 tf_deinit (void) {
     for (int i = 0; i < num_aa_fields * 2; i++) {
-        metacache_unref (aa_fields_cached[i]);
+        metacache_remove_string (aa_fields_cached[i]);
     }
     for (int i = 0; i < num_a_fields * 2; i++) {
-        metacache_unref (a_fields_cached[i]);
+        metacache_remove_string (a_fields_cached[i]);
     }
     for (int i = 0; i < num_alb_fields * 2; i++) {
-        metacache_unref (alb_fields_cached[i]);
+        metacache_remove_string (alb_fields_cached[i]);
     }
     for (int i = 0; i < num_title_fields * 2; i++) {
-        metacache_unref (title_fields_cached[i]);
+        metacache_remove_string (title_fields_cached[i]);
     }
     for (int i = 0; i < num_genre_fields * 2; i++) {
-        metacache_unref (genre_fields_cached[i]);
+        metacache_remove_string (genre_fields_cached[i]);
     }
     for (int i = 0; i < num_trknr_fields * 2; i++) {
-        metacache_unref (trknr_fields_cached[i]);
+        metacache_remove_string (trknr_fields_cached[i]);
     }
     for (int i = 0; i < num_disc_fields * 2; i++) {
-        metacache_unref (disc_fields_cached[i]);
+        metacache_remove_string (disc_fields_cached[i]);
     }
 }
 
