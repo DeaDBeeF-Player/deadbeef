@@ -231,7 +231,7 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         @"title": @(title),
         @"key": @(key),
         @"values": values
-    }];
+    }.mutableCopy];
 }
 
 
