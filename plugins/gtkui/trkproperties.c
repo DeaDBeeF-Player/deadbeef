@@ -45,7 +45,7 @@
 #include "tagwritersettings.h"
 #include "trkproperties.h"
 #include "wingeom.h"
-#include "utf8.h"
+#include "../../src/utf8.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
