@@ -234,6 +234,24 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
     }.mutableCopy];
 }
 
+static char *
+_formatted_title_for_unknown_key(const char *key) {
+    size_t l = strlen (key);
+    char *title = malloc(l*4);
+    title[0] = '<';
+    char *t = title + 1;
+    const char *p = key;
+    while (*p) {
+        int32_t size = 0;
+        u8_nextchar (p, &size);
+        int outsize = u8_toupper((const signed char *)p, size, t);
+        t += outsize;
+        p += size;
+    }
+    *t++ = '>';
+    *t++ = 0;
+    return title;
+}
 
 - (void)fillMeta {
     [self.store removeAllObjects];
@@ -261,10 +279,10 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             continue;
         }
 
-        size_t l = strlen (keys[k]);
-        char title[l + 3];
-        snprintf (title, sizeof (title), "<%s>", keys[k]);
+        char *title = _formatted_title_for_unknown_key(keys[k]);
         add_field (self.store, keys[k], title, 0, self.tracks, self.numtracks);
+        free (title);
+        title = NULL;
     }
     if (keys) {
         free (keys);
@@ -296,10 +314,10 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
         if (trkproperties_hc_props[i]) {
             continue;
         }
-        size_t l = strlen (keys[k]) + 2;
-        char title[l];
-        snprintf (title, sizeof (title), "<%s>", keys[k]+1);
+        char *title = _formatted_title_for_unknown_key(keys[k]);
         add_field (self.propstore, keys[k], title, 1, self.tracks, self.numtracks);
+        free (title);
+        title = NULL;
     }
     if (keys) {
         free (keys);
@@ -963,8 +981,10 @@ add_field (NSMutableArray *store, const char *key, const char *title, int is_pro
             }
         }
 
-        NSString *title = [NSString stringWithFormat:@"<%@>", key];
-        add_field (self.store, key.UTF8String, title.UTF8String, 0, self.tracks, self.numtracks);
+        char *title = _formatted_title_for_unknown_key(key.UTF8String);
+        add_field (self.store, key.UTF8String, title, 0, self.tracks, self.numtracks);
+        free (title);
+        title = NULL;
         self.modified = YES;
         [self.metadataTableView reloadData];
     }];
