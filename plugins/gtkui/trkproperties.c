@@ -45,6 +45,7 @@
 #include "tagwritersettings.h"
 #include "trkproperties.h"
 #include "wingeom.h"
+#include "utf8.h"
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
@@ -306,6 +307,25 @@ add_field_section(GtkListStore *store, const char *title, const char *value) {
 	gtk_list_store_set(store, &iter, META_COL_TITLE, title, META_COL_DISPLAY_VAL, value, META_COL_PANGO_WEIGHT, PANGO_WEIGHT_BOLD, -1);
 }
 
+static char *
+_formatted_title_for_unknown_key(const char *key) {
+    size_t l = strlen (key);
+    char *title = malloc(l*4);
+    title[0] = '<';
+    char *t = title + 1;
+    const char *p = key;
+    while (*p) {
+        int32_t size = 0;
+        u8_nextchar (p, &size);
+        int outsize = u8_toupper((const signed char *)p, size, t);
+        t += outsize;
+        p += size;
+    }
+    *t++ = '>';
+    *t++ = 0;
+    return title;
+}
+
 void
 trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtracks) {
     // no clear here
@@ -334,10 +354,10 @@ trkproperties_fill_meta (GtkListStore *store, DB_playItem_t **tracks, int numtra
             continue;
         }
 
-        size_t l = strlen (keys[k]);
-        char title[l + 3];
-        snprintf (title, sizeof (title), "<%s>", keys[k]);
+        char *title = _formatted_title_for_unknown_key(keys[k]);
         add_field (store, keys[k], title, 0, tracks, numtracks);
+        free (title);
+        title = NULL;
     }
     if (keys) {
         free (keys);
@@ -372,10 +392,10 @@ trkproperties_fill_prop (GtkListStore *store, DB_playItem_t **tracks, int numtra
             continue;
         }
 
-        size_t l = strlen (keys[k]);
-        char title[l + 3];
-        snprintf (title, sizeof (title), "<%s>", keys[k]+1);
+        char *title = _formatted_title_for_unknown_key(keys[k]);
         add_field (store, keys[k], title, 1, tracks, numtracks);
+        free (title);
+        title = NULL;
     }
     if (keys) {
         free (keys);
@@ -410,10 +430,10 @@ trkproperties_fill_metadata (void) {
         if (trkproperties_hc_props[i]) {
             continue;
         }
-        size_t l = strlen (keys[k]);
-        char title[l + 3];
-        snprintf (title, sizeof (title), "<%s>", keys[k]+1);
+        char *title = _formatted_title_for_unknown_key(keys[k]);
         add_field (propstore, keys[k], title, 1, tracks, numtracks);
+        free (title);
+        title = NULL;
     }
     if (keys) {
         free (keys);
@@ -1248,14 +1268,15 @@ on_trkproperties_add_new_field_activate
             }
 
             if (!dup) {
-                size_t l = strlen (text);
-                char title[l+3];
-                snprintf (title, sizeof (title), "<%s>", text);
+                char *title = _formatted_title_for_unknown_key(text);
                 const char *value = "";
                 const char *key = text;
 
                 gtk_list_store_append (store, &iter);
                 gtk_list_store_set (store, &iter, META_COL_TITLE, title, META_COL_DISPLAY_VAL, value, META_COL_KEY, key, META_COL_IS_MULT, 0, META_COL_VALUE, value, -1);
+                free (title);
+                title = NULL;
+
                 GtkTreePath *path;
                 gint rows = gtk_tree_model_iter_n_children (GTK_TREE_MODEL (store), NULL);
                 path = gtk_tree_path_new_from_indices (rows - 1, -1);
