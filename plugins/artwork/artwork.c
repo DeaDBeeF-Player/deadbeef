@@ -303,8 +303,7 @@ dir_scan_results (struct dirent *entry, const char *container, ddb_cover_info_t 
     return -1;
 }
 
-static
-int _dirent_alpha_cmp_func(const void *a, const void *b) {
+static int _dirent_alpha_cmp_func(const void *a, const void *b) {
     struct dirent * const *fa = a;
     struct dirent * const *fb = b;
 
