@@ -32,7 +32,6 @@ my @ignore_paths_android = (
     'plugins/shn',
     'plugins/sndio',
     'plugins/soundtouch',
-    'plugins/statusnotifier',
     'plugins/supereq',
     'plugins/wildmidi'
 );
