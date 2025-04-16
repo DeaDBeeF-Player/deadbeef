@@ -1,0 +1,12 @@
+FROM ubuntu:20.04
+
+WORKDIR /usr/src/deadbeef
+COPY docker-artifacts/x86_64/deadbeef-devel /usr/src/deadbeef
+
+RUN apt-get -qq update
+RUN apt-get install -y -qq libgtk2.0-0 libasound2 libpulse0 libgtk-3-0 libdispatch0
+
+RUN timeout -k 20s 20s /usr/src/deadbeef/deadbeef > /usr/src/deadbeef/log.txt
+RUN cat /usr/src/deadbeef/log.txt
+
+

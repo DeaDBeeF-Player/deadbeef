@@ -1,0 +1,7 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+RUN apt-get -qq update
+RUN apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-dev-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang libblocksruntime-dev libdispatch-dev bsdmainutils
+
