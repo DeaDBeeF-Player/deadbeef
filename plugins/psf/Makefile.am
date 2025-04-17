@@ -88,12 +88,12 @@ psf_la_SOURCES = plugin.c\
 	aosdk/osd_cpu.h\
 	aosdk/psfmain.c
 
-psf_la_LDFLAGS = -module -avoid-version $(ZLIB_LIBS)
+psf_la_LDFLAGS = -module -avoid-version $(ZLIB_LIBS) -lm
 
 psf_la_LIBADD = $(LDADD)
 
 psfpath=@top_srcdir@/plugins/psf
 
-psf_la_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -Wall -DHAS_PSXCPU=1 -I$(psfpath)/aosdk -I$(psfpath)/.. -I$(psfpath)/aosdk/eng_ssf -I$(psfpath)/aosdk/eng_qsf -I$(psfpath)/aosdk/eng_dsf -lm -fPIC -I@top_srcdir@/include
+psf_la_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -Wall -DHAS_PSXCPU=1 -I$(psfpath)/aosdk -I$(psfpath)/.. -I$(psfpath)/aosdk/eng_ssf -I$(psfpath)/aosdk/eng_qsf -I$(psfpath)/aosdk/eng_dsf -fPIC -I@top_srcdir@/include
 endif
 
