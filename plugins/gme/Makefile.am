@@ -319,7 +319,7 @@ gme_la_SOURCES = cgme.c gmewrap.cpp gmewrap.h\
 	game-music-emu-0.6pre/vgmplay/VGMPlay/VGMPlay.h\
 	game-music-emu-0.6pre/vgmplay/VGMPlay/VGMPlay_Intf.h
 
-gme_la_LDFLAGS = -module -avoid-version $(NOCPPLIB)
+gme_la_LDFLAGS = -module -avoid-version -lm $(NOCPPLIB)
 gme_la_LIBADD = $(ZLIB_LIBS)
 
 gme_la_CFLAGS = $(CFLAGS) $(ZLIB_CFLAGS) -I$(gmepath) -std=c99 -DGME_VERSION_055 -I@top_srcdir@/include

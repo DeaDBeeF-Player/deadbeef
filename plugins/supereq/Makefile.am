@@ -11,7 +11,7 @@ supereqpath=@top_srcdir@/plugins/supereq
 supereq_la_CFLAGS = $(CFLAGS) -std=c99 -DUSE_OOURA -I@top_srcdir@/include -I$(supereqpath)/libsupereq
 supereq_la_CXXFLAGS = $(CXXFLAGS) -fno-exceptions -fno-rtti -fno-unwind-tables -DUSE_OOURA -I@top_srcdir@/include -I$(supereqpath)/libsupereq
 
-supereq_la_LDFLAGS = -module -avoid-version $(NOCPPLIB)
+supereq_la_LDFLAGS = -module -avoid-version -lm $(NOCPPLIB)
 
 supereq_la_LIBADD = $(LDADD)
 endif
