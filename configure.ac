@@ -216,7 +216,7 @@ CFLAGS="$CFLAGS $INSANE_CFLAGS -D_GNU_SOURCE $CFLAGS_EXTENSIONS $PREFIXFLAGS -DD
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_ZLIB=yes
     ZLIB_CFLAGS="-I../../$LIB/include"
-    ZLIB_LIBS="../../$LIB/lib/libz.a"
+    ZLIB_LIBS="-lz"
     AC_SUBST(ZLIB_CFLAGS)
     AC_SUBST(ZLIB_LIBS)
 ], [
@@ -228,7 +228,7 @@ AS_IF([test "${enable_staticlink}" != "no"], [
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_ZIP=yes
     ZIP_CFLAGS="-I../../$LIB/include"
-    ZIP_LIBS="../../$LIB/lib/libzip.a ../../$LIB/lib/libz.a"
+    ZIP_LIBS="-lzip -lz"
     AC_SUBST(ZIP_CFLAGS)
     AC_SUBST(ZIP_LIBS)
 ], [
@@ -314,7 +314,7 @@ AC_SUBST(COREAUDIO_LIBS)
 AS_IF([test "${enable_ffmpeg}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         FFMPEG_DEPS_CFLAGS="-I../../$LIB/include"
-        FFMPEG_DEPS_LIBS="../../$LIB/lib/libavcodec.a -lpthread ../../$LIB/lib/libavformat.a ../../$LIB/lib/libavcodec.a ../../$LIB/lib/libavutil.a -lm ../../$LIB/lib/libz.a ../../$LIB/lib/libopencore-amrnb.a ../../$LIB/lib/libopencore-amrwb.a ../../$LIB/lib/libopus.a"
+        FFMPEG_DEPS_LIBS="-lavcodec -lpthread -lavformat -lavcodec -lavutil -lz -lopencore-amrnb -lopencore-amrwb -lopus -lm"
         AC_SUBST(FFMPEG_DEPS_CFLAGS)
         AC_SUBST(FFMPEG_DEPS_LIBS)
         HAVE_FFMPEG=yes
@@ -325,7 +325,7 @@ AS_IF([test "${enable_ffmpeg}" != "no"], [
 
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_DBUS=yes
-    DBUS_DEPS_LIBS="../../$LIB/lib/libdbus-1.a ../../$LIB/lib/libexpat.a -lrt"
+    DBUS_DEPS_LIBS="-ldbus-1 -lexpat -lrt"
     DBUS_DEPS_CFLAGS="-I../../$LIB/include/dbus-1.0 -I../../$LIB/lib/dbus-1.0/include/"
     AC_SUBST(DBUS_DEPS_LIBS)
 ], [
@@ -382,7 +382,7 @@ AS_IF([test "${HAVE_SSE3}"], [
 dnl curl lib
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_CURL=yes
-    CURL_LIBS="-lpthread -lrt -lcurl  ../../$LIB/lib/libz.a"
+    CURL_LIBS="-lpthread -lrt -lcurl -lz"
     CURL_CFLAGS="-I../../$LIB/include"
     AC_SUBST(CURL_LIBS)
     AC_SUBST(CURL_CFLAGS)
@@ -399,12 +399,12 @@ AS_IF([test "${enable_mp3}" != "no"], [
         HAVE_MP3=yes
         HAVE_LIBMAD=yes
         MAD_CFLAGS="-I../../$LIB/include"
-        MAD_LIBS="../../$LIB/lib/libmad.a"
+        MAD_LIBS="-lmad"
         AC_SUBST(MAD_CFLAGS)
         AC_SUBST(MAD_LIBS)
         HAVE_LIBMPG123=yes
         MPG123_CFLAGS="-I../../$LIB/include"
-        MPG123_LIBS="../../$LIB/lib/libmpg123.a"
+        MPG123_LIBS="-lmpg123"
         AC_SUBST(MPG123_CFLAGS)
         AC_SUBST(MPG123_LIBS)
     ], [
@@ -434,7 +434,7 @@ dnl vorbis plugin
 AS_IF([test "${enable_vorbis}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_VORBISPLUGIN=yes
-        VORBIS_LIBS="-lvorbisfile -lvorbis -lm -logg"
+        VORBIS_LIBS="-lvorbisfile -lvorbis -logg -lm"
         VORBIS_CFLAGS="-I../../$LIB/include"
         AC_SUBST(VORBIS_LIBS)
         AC_SUBST(VORBIS_CFLAGS)
@@ -453,7 +453,7 @@ dnl opus plugin
 AS_IF([test "${enable_opus}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_OPUSPLUGIN=yes
-        OPUS_LIBS="-lopusfile -lopus -lm -logg"
+        OPUS_LIBS="-lopusfile -lopus -logg -lm"
         OPUS_CFLAGS="-I../../$LIB/include -I../../$LIB/include/opus"
         AC_SUBST(OPUS_LIBS)
         AC_SUBST(OPUS_CFLAGS)
@@ -469,7 +469,7 @@ AS_IF([test "${enable_opus}" != "no"], [
 dnl libogg for oggedit
 AS_IF([test "${enable_staticlink}" != "no"], [
     HAVE_OGG=yes
-    OGG_LIBS="-logg"
+    OGG_LIBS="-logg -lm"
     OGG_CFLAGS="-I../../$LIB/include"
     AC_SUBST(OGG_LIBS)
     AC_SUBST(OGG_CFLAGS)
@@ -488,7 +488,7 @@ AS_IF([test "${enable_flac}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_FLACPLUGIN=yes
         FLAC_CFLAGS="-I../../$LIB/include"
-        FLAC_LIBS="-lFLAC"
+        FLAC_LIBS="-lFLAC -lm"
         AC_SUBST(FLAC_CFLAGS)
         AC_SUBST(FLAC_LIBS)
     ], [
@@ -506,7 +506,7 @@ AS_IF([test "${enable_wavpack}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_WAVPACKPLUGIN=yes
         WAVPACK_CFLAGS="-I../../$LIB/include"
-        WAVPACK_LIBS="../../$LIB/lib/libwavpack.a"
+        WAVPACK_LIBS="-lwavpack -lm"
         AC_SUBST(WAVPACK_CFLAGS)
         AC_SUBST(WAVPACK_LIBS)
     ], [
@@ -524,7 +524,7 @@ AS_IF([test "${enable_sndfile}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_SNDFILEPLUGIN=yes
         SNDFILE_CFLAGS="-I../../$LIB/include"
-        SNDFILE_LIBS="../../$LIB/lib/libsndfile.a"
+        SNDFILE_LIBS="-lsndfile -lm"
         AC_SUBST(SNDFILE_CFLAGS)
         AC_SUBST(SNDFILE_LIBS)
     ], [
@@ -548,7 +548,7 @@ dnl cdda plugin
 AS_IF([test "${enable_cdda}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_CDDAPLUGIN=yes
-        CDDA_LIBS="../../$LIB/lib/libcdio.a ../../$LIB/lib/libcdio_cdda.a ../../$LIB/lib/libcdio_paranoia.a ../../$LIB/lib/libudf.a ../../$LIB/lib/libiso9660.a ../../$LIB/lib/libcddb.a"
+        CDDA_LIBS="-lcdio -lcdio_cdda  -lcdio_paranoia -ludf -liso9660 -lcddb"
         CDDA_CFLAGS="-I../../$LIB/include -DUSE_PARANOIA -DUSE_PARANOIA_10_2"
         AC_SUBST(CDDA_LIBS)
         AC_SUBST(CDDA_CFLAGS)
@@ -712,7 +712,7 @@ AS_IF([test "${enable_nullout}" != "no"], [
 AS_IF([test "${enable_src}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         LIBSAMPLERATE_DEPS_CFLAGS="-I../../$LIB/include"
-        LIBSAMPLERATE_DEPS_LIBS="../../$LIB/lib/libsamplerate.a -lpthread ${DL_LIBS}"
+        LIBSAMPLERATE_DEPS_LIBS="-lsamplerate -lpthread ${DL_LIBS}"
         AC_SUBST(LIBSAMPLERATE_DEPS_CFLAGS)
         AC_SUBST(LIBSAMPLERATE_DEPS_LIBS)
         HAVE_DSP_SRC=yes
@@ -772,7 +772,7 @@ AS_IF([test "${enable_dca}" != "no"], [
 AS_IF([test "${enable_aac}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         FAAD2_CFLAGS="-I../../$LIB/include"
-        FAAD2_LIBS="../../$LIB/lib/libfaad.a"
+        FAAD2_LIBS="-lfaad -lm"
         AC_SUBST(FAAD2_CFLAGS)
         AC_SUBST(FAAD2_LIBS)
         HAVE_AAC=yes

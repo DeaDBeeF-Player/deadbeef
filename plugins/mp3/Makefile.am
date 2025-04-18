@@ -14,6 +14,6 @@ endif
 mp3_la_SOURCES = mp3.c mp3.h mp3parser.c mp3parser.h $(SOURCES_LIBMAD) $(SOURCES_LIBMPG123)
 mp3_la_LDFLAGS = -module -avoid-version
 
-mp3_la_LIBADD = $(LDADD) $(MAD_LIBS) $(MPG123_LIBS)
+mp3_la_LIBADD = $(LDADD) $(MAD_LIBS) $(MPG123_LIBS) -lm
 mp3_la_CFLAGS = $(CFLAGS) $(MAD_CFLAGS) $(USE_LIBMAD) $(MPG123_CFLAGS) $(USE_LIBMPG123) -std=c99 -fPIC -I@top_srcdir@/include
 endif
