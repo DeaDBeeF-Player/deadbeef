@@ -17,7 +17,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         apt-get -qq update
-        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync
+        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync libglib2.0-dev-bin
     - name: Checkout for Linux
       uses: actions/checkout@v1
       with:
