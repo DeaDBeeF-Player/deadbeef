@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <stdarg.h>
+#include <unistd.h>
 
 struct scriptableItem_s;
 typedef struct scriptableItem_s ddb_scriptable_item_t;
