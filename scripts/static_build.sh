@@ -76,7 +76,6 @@ export OBJC=$AP/apgcc
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
-export APBUILD_DEBUG=1
 make V=1 -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION || exit 1
 export DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION
 make DESTDIR=$DESTDIR install || exit 1
