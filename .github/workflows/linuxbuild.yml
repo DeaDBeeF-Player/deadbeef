@@ -13,9 +13,9 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         apt-get -qq update
-        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync libglib2.0-dev-bin
+        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync libglib2.0-dev-bin git
     - name: Checkout for Linux
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: true
     - name: Fetch static-deps
