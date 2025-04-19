@@ -2,10 +2,6 @@ name: Build for Linux
 
 on: [ push, pull_request ]
 
-env:
-  ACTIONS_RUNNER_FORCE_ACTIONS_NODE_VERSION: node16
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
-
 jobs:
   build_linux:
     name: CI for Linux
@@ -19,7 +15,7 @@ jobs:
         apt-get -qq update
         apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync libglib2.0-dev-bin
     - name: Checkout for Linux
-      uses: actions/checkout@v1
+      uses: actions/checkout@v4
       with:
         submodules: true
     - name: Fetch static-deps
