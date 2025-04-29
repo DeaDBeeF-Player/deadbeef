@@ -13,6 +13,7 @@ Comment[zh_CN]=倾听音乐
 Comment[zh_TW]=聆聽音樂
 Icon=deadbeef
 Exec=deadbeef %F
+StartupWMClass=deadbeef
 Terminal=false
 Actions=Play;Pause;Toggle-Pause;Stop;Next;Prev;
 MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;audio/x-mpegurl;audio/x-scpls;application/x-cue;
