@@ -520,6 +520,12 @@ ape_read_header(DB_FILE *fp, APEContext *ape)
         fprintf (stderr, "ape: Too many frames: %d\n", ape->totalframes);
         return -1;
     }
+
+    if(ape->totalframes == 0) {
+        fprintf (stderr, "ape: The count of frames is zero\n");
+        return -1;
+    }
+
     ape->frames = calloc(ape->totalframes, sizeof(APEFrame));
     if(!ape->frames)
         return -1;
