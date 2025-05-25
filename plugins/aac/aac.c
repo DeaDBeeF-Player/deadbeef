@@ -74,6 +74,8 @@ DB_functions_t *deadbeef;
 #define LFE_CHANNEL          (9)
 #define UNKNOWN_CHANNEL      (0)
 
+// Allow for up to 10 non-decodable (corrupt) frames in a row
+#define MAX_CORRUPT_FRAME_COUNT 10
 
 typedef struct {
     DB_fileinfo_t info;
@@ -108,6 +110,7 @@ typedef struct {
     int noremap;
     int eof;
     int junk;
+    int corrupt_ignore_count;
 } aac_info_t;
 
 static int
@@ -403,6 +406,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         info->remap[i] = -1;
     }
 
+    if (deadbeef->conf_get_int("aac.ignorecorrupt", 0)) {
+        info->corrupt_ignore_count = MAX_CORRUPT_FRAME_COUNT;
+    }
+
     return 0;
 }
 
@@ -581,8 +588,18 @@ aac_read (DB_fileinfo_t *_info, char *bytes, int size) {
             mp4packet = NULL;
 
             if (!samples) {
-                trace ("aac: ascDecoderDecodeFrame returned NULL\n");
-                break;
+                if (info->corrupt_ignore_count <= 0) {
+                    trace ("aac: aacDecoderDecodeFrame returned NULL too many times, aborted\n");
+                    break;
+                }
+                trace ("aac: aacDecoderDecodeFrame returned NULL, ignoring (%d attempts remaining)\n", info->corrupt_ignore_count);
+                info->corrupt_ignore_count--;
+                continue;
+            }
+
+            // Reset ignore count after successful decode
+            if (info->corrupt_ignore_count != 0) {
+                info->corrupt_ignore_count = MAX_CORRUPT_FRAME_COUNT;
             }
 
             bitrate_bytes += info->frame_info.bytesconsumed;
@@ -1132,6 +1149,10 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 
 static const char * exts[] = { "aac", "mp4", "m4a", "m4b", NULL };
 
+static const char settings_dlg[] = {
+    "property \"Ignore corrupt frames\" checkbox aac.ignorecorrupt 0;\n"
+};
+
 // define plugin interface
 static ddb_decoder2_t plugin = {
     .decoder.plugin.api_vmajor = 1,
@@ -1184,6 +1205,7 @@ static ddb_decoder2_t plugin = {
         "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.\n"
     ,
     .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.plugin.configdialog = settings_dlg,
     .decoder.open = aac_open,
     .decoder.init = aac_init,
     .decoder.free = aac_free,
