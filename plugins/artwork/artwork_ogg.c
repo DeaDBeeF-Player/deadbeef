@@ -73,8 +73,7 @@ int
 ogg_extract_art (ddb_cover_info_t *cover) {
     int err = -1;
     if (!strcasestr (cover->priv->filepath, ".ogg")
-        && !strcasestr (cover->priv->filepath, ".oga")
-        && !strcasestr (cover->priv->filepath, ".opus")) {
+        && !strcasestr (cover->priv->filepath, ".oga")) {
         return -1;
     }
 
