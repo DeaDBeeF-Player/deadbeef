@@ -53,6 +53,9 @@
 #ifdef USE_OGG
 #    include "artwork_ogg.h"
 #endif
+#ifdef USE_OPUS
+#    include "artwork_opus.h"
+#endif
 #include "albumartorg.h"
 #include "artwork.h"
 #include "artwork_internal.h"
@@ -951,6 +954,15 @@ process_query (ddb_cover_info_t *cover) {
 #ifdef USE_OGG
         trace ("trying to load artwork from ogg tag for %s\n", cover->priv->filepath);
         if (!ogg_extract_art (cover)) {
+            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
+            cover->cover_found = 1;
+            return;
+        }
+#endif
+
+#ifdef USE_OPUS
+        trace ("trying to load artwork from opus tag for %s\n", cover->priv->filepath);
+        if (!opus_extract_art (cover)) {
             _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
             cover->cover_found = 1;
             return;
