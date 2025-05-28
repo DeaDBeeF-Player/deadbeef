@@ -1925,6 +1925,12 @@
 		2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */; };
 		2DA62BA526F3C8A800ED449A /* gtkui_deletefromdisk.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA62BA326F3C8A800ED449A /* gtkui_deletefromdisk.h */; };
 		2DA62BA626F3C8A800ED449A /* gtkui_deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA62BA426F3C8A800ED449A /* gtkui_deletefromdisk.c */; };
+		2DA63F6E2DE8609E007B87B5 /* artwork_opus.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA63F6D2DE8609E007B87B5 /* artwork_opus.c */; };
+		2DA63F6F2DE8609E007B87B5 /* artwork_opus.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA63F6C2DE8609E007B87B5 /* artwork_opus.h */; };
+		2DA63F742DE860CA007B87B5 /* libopuslib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D9C5B051FDEBACC00D83CEF /* libopuslib.dylib */; };
+		2DA63F762DE860D3007B87B5 /* libopusfile.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D9C629E1FDEC51000D83CEF /* libopusfile.dylib */; };
+		2DA63F792DE862D3007B87B5 /* ogg_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA63F782DE862D3007B87B5 /* ogg_shared.c */; };
+		2DA63F7A2DE862D3007B87B5 /* ogg_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DA63F772DE862D3007B87B5 /* ogg_shared.h */; };
 		2DA66EC81EDF4EF800E20989 /* StreamerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC71EDF4EF800E20989 /* StreamerTests.cpp */; };
 		2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66EC91EDF4F2C00E20989 /* fakeout.c */; };
 		2DA66ECE1EDF501000E20989 /* fakein.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA66ECC1EDF501000E20989 /* fakein.c */; };
@@ -3832,6 +3838,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2DA5A91125D0330600947C19;
 			remoteInfo = wavpacklib;
+		};
+		2DA63F702DE860C1007B87B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D9C629D1FDEC51000D83CEF;
+			remoteInfo = opusfile;
+		};
+		2DA63F722DE860C1007B87B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D9C5B041FDEBACC00D83CEF;
+			remoteInfo = opuslib;
 		};
 		2DA84F7A24F58894003507A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -6598,6 +6618,10 @@
 		2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditColumnWindowController.m; sourceTree = "<group>"; };
 		2DA62BA326F3C8A800ED449A /* gtkui_deletefromdisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkui_deletefromdisk.h; sourceTree = "<group>"; };
 		2DA62BA426F3C8A800ED449A /* gtkui_deletefromdisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkui_deletefromdisk.c; sourceTree = "<group>"; };
+		2DA63F6C2DE8609E007B87B5 /* artwork_opus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_opus.h; sourceTree = "<group>"; };
+		2DA63F6D2DE8609E007B87B5 /* artwork_opus.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_opus.c; sourceTree = "<group>"; };
+		2DA63F772DE862D3007B87B5 /* ogg_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ogg_shared.h; sourceTree = "<group>"; };
+		2DA63F782DE862D3007B87B5 /* ogg_shared.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ogg_shared.c; sourceTree = "<group>"; };
 		2DA66EC71EDF4EF800E20989 /* StreamerTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamerTests.cpp; sourceTree = "<group>"; };
 		2DA66EC91EDF4F2C00E20989 /* fakeout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fakeout.c; sourceTree = "<group>"; };
 		2DA66ECA1EDF4F2C00E20989 /* fakeout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakeout.h; sourceTree = "<group>"; };
@@ -7948,6 +7972,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DA63F762DE860D3007B87B5 /* libopusfile.dylib in Frameworks */,
+				2DA63F742DE860CA007B87B5 /* libopuslib.dylib in Frameworks */,
 				2D95F6BE29392CE9002D8499 /* libvorbislib.dylib in Frameworks */,
 				2D95F6B72939283D002D8499 /* libogglib.dylib in Frameworks */,
 				2D71F1BC24AE7A3300E753D3 /* mp4p.framework in Frameworks */,
@@ -10043,30 +10069,34 @@
 		2D621F941CD92CC000EB6D22 /* artwork */ = {
 			isa = PBXGroup;
 			children = (
-				2D621FA51CD92CC500EB6D22 /* albumartorg.c */,
 				2D621FA61CD92CC500EB6D22 /* albumartorg.h */,
-				2DA7C22E251002390080963D /* artwork_flac.c */,
-				2DA7C22D251002390080963D /* artwork_flac.h */,
-				2D621FAE1CD92CC500EB6D22 /* artwork_internal.c */,
-				2D621FAF1CD92CC500EB6D22 /* artwork_internal.h */,
-				2D95F6B929392884002D8499 /* artwork_ogg.c */,
-				2D95F6B829392884002D8499 /* artwork_ogg.h */,
-				2D621FA91CD92CC500EB6D22 /* artwork.c */,
+				2D621FA51CD92CC500EB6D22 /* albumartorg.c */,
 				2D621FAA1CD92CC500EB6D22 /* artwork.h */,
-				2D95F6BF29392F17002D8499 /* base64.c */,
+				2D621FA91CD92CC500EB6D22 /* artwork.c */,
+				2DA7C22D251002390080963D /* artwork_flac.h */,
+				2DA7C22E251002390080963D /* artwork_flac.c */,
+				2D621FAF1CD92CC500EB6D22 /* artwork_internal.h */,
+				2D621FAE1CD92CC500EB6D22 /* artwork_internal.c */,
+				2D95F6B829392884002D8499 /* artwork_ogg.h */,
+				2D95F6B929392884002D8499 /* artwork_ogg.c */,
+				2DA63F6C2DE8609E007B87B5 /* artwork_opus.h */,
+				2DA63F6D2DE8609E007B87B5 /* artwork_opus.c */,
 				2D95F6C029392F17002D8499 /* base64.h */,
-				2D621FB01CD92CC500EB6D22 /* cache.c */,
+				2D95F6BF29392F17002D8499 /* base64.c */,
 				2D621FB11CD92CC500EB6D22 /* cache.h */,
-				2DAF900326A4533600C1CA25 /* coverinfo.c */,
+				2D621FB01CD92CC500EB6D22 /* cache.c */,
 				2DAF900226A4533600C1CA25 /* coverinfo.h */,
-				2D621FB31CD92CC500EB6D22 /* escape.c */,
+				2DAF900326A4533600C1CA25 /* coverinfo.c */,
 				2D621FB41CD92CC500EB6D22 /* escape.h */,
-				2D621FB71CD92CC500EB6D22 /* lastfm.c */,
+				2D621FB31CD92CC500EB6D22 /* escape.c */,
 				2D621FB81CD92CC500EB6D22 /* lastfm.h */,
-				2D621FBE1CD92CC500EB6D22 /* musicbrainz.c */,
+				2D621FB71CD92CC500EB6D22 /* lastfm.c */,
 				2D621FBF1CD92CC500EB6D22 /* musicbrainz.h */,
-				2D621FC01CD92CC500EB6D22 /* wos.c */,
+				2D621FBE1CD92CC500EB6D22 /* musicbrainz.c */,
+				2DA63F772DE862D3007B87B5 /* ogg_shared.h */,
+				2DA63F782DE862D3007B87B5 /* ogg_shared.c */,
 				2D621FC11CD92CC500EB6D22 /* wos.h */,
+				2D621FC01CD92CC500EB6D22 /* wos.c */,
 			);
 			name = artwork;
 			path = plugins/artwork;
@@ -14024,6 +14054,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DA63F6F2DE8609E007B87B5 /* artwork_opus.h in Headers */,
+				2DA63F7A2DE862D3007B87B5 /* ogg_shared.h in Headers */,
 				2D621FD51CD92CCA00EB6D22 /* escape.h in Headers */,
 				2D621FD31CD92CCA00EB6D22 /* cache.h in Headers */,
 				2D95F6BA29392884002D8499 /* artwork_ogg.h in Headers */,
@@ -15602,6 +15634,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				2DA63F712DE860C1007B87B5 /* PBXTargetDependency */,
+				2DA63F732DE860C1007B87B5 /* PBXTargetDependency */,
 				2D95F6BD29392CE1002D8499 /* PBXTargetDependency */,
 				2D95F6A729392833002D8499 /* PBXTargetDependency */,
 				2D71F1BB24AE7A2F00E753D3 /* PBXTargetDependency */,
@@ -17704,6 +17738,8 @@
 				2D621FD01CD92CCA00EB6D22 /* artwork_internal.c in Sources */,
 				2D95F6BB29392884002D8499 /* artwork_ogg.c in Sources */,
 				2D621FDD1CD92CCA00EB6D22 /* wos.c in Sources */,
+				2DA63F792DE862D3007B87B5 /* ogg_shared.c in Sources */,
+				2DA63F6E2DE8609E007B87B5 /* artwork_opus.c in Sources */,
 				2D621FCD1CD92CCA00EB6D22 /* artwork.c in Sources */,
 				2DAF900526A4533600C1CA25 /* coverinfo.c in Sources */,
 				2D621FD71CD92CCA00EB6D22 /* lastfm.c in Sources */,
@@ -19588,6 +19624,16 @@
 			isa = PBXTargetDependency;
 			target = 2DA5A91125D0330600947C19 /* wavpacklib */;
 			targetProxy = 2DA5AB0425D033A100947C19 /* PBXContainerItemProxy */;
+		};
+		2DA63F712DE860C1007B87B5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D9C629D1FDEC51000D83CEF /* opusfile */;
+			targetProxy = 2DA63F702DE860C1007B87B5 /* PBXContainerItemProxy */;
+		};
+		2DA63F732DE860C1007B87B5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D9C5B041FDEBACC00D83CEF /* opuslib */;
+			targetProxy = 2DA63F722DE860C1007B87B5 /* PBXContainerItemProxy */;
 		};
 		2DA84F7D24F5890F003507A2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -22002,6 +22048,7 @@
 					"USE_VFS_CURL=1",
 					"USE_METAFLAC=1",
 					"USE_OGG=1",
+					"USE_OPUS=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -22016,6 +22063,8 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/deps/opus-1.2.1/include\"",
+					"\"$(SRCROOT)/deps/opusfile-0.9/include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -22040,6 +22089,7 @@
 					"USE_VFS_CURL=1",
 					"USE_METAFLAC=1",
 					"USE_OGG=1",
+					"USE_OPUS=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -22054,6 +22104,8 @@
 					"\"$(SRCROOT)/deps/libogg-1.3.1/include\"",
 					"\"$(SRCROOT)/deps/libvorbis-1.3.3/include\"",
 					"\"$(SRCROOT)/../include\"",
+					"\"$(SRCROOT)/deps/opus-1.2.1/include\"",
+					"\"$(SRCROOT)/deps/opusfile-0.9/include\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";

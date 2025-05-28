@@ -1169,9 +1169,9 @@ project "artwork_plugin"
   }
   includedirs {"external/mp4p/include", "shared"}
   buildoptions {"-fblocks"}
-  defines {"USE_OGG=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1"}
-  pkgconfig ("flac ogg vorbisfile")
-  links {"FLAC", "ogg", "vorbisfile", "mp4p", "dispatch", "BlocksRuntime"}
+  defines {"USE_OGG=1", "USE_OPUS=1", "USE_VFS_CURL", "USE_METAFLAC", "USE_MP4FF", "USE_TAGGING=1"}
+  pkgconfig ("flac ogg vorbisfile opus opusfile")
+  links {"FLAC", "ogg", "vorbisfile", "opus", "opusfile", "mp4p", "dispatch", "BlocksRuntime"}
 else
   options_dic["plugin-artwork"] = "no"
 end

@@ -28,14 +28,12 @@
 #include "artwork_ogg.h"
 #include "artwork_internal.h"
 #include "base64.h"
+#include "ogg_shared.h"
 
 #define trace(...) { deadbeef->log_detailed (&plugin.plugin.plugin, 0, __VA_ARGS__); }
 
 extern DB_functions_t *deadbeef;
 extern ddb_artwork_plugin_t plugin;
-extern int artwork_disable_cache;
-
-// ---
 
 static size_t
 cvorbis_fread (void *ptr, size_t size, size_t nmemb, void *datasource) {
@@ -61,20 +59,11 @@ cvorbis_ftell (void *datasource) {
     return deadbeef->ftell (datasource);
 }
 
-// ---
-
-#define READ_UINT32() ({if (buffer_size < 4) goto error_decode_flac_block;  uint32_t _temp32 = (uint32_t)buffer[3] | ((uint32_t)buffer[2]<<8) | ((uint32_t)buffer[1]<<16) | ((uint32_t)buffer[0]<<24); buffer+=4; buffer_size-=4; _temp32;})
-
-#define READ_BUF(buf,size) {if (buffer_size < size) goto error_decode_flac_block; memcpy (buf, buffer, size); buffer += size; buffer_size -= size; }
-
-// ---
-
 int
 ogg_extract_art (ddb_cover_info_t *cover) {
     int err = -1;
     if (!strcasestr (cover->priv->filepath, ".ogg")
-        && !strcasestr (cover->priv->filepath, ".oga")
-        && !strcasestr (cover->priv->filepath, ".opus")) {
+        && !strcasestr (cover->priv->filepath, ".oga")) {
         return -1;
     }
 
@@ -114,74 +103,11 @@ ogg_extract_art (ddb_cover_info_t *cover) {
     // but would be great to be able to enumerate / return all pictures,
     // as well as prioritize by picture type.
 
-    const char key[] = "METADATA_BLOCK_PICTURE=";
     for (int i = 0; i < vc->comments; i++) {
-        uint8_t *decoded_blob = NULL;
-        char *mime_type = NULL;
-        char *descr = NULL;
-        int size = vc->comment_lengths[i];
-        if (vc->comment_lengths[i] <= sizeof(key)-1
-            || strncasecmp(vc->user_comments[i], key, sizeof (key)-1)) {
-            continue;
+        if (0 == ogg_parse_artwork_comment (vc->user_comments[i], vc->comment_lengths[i], cover)) {
+            err = 0;
+            break;
         }
-        trace ("ogg_extract_art: found cover art of %d bytes\n", size);
-
-        // decode base64
-        char *blob = vc->user_comments[i] + sizeof (key) - 1;
-        const int predicted_decoded_size = Base64decode_len(blob);
-
-        if (predicted_decoded_size <= 0) {
-            continue;
-        }
-
-        decoded_blob = malloc (predicted_decoded_size);
-        if (decoded_blob == NULL) {
-            goto error_decode_flac_block;
-        }
-        const int decoded_size = Base64decode((char *)decoded_blob, blob);
-
-        // decode flac picture block
-        uint8_t *buffer = decoded_blob;
-        int buffer_size = decoded_size;
-
-        /*int32_t picture_type = */READ_UINT32();
-        int32_t mime_size = READ_UINT32();
-        mime_type = calloc(1, mime_size + 1);
-        READ_BUF(mime_type, mime_size);
-        mime_type[mime_size] = 0;
-
-        // skip non-image data
-        if (strcasecmp(mime_type, "image/")
-            && strcasecmp(mime_type, "image/png")
-            && strcasecmp(mime_type, "image/jpeg")) {
-            goto error_decode_flac_block; // unsupported mime type
-        }
-
-        free (mime_type);
-        mime_type = NULL;
-        int32_t descr_size = READ_UINT32();
-        descr = calloc(1, descr_size + 1);
-        READ_BUF(descr, descr_size);
-        descr[descr_size] = 0;
-        free (descr);
-        descr = NULL;
-        /*uint32_t width = */READ_UINT32();
-        /*uint32_t height = */READ_UINT32();
-        /*uint32_t depth = */READ_UINT32();
-        /*uint32_t palette_size = */READ_UINT32();
-        uint32_t picture_data_len = READ_UINT32();
-
-        cover->priv->blob_size = picture_data_len;
-        cover->priv->blob_image_size = picture_data_len;
-        cover->priv->blob = (char *)decoded_blob;
-        cover->priv->blob_image_offset = buffer - decoded_blob;
-        err = 0;
-        break;
-    error_decode_flac_block:
-        free (decoded_blob);
-        free (mime_type);
-        free (descr);
-        continue;
     }
 
 error:
