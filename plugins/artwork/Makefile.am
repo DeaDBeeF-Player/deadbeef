@@ -12,7 +12,7 @@ endif
 if HAVE_OPUS
 opus_def = -DUSE_OPUS=1
 opus_libs = $(OPUS_LIBS)
-opus_sources = artwork_opus.c artwork_ogg.h
+opus_sources = artwork_opus.c artwork_opus.h
 endif
 
 if ARTWORK_USE_VFS_CURL
