@@ -519,12 +519,12 @@ main_cleanup_and_quit (void);
         if (!deadbeef->plt_add_files_begin (plt_curr, 0)) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 if (files.count == 1 && deadbeef->conf_get_int("cocoaui.name_playlist_from_folder", 1)) {
-                    char *title = malloc(1000);
-                    deadbeef->plt_get_title (plt, title, sizeof (title));
-
-                    const char *def = "New Playlist";
-                    BOOL isDefault = !strncmp (title, def, strlen (def));
-
+                    char *title = calloc(1, 1000);
+                    BOOL isDefault = NO;
+                    if (!deadbeef->plt_get_title (plt_curr, title, 1000)) {
+                        const char *def = "New Playlist";
+                        isDefault = !strncmp (title, def, strlen (def));
+                    }
                     free (title);
                     title = NULL;
 

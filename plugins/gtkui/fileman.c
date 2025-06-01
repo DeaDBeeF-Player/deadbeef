@@ -40,26 +40,6 @@ gtkpl_adddir_cb (gpointer data, gpointer userdata) {
     g_free (data);
 }
 
-void
-gtkpl_add_dirs (ddb_playlist_t *plt, GSList *lst) {
-    int empty = 0 == deadbeef->plt_get_item_count (plt, PL_MAIN);
-    if (g_slist_length (lst) == 1
-            && deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 1)) {
-        char t[1000];
-        if (!deadbeef->plt_get_title (plt, t, sizeof (t))) {
-            const char *def = _("New Playlist");
-            if (empty || !strncmp (t, def, strlen (def))) {
-                const char *folder = strrchr ((char*)lst->data, G_DIR_SEPARATOR);
-                if (!folder) {
-                    folder = lst->data;
-                }
-                deadbeef->plt_set_title (plt, folder+1);
-            }
-        }
-    }
-    g_slist_foreach(lst, gtkpl_adddir_cb, plt);
-}
-
 static void
 gtkpl_addfile_cb (gpointer data, gpointer userdata) {
     ddb_playlist_t *plt = userdata;
@@ -93,20 +73,35 @@ gtkui_add_dirs (GSList *lst) {
     }
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        gtkpl_add_dirs (plt, lst);
+        int is_empty = 0 == deadbeef->plt_get_item_count (plt_curr, PL_MAIN);
+        int is_single_item = g_slist_length (lst) == 1;
+        int is_autorename_enabled = deadbeef->conf_get_int ("gtkui.name_playlist_from_folder", 1);
+        if (is_single_item && is_autorename_enabled) {
+            int is_default = 0;
+
+            char *t = calloc(1, 1000);
+            if (!deadbeef->plt_get_title (plt_curr, t, 1000)) {
+                const char *def = _("New Playlist");
+                is_default = is_empty || !strncmp (t, def, strlen (def));
+            }
+            free (t);
+            t = NULL;
+
+            if (is_default) {
+                const char *folder = strrchr ((char*)lst->data, G_DIR_SEPARATOR);
+                if (!folder) {
+                    folder = lst->data;
+                }
+                deadbeef->plt_set_title (plt_curr, folder+1);
+            }
+        }
+        g_slist_foreach(lst, gtkpl_adddir_cb, plt);
+
 
         // TODO: handle cancel
 
         gtkui_dispatch_on_main(^{
             ddb_playItem_t *tail = deadbeef->plt_get_tail_item(plt_curr, PL_MAIN);
-
-            char *new_title = malloc(1000);
-
-            deadbeef->plt_get_title(plt, new_title, 1000);
-            deadbeef->plt_set_title(plt_curr, new_title);
-
-            free (new_title);
-            new_title = NULL;
 
             ddb_undo->set_action_name (_("Add Folders"));
             deadbeef->plt_move_all_items (plt_curr, plt, tail);
