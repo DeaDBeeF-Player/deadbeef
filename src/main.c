@@ -28,7 +28,6 @@
 #    include <config.h>
 #endif
 #include <assert.h>
-#include <dispatch/dispatch.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -1056,6 +1055,38 @@ _touch (const char *path) {
 }
 #endif
 
+static void
+_async_exit_handler(void) {
+    // at this point we can simply do exit(0), but let's clean up for debugging
+#ifdef OSX_APPBUNDLE
+    scriptableDeinitShared ();
+#endif
+
+    pl_free (); // may access conf_*
+    ddb_undomanager_free(ddb_undomanager_shared());
+
+    conf_free ();
+
+    tf_deinit ();
+
+    trace ("messagepump_free\n");
+    messagepump_free ();
+    trace ("plug_cleanup\n");
+    plug_cleanup ();
+    trace ("logger_free\n");
+
+    metacache_deinit ();
+
+    trace ("💛💙\n");
+    ddb_logger_free ();
+
+    char crash_marker[PATH_MAX];
+    snprintf (crash_marker, sizeof (crash_marker), "%s/running", dbconfdir);
+    unlink (crash_marker);
+
+    exit (0);
+}
+
 void
 main_cleanup_and_quit (void) {
     // stop streaming and playback before unloading plugins
@@ -1102,37 +1133,7 @@ main_cleanup_and_quit (void) {
     // and query configuration in background
     // so unload everything 1st before final cleanup
     plug_disconnect_all ();
-    plug_unload_all (^{
-    // at this point we can simply do exit(0), but let's clean up for debugging
-#ifdef OSX_APPBUNDLE
-        scriptableDeinitShared ();
-#endif
-
-        pl_free (); // may access conf_*
-        ddb_undomanager_free(ddb_undomanager_shared());
-
-        conf_free ();
-
-        tf_deinit ();
-
-        trace ("messagepump_free\n");
-        messagepump_free ();
-        trace ("plug_cleanup\n");
-        plug_cleanup ();
-        trace ("logger_free\n");
-
-        metacache_deinit ();
-
-        trace ("💛💙\n");
-        ddb_logger_free ();
-
-        char crash_marker[PATH_MAX];
-        snprintf (crash_marker, sizeof (crash_marker), "%s/running", dbconfdir);
-        unlink (crash_marker);
-
-        exit (0);
-    });
-
+    plug_unload_all (_async_exit_handler);
 }
 
 static void

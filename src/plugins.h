@@ -40,7 +40,7 @@ int
 plug_load_all (void);
 
 void
-plug_unload_all (void(^completion_block)(void));
+plug_unload_all (void(*completion_handler)(void));
 
 void
 plug_connect_all (void);

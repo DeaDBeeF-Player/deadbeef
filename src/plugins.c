@@ -24,10 +24,8 @@
 
   Oleksiy Yakovenko waker@users.sourceforge.net
 */
-#include <Block.h>
 #include <ctype.h>
 #include <dirent.h>
-#include <dispatch/dispatch.h>
 #include <dlfcn.h>
 #include <assert.h>
 #include <stdio.h>
@@ -1398,7 +1396,7 @@ static void
 _plug_unload_stop_complete (void);
 
 static int _async_stop_count = 0;
-static void (^_async_stop_completion_block)(void);
+static void (*_async_stop_completion_handler)(void);
 
 static void
 _handle_async_stop (DB_plugin_t *plugin) {
@@ -1458,14 +1456,15 @@ _plug_unload_stop_complete (void) {
         mutex_free (background_jobs_mutex);
         background_jobs_mutex = 0;
     }
-    _async_stop_completion_block();
-    Block_release(_async_stop_completion_block);
-    _async_stop_completion_block = NULL;
+    if (_async_stop_completion_handler != NULL) {
+        _async_stop_completion_handler();
+        _async_stop_completion_handler = NULL;
+    }
 }
 
 void
-plug_unload_all (void(^completion_block)(void)) {
-    _async_stop_completion_block = Block_copy(completion_block);
+plug_unload_all (void(*completion_handler)(void)) {
+    _async_stop_completion_handler = completion_handler;
     action_set_playlist (NULL);
     trace ("plug_unload_all\n");
     trace ("Stopping async plugins...\n");
@@ -1526,8 +1525,7 @@ plug_get_gui_names (void) {
 static ddb_playback_state_t _curr_playback_state = (ddb_playback_state_t)-1;
 
 static void
-call_notify_state_change(void (^block)(void)) {
-    block();
+call_notify_state_change(void) {
     ddb_playback_state_t state = output_plugin->state();
     if (state != _curr_playback_state) {
         _curr_playback_state = state;
@@ -1544,58 +1542,45 @@ static int _out_free (void) {
 }
 
 static int _out_setformat (ddb_waveformat_t *fmt) {
-    __block ddb_playback_state_t result;
-    call_notify_state_change(^{
-        result = output_plugin->setformat(fmt);
-    });
+    ddb_playback_state_t result = output_plugin->setformat(fmt);
+    call_notify_state_change();
     return result;
 }
 
 static int _out_play (void) {
-    __block ddb_playback_state_t result;
-    call_notify_state_change(^{
-        result = output_plugin->play();
-    });
+    ddb_playback_state_t result = output_plugin->play();
+    call_notify_state_change();
     return result;
 }
 
 static int _out_stop (void) {
-    __block ddb_playback_state_t result;
-    call_notify_state_change(^{
-        result = output_plugin->stop();
-    });
+    ddb_playback_state_t result = output_plugin->stop();
+    call_notify_state_change();
     return result;
 }
 
 static int _out_pause (void) {
-    __block ddb_playback_state_t result;
-    call_notify_state_change(^{
-        result = output_plugin->pause();
-    });
+    ddb_playback_state_t result = output_plugin->pause();
+    call_notify_state_change();
     return result;
 }
 
 static int _out_unpause (void) {
-    __block ddb_playback_state_t result;
-    call_notify_state_change(^{
-        result = output_plugin->unpause();
-    });
+    ddb_playback_state_t result = output_plugin->unpause();
+    call_notify_state_change();
     return result;
 }
 
 static ddb_playback_state_t _out_state (void) {
-    __block ddb_playback_state_t result;
-    call_notify_state_change(^{
-        result = output_plugin->state();
-    });
+    ddb_playback_state_t result = output_plugin->state();
+    call_notify_state_change();
     return result;
 }
 
 static void _out_enum_soundcards (void (*callback)(const char *name, const char *desc, void*), void *userdata) {
     if (output_plugin->enum_soundcards) {
-        call_notify_state_change(^{
-            output_plugin->enum_soundcards(callback, userdata);
-        });
+        output_plugin->enum_soundcards(callback, userdata);
+        call_notify_state_change();
     }
 }
 
@@ -1627,11 +1612,10 @@ plug_get_output (void) {
 
 void
 plug_set_output (DB_output_t *out) {
-    call_notify_state_change(^{
-        output_plugin = out;
-        conf_set_str ("output_plugin", output_plugin->plugin.id);
-        trace ("selected output plugin: %s\n", output_plugin->plugin.name);
-    });
+    output_plugin = out;
+    conf_set_str ("output_plugin", output_plugin->plugin.id);
+    trace ("selected output plugin: %s\n", output_plugin->plugin.name);
+    call_notify_state_change();
 }
 
 static DB_output_t *
