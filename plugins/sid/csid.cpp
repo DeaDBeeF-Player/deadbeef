@@ -49,8 +49,11 @@ typedef struct {
     SidTune *tune;
     float duration; // of the current song
     int chip_voices;
+    int can_loop;
     int rawsignal;
 } sid_info_t;
+
+static int conf_play_forever = 0;
 
 static inline void
 le_int16 (int16_t in, unsigned char *out) {
@@ -278,6 +281,7 @@ sldb_find (const uint8_t *digest) {
 DB_fileinfo_t *
 csid_open (uint32_t hints) {
     sid_info_t *info = (sid_info_t *)calloc (1, sizeof (sid_info_t));
+    info->can_loop = hints & DDB_DECODER_HINT_CAN_LOOP;
     info->rawsignal = hints & DDB_DECODER_HINT_RAW_SIGNAL;
     info->chip_voices = 0xff;
     return &info->info;
@@ -389,7 +393,9 @@ _mute_voices(sid_info_t *info) {
 int
 csid_read (DB_fileinfo_t *_info, char *bytes, int size) {
     sid_info_t *info = (sid_info_t *)_info;
-    if (_info->readpos > info->duration) {
+    int playForever = conf_play_forever && info->can_loop;
+
+    if (!playForever && _info->readpos > info->duration) {
         return 0;
     }
 
@@ -611,6 +617,8 @@ sid_configchanged (void) {
     // pick up new sldb filename in case it was changed
     sldb_free ();
 
+    conf_play_forever = deadbeef->streamer_get_repeat () == DDB_REPEAT_SINGLE;
+
     return 0;
 }
 
@@ -626,7 +634,6 @@ sid_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 int
 csid_start (void) {
-    sid_configchanged ();
     return 0;
 }
 
