@@ -65,6 +65,9 @@ export OBJC=$AP/apgcc
 
 ./autogen.sh || exit 1
 
+CFLAGS="$CFLAGS -g"
+LDFLAGS="$LDFLAGS -Wl,--build-id"
+
 ./configure CFLAGS="$CFLAGS -O3 -D_FORTIFY_SOURCE=0" CXXFLAGS="$CXXFLAGS -O3 -D_FORTIFY_SOURCE=0" LDFLAGS="$LDFLAGS" $CONFIGURE_FLAGS --enable-staticlink --prefix=/opt/deadbeef || {
     # store failed config.log in portable dir, which is mapped to
     # docker-artifacts when using docker.
@@ -78,6 +81,17 @@ sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
 make V=1 -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION || exit 1
 export DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION
+
+echo "Extracting debug symbols..."
+# Note: need to do it before make install!
+mkdir -p "portable/$ARCH"
+cd src
+objcopy --only-keep-debug ./deadbeef deadbeef.debug || exit 1
+strip --strip-debug --strip-unneeded ./deadbeef || exit 1
+objcopy --add-gnu-debuglink=deadbeef.debug ./deadbeef || exit 1
+cd ..
+mv src/deadbeef.debug "portable/$ARCH/" || exit 1
+
 make DESTDIR=$DESTDIR install || exit 1
 mkdir -p $LIBRARY_PATH
 cp -r $LIBRARY_PATH/libBlocksRuntime.so* $DESTDIR/opt/deadbeef/lib/
@@ -90,7 +104,7 @@ find $DESTDIR/opt/deadbeef -type f -name "*.so" | while read i ; do ./scripts/gl
 
 MACHINE_TYPE=`uname -m`
 if [ ${MACHINE_TYPE} == 'x86_64' ]; then
-    echo "building pluginfo tool..."
+    echo "Building pluginfo tool..."
     cd tools/pluginfo
     make || exit 1
     cd ../../

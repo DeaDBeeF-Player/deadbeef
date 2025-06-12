@@ -21,6 +21,7 @@ LIBDIR=$SRCDIR/lib
 DOCDIR=$SRCDIR/doc
 PIXMAPDIR=$SRCDIR/pixmaps
 OUTNAME=deadbeef-static_${VERSION}-${BUILD}_${ARCH}.tar.bz2
+DEBUG_OUTNAME=deadbeef-debug-symbols_${VERSION}-${BUILD}_${ARCH}.tar.bz2
 
 mkdir -p portable_out/build
 rm portable_out/build/$OUTNAME
@@ -91,6 +92,10 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/lyrics_gtk3.so\
     $PIXMAPDIR\
     $SRCDIR/locale\
+    || exit 1
+
+tar jcvf ../../portable_out/build/$DEBUG_OUTNAME\
+    ./deadbeef.debug\
     || exit 1
 
 cd ../..
