@@ -16509,7 +16509,8 @@
 		4D1B3E7218379829003E6066 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1400;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2600;
 				ORGANIZATIONNAME = "Oleksiy Yakovenko";
 				TargetAttributes = {
 					2D00F23E2434DE4E000FC130 = {
@@ -21226,6 +21227,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -21252,6 +21254,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = NO;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -24706,7 +24709,6 @@
 				MACH_O_TYPE = mh_dylib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				STRIP_INSTALLED_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-unreachable-code-loop-increment";
 			};
 			name = Debug;
@@ -24740,7 +24742,6 @@
 				MACH_O_TYPE = mh_dylib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				STRIP_INSTALLED_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wno-unreachable-code-loop-increment";
 			};
 			name = Release;
