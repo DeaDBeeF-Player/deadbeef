@@ -36,6 +36,7 @@ case "$TRAVIS_OS_NAME" in
     osx)
         echo Uploading mac artifacts...
         rsync -e "$SSHOPTS" osx/build/Release/deadbeef-$VERSION-macos-universal.zip waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/macOS/$TRAVIS_BRANCH/ || exit 1
+        rsync -e "$SSHOPTS" osx/build/Release/deadbeef-$VERSION-macos-dSYM.zip waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/macOS/$TRAVIS_BRANCH/ || exit 1
     ;;
     windows)
         echo Uploading windows artifacts...

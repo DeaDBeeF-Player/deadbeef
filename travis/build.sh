@@ -35,6 +35,7 @@ case "$TRAVIS_OS_NAME" in
         xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" -project osx/deadbeef.xcodeproj -target DeaDBeeF -configuration Release | tee osx/build/Release/build.log | xcbeautify ; test ${PIPESTATUS[0]} -eq 0
         cd osx/build/Release
         zip -r deadbeef-$VERSION-macos-universal.zip DeaDBeeF.app
+        zip -r deadbeef-$VERSION-macos-dSYM.zip *.dSYM
         cd ../../..
     ;;
     windows)

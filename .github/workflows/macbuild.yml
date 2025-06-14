@@ -26,12 +26,18 @@ jobs:
         gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
         gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
       run: TRAVIS_OS_NAME=osx travis/upload.sh
-    - name: Upload artifact
+    - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
         name: deadbeef-macos-universal
-        path: osx/build/Release/*.zip
+        path: osx/build/Release/*-universal.zip
         if-no-files-found: error
+    - name: Upload debug symbols
+      uses: actions/upload-artifact@v4
+      with:
+        name: deadbeef-macos-dSYM
+        path: osx/build/Release/*-dSYM.zip
+        if-no-files-found: warn
     - name: Upload logs
       uses: actions/upload-artifact@v4
       with:
