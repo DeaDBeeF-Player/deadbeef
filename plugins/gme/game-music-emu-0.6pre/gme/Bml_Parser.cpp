@@ -83,7 +83,7 @@ void Bml_Parser::parseDocument( const char * source, size_t max_length )
             path[0] = 0;
         }
         if (e != p) {
-            char name[e-p+1];
+            char *name = new char[e-p+1];
             memcpy (name, p, e-p);
             name[e-p] = 0;
 
@@ -102,6 +102,7 @@ void Bml_Parser::parseDocument( const char * source, size_t max_length )
             else {
                 addNode (path, NULL);
             }
+            delete[] name;
         }
         p = e;
         p++;
