@@ -1039,7 +1039,7 @@ cflac_read_metadata (DB_playItem_t *it) {
         return -1;
     }
     FLAC__bool res = FLAC__metadata_chain_read_with_callbacks (chain, (FLAC__IOHandle)file, iocb);
-    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
+    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_CHAIN_STATUS_NOT_A_FLAC_FILE) {
         res = FLAC__metadata_chain_read_ogg_with_callbacks (chain, (FLAC__IOHandle)file, iocb);
     }
     deadbeef->fclose (file);

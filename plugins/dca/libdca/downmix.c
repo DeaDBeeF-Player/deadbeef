@@ -94,7 +94,7 @@ int dca_downmix_init (int input, int flags, level_t * level,
     output = table[output][input];
 
     if (output == DCA_STEREO &&
-	(input == DCA_DOLBY || (input == DCA_3F && clev == LEVEL (LEVEL_3DB))))
+	(input == DCA_DOLBY || (input == DCA_3F && clev == (float)LEVEL (LEVEL_3DB))))
 	output = DCA_DOLBY;
 
     if (flags & DCA_ADJUST_LEVEL) {

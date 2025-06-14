@@ -83,13 +83,13 @@
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt,...)
 
-static const int num_aa_fields = 6;
-static const int num_a_fields = 6;
-static const int num_alb_fields = 2;
-static const int num_title_fields = 2;
-static const int num_genre_fields = 1;
-static const int num_trknr_fields = 1;
-static const int num_disc_fields = 1;
+#define num_aa_fields 6
+#define num_a_fields 6
+#define num_alb_fields 2
+#define num_title_fields 2
+#define num_genre_fields 1
+#define num_trknr_fields 1
+#define num_disc_fields 1
 
 static const char *aa_fields[num_aa_fields] = { "album artist", "albumartist", "band", "artist", "composer", "performer" };
 static const char *a_fields[num_a_fields] = { "artist", "album artist", "albumartist", "band", "composer", "performer" };
