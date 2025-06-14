@@ -409,6 +409,16 @@ static void ebur128_check_true_peak(ebur128_state* st, size_t frames) {
         _mm_setcsr(mxcsr | _MM_FLUSH_ZERO_ON);
 #define TURN_OFF_FTZ _mm_setcsr(mxcsr);
 #define FLUSH_MANUALLY
+
+#elif defined(__aarch64__)
+
+#define TURN_ON_FTZ \
+    uint64_t fpcr; \
+    asm volatile("mrs %0, fpcr" : "=r"(fpcr)); \
+    asm volatile("msr fpcr, %0" :: "r"(fpcr | (1 << 24)));
+#define TURN_OFF_FTZ asm volatile("msr fpcr, %0" :: "r"(fpcr));
+#define FLUSH_MANUALLY
+
 #else
 #warning "manual FTZ is being used, please enable SSE2 (-msse2 -mfpmath=sse)"
 #define TURN_ON_FTZ
