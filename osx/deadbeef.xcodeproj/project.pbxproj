@@ -22620,11 +22620,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_FUNCTION = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/deps/mpg123-1.31.1/ports/Xcode",
-					"$(SRCROOT)/deps/mpg123-1.31.1/src/libmpg123",
-					"$(SRCROOT)/deps/mpg123-1.31.1/ports/Xcode",
-				);
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/mpg123-1.32.6/ports/Xcode\"";
 				LD_DYLIB_INSTALL_NAME = "";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -22668,11 +22664,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_FUNCTION = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/deps/mpg123-1.31.1/ports/Xcode",
-					"$(SRCROOT)/deps/mpg123-1.31.1/src/libmpg123",
-					"$(SRCROOT)/deps/mpg123-1.31.1/ports/Xcode",
-				);
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/mpg123-1.32.6/ports/Xcode\"";
 				LD_DYLIB_INSTALL_NAME = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
