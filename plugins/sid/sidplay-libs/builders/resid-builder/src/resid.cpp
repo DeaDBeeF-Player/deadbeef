@@ -25,6 +25,7 @@
 #include "resid.h"
 #include "resid-emu.h"
 #include <string.h>
+#include <string>
 
 char ReSID::m_credit[];
 
@@ -40,19 +41,18 @@ ReSID::ReSID (sidbuilder *builder)
  m_status(true),
  m_locked(false)
 {
-    char *p = m_credit;
     m_error = "N/A";
 
     // Setup credits
-    sprintf (p, "ReSID V%s Engine:", VERSION);
-    p += strlen (p) + 1;
-    strcpy  (p, "\t(C) 1999-2002 Simon White <sidplay2@yahoo.com>");
-    p += strlen (p) + 1;
-    sprintf (p, "MOS6581 (SID) Emulation (ReSID V%s):", RESID::resid_version_string);
-    p += strlen (p) + 1;
-    sprintf (p, "\t(C) 1999-2002 Dag Lem <resid@nimrod.no>");
-    p += strlen (p) + 1;
-    *p = '\0';
+    // +deadbeef: The code here was building a weird credits string with multiple \0 dividers,
+    // and it's not used anyway...
+    // Replacing with a simpler and safer one to shut up the compiler warnings about sprintf.
+    m_credit[0] = 0;
+    std::string temp = std::string("ReSID V") + VERSION + " Engine:\n"
+    + "\t(C) 1999-2002 Simon White <sidplay2@yahoo.com>\n"
+    + "MOS6581 (SID) Emulation (ReSID V" + RESID::resid_version_string + "):\n"
+    + "\t(C) 1999-2002 Dag Lem <resid@nimrod.no>";
+    strncat(m_credit, temp.c_str(), sizeof (m_credit) - 1);
 
 	if (!&m_sid)
 	{

@@ -87,7 +87,7 @@ uint ReSIDBuilder::create (uint sids)
         // Memory alloc failed?
         if (!sid)
 		{
-			sprintf (m_errorBuffer, "%s ERROR: Unable to create ReSID object", name ());
+			snprintf (m_errorBuffer, sizeof(m_errorBuffer), "%s ERROR: Unable to create ReSID object", name ());
             m_error = m_errorBuffer;
 			goto ReSIDBuilder_create_error;
 		}
@@ -187,7 +187,7 @@ sidemu *ReSIDBuilder::lock (c64env *env, sid2_model_t model)
     }
     // Unable to locate free SID
     m_status = false;
-    sprintf (m_errorBuffer, "%s ERROR: No available SIDs to lock", name ());
+    snprintf (m_errorBuffer, sizeof(m_errorBuffer), "%s ERROR: No available SIDs to lock", name ());
     return NULL;
 }
 
