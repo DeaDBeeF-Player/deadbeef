@@ -89,10 +89,12 @@ protected:
     bool dodump;
     EventContext &eventContext;
    
+    using CycleFunc = void (MOS6510::*)(void);
+
     // Declare processor operations
     struct ProcessorOperations
     {
-        void         (MOS6510::**cycle)(void);
+        CycleFunc*    cycle;
         uint          cycles;
         uint_least8_t opcode;
     };
