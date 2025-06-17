@@ -1,0 +1,38 @@
+name: Build Debug for Linux
+
+on: [ push, pull_request ]
+
+jobs:
+  build_linux:
+    name: CI for Linux
+    runs-on: ubuntu-latest
+    container: ubuntu:20.04
+    steps:
+    - name: Install dependencies for Linux
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        apt-get -qq update
+        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync libglib2.0-dev-bin git
+    - name: Checkout for Linux
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Fetch static-deps
+      run: travis/download-linux-static-deps.sh
+    - name: Run Tests
+      run: scripts/test.sh
+    - name: Build for Linux
+      run: TRAVIS_OS_NAME=linux travis/build.sh --debug
+    - name: Upload for Linux
+      env:
+          gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
+          gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
+      run: TRAVIS_OS_NAME=linux travis/upload.sh --debug
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-debug
+        # todo: rename and upload only one artifact (the build)
+        path: portable_out/build/*.tar.bz2
+

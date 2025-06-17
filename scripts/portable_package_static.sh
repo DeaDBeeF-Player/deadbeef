@@ -2,6 +2,15 @@
 
 ./scripts/portable_postbuild.sh
 
+DEBUG=false
+
+for arg in "$@"; do
+    if [[ "$arg" == "--debug" ]]; then
+        DEBUG=true
+        break
+    fi
+done
+
 # package for distribution
 VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
 BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
@@ -20,8 +29,11 @@ PLUGDIR=$SRCDIR/plugins
 LIBDIR=$SRCDIR/lib
 DOCDIR=$SRCDIR/doc
 PIXMAPDIR=$SRCDIR/pixmaps
-OUTNAME=deadbeef-static_${VERSION}-${BUILD}_${ARCH}.tar.bz2
-DEBUG_OUTNAME=deadbeef-debug-symbols_${VERSION}-${BUILD}_${ARCH}.tar.bz2
+if ! $DEBUG; then
+    OUTNAME=deadbeef-static_${VERSION}-${BUILD}_${ARCH}.tar.bz2
+else
+    OUTNAME=deadbeef-static-debug_${VERSION}-${BUILD}_${ARCH}.tar.bz2
+fi
 
 mkdir -p portable_out/build
 rm portable_out/build/$OUTNAME
@@ -92,10 +104,6 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/lyrics_gtk3.so\
     $PIXMAPDIR\
     $SRCDIR/locale\
-    || exit 1
-
-tar jcvf ../../portable_out/build/$DEBUG_OUTNAME\
-    ./deadbeef.debug\
     || exit 1
 
 cd ../..

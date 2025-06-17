@@ -1,5 +1,15 @@
 #!/bin/bash
 set -e
+
+DEBUG=false
+
+for arg in "$@"; do
+    if [[ "$arg" == "--debug" ]]; then
+        DEBUG=true
+        break
+    fi
+done
+
 case "$TRAVIS_OS_NAME" in
     linux)
         ls -l .
@@ -7,17 +17,16 @@ case "$TRAVIS_OS_NAME" in
 #        ARCH=i686 ./scripts/static_build.sh
 #        ARCH=i686 ./scripts/portable_package_static.sh
         echo "Building for x86_64"
-        if [[ "$1" == "--clang" ]] ; then
-            CLANG_FLAG="--clang"
+        ARCH=x86_64 ./scripts/static_build.sh $@
+        ARCH=x86_64 ./scripts/portable_package_static.sh $@
+        if ! $DEBUG; then
+            echo "Making deb package"
+            ARCH=x86_64 ./tools/packages/debian.sh
+            echo "Making arch package"
+            ARCH=x86_64 ./tools/packages/arch.sh
+            echo "Running make dist"
+            make dist
         fi
-        ARCH=x86_64 ./scripts/static_build.sh $CLANG_FLAG
-        ARCH=x86_64 ./scripts/portable_package_static.sh
-        echo "Making deb package"
-        ARCH=x86_64 ./tools/packages/debian.sh
-        echo "Making arch package"
-        ARCH=x86_64 ./tools/packages/arch.sh
-        echo "Running make dist"
-        make dist
     ;;
     osx)
         echo "Install xcbeautify ..."

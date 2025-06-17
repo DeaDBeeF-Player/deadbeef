@@ -25,13 +25,27 @@ if [ ! -z $GITHUB_REF ]; then
     echo "Branch/Tag: $TRAVIS_BRANCH"
 fi
 
+DEBUG=false
+
+for arg in "$@"; do
+    if [[ "$arg" == "--debug" ]]; then
+        DEBUG=true
+        break
+    fi
+done
+
+
 case "$TRAVIS_OS_NAME" in
     linux)
         echo Uploading linux artifacts...
-        rsync -e "$SSHOPTS" deadbeef-*.tar.bz2 waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
+        if ! $DEBUG; then
+            # Do not upload packages / source for debug build
+            rsync -e "$SSHOPTS" deadbeef-*.tar.bz2 waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
+            rsync -e "$SSHOPTS" package_out/x86_64/debian/*.deb waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
+            rsync -e "$SSHOPTS" package_out/x86_64/arch/*.pkg.tar.xz waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
+        fi
+        # This will match the build tarballs and debug symbols
         rsync -e "$SSHOPTS" portable_out/build/*.tar.bz2 waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
-        rsync -e "$SSHOPTS" package_out/x86_64/debian/*.deb waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
-        rsync -e "$SSHOPTS" package_out/x86_64/arch/*.pkg.tar.xz waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
     ;;
     osx)
         echo Uploading mac artifacts...
