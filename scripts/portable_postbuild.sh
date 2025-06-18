@@ -11,6 +11,16 @@ else
     echo unknown arch $ARCH
     exit -1
 fi
+
+DEBUG=false
+
+for arg in "$@"; do
+    if [[ "$arg" == "--debug" ]]; then
+        DEBUG=true
+        break
+    fi
+done
+
 OUTDIR=portable/$ARCH/deadbeef-$VERSION
 PLUGDIR=$OUTDIR/plugins
 DOCDIR=$OUTDIR/doc
@@ -113,8 +123,10 @@ for i in po/*.gmo ; do
     cp $i $OUTDIR/locale/$base/LC_MESSAGES/deadbeef.mo
 done
 
+if ! $DEBUG; then
 # strip
-if [ $OSTYPE != 'Darwin' ];then
-    strip --strip-unneeded $OUTDIR/deadbeef
-    for i in $PLUGDIR/*.so ; do strip --strip-unneeded $i ; done
+    if [ $OSTYPE != 'Darwin' ];then
+        strip --strip-unneeded $OUTDIR/deadbeef
+        for i in $PLUGDIR/*.so ; do strip --strip-unneeded $i ; done
+    fi
 fi
