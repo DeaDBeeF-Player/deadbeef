@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./scripts/portable_postbuild.sh
+./scripts/portable_postbuild.sh $@
 
 DEBUG=false
 
