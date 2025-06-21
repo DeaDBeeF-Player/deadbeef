@@ -3609,7 +3609,7 @@ junklib_id3v2_sync_frame (const int version_major, uint8_t *data, const int sync
     char *writeptr = data;
     int written = 0;
     int consumed = 0;
-    while (written < synced_size) {
+    while (written < synced_size && consumed < synced_size) {
         *writeptr++ = *data;
         written++;
         if (data[0] == 0xff && synced_size-written >= 2 && data[1] == 0) {
