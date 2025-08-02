@@ -279,14 +279,16 @@ oss_thread (void *context) {
         if (oss_terminate) {
             break;
         }
-        if (state != DDB_PLAYBACK_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1)) {
+
+        int sample_size = plugin.fmt.channels * (plugin.fmt.bps / 8);
+
+        if (state != DDB_PLAYBACK_STATE_PLAYING || !deadbeef->streamer_ok_to_read (-1) || sample_size == 0) {
             usleep (10000);
             continue;
         }
 
         int res = 0;
         
-        int sample_size = plugin.fmt.channels * (plugin.fmt.bps / 8);
         int bs = BLOCKSIZE;
         int mod = bs % sample_size;
         if (mod > 0) {
