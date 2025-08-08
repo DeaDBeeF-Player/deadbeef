@@ -242,7 +242,7 @@ pl_common_is_album_art_column (void *user_data) {
 PangoAttrList *
 convert_escapetext_to_pango_attrlist (char *text, char **plainString, float *fg, float *bg, float *highlight) {
     const int maxTintStops = 100;
-    tint_stop_t tintStops[maxTintStops];
+    tint_stop_t *tintStops = calloc(maxTintStops, sizeof(tint_stop_t));
     int numTintStops;
 
     numTintStops = calculate_tint_stops_from_string (text, tintStops, maxTintStops, plainString);
