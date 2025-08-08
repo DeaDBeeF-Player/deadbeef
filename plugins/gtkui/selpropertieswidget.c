@@ -341,13 +341,16 @@ w_selproperties_create (void) {
     w->menu = gtk_menu_new();
     w->menu_copy = gtk_menu_item_new_with_mnemonic( _("Copy"));
     gtk_widget_show(w->menu_copy);
+    GtkWidget *sep = gtk_separator_menu_item_new ();
+    gtk_widget_show(sep);
     w->menu_properties = gtk_check_menu_item_new_with_mnemonic( _("Properties"));
     gtk_widget_show(w->menu_properties);
     w->menu_metadata = gtk_check_menu_item_new_with_mnemonic( _("Metadata"));
     gtk_widget_show(w->menu_metadata);
     gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_copy, 0);
-    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_properties, 1);
-    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_metadata, 2);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), sep, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_properties, 2);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_metadata, 3);
 
     g_signal_connect((gpointer)w->menu_copy, "activate", G_CALLBACK(_menu_copy_activate), w);
     g_signal_connect((gpointer)w->menu_properties, "activate", G_CALLBACK(_menu_activate), w);
