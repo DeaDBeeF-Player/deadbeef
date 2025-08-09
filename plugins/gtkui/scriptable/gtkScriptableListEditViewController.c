@@ -170,7 +170,7 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
 #if GTK_CHECK_VERSION(3, 0, 0)
     const char *add_icon = "list-add-symbolic";
     const char *remove_icon = "list-remove-symbolic";
-    const char *preferences_icon = "preferences-system-symbolic";
+    const char *preferences_icon = "document-edit-symbolic";
     const char *copy_icon = "edit-copy-symbolic";
 #else
     const char *add_icon = "gtk-add";
