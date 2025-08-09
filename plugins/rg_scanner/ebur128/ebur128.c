@@ -414,9 +414,9 @@ static void ebur128_check_true_peak(ebur128_state* st, size_t frames) {
 
 #define TURN_ON_FTZ \
     uint64_t fpcr; \
-    asm volatile("mrs %0, fpcr" : "=r"(fpcr)); \
-    asm volatile("msr fpcr, %0" :: "r"(fpcr | (1 << 24)));
-#define TURN_OFF_FTZ asm volatile("msr fpcr, %0" :: "r"(fpcr));
+    __asm__ volatile("mrs %0, fpcr" : "=r"(fpcr)); \
+    __asm__ volatile("msr fpcr, %0" :: "r"(fpcr | (1 << 24)));
+#define TURN_OFF_FTZ __asm__ volatile("msr fpcr, %0" :: "r"(fpcr));
 #define FLUSH_MANUALLY
 
 #else
