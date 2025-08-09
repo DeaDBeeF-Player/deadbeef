@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2015 Oleksiy Yakovenko and other contributors
+    Copyright (C) 2009-2025 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -40,643 +40,172 @@
 #include "gtkui.h"
 #include "pluginconf.h"
 
-static ddb_dsp_context_t *chain;
-static GtkWidget *prefwin;
-static GtkWidget *dsp_popup;
+#include "../../shared/scriptable/scriptable.h"
+#include "../../shared/scriptable/scriptable_dsp.h"
+#include "scriptable/gtkScriptableListEditViewController.h"
+#include "scriptable/gtkScriptableSelectViewController.h"
 
-static ddb_dsp_context_t *
-dsp_clone (ddb_dsp_context_t *from) {
-    ddb_dsp_context_t *dsp = from->plugin->open ();
-    char param[2000];
-    if (from->plugin->num_params) {
-        int n = from->plugin->num_params ();
-        for (int i = 0; i < n; i++) {
-            from->plugin->get_param (from, i, param, sizeof (param));
-            dsp->plugin->set_param (dsp, i, param);
-        }
-    }
-    dsp->enabled = from->enabled;
-    return dsp;
-}
+static GtkWidget *_prefwin;
+static gtkScriptableListEditViewController_t *_listView;
+static gtkScriptableListEditViewControllerDelegate_t _listViewDelegate;
+
+static gtkScriptableSelectViewController_t *_selectView;
+static scriptableModel_t *_selectViewScriptableModel;
+static gtkScriptableSelectViewControllerDelegate_t _selectViewDelegate;
+
+static scriptableItem_t *_current_dsp_chain;
 
 static void
-fill_dsp_chain (GtkListStore *mdl) {
-    ddb_dsp_context_t *dsp = chain;
-    while (dsp) {
-        GtkTreeIter iter;
-        gtk_list_store_append (mdl, &iter);
-        gtk_list_store_set (mdl, &iter, 0, dsp->plugin->plugin.name, -1);
-        dsp = dsp->next;
+_update_current_dsp_chain(ddb_dsp_context_t *chain) {
+    if (_current_dsp_chain != NULL) {
+        scriptableItemFree(_current_dsp_chain);
+        _current_dsp_chain = NULL;
     }
+    _current_dsp_chain = scriptableDspPresetFromDspChain (chain);
 }
-
-static int dirent_alphasort (const struct dirent **a, const struct dirent **b) {
-    return strcmp ((*a)->d_name, (*b)->d_name);
-}
-
-static int
-scandir_preset_filter (const struct dirent *ent) {
-    char *ext = strrchr (ent->d_name, '.');
-    if (ext && !strcasecmp (ext, ".txt")) {
-        return 1;
-    }
-    return 0;
-}
-
-static void
-dsp_fill_preset_list (GtkWidget *combobox) {
-    // fill list of presets
-    GtkListStore *mdl;
-    mdl = GTK_LIST_STORE (gtk_combo_box_get_model (GTK_COMBO_BOX (combobox)));
-    gtk_list_store_clear (mdl);
-    struct dirent **namelist = NULL;
-    char path[1024];
-    if (snprintf (path, sizeof (path), "%s/presets/dsp", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG)) > 0) {
-        int n = scandir (path, &namelist, scandir_preset_filter, dirent_alphasort);
-        int i;
-        for (i = 0; i < n; i++) {
-            char title[100];
-            strcpy (title, namelist[i]->d_name);
-            char *e = strrchr (title, '.');
-            if (e) {
-                *e = 0;
-            }
-            GtkTreeIter iter;
-            gtk_list_store_append (mdl, &iter);
-            gtk_list_store_set (mdl, &iter, 0, title, -1);
-            free (namelist[i]);
-        }
-        free (namelist);
-    }
-
-    // set last preset name
-    GtkWidget *entry = gtk_bin_get_child (GTK_BIN (combobox));
-    if (entry) {
-        deadbeef->conf_lock ();
-        gtk_entry_set_text (GTK_ENTRY (entry), deadbeef->conf_get_str_fast ("gtkui.conf_dsp_preset", ""));
-        deadbeef->conf_unlock ();
-    }
-}
-
-static void
-on_dsp_list_view_sel_changed(GtkTreeSelection *treeselection, gpointer user_data)
-{
-    GtkWidget *configbtn = lookup_widget (prefwin, "dsp_configure_toolbtn");
-    GtkWidget *removebtn = lookup_widget (prefwin, "dsp_remove_toolbtn");
-    GtkWidget *upbtn = lookup_widget (prefwin, "dsp_up_toolbtn");
-    GtkWidget *downbtn = lookup_widget (prefwin, "dsp_down_toolbtn");
-
-    GtkTreeModel *mdl;
-    GtkTreeIter iter;
-
-    gboolean has_selection = gtk_tree_selection_get_selected (treeselection, &mdl, &iter);
-    if (has_selection) {
-        int count = gtk_tree_model_iter_n_children (mdl, NULL);
-        GtkTreePath *path = gtk_tree_model_get_path (mdl, &iter);
-        int *ind = gtk_tree_path_get_indices (path);
-        gtk_widget_set_sensitive (upbtn, *ind > 0);
-        gtk_widget_set_sensitive (downbtn, *ind < count-1);
-    } else {
-        gtk_widget_set_sensitive (upbtn, FALSE);
-        gtk_widget_set_sensitive (downbtn, FALSE);
-    }
-
-    gtk_widget_set_sensitive (configbtn, has_selection);
-    gtk_widget_set_sensitive (removebtn, has_selection);
-}
-
-static void
-update_streamer (void) {
-    deadbeef->streamer_set_dsp_chain (chain);
-}
-
-static int
-listview_get_index (GtkWidget *list) {
-    GtkTreePath *path;
-    GtkTreeViewColumn *col;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (list), &path, &col);
-    if (!path) {
-        // nothing selected
-        return -1;
-    }
-    int *indices = gtk_tree_path_get_indices (path);
-    int idx = *indices;
-    g_free (indices);
-    return idx;
-}
-
-static void
-on_dsp_popup_menu_item_activate(GtkMenuItem* self, gpointer user_data)
-{
-    // create new instance of the selected plugin
-    struct DB_dsp_s* dsp = user_data;
-    ddb_dsp_context_t *inst=NULL;
-    if (dsp && dsp->open) {
-        inst = dsp->open();
-    }
-    if (inst) {
-        GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-        int idx = listview_get_index (list);
-
-        // append to DSP chain at index
-        ddb_dsp_context_t *p = chain;
-        ddb_dsp_context_t *prev = NULL;
-        int i = idx;
-        while (p && i--) {
-            prev = p;
-            p = p->next;
-        }
-        if (p) {
-            if (prev) {
-                inst->next = p->next;
-                prev->next = p;
-                p->next = inst;
-            }
-            else {
-                inst->next = p->next;
-                chain->next = inst;
-            }
-        } else {
-            chain = inst;
-        }
-
-        // reinit list of instances
-        GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
-        gtk_list_store_clear (mdl);
-        fill_dsp_chain (mdl);
-        // Update cursor to newly inserted item
-        GtkTreePath *path = gtk_tree_path_new_from_indices (idx+1, -1);
-        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
-        gtk_tree_path_free (path);
-
-        update_streamer ();
-    }
-    else {
-        fprintf (stderr, "prefwin: failed to add DSP plugin to chain\n");
-    }
-}
-
-GtkWidget *make_dsp_popup_menu(void)
-{
-    struct DB_dsp_s **dsp = deadbeef->plug_get_dsp_list ();
-    int i;
-    GtkWidget *menu = gtk_menu_new();
-    for (i = 0; dsp[i]; i++) {
-        GtkWidget *item = gtk_menu_item_new_with_label(dsp[i]->plugin.name);
-        gtk_widget_show (item);
-        g_signal_connect(G_OBJECT (item), "activate",
-            G_CALLBACK (on_dsp_popup_menu_item_activate), (void*)dsp[i]);
-        gtk_container_add (GTK_CONTAINER (menu), item);
-    }
-    return menu;
-}
-
-static void
-on_dsp_popup_hide(GtkWidget* attach_widget, GtkMenu* menu)
-{
-    GtkWidget *togglebtn = lookup_widget (prefwin, "dsp_add_toolbtn");
-    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (togglebtn), FALSE);
-}
-
-#if GTK_CHECK_VERSION(3,0,0)
-static void
-_dsp_use_symbolic_icons(void) {
-    GtkWidget *addbtn = lookup_widget (prefwin, "dsp_add_toolbtn");
-    GtkWidget *configbtn = lookup_widget (prefwin, "dsp_configure_toolbtn");
-    GtkWidget *removebtn = lookup_widget (prefwin, "dsp_remove_toolbtn");
-    GtkWidget *upbtn = lookup_widget (prefwin, "dsp_up_toolbtn");
-    GtkWidget *downbtn = lookup_widget (prefwin, "dsp_down_toolbtn");
-
-    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (addbtn), NULL);
-    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (addbtn), "list-add-symbolic");
-
-    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (configbtn), NULL);
-    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (configbtn), "preferences-system-symbolic");
-
-    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (removebtn), NULL);
-    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (removebtn), "list-remove-symbolic");
-
-    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (upbtn), NULL);
-    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (upbtn), "go-up-symbolic");
-
-    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (downbtn), NULL);
-    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (downbtn), "go-down-symbolic");
-}
-#endif
 
 void
-dsp_setup_init (GtkWidget *_prefwin) {
-    prefwin = _prefwin;
-    // copy current dsp chain
-    ddb_dsp_context_t *streamer_chain = deadbeef->streamer_get_dsp_chain ();
-
-    ddb_dsp_context_t *tail = NULL;
-    while (streamer_chain) {
-        ddb_dsp_context_t *new = dsp_clone (streamer_chain);
-        if (tail) {
-            tail->next = new;
-            tail = new;
-        }
-        else {
-            chain = tail = new;
-        }
-        streamer_chain = streamer_chain->next;
+_save_as_preset(GtkButton *button,
+                gpointer user_data) {
+    if (_current_dsp_chain == NULL) {
+        return;
     }
+    GtkWidget *dlg = create_entrydialog ();
+    gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
+    gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
+    gtk_window_set_title (GTK_WINDOW (dlg), _ ("New preset"));
+    GtkWidget *e;
+    e = lookup_widget (dlg, "title_label");
+    gtk_label_set_text (GTK_LABEL (e), _ ("Name:"));
+    e = lookup_widget (dlg, "title");
+    gtk_entry_set_text (GTK_ENTRY (e), _("New Preset"));
+    int res = gtk_dialog_run (GTK_DIALOG (dlg));
+    if (res == GTK_RESPONSE_OK) {
+        const char *name = gtk_entry_get_text (GTK_ENTRY (e));
+        scriptableItem_t *preset = scriptableItemClone (_current_dsp_chain);
+        scriptableItem_t *presetList = scriptableDspRoot(deadbeef->get_shared_scriptable_root());
+        scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, presetList);
+        scriptableItemAddSubItem(presetList, preset);
+        gtkScriptableSelectViewControllerSetScriptable(_selectView, presetList);
+    }
+    gtk_widget_destroy (dlg);
+}
 
-    // fill dsp_listview
-    GtkWidget *listview = lookup_widget (prefwin, "dsp_listview");
-    GtkTreeSelection *listview_sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (listview));
-    g_signal_connect ((gpointer)listview_sel, "changed", G_CALLBACK (on_dsp_list_view_sel_changed), NULL);
+static void _add_buttons (gtkScriptableListEditViewController_t *view_controller, GtkBox *button_box, void *context) {
+    GtkWidget *button = gtk_button_new_with_label(_("Save as preset"));
+    gtk_box_pack_end(button_box, button, FALSE, FALSE, 0);
+    gtk_widget_show(button);
+
+    g_signal_connect (button, "clicked", G_CALLBACK (_save_as_preset), NULL);
+}
+
+static void _list_scriptable_did_change (gtkScriptableListEditViewController_t *view_controller, gtkScriptableChange_t change_type, void *context) {
+    // create dsp chain from the new state
+
+    scriptableItem_t *item = gtkScriptableListEditViewControllerGetScriptable(view_controller);
+    ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (item);
+    deadbeef->streamer_set_dsp_chain (chain);
+    deadbeef->dsp_preset_free (chain);
+}
+
+static void _selection_did_change (gtkScriptableSelectViewController_t *vc, scriptableItem_t *item, void *context) {
+    ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (item);
+    deadbeef->streamer_set_dsp_chain (chain);
+    deadbeef->dsp_preset_free (chain);
+}
+
+static void _select_scriptable_did_change (
+                               gtkScriptableSelectViewController_t *view_controller,
+                               gtkScriptableChange_t change_type,
+                                    void *context) {
+    // unused / no need to do anything
+}
+
+void
+dsp_setup_chain_changed (void) {
+    // The quirk here is that we can't replace current scriptable(s) here,
+    // since it can be in use by multiple nested dialogs.
+    // So we do nothing, and reload only when config dialog reopens.
+    //
+    // Example what this would break:
+    // * Open DSP node editor, then click reset
+    // * This would update streamer DSP chain
+    // * This would in turn call this method
+    // * This would delete old scriptable, and corrupt current editor
+}
+
+void
+dsp_setup_init (GtkWidget *prefwin) {
+    _prefwin = prefwin;
+
+    GtkWidget *vbox = lookup_widget(prefwin, "prefwin_dsp_vbox");
+
+    // Stop listening
+    _listViewDelegate.scriptable_did_change = NULL;
+    _selectViewDelegate.scriptable_did_change = NULL;
+    _selectViewDelegate.selection_did_change = NULL;
 
 
-    GtkCellRenderer *title_cell = gtk_cell_renderer_text_new ();
-    GtkTreeViewColumn *col = gtk_tree_view_column_new_with_attributes (_("Plugin"), title_cell, "text", 0, NULL);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (listview), GTK_TREE_VIEW_COLUMN (col));
-    GtkListStore *mdl = gtk_list_store_new (1, G_TYPE_STRING);
-    gtk_tree_view_set_model (GTK_TREE_VIEW (listview), GTK_TREE_MODEL (mdl));
+    // Editor for current dsp chain
 
-    fill_dsp_chain (mdl);
-    GtkTreePath *path = gtk_tree_path_new_from_indices (0, -1);
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (listview), path, NULL, FALSE);
-    gtk_tree_path_free (path);
+    _listView = gtkScriptableListEditViewControllerNew();
 
-    GtkWidget *combobox = lookup_widget (prefwin, "dsp_preset");
-    dsp_fill_preset_list (combobox);
+    _listViewDelegate.add_buttons = _add_buttons;
 
-    // Make dsp popup menu
-    dsp_popup = make_dsp_popup_menu ();
-    g_signal_connect ((gpointer)dsp_popup, "hide", G_CALLBACK (on_dsp_popup_hide), NULL);
-    gtk_menu_attach_to_widget (GTK_MENU (dsp_popup), prefwin, NULL);
+    gtkScriptableListEditViewControllerSetDelegate(_listView, &_listViewDelegate, NULL);
 
-    // Styling
-    GtkWidget *dsp_toolbar = lookup_widget (prefwin, "dsp_toolbar");
-    gtk_toolbar_set_icon_size (GTK_TOOLBAR (dsp_toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
+    ddb_dsp_context_t *chain = deadbeef->streamer_get_dsp_chain ();
+    _update_current_dsp_chain(chain);
 
-#if GTK_CHECK_VERSION(3,0,0)
-    _dsp_use_symbolic_icons ();
-#endif
+    gtkScriptableListEditViewControllerLoad(_listView);
+    gtkScriptableListEditViewControllerSetScriptable(_listView, _current_dsp_chain);
+
+    GtkWidget *listViewWidget = gtkScriptableListEditViewControllerGetView(_listView);
+
+    gtk_box_pack_start(GTK_BOX(vbox), listViewWidget, TRUE, TRUE, 0);
+
+    // Preset selector
+
+    _selectView = gtkScriptableSelectViewControllerNew();
+
+    gtkScriptableSelectViewControllerSetDelegate(_selectView, &_selectViewDelegate, NULL);
+
+    scriptableItem_t *presetList = scriptableDspRoot(deadbeef->get_shared_scriptable_root());
+    gtkScriptableSelectViewControllerSetScriptable(_selectView, presetList);
+
+    _selectViewScriptableModel = scriptableModelInit (scriptableModelAlloc (), deadbeef, "dsp.preset");
+    gtkScriptableSelectViewControllerSetModel (_selectView, _selectViewScriptableModel);
+
+    GtkWidget *selectViewWidget = gtkScriptableSelectViewControllerGetView(_selectView);
+
+    GtkWidget *selectorHBox = gtk_hbox_new(FALSE, 8);
+    gtk_widget_show(selectorHBox);
+
+    GtkWidget *label = gtk_label_new(_("DSP Preset:"));
+    gtk_widget_show(label);
+    gtk_box_pack_start(GTK_BOX(selectorHBox), label, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(selectorHBox), selectViewWidget, TRUE, TRUE, 0);
+
+    gtk_box_pack_start(GTK_BOX(vbox), selectorHBox, FALSE, TRUE, 0);
+
+    // Start listening to changes
+    _listViewDelegate.scriptable_did_change = _list_scriptable_did_change;
+    _selectViewDelegate.scriptable_did_change = _select_scriptable_did_change;
+    _selectViewDelegate.selection_did_change = _selection_did_change;
 }
 
 void
 dsp_setup_free (void) {
-    while (chain) {
-        ddb_dsp_context_t *next = chain->next;
-        chain->plugin->close (chain);
-        chain = next;
+    if (_listView != NULL) {
+        gtkScriptableListEditViewControllerFree(_listView);
+        _listView = NULL;
     }
-    prefwin = NULL;
-}
-
-void
-on_dsp_remove_toolbtn_clicked          (GtkToolButton   *toolbutton,
-                                        gpointer         user_data)
-{
-    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-    int idx = listview_get_index (list);
-    if (idx == -1) {
-        return;
+    if (_selectView != NULL) {
+        gtkScriptableSelectViewControllerFree(_selectView);
+        _selectView = NULL;
     }
-
-    ddb_dsp_context_t *p = chain;
-    ddb_dsp_context_t *prev = NULL;
-    int i = idx;
-    while (p && i--) {
-        prev = p;
-        p = p->next;
-    }
-    if (p) {
-        if (prev) {
-            prev->next = p->next;
-        }
-        else {
-            chain = p->next;
-        }
-        p->plugin->close (p);
-        GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
-        gtk_list_store_clear (mdl);
-        fill_dsp_chain (mdl);
-        GtkTreePath *path = gtk_tree_path_new_from_indices (idx, -1);
-        gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
-        gtk_tree_path_free (path);
-        update_streamer ();
-    }
-}
-
-static ddb_dsp_context_t *current_dsp_context = NULL;
-
-void
-dsp_ctx_set_param (const char *key, const char *value) {
-    current_dsp_context->plugin->set_param (current_dsp_context, atoi (key), value);
-}
-
-void
-dsp_ctx_get_param (const char *key, char *value, int len, const char *def) {
-    strncpy (value, def, len);
-    current_dsp_context->plugin->get_param (current_dsp_context, atoi (key), value, len);
-}
-
-int
-button_cb (int btn, void *ctx) {
-    if (btn == ddb_button_apply) {
-        update_streamer ();
-    }
-    return 1;
-}
-
-void
-on_dsp_configure_clicked               (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-    int idx = listview_get_index (list);
-    if (idx == -1) {
-        return;
-    }
-    ddb_dsp_context_t *p = chain;
-    int i = idx;
-    while (p && i--) {
-        p = p->next;
-    }
-    if (!p || !p->plugin->configdialog) {
-        return;
-    }
-    current_dsp_context = p;
-    ddb_dialog_t conf = {
-        .title = p->plugin->plugin.name,
-        .layout = p->plugin->configdialog,
-        .set_param = dsp_ctx_set_param,
-        .get_param = dsp_ctx_get_param,
-    };
-    int response = gtkui_run_dialog (prefwin, &conf, 0, button_cb, NULL);
-    if (response == ddb_button_ok) {
-        update_streamer ();
-    }
-    current_dsp_context = NULL;
-}
-
-static int
-swap_items (GtkWidget *list, int idx) {
-    ddb_dsp_context_t *prev = NULL;
-    ddb_dsp_context_t *p = chain;
-
-    int n = idx;
-    while (n > 0 && p) {
-        prev = p;
-        p = p->next;
-        n--;
-    }
-
-    if (!p || !p->next) {
-        return -1;
-    }
-
-    ddb_dsp_context_t *moved = p->next;
-
-    if (!moved) {
-        return -1;
-    }
-
-    ddb_dsp_context_t *last = moved ? moved->next : NULL;
-
-    if (prev) {
-        p->next = last;
-        prev->next = moved;
-        moved->next = p;
-    }
-    else {
-        p->next = last;
-        chain = moved;
-        moved->next = p;
-    }
-    GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
-    gtk_list_store_clear (mdl);
-    fill_dsp_chain (mdl);
-    return 0;
-}
-
-
-void
-on_dsp_up_clicked                      (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-    int idx = listview_get_index (list);
-    if (idx <= 0) {
-        return;
-    }
-
-    if (-1 == swap_items (list, idx-1)) {
-        return;
-    }
-    GtkTreePath *path = gtk_tree_path_new_from_indices (idx-1, -1);
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
-    gtk_tree_path_free (path);
-    update_streamer ();
-}
-
-
-void
-on_dsp_down_clicked                    (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-    int idx = listview_get_index (list);
-    if (idx == -1) {
-        return;
-    }
-
-    if (-1 == swap_items (list, idx)) {
-        return;
-    }
-    GtkTreePath *path = gtk_tree_path_new_from_indices (idx+1, -1);
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
-    gtk_tree_path_free (path);
-    update_streamer ();
-}
-
-void
-on_dsp_preset_changed                  (GtkComboBox     *combobox,
-                                        gpointer         user_data)
-{
-    GtkWidget *entry = gtk_bin_get_child (GTK_BIN (combobox));
-    if (entry) {
-        deadbeef->conf_set_str ("gtkui.conf_dsp_preset", gtk_entry_get_text (GTK_ENTRY (entry)));
-    }
-}
-
-
-void
-on_dsp_preset_save_clicked             (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    const char *confdir = deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG);
-    char path[1024];
-    if (snprintf (path, sizeof (path), "%s/presets", confdir) < 0) {
-        return;
-    }
-    mkdir (path, 0755);
-    if (snprintf (path, sizeof (path), "%s/presets/dsp", confdir) < 0) {
-        return;
-    }
-    GtkWidget *combobox = lookup_widget (prefwin, "dsp_preset");
-    GtkWidget *entry = gtk_bin_get_child (GTK_BIN (combobox));
-    if (!entry) {
-        return;
-    }
-
-    const char *text = gtk_entry_get_text (GTK_ENTRY (entry));
-    mkdir (path, 0755);
-    if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", confdir, text) < 0) {
-        return;
-    }
-    deadbeef->dsp_preset_save (path, chain);
-
-    dsp_fill_preset_list (combobox);
-}
-
-
-void
-on_dsp_preset_load_clicked             (GtkButton       *button,
-                                        gpointer         user_data)
-{
-    GtkWidget *combobox = lookup_widget (prefwin, "dsp_preset");
-    GtkWidget *entry = gtk_bin_get_child (GTK_BIN (combobox));
-    if (entry) {
-        const char *text = gtk_entry_get_text (GTK_ENTRY (entry));
-        char path[PATH_MAX];
-        if (snprintf (path, sizeof (path), "%s/presets/dsp/%s.txt", deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG), text) > 0) {
-            ddb_dsp_context_t *new_chain = NULL;
-            int res = deadbeef->dsp_preset_load (path, &new_chain);
-            if (!res) {
-                deadbeef->dsp_preset_free (chain);
-                chain = new_chain;
-                GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-                GtkListStore *mdl = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW(list)));
-                gtk_list_store_clear (mdl);
-                fill_dsp_chain (mdl);
-                update_streamer ();
-            }
-        }
-    }
-}
-
-void
-on_dsp_toolbtn_up_clicked              (GtkToolButton   *toolbutton,
-                                        gpointer         user_data)
-{
-    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-    int idx = listview_get_index (list);
-    if (idx <= 0) {
-        return;
-    }
-
-    if (-1 == swap_items (list, idx-1)) {
-        return;
-    }
-    GtkTreePath *path = gtk_tree_path_new_from_indices (idx-1, -1);
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
-    gtk_tree_path_free (path);
-    update_streamer ();
-}
-
-
-void
-on_dsp_toolbtn_down_clicked            (GtkToolButton   *toolbutton,
-                                        gpointer         user_data)
-{
-    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-    int idx = listview_get_index (list);
-    if (idx == -1) {
-        return;
-    }
-
-    if (-1 == swap_items (list, idx)) {
-        return;
-    }
-    GtkTreePath *path = gtk_tree_path_new_from_indices (idx+1, -1);
-    gtk_tree_view_set_cursor (GTK_TREE_VIEW (list), path, NULL, FALSE);
-    gtk_tree_path_free (path);
-    update_streamer ();
-}
-
-static void
-show_dsp_configure_dlg(void)
-{
-    GtkWidget *list = lookup_widget (prefwin, "dsp_listview");
-    int idx = listview_get_index (list);
-    if (idx == -1) {
-        return;
-    }
-    ddb_dsp_context_t *p = chain;
-    int i = idx;
-    while (p && i--) {
-        p = p->next;
-    }
-    if (!p || !p->plugin->configdialog) {
-        return;
-    }
-    current_dsp_context = p;
-    ddb_dialog_t conf = {
-        .title = p->plugin->plugin.name,
-        .layout = p->plugin->configdialog,
-        .set_param = dsp_ctx_set_param,
-        .get_param = dsp_ctx_get_param,
-    };
-    int response = gtkui_run_dialog (prefwin, &conf, 0, button_cb, NULL);
-    if (response == ddb_button_ok) {
-        update_streamer ();
-    }
-    current_dsp_context = NULL;
-}
-
-void
-on_dsp_configure_toolbtn_clicked       (GtkToolButton   *toolbutton,
-                                        gpointer         user_data)
-{
-    show_dsp_configure_dlg ();
-}
-
-void
-on_dsp_listview_row_activated          (GtkTreeView     *treeview,
-                                        GtkTreePath     *path,
-                                        GtkTreeViewColumn *column,
-                                        gpointer         user_data)
-{
-    show_dsp_configure_dlg ();
-}
-
-#if !GTK_CHECK_VERSION(3,22,0)
-static void
-set_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
-{
-  GtkWidget *button = GTK_WIDGET(user_data);
-  GtkAllocation a;
-  gtk_widget_get_allocation(GTK_WIDGET (button), &a);
-
-  GtkRequisition r;
-  gtk_widget_size_request(GTK_WIDGET (menu), &r);
-
-  gdk_window_get_origin(gtk_widget_get_window(button), x, y);
-  *x += a.x;
-  *y += a.y - (r.height);
-  *push_in = TRUE;
-}
-#endif
-
-void
-on_dsp_add_toolbtn_toggled             (GtkToggleToolButton *toggletoolbutton,
-                                        gpointer         user_data)
-{
-    if (gtk_toggle_tool_button_get_active(toggletoolbutton)) {
-#if GTK_CHECK_VERSION(3,22,0)
-        gtk_menu_popup_at_widget (GTK_MENU (dsp_popup), GTK_WIDGET (toggletoolbutton), GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_SOUTH_WEST, NULL);
-#else
-
-  gtk_menu_popup(GTK_MENU (dsp_popup),
-                 NULL, NULL,
-                 (GtkMenuPositionFunc) set_position, toggletoolbutton,
-                 0, gtk_get_current_event_time());
-
-#endif
+    if (_selectViewScriptableModel != NULL) {
+        scriptableModelFree(_selectViewScriptableModel);
+        _selectViewScriptableModel = NULL;
     }
 }

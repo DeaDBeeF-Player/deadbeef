@@ -9,9 +9,9 @@
 #include "conf.h"
 #include <deadbeef/common.h>
 #include "logger.h"
-#include "scriptable/scriptable.h"
-#include "scriptable_dsp.h"
-#include "scriptable_encoder.h"
+#include "../shared/scriptable/scriptable.h"
+#include "../shared/scriptable/scriptable_dsp.h"
+#include "../shared/scriptable/scriptable_encoder.h"
 #include <gtest/gtest.h>
 
 class ScriptableTests: public ::testing::Test {
@@ -20,6 +20,8 @@ protected:
     scriptableItem_t *root;
 
     void SetUp() override {
+        scriptableDspInit(deadbeef);
+        scriptableEncoderInit(deadbeef);
         snprintf(dbconfdir, sizeof (dbconfdir), "%s/PresetManagerData", dbplugindir);
         ddb_logger_init ();
         conf_init ();

@@ -21,17 +21,18 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef __DSPCONFIG_H
-#define __DSPCONFIG_H
+#ifndef scriptable_shared_h
+#define scriptable_shared_h
+
+#include <deadbeef/deadbeef.h>
 
 void
-dsp_setup_init (GtkWidget *prefwin);
+scriptableInitShared (DB_functions_t *deadbeef);
 
 void
-dsp_setup_free (void);
+scriptableDeinitShared (void);
 
-void
-dsp_setup_chain_changed (void);
+ddb_scriptable_item_t *
+scriptableGetSharedRoot(void);
 
-#endif
-
+#endif /* scriptable_shared_h */

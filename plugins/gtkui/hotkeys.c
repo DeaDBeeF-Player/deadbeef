@@ -55,7 +55,7 @@ typedef struct
 #include "support.h"
 #include "gtkui.h"
 #include "interface.h"
-#include "../libparser/parser.h"
+#include "../../shared/parser.h"
 #include "../hotkeys/hotkeys.h"
 #ifndef __APPLE__
 #ifndef __MINGW32__

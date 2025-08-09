@@ -206,15 +206,6 @@ scriptableItemFactoryItemTypes (struct scriptableItem_s *item);
 char *
 scriptableItemFormattedName (scriptableItem_t *item);
 
-void
-scriptableInitShared (void);
-
-void
-scriptableDeinitShared (void);
-
-scriptableItem_t *
-scriptableRootShared (void);
-
 #ifdef __cplusplus
 }
 #endif

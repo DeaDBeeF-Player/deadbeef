@@ -68,6 +68,7 @@
 #endif
 #include "undo/undomanager.h"
 #include "viz.h"
+#include "scriptable/scriptable_shared.h"
 
 DB_plugin_t main_plugin = {
     .type = DB_PLUGIN_MISC,
@@ -209,6 +210,10 @@ _plug_register_for_async_deinit (DB_plugin_t *plugin, void (*deinit_func)(void (
             break;
         }
     }
+}
+
+static ddb_scriptable_item_t * _get_shared_scriptable_root(void) {
+    return scriptableGetSharedRoot();
 }
 
 // deadbeef api
@@ -614,6 +619,7 @@ static DB_functions_t deadbeef_api = {
     .plt_autosort = (void (*)(ddb_playlist_t *plt))plt_autosort,
 
     .plt_sort_v3 = plt_sort_v3,
+    .get_shared_scriptable_root = _get_shared_scriptable_root,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;

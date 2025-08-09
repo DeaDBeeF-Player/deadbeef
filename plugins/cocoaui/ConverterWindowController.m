@@ -115,7 +115,7 @@ static NSMutableArray *g_converterControllers;
     [self initializeWidgets];
     self.window.delegate = self;
 
-    self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot(scriptableRootShared())];
+    self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot(deadbeef->get_shared_scriptable_root())];
     self.dspSelectViewController.dataSource = self.dspPresetsDataSource;
     self.dspSelectViewController = [ScriptableSelectViewController new];
     self.dspSelectViewController.view.frame = self.dspPresetSelectorContainer.bounds;
@@ -126,12 +126,12 @@ static NSMutableArray *g_converterControllers;
 
     char dsp_preset_name[100];
     deadbeef->conf_get_str ("converter.dsp_preset_name", "", dsp_preset_name, sizeof(dsp_preset_name));
-    scriptableItem_t *dspPreset = scriptableItemSubItemForName(scriptableDspRoot(scriptableRootShared()), dsp_preset_name);
+    scriptableItem_t *dspPreset = scriptableItemSubItemForName(scriptableDspRoot(deadbeef->get_shared_scriptable_root()), dsp_preset_name);
     if (dspPreset) {
         [self.dspSelectViewController selectItem:dspPreset];
     }
 
-    self.encoderPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableEncoderRoot(scriptableRootShared())];
+    self.encoderPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableEncoderRoot(deadbeef->get_shared_scriptable_root())];
     self.encoderSelectViewController.dataSource = self.dspPresetsDataSource;
 
     self.encoderSelectViewController = [ScriptableSelectViewController new];
@@ -143,7 +143,7 @@ static NSMutableArray *g_converterControllers;
 
     char enc_preset_name[100];
     deadbeef->conf_get_str ("converter.encoder_preset_name", "", enc_preset_name, sizeof(enc_preset_name));
-    scriptableItem_t *encPreset = scriptableItemSubItemForName(scriptableEncoderRoot(scriptableRootShared()), enc_preset_name);
+    scriptableItem_t *encPreset = scriptableItemSubItemForName(scriptableEncoderRoot(deadbeef->get_shared_scriptable_root()), enc_preset_name);
     if (encPreset) {
         [self.encoderSelectViewController selectItem:encPreset];
     }
@@ -220,7 +220,7 @@ static NSMutableArray *g_converterControllers;
     if (selectedEncoderPreset == -1) {
         return;
     }
-    scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableEncoderRoot(scriptableRootShared()), (unsigned int)selectedEncoderPreset);
+    scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableEncoderRoot(deadbeef->get_shared_scriptable_root()), (unsigned int)selectedEncoderPreset);
     ddb_encoder_preset_t *encoder_preset = self.converter_plugin->encoder_preset_alloc();
     scriptableEncoderPresetToConverterEncoderPreset(preset, encoder_preset);
 
@@ -402,7 +402,7 @@ static NSMutableArray *g_converterControllers;
 
     NSInteger selectedEncoderPreset = self.encoderSelectViewController.indexOfSelectedItem;
     if (selectedEncoderPreset != -1) {
-        scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableEncoderRoot(scriptableRootShared()), (unsigned int)selectedEncoderPreset);
+        scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableEncoderRoot(deadbeef->get_shared_scriptable_root()), (unsigned int)selectedEncoderPreset);
         self.encoder_preset = self.converter_plugin->encoder_preset_alloc();
         scriptableEncoderPresetToConverterEncoderPreset(preset, self.encoder_preset);
     }
@@ -422,7 +422,7 @@ static NSMutableArray *g_converterControllers;
 
     NSInteger selectedDspPreset = self.dspSelectViewController.indexOfSelectedItem;
     if (selectedDspPreset != -1) {
-        scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableDspRoot(scriptableRootShared()), (unsigned int)selectedDspPreset);
+        scriptableItem_t *preset = scriptableItemChildAtIndex(scriptableDspRoot(deadbeef->get_shared_scriptable_root()), (unsigned int)selectedDspPreset);
         ddb_dsp_context_t *chain = scriptableDspConfigToDspChain(preset);
         if (chain) {
             self.dsp_preset = self.converter_plugin->dsp_preset_alloc ();
@@ -604,27 +604,27 @@ static NSMutableArray *g_converterControllers;
 #pragma mark - ScriptableSelectDelegate
 
 - (void)scriptableSelectItemSelected:(nonnull scriptableItem_t *)item {
-    if (scriptableItemParent(item) == scriptableEncoderRoot(scriptableRootShared())) {
+    if (scriptableItemParent(item) == scriptableEncoderRoot(deadbeef->get_shared_scriptable_root())) {
         const char *name = scriptableItemPropertyValueForKey(item, "name");
         deadbeef->conf_set_str ("converter.encoder_preset_name", name);
         [self updateFilenamesPreview];
     }
-    else if (scriptableItemParent(item) == scriptableDspRoot(scriptableRootShared())) {
+    else if (scriptableItemParent(item) == scriptableDspRoot(deadbeef->get_shared_scriptable_root())) {
         const char *name = scriptableItemPropertyValueForKey(item, "name");
         deadbeef->conf_set_str ("converter.dsp_preset_name", name);
     }
 }
 
 - (void)scriptableItemDidChange:(scriptableItem_t * _Nonnull)scriptable change:(ScriptableItemChange)change {
-    if (scriptable == scriptableEncoderRoot(scriptableRootShared())) {
+    if (scriptable == scriptableEncoderRoot(deadbeef->get_shared_scriptable_root())) {
         NSInteger selectedEncPresetIndex = self.encoderSelectViewController.indexOfSelectedItem;
-        scriptableItem_t *selectedEncPreset = scriptableItemChildAtIndex(scriptableEncoderRoot(scriptableRootShared()), (unsigned int)selectedEncPresetIndex);
+        scriptableItem_t *selectedEncPreset = scriptableItemChildAtIndex(scriptableEncoderRoot(deadbeef->get_shared_scriptable_root()), (unsigned int)selectedEncPresetIndex);
         [self scriptableSelectItemSelected:selectedEncPreset];
         [self.encoderSelectViewController reloadData];
     }
-    else if (scriptable == scriptableDspRoot(scriptableRootShared())) {
+    else if (scriptable == scriptableDspRoot(deadbeef->get_shared_scriptable_root())) {
         NSInteger selectedDspPresetIndex = self.dspSelectViewController.indexOfSelectedItem;
-        scriptableItem_t *selectedDspPreset = scriptableItemChildAtIndex(scriptableDspRoot(scriptableRootShared()), (unsigned int)selectedDspPresetIndex);
+        scriptableItem_t *selectedDspPreset = scriptableItemChildAtIndex(scriptableDspRoot(deadbeef->get_shared_scriptable_root()), (unsigned int)selectedDspPresetIndex);
         [self scriptableSelectItemSelected:selectedDspPreset];
         [self.dspSelectViewController reloadData];
     }

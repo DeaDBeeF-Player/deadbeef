@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../../gettext.h"
-#include "../../libparser/parser.h"
+#include "../../../shared/parser.h"
 #include "../drawing.h"
 #include "../gtkui.h"
 #include "../interface.h"

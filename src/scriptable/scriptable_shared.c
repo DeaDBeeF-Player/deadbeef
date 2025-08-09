@@ -21,17 +21,31 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef __DSPCONFIG_H
-#define __DSPCONFIG_H
+#include "scriptable_shared.h"
+#include "../../shared/scriptable/scriptable.h"
+#include "../../shared/scriptable/scriptable_dsp.h"
+#include "../../shared/scriptable/scriptable_encoder.h"
+
+static ddb_scriptable_item_t *_sharedRoot;
 
 void
-dsp_setup_init (GtkWidget *prefwin);
+scriptableInitShared (DB_functions_t *deadbeef) {
+    if (_sharedRoot == NULL) {
+        _sharedRoot = scriptableItemAlloc();
+        scriptableDspInit(deadbeef);
+        scriptableEncoderInit(deadbeef);
+    }
+}
 
 void
-dsp_setup_free (void);
+scriptableDeinitShared (void) {
+    if (_sharedRoot != NULL) {
+        scriptableItemFree(_sharedRoot);
+        _sharedRoot = NULL;
+    }
+}
 
-void
-dsp_setup_chain_changed (void);
-
-#endif
-
+ddb_scriptable_item_t *
+scriptableGetSharedRoot(void) {
+    return _sharedRoot;
+}

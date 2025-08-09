@@ -32,7 +32,7 @@
 #include <deadbeef/strdupa.h>
 #include "../../shared/analyzer/analyzer.h"
 #include "../../shared/scope/scope.h"
-#include "../libparser/parser.h"
+#include "../../shared/parser.h"
 #include "actions.h"
 #include "callbacks.h"
 #include "ddb_splitter.h"

@@ -189,6 +189,12 @@ prefwin_init_medialib (GtkWidget *_prefwin) {
 
     GtkWidget *button_add = lookup_widget(prefwin, "button_medialib_add_folder");
     GtkWidget *button_remove = lookup_widget(prefwin, "button_medialib_remove_folder");
+
+#if GTK_CHECK_VERSION(3, 0, 0)
+    gtk_button_set_image(GTK_BUTTON(button_add), gtk_image_new_from_icon_name("list-add-symbolic", GTK_ICON_SIZE_BUTTON));
+    gtk_button_set_image(GTK_BUTTON(button_remove), gtk_image_new_from_icon_name("list-remove-symbolic", GTK_ICON_SIZE_BUTTON));
+#endif
+
     g_signal_connect((gpointer)enable_button, "toggled", G_CALLBACK (_enable_did_toggle), prefwin);
     g_signal_connect((gpointer)button_add, "clicked", G_CALLBACK (_add_did_activate), prefwin);
     g_signal_connect((gpointer)button_remove, "clicked", G_CALLBACK (_remove_did_activate), prefwin);

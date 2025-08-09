@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "scriptable/scriptable.h"
+#include "scriptable.h"
+#include <deadbeef/deadbeef.h>
 
 typedef struct scriptableKeyValue_s {
     struct scriptableKeyValue_s *next;
@@ -491,24 +492,3 @@ scriptableItemFormattedName (scriptableItem_t *item) {
 }
 
 
-static scriptableItem_t *_sharedRoot;
-
-void
-scriptableInitShared (void) {
-    if (_sharedRoot == NULL) {
-        _sharedRoot = scriptableItemAlloc();
-    }
-}
-
-void
-scriptableDeinitShared (void) {
-    if (_sharedRoot != NULL) {
-        scriptableItemFree(_sharedRoot);
-        _sharedRoot = NULL;
-    }
-}
-
-scriptableItem_t *
-scriptableRootShared(void) {
-    return _sharedRoot;
-}

@@ -33,7 +33,7 @@
 #include "support.h"
 #include "interface.h"
 #include "callbacks.h"
-#include "../libparser/parser.h"
+#include "../../shared/parser.h"
 #include "ctmapping.h"
 
 static GtkWidget *ctmapping_dlg;

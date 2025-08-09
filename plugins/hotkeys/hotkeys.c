@@ -36,7 +36,7 @@
 #    include <sys/prctl.h>
 #endif
 
-#include "../libparser/parser.h"
+#include "../../shared/parser.h"
 #include "hotkeys.h"
 #include <deadbeef/deadbeef.h>
 

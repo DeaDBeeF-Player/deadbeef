@@ -90,12 +90,11 @@
 #include "logger.h"
 #include "metacache.h"
 
-#ifdef OSX_APPBUNDLE
-#    include "scriptable/scriptable.h"
-#    include "scriptable/scriptable_dsp.h"
-#    include "scriptable/scriptable_encoder.h"
-//#include "scriptable/scriptable_tfquery.h"
-#endif
+#include "scriptable/scriptable.h"
+#include "scriptable/scriptable_dsp.h"
+#include "scriptable/scriptable_encoder.h"
+
+#include "scriptable/scriptable_shared.h"
 
 #include "undo/undomanager.h"
 
@@ -1058,9 +1057,7 @@ _touch (const char *path) {
 static void
 _async_exit_handler(void) {
     // at this point we can simply do exit(0), but let's clean up for debugging
-#ifdef OSX_APPBUNDLE
     scriptableDeinitShared ();
-#endif
 
     pl_free (); // may access conf_*
     ddb_undomanager_free(ddb_undomanager_shared());
@@ -1638,9 +1635,7 @@ main (int argc, char *argv[]) {
 
     messagepump_init (); // required to push messages while handling commandline
 
-#ifdef OSX_APPBUNDLE
-    scriptableInitShared ();
-#endif
+    scriptableInitShared (deadbeef);
     if (plug_load_all ()) { // required to add files to playlist from commandline
         exit (-1);
     }
@@ -1669,10 +1664,8 @@ main (int argc, char *argv[]) {
 
     free (cmdline);
 
-#ifdef OSX_APPBUNDLE
-    scriptableDspLoadPresets (scriptableRootShared ());
-    scriptableEncoderLoadPresets (scriptableRootShared ());
-#endif
+    scriptableDspLoadPresets (scriptableGetSharedRoot());
+    scriptableEncoderLoadPresets (scriptableGetSharedRoot());
 
     streamer_init ();
 

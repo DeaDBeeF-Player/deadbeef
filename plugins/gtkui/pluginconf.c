@@ -33,12 +33,14 @@
 #include "../../gettext.h"
 #include <deadbeef/deadbeef.h>
 #include "gtkui.h"
-#include "../libparser/parser.h"
+#include "../../shared/parser.h"
 #include "support.h"
 #include "pluginconf.h"
 
 //#define trace(...) { fprintf (stderr, __VA_ARGS__); }
 #define trace(fmt, ...)
+
+static const char *userdata_key = "ddb_ui_key";
 
 extern GtkWidget *mainwin;
 
@@ -233,11 +235,42 @@ apply_conf (GtkWidget *w, ddb_dialog_t *conf, int reset_settings) {
 }
 
 static void
-prop_changed (GtkWidget *editable, gpointer user_data) {
-    ddb_pluginprefs_dialog_t *conf =
-        (ddb_pluginprefs_dialog_t *)g_object_get_data (G_OBJECT (user_data), "dialog_conf_struct");
-    if (conf->prop_changed)
-        conf->prop_changed (conf);
+prop_changed (GtkWidget *widget, gpointer user_data) {
+    gtkui_script_datamodel_t *model = user_data;
+
+    if (model->any_property_did_change != NULL) {
+        model->any_property_did_change(model);
+    }
+
+    if (model->updates_immediately) {
+        const char *key = g_object_get_data (G_OBJECT (widget), userdata_key);
+        if (key != NULL) {
+            if (GTK_IS_ENTRY(widget)) {
+                const char *value = gtk_entry_get_text(GTK_ENTRY(widget));
+                model->set_param(model->context, key, value);
+            }
+            else if (GTK_IS_TOGGLE_BUTTON(widget)) {
+                model->set_param (model->context, key, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) ? "1" : "0");
+            }
+            else if (GTK_IS_FILE_CHOOSER_BUTTON(widget)) {
+                model->set_param (model->context, key, gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget)));
+            }
+            else if (GTK_IS_COMBO_BOX(widget)) {
+                char s[20];
+                snprintf (s, sizeof (s), "%d", gtk_combo_box_get_active (GTK_COMBO_BOX (widget)));
+                model->set_param (model->context, key, s);
+            }
+            else if (GTK_IS_SCALE(widget)) {
+                char s[20];
+                snprintf (s, sizeof (s), "%f", gtk_range_get_value (GTK_RANGE (widget)));
+                model->set_param(model->context, key, s);
+            } else if (GTK_IS_SPIN_BUTTON(widget)) {
+                char s[20];
+                snprintf (s, sizeof (s), "%f", (float)gtk_spin_button_get_value (GTK_SPIN_BUTTON (widget)));
+                model->set_param (model->context, key, s);
+            }
+        }
+    }
 }
 
 void
@@ -302,38 +335,32 @@ _localize_label (const char *label) {
     return _ (label);
 }
 
-void
-gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
+
+GtkWidget *
+gtkui_create_ui_from_script(const char *layout, gtkui_script_datamodel_t *model, const char *title) {
+    if (title == NULL) {
+        title = "<undefined>";
+    }
+
     GtkWidget *widgets[100] = { NULL };
-    ddb_dialog_t *conf = &make_dialog_conf->dialog_conf;
     int pack[100] = { 0 };
     int ncurr = 0;
 
-    GtkWidget *containervbox = make_dialog_conf->containerbox;
-
-    // This needs to be set on an object that is tied to the lifetime of the plugin preferences container
-    make_dialog_conf = (ddb_pluginprefs_dialog_t *)g_memdup (make_dialog_conf, sizeof (ddb_pluginprefs_dialog_t));
-    g_object_set_data_full (G_OBJECT (containervbox), "dialog_conf_struct", make_dialog_conf, g_free);
-
-    // Temporarily disable the callback until dialog script has been fully parsed
-    void (*temp_prop_changed) = make_dialog_conf->prop_changed;
-    make_dialog_conf->prop_changed = NULL;
-
-    widgets[ncurr] = containervbox;
-    gtk_box_set_spacing (GTK_BOX (widgets[ncurr]), 8);
+    GtkWidget *content_vbox = gtk_vbox_new(FALSE, 8);
+    widgets[ncurr] = content_vbox;
 
     // parse script
     char token[MAX_TOKEN];
-    const char *script = conf->layout;
+    const char *script = layout;
     parser_line = 1;
     while ((script = gettoken (script, token))) {
         if (strcmp (token, "property")) {
             fprintf (
-                stderr,
-                "invalid token while loading plugin %s config dialog: %s at line %d\n",
-                conf->title,
-                token,
-                parser_line);
+                     stderr,
+                     "invalid token while loading ui script '%s': %s at line %d\n",
+                     title,
+                     token,
+                     parser_line);
             break;
         }
         char name[MAX_TOKEN];
@@ -433,7 +460,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
             }
             gtk_box_pack_start (GTK_BOX (widgets[ncurr]), label, FALSE, TRUE, 0);
 
-            if (check_semicolon (&script, token, conf->title) < 0)
+            if (check_semicolon (&script, token, title) < 0)
                 break;
 
             continue;
@@ -450,14 +477,14 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
         GtkWidget *prop = NULL;
         GtkWidget *cont = NULL;
         char value[1000];
-        conf->get_param (key, value, sizeof (value), def);
+        model->get_param (model->context, key, value, sizeof (value), def);
         if (!strcmp (type, "entry") || !strcmp (type, "password")) {
             label = gtk_label_new (labeltext);
             gtk_widget_show (label);
             prop = gtk_entry_new ();
             gtk_entry_set_width_chars (GTK_ENTRY (prop), 5);
             gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
-            g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), containervbox);
+            g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), model);
             gtk_widget_show (prop);
             gtk_entry_set_text (GTK_ENTRY (prop), value);
 
@@ -467,7 +494,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
         }
         else if (!strcmp (type, "checkbox")) {
             prop = gtk_check_button_new_with_label (labeltext);
-            g_signal_connect (G_OBJECT (prop), "toggled", G_CALLBACK (prop_changed), containervbox);
+            g_signal_connect (G_OBJECT (prop), "toggled", G_CALLBACK (prop_changed), model);
             gtk_widget_show (prop);
             int val = atoi (value);
             gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (prop), val);
@@ -479,14 +506,14 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
                 prop = gtk_file_chooser_button_new (labeltext, GTK_FILE_CHOOSER_ACTION_OPEN);
                 gtk_widget_show (prop);
                 gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (prop), value);
-                g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (prop_changed), containervbox);
+                g_signal_connect (G_OBJECT (prop), "file-set", G_CALLBACK (prop_changed), model);
             }
             else {
                 cont = gtk_hbox_new (FALSE, 2);
                 gtk_widget_show (cont);
                 prop = gtk_entry_new ();
                 gtk_entry_set_activates_default (GTK_ENTRY (prop), TRUE);
-                g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), containervbox);
+                g_signal_connect (G_OBJECT (prop), "changed", G_CALLBACK (prop_changed), model);
                 gtk_widget_show (prop);
                 gtk_editable_set_editable (GTK_EDITABLE (prop), FALSE);
                 gtk_entry_set_text (GTK_ENTRY (prop), value);
@@ -522,7 +549,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
                 break;
             }
             gtk_combo_box_set_active (GTK_COMBO_BOX (prop), atoi (value));
-            g_signal_connect ((gpointer)prop, "changed", G_CALLBACK (prop_changed), containervbox);
+            g_signal_connect ((gpointer)prop, "changed", G_CALLBACK (prop_changed), model);
         }
         else if (!strncmp (type, "hscale[", 7) || !strncmp (type, "vscale[", 7) || !strncmp (type, "spinbtn[", 8)) {
             float min, max, step;
@@ -552,7 +579,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
             }
             else {
                 prop = type[0] == 'h' ? gtk_hscale_new_with_range (min, max, step)
-                                      : gtk_vscale_new_with_range (min, max, step);
+                : gtk_vscale_new_with_range (min, max, step);
                 if (invert) {
                     gtk_range_set_inverted (GTK_RANGE (prop), TRUE);
                 }
@@ -561,11 +588,15 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
             }
             label = gtk_label_new (labeltext);
             gtk_widget_show (label);
-            g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), containervbox);
+            g_signal_connect (G_OBJECT (prop), "value-changed", G_CALLBACK (prop_changed), model);
             gtk_widget_show (prop);
         }
 
-        if (check_semicolon (&script, token, conf->title) < 0)
+        if (prop != NULL) {
+            g_object_set_data_full (G_OBJECT (prop), userdata_key, strdup(key), free);
+        }
+
+        if (check_semicolon (&script, token, title) < 0)
             break;
 
         if (label && prop) {
@@ -580,15 +611,58 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
             cont = prop;
         }
         if (prop) {
-            g_object_set_data (G_OBJECT (containervbox), key, prop);
+            g_object_set_data (G_OBJECT (content_vbox), key, prop);
         }
         if (cont) {
             gtk_box_pack_start (GTK_BOX (widgets[ncurr]), cont, FALSE, TRUE, 0);
         }
     }
+    return content_vbox;
+}
 
-    // Now that all signal handlers are installed, reinstate the callback
-    make_dialog_conf->prop_changed = temp_prop_changed;
+static void
+_set_param (void *context, const char *key, const char *value) {
+    ddb_pluginprefs_dialog_t *make_dialog_conf = context;
+    make_dialog_conf->dialog_conf.set_param(key, value);
+}
+
+static void
+_get_param (void *context, const char *key, char *value, int len, const char *def) {
+    ddb_pluginprefs_dialog_t *make_dialog_conf = context;
+    make_dialog_conf->dialog_conf.get_param(key, value, len, def);
+}
+
+static void
+_any_property_did_change(void *context) {
+    ddb_pluginprefs_dialog_t *make_dialog_conf = context;
+    if (make_dialog_conf != NULL && make_dialog_conf->prop_changed != NULL)
+        make_dialog_conf->prop_changed (make_dialog_conf);
+}
+
+void
+gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
+    ddb_dialog_t *conf = &make_dialog_conf->dialog_conf;
+
+    GtkWidget *containervbox = make_dialog_conf->containerbox;
+
+    // This needs to be set on an object that is tied to the lifetime of the plugin preferences container
+    make_dialog_conf = (ddb_pluginprefs_dialog_t *)g_memdup (make_dialog_conf, sizeof (ddb_pluginprefs_dialog_t));
+    g_object_set_data_full (G_OBJECT (containervbox), "dialog_conf_struct", make_dialog_conf, g_free);
+
+    gtkui_script_datamodel_t model = {
+        .context = make_dialog_conf,
+        .updates_immediately = FALSE, // Update on Apply button
+        .get_param = _get_param,
+        .set_param = _set_param,
+    };
+
+    GtkWidget *content = gtkui_create_ui_from_script(conf->layout, &model, make_dialog_conf->dialog_conf.title);
+
+    gtk_widget_show(content);
+    gtk_box_pack_start(GTK_BOX(containervbox), content, TRUE, FALSE, 0);
+
+    // Now that all signal handlers are installed, start reacting to changes
+    model.any_property_did_change = _any_property_did_change;
 }
 
 int

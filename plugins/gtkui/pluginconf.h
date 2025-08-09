@@ -36,6 +36,20 @@ struct ddb_pluginprefs_dialog_s {
     void (*prop_changed) (ddb_pluginprefs_dialog_t *make_dialog_conf);
 };
 
+typedef struct {
+    void *context;
+    gboolean updates_immediately;
+    void (*set_param) (void *context, const char *key, const char *value);
+    void (*get_param) (void *context, const char *key, char *value, int len, const char *def);
+
+    /// Used to enable Apply button in plugin config dialogs
+    /// Can be NULL.
+    void (*any_property_did_change) (void *context);
+} gtkui_script_datamodel_t;
+
+GtkWidget *
+gtkui_create_ui_from_script(const char *layout, gtkui_script_datamodel_t *datamodel, const char *_title);
+
 int
 gtkui_run_dialog (GtkWidget *parentwin, ddb_dialog_t *conf, uint32_t buttons, int (*callback)(int button, void *ctx), void *ctx);
 

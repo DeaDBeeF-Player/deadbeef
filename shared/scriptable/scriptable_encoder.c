@@ -4,11 +4,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <deadbeef/deadbeef.h>
-#include <deadbeef/common.h>
 #include "scriptable_encoder.h"
-#include <deadbeef/strdupa.h>
 
-extern DB_functions_t *deadbeef;
+static DB_functions_t *deadbeef;
 
 static scriptableStringListItem_t *
 scriptableEncoderItemNames (scriptableItem_t *item);
@@ -79,6 +77,11 @@ static const char *configdialog =
     "property \"Write OggVorbis tag\" checkbox tag_oggvorbis 0;"
     "property \"Write MP4 tag\" checkbox tag_mp4 0;"
 ;
+
+void
+scriptableEncoderInit(DB_functions_t *_deadbeef) {
+    deadbeef = _deadbeef;
+}
 
 static scriptableStringListItem_t *
 scriptableEncoderItemNames (scriptableItem_t *item) {
@@ -167,7 +170,8 @@ check_dir (const char *dir, mode_t mode)
         {
             if (0 != mkdir (tmp, mode))
             {
-                trace ("Failed to create %s\n", tmp);
+                // FIXME: This should be displayed to a user
+                fprintf (stderr, "Failed to create %s\n", tmp);
                 free (tmp);
                 return 0;
             }

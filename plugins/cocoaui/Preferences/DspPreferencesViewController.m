@@ -58,7 +58,7 @@ extern DB_functions_t *deadbeef;
     _currentDspChain = scriptableDspPresetFromDspChain (deadbeef->streamer_get_dsp_chain ());
     self.dspChainDataSource = [ScriptableTableDataSource dataSourceWithScriptable:_currentDspChain];
 
-    self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot(scriptableRootShared())];
+    self.dspPresetsDataSource = [ScriptableTableDataSource dataSourceWithScriptable:scriptableDspRoot(deadbeef->get_shared_scriptable_root())];
 
     // preset list and browse button
     self.dspSelectViewController = [ScriptableSelectViewController new];
@@ -101,7 +101,7 @@ extern DB_functions_t *deadbeef;
         if (returnCode == NSModalResponseOK) {
             const char *name = self.dspPresetNameTextField.stringValue.UTF8String;
             scriptableItem_t *preset = scriptableItemClone (self.dspChainDataSource.scriptable);
-            scriptableItem_t *presets = scriptableDspRoot(scriptableRootShared());
+            scriptableItem_t *presets = scriptableDspRoot(deadbeef->get_shared_scriptable_root());
             scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, presets);
             scriptableItemAddSubItem(presets, preset);
             [self.dspSelectViewController reloadData];
@@ -111,11 +111,11 @@ extern DB_functions_t *deadbeef;
 
 - (IBAction)presetNameOK:(id)sender {
     const char *name = self.dspPresetNameTextField.stringValue.UTF8String;
-    if (scriptableItemContainsSubItemWithName(scriptableDspRoot(scriptableRootShared()), name)) {
+    if (scriptableItemContainsSubItemWithName(scriptableDspRoot(deadbeef->get_shared_scriptable_root()), name)) {
         [ScriptableErrorViewer.sharedInstance displayDuplicateNameError];
         return;
     }
-    if (!scriptableItemIsSubItemNameAllowed(scriptableDspRoot(scriptableRootShared()), name)) {
+    if (!scriptableItemIsSubItemNameAllowed(scriptableDspRoot(deadbeef->get_shared_scriptable_root()), name)) {
         [ScriptableErrorViewer.sharedInstance displayInvalidNameError];
         return;
     }

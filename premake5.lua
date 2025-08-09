@@ -185,6 +185,51 @@ project "libtftintutil"
   filter "platforms:not Windows"
     buildoptions {"-fPIC"}
 
+project "libparser"
+  kind "StaticLib"
+  language "C"
+  targetdir "."
+  targetprefix ""
+  files {
+    "shared/parser.c"
+  }
+  filter "platforms:not Windows"
+    buildoptions {"-fPIC"}
+
+project "libscriptable"
+  kind "StaticLib"
+  language "C"
+  targetdir "."
+  targetprefix ""
+  files {
+    "shared/scriptable/*.c"
+  }
+  buildoptions {"-fblocks"}
+  filter "platforms:not Windows"
+    buildoptions {"-fPIC"}
+
+project "libpluginsettings"
+  kind "StaticLib"
+  language "C"
+  targetdir "."
+  targetprefix ""
+  files {
+    "shared/pluginsettings.c"
+  }
+  filter "platforms:not Windows"
+    buildoptions {"-fPIC"}
+
+project "libgrowablebuffer"
+  kind "StaticLib"
+  language "C"
+  targetdir "."
+  targetprefix ""
+  files {
+    "shared/growableBuffer.c"
+  }
+  filter "platforms:not Windows"
+    buildoptions {"-fPIC"}
+
 -- DeaDBeeF
 
 project "deadbeef"
@@ -197,9 +242,9 @@ project "deadbeef"
     "shared/undo/*.c",
     "shared/filereader/*.c",
     "src/*.c",
-    "plugins/libparser/*.c",
     "external/wcwidth/wcwidth.c",
     "shared/ctmap.c",
+    "src/scriptable/*.c"
   }
   includedirs {
     "shared"
@@ -213,7 +258,7 @@ project "deadbeef"
     "LOCALEDIR=\"donotuse\""
   }
   buildoptions {"-fblocks"}
-  links { "m", "pthread", "dl","dispatch", "BlocksRuntime"}
+  links { "m", "pthread", "dl","dispatch", "BlocksRuntime", "libparser", "libscriptable", "libgrowablebuffer", "libpluginsettings"}
   filter "platforms:Windows"
     files {
       "icons/deadbeef-icon.rc",
@@ -789,9 +834,9 @@ end
 if option ("plugin-hotkeys") then
 project "hotkeys"
   files {
-    "plugins/hotkeys/*.c",
-    "plugins/libparser/*.c"
+    "plugins/hotkeys/*.c"
   }
+  links {"libparser"}
   filter "system:not windows"
     links {"X11"}
 end
@@ -833,12 +878,9 @@ project "ddb_gui_GTK2"
     "plugins/gtkui/playlist/*.c",
     "plugins/gtkui/scriptable/*.c",
     "shared/eqpreset.c",
-    "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
     "shared/analyzer/analyzer.c",
     "shared/scope/scope.c",
-    "shared/scriptable/*.c",
-    "plugins/libparser/parser.c",
     "src/utf8.c"
   }
   excludes {
@@ -847,13 +889,15 @@ project "ddb_gui_GTK2"
   }
   includedirs {
     "plugins/gtkui",
-    "plugins/libparser",
     "shared"
   }
   buildoptions {"-fblocks"}
   pkgconfig ("gtk+-2.0 jansson")
-  links {"libdeletefromdisk", "libtftintutil", "dispatch", "BlocksRuntime"}
+  links {"libdeletefromdisk", "libtftintutil", "dispatch", "BlocksRuntime", "libparser", "libscriptable", "libgrowablebuffer", "libpluginsettings"}
   defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
+
+  filter "platforms:Windows"
+    links {"libwin"}
 end
 
 if option ("plugin-gtk3", "gtk+-3.0 jansson") then
@@ -866,17 +910,13 @@ project "ddb_gui_GTK3"
     "plugins/gtkui/playlist/*.c",
     "plugins/gtkui/scriptable/*.c",
     "shared/eqpreset.c",
-    "shared/pluginsettings.c",
     "shared/trkproperties_shared.c",
     "shared/analyzer/analyzer.c",
     "shared/scope/scope.c",
-    "shared/scriptable/*.c",
-    "plugins/libparser/parser.c",
     "src/utf8.c"
   }
   includedirs {
     "plugins/gtkui",
-    "plugins/libparser",
     "shared"
   }
 
@@ -886,8 +926,11 @@ project "ddb_gui_GTK3"
 
   buildoptions {"-fblocks"}
   pkgconfig("gtk+-3.0 jansson")
-  links {"libdeletefromdisk", "libtftintutil", "dispatch", "BlocksRuntime"}
+  links {"libdeletefromdisk", "libtftintutil", "dispatch", "BlocksRuntime", "libparser", "libscriptable", "libgrowablebuffer", "libpluginsettings"}
   defines ("GLIB_DISABLE_DEPRECATION_WARNINGS")
+
+  filter "platforms:Windows"
+    links {"libwin"}
 end
 
 if option ("plugin-rg_scanner") then
@@ -1048,8 +1091,7 @@ project "converter_gtk3"
     "plugins/converter/support.c"
   }
   includedirs {
-    "plugins/gtkui",
-    "plugins/libparser"
+    "plugins/gtkui"
   }
   pkgconfig ("gtk+-3.0")
 end
@@ -1062,7 +1104,6 @@ project "pltbrowser_gtk2"
   }
   includedirs {
     "plugins/gtkui",
-    "plugins/libparser"
   }
   pkgconfig ("gtk+-2.0")
 end
@@ -1074,8 +1115,7 @@ project "pltbrowser_gtk3"
     "plugins/pltbrowser/support.c"
   }
   includedirs {
-    "plugins/gtkui",
-    "plugins/libparser"
+    "plugins/gtkui"
   }
   pkgconfig ("gtk+-3.0")
 end
@@ -1261,7 +1301,10 @@ project "medialib"
   }
   pkgconfig ("jansson")
   buildoptions {"-fblocks"}
-  links {"dispatch", "BlocksRuntime"}
+  links {"dispatch", "BlocksRuntime", "libscriptable", "libgrowablebuffer", "libpluginsettings", "libparser"}
+
+  filter "platforms:Windows"
+    links {"libwin"}
 end
 
 project "translations"

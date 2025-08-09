@@ -5,11 +5,11 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "growableBuffer.h"
-#include "pluginsettings.h"
+#include "../growableBuffer.h"
+#include "../pluginsettings.h"
 #include "scriptable_dsp.h"
 
-extern DB_functions_t *deadbeef;
+static DB_functions_t *deadbeef;
 
 static scriptableStringListItem_t *
 scriptableDspChainItemNames (scriptableItem_t *item);
@@ -44,6 +44,9 @@ scriptableDspRootRemoveSubItem (scriptableItem_t *item, scriptableItem_t *subIte
 static int
 isPresetNameAllowed (scriptableItem_t *preset, const char *name);
 
+static int
+scriptableDspPresetNodeReset (scriptableItem_t *item);
+
 static char *
 scriptableDspPresetNodeSaveToString (scriptableItem_t *item);
 
@@ -59,8 +62,12 @@ scriptableDspPresetSave(scriptableItem_t *item);
 static int
 scriptableDspPresetDelete(scriptableItem_t *subItem);
 
+static void
+scriptableDspNodeItemInitFromDspContext(scriptableItem_t *node, ddb_dsp_context_t *context);
+
 static scriptableOverrides_t
 scriptableDspNodeCallbacks = {
+    .reset = scriptableDspPresetNodeReset,
     .saveToString = scriptableDspPresetNodeSaveToString,
     .propertyValueDidChangeForKey = scriptableDspPresetNodePropertyValueDidChangeForKey,
 };
@@ -90,6 +97,11 @@ static scriptableOverrides_t scriptableDspPresetListCallbacks = {
     .isSubItemNameAllowed = isPresetNameAllowed,
 };
 
+
+void
+scriptableDspInit(DB_functions_t *_deadbeef) {
+    deadbeef = _deadbeef;
+}
 
 static int
 dirent_alphasort (const struct dirent **a, const struct dirent **b) {
@@ -247,7 +259,24 @@ scriptableDspPropertyValueWillChangeForKey (scriptableItem_t *item, const char *
     }
 }
 
+static int
+scriptableDspPresetNodeReset (scriptableItem_t *node) {
+    const char *pluginId = scriptableItemPropertyValueForKey (node, "pluginId");
+    if (!pluginId) {
+        return -1;
+    }
 
+    DB_dsp_t *dsp = dspPluginForId(pluginId);
+    if (!dsp) {
+        return -1;
+    }
+
+    ddb_dsp_context_t *ctx = dsp->open ();
+    scriptableDspNodeItemInitFromDspContext(node, ctx);
+    dsp->close(ctx);
+
+    return 0;
+}
 
 static char *
 scriptableDspPresetNodeSaveToString (scriptableItem_t *node) {
@@ -509,10 +538,8 @@ static scriptableItem_t *scriptableDspCreateNodeFromContext (ddb_dsp_context_t *
     return node;
 }
 
-scriptableItem_t *
-scriptableDspNodeItemFromDspContext (ddb_dsp_context_t *context) {
-    scriptableItem_t *node = scriptableDspCreateNodeFromContext (context);
-
+static void
+scriptableDspNodeItemInitFromDspContext(scriptableItem_t *node, ddb_dsp_context_t *context) {
     if (context->plugin->num_params) {
         for (int i = 0; i < context->plugin->num_params (); i++) {
             char key[100];
@@ -523,6 +550,13 @@ scriptableDspNodeItemFromDspContext (ddb_dsp_context_t *context) {
         }
     }
     scriptableItemSetPropertyValueForKey(node, context->enabled ? "1" : "0", "enabled");
+}
+
+scriptableItem_t *
+scriptableDspNodeItemFromDspContext (ddb_dsp_context_t *context) {
+    scriptableItem_t *node = scriptableDspCreateNodeFromContext (context);
+
+    scriptableDspNodeItemInitFromDspContext(node, context);
 
     return node;
 }
@@ -573,7 +607,7 @@ scriptableDspConfigToDspChain (scriptableItem_t *item) {
     for (c = scriptableItemChildren(item); c != NULL; c = scriptableItemNext(c)) {
         const char *pluginId = scriptableItemPropertyValueForKey(c, "pluginId");
         DB_plugin_t *plugin = deadbeef->plug_get_for_id (pluginId);
-        if (plugin->type != DB_PLUGIN_DSP) {
+        if (plugin != NULL && plugin->type != DB_PLUGIN_DSP) {
             break;
         }
         DB_dsp_t *dsp = (DB_dsp_t *)plugin;

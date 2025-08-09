@@ -29,7 +29,7 @@
 #include <gdk/gdkkeysyms.h>
 #include "gtkui.h"
 #include <deadbeef/strdupa.h>
-#include "../../libparser/parser.h"
+#include "../../../shared/parser.h"
 #include "../../../shared/deletefromdisk.h"
 #include "actions.h"
 #include "actionhandlers.h"

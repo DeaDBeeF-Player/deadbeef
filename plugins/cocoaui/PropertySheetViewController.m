@@ -1,4 +1,5 @@
 #import "PropertySheetViewController.h"
+#import "PropertySheetViewController.h"
 #import "PropertySheetContentView.h"
 // FIXME: needed for referencing other object lists
 //#import "ItemListViewController.h"

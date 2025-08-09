@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ctmap.h"
-#include "../plugins/libparser/parser.h"
+#include "../shared/parser.h"
 
 void
 ddb_ctmap_free (ddb_ctmap_t *ctmap) {

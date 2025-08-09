@@ -685,7 +685,6 @@
 		2D01D7EE1AB222BF00BCD3C4 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
 		2D01D7EF1AB2233D00BCD3C4 /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
 		2D01D7F11AB2238600BCD3C4 /* testbootstrap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D01D7F01AB2238600BCD3C4 /* testbootstrap.c */; };
-		2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		2D02127A2D9AFBB800BAEA12 /* lyrics.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212772D9AFBB800BAEA12 /* lyrics.c */; };
 		2D02127B2D9AFBB800BAEA12 /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0212792D9AFBB800BAEA12 /* support.c */; };
 		2D02127C2D9AFBB800BAEA12 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0212782D9AFBB800BAEA12 /* support.h */; };
@@ -732,11 +731,7 @@
 		2D11E8B21AA0E3DD00A67A20 /* MainWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D11E8AF1AA0E3DD00A67A20 /* MainWindowController.h */; };
 		2D11E8B31AA0E3DD00A67A20 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */; };
 		2D135EF0226E47AA00BAAE84 /* scriptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EE8226E38AF00BAAE84 /* scriptable.c */; };
-		2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */; };
-		2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */; };
 		2D135EF4226E47CE00BAAE84 /* ScriptableTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EF3226E47CE00BAAE84 /* ScriptableTests.cpp */; };
-		2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */; };
-		2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */; };
 		2D15721623785BD900985E47 /* VfsCurlTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D15721523785BD900985E47 /* VfsCurlTests.cpp */; };
 		2D15722423785BEC00985E47 /* vfs_curl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24B5019E724E100E34920 /* vfs_curl.c */; };
 		2D15722723785D0100985E47 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D977F441CA4B1F3006DBE79 /* libcurl.dylib */; };
@@ -767,6 +762,43 @@
 		2D2351251B138F3200A62936 /* converter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2351231B138F3200A62936 /* converter.c */; };
 		2D2351281B13922400A62936 /* Converter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2351271B13922400A62936 /* Converter.xib */; };
 		2D255AC82E48CA3700DA3757 /* ddb_dsp_libretro.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D25568E2E47680D00DA3757 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568B2E47680D00DA3757 /* scriptable_dsp.c */; };
+		2D25568F2E47680D00DA3757 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568D2E47680D00DA3757 /* scriptable_encoder.c */; };
+		2D2556902E47680D00DA3757 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25568A2E47680D00DA3757 /* scriptable_dsp.h */; };
+		2D2556912E47680D00DA3757 /* scriptable_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25568C2E47680D00DA3757 /* scriptable_encoder.h */; };
+		2D2556922E47680D00DA3757 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568B2E47680D00DA3757 /* scriptable_dsp.c */; };
+		2D2556932E47680D00DA3757 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568D2E47680D00DA3757 /* scriptable_encoder.c */; };
+		2D2556942E47680D00DA3757 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25568A2E47680D00DA3757 /* scriptable_dsp.h */; };
+		2D2556952E47680D00DA3757 /* scriptable_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25568C2E47680D00DA3757 /* scriptable_encoder.h */; };
+		2D2556982E47680D00DA3757 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25568A2E47680D00DA3757 /* scriptable_dsp.h */; };
+		2D2556992E47680D00DA3757 /* scriptable_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25568C2E47680D00DA3757 /* scriptable_encoder.h */; };
+		2D25569A2E47680D00DA3757 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568B2E47680D00DA3757 /* scriptable_dsp.c */; };
+		2D25569B2E47680D00DA3757 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568D2E47680D00DA3757 /* scriptable_encoder.c */; };
+		2D25569C2E47680D00DA3757 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25568A2E47680D00DA3757 /* scriptable_dsp.h */; };
+		2D25569D2E47680D00DA3757 /* scriptable_encoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25568C2E47680D00DA3757 /* scriptable_encoder.h */; };
+		2D25569E2E47681D00DA3757 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568B2E47680D00DA3757 /* scriptable_dsp.c */; };
+		2D25569F2E47681D00DA3757 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568D2E47680D00DA3757 /* scriptable_encoder.c */; };
+		2D2556A02E4768A400DA3757 /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F529B92DF900218F1D /* growableBuffer.c */; };
+		2D2556A12E4768A400DA3757 /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F529B92DF900218F1D /* growableBuffer.c */; };
+		2D2556A22E4768ED00DA3757 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
+		2D2556A32E4768ED00DA3757 /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
+		2D2556A72E476F3400DA3757 /* scriptable_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556A62E476F3400DA3757 /* scriptable_shared.c */; };
+		2D2556A82E476F3400DA3757 /* scriptable_shared.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2556A52E476F3400DA3757 /* scriptable_shared.h */; };
+		2D2556BA2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2556B82E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h */; };
+		2D2556BB2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556B92E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.c */; };
+		2D2556BC2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556B92E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.c */; };
+		2D2556BD2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2556B82E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h */; };
+		2D2556D12E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556D02E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c */; };
+		2D2556D22E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2556CF2E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.h */; };
+		2D2556D32E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556D02E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c */; };
+		2D2556D42E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2556CF2E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.h */; };
+		2D2556DB2E48A5D700DA3757 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556DA2E48A5D700DA3757 /* parser.c */; };
+		2D2556DC2E48A5D700DA3757 /* parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2556D92E48A5D700DA3757 /* parser.h */; };
+		2D2556DD2E48A5D700DA3757 /* parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2556D92E48A5D700DA3757 /* parser.h */; };
+		2D2556DE2E48A5D700DA3757 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556DA2E48A5D700DA3757 /* parser.c */; };
+		2D2556DF2E48A5D700DA3757 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556DA2E48A5D700DA3757 /* parser.c */; };
+		2D2556E02E48A5D700DA3757 /* parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2556D92E48A5D700DA3757 /* parser.h */; };
+		2D2556E12E48A66C00DA3757 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556DA2E48A5D700DA3757 /* parser.c */; };
 		2D27AEE81D9D871600842D76 /* rg_scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEE61D9D871600842D76 /* rg_scanner.c */; };
 		2D27AEE91D9D871600842D76 /* rg_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D27AEE71D9D871600842D76 /* rg_scanner.h */; };
 		2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -983,7 +1015,6 @@
 		2D524C0A1B245AE00018C4FA /* DdbTitleFormattingHelpButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D524C081B245AE00018C4FA /* DdbTitleFormattingHelpButton.m */; };
 		2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D54915522B1711E000FE7E3 /* HelpWindowController.h */; };
 		2D54915822B1711E000FE7E3 /* HelpWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D54915622B1711E000FE7E3 /* HelpWindowController.m */; };
-		2D5656FF2AED13EC0014443E /* gtkScriptableListEditViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D5656FD2AED13EC0014443E /* gtkScriptableListEditViewController.h */; };
 		2D5657012AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */; };
 		2D5657022AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */; };
 		2D5657052AED1A820014443E /* gtkScriptableListEditWindowController.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */; };
@@ -1658,10 +1689,8 @@
 		2D92D32C29B92FCA00218F1D /* trkproperties_shared.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F129B92DF900218F1D /* trkproperties_shared.c */; };
 		2D92D32D29B9305B00218F1D /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
 		2D92D32E29B9305B00218F1D /* ctmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21E29B92DF900218F1D /* ctmap.c */; };
-		2D92D32F29B9305B00218F1D /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F529B92DF900218F1D /* growableBuffer.c */; };
 		2D92D33029B9305B00218F1D /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
 		2D92D33129B9305B00218F1D /* ctmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21E29B92DF900218F1D /* ctmap.c */; };
-		2D92D33229B9305B00218F1D /* growableBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F529B92DF900218F1D /* growableBuffer.c */; };
 		2D92D33329B931C600218F1D /* deletefromdisk.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F029B92DF900218F1D /* deletefromdisk.c */; };
 		2D92D33629B931FB00218F1D /* ctmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21E29B92DF900218F1D /* ctmap.c */; };
 		2D92D33729B9320200218F1D /* eqpreset.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1EF29B92DF900218F1D /* eqpreset.c */; };
@@ -2222,7 +2251,6 @@
 		2DC656C92744289C00583E14 /* ddb_splitter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5842269BB4300AFF9AE /* ddb_splitter.c */; };
 		2DC656CA2744289C00583E14 /* tfimport.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5C62269BB4300AFF9AE /* tfimport.c */; };
 		2DC656CB2744289C00583E14 /* mainplaylist.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5DE2269BB4300AFF9AE /* mainplaylist.c */; };
-		2DC656CC2744289C00583E14 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		2DC656CD2744289C00583E14 /* progress.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5DC2269BB4300AFF9AE /* progress.c */; };
 		2DC656CE2744289C00583E14 /* dspconfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B5B32269BB4300AFF9AE /* dspconfig.c */; };
 		2DC656CF2744289C00583E14 /* widgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B6952269BB4300AFF9AE /* widgets.c */; };
@@ -2542,8 +2570,6 @@
 		2DE3B8622269CA1500AFF9AE /* hotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B8482269CA1500AFF9AE /* hotkeys.h */; };
 		2DE3B8652269CA1500AFF9AE /* hotkeys.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B84F2269CA1500AFF9AE /* hotkeys.c */; };
 		2DE3B86D2269CA5400AFF9AE /* hotkeys.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
-		2DE3B86F2269CAEA00AFF9AE /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51501837EF9D003E6066 /* parser.c */; };
 		2DE3B88F2269F6BA00AFF9AE /* support.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87D2269F6B900AFF9AE /* support.c */; };
 		2DE3B8902269F6BA00AFF9AE /* pltbrowser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */; };
 		2DE3B8932269F6BA00AFF9AE /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B88C2269F6B900AFF9AE /* support.h */; };
@@ -5495,11 +5521,7 @@
 		2D11E8B01AA0E3DD00A67A20 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
 		2D135EE7226E38AF00BAAE84 /* scriptable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable.h; sourceTree = "<group>"; };
 		2D135EE8226E38AF00BAAE84 /* scriptable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable.c; sourceTree = "<group>"; };
-		2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_dsp.h; sourceTree = "<group>"; };
-		2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_dsp.c; sourceTree = "<group>"; };
 		2D135EF3226E47CE00BAAE84 /* ScriptableTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptableTests.cpp; sourceTree = "<group>"; };
-		2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_encoder.h; sourceTree = "<group>"; };
-		2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_encoder.c; sourceTree = "<group>"; };
 		2D15721523785BD900985E47 /* VfsCurlTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VfsCurlTests.cpp; sourceTree = "<group>"; };
 		2D15722523785C0500985E47 /* vfs_curl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vfs_curl.h; sourceTree = "<group>"; };
 		2D17F8451AB3391A00AF2853 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
@@ -5527,6 +5549,18 @@
 		2D2351231B138F3200A62936 /* converter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = converter.c; sourceTree = "<group>"; usesTabs = 0; };
 		2D2351241B138F3200A62936 /* converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = converter.h; sourceTree = "<group>"; };
 		2D2351271B13922400A62936 /* Converter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Converter.xib; sourceTree = "<group>"; };
+		2D25568A2E47680D00DA3757 /* scriptable_dsp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_dsp.h; sourceTree = "<group>"; };
+		2D25568B2E47680D00DA3757 /* scriptable_dsp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_dsp.c; sourceTree = "<group>"; };
+		2D25568C2E47680D00DA3757 /* scriptable_encoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_encoder.h; sourceTree = "<group>"; };
+		2D25568D2E47680D00DA3757 /* scriptable_encoder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_encoder.c; sourceTree = "<group>"; };
+		2D2556A52E476F3400DA3757 /* scriptable_shared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = scriptable_shared.h; sourceTree = "<group>"; };
+		2D2556A62E476F3400DA3757 /* scriptable_shared.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = scriptable_shared.c; sourceTree = "<group>"; };
+		2D2556B82E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptablePropertySheetEditViewController.h; sourceTree = "<group>"; };
+		2D2556B92E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptablePropertySheetEditViewController.c; sourceTree = "<group>"; };
+		2D2556CF2E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptablePropertySheetEditWindowController.h; sourceTree = "<group>"; };
+		2D2556D02E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptablePropertySheetEditWindowController.c; sourceTree = "<group>"; };
+		2D2556D92E48A5D700DA3757 /* parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
+		2D2556DA2E48A5D700DA3757 /* parser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = parser.c; sourceTree = "<group>"; };
 		2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rg_scanner.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D27AEE61D9D871600842D76 /* rg_scanner.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rg_scanner.c; sourceTree = "<group>"; };
 		2D27AEE71D9D871600842D76 /* rg_scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rg_scanner.h; sourceTree = "<group>"; };
@@ -7205,8 +7239,6 @@
 		4D1B49EC1837EC49003E6066 /* vfs_stdio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vfs_stdio.c; sourceTree = "<group>"; };
 		4D1B49ED1837EC49003E6066 /* volume.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = volume.c; sourceTree = "<group>"; };
 		4D1B49EE1837EC49003E6066 /* volume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = volume.h; sourceTree = "<group>"; };
-		4D1B51501837EF9D003E6066 /* parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parser.c; sourceTree = "<group>"; };
-		4D1B51511837EF9D003E6066 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parser.h; sourceTree = "<group>"; };
 		4D1B51581837F4E9003E6066 /* nullout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nullout.c; sourceTree = "<group>"; };
 		4D1B51631837F60A003E6066 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		4D1B51651837F61F003E6066 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -9608,10 +9640,8 @@
 		2D135EE6226E388E00BAAE84 /* scriptable */ = {
 			isa = PBXGroup;
 			children = (
-				2D135EEC226E428C00BAAE84 /* scriptable_dsp.c */,
-				2D135EEB226E428C00BAAE84 /* scriptable_dsp.h */,
-				2D135EFA226E4E1600BAAE84 /* scriptable_encoder.c */,
-				2D135EF9226E4E1600BAAE84 /* scriptable_encoder.h */,
+				2D2556A52E476F3400DA3757 /* scriptable_shared.h */,
+				2D2556A62E476F3400DA3757 /* scriptable_shared.c */,
 			);
 			path = scriptable;
 			sourceTree = "<group>";
@@ -11229,6 +11259,8 @@
 				2D92D21629B92DF900218F1D /* tftintutil.h */,
 				2D92D1F129B92DF900218F1D /* trkproperties_shared.c */,
 				2D92D1FF29B92DF900218F1D /* trkproperties_shared.h */,
+				2D2556D92E48A5D700DA3757 /* parser.h */,
+				2D2556DA2E48A5D700DA3757 /* parser.c */,
 			);
 			name = shared;
 			path = ../shared;
@@ -11949,6 +11981,10 @@
 		2DB520E52AA8FA4C00B6250A /* scriptable */ = {
 			isa = PBXGroup;
 			children = (
+				2D25568A2E47680D00DA3757 /* scriptable_dsp.h */,
+				2D25568B2E47680D00DA3757 /* scriptable_dsp.c */,
+				2D25568C2E47680D00DA3757 /* scriptable_encoder.h */,
+				2D25568D2E47680D00DA3757 /* scriptable_encoder.c */,
 				2D135EE8226E38AF00BAAE84 /* scriptable.c */,
 				2D135EE7226E38AF00BAAE84 /* scriptable.h */,
 				2DC5A3002B0A125000CBDA66 /* scriptable_model.h */,
@@ -11960,14 +11996,18 @@
 		2DB522F62AACF08300B6250A /* scriptable */ = {
 			isa = PBXGroup;
 			children = (
-				2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */,
-				2D5656FD2AED13EC0014443E /* gtkScriptableListEditViewController.h */,
-				2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */,
-				2D5657032AED1A7E0014443E /* gtkScriptableListEditWindowController.h */,
-				2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */,
-				2DB522F72AACF09600B6250A /* gtkScriptableSelectViewController.h */,
-				2D56580A2AEE63430014443E /* gtkScriptable.c */,
 				2D56579A2AED73A30014443E /* gtkScriptable.h */,
+				2D56580A2AEE63430014443E /* gtkScriptable.c */,
+				2D5656FD2AED13EC0014443E /* gtkScriptableListEditViewController.h */,
+				2D5656FE2AED13EC0014443E /* gtkScriptableListEditViewController.c */,
+				2D5657032AED1A7E0014443E /* gtkScriptableListEditWindowController.h */,
+				2D5657042AED1A7E0014443E /* gtkScriptableListEditWindowController.c */,
+				2D2556B82E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h */,
+				2D2556B92E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.c */,
+				2D2556CF2E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.h */,
+				2D2556D02E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c */,
+				2DB522F72AACF09600B6250A /* gtkScriptableSelectViewController.h */,
+				2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */,
 			);
 			path = scriptable;
 			sourceTree = "<group>";
@@ -12834,7 +12874,6 @@
 				2D28F05A1C283CAC004A6E7B /* libfaad */,
 				2D621FEC1CD92FF700EB6D22 /* libjpeg */,
 				2D88E9FB1B2AF6C70072FD43 /* liboggedit */,
-				4D1B514D1837EF9D003E6066 /* libparser */,
 				2D6220A41CD933E100EB6D22 /* libpng */,
 				2D0212762D9AFB9700BAEA12 /* lyrics */,
 				2DCB281819E8616E008E9DF6 /* m3u */,
@@ -12870,16 +12909,6 @@
 			);
 			name = plugins;
 			path = ..;
-			sourceTree = "<group>";
-		};
-		4D1B514D1837EF9D003E6066 /* libparser */ = {
-			isa = PBXGroup;
-			children = (
-				4D1B51501837EF9D003E6066 /* parser.c */,
-				4D1B51511837EF9D003E6066 /* parser.h */,
-			);
-			name = libparser;
-			path = plugins/libparser;
 			sourceTree = "<group>";
 		};
 		4D1B51551837F4E9003E6066 /* nullout */ = {
@@ -13585,18 +13614,18 @@
 			files = (
 				2DDD76C925E152BF00FA6FE5 /* DesignModeDefs.h in Headers */,
 				2D4020901F27BD7200D4EA4F /* cueutil.h in Headers */,
-				2D135EF1226E47AA00BAAE84 /* scriptable_dsp.h in Headers */,
 				2D30D20D25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
 				2DC657EB274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */,
 				2DC657D52749581900583E14 /* DdbTabStripViewController.h in Headers */,
 				2DC657CD2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
 				2D9EBB7225E45BAA00255592 /* DesignModeDeps.h in Headers */,
 				2DDD7ABC25E1831000FA6FE5 /* PlaylistDataModel.h in Headers */,
+				2D2556A82E476F3400DA3757 /* scriptable_shared.h in Headers */,
 				2D7387ED29BE5DA2003E3126 /* undobuffer.h in Headers */,
 				2DC657C72748502F00583E14 /* SegmentedTabView.h in Headers */,
 				2D448A851D5C5C6500B43F12 /* logger.h in Headers */,
+				2D2556E02E48A5D700DA3757 /* parser.h in Headers */,
 				2DA8912225FFEB9B0084860D /* PlaylistGroup.h in Headers */,
-				2D135EFE226E511D00BAAE84 /* scriptable_encoder.h in Headers */,
 				2DC657E3274A5F6000583E14 /* PlaylistBrowserWidget.h in Headers */,
 				2D3992E125C2038700CFA936 /* WeakRefWrapper.h in Headers */,
 				2D7387EE29BE5DA2003E3126 /* undo_playlist.h in Headers */,
@@ -13612,6 +13641,8 @@
 				2DC6C5F9294CE14B00A63CEB /* ChiptuneVoicesViewController.h in Headers */,
 				2DDD796425E15ED200FA6FE5 /* PlaylistWidget.h in Headers */,
 				2D9FD9E32607C68500F406D1 /* AlbumArtImageView.h in Headers */,
+				2D25569C2E47680D00DA3757 /* scriptable_dsp.h in Headers */,
+				2D25569D2E47680D00DA3757 /* scriptable_encoder.h in Headers */,
 				2DC65808274A876300583E14 /* DeletePlaylistConfirmationController.h in Headers */,
 				2D98B68C272D573700E655AE /* ScopeSettings.h in Headers */,
 				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
@@ -14032,6 +14063,8 @@
 				2D78C54B27568AC500F96F9D /* medialib.h in Headers */,
 				2D78C54F27568AC500F96F9D /* medialibcommon.h in Headers */,
 				2D78C55027568AC500F96F9D /* medialibstate.h in Headers */,
+				2D2556982E47680D00DA3757 /* scriptable_dsp.h in Headers */,
+				2D2556992E47680D00DA3757 /* scriptable_encoder.h in Headers */,
 				2D78C54E27568AC500F96F9D /* medialibsource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -14484,13 +14517,17 @@
 				2DC6566E2744289C00583E14 /* ddbequalizer.h in Headers */,
 				2DC6566F2744289C00583E14 /* callbacks.h in Headers */,
 				2D60EAC22771119500C28A44 /* playlistrenderer.h in Headers */,
+				2D2556902E47680D00DA3757 /* scriptable_dsp.h in Headers */,
+				2D2556912E47680D00DA3757 /* scriptable_encoder.h in Headers */,
 				2DC656702744289C00583E14 /* tfimport.h in Headers */,
 				2DC656712744289C00583E14 /* namedicons.h in Headers */,
 				2DC656722744289C00583E14 /* interface.h in Headers */,
 				2DC656732744289C00583E14 /* ddbcellrenderertextmultiline.h in Headers */,
 				2DC656742744289C00583E14 /* gtkui.h in Headers */,
 				2DC656752744289C00583E14 /* clipboard.h in Headers */,
+				2D2556DD2E48A5D700DA3757 /* parser.h in Headers */,
 				2DC656762744289C00583E14 /* ddbtabstrip.h in Headers */,
+				2D2556BA2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h in Headers */,
 				2D2C51592B6BE15900EAC44E /* undostack.h in Headers */,
 				2DC656772744289C00583E14 /* prefwinmisc.h in Headers */,
 				2DC656792744289C00583E14 /* widgets.h in Headers */,
@@ -14508,6 +14545,7 @@
 				2DC656832744289C00583E14 /* actions.h in Headers */,
 				2DC656842744289C00583E14 /* trkproperties.h in Headers */,
 				2DC656852744289C00583E14 /* ddb_splitter.h in Headers */,
+				2D2556D22E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.h in Headers */,
 				2DC5A2A72B05450400CBDA66 /* mlcellrendererpixbuf.h in Headers */,
 				2D0AC9AC2864E12700F6D56A /* selpropertieswidget.h in Headers */,
 				2DC656862744289C00583E14 /* ddb_splitter_size_mode.h in Headers */,
@@ -14570,13 +14608,17 @@
 				2DE3B7C42269BF1300AFF9AE /* ddbequalizer.h in Headers */,
 				2DE3B7DA2269BF1700AFF9AE /* callbacks.h in Headers */,
 				2D60EAC32771119500C28A44 /* playlistrenderer.h in Headers */,
+				2D2556942E47680D00DA3757 /* scriptable_dsp.h in Headers */,
+				2D2556952E47680D00DA3757 /* scriptable_encoder.h in Headers */,
 				2DE3B7CA2269BF1300AFF9AE /* tfimport.h in Headers */,
 				2DE3B7E22269BF3100AFF9AE /* namedicons.h in Headers */,
 				2DE3B7E72269BF3100AFF9AE /* interface.h in Headers */,
 				2DE3B7EF2269BF3100AFF9AE /* ddbcellrenderertextmultiline.h in Headers */,
 				2DE3B7CC2269BF1300AFF9AE /* gtkui.h in Headers */,
 				2DE3B7F72269BF3100AFF9AE /* clipboard.h in Headers */,
+				2D2556DC2E48A5D700DA3757 /* parser.h in Headers */,
 				2DE3B7EB2269BF3100AFF9AE /* ddbtabstrip.h in Headers */,
+				2D2556BD2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h in Headers */,
 				2D2C515A2B6BE15900EAC44E /* undostack.h in Headers */,
 				2D715C1226C836FE0022A8F0 /* prefwinmisc.h in Headers */,
 				2DE3B7E02269BF3100AFF9AE /* widgets.h in Headers */,
@@ -14594,6 +14636,7 @@
 				2DE3B7D12269BF1700AFF9AE /* actions.h in Headers */,
 				2DE3B7C52269BF1300AFF9AE /* trkproperties.h in Headers */,
 				2DE3B7ED2269BF3100AFF9AE /* ddb_splitter.h in Headers */,
+				2D2556D42E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.h in Headers */,
 				2DC5A2A92B05450400CBDA66 /* mlcellrendererpixbuf.h in Headers */,
 				2D0AC9AD2864E12700F6D56A /* selpropertieswidget.h in Headers */,
 				2DE3B7FB2269BF3100AFF9AE /* ddb_splitter_size_mode.h in Headers */,
@@ -14923,7 +14966,6 @@
 				2DC657D42749581900583E14 /* DdbTabStripViewController.h in Headers */,
 				2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */,
 				2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
-				2D5656FF2AED13EC0014443E /* gtkScriptableListEditViewController.h in Headers */,
 				2D04701525E2D97D00F68459 /* WidgetMenuBuilder.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
@@ -17197,7 +17239,6 @@
 				2D0A6B1D23771B3300252E6D /* playmodes.c in Sources */,
 				2D92D33E29B9324A00218F1D /* pluginsettings.c in Sources */,
 				2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */,
-				2D01D7F21AB223CC00BCD3C4 /* parser.c in Sources */,
 				2D01D7D01AB2219C00BCD3C4 /* md5.c in Sources */,
 				2DC5A3042B0A168D00CBDA66 /* scriptable_model.c in Sources */,
 				2D01D7DD1AB2219C00BCD3C4 /* pltmeta.c in Sources */,
@@ -17208,11 +17249,12 @@
 				2D01D7E41AB2219C00BCD3C4 /* utf8.c in Sources */,
 				2D92D33729B9320200218F1D /* eqpreset.c in Sources */,
 				2D01D7D11AB2219C00BCD3C4 /* playqueue.c in Sources */,
+				2D2556DF2E48A5D700DA3757 /* parser.c in Sources */,
 				2D7387E929BE5DA2003E3126 /* undomanager.c in Sources */,
-				2D135EFD226E4E1900BAAE84 /* scriptable_encoder.c in Sources */,
 				2D01D7DB1AB2219C00BCD3C4 /* playlist.c in Sources */,
 				2D92D33829B9320500218F1D /* growableBuffer.c in Sources */,
 				2DCF64811D54A2A4002282D3 /* cocoautil.m in Sources */,
+				2D2556A72E476F3400DA3757 /* scriptable_shared.c in Sources */,
 				2D5121C61B01DEFD009F6410 /* sort.c in Sources */,
 				2D9E5C6724AE6DE60099B108 /* wcwidth.c in Sources */,
 				2D9E9B5126BB1DF000757C71 /* fft_accelerate.c in Sources */,
@@ -17236,7 +17278,6 @@
 				2D01D7E01AB2219C00BCD3C4 /* replaygain.c in Sources */,
 				2D0212F72DA0788200BAEA12 /* coreplugin.c in Sources */,
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
-				2D135EF2226E47AA00BAAE84 /* scriptable_dsp.c in Sources */,
 				2D7387EB29BE5DA2003E3126 /* undo_playlist.c in Sources */,
 				2D7387EA29BE5DA2003E3126 /* undobuffer.c in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
@@ -17244,6 +17285,8 @@
 				2D92D33D29B9324A00218F1D /* tftintutil.c in Sources */,
 				2DB951C726B0874200602876 /* decodedblock.c in Sources */,
 				2D35A24D2B74D95B006D9356 /* filereader.c in Sources */,
+				2D25569A2E47680D00DA3757 /* scriptable_dsp.c in Sources */,
+				2D25569B2E47680D00DA3757 /* scriptable_encoder.c in Sources */,
 				2D7DE4A61E64CD7700AA0F83 /* dsp.c in Sources */,
 				2DA21F6029868F9C0077BD4C /* resizable_buffer.c in Sources */,
 				2D01D7D21AB2219C00BCD3C4 /* tf.c in Sources */,
@@ -17727,7 +17770,6 @@
 			files = (
 				2D48DBD62269B731002CACFD /* main.c in Sources */,
 				2D92D33029B9305B00218F1D /* pluginsettings.c in Sources */,
-				2D92D33229B9305B00218F1D /* growableBuffer.c in Sources */,
 				2DEE302A29BC8D1900A293AD /* coreaudio.c in Sources */,
 				2D48DBE42269B731002CACFD /* plugins.c in Sources */,
 				2D92D33129B9305B00218F1D /* ctmap.c in Sources */,
@@ -18352,6 +18394,8 @@
 				2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */,
 				2D78C5632756919300F96F9D /* medialib.c in Sources */,
 				2D78C55F27568F8600F96F9D /* medialibtree.c in Sources */,
+				2D25569E2E47681D00DA3757 /* scriptable_dsp.c in Sources */,
+				2D25569F2E47681D00DA3757 /* scriptable_encoder.c in Sources */,
 				2D78C55527568B0800F96F9D /* medialibsource.c in Sources */,
 				2DA66EC81EDF4EF800E20989 /* StreamerTests.cpp in Sources */,
 				2D0214082DA12CA900BAEA12 /* MetacacheTests.cpp in Sources */,
@@ -18407,6 +18451,7 @@
 				2D92D31E29B92F8D00218F1D /* deletefromdisk.c in Sources */,
 				2DC656A12744289C00583E14 /* fileman.c in Sources */,
 				2DC656A22744289C00583E14 /* prefwinsound.c in Sources */,
+				2D2556A02E4768A400DA3757 /* growableBuffer.c in Sources */,
 				2D9793ED276E894E0062585E /* gobjcache.c in Sources */,
 				2D92F3822B6D250D00BD07E8 /* undointegration.c in Sources */,
 				2D92D31D29B92F8D00218F1D /* eqpreset.c in Sources */,
@@ -18456,16 +18501,21 @@
 				2DC656C92744289C00583E14 /* ddb_splitter.c in Sources */,
 				2D92D32429B92F9600218F1D /* tftintutil.c in Sources */,
 				2DC656CA2744289C00583E14 /* tfimport.c in Sources */,
+				2D2556A22E4768ED00DA3757 /* pluginsettings.c in Sources */,
 				2DC656CB2744289C00583E14 /* mainplaylist.c in Sources */,
-				2DC656CC2744289C00583E14 /* parser.c in Sources */,
 				2D5657052AED1A820014443E /* gtkScriptableListEditWindowController.c in Sources */,
 				2DC656CD2744289C00583E14 /* progress.c in Sources */,
+				2D2556D12E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c in Sources */,
+				2D2556DE2E48A5D700DA3757 /* parser.c in Sources */,
 				2DC656CE2744289C00583E14 /* dspconfig.c in Sources */,
 				2DC656CF2744289C00583E14 /* widgets.c in Sources */,
 				2D56580D2AEE64200014443E /* gtkScriptable.c in Sources */,
 				2DC656D02744289C00583E14 /* pluginconf.c in Sources */,
+				2D2556BB2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.c in Sources */,
 				2DC656D12744289C00583E14 /* trkproperties.c in Sources */,
 				2DC656D22744289C00583E14 /* ctmapping.c in Sources */,
+				2D25568E2E47680D00DA3757 /* scriptable_dsp.c in Sources */,
+				2D25568F2E47680D00DA3757 /* scriptable_encoder.c in Sources */,
 				2DC5A2A82B05450400CBDA66 /* mlcellrendererpixbuf.c in Sources */,
 				2DC656D32744289C00583E14 /* prefwinnetwork.c in Sources */,
 			);
@@ -18477,7 +18527,6 @@
 			files = (
 				2DC65734274428F200583E14 /* main.c in Sources */,
 				2D92D32D29B9305B00218F1D /* pluginsettings.c in Sources */,
-				2D92D32F29B9305B00218F1D /* growableBuffer.c in Sources */,
 				2DEE302929BC8D1900A293AD /* coreaudio.c in Sources */,
 				2DC65735274428F200583E14 /* plugins.c in Sources */,
 				2D92D32E29B9305B00218F1D /* ctmap.c in Sources */,
@@ -18515,6 +18564,7 @@
 				2D92D32029B92F8D00218F1D /* deletefromdisk.c in Sources */,
 				2DE3B7FA2269BF3100AFF9AE /* fileman.c in Sources */,
 				2D715C0B26C833570022A8F0 /* prefwinsound.c in Sources */,
+				2D2556A12E4768A400DA3757 /* growableBuffer.c in Sources */,
 				2D9793EE276E894F0062585E /* gobjcache.c in Sources */,
 				2D92F3832B6D250E00BD07E8 /* undointegration.c in Sources */,
 				2D92D31F29B92F8D00218F1D /* eqpreset.c in Sources */,
@@ -18564,16 +18614,21 @@
 				2DE3B7C82269BF1300AFF9AE /* ddb_splitter.c in Sources */,
 				2D92D32529B92F9700218F1D /* tftintutil.c in Sources */,
 				2DE3B7E62269BF3100AFF9AE /* tfimport.c in Sources */,
+				2D2556A32E4768ED00DA3757 /* pluginsettings.c in Sources */,
 				2DE3B7F42269BF3100AFF9AE /* mainplaylist.c in Sources */,
-				2DE3B86F2269CAEA00AFF9AE /* parser.c in Sources */,
 				2D56575D2AED38870014443E /* gtkScriptableListEditWindowController.c in Sources */,
 				2DE3B7F32269BF3100AFF9AE /* progress.c in Sources */,
+				2D2556D32E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c in Sources */,
+				2D2556DB2E48A5D700DA3757 /* parser.c in Sources */,
 				2DE3B7DD2269BF3100AFF9AE /* dspconfig.c in Sources */,
 				2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */,
 				2D56580E2AEE64210014443E /* gtkScriptable.c in Sources */,
 				2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */,
+				2D2556BC2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.c in Sources */,
 				2DE3B7EA2269BF3100AFF9AE /* trkproperties.c in Sources */,
 				2DE3B7CB2269BF1300AFF9AE /* ctmapping.c in Sources */,
+				2D2556922E47680D00DA3757 /* scriptable_dsp.c in Sources */,
+				2D2556932E47680D00DA3757 /* scriptable_encoder.c in Sources */,
 				2DC5A2AA2B05450400CBDA66 /* mlcellrendererpixbuf.c in Sources */,
 				2D715C1B26C839020022A8F0 /* prefwinnetwork.c in Sources */,
 			);
@@ -18583,7 +18638,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DE3B86E2269CA9800AFF9AE /* parser.c in Sources */,
+				2D2556E12E48A66C00DA3757 /* parser.c in Sources */,
 				2DE3B8652269CA1500AFF9AE /* hotkeys.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

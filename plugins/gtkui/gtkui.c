@@ -40,7 +40,7 @@
 #include <deadbeef/deadbeef.h>
 #include "../../gettext.h"
 #include "../hotkeys/hotkeys.h"
-#include "../libparser/parser.h"
+#include "../../shared/parser.h"
 #include "actionhandlers.h"
 #include "actions.h"
 #include "callbacks.h"
@@ -48,6 +48,7 @@
 #include "covermanager/covermanager.h"
 #include "ddbtabstrip.h"
 #include "drawing.h"
+#include "dspconfig.h"
 #include "eq.h"
 #include "gtkui.h"
 #include "gtkui_api.h"
@@ -70,6 +71,8 @@
 #include "selpropertieswidget.h"
 #include "undostack.h"
 #include "undointegration.h"
+#include "../../shared/scriptable/scriptable_dsp.h"
+#include "../../shared/scriptable/scriptable_encoder.h"
 
 #define USE_GTK_APPLICATION 1
 
@@ -1048,7 +1051,10 @@ gtkui_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
         g_idle_add (add_mainmenu_actions_cb, NULL);
         break;
     case DB_EV_DSPCHAINCHANGED:
-        eq_refresh ();
+        gtkui_dispatch_on_main(^{
+            eq_refresh ();
+            dsp_setup_chain_changed ();
+        });
         break;
     }
     return 0;
@@ -2235,12 +2241,16 @@ gtkui_get_actions (DB_playItem_t *it) {
 DB_plugin_t *
 ddb_gui_GTK2_load (DB_functions_t *api) {
     deadbeef = api;
+    scriptableDspInit(api);
+    scriptableEncoderInit(api);
     return DB_PLUGIN (&plugin);
 }
 #else
 DB_plugin_t *
 ddb_gui_GTK3_load (DB_functions_t *api) {
     deadbeef = api;
+    scriptableDspInit(api);
+    scriptableEncoderInit(api);
     return DB_PLUGIN (&plugin);
 }
 #endif

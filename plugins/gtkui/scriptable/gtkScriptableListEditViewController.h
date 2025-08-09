@@ -67,4 +67,7 @@ gtkScriptableListEditViewControllerGetView(gtkScriptableListEditViewController_t
 void
 gtkScriptableListEditViewControllerSetScriptable(gtkScriptableListEditViewController_t *self, scriptableItem_t *scriptable);
 
+scriptableItem_t *
+gtkScriptableListEditViewControllerGetScriptable(gtkScriptableListEditViewController_t *self);
+
 #endif /* gtkScriptableListEditViewController_h */

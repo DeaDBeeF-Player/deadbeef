@@ -47,7 +47,7 @@
 #include "vfs.h"
 #include "premix.h"
 #include "handler.h"
-#include "plugins/libparser/parser.h"
+#include "shared/parser.h"
 #include "resizable_buffer.h"
 #include "ringbuf.h"
 #include <deadbeef/strdupa.h>

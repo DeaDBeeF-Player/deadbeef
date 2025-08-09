@@ -46,7 +46,7 @@
 #include "search.h"
 #include "progress.h"
 #include "gtkui.h"
-#include "../libparser/parser.h"
+#include "../../shared/parser.h"
 #include "drawing.h"
 #include "eq.h"
 #include "undostack.h"

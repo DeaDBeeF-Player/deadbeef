@@ -25,6 +25,8 @@
 #include <string.h>
 #include "gtkScriptableListEditViewController.h"
 #include "gtkScriptableListEditWindowController.h"
+#include "gtkScriptablePropertySheetEditViewController.h"
+#include "gtkScriptablePropertySheetEditWindowController.h"
 #include "../../../gettext.h"
 
 struct gtkScriptableListEditViewController_t {
@@ -46,6 +48,10 @@ struct gtkScriptableListEditViewController_t {
 
     gtkScriptableListEditWindowController_t *list_editor_window_controller;
     gtkScriptableListEditWindowControllerDelegate_t list_editor_window_delegate;
+
+    gtkScriptablePropertySheetEditWindowController_t *property_sheet_editor_window_controller;
+    gtkScriptablePropertySheetEditWindowControllerDelegate_t property_sheet_editor_window_delegate;
+
 };
 
 static void
@@ -67,13 +73,24 @@ static void
 _duplicate_did_activate (GtkButton *button, gpointer user_data);
 
 static void
-_scriptable_did_change (
+_list_scriptable_did_change (
     gtkScriptableListEditWindowController_t *view_controller,
     gtkScriptableChange_t change_type,
     void *context);
 
 static void
-_selection_did_change (GtkTreeSelection *treeselection, gpointer user_data);
+_list_selection_did_change (GtkTreeSelection *treeselection, gpointer user_data);
+
+static void
+_list_editor_window_did_close (gtkScriptableListEditWindowController_t *controller, void *context);
+
+static void
+_property_sheet_scriptable_did_change (
+                             gtkScriptablePropertySheetEditWindowController_t *view_controller,
+                             gtkScriptableChange_t change_type,
+                             void *context);
+static void
+_property_sheet_editor_window_did_close (gtkScriptablePropertySheetEditWindowController_t *controller, void *context);
 
 static void
 _init_treeview_cell_from_scriptable_item (
@@ -88,9 +105,6 @@ static void
 _did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data);
 
 static void
-_list_editor_window_did_close (gtkScriptableListEditWindowController_t *controller, void *context);
-
-static void
 _did_reorder_items (GtkWidget *widget, GdkDragContext *context, gpointer user_data);
 
 static void
@@ -100,8 +114,11 @@ gtkScriptableListEditViewController_t *
 gtkScriptableListEditViewControllerNew (void) {
     gtkScriptableListEditViewController_t *self = calloc (1, sizeof (gtkScriptableListEditViewController_t));
 
-    self->list_editor_window_delegate.scriptable_did_change = _scriptable_did_change;
+    self->list_editor_window_delegate.scriptable_did_change = _list_scriptable_did_change;
     self->list_editor_window_delegate.window_did_close = _list_editor_window_did_close;
+
+    self->property_sheet_editor_window_delegate.scriptable_did_change = _property_sheet_scriptable_did_change;
+    self->property_sheet_editor_window_delegate.window_did_close = _property_sheet_editor_window_did_close;
 
     return self;
 }
@@ -214,7 +231,7 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
     g_signal_connect ((gpointer)duplicate_button, "clicked", G_CALLBACK (_duplicate_did_activate), self);
 
     GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list_view));
-    g_signal_connect ((gpointer)selection, "changed", G_CALLBACK (_selection_did_change), self);
+    g_signal_connect ((gpointer)selection, "changed", G_CALLBACK (_list_selection_did_change), self);
 
     _reload_data (self);
 }
@@ -243,6 +260,11 @@ gtkScriptableListEditViewControllerSetScriptable (
     gtk_tree_view_set_reorderable (self->tree_view, reorderable);
 
     _reload_data (self);
+}
+
+scriptableItem_t *
+gtkScriptableListEditViewControllerGetScriptable (gtkScriptableListEditViewController_t *self) {
+    return self->scriptable;
 }
 
 static void
@@ -396,7 +418,13 @@ _menu_create_item_activate (GtkMenuItem *menu_item, gpointer user_data) {
 static GtkWidget *
 _get_create_item_menu (gtkScriptableListEditViewController_t *self) {
     scriptableStringListItem_t *names = scriptableItemFactoryItemNames (self->scriptable);
-    if (!names) {
+    if (names == NULL) {
+        return NULL;
+    }
+
+    scriptableStringListItem_t *types = scriptableItemFactoryItemTypes (self->scriptable);
+    if (types == NULL) {
+        scriptableStringListFree (names);
         return NULL;
     }
 
@@ -404,17 +432,23 @@ _get_create_item_menu (gtkScriptableListEditViewController_t *self) {
 
     int index = 0;
     scriptableStringListItem_t *n = names;
+    scriptableStringListItem_t *t = types;
     while (n) {
         GtkWidget *item = gtk_menu_item_new_with_label (n->str);
         gtk_widget_show (item);
-        g_object_set_data_full (G_OBJECT (item), "item_type", strdup (n->str), free);
+        g_object_set_data_full (G_OBJECT (item), "item_type", strdup (t->str), free);
         g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (_menu_create_item_activate), self);
         gtk_container_add (GTK_CONTAINER (menu), item);
         n = n->next;
+        t = t->next;
         index++;
     }
 
     scriptableStringListFree (names);
+    names = NULL;
+
+    scriptableStringListFree (types);
+    types = NULL;
 
     return menu;
 }
@@ -537,20 +571,21 @@ _config_did_activate (GtkButton *button, gpointer user_data) {
             GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
     }
     else {
-        // FIXME: impl
-        // kept unimplemented for the time being since it's not used by medialib widget
-        //        self.propertiesViewController.labelFontSize = 10;
-        //        self.propertiesViewController.contentFontSize = 11;
-        //        self.propertiesViewController.unitSpacing = 4;
-        //        self.propertiesViewController.autoAlignLabels = NO;
-        //
-        //        self.propertiesDataSource.delegate = self;
-        //        self.propertiesDataSource = [[ScriptablePropertySheetDataSource alloc] initWithScriptable:item];
-        //
-        //        self.propertiesViewController.dataSource = self.propertiesDataSource;
-        //        self.propertiesPanelResetButton.enabled = !(scriptableItemFlags(item) & SCRIPTABLE_FLAG_IS_READONLY);
-        //        [self.view.window beginSheet:_propertiesPanel completionHandler:^(NSModalResponse returnCode) {
-        //         }];
+        self->property_sheet_editor_window_controller = gtkScriptablePropertySheetEditWindowControllerNew();
+        gtkScriptablePropertySheetEditWindowControllerSetScriptable(self->property_sheet_editor_window_controller, item);
+
+        char *title = gtkScriptableEditDialogTitleForItem (item);
+        gtkScriptablePropertySheetEditWindowControllerSetTitle (self->property_sheet_editor_window_controller, title);
+        free (title);
+
+        gtkScriptablePropertySheetEditWindowControllerSetDelegate (
+                                                          self->property_sheet_editor_window_controller,
+                                                          &self->property_sheet_editor_window_delegate,
+                                                          self);
+
+        gtkScriptablePropertySheetEditWindowControllerRunModal (
+                                                       self->property_sheet_editor_window_controller,
+                                                       GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
     }
 }
 
@@ -572,7 +607,7 @@ _duplicate_did_activate (GtkButton *button, gpointer user_data) {
 }
 
 static void
-_selection_did_change (GtkTreeSelection *treeselection, gpointer user_data) {
+_list_selection_did_change (GtkTreeSelection *treeselection, gpointer user_data) {
     gtkScriptableListEditViewController_t *self = user_data;
     _update_buttons (self);
 }
@@ -652,7 +687,7 @@ _did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpo
 }
 
 static void
-_scriptable_did_change (
+_list_scriptable_did_change (
     gtkScriptableListEditWindowController_t *view_controller,
     gtkScriptableChange_t change_type,
     void *context) {
@@ -669,6 +704,28 @@ _list_editor_window_did_close (gtkScriptableListEditWindowController_t *controll
     if (self->list_editor_window_controller != NULL) {
         gtkScriptableListEditWindowControllerFree (self->list_editor_window_controller);
         self->list_editor_window_controller = NULL;
+    }
+}
+
+
+static void
+_property_sheet_scriptable_did_change (
+                                       gtkScriptablePropertySheetEditWindowController_t *view_controller,
+                                       gtkScriptableChange_t change_type,
+                                       void *context) {
+    gtkScriptableListEditViewController_t *self = context;
+    if (self->delegate != NULL && self->delegate->scriptable_did_change != NULL) {
+        self->delegate->scriptable_did_change (self, change_type, self->context);
+    }
+}
+
+static void
+_property_sheet_editor_window_did_close (gtkScriptablePropertySheetEditWindowController_t *controller, void *context) {
+    gtkScriptableListEditViewController_t *self = context;
+
+    if (self->property_sheet_editor_window_controller != NULL) {
+        gtkScriptablePropertySheetEditWindowControllerFree (self->property_sheet_editor_window_controller);
+        self->property_sheet_editor_window_controller = NULL;
     }
 }
 
