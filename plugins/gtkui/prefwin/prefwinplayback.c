@@ -75,6 +75,9 @@ prefwin_init_playback_tab (GtkWidget *_prefwin) {
     // reset autostop
     prefwin_set_toggle_button("reset_autostop", deadbeef->conf_get_int ("playlist.stop_after_current_reset", 0));
 
+    // reset queue autostop
+    prefwin_set_toggle_button("reset_autostopqueue", deadbeef->conf_get_int ("playlist.stop_after_queue_reset", 0));
+
     // reset album autostop
     prefwin_set_toggle_button("reset_autostopalbum", deadbeef->conf_get_int ("playlist.stop_after_album_reset", 0));
 }
@@ -193,6 +196,13 @@ on_reset_autostop_toggled              (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.stop_after_current_reset", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_reset_autostopqueue_toggled         (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("playlist.stop_after_queue_reset", gtk_toggle_button_get_active (togglebutton));
 }
 
 void
