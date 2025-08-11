@@ -137,6 +137,16 @@ oss_init (void) {
         return -1;
     }
 
+    if (!plugin.fmt.channels) {
+        // generic format
+        plugin.fmt.bps = 16;
+        plugin.fmt.is_float = 0;
+        plugin.fmt.channels = 2;
+        plugin.fmt.samplerate = 44100;
+        plugin.fmt.channelmask = 3;
+        plugin.fmt.flags &= ~DDB_WAVEFORMAT_FLAG_IS_DOP;
+    }
+
     oss_set_hwparams (&plugin.fmt);
 
     mutex = deadbeef->mutex_create ();
