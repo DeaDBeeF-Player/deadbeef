@@ -99,7 +99,7 @@ _init_treeview_cell_from_scriptable_item (
     scriptableItem_t *item);
 
 static GtkWidget *
-_create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name);
+_create_tool_button_with_image_name (const char *image_name);
 
 static void
 _did_edit_name (GtkCellRendererText *renderer, gchar *path, gchar *new_text, gpointer user_data);
@@ -176,13 +176,9 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
     gtk_widget_show (button_box);
     gtk_box_pack_start (GTK_BOX (vbox), button_box, FALSE, FALSE, 0);
 
-    GtkWidget *toolbar = gtk_toolbar_new ();
+    GtkWidget *toolbar = gtk_hbox_new(TRUE, 0);
     gtk_widget_show (toolbar);
     gtk_box_pack_start (GTK_BOX (button_box), toolbar, FALSE, FALSE, 0);
-    gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), GTK_TOOLBAR_BOTH_HORIZ);
-    gtk_toolbar_set_show_arrow (GTK_TOOLBAR (toolbar), FALSE);
-
-    gtk_toolbar_set_icon_size (GTK_TOOLBAR (toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
 
 #if GTK_CHECK_VERSION(3, 0, 0)
     const char *add_icon = "list-add-symbolic";
@@ -190,30 +186,28 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
     const char *preferences_icon = "document-edit-symbolic";
     const char *copy_icon = "edit-copy-symbolic";
 #else
-    const char *add_icon = "gtk-add";
-    const char *remove_icon = "gtk-remove";
+    const char *add_icon = "list-add";
+    const char *remove_icon = "list-remove";
     const char *preferences_icon = "gtk-preferences";
-    const char *copy_icon = "gtk-copy";
+    const char *copy_icon = "edit-copy";
 #endif
 
-    GtkIconSize icon_size = gtk_toolbar_get_icon_size (GTK_TOOLBAR (toolbar));
-
-    GtkWidget *add_button = _create_tool_button_with_image_name (icon_size, add_icon);
+    GtkWidget *add_button = _create_tool_button_with_image_name (add_icon);
     gtk_widget_show (add_button);
     gtk_container_add (GTK_CONTAINER (toolbar), add_button);
     self->add_button = add_button;
 
-    GtkWidget *remove_button = _create_tool_button_with_image_name (icon_size, remove_icon);
+    GtkWidget *remove_button = _create_tool_button_with_image_name (remove_icon);
     gtk_widget_show (remove_button);
     gtk_container_add (GTK_CONTAINER (toolbar), remove_button);
     self->remove_button = remove_button;
 
-    GtkWidget *config_button = _create_tool_button_with_image_name (icon_size, preferences_icon);
+    GtkWidget *config_button = _create_tool_button_with_image_name (preferences_icon);
     gtk_widget_show (config_button);
     gtk_container_add (GTK_CONTAINER (toolbar), config_button);
     self->config_button = config_button;
 
-    GtkWidget *duplicate_button = _create_tool_button_with_image_name (icon_size, copy_icon);
+    GtkWidget *duplicate_button = _create_tool_button_with_image_name (copy_icon);
     gtk_widget_show (duplicate_button);
     gtk_container_add (GTK_CONTAINER (toolbar), duplicate_button);
     self->duplicate_button = duplicate_button;
@@ -613,16 +607,16 @@ _list_selection_did_change (GtkTreeSelection *treeselection, gpointer user_data)
 }
 
 static GtkWidget *
-_create_tool_button_with_image_name (GtkIconSize icon_size, const char *image_name) {
-    GtkToolItem *button = gtk_tool_button_new (NULL, "");
+_create_tool_button_with_image_name (const char *image_name) {
+    GtkWidget *img = gtk_image_new_from_icon_name(image_name, GTK_ICON_SIZE_SMALL_TOOLBAR);
+    GtkWidget *btn = gtk_button_new();
+    gtk_button_set_image(GTK_BUTTON(btn), img);
 #if GTK_CHECK_VERSION(3, 0, 0)
-    gtk_tool_button_set_icon_name (GTK_TOOL_BUTTON (button), image_name);
+    gtk_style_context_add_class(gtk_widget_get_style_context(btn), "flat");
 #else
-    GtkWidget *image = gtk_image_new_from_stock (image_name, icon_size);
-    gtk_widget_show (image);
-    gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (button), image);
+    gtk_button_set_relief(GTK_BUTTON(btn), GTK_RELIEF_NONE);
 #endif
-    return GTK_WIDGET (button);
+    return btn;
 }
 
 static void
