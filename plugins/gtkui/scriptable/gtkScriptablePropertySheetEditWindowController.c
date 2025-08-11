@@ -61,7 +61,7 @@ gtkScriptablePropertySheetEditWindowControllerNew (void) {
     gtkScriptablePropertySheetEditWindowController_t *self = calloc (1, sizeof (gtkScriptablePropertySheetEditWindowController_t));
 
     GtkWidget *window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_widget_set_size_request(window, 400, 0);
+    gtk_widget_set_size_request(window, 400, -1);
 
     self->window = window;
     g_object_ref (window);
