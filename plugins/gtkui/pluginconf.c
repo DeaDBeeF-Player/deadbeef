@@ -239,7 +239,7 @@ prop_changed (GtkWidget *widget, gpointer user_data) {
     gtkui_script_datamodel_t *model = user_data;
 
     if (model->any_property_did_change != NULL) {
-        model->any_property_did_change(model);
+        model->any_property_did_change(model->context);
     }
 
     if (model->updates_immediately) {
@@ -639,6 +639,13 @@ _any_property_did_change(void *context) {
         make_dialog_conf->prop_changed (make_dialog_conf);
 }
 
+static gtkui_script_datamodel_t _model = {
+    .context = NULL,
+    .updates_immediately = TRUE, // Update on Apply button
+    .get_param = _get_param,
+    .set_param = _set_param,
+};
+
 void
 gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
     ddb_dialog_t *conf = &make_dialog_conf->dialog_conf;
@@ -647,22 +654,16 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
 
     // This needs to be set on an object that is tied to the lifetime of the plugin preferences container
     make_dialog_conf = (ddb_pluginprefs_dialog_t *)g_memdup (make_dialog_conf, sizeof (ddb_pluginprefs_dialog_t));
-    g_object_set_data_full (G_OBJECT (containervbox), "dialog_conf_struct", make_dialog_conf, g_free);
+    _model.context = make_dialog_conf;
 
-    gtkui_script_datamodel_t model = {
-        .context = make_dialog_conf,
-        .updates_immediately = FALSE, // Update on Apply button
-        .get_param = _get_param,
-        .set_param = _set_param,
-    };
-
-    GtkWidget *content = gtkui_create_ui_from_script(conf->layout, &model, make_dialog_conf->dialog_conf.title);
+    _model.any_property_did_change = NULL;
+    GtkWidget *content = gtkui_create_ui_from_script(conf->layout, &_model, make_dialog_conf->dialog_conf.title);
 
     gtk_widget_show(content);
     gtk_box_pack_start(GTK_BOX(containervbox), content, TRUE, FALSE, 0);
 
     // Now that all signal handlers are installed, start reacting to changes
-    model.any_property_did_change = _any_property_did_change;
+    _model.any_property_did_change = _any_property_did_change;
 }
 
 int
