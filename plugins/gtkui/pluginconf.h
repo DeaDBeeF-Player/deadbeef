@@ -31,7 +31,8 @@ struct ddb_pluginprefs_dialog_s {
     ddb_dialog_t dialog_conf;
 
     GtkWidget *parent;
-    GtkWidget *containerbox; // The container widget (typically a GtkVBox) that holds all the fields.
+    GtkWidget *containerbox; // The root widget of the dialog
+    GtkWidget *content; // The container widget (typically a GtkVBox) that holds all the fields.
 
     void (*prop_changed) (ddb_pluginprefs_dialog_t *make_dialog_conf);
 };

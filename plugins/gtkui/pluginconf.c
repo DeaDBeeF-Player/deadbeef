@@ -661,6 +661,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
 
     gtk_widget_show(content);
     gtk_box_pack_start(GTK_BOX(containervbox), content, TRUE, FALSE, 0);
+    make_dialog_conf->content = content;
 
     // Now that all signal handlers are installed, start reacting to changes
     _model.any_property_did_change = _any_property_did_change;
@@ -739,7 +740,7 @@ gtkui_run_dialog (
         gtk_dialog_set_response_sensitive (GTK_DIALOG (win), GTK_RESPONSE_APPLY, FALSE);
         response = gtk_dialog_run (GTK_DIALOG (win));
         if (response == GTK_RESPONSE_APPLY || response == GTK_RESPONSE_OK) {
-            apply_conf (make_dialog_conf.containerbox, conf, 0);
+            apply_conf (make_dialog_conf.content, conf, 0);
         }
         if (callback) {
             int btn = ddb_button_from_gtk_response (response);

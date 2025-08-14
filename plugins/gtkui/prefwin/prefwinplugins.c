@@ -79,7 +79,7 @@ on_pref_pluginlist_button_press_event  (GtkWidget       *widget,
 
 static void
 plugin_pref_prop_changed_cb(ddb_pluginprefs_dialog_t *make_dialog_conf) {
-    apply_conf (GTK_WIDGET (make_dialog_conf->containerbox), &make_dialog_conf->dialog_conf, 0);
+    apply_conf (GTK_WIDGET (make_dialog_conf->content), &make_dialog_conf->dialog_conf, 0);
 }
 
 static void
