@@ -328,7 +328,7 @@ _insertion_index (gtkScriptableListEditViewController_t *self) {
     int cnt = scriptableItemNumChildren (self->scriptable);
     int index = _get_selected_index (self);
     if (cnt == 0) {
-        return -1;
+        return 0;
     }
     else if (index < 0) {
         index = cnt;
