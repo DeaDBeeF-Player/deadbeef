@@ -440,6 +440,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
 
     int64_t offs = startoffs;
     int64_t fileoffs = startoffs;
+    int64_t lastpacketoffs = -1;
 
     int prev_br = -1;
     int prev_length = -1;
@@ -489,6 +490,13 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
                 goto error;
             }
 
+            // if there are valid packets, but there's a large fill of invalid data -- assume EOF,
+            // otherwise this may hang for a very long time.
+            // Example scenario: 150MB mp3 file filled with zeroes in 2nd half.
+            if (lastpacketoffs != -1 && offs - lastpacketoffs > MAX_INVALID_BYTES) {
+                goto end;
+            }
+
             // prevent misdetected garbage packets to be used as ref_packet
             if (info->npackets == 1) {
                 info->npackets = 0;
@@ -517,6 +525,7 @@ mp3_parse_file (mp3info_t *info, uint32_t flags, DB_FILE *fp, int64_t fsize, int
             }
 
             packet.offs = offs;
+            lastpacketoffs = offs;
 
             if (!info->packet_offs || seek_to_sample >= 0) {
                 info->packet_offs = offs;
