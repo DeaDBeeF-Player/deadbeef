@@ -595,6 +595,19 @@ action_toggle_designmode_handler (DB_plugin_action_t *act, ddb_action_context_t 
 }
 
 gboolean
+action_dsp_preferences_handler_cb (void *data) {
+    prefwin_run (PREFWIN_TAB_INDEX_DSP);
+    return FALSE;
+}
+
+int
+action_dsp_preferences_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
+    gdk_threads_add_idle (action_dsp_preferences_handler_cb, NULL);
+    return 0;
+}
+
+
+gboolean
 action_preferences_handler_cb (void *data) {
     prefwin_run (-1);
     return FALSE;
