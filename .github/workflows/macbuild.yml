@@ -12,7 +12,7 @@ jobs:
     - name: Select Xcode version
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '15'
+        xcode-version: '16'
     - name: Build for macOS
       run: TRAVIS_OS_NAME=osx travis/build.sh
     - name: Publish Test Results
