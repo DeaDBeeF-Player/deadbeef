@@ -175,7 +175,7 @@ _create_sorted_tree(
         char next_text[1000];
         ctx.it = next;
         deadbeef->tf_eval(&ctx, tfs[group_level], next_text, sizeof (next_text));
-        group_did_change = strcmp(group_text, next_text);
+        group_did_change = strcasecmp(group_text, next_text);
 
         if (group_did_change && level > 0) {
             break;
