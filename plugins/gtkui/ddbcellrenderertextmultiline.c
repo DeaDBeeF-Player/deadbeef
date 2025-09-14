@@ -311,7 +311,6 @@ static gboolean ddb_cell_renderer_text_multiline_gtk_cell_renderer_focus_out_eve
 
     priv = DDB_CELL_RENDERER_TEXT_MULTILINE_GET_PRIVATE (_self_);
 
-    entry->priv->editing_canceled = TRUE;
     if (priv->in_entry_menu)
         return FALSE;
 
