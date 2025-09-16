@@ -761,7 +761,6 @@
 		2D2351211B138F1100A62936 /* converter.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D23511B1B138ECB00A62936 /* converter.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D2351251B138F3200A62936 /* converter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2351231B138F3200A62936 /* converter.c */; };
 		2D2351281B13922400A62936 /* Converter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D2351271B13922400A62936 /* Converter.xib */; };
-		2D255AC82E48CA3700DA3757 /* ddb_dsp_libretro.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D25568E2E47680D00DA3757 /* scriptable_dsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568B2E47680D00DA3757 /* scriptable_dsp.c */; };
 		2D25568F2E47680D00DA3757 /* scriptable_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D25568D2E47680D00DA3757 /* scriptable_encoder.c */; };
 		2D2556902E47680D00DA3757 /* scriptable_dsp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D25568A2E47680D00DA3757 /* scriptable_dsp.h */; };
@@ -799,6 +798,7 @@
 		2D2556DF2E48A5D700DA3757 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556DA2E48A5D700DA3757 /* parser.c */; };
 		2D2556E02E48A5D700DA3757 /* parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2556D92E48A5D700DA3757 /* parser.h */; };
 		2D2556E12E48A66C00DA3757 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2556DA2E48A5D700DA3757 /* parser.c */; };
+		2D255AC82E48CA3700DA3757 /* ddb_dsp_libretro.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D27AEE81D9D871600842D76 /* rg_scanner.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D27AEE61D9D871600842D76 /* rg_scanner.c */; };
 		2D27AEE91D9D871600842D76 /* rg_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D27AEE71D9D871600842D76 /* rg_scanner.h */; };
 		2D27AEF11D9D877D00842D76 /* rg_scanner.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D27AED41D9D86ED00842D76 /* rg_scanner.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
