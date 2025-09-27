@@ -219,7 +219,7 @@ _create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, int selected, c
         bcs[i] = deadbeef->tf_compile(bc);
         free (bc);
 
-        tf_sort_size += strlen(tfs[i]);
+        tf_sort_size += strlen(tfs[i]) + 1;
     }
     tf_sort_size++;
 
@@ -229,6 +229,7 @@ _create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, int selected, c
         size_t len = strlen(tfs[i]);
         memcpy(curr, tfs[i], len);
         curr += len;
+        *curr++ = '/';
     }
     *curr = 0;
 
