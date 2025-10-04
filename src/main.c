@@ -838,7 +838,7 @@ save_resume_state (void) {
     int playtrack = -1;
     int playlist = -1;
     playlist_t *plt = pl_get_playlist (trk);
-    int paused = (output->state () == DDB_PLAYBACK_STATE_PAUSED);
+    int paused = (output->state () == DDB_PLAYBACK_STATE_PAUSED) || (conf_get_int ("resume_always_paused", 0));
     if (trk && plt) {
         playlist = plt_get_idx_of (plt);
         playtrack = plt_get_item_idx (plt, trk, PL_MAIN);

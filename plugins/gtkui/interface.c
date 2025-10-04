@@ -1605,6 +1605,7 @@ create_prefwin (void)
   GtkWidget *cli_add_to_playlist;
   GtkWidget *cli_playlist_name;
   GtkWidget *resume_last_session;
+  GtkWidget *resume_always_paused;
   GtkWidget *ignore_archives;
   GtkWidget *reset_autostop;
   GtkWidget *reset_autostopalbum;
@@ -2134,6 +2135,10 @@ create_prefwin (void)
   resume_last_session = gtk_check_button_new_with_mnemonic (_("Resume previous session on startup"));
   gtk_widget_show (resume_last_session);
   gtk_box_pack_start (GTK_BOX (vbox8), resume_last_session, FALSE, FALSE, 0);
+
+  resume_always_paused = gtk_check_button_new_with_mnemonic (_("Always resume session in paused state"));
+  gtk_widget_show (resume_always_paused);
+  gtk_box_pack_start (GTK_BOX (vbox8), resume_always_paused, FALSE, FALSE, 0);
 
   ignore_archives = gtk_check_button_new_with_mnemonic (_("Don't add from archives when adding folders"));
   gtk_widget_show (ignore_archives);
@@ -3317,6 +3322,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) resume_last_session, "toggled",
                     G_CALLBACK (on_resume_last_session_toggled),
                     NULL);
+  g_signal_connect ((gpointer) resume_always_paused, "toggled",
+                    G_CALLBACK (on_resume_always_paused_toggled),
+                    NULL);
   g_signal_connect ((gpointer) ignore_archives, "toggled",
                     G_CALLBACK (on_ignore_archives_toggled),
                     NULL);
@@ -3630,6 +3638,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, cli_add_to_playlist, "cli_add_to_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, cli_playlist_name, "cli_playlist_name");
   GLADE_HOOKUP_OBJECT (prefwin, resume_last_session, "resume_last_session");
+  GLADE_HOOKUP_OBJECT (prefwin, resume_always_paused, "resume_always_paused");
   GLADE_HOOKUP_OBJECT (prefwin, ignore_archives, "ignore_archives");
   GLADE_HOOKUP_OBJECT (prefwin, reset_autostop, "reset_autostop");
   GLADE_HOOKUP_OBJECT (prefwin, reset_autostopalbum, "reset_autostopalbum");
