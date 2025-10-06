@@ -836,7 +836,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     deadbeef->plt_select_all(plt);
 
     deadbeef->action_set_playlist(plt);
-    [self.trackContextMenu update:plt  actionContext:DDB_ACTION_CTX_PLAYLIST];
+    [self.trackContextMenu update:plt actionContext:DDB_ACTION_CTX_PLAYLIST isMediaLib:YES];
 
     deadbeef->plt_unref(plt);
 

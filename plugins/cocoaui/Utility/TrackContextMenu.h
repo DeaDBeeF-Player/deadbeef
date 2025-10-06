@@ -31,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithView:(NSView *)view NS_DESIGNATED_INITIALIZER;
 
 - (void)update:(ddb_playlist_t * _Nullable)playlist actionContext:(ddb_action_context_t)actionContext;
+- (void)update:(ddb_playlist_t *)playlist actionContext:(ddb_action_context_t)actionContext isMediaLib:(BOOL)isMediaLib;
 - (void)updateWithTrackList:(ddb_playItem_t * _Nullable * _Nullable)tracks count:(NSUInteger)count playlist:(ddb_playlist_t * _Nullable)plt currentTrack:(ddb_playItem_t * _Nullable)currentTrack currentTrackIdx:(int)currentTrackIdx;
 
 @end

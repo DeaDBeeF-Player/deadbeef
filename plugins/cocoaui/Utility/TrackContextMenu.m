@@ -98,6 +98,10 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)update:(ddb_playlist_t *)playlist actionContext:(ddb_action_context_t)actionContext {
+    [self update:playlist actionContext:actionContext isMediaLib:NO];
+}
+
+- (void)update:(ddb_playlist_t *)playlist actionContext:(ddb_action_context_t)actionContext isMediaLib:(BOOL)isMediaLib {
     [self removeAllItems];
 
     if (actionContext == DDB_ACTION_CTX_PLAYLIST && playlist == NULL) {
@@ -131,18 +135,20 @@ extern DB_functions_t *deadbeef;
     self.rgMenuItem.submenu = rgMenu;
     [self addItem:self.rgMenuItem];
 
-    self.addToFrontOfQueueItem = [self addItemWithTitle:@"Play Next" action:@selector(addToFrontOfPlaybackQueue) keyEquivalent:@""];
-    self.addToFrontOfQueueItem.target = self;
+    if (!isMediaLib) {
+        self.addToFrontOfQueueItem = [self addItemWithTitle:@"Play Next" action:@selector(addToFrontOfPlaybackQueue) keyEquivalent:@""];
+        self.addToFrontOfQueueItem.target = self;
 
-    self.addToQueueItem = [self addItemWithTitle:@"Play Later" action:@selector(addToPlaybackQueue) keyEquivalent:@""];
-    self.addToQueueItem.target = self;
+        self.addToQueueItem = [self addItemWithTitle:@"Play Later" action:@selector(addToPlaybackQueue) keyEquivalent:@""];
+        self.addToQueueItem.target = self;
 
-    self.removeFromQueueItem = [self addItemWithTitle:@"Remove from Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""];
-    self.removeFromQueueItem.target = self;
+        self.removeFromQueueItem = [self addItemWithTitle:@"Remove from Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""];
+        self.removeFromQueueItem.target = self;
 
-    self.removeFromPlaylistItem = [self addItemWithTitle:@"Delete" action:@selector(delete:) keyEquivalent:@"\b"];
-    self.removeFromPlaylistItem.target = self;
-    self.removeFromPlaylistItem.keyEquivalentModifierMask = 0;
+        self.removeFromPlaylistItem = [self addItemWithTitle:@"Delete" action:@selector(delete:) keyEquivalent:@"\b"];
+        self.removeFromPlaylistItem.target = self;
+        self.removeFromPlaylistItem.keyEquivalentModifierMask = 0;
+    }
 
     [self addItem:NSMenuItem.separatorItem];
 
