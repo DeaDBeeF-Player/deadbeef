@@ -472,9 +472,6 @@ trk_context_menu_build (GtkWidget *menu) {
     g_list_free(children);
 
     // add all items
-    GtkWidget *play_later;
-    GtkWidget *play_next;
-    GtkWidget *remove_from_playback_queue1;
     GtkWidget *separator;
     GtkWidget *remove_from_disk = NULL;
     GtkWidget *separator9;
@@ -488,36 +485,51 @@ trk_context_menu_build (GtkWidget *menu) {
     GtkWidget *set_custom_title;
 #endif
 
-    play_next = gtk_menu_item_new_with_mnemonic (_("Play Next"));
-    gtk_widget_show (play_next);
-    gtk_container_add (GTK_CONTAINER (menu), play_next);
-    gtk_widget_set_sensitive(play_next, selected_count != 0);
+    if (!_menuPlaylistIsDynamic) {
+        GtkWidget *play_later;
+        GtkWidget *play_next;
+        GtkWidget *remove_from_playback_queue1;
+        play_next = gtk_menu_item_new_with_mnemonic (_("Play Next"));
+        gtk_widget_show (play_next);
+        gtk_container_add (GTK_CONTAINER (menu), play_next);
+        gtk_widget_set_sensitive(play_next, selected_count != 0);
 
-    play_later = gtk_menu_item_new_with_mnemonic (_("Play Later"));
-    gtk_widget_show (play_later);
-    gtk_container_add (GTK_CONTAINER (menu), play_later);
-    gtk_widget_set_sensitive(play_later, selected_count != 0);
+        play_later = gtk_menu_item_new_with_mnemonic (_("Play Later"));
+        gtk_widget_show (play_later);
+        gtk_container_add (GTK_CONTAINER (menu), play_later);
+        gtk_widget_set_sensitive(play_later, selected_count != 0);
 
-    remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
-    if (selected_count > 0 && _menuPlaylist != NULL) {
-        int pqlen = deadbeef->playqueue_get_count ();
-        int no_playqueue_items = 1;
-        // NOTE: this can be an extremely slow operation
-        for (int i = 0; i < pqlen && no_playqueue_items; i++) {
-            DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
-            if (deadbeef->pl_get_playlist (pqitem) == _menuPlaylist
-                && (_menuActionContext != DDB_ACTION_CTX_SELECTION || deadbeef->pl_is_selected (pqitem))) {
-                no_playqueue_items = 0;
+        remove_from_playback_queue1 = gtk_menu_item_new_with_mnemonic (_("Remove from Playback Queue"));
+        if (selected_count > 0 && _menuPlaylist != NULL) {
+            int pqlen = deadbeef->playqueue_get_count ();
+            int no_playqueue_items = 1;
+            // NOTE: this can be an extremely slow operation
+            for (int i = 0; i < pqlen && no_playqueue_items; i++) {
+                DB_playItem_t *pqitem = deadbeef->playqueue_get_item (i);
+                if (deadbeef->pl_get_playlist (pqitem) == _menuPlaylist
+                    && (_menuActionContext != DDB_ACTION_CTX_SELECTION || deadbeef->pl_is_selected (pqitem))) {
+                    no_playqueue_items = 0;
+                }
+                deadbeef->pl_item_unref (pqitem);
             }
-            deadbeef->pl_item_unref (pqitem);
+            if (no_playqueue_items) {
+                gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
+            }
         }
-        if (no_playqueue_items) {
-            gtk_widget_set_sensitive (remove_from_playback_queue1, FALSE);
-        }
+        gtk_widget_show (remove_from_playback_queue1);
+        gtk_container_add (GTK_CONTAINER (menu), remove_from_playback_queue1);
+
+        g_signal_connect ((gpointer) play_later, "activate",
+                          G_CALLBACK (play_later_activate),
+                          NULL);
+        g_signal_connect ((gpointer) play_next, "activate",
+                          G_CALLBACK (play_next_activate),
+                          NULL);
+        g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
+                          G_CALLBACK (remove_from_playback_queue_activate),
+                          NULL);
     }
 
-    gtk_widget_show (remove_from_playback_queue1);
-    gtk_container_add (GTK_CONTAINER (menu), remove_from_playback_queue1);
 
     reload_metadata = gtk_menu_item_new_with_mnemonic (_("Reload Metadata"));
     gtk_widget_show (reload_metadata);
@@ -646,15 +658,6 @@ trk_context_menu_build (GtkWidget *menu) {
     gtk_container_add (GTK_CONTAINER (menu), properties1);
     gtk_widget_set_sensitive (properties1, selected_count != 0);
 
-    g_signal_connect ((gpointer) play_later, "activate",
-                      G_CALLBACK (play_later_activate),
-                      NULL);
-    g_signal_connect ((gpointer) play_next, "activate",
-                      G_CALLBACK (play_next_activate),
-                      NULL);
-    g_signal_connect ((gpointer) remove_from_playback_queue1, "activate",
-                      G_CALLBACK (remove_from_playback_queue_activate),
-                      NULL);
     g_signal_connect ((gpointer) reload_metadata, "activate",
                       G_CALLBACK (reload_metadata_activate),
                       NULL);
