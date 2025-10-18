@@ -10,7 +10,7 @@ Icon=deadbeef
 Exec=deadbeef --queue %F
 Terminal=false
 NoDisplay=true
-MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;audio/x-mpegurl;audio/x-scpls;application/x-cue;inode/directory;
+MimeType=application/ogg;audio/x-vorbis+ogg;application/x-ogg;audio/mp3;audio/prs.sid;audio/x-flac;audio/mpeg;audio/x-mpeg;audio/x-mod;audio/x-it;audio/x-s3m;audio/x-xm;audio/x-mpegurl;audio/x-scpls;application/x-cue;audio/m4a;inode/directory;
 
 X-PulseAudio-Properties=media.role=music
 X-KDE-StartupNotify=false
