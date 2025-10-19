@@ -430,7 +430,7 @@ trkproperties_fill_metadata (void) {
         if (trkproperties_hc_props[i]) {
             continue;
         }
-        char *title = _formatted_title_for_unknown_key(keys[k]);
+        char *title = _formatted_title_for_unknown_key(keys[k] + 1);
         add_field (propstore, keys[k], title, 1, tracks, numtracks);
         free (title);
         title = NULL;
