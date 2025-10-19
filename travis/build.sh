@@ -39,7 +39,7 @@ case "$TRAVIS_OS_NAME" in
         echo "Build & run tests ..."
         mkdir -p osx/build/reports
         mkdir -p osx/build/Release
-        xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" test -project osx/deadbeef.xcodeproj -scheme deadbeef -configuration Release | xcbeautify --report junit --report-path "osx/build/reports"  ; test ${PIPESTATUS[0]} -eq 0
+        xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" test -project osx/deadbeef.xcodeproj -scheme deadbeef -configuration Release | tee osx/build/Release/test.log | xcbeautify --report junit --report-path "osx/build/reports"  ; test ${PIPESTATUS[0]} -eq 0
         echo "Build DeaDBeeF.app ..."
         xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" -project osx/deadbeef.xcodeproj -target DeaDBeeF -configuration Release | tee osx/build/Release/build.log | xcbeautify ; test ${PIPESTATUS[0]} -eq 0
         cd osx/build/Release
