@@ -68,7 +68,15 @@ static int grouptitleheight = 22;
     _pinnedGroupTitleView.hidden = YES;
     [self addSubview:_pinnedGroupTitleView];
 
+    // A bit of a hack: we can't control view/menu lifecycle,
+    // but here we hold references to some low level objects which we'd like to cleanup before quitting.
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(applicationWillQuit:) name:@"ApplicationWillQuit" object:nil];
+
     return self;
+}
+
+- (void)applicationWillQuit:(NSNotification *)notification {
+    [self freeGroups];
 }
 
 - (void)setDelegate:(id<DdbListviewDelegate>)delegate {
