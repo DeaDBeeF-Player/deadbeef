@@ -181,6 +181,7 @@ pl_free (void) {
     _plt_loading = 1;
     while (_playlists_head) {
 
+#if _DEBUG
         for (playItem_t *it = _playlists_head->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
             if (it->_refc > 1) {
                 fprintf (
@@ -203,6 +204,7 @@ pl_free (void) {
                 _playlists_head->title,
                 _playlists_head->refc);
         }
+#endif
 
         plt_remove (0);
     }
