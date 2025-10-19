@@ -996,6 +996,7 @@ plugins/lyrics/Makefile
 po/Makefile.in
 intl/Makefile
 deadbeef.desktop
+deadbeef_enqueue.desktop
 ])
 
 AC_OUTPUT

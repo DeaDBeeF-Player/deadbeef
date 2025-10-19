@@ -38,7 +38,8 @@ rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.a
 # move icons and other shit to /usr
 mkdir -p $TEMPDIR/usr/share/
 mv $TEMPDIR/opt/deadbeef/share/applications $TEMPDIR/usr/share/
-sed -i 's/Exec=deadbeef/Exec=\/opt\/deadbeef\/bin\/deadbeef/g' $TEMPDIR/usr/share/applications/deadbeef.desktop 
+sed -i 's/Exec=deadbeef/Exec=\/opt\/deadbeef\/bin\/deadbeef/g' $TEMPDIR/usr/share/applications/deadbeef.desktop
+sed -i 's/Exec=deadbeef/Exec=\/opt\/deadbeef\/bin\/deadbeef/g' $TEMPDIR/usr/share/applications/deadbeef_enqueue.desktop
 mv $TEMPDIR/opt/deadbeef/share/icons $TEMPDIR/usr/share/
 
 # generate debian-binary
