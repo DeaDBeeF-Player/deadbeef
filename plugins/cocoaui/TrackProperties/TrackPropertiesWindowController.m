@@ -314,7 +314,7 @@ _formatted_title_for_unknown_key(const char *key) {
         if (trkproperties_hc_props[i]) {
             continue;
         }
-        char *title = _formatted_title_for_unknown_key(keys[k]);
+        char *title = _formatted_title_for_unknown_key(keys[k] + 1);
         add_field (self.propstore, keys[k], title, 1, self.tracks, self.numtracks);
         free (title);
         title = NULL;
