@@ -2477,6 +2477,7 @@
 		2DDD7ABD25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */; };
 		2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDE52A424F821630096EF80 /* MediaLibraryOutlineView.h */; };
 		2DDE52A724F821630096EF80 /* MediaLibraryOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDE52A524F821630096EF80 /* MediaLibraryOutlineView.m */; };
+		2DDF00A52EA565D000E03C13 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 2DDF00A42EA565D000E03C13 /* AppIcon.icon */; };
 		2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */; };
 		2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */; };
 		2DDF87EA24027FCF00CA8E91 /* hotkeys.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8302269C9FB00AFF9AE /* hotkeys.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -7044,6 +7045,7 @@
 		2DDD7ABA25E1830F00FA6FE5 /* PlaylistDataModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PlaylistDataModel.m; sourceTree = "<group>"; };
 		2DDE52A424F821630096EF80 /* MediaLibraryOutlineView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryOutlineView.h; sourceTree = "<group>"; };
 		2DDE52A524F821630096EF80 /* MediaLibraryOutlineView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryOutlineView.m; sourceTree = "<group>"; };
+		2DDF00A42EA565D000E03C13 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		2DDF87D724027DA500CA8E91 /* PluginActionMenuItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginActionMenuItem.h; sourceTree = "<group>"; };
 		2DDF87D824027DA500CA8E91 /* PluginActionMenuItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginActionMenuItem.m; sourceTree = "<group>"; };
 		2DDF87EB2402845C00CA8E91 /* NSMenu+ActionItems.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMenu+ActionItems.h"; sourceTree = "<group>"; };
@@ -9618,6 +9620,7 @@
 		2D0B1C8619C5CF4A00CED0B5 /* Supporting files */ = {
 			isa = PBXGroup;
 			children = (
+				2DDF00A42EA565D000E03C13 /* AppIcon.icon */,
 				2DD5262E2062F1DF002609C5 /* help-cocoa.txt */,
 				4DA72BE61838EAAB00A98C62 /* main.m */,
 				4DA72BDE1838EAAB00A98C62 /* deadbeef-Info.plist */,
@@ -17079,6 +17082,7 @@
 				2D9C0C15238DC0E700CE8C10 /* GroupByCustomWindow.xib in Resources */,
 				2DBCA69D27944BB600D7432F /* ChangeLog in Resources */,
 				2DC657FC274A7C4600583E14 /* RenamePlaylistViewController.xib in Resources */,
+				2DDF00A52EA565D000E03C13 /* AppIcon.icon in Resources */,
 				2DB05FFD252E53220090635E /* iconGUISettingsTemplate.pdf in Resources */,
 				2DEBA1D423E207A3000E4135 /* EqualizerWindowController.xib in Resources */,
 				2DC6C5FC294CE14B00A63CEB /* ChiptuneVoicesViewController.xib in Resources */,
