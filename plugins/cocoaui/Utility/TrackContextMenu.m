@@ -66,10 +66,23 @@ extern DB_functions_t *deadbeef;
     self = [super initWithTitle:@""];
     self.view = view;
     self.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+
+    // A bit of a hack: we can't control view/menu lifecycle,
+    // but here we hold references to some low level objects which we'd like to cleanup before quitting.
+    [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(applicationWillQuit:) name:@"ApplicationWillQuit" object:nil];
+
     return self;
 }
 
+- (void)applicationWillQuit:(NSNotification *)notification {
+    [self cleanup];
+}
+
 - (void)dealloc {
+    [self cleanup];
+}
+
+- (void)cleanup {
     if (_deleteFromDiskController) {
         ddbDeleteFromDiskControllerFree(_deleteFromDiskController);
         _deleteFromDiskController = NULL;

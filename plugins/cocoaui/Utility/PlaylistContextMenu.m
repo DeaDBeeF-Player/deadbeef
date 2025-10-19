@@ -25,7 +25,8 @@ extern DB_functions_t *deadbeef;
 
 @implementation PlaylistContextMenu
 
-- (void)dealloc {
+- (void)cleanup {
+    [super cleanup];
     self.playlist = NULL;
 }
 
