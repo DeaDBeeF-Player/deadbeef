@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24411" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24411"/>
+        <capability name="NSView safe area layout guides" minToolsVersion="12.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -28,7 +29,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" fullSizeContentView="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="980" height="440"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1728" height="1083"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="980" height="440"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -173,11 +174,11 @@
             <point key="canvasLocation" x="-587" y="23"/>
         </menu>
         <customView id="v3y-Wv-fY1">
-            <rect key="frame" x="0.0" y="0.0" width="285" height="334"/>
+            <rect key="frame" x="0.0" y="0.0" width="285" height="350"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <button toolTip="Configure" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="g73-tS-yMi">
-                    <rect key="frame" x="178" y="247" width="94" height="32"/>
+                    <rect key="frame" x="182" y="256" width="83" height="24"/>
                     <buttonCell key="cell" type="push" title="Configure" bezelStyle="rounded" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="BXp-on-KAq">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -187,7 +188,7 @@
                     </connections>
                 </button>
                 <searchField wantsLayer="YES" focusRingType="none" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KyF-ei-PTn">
-                    <rect key="frame" x="20" y="224" width="245" height="22"/>
+                    <rect key="frame" x="20" y="224" width="245" height="24"/>
                     <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" sendsSearchStringImmediately="YES" id="GoA-F3-oJI">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -291,26 +292,28 @@
                     </scroller>
                 </scrollView>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="bx2-Y7-PbO">
-                    <rect key="frame" x="20" y="254" width="157" height="20"/>
+                    <rect key="frame" x="20" y="258" width="154" height="20"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="20" id="WNM-f0-mqS"/>
                     </constraints>
                 </customView>
             </subviews>
             <constraints>
-                <constraint firstItem="bx2-Y7-PbO" firstAttribute="top" secondItem="v3y-Wv-fY1" secondAttribute="top" constant="60" id="Abv-jY-4OA"/>
+                <constraint firstItem="bx2-Y7-PbO" firstAttribute="top" secondItem="YP5-6P-ME5" secondAttribute="top" constant="20" symbolic="YES" id="Abv-jY-4OA"/>
                 <constraint firstItem="KyF-ei-PTn" firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" id="Byr-jY-QSB"/>
-                <constraint firstItem="g73-tS-yMi" firstAttribute="top" secondItem="bx2-Y7-PbO" secondAttribute="top" id="GgH-yZ-RNV"/>
-                <constraint firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" constant="20" symbolic="YES" id="IUr-En-aze"/>
+                <constraint firstItem="g73-tS-yMi" firstAttribute="centerY" secondItem="bx2-Y7-PbO" secondAttribute="centerY" id="Cbp-wp-dhF"/>
+                <constraint firstItem="YP5-6P-ME5" firstAttribute="trailing" secondItem="g73-tS-yMi" secondAttribute="trailing" constant="20" symbolic="YES" id="IUr-En-aze"/>
                 <constraint firstItem="g73-tS-yMi" firstAttribute="leading" secondItem="bx2-Y7-PbO" secondAttribute="trailing" constant="8" symbolic="YES" id="LAq-2m-P1g"/>
                 <constraint firstItem="KyF-ei-PTn" firstAttribute="top" secondItem="g73-tS-yMi" secondAttribute="bottom" constant="8" id="ORZ-kK-HOV"/>
-                <constraint firstAttribute="bottom" secondItem="VJY-8N-XhM" secondAttribute="bottom" id="UUG-BW-jzV"/>
-                <constraint firstItem="bx2-Y7-PbO" firstAttribute="leading" secondItem="v3y-Wv-fY1" secondAttribute="leading" constant="20" symbolic="YES" id="giY-GL-IPr"/>
-                <constraint firstAttribute="trailing" secondItem="VJY-8N-XhM" secondAttribute="trailing" id="jUc-sO-BRH"/>
+                <constraint firstItem="YP5-6P-ME5" firstAttribute="bottom" secondItem="VJY-8N-XhM" secondAttribute="bottom" id="UUG-BW-jzV"/>
+                <constraint firstItem="bx2-Y7-PbO" firstAttribute="leading" secondItem="YP5-6P-ME5" secondAttribute="leading" constant="20" symbolic="YES" id="giY-GL-IPr"/>
+                <constraint firstItem="YP5-6P-ME5" firstAttribute="trailing" secondItem="VJY-8N-XhM" secondAttribute="trailing" id="jUc-sO-BRH"/>
                 <constraint firstItem="VJY-8N-XhM" firstAttribute="top" secondItem="KyF-ei-PTn" secondAttribute="bottom" constant="8" symbolic="YES" id="nQQ-50-wgo"/>
                 <constraint firstItem="bx2-Y7-PbO" firstAttribute="leading" secondItem="KyF-ei-PTn" secondAttribute="leading" id="p0e-SI-wkT"/>
-                <constraint firstItem="VJY-8N-XhM" firstAttribute="leading" secondItem="v3y-Wv-fY1" secondAttribute="leading" id="uIQ-CV-mDn"/>
+                <constraint firstItem="VJY-8N-XhM" firstAttribute="leading" secondItem="YP5-6P-ME5" secondAttribute="leading" id="uIQ-CV-mDn"/>
             </constraints>
+            <viewLayoutGuide key="safeArea" id="YP5-6P-ME5"/>
+            <viewLayoutGuide key="layoutMargins" id="uAW-EZ-nfo"/>
             <point key="canvasLocation" x="-796.5" y="-267"/>
         </customView>
     </objects>
