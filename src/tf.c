@@ -168,25 +168,10 @@ static int
 tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int outlen, int *bool_out, int fail_on_undef);
 
 static const char *
-_tf_get_combined_value (playItem_t *it, const char *key, int *needs_free, int item_index, int needs_mutex_lock);
+_tf_get_combined_value (playItem_t *it, const char *key, int *needs_free, int item_index, uint64_t eval_flags);
 
 static void
 _tf_vars_free(ddb_tf_context_int_t *ctx);
-
-const char *
-_metacache_add_uppercase_string(const char *input) {
-    char *buffer = malloc (strlen (input + 1));
-
-    char *p = buffer;
-    while (*input) {
-        *p++ = (char)toupper(*input++);
-    }
-    *p = 0;
-
-    const char *result = metacache_add_string (buffer);
-    free (buffer);
-    return result;
-}
 
 void
 tf_init (void) {
@@ -2367,8 +2352,7 @@ tf_func_meta (ddb_tf_context_t *ctx, int argc, const uint16_t *arglens, const ch
     TF_EVAL_CHECK(len, ctx, arg, arglens[0], out, outlen, fail_on_undef);
 
     int needs_free = 0;
-    int needs_mutex_lock = (ctx->flags & DDB_TF_CONTEXT_NO_MUTEX_LOCK) ? 0 : 1;
-    const char *meta = _tf_get_combined_value ((playItem_t *)ctx->it, out, &needs_free, tf_item_index_for_context(ctx), needs_mutex_lock);
+    const char *meta = _tf_get_combined_value ((playItem_t *)ctx->it, out, &needs_free, tf_item_index_for_context(ctx), ctx->flags);
     if (!meta) {
         return 0;
     }
@@ -2875,9 +2859,10 @@ tf_func_def tf_funcs[TF_MAX_FUNCS] = {
 };
 
 static const char *
-_tf_get_combined_value_cached_key (playItem_t *it, const char *key, int *needs_free, int item_index, int is_cached_key, int needs_mutex_lock) {
+_tf_get_combined_value_cached_key (playItem_t *it, const char *key, int *needs_free, int item_index, int is_cached_key, uint64_t eval_flags) {
     DB_metaInfo_t *meta;
-    if (!is_cached_key) {
+    int needs_mutex_lock = !(eval_flags & DDB_TF_CONTEXT_NO_MUTEX_LOCK);
+    if (!is_cached_key || !(eval_flags & DDB_TF_CONTEXT_FAST_LOOKUP)) {
         meta = pl_meta_for_key_with_override_needs_mutex_lock (it, key, needs_mutex_lock);
     }
     else {
@@ -2939,8 +2924,8 @@ _tf_get_combined_value_cached_key (playItem_t *it, const char *key, int *needs_f
 }
 
 static const char *
-_tf_get_combined_value (playItem_t *it, const char *key, int *needs_free, int item_index, int needs_mutex_lock) {
-    return _tf_get_combined_value_cached_key(it, key, needs_free, item_index, 0, needs_mutex_lock);
+_tf_get_combined_value (playItem_t *it, const char *key, int *needs_free, int item_index, uint64_t eval_flags) {
+    return _tf_get_combined_value_cached_key(it, key, needs_free, item_index, 0, eval_flags);
 }
 
 static int
@@ -3090,9 +3075,8 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
 
                 int pl_locked = 0;
 
-                int needs_mutex_lock = (ctx->flags & DDB_TF_CONTEXT_NO_MUTEX_LOCK) ? 0 : 1;
-                if (!needs_mutex_lock
-                    && !(ctx->flags&TF_INTERNAL_FLAG_LOCKED)) {
+                if ((ctx->flags & DDB_TF_CONTEXT_NO_MUTEX_LOCK)
+                    && !(ctx->flags & TF_INTERNAL_FLAG_LOCKED)) {
                     pl_lock ();
                     ctx->flags |= TF_INTERNAL_FLAG_LOCKED;
                     pl_locked = 1;
@@ -3108,28 +3092,28 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 int item_index = tf_item_index_for_context(ctx);
                 if (!strcmp (name, aa_fields[0])) {
                     for (int i = 0; !val && i < num_aa_fields; i++) {
-                        val = _tf_get_combined_value(it, aa_fields[i], &needs_free, item_index, needs_mutex_lock);
+                        val = _tf_get_combined_value(it, aa_fields[i], &needs_free, item_index, ctx->flags);
                     }
                 }
                 else if (!strcmp (name, a_fields[0])) {
                     for (int i = 0; !val && i < num_a_fields; i++) {
-                        val = _tf_get_combined_value(it, a_fields[i], &needs_free, item_index, needs_mutex_lock);
+                        val = _tf_get_combined_value(it, a_fields[i], &needs_free, item_index, ctx->flags);
                     }
                 }
                 else if (!strcmp (name, alb_fields[0])) {
                     for (int i = 0; !val && i < num_alb_fields; i++) {
-                        val = _tf_get_combined_value (it, alb_fields[i], &needs_free, item_index, needs_mutex_lock);
+                        val = _tf_get_combined_value (it, alb_fields[i], &needs_free, item_index, ctx->flags);
                     }
                 }
                 else if (!strcmp (name, "track artist")) {
                     const char *aa = NULL;
                     for (int i = 0; !val && i < num_aa_fields; i++) {
-                        val = _tf_get_combined_value (it, aa_fields[i], &needs_free, item_index, needs_mutex_lock);
+                        val = _tf_get_combined_value (it, aa_fields[i], &needs_free, item_index, ctx->flags);
                     }
                     aa = val;
                     val = NULL;
                     for (int i = 0; !val && i < num_a_fields; i++) {
-                        val = _tf_get_combined_value (it, a_fields[i], &needs_free, item_index, needs_mutex_lock);
+                        val = _tf_get_combined_value (it, a_fields[i], &needs_free, item_index, ctx->flags);
                     }
                     if (val && aa && !strcmp (val, aa)) {
                         val = NULL;
@@ -3150,7 +3134,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     }
                 }
                 else if (!strcmp (name, title_fields[0])) {
-                    val = _tf_get_combined_value (it, "title", &needs_free, item_index, needs_mutex_lock);
+                    val = _tf_get_combined_value (it, "title", &needs_free, item_index, ctx->flags);
                     if (!val) {
                         const char *v = pl_find_meta_raw (it, ":URI");
                         if (v) {
@@ -3646,7 +3630,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     skip_out = 1;
                 }
                 else {
-                    val = _tf_get_combined_value (it, name, &needs_free, item_index, needs_mutex_lock);
+                    val = _tf_get_combined_value (it, name, &needs_free, item_index, ctx->flags);
                 }
 
                 if (val || (!val && out > init_out)) {
@@ -3792,27 +3776,25 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 // set to 1 if special case handler successfully wrote the output
                 int skip_out = 0;
 
-                int needs_mutex_lock = (ctx->flags & DDB_TF_CONTEXT_NO_MUTEX_LOCK) ? 0 : 1;
-
                 switch (field_id) {
                 case 0: // album artist
                     for (int i = 0; !val && i < num_aa_fields; i++) {
-                        val = _tf_get_combined_value_cached_key(it, aa_fields_cached[i], &needs_free, item_index, 1, needs_mutex_lock);
+                        val = _tf_get_combined_value_cached_key(it, aa_fields_cached[i], &needs_free, item_index, 1, ctx->flags);
                     }
                     break;
                 case 1: // artist
                     for (int i = 0; !val && i < num_a_fields; i++) {
-                        val = _tf_get_combined_value_cached_key(it, a_fields_cached[i], &needs_free, item_index, 1, needs_mutex_lock);
+                        val = _tf_get_combined_value_cached_key(it, a_fields_cached[i], &needs_free, item_index, 1, ctx->flags);
                     }
                     break;
                 case 2: // album
                     for (int i = 0; !val && i < num_alb_fields; i++) {
-                        val = _tf_get_combined_value_cached_key(it, alb_fields_cached[i], &needs_free, item_index, 1, needs_mutex_lock);
+                        val = _tf_get_combined_value_cached_key(it, alb_fields_cached[i], &needs_free, item_index, 1, ctx->flags);
                     }
                     break;
                 case 3: // title
                     for (int i = 0; !val && i < num_title_fields; i++) {
-                        val = _tf_get_combined_value_cached_key(it, title_fields_cached[i], &needs_free, item_index, 1, needs_mutex_lock);
+                        val = _tf_get_combined_value_cached_key(it, title_fields_cached[i], &needs_free, item_index, 1, ctx->flags);
                         if (val != NULL && i > 0) {
                             const char *end = NULL;
                             const char *start = _get_title_from_path(val, &end);
@@ -3831,12 +3813,12 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     break;
                 case 4: // genre
                     for (int i = 0; !val && i < num_genre_fields; i++) {
-                        val = _tf_get_combined_value_cached_key(it, genre_fields_cached[i], &needs_free, item_index, 1, needs_mutex_lock);
+                        val = _tf_get_combined_value_cached_key(it, genre_fields_cached[i], &needs_free, item_index, 1, ctx->flags);
                     }
                     break;
                 case 5: // tracknumber
                     for (int i = 0; !val && i < num_trknr_fields; i++) {
-                        DB_metaInfo_t *meta = pl_meta_for_key_with_override_needs_mutex_lock (it, "track", needs_mutex_lock);
+                        DB_metaInfo_t *meta = pl_meta_for_key_with_override_needs_mutex_lock (it, "track", !(ctx->flags & DDB_TF_CONTEXT_NO_MUTEX_LOCK));
                         const char *v = NULL;
                         if (meta) {
                             v = meta->value;
@@ -3857,7 +3839,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                     break;
                 case 6: // disc
                     for (int i = 0; !val && i < num_disc_fields; i++) {
-                        val = _tf_get_combined_value_cached_key(it, disc_fields_cached[i], &needs_free, item_index, 1, needs_mutex_lock);
+                        val = _tf_get_combined_value_cached_key(it, disc_fields_cached[i], &needs_free, item_index, 1, ctx->flags);
                     }
                     break;
                 default:

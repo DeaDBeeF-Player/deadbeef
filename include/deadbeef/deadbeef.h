@@ -731,7 +731,7 @@ typedef struct ddb_fileadd_data_s {
 
 // since 1.8
 #if (DDB_API_LEVEL >= 8)
-enum {
+typedef enum {
     DDB_TF_CONTEXT_HAS_INDEX = 1,
     DDB_TF_CONTEXT_HAS_ID = 2,
     DDB_TF_CONTEXT_NO_DYNAMIC = 4, // skip dynamic fields (%playback_time%)
@@ -746,12 +746,16 @@ enum {
     // the caller supports text dimming functions
     DDB_TF_CONTEXT_TEXT_DIM = 16,
 #endif
-    // since 1.13
 #if (DDB_API_LEVEL >= 13)
     // the caller guarantees that metadata access is thread safe
     DDB_TF_CONTEXT_NO_MUTEX_LOCK = 32,
 #endif
-};
+#if (DDB_API_LEVEL >= 19)
+    // Allow faster metadata lookups, but without "override" support.
+    // This is mostly suitable for medialib tree formatting.
+    DDB_TF_CONTEXT_FAST_LOOKUP = 64,
+#endif
+} ddb_tf_flags_t;
 
 // since 1.10
 #if (DDB_API_LEVEL >= 10)

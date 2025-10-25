@@ -56,7 +56,7 @@ _create_sorted_tree(
 
     ddb_tf_context_t ctx = {0};
     ctx._size = sizeof (ddb_tf_context_t);
-    ctx.flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_NO_DYNAMIC;
+    ctx.flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_FAST_LOOKUP;
     ctx.plt = plt;
     ctx.iter = PL_MAIN;
 
@@ -236,7 +236,7 @@ _create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, int selected, c
     if (needs_sort) {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
-            .flags = DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_NO_MUTEX_LOCK,
+            .flags = DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_FAST_LOOKUP,
             .plt = source->ml_playlist,
             .idx = -1,
         };
@@ -352,7 +352,7 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
 
     ddb_tf_context_t ctx = {0};
     ctx._size = sizeof (ddb_tf_context_t);
-    ctx.flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_NO_DYNAMIC;
+    ctx.flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_FAST_LOOKUP;
     ctx.plt = plt;
     ctx.iter = PL_MAIN;
 

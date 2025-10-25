@@ -3151,7 +3151,7 @@ _streamer_mark_album_played_up_to (playItem_t *item) {
 
     ddb_tf_context_t ctx = {
         ._size = sizeof (ddb_tf_context_t),
-        .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_NO_DYNAMIC,
+        .flags = DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_FAST_LOOKUP,
     };
 
     char album[100];
