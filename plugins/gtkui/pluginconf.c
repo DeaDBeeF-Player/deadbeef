@@ -660,7 +660,7 @@ gtkui_make_dialog (ddb_pluginprefs_dialog_t *make_dialog_conf) {
     GtkWidget *content = gtkui_create_ui_from_script(conf->layout, &_model, make_dialog_conf->dialog_conf.title);
 
     gtk_widget_show(content);
-    gtk_box_pack_start(GTK_BOX(containervbox), content, TRUE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(containervbox), content, FALSE, FALSE, 0);
     make_dialog_conf->content = content;
 
     // Now that all signal handlers are installed, start reacting to changes
