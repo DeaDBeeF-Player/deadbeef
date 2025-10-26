@@ -1,31 +1,27 @@
 {
-  "fill" : {
-    "automatic-gradient" : "extended-srgb:0.00000,0.53333,1.00000,1.00000"
-  },
+  "fill" : "automatic",
   "groups" : [
     {
       "blur-material" : null,
-      "hidden" : false,
       "layers" : [
         {
-          "blend-mode" : "normal",
-          "glass" : false,
-          "hidden" : false,
-          "image-name" : "deadbeef.svg",
-          "name" : "AppIcon",
-          "opacity" : 1,
+          "fill" : "none",
+          "glass" : true,
+          "image-name" : "logo.svg",
+          "name" : "logo",
           "position" : {
-            "scale" : 1.61,
+            "scale" : 1.65,
             "translation-in-points" : [
-              0,
+              79.2,
               0
             ]
           }
         }
       ],
+      "lighting" : "individual",
       "shadow" : {
-        "kind" : "layer-color",
-        "opacity" : 1
+        "kind" : "neutral",
+        "opacity" : 0.5
       },
       "specular" : true,
       "translucency" : {
@@ -34,18 +30,15 @@
       }
     },
     {
-      "hidden" : false,
+      "blur-material" : null,
       "layers" : [
         {
-          "fill" : {
-            "solid" : "display-p3:0.95131,0.95131,0.95131,1.00000"
-          },
-          "glass" : false,
-          "hidden" : false,
-          "image-name" : "AppIconBackground.png",
-          "name" : "AppIconBackground",
+          "fill" : "none",
+          "glass" : true,
+          "image-name" : "frame.svg",
+          "name" : "frame",
           "position" : {
-            "scale" : 33,
+            "scale" : 1.65,
             "translation-in-points" : [
               0,
               0
@@ -58,7 +51,7 @@
         "kind" : "neutral",
         "opacity" : 0.5
       },
-      "specular" : false,
+      "specular" : true,
       "translucency" : {
         "enabled" : false,
         "value" : 0.5
