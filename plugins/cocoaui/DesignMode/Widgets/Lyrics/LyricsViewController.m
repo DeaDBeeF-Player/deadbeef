@@ -32,6 +32,7 @@ static NSString * const lyricsNotAvailableString = @"Lyrics Not Available";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.textView.textContainerInset = NSMakeSize(0, 10);
     self.lyricsCache = [NSCache new];
     [self update];
 }
