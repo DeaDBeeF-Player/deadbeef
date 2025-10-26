@@ -70,7 +70,7 @@
                     <constraint firstAttribute="trailing" secondItem="Yc4-pv-Wup" secondAttribute="trailing" constant="8" id="ycs-1W-YMK"/>
                 </constraints>
             </view>
-            <toolbar key="toolbar" implicitIdentifier="AC52D12D-4000-4B08-A065-07D723AB5954" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="HZu-Ne-Wux">
+            <toolbar key="toolbar" implicitIdentifier="AC52D12D-4000-4B08-A065-07D723AB5954" autosavesConfiguration="NO" allowsUserCustomization="NO" showsBaselineSeparator="NO" displayMode="iconOnly" sizeMode="regular" id="HZu-Ne-Wux">
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="B7B3A6E3-A418-464C-AAF3-D9D0B5687BBF" label="Custom View" paletteLabel="Custom View" tag="-1" sizingBehavior="auto" id="J23-QU-u9D" userLabel="Custom Seekbar" customClass="CustomToolbarItem">
                         <nil key="toolTip"/>
