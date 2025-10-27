@@ -287,6 +287,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.music</string>
 	<key>LSEnvironment</key>
 	<dict>
 		<key>PATH</key>
