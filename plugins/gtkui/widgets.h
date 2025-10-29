@@ -146,4 +146,10 @@ w_logviewer_create (void);
 gboolean
 w_logviewer_is_present(void);
 
+ddb_gtkui_widget_t *
+w_create_from_conf (const char *key);
+
+int
+w_save_to_conf (const char *key, ddb_gtkui_widget_t *val);
+
 #endif

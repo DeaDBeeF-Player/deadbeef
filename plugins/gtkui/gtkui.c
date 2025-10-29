@@ -2404,4 +2404,7 @@ ddb_gtkui_t plugin = {
     .cut_selection = clipboard_cut_selection,
     .paste_selection = clipboard_paste_selection,
     .w_get_type_flags = w_get_type_flags,
+    .conf_get_widget = w_create_from_conf,
+    .conf_set_widget = w_save_to_conf,
+    .w_send_message = send_messages_to_widgets,
 };

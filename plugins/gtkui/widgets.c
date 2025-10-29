@@ -689,21 +689,55 @@ _save_widget_to_json (ddb_gtkui_widget_t *w) {
     return node;
 }
 
-void
-w_save (void) {
-    if (rootwidget == NULL) {
-        return;
+ddb_gtkui_widget_t *
+w_create_from_conf (const char *key) {
+    char *layout_str = NULL;
+    {
+        deadbeef->conf_lock ();
+        const char *layout_str_conf = deadbeef->conf_get_str_fast (key, NULL);
+        if(layout_str_conf) {
+            layout_str = strdup (layout_str_conf);
+        }
+        deadbeef->conf_unlock ();
+    }
+    if (!layout_str) return NULL;
+
+    ddb_gtkui_widget_t *w = NULL;
+    {
+        json_t *layout = json_loads (layout_str, 0, NULL);
+        if (layout) {
+            w_create_from_json (layout, &w);
+            json_delete (layout);
+        }
+    }
+    free(layout_str);
+
+    return w;
+}
+
+int
+w_save_to_conf (const char *key, ddb_gtkui_widget_t *val) {
+    int out = 0;
+
+    json_t *layout = _save_widget_to_json (val);
+    if (!layout) out = -1; else {
+        char *layout_str = json_dumps (layout, JSON_COMPACT);
+        if (!layout_str) out = -1; else {
+            deadbeef->conf_set_str (key, layout_str);
+            free (layout_str);
+        }
+
+        json_delete (layout);
     }
 
-    json_t *layout = _save_widget_to_json (rootwidget->children);
+    return out;
+}
 
-    char *layout_str = json_dumps (layout, JSON_COMPACT);
-
-    deadbeef->conf_set_str (DDB_GTKUI_CONF_LAYOUT, layout_str);
+void
+w_save (void) {
+    if (!rootwidget) return;
+    w_save_to_conf (DDB_GTKUI_CONF_LAYOUT, rootwidget->children);
     deadbeef->conf_save ();
-
-    free (layout_str);
-    json_delete (layout);
 }
 
 static void
