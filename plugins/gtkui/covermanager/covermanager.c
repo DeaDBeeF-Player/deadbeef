@@ -37,9 +37,20 @@ extern DB_functions_t *deadbeef;
 
 #define CACHE_SIZE 50
 
+typedef struct cover_completion_block_list_item_s {
+    struct cover_completion_block_list_item_s *next;
+    int want_default;
+    covermanager_completion_block_t completion_block;
+} cover_completion_block_list_item_t;
+
+typedef struct {
+    cover_completion_block_list_item_t *completion_blocks;
+} cover_request_t;
+
 struct covermanager_s {
     ddb_artwork_plugin_t *plugin;
     gobj_cache_t cache;
+    GHashTable *pending_requests;
     dispatch_queue_t loader_queue;
     char *name_tf;
     char *default_cover_path;
@@ -50,8 +61,7 @@ struct covermanager_s {
 
 typedef struct {
     covermanager_t *impl;
-    int want_default;
-    dispatch_block_t completion_block;
+    char *key;
 } query_userdata_t;
 
 static covermanager_t *_shared;
@@ -154,7 +164,7 @@ error:
 }
 
 static GdkPixbuf *
-_load_image_from_cover (covermanager_t *impl, ddb_cover_info_t *cover, int want_default) {
+_load_image_from_cover (covermanager_t *impl, ddb_cover_info_t *cover) {
     GdkPixbuf *img = NULL;
 
     if (cover && cover->image_filename) {
@@ -166,6 +176,10 @@ _load_image_from_cover (covermanager_t *impl, ddb_cover_info_t *cover, int want_
             gdk_pixbuf_loader_close (loader, NULL);
             img = gdk_pixbuf_loader_get_pixbuf (loader);
             free (buf);
+            if (img) {
+                g_object_ref (img);
+            }
+            g_object_unref (loader);
         }
     }
 
@@ -191,28 +205,19 @@ _load_image_from_cover (covermanager_t *impl, ddb_cover_info_t *cover, int want_
         }
     }
 
-    if (!img && want_default) {
-        img = impl->default_cover;
-        if (img != NULL) {
-            gobj_ref (img);
-        }
-    }
-
     return img;
 }
 
 static void
-_add_cover_for_track (covermanager_t *impl, ddb_playItem_t *track, GdkPixbuf *img) {
-    char *key = _cache_key_for_track (impl, track);
+_add_cover_for_track (covermanager_t *impl, const char *key, ddb_playItem_t *track, GdkPixbuf *img) {
     gobj_cache_set (impl->cache, key, G_OBJECT (img));
-    free (key);
 }
 
 static void
 _cleanup_query (ddb_cover_query_t *query) {
     query_userdata_t *user_data = query->user_data;
-    void (^completionBlock) (GdkPixbuf *) = (void (^) (GdkPixbuf *))user_data->completion_block;
-    Block_release (completionBlock);
+
+    free (user_data->key);
     free (user_data);
 
     // Free the query -- it's fast, so it's OK to free it on main queue
@@ -231,20 +236,31 @@ _callback_and_cleanup (ddb_cover_query_t *query, ddb_cover_info_t *cover, GdkPix
     }
 
     if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-        _add_cover_for_track (impl, query->track, img);
+        _add_cover_for_track (impl, user_data->key, query->track, img);
     }
-    void (^completionBlock) (GdkPixbuf *) = (void (^) (GdkPixbuf *))user_data->completion_block;
-    completionBlock (img);
+
+    cover_request_t *request = g_hash_table_lookup(user_data->impl->pending_requests, user_data->key);
+    if (request != NULL) {
+        cover_completion_block_list_item_t *item = request->completion_blocks;
+        while (item != NULL) {
+            if (!img && item->want_default) {
+                img = impl->default_cover;
+                if (img != NULL) {
+                    gobj_ref (img);
+                }
+            }
+
+            item->completion_block (img);
+            item = item->next;
+        }
+    }
     if (img != NULL) {
         gobj_unref (img);
         img = NULL;
     }
-    Block_release (completionBlock);
-    free (user_data);
+    g_hash_table_remove (user_data->impl->pending_requests, user_data->key);
 
-    // Free the query -- it's fast, so it's OK to free it on main queue
-    deadbeef->pl_item_unref (query->track);
-    free (query);
+    _cleanup_query(query);
 
     // Release the cover on background queue
     if (cover != NULL) {
@@ -264,46 +280,22 @@ _cover_loaded_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         return;
     }
 
-    gtkui_dispatch_on_main (^{
-        // Prevent spurious loading of the same image. The load is already scheduled, so we should just wait for it.
-        char *key = _cache_key_for_track (impl, query->track);
-        gboolean should_wait =
-            gobj_cache_get_should_wait (impl->cache, key) || (gobj_cache_get (impl->cache, key) != NULL);
-
-        if (should_wait) {
-            // append to the end of loader queue
-            dispatch_async (impl->loader_queue, ^{
-                gtkui_dispatch_on_main (^{
-                    GdkPixbuf *img = GDK_PIXBUF (gobj_cache_get (impl->cache, key));
-                    _callback_and_cleanup (query, cover, img);
-                    free (key);
-                });
-            });
+    // Load the image on background queue
+    dispatch_async (impl->loader_queue, ^{
+        if (impl->is_terminating) {
+            _cleanup_query (query);
             return;
         }
-        else {
-            gobj_cache_set_should_wait (impl->cache, key, TRUE);
-            free (key);
+
+        __block GdkPixbuf *img = NULL;
+
+        if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
+            img = _load_image_from_cover (impl, cover);
         }
 
-        // Load the image on background queue
-        dispatch_async (impl->loader_queue, ^{
-            if (impl->is_terminating) {
-                _cleanup_query (query);
-                return;
-            }
-
-            __block GdkPixbuf *img = NULL;
-
-            if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
-                query_userdata_t *user_data = query->user_data;
-                img = _load_image_from_cover (impl, cover, user_data->want_default);
-            }
-
-            // Update the UI on main queue
-            gtkui_dispatch_on_main (^{
-                _callback_and_cleanup (query, cover, img);
-            });
+        // Update the UI on main queue
+        gtkui_dispatch_on_main (^{
+            _callback_and_cleanup (query, cover, img);
         });
     });
 }
@@ -326,6 +318,19 @@ covermanager_shared_free (void) {
     }
 }
 
+static void
+_cover_request_free(gpointer data) {
+    cover_request_t *req = data;
+    cover_completion_block_list_item_t *item = req->completion_blocks;
+    while (item != NULL) {
+        cover_completion_block_list_item_t *next = item->next;
+        Block_release(item->completion_block);
+        free (item);
+        item = next;
+    }
+    free(req);
+}
+
 covermanager_t *
 covermanager_new (void) {
     covermanager_t *impl = calloc (1, sizeof (covermanager_t));
@@ -338,11 +343,14 @@ covermanager_new (void) {
 
     impl->cache = gobj_cache_new (CACHE_SIZE);
 
+    impl->pending_requests = g_hash_table_new_full(g_str_hash, g_str_equal, free, _cover_request_free);
+
     impl->image_size = deadbeef->conf_get_int ("artwork.image_size", 256);
 
     impl->name_tf = deadbeef->tf_compile ("%_path_raw%");
 
     impl->loader_queue = dispatch_queue_create ("CoverManagerLoaderQueue", NULL);
+
 
     if (impl->plugin != NULL) {
         impl->plugin->add_listener (_artwork_listener, impl);
@@ -355,6 +363,12 @@ covermanager_new (void) {
 
 void
 covermanager_free (covermanager_t *impl) {
+
+    if (impl->loader_queue) {
+        dispatch_release(impl->loader_queue);
+        impl->loader_queue = NULL;
+    }
+
     if (impl->plugin != NULL) {
         impl->plugin->remove_listener (_artwork_listener, impl);
         impl->plugin = NULL;
@@ -368,6 +382,11 @@ covermanager_free (covermanager_t *impl) {
         impl->cache = NULL;
     }
 
+    if (impl->pending_requests != NULL) {
+        g_hash_table_destroy(impl->pending_requests);
+        impl->pending_requests = NULL;
+    }
+
     free (impl->default_cover_path);
     impl->default_cover_path = NULL;
 
@@ -376,6 +395,25 @@ covermanager_free (covermanager_t *impl) {
     }
 
     free (impl);
+}
+
+static gboolean
+_add_pending_request (covermanager_t *impl, const char *key, covermanager_completion_block_t completion_block, int want_default) {
+    gboolean result = FALSE;
+    cover_request_t *request = g_hash_table_lookup (impl->pending_requests, key);
+    if (request == NULL) {
+        request = calloc(sizeof(cover_request_t), 1);
+        g_hash_table_insert(impl->pending_requests, strdup(key), request);
+        result = TRUE; // new request
+    }
+
+    cover_completion_block_list_item_t *item = calloc(sizeof(cover_completion_block_list_item_t), 1);
+    item->want_default = want_default;
+    item->completion_block = Block_copy(completion_block);
+    item->next = request->completion_blocks;
+    request->completion_blocks = item;
+
+    return result;
 }
 
 static GdkPixbuf *
@@ -392,20 +430,23 @@ _cover_for_track (
 
     char *key = _cache_key_for_track (impl, track);
     GdkPixbuf *cover = GDK_PIXBUF (gobj_cache_get (impl->cache, key));
-    free (key);
-    key = NULL;
 
     // FIXME: need to check whether the cache has NULL object for the key
     if (cover != NULL) {
         // completion_block is not executed if the image is non-nil, to avoid double drawing.
         // The caller must release user data if the returned image is not nil.
+        free (key);
+        key = NULL;
         return cover;
     }
 
-    if (gobj_cache_get_should_wait (impl->cache, key)) {
+    gboolean is_new_request = _add_pending_request (impl, key, completion_block, want_default);
+
+    if (!is_new_request) {
+        free (key);
+        key = NULL;
         return NULL;
     }
-
     ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
     query->_size = sizeof (ddb_cover_query_t);
     query->track = track;
@@ -413,10 +454,10 @@ _cover_for_track (
     query->source_id = source_id;
 
     query_userdata_t *data = calloc (1, sizeof (query_userdata_t));
-    data->completion_block = (dispatch_block_t)Block_copy (completion_block);
-    data->want_default = want_default;
     data->impl = impl;
+    data->key = key; // transfer ownership here, no need to free
     query->user_data = (void *)data;
+    key = NULL;
 
     impl->plugin->cover_get (query, _cover_loaded_callback);
 
