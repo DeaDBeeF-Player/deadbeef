@@ -54,6 +54,7 @@ static scriptableModel_t *_selectViewScriptableModel;
 static gtkScriptableSelectViewControllerDelegate_t _selectViewDelegate;
 
 static scriptableItem_t *_current_dsp_chain;
+static gboolean _is_saving_new_preset;
 
 static void
 _update_current_dsp_chain(ddb_dsp_context_t *chain) {
@@ -82,11 +83,14 @@ _save_as_preset(GtkButton *button,
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
         const char *name = gtk_entry_get_text (GTK_ENTRY (e));
+        _is_saving_new_preset = TRUE;
         scriptableItem_t *preset = scriptableItemClone (_current_dsp_chain);
         scriptableItem_t *presetList = scriptableDspRoot(deadbeef->get_shared_scriptable_root());
         scriptableItemSetUniqueNameUsingPrefixAndRoot(preset, name, presetList);
         scriptableItemAddSubItem(presetList, preset);
         gtkScriptableSelectViewControllerSetScriptable(_selectView, presetList);
+        gtkScriptableSelectViewControllerSelectItem(_selectView, preset);
+        _is_saving_new_preset = FALSE;
     }
     gtk_widget_destroy (dlg);
 }
@@ -109,6 +113,9 @@ static void _list_scriptable_did_change (gtkScriptableListEditViewController_t *
 }
 
 static void _selection_did_change (gtkScriptableSelectViewController_t *vc, scriptableItem_t *item, void *context) {
+    if (_is_saving_new_preset) {
+        return;
+    }
     ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (item);
     deadbeef->streamer_set_dsp_chain (chain);
 
