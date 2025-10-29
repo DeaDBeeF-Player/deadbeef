@@ -31,7 +31,6 @@ typedef struct {
     char *key;
     time_t atime;
     GObject *obj;
-    gboolean should_wait;
 } gobj_cache_item_t;
 
 typedef struct gobj_cache_impl_s {
@@ -98,7 +97,7 @@ gobj_cache_free (gobj_cache_t restrict cache) {
 }
 
 static void
-_gobj_cache_set_int (gobj_cache_t restrict cache, const char * restrict key, GObject *obj, gboolean should_wait) {
+_gobj_cache_set_int (gobj_cache_t restrict cache, const char * restrict key, GObject *obj) {
     if (key == NULL) {
         return;
     }
@@ -124,7 +123,6 @@ _gobj_cache_set_int (gobj_cache_t restrict cache, const char * restrict key, GOb
                 gobj_unref(item->obj);
             }
             item->obj = obj;
-            item->should_wait = should_wait;
             return;
         }
 
@@ -148,12 +146,11 @@ _gobj_cache_set_int (gobj_cache_t restrict cache, const char * restrict key, GOb
     reuse->atime = time(NULL);
     reuse->key = strdup(key);
     reuse->obj = obj;
-    reuse->should_wait = should_wait;
 }
 
 void
 gobj_cache_set (gobj_cache_t restrict cache, const char * restrict key, GObject *obj) {
-    _gobj_cache_set_int(cache, key, obj, FALSE);
+    _gobj_cache_set_int(cache, key, obj);
 }
 
 static gobj_cache_item_t *
@@ -184,23 +181,6 @@ gobj_cache_get (gobj_cache_t cache, const char *key) {
         gobj_ref(item->obj);
     }
     return item->obj;
-}
-
-void
-gobj_cache_set_should_wait (gobj_cache_t cache, const char *key, gboolean should_wait) {
-    gobj_cache_item_t *item = _gobj_cache_get_int (cache,key);
-    if (!item || !should_wait) {
-        _gobj_cache_set_int(cache, key, NULL, should_wait);
-    }
-}
-
-gboolean
-gobj_cache_get_should_wait (gobj_cache_t cache, const char *key) {
-    gobj_cache_item_t *item = _gobj_cache_get_int(cache, key);
-    if (!item) {
-        return FALSE;
-    }
-    return item->should_wait;
 }
 
 void

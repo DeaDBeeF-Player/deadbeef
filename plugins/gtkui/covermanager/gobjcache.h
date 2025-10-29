@@ -50,12 +50,6 @@ GObject *
 gobj_cache_get (gobj_cache_t cache, const char *key);
 
 void
-gobj_cache_set_should_wait (gobj_cache_t cache, const char *key, gboolean should_wait);
-
-gboolean
-gobj_cache_get_should_wait (gobj_cache_t cache, const char *key);
-
-void
 gobj_cache_remove (gobj_cache_t cache, const char *key);
 
 void
