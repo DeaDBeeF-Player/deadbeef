@@ -301,7 +301,8 @@ typedef struct {
     uint32_t (*w_get_type_flags) (const char *type);
 #endif
 #if (DDB_GTKUI_API_LEVEL >= 206)
-    /// Deserialize a widget from the config (thread-safe).
+    /// Deserialize a widget from the config.
+    /// Should be called from the main thread, and no need for conf_lock/conf_unlock.
     /// May return NULL on errors or if the key is not in the config.
     ddb_gtkui_widget_t *(*conf_get_widget) (const char *key);
 
@@ -311,7 +312,7 @@ typedef struct {
     int (*conf_set_widget) (const char *key, ddb_gtkui_widget_t *val);
 
     /// Sends a message to a widget and its children recursively.
-    void (*w_send_message) (ddb_gtkui_widget_t *w,uint32_t id,uintptr_t ctx,uint32_t p1,uint32_t p2);
+    void (*w_send_message) (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 #endif
 } ddb_gtkui_t;
 

@@ -695,22 +695,22 @@ w_create_from_conf (const char *key) {
     {
         deadbeef->conf_lock ();
         const char *layout_str_conf = deadbeef->conf_get_str_fast (key, NULL);
-        if(layout_str_conf) {
+        if (layout_str_conf != NULL) {
             layout_str = strdup (layout_str_conf);
         }
         deadbeef->conf_unlock ();
     }
-    if (!layout_str) return NULL;
+    if (layout_str == NULL) return NULL;
 
     ddb_gtkui_widget_t *w = NULL;
     {
         json_t *layout = json_loads (layout_str, 0, NULL);
-        if (layout) {
+        if (layout != NULL) {
             w_create_from_json (layout, &w);
             json_delete (layout);
         }
     }
-    free(layout_str);
+    free (layout_str);
 
     return w;
 }
@@ -720,9 +720,15 @@ w_save_to_conf (const char *key, ddb_gtkui_widget_t *val) {
     int out = 0;
 
     json_t *layout = _save_widget_to_json (val);
-    if (!layout) out = -1; else {
+    if (layout == NULL) {
+        out = -1;
+    }
+    else {
         char *layout_str = json_dumps (layout, JSON_COMPACT);
-        if (!layout_str) out = -1; else {
+        if (layout_str == NULL) {
+            out = -1;
+        }
+        else {
             deadbeef->conf_set_str (key, layout_str);
             free (layout_str);
         }
