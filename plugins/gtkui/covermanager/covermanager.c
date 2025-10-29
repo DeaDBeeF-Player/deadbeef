@@ -39,7 +39,7 @@ extern DB_functions_t *deadbeef;
 
 struct covermanager_s {
     ddb_artwork_plugin_t *plugin;
-    gobj_cache_t *cache;
+    gobj_cache_t cache;
     dispatch_queue_t loader_queue;
     char *name_tf;
     char *default_cover_path;

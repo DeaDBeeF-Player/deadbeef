@@ -34,7 +34,7 @@ typedef struct {
     gboolean should_wait;
 } gobj_cache_item_t;
 
-typedef struct {
+typedef struct gobj_cache_impl_s {
     gobj_cache_item_t *items;
     int count;
 } gobj_cache_impl_t;

@@ -26,8 +26,8 @@
 
 #include <gtk/gtk.h>
 
-typedef void *gobj_cache_t;
-
+struct gobj_cache_impl_s;
+typedef struct gobj_cache_impl_s *gobj_cache_t;
 guint
 gobj_get_refc (gpointer ptr);
 
