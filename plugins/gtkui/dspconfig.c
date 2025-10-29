@@ -111,6 +111,11 @@ static void _list_scriptable_did_change (gtkScriptableListEditViewController_t *
 static void _selection_did_change (gtkScriptableSelectViewController_t *vc, scriptableItem_t *item, void *context) {
     ddb_dsp_context_t *chain = scriptableDspConfigToDspChain (item);
     deadbeef->streamer_set_dsp_chain (chain);
+
+    _update_current_dsp_chain(chain);
+
+    gtkScriptableListEditViewControllerSetScriptable(_listView, _current_dsp_chain);
+
     deadbeef->dsp_preset_free (chain);
 }
 
