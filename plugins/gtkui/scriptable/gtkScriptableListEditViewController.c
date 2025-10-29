@@ -70,6 +70,12 @@ static void
 _config_did_activate (GtkButton *button, gpointer user_data);
 
 static void
+_did_activate_row(GtkTreeView *tree_view,
+                  GtkTreePath *path,
+                  GtkTreeViewColumn *column,
+                  gpointer user_data);
+
+static void
 _duplicate_did_activate (GtkButton *button, gpointer user_data);
 
 static void
@@ -226,6 +232,8 @@ gtkScriptableListEditViewControllerLoad (gtkScriptableListEditViewController_t *
 
     GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list_view));
     g_signal_connect ((gpointer)selection, "changed", G_CALLBACK (_list_selection_did_change), self);
+
+    g_signal_connect(list_view, "row-activated", G_CALLBACK(_did_activate_row), self);
 
     _reload_data (self);
 }
@@ -536,9 +544,7 @@ _remove_did_activate (GtkButton *button, gpointer user_data) {
 }
 
 static void
-_config_did_activate (GtkButton *button, gpointer user_data) {
-    gtkScriptableListEditViewController_t *self = user_data;
-
+_configure_for_selected_row(gtkScriptableListEditViewController_t *self) {
     int index = _get_selected_index (self);
     if (index < 0) {
         return;
@@ -556,13 +562,13 @@ _config_did_activate (GtkButton *button, gpointer user_data) {
         free (title);
 
         gtkScriptableListEditWindowControllerSetDelegate (
-            self->list_editor_window_controller,
-            &self->list_editor_window_delegate,
-            self);
+                                                          self->list_editor_window_controller,
+                                                          &self->list_editor_window_delegate,
+                                                          self);
 
         gtkScriptableListEditWindowControllerRunModal (
-            self->list_editor_window_controller,
-            GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
+                                                       self->list_editor_window_controller,
+                                                       GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
     }
     else {
         self->property_sheet_editor_window_controller = gtkScriptablePropertySheetEditWindowControllerNew();
@@ -573,14 +579,29 @@ _config_did_activate (GtkButton *button, gpointer user_data) {
         free (title);
 
         gtkScriptablePropertySheetEditWindowControllerSetDelegate (
-                                                          self->property_sheet_editor_window_controller,
-                                                          &self->property_sheet_editor_window_delegate,
-                                                          self);
+                                                                   self->property_sheet_editor_window_controller,
+                                                                   &self->property_sheet_editor_window_delegate,
+                                                                   self);
 
         gtkScriptablePropertySheetEditWindowControllerRunModal (
-                                                       self->property_sheet_editor_window_controller,
-                                                       GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
+                                                                self->property_sheet_editor_window_controller,
+                                                                GTK_WINDOW (gtk_widget_get_toplevel (self->view)));
     }
+}
+
+static void
+_config_did_activate (GtkButton *button, gpointer user_data) {
+    gtkScriptableListEditViewController_t *self = user_data;
+    _configure_for_selected_row(self);
+}
+
+static void
+_did_activate_row(GtkTreeView *tree_view,
+                 GtkTreePath *path,
+                 GtkTreeViewColumn *column,
+                 gpointer user_data) {
+    gtkScriptableListEditViewController_t *self = user_data;
+    _configure_for_selected_row(self);
 }
 
 static void
