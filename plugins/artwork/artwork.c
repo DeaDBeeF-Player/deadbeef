@@ -870,7 +870,7 @@ process_query (ddb_cover_info_t *cover) {
 
     if (cover->priv->album_cache_path[0]) {
         res = stat (cover->priv->album_cache_path, &cache_stat);
-        if (res == 0 && cache_stat.st_size != 0 && cache_stat.st_mtime >= cache_reset_time) {
+        if (res == 0 && cache_stat.st_size != 0/* && cache_stat.st_mtime >= cache_reset_time*/) {
             cover->image_filename = strdup (cover->priv->album_cache_path);
             cover->cover_found = 1;
             return;

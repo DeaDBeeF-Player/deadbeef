@@ -68,6 +68,7 @@ remove_cache_item (const char *cache_path) {
     (void)unlink (cache_path);
 }
 
+#if 0
 static int
 path_ok (const char *entry) {
     return strcmp (entry, ".") && strcmp (entry, "..");
@@ -81,9 +82,11 @@ should_terminate(void) {
     });
     return terminate;
 }
+#endif
 
 static void
 cache_cleaner_worker (void) {
+#if 0
     char covers_path[PATH_MAX];
     if (make_cache_root_path (covers_path, sizeof (covers_path))) {
         return;
@@ -120,6 +123,7 @@ cache_cleaner_worker (void) {
         closedir (covers_dir);
         covers_dir = NULL;
     }
+#endif
 }
 
 void

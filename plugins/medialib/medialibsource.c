@@ -271,6 +271,7 @@ ml_is_source_enabled (ddb_mediasource_source_t *_source) {
 
 void
 ml_refresh (ddb_mediasource_source_t *_source) {
+#if 0
     medialib_source_t *source = (medialib_source_t *)_source;
 
     __block int64_t scanner_current_index = -1;
@@ -326,6 +327,7 @@ ml_refresh (ddb_mediasource_source_t *_source) {
 
         scanner_thread (source, conf);
     });
+#endif
 }
 
 void
