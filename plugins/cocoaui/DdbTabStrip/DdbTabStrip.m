@@ -33,6 +33,7 @@
 extern DB_functions_t *deadbeef;
 
 static const int no_tab = -1;
+static const NSPoint no_point = { .x = -100000, .y = -100000 };
 
 static const int text_left_padding = 24;
 static const int text_right_padding = 24;
@@ -198,7 +199,7 @@ static const int close_btn_left_offs = 8;
     self.clickedTabIndex = no_tab;
     self.autoresizesSubviews = NO;
 
-    _lastMouseCoord.x = -100000;
+    _lastMouseCoord = no_point;
     _pointedTab = no_tab;
 
     [self setupTrackingArea];
@@ -456,7 +457,7 @@ static const int close_btn_left_offs = 8;
                     [clipPath appendBezierPathWithRect:clipRight];
                     [clipPath setClip];
                 }
-                int undercursor = [self tabUnderCursor:_lastMouseCoord.x];
+                int undercursor = [self tabUnderCursor:_lastMouseCoord];
                 if (undercursor == _dragging) {
                     [self updatePointedTab:idx];
                 }
@@ -506,7 +507,13 @@ static const int close_btn_left_offs = 8;
     return NSMakeRect(0, 0, 0, 0);
 }
 
--(int)tabUnderCursor:(int)x {
+-(int)tabUnderCursor:(NSPoint)point {
+    if (NSEqualPoints(point, no_point)) {
+        return no_tab;
+    }
+
+    int x = point.x;
+
     int hscroll = self.scrollPos;
 
     int idx;
@@ -606,7 +613,7 @@ static const int close_btn_left_offs = 8;
 - (void)mouseDown:(NSEvent *)event {
     NSPoint coord = [self convertPoint:event.locationInWindow fromView:nil];
     _lastMouseCoord = coord;
-    _clickedTabIndex = [self tabUnderCursor:coord.x];
+    _clickedTabIndex = [self tabUnderCursor:coord];
     if (event.type == NSEventTypeLeftMouseDown) {
 
         if (_clickedTabIndex != no_tab) {
@@ -672,7 +679,7 @@ static const int close_btn_left_offs = 8;
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
     NSPoint coord = [self convertPoint:theEvent.locationInWindow fromView:nil];
-    _clickedTabIndex = [self tabUnderCursor:coord.x];
+    _clickedTabIndex = [self tabUnderCursor:coord];
     if ((theEvent.type == NSEventTypeRightMouseDown || theEvent.type == NSEventTypeLeftMouseDown)
         && (theEvent.buttonNumber == 1
             || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSEventModifierFlagControl)))) {
@@ -701,7 +708,7 @@ static const int close_btn_left_offs = 8;
     }
 
     NSPoint coord = [self convertPoint:event.locationInWindow fromView:nil];
-    _clickedTabIndex = [self tabUnderCursor:coord.x];
+    _clickedTabIndex = [self tabUnderCursor:coord];
     if (event.type == NSEventTypeOtherMouseDown) {
         if (_clickedTabIndex == no_tab) {
             // new tab
@@ -821,7 +828,7 @@ static const int close_btn_left_offs = 8;
 }
 
 -(void)mouseMovedHandler {
-    int tab = [self tabUnderCursor:_lastMouseCoord.x];
+    int tab = [self tabUnderCursor:_lastMouseCoord];
     if (tab >= 0) {
         NSString *s = plt_get_title_wrapper (tab);
 
@@ -847,7 +854,7 @@ static const int close_btn_left_offs = 8;
 }
 
 -(void)mouseExited:(NSEvent *)event {
-    _lastMouseCoord.x = -100000;
+    _lastMouseCoord = no_point;
     if (_pointedTab != no_tab) {
         [self updatePointedTab:no_tab];
         self.needsDisplay = YES;
@@ -870,7 +877,7 @@ static const int close_btn_left_offs = 8;
         if (self == nil) {
             return;
         }
-        int tabUnderCursor = [self tabUnderCursor: coord.x];
+        int tabUnderCursor = [self tabUnderCursor:coord];
         if (tabUnderCursor != no_tab) {
             deadbeef->plt_set_curr_idx (tabUnderCursor);
         }
