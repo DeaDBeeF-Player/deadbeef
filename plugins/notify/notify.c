@@ -253,6 +253,10 @@ _load_image (const char *image_filename) {
         gdk_pixbuf_loader_close (loader, NULL);
         img = gdk_pixbuf_loader_get_pixbuf (loader);
         free (buf);
+        if (img) {
+            g_object_ref (img);
+        }
+        g_object_unref (loader);
     }
 
     if (img == NULL) {
