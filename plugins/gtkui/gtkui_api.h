@@ -50,7 +50,7 @@ typedef void GtkWidget;
 #endif
 
 #define DDB_GTKUI_API_VERSION_MAJOR 2
-#define DDB_GTKUI_API_VERSION_MINOR 5
+#define DDB_GTKUI_API_VERSION_MINOR 6
 
 #define DDB_GTKUI_DEPRECATED(x)
 
@@ -111,7 +111,7 @@ typedef struct ddb_gtkui_widget_s {
     struct ddb_gtkui_widget_s *parent;
 
     GtkWidget *widget;
-    
+
     uint32_t flags;
 
     // all the functions here are overloads, so they are not mandatory
@@ -299,6 +299,22 @@ typedef struct {
 #if (DDB_GTKUI_API_LEVEL >= 205)
     /// Get flags passed to @c w_reg_widget for this type.
     uint32_t (*w_get_type_flags) (const char *type);
+#endif
+#if (DDB_GTKUI_API_LEVEL >= 206)
+    /// Deserialize a widget from the config.
+    /// Works similarly as the conf_get_* functions.
+    /// Should be called from the main thread, and no need for conf_lock/conf_unlock.
+    /// May return NULL on errors or if the key is not found in the config.
+    ddb_gtkui_widget_t *(*w_load_layout_from_conf_key) (const char *key);
+
+    /// Serialize a widget to the config.
+    /// Works similarly as the conf_set_* functions.
+    /// val must be non-NULL.
+    /// Returns 0 if successful.
+    int (*w_save_layout_to_conf_key) (const char *key, ddb_gtkui_widget_t *val);
+
+    /// Sends a message to a widget and its children recursively.
+    void (*w_send_message) (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 #endif
 } ddb_gtkui_t;
 
