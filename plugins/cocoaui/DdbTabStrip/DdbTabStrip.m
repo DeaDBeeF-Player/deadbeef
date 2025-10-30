@@ -571,8 +571,14 @@ static const int close_btn_left_offs = 8;
 }
 
 -(void)scrollWheel:(NSEvent*)event {
-    CGFloat newScroll = self.scrollPos + event.deltaY;
-    newScroll -= event.deltaY * 4;
+    CGFloat newScroll;
+    if (event.hasPreciseScrollingDeltas) {
+        // Precision Scrolling - Apple Trackpad and Magic mouse.
+        newScroll = self.scrollPos - (event.scrollingDeltaX + event.scrollingDeltaY);
+    } else {
+        // Non precision scrolling - discrete wheel scroolling mice.
+        newScroll = self.scrollPos - (event.deltaX + event.deltaY) * 4;
+    }
     self.scrollPos = newScroll;
     self.needsDisplay = YES;
 }
