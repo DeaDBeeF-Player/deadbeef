@@ -32,6 +32,7 @@
 
 extern DB_functions_t *deadbeef;
 
+static const int no_tab = -1;
 
 static const int text_left_padding = 24;
 static const int text_right_padding = 24;
@@ -193,12 +194,12 @@ static const int close_btn_left_offs = 8;
 }
 
 - (void)setup {
-    _dragging = -1;
-    self.clickedTabIndex = -1;
+    _dragging = no_tab;
+    self.clickedTabIndex = no_tab;
     self.autoresizesSubviews = NO;
 
     _lastMouseCoord.x = -100000;
-    _pointedTab = -1;
+    _pointedTab = no_tab;
 
     [self setupTrackingArea];
 
@@ -358,7 +359,7 @@ static const int close_btn_left_offs = 8;
     [[NSGraphicsContext currentContext] restoreGraphicsState];
 
     // close button
-    if (idx == _pointedTab && (_dragging == -1 || !self.dragReallyBegan)) {
+    if (idx == _pointedTab && (_dragging == no_tab || !self.dragReallyBegan)) {
         NSRect atRect = [self tabCloseButtonRectForTabRect:area];
         NSPoint from = atRect.origin;
         from.x += 2;
@@ -399,7 +400,7 @@ static const int close_btn_left_offs = 8;
     int x = -hscroll;
     int w = 0;
     int tab_selected = deadbeef->plt_get_curr_idx ();
-    if (tab_selected == -1) {
+    if (tab_selected == no_tab) {
         return;
     }
 
@@ -468,7 +469,7 @@ static const int close_btn_left_offs = 8;
     x = -hscroll + tabs_left_margin;
 
     // draw tabs on the left
-    int c = tab_selected == -1 ? cnt : tab_selected;
+    int c = tab_selected == no_tab ? cnt : tab_selected;
     for (idx = 0; idx < c; idx++) {
         w = widths[idx];
         NSRect area = [self tabRectForXPos:x width:w height:self.bounds.size.height];
@@ -476,7 +477,7 @@ static const int close_btn_left_offs = 8;
         x += w - tab_overlap_size;
     }
     // draw tabs on the right
-    if (tab_selected != -1 && tab_selected != cnt-1) {
+    if (tab_selected != no_tab && tab_selected != cnt-1) {
         x = -hscroll + tabs_left_margin;
         for (idx = 0; idx < cnt; idx++) {
             x += widths[idx] - tab_overlap_size;
@@ -519,7 +520,7 @@ static const int close_btn_left_offs = 8;
             return idx;
         }
     }
-    return -1;
+    return no_tab;
 }
 
 -(void)scrollToTab:(int)tab {
@@ -555,9 +556,9 @@ static const int close_btn_left_offs = 8;
 }
 
 -(void)closePointedTab {
-    if (_pointedTab != -1) {
+    if (_pointedTab != no_tab) {
         self.clickedTabIndex = _pointedTab;
-        _pointedTab = -1;
+        _pointedTab = no_tab;
         [self closePlaylist:self];
     }
 }
@@ -608,7 +609,7 @@ static const int close_btn_left_offs = 8;
     _clickedTabIndex = [self tabUnderCursor:coord.x];
     if (event.type == NSEventTypeLeftMouseDown) {
 
-        if (_clickedTabIndex != -1) {
+        if (_clickedTabIndex != no_tab) {
             if ([self handleClickedTabCloseRect]) {
                 return;
             }
@@ -702,7 +703,7 @@ static const int close_btn_left_offs = 8;
     NSPoint coord = [self convertPoint:event.locationInWindow fromView:nil];
     _clickedTabIndex = [self tabUnderCursor:coord.x];
     if (event.type == NSEventTypeOtherMouseDown) {
-        if (_clickedTabIndex == -1) {
+        if (_clickedTabIndex == no_tab) {
             // new tab
             int playlist = cocoaui_add_new_playlist ();
             if (playlist != -1) {
@@ -711,7 +712,7 @@ static const int close_btn_left_offs = 8;
             return;
         }
         else if (deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1)) {
-            if (_clickedTabIndex != -1) {
+            if (_clickedTabIndex != no_tab) {
                 [self closePlaylist:self];
             }
         }
@@ -723,9 +724,9 @@ static const int close_btn_left_offs = 8;
     if (event.type == NSEventTypeLeftMouseUp) {
         if (_prepare || _dragging >= 0) {
             int dragged = _dragging;
-            _dragging = -1;
+            _dragging = no_tab;
             _prepare = 0;
-            if (dragged != -1) {
+            if (dragged != no_tab) {
                 [self updatePointedTab:dragged];
             }
             self.needsDisplay = YES;
@@ -787,7 +788,7 @@ static const int close_btn_left_offs = 8;
         int idx;
         int hscroll = self.scrollPos;
         int x = -hscroll + tabs_left_margin;
-        int inspos = -1;
+        int inspos = no_tab;
         int cnt = deadbeef->plt_get_count ();
         int dw = [self tabWidthForIndex:_dragging] - tab_overlap_size;
         for (idx = 0; idx < cnt; idx++) {
@@ -847,8 +848,8 @@ static const int close_btn_left_offs = 8;
 
 -(void)mouseExited:(NSEvent *)event {
     _lastMouseCoord.x = -100000;
-    if (_pointedTab != -1) {
-        [self updatePointedTab:-1];
+    if (_pointedTab != no_tab) {
+        [self updatePointedTab:no_tab];
         self.needsDisplay = YES;
     }
 }
@@ -870,7 +871,7 @@ static const int close_btn_left_offs = 8;
             return;
         }
         int tabUnderCursor = [self tabUnderCursor: coord.x];
-        if (tabUnderCursor != -1) {
+        if (tabUnderCursor != no_tab) {
             deadbeef->plt_set_curr_idx (tabUnderCursor);
         }
         self.pickDragTimer = nil;
@@ -924,7 +925,7 @@ static const int close_btn_left_offs = 8;
 
 - (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
     deadbeef->plt_remove (self.clickedTabIndex);
-    self.clickedTabIndex = -1;
+    self.clickedTabIndex = no_tab;
     self.needsDisplay = YES; // NOTE: this was added to redraw after a context menu
 }
 
