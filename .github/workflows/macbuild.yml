@@ -14,7 +14,7 @@ jobs:
     - name: Select Xcode version
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '16'
+        xcode-version: '26'
     - name: Build for macOS
       run: BUILD_OS_NAME=osx ci_scripts/build.sh
     - name: Publish Test Results
