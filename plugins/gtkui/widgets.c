@@ -739,7 +739,9 @@ w_save_to_conf (const char *key, ddb_gtkui_widget_t *val) {
 
 void
 w_save (void) {
-    if (!rootwidget) return;
+    if (rootwidget == NULL) {
+        return;
+    }
     w_save_to_conf (DDB_GTKUI_CONF_LAYOUT, rootwidget->children);
     deadbeef->conf_save ();
 }
