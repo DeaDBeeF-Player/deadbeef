@@ -41,6 +41,7 @@ extern int design_mode;
 typedef enum {
     MODE_SELECTED,
     MODE_PLAYING,
+    MODE_PLAYING_OR_SELECTED,
 } albumart_mode_t;
 
 typedef struct {
@@ -59,6 +60,7 @@ typedef struct {
     GtkWidget *menu;
     GtkWidget *mode_playing_track;
     GtkWidget *mode_selected_track;
+    GtkWidget *mode_playing_or_selected_track;
 } w_albumart_t;
 
 static gboolean
@@ -78,6 +80,13 @@ _update (w_albumart_t *w) {
 
     ddb_playItem_t *it = NULL;
     switch (w->mode) {
+    case MODE_PLAYING_OR_SELECTED: {
+        it = deadbeef->streamer_get_playing_track_safe ();
+        if(it != NULL) {
+            break;
+        }
+        // intentional fallthrough otherwise
+    }
     case MODE_SELECTED: {
         int cursor = deadbeef->pl_get_cursor (PL_MAIN);
         if (cursor != -1) {
@@ -244,6 +253,7 @@ _menu_update (w_albumart_t *s) {
     s->updating_menu = TRUE;
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (s->mode_playing_track), s->mode == MODE_PLAYING);
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (s->mode_selected_track), s->mode == MODE_SELECTED);
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (s->mode_playing_or_selected_track), s->mode == MODE_PLAYING_OR_SELECTED);
     s->updating_menu = FALSE;
 }
 
@@ -277,6 +287,10 @@ _menu_activate (GtkWidget *self, gpointer user_data) {
         s->mode = MODE_SELECTED;
         _update (s);
     }
+    else if (self == s->mode_playing_or_selected_track) {
+        s->mode = MODE_PLAYING_OR_SELECTED;
+        _update (s);
+    }
 }
 
 static void
@@ -289,6 +303,9 @@ _deserialize_from_keyvalues (ddb_gtkui_widget_t *widget, const char **keyvalues)
         if (!strcmp (keyvalues[i], "mode")) {
             if (!strcmp (keyvalues[i + 1], "playing")) {
                 s->mode = MODE_PLAYING;
+            }
+            else if (!strcmp (keyvalues[i + 1], "playing_or_selected")) {
+                s->mode = MODE_PLAYING_OR_SELECTED;
             }
         }
     }
@@ -307,6 +324,9 @@ _serialize_to_keyvalues (ddb_gtkui_widget_t *widget) {
         break;
     case MODE_PLAYING:
         keyvalues[1] = "playing";
+        break;
+    case MODE_PLAYING_OR_SELECTED:
+        keyvalues[1] = "playing_or_selected";
         break;
     }
     return keyvalues;
@@ -376,11 +396,17 @@ w_albumart_create (void) {
     gtk_check_menu_item_set_draw_as_radio (GTK_CHECK_MENU_ITEM (w->mode_selected_track), TRUE);
     gtk_widget_show (w->mode_selected_track);
 
+    w->mode_playing_or_selected_track = gtk_check_menu_item_new_with_label (_ ("Playing or Selected Track"));
+    gtk_check_menu_item_set_draw_as_radio (GTK_CHECK_MENU_ITEM (w->mode_playing_or_selected_track), TRUE);
+    gtk_widget_show (w->mode_playing_or_selected_track);
+
     gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), w->mode_playing_track, 0);
     gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), w->mode_selected_track, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), w->mode_playing_or_selected_track, 2);
 
     g_signal_connect ((gpointer)w->mode_playing_track, "activate", G_CALLBACK (_menu_activate), w);
     g_signal_connect ((gpointer)w->mode_selected_track, "activate", G_CALLBACK (_menu_activate), w);
+    g_signal_connect ((gpointer)w->mode_playing_or_selected_track, "activate", G_CALLBACK (_menu_activate), w);
 
     return (ddb_gtkui_widget_t *)w;
 }
