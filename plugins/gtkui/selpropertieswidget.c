@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "gtkui.h"
 #include "support.h"
 #include "trkproperties.h"
 #include "selpropertieswidget.h"
@@ -49,6 +50,7 @@ typedef struct {
 
     gboolean updating_menu; // suppress menu event handlers
     GtkWidget *menu;
+    GtkWidget *menu_copy;
     GtkWidget *menu_properties;
     GtkWidget *menu_metadata;
 } w_selproperties_t;
@@ -118,6 +120,24 @@ _init (struct ddb_gtkui_widget_s *widget) {
 }
 
 static void
+_menu_copy_activate (GtkWidget* self, gpointer user_data) {
+    w_selproperties_t *s = user_data;
+
+    GtkTreeModel* model;
+    GtkTreeIter iter;
+    if (gtk_tree_selection_get_selected (gtk_tree_view_get_selection (GTK_TREE_VIEW (s->tree)), &model, &iter)) {
+        gchar *buffer;
+        gtk_tree_model_get (model, &iter, META_COL_DISPLAY_VAL, &buffer, -1);
+
+        GdkDisplay *display = gtk_widget_get_display (mainwin);
+        GtkClipboard *clipboard = gtk_clipboard_get_for_display (display, GDK_SELECTION_CLIPBOARD);
+        gtk_clipboard_set_text (clipboard, buffer, -1);
+
+        g_free (buffer);
+    }
+}
+
+static void
 _menu_activate (GtkWidget* self, gpointer user_data) {
     w_selproperties_t *s = user_data;
 
@@ -179,7 +199,7 @@ _button_press (GtkWidget* self, GdkEventButton *event, gpointer user_data) {
     if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
         _menu_update(s);
         gtk_menu_popup_at_pointer (GTK_MENU (s->menu), NULL);
-        return TRUE;
+        return FALSE;
     }
 
     return FALSE;
@@ -319,13 +339,20 @@ w_selproperties_create (void) {
     g_signal_connect ((gpointer)w->tree, "button-press-event", G_CALLBACK (_button_press), w);
 
     w->menu = gtk_menu_new();
+    w->menu_copy = gtk_menu_item_new_with_mnemonic( _("Copy"));
+    gtk_widget_show(w->menu_copy);
+    GtkWidget *sep = gtk_separator_menu_item_new ();
+    gtk_widget_show(sep);
     w->menu_properties = gtk_check_menu_item_new_with_mnemonic( _("Properties"));
     gtk_widget_show(w->menu_properties);
     w->menu_metadata = gtk_check_menu_item_new_with_mnemonic( _("Metadata"));
     gtk_widget_show(w->menu_metadata);
-    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_properties, 0);
-    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_metadata, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_copy, 0);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), sep, 1);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_properties, 2);
+    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), w->menu_metadata, 3);
 
+    g_signal_connect((gpointer)w->menu_copy, "activate", G_CALLBACK(_menu_copy_activate), w);
     g_signal_connect((gpointer)w->menu_properties, "activate", G_CALLBACK(_menu_activate), w);
     g_signal_connect((gpointer)w->menu_metadata, "activate", G_CALLBACK(_menu_activate), w);
 
