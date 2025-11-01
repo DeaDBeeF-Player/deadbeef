@@ -613,7 +613,7 @@
 		      <property name="label" translatable="yes">Stop after queue</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
-		      <signal name="activate" handler="on_stop_after_current_queue" last_modification_time="Mon, 20 Oct 2025 22:51:29 GMT"/>
+		      <signal name="activate" handler="on_stop_after_queue_activate" last_modification_time="Mon, 20 Oct 2025 22:51:29 GMT"/>
 		    </widget>
 		  </child>
 
