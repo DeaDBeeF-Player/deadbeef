@@ -65,13 +65,12 @@ static const int tab_close_btn_size = 12;
 }
 
 @property (nonatomic,readonly) NSColor *tabTextColor;
-@property (nonatomic,nullable) NSDictionary *titleAttributesCurrent;
-@property (nonatomic,readonly) NSDictionary *titleAttributes;
+@property (nonatomic,nullable) NSDictionary *titleAttributes;
 @property (nonatomic) BOOL isDarkMode;
 @property (nonatomic) BOOL isKeyWindow;
-@property (nonatomic,nullable) NSDictionary *titleAttributesSelectedCurrent;
-@property (nonatomic,readonly) NSDictionary *titleAttributesSelected;
-@property (nonatomic,readonly) NSColor *tabBackgroundColor;
+@property (nonatomic,nullable) NSDictionary *titleAttributesSelected;
+@property (nonatomic) NSColor *selectedTabBackgroundColor;
+@property (nonatomic) NSColor *tabBackgroundColor;
 
 @property (nonatomic) BOOL dragReallyBegan;
 
@@ -113,11 +112,11 @@ static const int tab_close_btn_size = 12;
     return textColor;
 }
 
-- (void)updateTitleAttributes {
+- (void)updateDrawingConfiguration {
     NSString *osxMode = [NSUserDefaults.standardUserDefaults stringForKey:@"AppleInterfaceStyle"];
     BOOL isDarkMode = [osxMode isEqualToString:@"Dark"];
 
-    if (isDarkMode == self.isDarkMode && self.window.isKeyWindow == self.isKeyWindow && self.titleAttributesCurrent) {
+    if (isDarkMode == self.isDarkMode && self.window.isKeyWindow == self.isKeyWindow && self.titleAttributes) {
         return;
     }
 
@@ -137,7 +136,7 @@ static const int tab_close_btn_size = 12;
         textColor = [self.accentColor blendedColorWithFraction:0.2 ofColor:NSColor.blackColor];
     }
 
-    self.titleAttributesSelectedCurrent = @{
+    self.titleAttributesSelected = @{
         NSParagraphStyleAttributeName: textStyle,
         NSFontAttributeName:font,
         NSForegroundColorAttributeName:textColor
@@ -150,39 +149,25 @@ static const int tab_close_btn_size = 12;
     font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightMedium];
     textColor = self.tabTextColor;
 
-    self.titleAttributesCurrent = @{
+    self.titleAttributes = @{
         NSParagraphStyleAttributeName: textStyle,
         NSFontAttributeName:font,
         NSForegroundColorAttributeName:textColor
     };
-}
 
-- (NSDictionary *)titleAttributes {
-    return self.titleAttributesCurrent;
-}
+    self.selectedTabBackgroundColor = [
+        [NSColor.windowBackgroundColor blendedColorWithFraction:(self.isDarkMode ? 0.15 : 0.55) ofColor:NSColor.whiteColor] colorWithAlphaComponent:(self.isKeyWindow ? 1 : 0.5)
+    ];
 
-- (NSDictionary *)titleAttributesSelected {
-    return self.titleAttributesSelectedCurrent;
+    self.tabBackgroundColor = [
+        [self backgroundColorWithPercentage:self.isDarkMode ? 0 : 0.1] colorWithAlphaComponent:self.isKeyWindow ? 1 : 0.5
+    ];
 }
 
 - (NSColor *)backgroundColorWithPercentage:(CGFloat)percentage {
     NSColor *baseColor = NSColor.windowBackgroundColor;
     NSColor *blendColor = self.isDarkMode ? NSColor.whiteColor : NSColor.blackColor;
     return [baseColor blendedColorWithFraction:percentage ofColor:blendColor];
-}
-
-- (NSColor *)selectedTabBackgroundColor {
-    BOOL isKey = self.window.isKeyWindow;
-    CGFloat percentage = self.isDarkMode ? 0.15 : 0.55;
-    NSColor *baseColor = NSColor.windowBackgroundColor;
-    NSColor *blendColor = NSColor.whiteColor;
-    NSColor *blendedColor = [baseColor blendedColorWithFraction:percentage ofColor:blendColor];
-    return [blendedColor colorWithAlphaComponent:isKey ? 1 : 0.5];
-}
-
-- (NSColor *)tabBackgroundColor {
-    BOOL isKey = self.window.isKeyWindow;
-    return [[self backgroundColorWithPercentage:self.isDarkMode ? 0 : 0.1] colorWithAlphaComponent:isKey ? 1 : 0.5];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -414,7 +399,7 @@ static const int tab_close_btn_size = 12;
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
 
-    [self updateTitleAttributes];
+    [self updateDrawingConfiguration];
 
     [self.tabBackgroundColor set];
     NSRectFill(self.frame);
