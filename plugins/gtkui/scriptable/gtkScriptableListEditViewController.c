@@ -277,10 +277,11 @@ _update_buttons (gtkScriptableListEditViewController_t *self) {
 
     if (selected_index != -1) {
         scriptableItem_t *item = scriptableItemChildAtIndex (self->scriptable, selected_index);
-        uint64_t flag = scriptableItemFlags (item) & SCRIPTABLE_FLAG_IS_LIST;
-        const char *dlg = scriptableItemConfigDialog (item);
-
-        editable = flag != 0 || dlg != NULL;
+        if (item != NULL) {
+            uint64_t flag = scriptableItemFlags (item) & SCRIPTABLE_FLAG_IS_LIST;
+            const char *dlg = scriptableItemConfigDialog (item);
+            editable = flag != 0 || dlg != NULL;
+        }
     }
 
     gtk_widget_set_sensitive (self->remove_button, enable);
