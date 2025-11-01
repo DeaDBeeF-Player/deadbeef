@@ -2119,7 +2119,7 @@ static DB_plugin_action_t action_preferences = { .title = "Edit/Preferences",
                                                  .callback2 = action_preferences_handler,
                                                  .next = &action_toggle_designmode };
 
-static DB_plugin_action_t action_dsp_preferences = { .title = "DSP Preferences",
+static DB_plugin_action_t action_dsp_preferences = { .title = "Edit/DSP Preferences",
                                                      .name = "dsp_preferences",
                                                      .flags = DB_ACTION_COMMON,
                                                      .callback2 = action_dsp_preferences_handler,
