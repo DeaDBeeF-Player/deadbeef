@@ -115,24 +115,24 @@ static plugin_t *plugins_lowprio_tail;
 #define MAX_PLUGINS 100
 static DB_plugin_t *g_plugins[MAX_PLUGINS+1];
 
-#define MAX_GUI_PLUGINS 10
+#define MAX_GUI_PLUGINS 50
 static char *g_gui_names[MAX_GUI_PLUGINS+1];
 static int g_num_gui_names;
 
 #define MAX_DECODER_PLUGINS 50
 static DB_decoder_t *g_decoder_plugins[MAX_DECODER_PLUGINS+1];
 
-#define MAX_VFS_PLUGINS 10
+#define MAX_VFS_PLUGINS 50
 static DB_vfs_t *g_vfs_plugins[MAX_VFS_PLUGINS+1];
 
-#define MAX_DSP_PLUGINS 10
+#define MAX_DSP_PLUGINS 50
 static DB_dsp_t *g_dsp_plugins[MAX_DSP_PLUGINS+1];
 
-#define MAX_OUTPUT_PLUGINS 10
+#define MAX_OUTPUT_PLUGINS 50
 static DB_output_t *g_output_plugins[MAX_OUTPUT_PLUGINS+1];
 static DB_output_t *output_plugin = NULL;
 
-#define MAX_PLAYLIST_PLUGINS 10
+#define MAX_PLAYLIST_PLUGINS 50
 static DB_playlist_t *g_playlist_plugins[MAX_PLAYLIST_PLUGINS+1];
 
 static uintptr_t background_jobs_mutex;
