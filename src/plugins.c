@@ -1416,22 +1416,7 @@ _handle_async_stop (DB_plugin_t *plugin) {
 }
 
 static void
-_plug_unload_stop_complete (void) {
-    trace ("All async plugins have stopped.\n");
-    // Stop the normal plugins with synchronous stop
-    for (plugin_t *p = plugins; p; p = p->next) {
-        if (p->plugin->stop && p->async_deinit == NULL) {
-            trace ("Stopping %s...\n", p->plugin->name);
-            fflush (stderr);
-#if HAVE_COCOAUI
-            if (p->plugin->type == DB_PLUGIN_GUI) {
-                continue;
-            }
-#endif
-            p->plugin->stop ();
-        }
-    }
-
+_unload_plugins(void) {
     while (plugins) {
         plugin_t *next = plugins->next;
         if (plugins->handle) {
@@ -1456,8 +1441,25 @@ _plug_unload_stop_complete (void) {
     memset (g_output_plugins, 0, sizeof (g_output_plugins));
     output_plugin = NULL;
     memset (g_playlist_plugins, 0, sizeof (g_playlist_plugins));
+}
 
-    trace ("All plugins had been unloaded\n");
+static void
+_plug_unload_stop_complete (void) {
+    trace ("All async plugins have stopped.\n");
+    // Stop the normal plugins with synchronous stop
+    for (plugin_t *p = plugins; p; p = p->next) {
+        if (p->plugin->stop && p->async_deinit == NULL) {
+            trace ("Stopping %s...\n", p->plugin->name);
+            fflush (stderr);
+#if HAVE_COCOAUI
+            if (p->plugin->type == DB_PLUGIN_GUI) {
+                continue;
+            }
+#endif
+            p->plugin->stop ();
+        }
+    }
+
     if (background_jobs_mutex) {
         mutex_free (background_jobs_mutex);
         background_jobs_mutex = 0;
@@ -1466,6 +1468,15 @@ _plug_unload_stop_complete (void) {
         _async_stop_completion_handler();
         _async_stop_completion_handler = NULL;
     }
+
+    // NOTE: This has to be done last, after async handler,
+    // otherwise a crash may occur if some cleanup/deinitializer calls some plugin api.
+    // Example problematic scenario:
+    // Create DSP preset: this will setup a scriptable with callback residing in plugin memory,
+    // and if scriptableDeinitShared is called after dlclose,
+    // it would result in an attempt to call scriptable method which is no longer a valid pointer.
+    _unload_plugins();
+    trace ("All plugins had been unloaded\n");
 }
 
 void
