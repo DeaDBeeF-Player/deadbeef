@@ -32,15 +32,20 @@
 
 extern DB_functions_t *deadbeef;
 
+static const int no_tab = -1;
+static const NSPoint no_point = { .x = -100000, .y = -100000 };
 
 static const int text_left_padding = 24;
 static const int text_right_padding = 24;
+
 static const int tab_overlap_size = 0;
 static const int tabs_left_margin = 0;
-static const int tab_vert_padding = 1;
+static const int tab_vert_padding = 0;
+
 static const int min_tab_size = 80;
 static const int max_tab_size = 200;
-static const int close_btn_left_offs = 8;
+
+static const int tab_close_btn_size = 12;
 
 @interface DdbTabStrip () <RenamePlaylistViewControllerDelegate,DeletePlaylistConfirmationControllerDelegate,TrackContextMenuDelegate,TrackPropertiesWindowControllerDelegate> {
     int _dragging;
@@ -193,12 +198,12 @@ static const int close_btn_left_offs = 8;
 }
 
 - (void)setup {
-    _dragging = -1;
-    self.clickedTabIndex = -1;
+    _dragging = no_tab;
+    self.clickedTabIndex = no_tab;
     self.autoresizesSubviews = NO;
 
-    _lastMouseCoord.x = -100000;
-    _pointedTab = -1;
+    _lastMouseCoord = no_point;
+    _pointedTab = no_tab;
 
     [self setupTrackingArea];
 
@@ -312,63 +317,65 @@ static const int close_btn_left_offs = 8;
     [self mouseMovedHandler];
 }
 
-- (void)drawTab:(int)idx area:(NSRect)area selected:(BOOL)sel {
-    [[NSGraphicsContext currentContext] saveGraphicsState];
-    NSBezierPath.defaultLineWidth = 1;
+- (void)drawTab:(int)idx area:(NSRect)area selectedIdx:(int)selectedIdx {
+    [NSGraphicsContext.currentContext saveGraphicsState];
+    const NSRect tabRect = area;
 
-    NSRect tabRect = area;
+    const BOOL selected = idx == selectedIdx;
+    const BOOL highlighted = idx == _pointedTab;
 
-    // rectangular tabs
-    tabRect.size.height++;
-
-    // tab background
-    if (sel) {
+    // Layer 1 - Tab background (pill-shaped), only for selected or highlighted.
+    const NSRect bgRect = NSInsetRect(tabRect, 0, 2);
+    if (selected) {
         NSColor *backgroundColor = self.tabBackgroundColor;
         [backgroundColor set];
 
-        NSRect rc = tabRect;
-        rc.origin.x -= 1;
-        rc.size.width += 1;
-        NSBezierPath *tab = [NSBezierPath bezierPathWithRect:rc];
+        CGFloat radius = NSHeight(bgRect) / 2;
+        NSBezierPath *tab = [NSBezierPath bezierPathWithRoundedRect:bgRect xRadius:radius yRadius:radius];
+        [tab fill];
+    } else if (highlighted && (_dragging == no_tab || !self.dragReallyBegan)) {
+        NSColor *backgroundColor = [self.tabBackgroundColor colorWithAlphaComponent:0.5];
+        [backgroundColor set];
+
+        CGFloat radius = NSHeight(bgRect) / 2;
+        NSBezierPath *tab = [NSBezierPath bezierPathWithRoundedRect:bgRect xRadius:radius yRadius:radius];
         [tab fill];
     }
 
-
-    // tab divider
-    NSColor *clr = _hiddenVertLine.borderColor;
-    [[clr colorWithAlphaComponent:0.5] set];
-    NSBezierPath *line = [NSBezierPath bezierPath];
-    [line moveToPoint:NSMakePoint(tabRect.origin.x + tabRect.size.width-0.5, tabRect.origin.y+5)];
-    [line lineToPoint:NSMakePoint(tabRect.origin.x + tabRect.size.width-0.5, tabRect.origin.y+tabRect.size.height-10)];
-    if (sel && _dragging >= 0) {
-        [line moveToPoint:NSMakePoint(tabRect.origin.x-0.5, tabRect.origin.y+5)];
-        [line lineToPoint:NSMakePoint(tabRect.origin.x-0.5, tabRect.origin.y+tabRect.size.height-10)];
+    // Layer 2 - Tab divider to the right, skipping active and highlighted tab.
+    NSBezierPath.defaultLineWidth = 1;
+    if ((idx < selectedIdx - 1 || idx > selectedIdx) && (idx < _pointedTab - 1 || idx > _pointedTab)) {
+        NSColor *clr = _hiddenVertLine.borderColor;
+        [[clr colorWithAlphaComponent:0.5] set];
+        NSBezierPath *line = [NSBezierPath bezierPath];
+        [line moveToPoint:NSMakePoint(NSMaxX(tabRect) - 0.5, NSMinY(tabRect) + 5)];
+        [line lineToPoint:NSMakePoint(NSMaxX(tabRect) - 0.5, NSMaxY(tabRect) - 5)];
+        [line stroke];
     }
-    [line stroke];
 
-    // tab title
-    NSDictionary *attrs = sel ? self.titleAttributesSelected : self.titleAttributes;
+    // Layer 3 - Tab title.
+    NSDictionary *attrs = selected ? self.titleAttributesSelected : self.titleAttributes;
 
     NSString *tab_title = plt_get_title_wrapper (idx);
 
     NSSize size = [tab_title sizeWithAttributes:attrs];
 
-    [tab_title drawInRect:NSMakeRect(area.origin.x + text_left_padding, area.origin.y + area.size.height/2 - size.height/2, area.size.width - (text_left_padding + text_right_padding - 1), size.height) withAttributes:attrs];
+    NSRect textRect = bgRect;
+    // Inset by paddings
+    textRect.origin.x += text_left_padding;
+    textRect.size.width -= text_left_padding + text_right_padding;
+    // Center vertically
+    textRect.origin.y = NSMidY(bgRect) - size.height / 2;
+    textRect.size.height = size.height;
 
-    [[NSGraphicsContext currentContext] restoreGraphicsState];
+    [tab_title drawInRect:textRect withAttributes:attrs];
 
-    // close button
-    if (idx == _pointedTab && (_dragging == -1 || !self.dragReallyBegan)) {
-        NSRect atRect = [self tabCloseButtonRectForTabRect:area];
-        NSPoint from = atRect.origin;
-        from.x += 2;
-        from.y += 2;
-        NSPoint to = from;
-        to.x+=8;
-        to.y+=8;
-        if (NSPointInRect (_lastMouseCoord, atRect)) {
-            NSBezierPath *path = [NSBezierPath bezierPathWithRoundedRect:atRect xRadius:1 yRadius:1];
-            CGFloat alpha = _closeTabCapture?0.4:0.2;
+    // Layer 4 - Close button
+    if (highlighted && (_dragging == no_tab || !self.dragReallyBegan)) {
+        const NSRect closeBgRect = [self tabCloseButtonRectForTabRect:bgRect];
+        if (NSPointInRect(_lastMouseCoord, closeBgRect)) {
+            NSBezierPath *path = [NSBezierPath bezierPathWithOvalInRect:closeBgRect];
+            CGFloat alpha = _closeTabCapture ? 0.4 : 0.2 ;
             if (!self.isKeyWindow) {
                 alpha *= 0.7;
             }
@@ -378,11 +385,19 @@ static const int close_btn_left_offs = 8;
             [closeButtonBackgroundColor set];
             [path fill];
         }
+
+        CGFloat closeRadius = closeBgRect.size.width / 2;
+        NSRect closeRect = NSInsetRect(closeBgRect, closeRadius / 2, closeRadius / 2);
+
         [self.tabTextColor set];
-        NSBezierPath.defaultLineWidth = 2;
-        [NSBezierPath strokeLineFromPoint: from toPoint: to ];
-        [NSBezierPath strokeLineFromPoint: NSMakePoint(from.x, to.y) toPoint: NSMakePoint(to.x, from.y) ];
+        NSBezierPath.defaultLineWidth = 1;
+        [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMinX(closeRect), NSMinY(closeRect))
+                                  toPoint:NSMakePoint(NSMaxX(closeRect), NSMaxY(closeRect))];
+        [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMinX(closeRect), NSMaxY(closeRect))
+                                  toPoint:NSMakePoint(NSMaxX(closeRect), NSMinY(closeRect))];
     }
+
+    [NSGraphicsContext.currentContext restoreGraphicsState];
 }
 
 - (NSRect)tabRectForXPos:(int)xPos width:(int)tabWidth height:(int)tabHeight {
@@ -399,7 +414,7 @@ static const int close_btn_left_offs = 8;
     int x = -hscroll;
     int w = 0;
     int tab_selected = deadbeef->plt_get_curr_idx ();
-    if (tab_selected == -1) {
+    if (tab_selected == no_tab) {
         return;
     }
 
@@ -425,7 +440,7 @@ static const int close_btn_left_offs = 8;
         idx = tab_selected;
         w = widths[tab_selected];
         selectedTabRect = [self tabRectForXPos:x width:w height:self.bounds.size.height];
-        [self drawTab:idx area:selectedTabRect selected:YES];
+        [self drawTab:idx area:selectedTabRect selectedIdx:tab_selected];
     }
     else {
         need_draw_moving = 1;
@@ -442,7 +457,7 @@ static const int close_btn_left_offs = 8;
                 if (w > 0) {
                     // ***** draw dragging tab here *****
                     selectedTabRect = [self tabRectForXPos:x width:w height:self.bounds.size.height];
-                    [self drawTab:tab_selected area:selectedTabRect selected:YES];
+                    [self drawTab:tab_selected area:selectedTabRect selectedIdx:tab_selected];
 
                     NSBezierPath *clipPath = [NSBezierPath bezierPath];
 
@@ -455,7 +470,7 @@ static const int close_btn_left_offs = 8;
                     [clipPath appendBezierPathWithRect:clipRight];
                     [clipPath setClip];
                 }
-                int undercursor = [self tabUnderCursor:_lastMouseCoord.x];
+                int undercursor = [self tabUnderCursor:_lastMouseCoord];
                 if (undercursor == _dragging) {
                     [self updatePointedTab:idx];
                 }
@@ -468,15 +483,15 @@ static const int close_btn_left_offs = 8;
     x = -hscroll + tabs_left_margin;
 
     // draw tabs on the left
-    int c = tab_selected == -1 ? cnt : tab_selected;
+    int c = tab_selected == no_tab ? cnt : tab_selected;
     for (idx = 0; idx < c; idx++) {
         w = widths[idx];
         NSRect area = [self tabRectForXPos:x width:w height:self.bounds.size.height];
-        [self drawTab:idx area:area selected:NO];
+        [self drawTab:idx area:area selectedIdx:tab_selected];
         x += w - tab_overlap_size;
     }
     // draw tabs on the right
-    if (tab_selected != -1 && tab_selected != cnt-1) {
+    if (tab_selected != no_tab && tab_selected != cnt-1) {
         x = -hscroll + tabs_left_margin;
         for (idx = 0; idx < cnt; idx++) {
             x += widths[idx] - tab_overlap_size;
@@ -485,7 +500,7 @@ static const int close_btn_left_offs = 8;
             w = widths[idx];
             x -= w - tab_overlap_size;
             NSRect area = [self tabRectForXPos:x width:w height:self.bounds.size.height];
-            [self drawTab:idx area:area selected:NO];
+            [self drawTab:idx area:area selectedIdx:tab_selected];
         }
     }
 
@@ -505,7 +520,13 @@ static const int close_btn_left_offs = 8;
     return NSMakeRect(0, 0, 0, 0);
 }
 
--(int)tabUnderCursor:(int)x {
+-(int)tabUnderCursor:(NSPoint)point {
+    if (NSEqualPoints(point, no_point)) {
+        return no_tab;
+    }
+
+    int x = point.x;
+
     int hscroll = self.scrollPos;
 
     int idx;
@@ -519,7 +540,7 @@ static const int close_btn_left_offs = 8;
             return idx;
         }
     }
-    return -1;
+    return no_tab;
 }
 
 -(void)scrollToTab:(int)tab {
@@ -537,7 +558,7 @@ static const int close_btn_left_offs = 8;
 
 -(void)scrollRight {
     int tab = deadbeef->plt_get_curr_idx ();
-    if (tab < deadbeef->plt_get_count ()-1) {
+    if (tab < deadbeef->plt_get_count () - 1) {
         tab++;
         deadbeef->plt_set_curr_idx (tab);
     }
@@ -555,26 +576,33 @@ static const int close_btn_left_offs = 8;
 }
 
 -(void)closePointedTab {
-    if (_pointedTab != -1) {
+    if (_pointedTab != no_tab) {
         self.clickedTabIndex = _pointedTab;
-        _pointedTab = -1;
+        _pointedTab = no_tab;
         [self closePlaylist:self];
     }
 }
 
 -(void)scrollWheel:(NSEvent*)event {
-    CGFloat newScroll = self.scrollPos + event.deltaY;
-    newScroll -= event.deltaY * 4;
+    CGFloat newScroll;
+    if (event.hasPreciseScrollingDeltas) {
+        // Precision Scrolling - Apple Trackpad and Magic mouse.
+        newScroll = self.scrollPos - (event.scrollingDeltaX + event.scrollingDeltaY);
+    } else {
+        // Non precision scrolling - discrete wheel scroolling mice.
+        newScroll = self.scrollPos - (event.deltaX + event.deltaY) * 4;
+    }
     self.scrollPos = newScroll;
     self.needsDisplay = YES;
 }
 
 -(NSRect)tabCloseButtonRectForTabRect:(NSRect)tabRect {
-    NSPoint from = NSMakePoint(tabRect.origin.x + close_btn_left_offs + 0.5, tabRect.origin.y + tabRect.size.height/2 - 6);
+    NSSize size = NSMakeSize(tab_close_btn_size, tab_close_btn_size);
+    CGFloat offset = (tabRect.size.height - size.height) / 2;
+    NSPoint from = NSMakePoint(tabRect.origin.x + offset, tabRect.origin.y + offset);
     NSRect atRect;
     atRect.origin = from;
-    atRect.origin.x -= 2;
-    atRect.size = NSMakeSize(12, 12);
+    atRect.size = size;
     return atRect;
 }
 
@@ -605,10 +633,10 @@ static const int close_btn_left_offs = 8;
 - (void)mouseDown:(NSEvent *)event {
     NSPoint coord = [self convertPoint:event.locationInWindow fromView:nil];
     _lastMouseCoord = coord;
-    _clickedTabIndex = [self tabUnderCursor:coord.x];
+    _clickedTabIndex = [self tabUnderCursor:coord];
     if (event.type == NSEventTypeLeftMouseDown) {
 
-        if (_clickedTabIndex != -1) {
+        if (_clickedTabIndex != no_tab) {
             if ([self handleClickedTabCloseRect]) {
                 return;
             }
@@ -671,7 +699,7 @@ static const int close_btn_left_offs = 8;
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent {
     NSPoint coord = [self convertPoint:theEvent.locationInWindow fromView:nil];
-    _clickedTabIndex = [self tabUnderCursor:coord.x];
+    _clickedTabIndex = [self tabUnderCursor:coord];
     if ((theEvent.type == NSEventTypeRightMouseDown || theEvent.type == NSEventTypeLeftMouseDown)
         && (theEvent.buttonNumber == 1
             || (theEvent.buttonNumber == 0 && (theEvent.modifierFlags & NSEventModifierFlagControl)))) {
@@ -700,9 +728,9 @@ static const int close_btn_left_offs = 8;
     }
 
     NSPoint coord = [self convertPoint:event.locationInWindow fromView:nil];
-    _clickedTabIndex = [self tabUnderCursor:coord.x];
+    _clickedTabIndex = [self tabUnderCursor:coord];
     if (event.type == NSEventTypeOtherMouseDown) {
-        if (_clickedTabIndex == -1) {
+        if (_clickedTabIndex == no_tab) {
             // new tab
             int playlist = cocoaui_add_new_playlist ();
             if (playlist != -1) {
@@ -711,7 +739,7 @@ static const int close_btn_left_offs = 8;
             return;
         }
         else if (deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1)) {
-            if (_clickedTabIndex != -1) {
+            if (_clickedTabIndex != no_tab) {
                 [self closePlaylist:self];
             }
         }
@@ -723,9 +751,9 @@ static const int close_btn_left_offs = 8;
     if (event.type == NSEventTypeLeftMouseUp) {
         if (_prepare || _dragging >= 0) {
             int dragged = _dragging;
-            _dragging = -1;
+            _dragging = no_tab;
             _prepare = 0;
-            if (dragged != -1) {
+            if (dragged != no_tab) {
                 [self updatePointedTab:dragged];
             }
             self.needsDisplay = YES;
@@ -787,7 +815,7 @@ static const int close_btn_left_offs = 8;
         int idx;
         int hscroll = self.scrollPos;
         int x = -hscroll + tabs_left_margin;
-        int inspos = -1;
+        int inspos = no_tab;
         int cnt = deadbeef->plt_get_count ();
         int dw = [self tabWidthForIndex:_dragging] - tab_overlap_size;
         for (idx = 0; idx < cnt; idx++) {
@@ -820,7 +848,7 @@ static const int close_btn_left_offs = 8;
 }
 
 -(void)mouseMovedHandler {
-    int tab = [self tabUnderCursor:_lastMouseCoord.x];
+    int tab = [self tabUnderCursor:_lastMouseCoord];
     if (tab >= 0) {
         NSString *s = plt_get_title_wrapper (tab);
 
@@ -846,9 +874,9 @@ static const int close_btn_left_offs = 8;
 }
 
 -(void)mouseExited:(NSEvent *)event {
-    _lastMouseCoord.x = -100000;
-    if (_pointedTab != -1) {
-        [self updatePointedTab:-1];
+    _lastMouseCoord = no_point;
+    if (_pointedTab != no_tab) {
+        [self updatePointedTab:no_tab];
         self.needsDisplay = YES;
     }
 }
@@ -869,8 +897,8 @@ static const int close_btn_left_offs = 8;
         if (self == nil) {
             return;
         }
-        int tabUnderCursor = [self tabUnderCursor: coord.x];
-        if (tabUnderCursor != -1) {
+        int tabUnderCursor = [self tabUnderCursor:coord];
+        if (tabUnderCursor != no_tab) {
             deadbeef->plt_set_curr_idx (tabUnderCursor);
         }
         self.pickDragTimer = nil;
@@ -924,7 +952,7 @@ static const int close_btn_left_offs = 8;
 
 - (void)deletePlaylistDone:(DeletePlaylistConfirmationController *)controller {
     deadbeef->plt_remove (self.clickedTabIndex);
-    self.clickedTabIndex = -1;
+    self.clickedTabIndex = no_tab;
     self.needsDisplay = YES; // NOTE: this was added to redraw after a context menu
 }
 
