@@ -608,6 +608,16 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkCheckMenuItem" id="stop_after_queue">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Stop after queue</property>
+		      <property name="use_underline">True</property>
+		      <property name="active">False</property>
+		      <signal name="activate" handler="on_stop_after_queue_activate" last_modification_time="Mon, 20 Oct 2025 22:51:29 GMT"/>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkCheckMenuItem" id="stop_after_album">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Stop after current album</property>
@@ -3460,6 +3470,26 @@ Only prevent clipping</property>
 		  <property name="inconsistent">False</property>
 		  <property name="draw_indicator">True</property>
 		  <signal name="toggled" handler="on_reset_autostop_toggled" last_modification_time="Mon, 02 Apr 2012 17:59:08 GMT"/>
+		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">False</property>
+		  <property name="fill">False</property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkCheckButton" id="reset_autostopqueue">
+		  <property name="visible">True</property>
+		  <property name="can_focus">True</property>
+		  <property name="label" translatable="yes">&quot;Stop after queue&quot; option will switch off after triggering</property>
+		  <property name="use_underline">True</property>
+		  <property name="relief">GTK_RELIEF_NORMAL</property>
+		  <property name="focus_on_click">True</property>
+		  <property name="active">False</property>
+		  <property name="inconsistent">False</property>
+		  <property name="draw_indicator">True</property>
+		  <signal name="toggled" handler="on_reset_autostopqueue_toggled" last_modification_time="Mon, 20 Oct 2025 22:51:29 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>

@@ -717,6 +717,12 @@ gtkui_on_configchanged (void *data) {
         GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_current")),
         stop_after_current ? TRUE : FALSE);
 
+    // stop after queue
+    int stop_after_queue = deadbeef->conf_get_int ("playlist.stop_after_queue", 0);
+    gtk_check_menu_item_set_active (
+        GTK_CHECK_MENU_ITEM (lookup_widget (mainwin, "stop_after_queue")),
+        stop_after_queue ? TRUE : FALSE);
+
     // stop after current album
     int stop_after_album = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
     gtk_check_menu_item_set_active (
