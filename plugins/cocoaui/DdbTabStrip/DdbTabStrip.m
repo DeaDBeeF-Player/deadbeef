@@ -71,8 +71,6 @@ static const int tab_close_btn_size = 12;
 @property (nonatomic) BOOL isKeyWindow;
 @property (nonatomic,nullable) NSDictionary *titleAttributesSelectedCurrent;
 @property (nonatomic,readonly) NSDictionary *titleAttributesSelected;
-@property (nonatomic) NSColor *tabBackgroundColorDark;
-@property (nonatomic) NSColor *tabBackgroundColorLight;
 @property (nonatomic,readonly) NSColor *tabBackgroundColor;
 
 @property (nonatomic) BOOL dragReallyBegan;
@@ -131,7 +129,13 @@ static const int tab_close_btn_size = 12;
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
     NSFont *font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize weight:NSFontWeightSemibold];
-    NSColor *textColor = self.isDarkMode ? NSColor.controlTextColor : self.accentColor;
+    NSColor *textColor;
+    // Increase contrast of accent color on light/dark background
+    if (self.isDarkMode) {
+        textColor = [self.accentColor blendedColorWithFraction:0.5 ofColor:NSColor.whiteColor];
+    } else {
+        textColor = [self.accentColor blendedColorWithFraction:0.2 ofColor:NSColor.blackColor];
+    }
 
     self.titleAttributesSelectedCurrent = @{
         NSParagraphStyleAttributeName: textStyle,
@@ -154,29 +158,31 @@ static const int tab_close_btn_size = 12;
 }
 
 - (NSDictionary *)titleAttributes {
-    [self updateTitleAttributes];
-
     return self.titleAttributesCurrent;
 }
 
 - (NSDictionary *)titleAttributesSelected {
-    [self updateTitleAttributes];
-
     return self.titleAttributesSelectedCurrent;
 }
 
-- (NSColor *)tabBackgroundColor {
-    if (@available(macOS 13.0, *)) {
-        return NSColor.selectedTextBackgroundColor;
-    }
-    NSString *osxMode = [NSUserDefaults.standardUserDefaults stringForKey:@"AppleInterfaceStyle"];
+- (NSColor *)backgroundColorWithPercentage:(CGFloat)percentage {
+    NSColor *baseColor = NSColor.windowBackgroundColor;
+    NSColor *blendColor = self.isDarkMode ? NSColor.whiteColor : NSColor.blackColor;
+    return [baseColor blendedColorWithFraction:percentage ofColor:blendColor];
+}
+
+- (NSColor *)selectedTabBackgroundColor {
     BOOL isKey = self.window.isKeyWindow;
-    if ([osxMode isEqualToString:@"Dark"]) {
-        return [self.accentColor colorWithAlphaComponent:isKey?0.5:0.3];
-    }
-    else {
-        return [self.accentColor colorWithAlphaComponent:(isKey?0.3:0.2)];
-    }
+    CGFloat percentage = self.isDarkMode ? 0.15 : 0.55;
+    NSColor *baseColor = NSColor.windowBackgroundColor;
+    NSColor *blendColor = NSColor.whiteColor;
+    NSColor *blendedColor = [baseColor blendedColorWithFraction:percentage ofColor:blendColor];
+    return [blendedColor colorWithAlphaComponent:isKey ? 1 : 0.5];
+}
+
+- (NSColor *)tabBackgroundColor {
+    BOOL isKey = self.window.isKeyWindow;
+    return [[self backgroundColorWithPercentage:self.isDarkMode ? 0 : 0.1] colorWithAlphaComponent:isKey ? 1 : 0.5];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -327,14 +333,14 @@ static const int tab_close_btn_size = 12;
     // Layer 1 - Tab background (pill-shaped), only for selected or highlighted.
     const NSRect bgRect = NSInsetRect(tabRect, 0, 2);
     if (selected) {
-        NSColor *backgroundColor = self.tabBackgroundColor;
+        NSColor *backgroundColor = self.selectedTabBackgroundColor;
         [backgroundColor set];
 
         CGFloat radius = NSHeight(bgRect) / 2;
         NSBezierPath *tab = [NSBezierPath bezierPathWithRoundedRect:bgRect xRadius:radius yRadius:radius];
         [tab fill];
     } else if (highlighted && (_dragging == no_tab || !self.dragReallyBegan)) {
-        NSColor *backgroundColor = [self.tabBackgroundColor colorWithAlphaComponent:0.5];
+        NSColor *backgroundColor = [self.selectedTabBackgroundColor colorWithAlphaComponent:0.5];
         [backgroundColor set];
 
         CGFloat radius = NSHeight(bgRect) / 2;
@@ -405,9 +411,14 @@ static const int tab_close_btn_size = 12;
 
 }
 
-- (void)drawRect:(NSRect)dirtyRect
-{
+- (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
+
+    [self updateTitleAttributes];
+
+    [self.tabBackgroundColor set];
+    NSRectFill(self.frame);
+
     int cnt = deadbeef->plt_get_count ();
     int hscroll = self.scrollPos;
 
