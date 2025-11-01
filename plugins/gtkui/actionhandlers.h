@@ -165,6 +165,12 @@ int
 action_toggle_designmode_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
 gboolean
+action_dsp_preferences_handler_cb (void *data);
+
+int
+action_dsp_preferences_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
+
+gboolean
 action_preferences_handler_cb (void *data);
 
 int

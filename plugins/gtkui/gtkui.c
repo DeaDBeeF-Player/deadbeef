@@ -2119,11 +2119,17 @@ static DB_plugin_action_t action_preferences = { .title = "Edit/Preferences",
                                                  .callback2 = action_preferences_handler,
                                                  .next = &action_toggle_designmode };
 
+static DB_plugin_action_t action_dsp_preferences = { .title = "Edit/DSP Preferences",
+                                                     .name = "dsp_preferences",
+                                                     .flags = DB_ACTION_COMMON,
+                                                     .callback2 = action_dsp_preferences_handler,
+                                                     .next = &action_preferences };
+
 static DB_plugin_action_t action_sort_custom = { .title = "Edit/Sort Custom",
                                                  .name = "sort_custom",
                                                  .flags = DB_ACTION_COMMON,
                                                  .callback2 = action_sort_custom_handler,
-                                                 .next = &action_preferences };
+                                                 .next = &action_dsp_preferences };
 
 static DB_plugin_action_t action_crop_selected = { .title = "Edit/Crop Selected",
                                                    .name = "crop_selected",
