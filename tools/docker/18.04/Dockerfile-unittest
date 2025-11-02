@@ -2,6 +2,6 @@ FROM deadbeef-builder-player-clang-18.04
 
 WORKDIR /usr/src/deadbeef
 COPY . /usr/src/deadbeef
-ENV TRAVIS_OS_NAME=linux
+ENV BUILD_OS_NAME=linux
 
 CMD [ "bash", "scripts/test.sh"]

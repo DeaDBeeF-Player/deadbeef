@@ -19,16 +19,16 @@ jobs:
       with:
         submodules: true
     - name: Fetch static-deps
-      run: travis/download-linux-static-deps.sh
+      run: ci_scripts/download-linux-static-deps.sh
     - name: Run Tests
       run: scripts/test.sh
     - name: Build for Linux
-      run: BUILD_OS_NAME=linux travis/build.sh
+      run: BUILD_OS_NAME=linux ci_scripts/build.sh
     - name: Upload for Linux
       env:
           gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
           gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
-      run: BUILD_OS_NAME=linux travis/upload.sh
+      run: BUILD_OS_NAME=linux ci_scripts/upload.sh
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:

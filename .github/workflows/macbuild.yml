@@ -16,7 +16,7 @@ jobs:
       with:
         xcode-version: '16'
     - name: Build for macOS
-      run: BUILD_OS_NAME=osx travis/build.sh
+      run: BUILD_OS_NAME=osx ci_scripts/build.sh
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/macos@v2
       if: always()
@@ -27,7 +27,7 @@ jobs:
       env:
         gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
         gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
-      run: BUILD_OS_NAME=osx travis/upload.sh
+      run: BUILD_OS_NAME=osx ci_scripts/upload.sh
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
