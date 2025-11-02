@@ -1,4 +1,4 @@
-#!/bin/sh
-VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
-ARCH=`uname -m | perl -ne 'chomp and print'`
-DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION make install
+#!/bin/bash
+VERSION=$(<"build_data/VERSION")
+ARCH=$(uname -m)
+DESTDIR=$(pwd)/static/$ARCH/deadbeef-$VERSION make install

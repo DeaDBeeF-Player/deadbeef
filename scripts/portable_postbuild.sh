@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 set -x
-VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
+VERSION=$(<"build_data/VERSION")
 OSTYPE=`uname -s`
 if [[ "$ARCH" == "i686" ]]; then
     echo arch: $ARCH

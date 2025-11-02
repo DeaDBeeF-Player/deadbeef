@@ -1,14 +1,17 @@
-#!/bin/sh
-PWD=`pwd`
-VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
-ARCH_VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print' | sed 's/-//'`
-BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
-ARCH=`uname -m | perl -ne 'chomp and print'`
-INDIR=$PWD/static/$ARCH/deadbeef-$VERSION
-TEMPDIR=$PWD/package_temp/$ARCH/slackware-$VERSION
+#!/bin/bash
+
+set -e
+
+PWD=$(pwd)
+VERSION=$(<"build_data/VERSION")
+PACKAGE_VERSION=$(echo -n $VERSION | sed 's/-//')
+VERSION_SUFFIX=$(<"build_data/VERSION_SUFFIX")
+PACKAGE_ARCH=$(uname -m)
+INDIR=$PWD/static/${PACKAGE_ARCH}/deadbeef-${VERSION}
+TEMPDIR=$PWD/package_temp/${PACKAGE_ARCH}/slackware-${VERSION}
 PKGINFO=$TEMPDIR/.PKGINFO
 INSTALL=$TEMPDIR/.INSTALL
-OUTDIR=$PWD/package_out/$ARCH/slackware
+OUTDIR=$PWD/package_out/${PACKAGE_ARCH}/slackware
 
 # make dirs
 mkdir -p $TEMPDIR
@@ -17,14 +20,16 @@ mkdir -p $OUTDIR
 # copy files
 cp -r $INDIR/* $TEMPDIR/
 # rm unneeded files
-rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.la
-for i in $TEMPDIR/opt/deadbeef/lib/deadbeef/*.so.0.0.0; do
-    n=$TEMPDIR/opt/deadbeef/lib/deadbeef/`basename $i .0.0.0`
-    mv $i $n
-    strip --strip-unneeded $n
+rm -f $TEMPDIR/opt/deadbeef/lib/deadbeef/*.la
+
+find "$TEMPDIR/opt/deadbeef/lib/deadbeef" -type f -name '*.so.0.0.0' | while IFS= read -r i; do
+    n="${i%.0.0.0}"
+    mv "$i" "$n"
+    strip --strip-unneeded "$n"
 done
-rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.so.*
-rm $TEMPDIR/opt/deadbeef/lib/deadbeef/*.a
+
+rm -f $TEMPDIR/opt/deadbeef/lib/deadbeef/*.so.*
+rm -f $TEMPDIR/opt/deadbeef/lib/deadbeef/*.a
 
 # move icons and other shit to /usr
 mkdir -p $TEMPDIR/usr/share/
@@ -39,4 +44,4 @@ cp tools/packages/slack-desc $TEMPDIR/install/
 
 # archive
 cd $TEMPDIR
-fakeroot -- tar zcvf $OUTDIR/deadbeef-static-$ARCH_VERSION-$BUILD-$ARCH.tgz *
+fakeroot -- tar zcvf $OUTDIR/deadbeef-static-${PACKAGE_VERSION}-${VERSION_SUFFIX}-${PACKAGE_ARCH}.tgz *

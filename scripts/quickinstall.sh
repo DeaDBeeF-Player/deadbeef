@@ -1,6 +1,6 @@
 #!/bin/bash
 . .install
-PREFIX="${PREFIX:-`pwd`/build}"
+PREFIX="${PREFIX:-$(pwd)/build}"
 mkdir -p $PREFIX/lib/deadbeef
 mkdir -p $PREFIX/bin
 

@@ -247,19 +247,19 @@ function print_options ()
     end
 end
 
--- Returns deadbeef version which is stored in ./PORTABLE_VERSION
+-- Returns deadbeef version which is stored in ./build_data/VERSION
 -- WINDOWS: Return current date
 function get_version ()
 	if _OPTIONS["version-override"] ~= nil then
 		date = os.date("%Y-%m-%d")
-		fp = io.open ("PORTABLE_VERSION","w")
+		fp = io.open ("build_data/VERSION","w")
 		io.output (fp)
 		io.write(date)
 		io.close (fp)
 		print(date)
 		return date
 	end
-	fp = io.open ("PORTABLE_VERSION","r")
+	fp = io.open ("build_data/VERSION","r")
 	io.input (fp)
 	local ver = io.read()
 	io.close (fp)

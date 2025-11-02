@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 # package for distribution
-VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
-BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
+VERSION=$(<"build_data/VERSION")
+BUILD=$(<"build_data/VERSION_SUFFIX")
 
 # main distro
 SRCDIR=deadbeef-$VERSION-portable

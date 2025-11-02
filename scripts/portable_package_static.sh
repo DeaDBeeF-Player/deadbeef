@@ -12,8 +12,8 @@ for arg in "$@"; do
 done
 
 # package for distribution
-VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
-BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
+VERSION=$(<"build_data/VERSION")
+BUILD=$(<"build_data/VERSION_SUFFIX")
 if [[ "$ARCH" == "i686" ]]; then
     echo arch: $ARCH
 elif [[ "$ARCH" == "x86_64" ]]; then

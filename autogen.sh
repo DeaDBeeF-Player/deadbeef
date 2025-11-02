@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 echo "Running autopoint..."; autopoint -f
 echo "Running aclocal..."; aclocal $ACLOCAL_FLAGS -I m4

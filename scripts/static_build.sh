@@ -9,11 +9,10 @@ for arg in "$@"; do
     fi
 done
 
-VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
+VERSION=$(<"build_data/VERSION")
 ORIGIN=$PWD
 STATIC_DEPS=static-deps
 AP=$ORIGIN/external/apbuild
-#ARCH=`uname -m | perl -ne 'chomp and print'`
 if [[ "$ARCH" == "i686" ]]; then
     export CFLAGS="-m32 -I$ORIGIN/$STATIC_DEPS/lib-x86-32/include"
     export LDFLAGS="-m32 -L$ORIGIN/$STATIC_DEPS/lib-x86-32/lib -L$ORIGIN/$STATIC_DEPS/lib-x86-32/lib/i386-linux-gnu"
@@ -96,8 +95,8 @@ LDFLAGS="$LDFLAGS -Wl,--build-id"
 sed -i 's/-lstdc++ -lm -lgcc_s -lc -lgcc_s/-lm -lc/g' libtool
 sed -i 's/hardcode_into_libs=yes/hardcode_into_libs=no/g' libtool
 make clean
-make V=1 -j8 DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION || exit 1
-export DESTDIR=`pwd`/static/$ARCH/deadbeef-$VERSION
+make V=1 -j8 DESTDIR=${ORIGIN}/static/$ARCH/deadbeef-$VERSION || exit 1
+export DESTDIR=${ORIGIN}/static/$ARCH/deadbeef-$VERSION
 
 make DESTDIR=$DESTDIR install || exit 1
 mkdir -p $LIBRARY_PATH

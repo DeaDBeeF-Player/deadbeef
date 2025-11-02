@@ -20,6 +20,7 @@ case "$BUILD_OS_NAME" in
 #        ARCH=i686 ./scripts/static_build.sh
 #        ARCH=i686 ./scripts/portable_package_static.sh
         echo "Building for x86_64"
+        echo "m4_define([DEADBEEF_VERSION], [$VERSION])" > "build_data/version.m4"
         ARCH=x86_64 ./scripts/static_build.sh $@
         ARCH=x86_64 ./scripts/portable_package_static.sh $@
         if ! $DEBUG; then

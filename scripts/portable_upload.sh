@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
-VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
-BUILD=`cat PORTABLE_BUILD | perl -ne 'chomp and print'`
+VERSION=$(<"build_data/VERSION")
+BUILD=$(<"build_data/VERSION_SUFFIX")
 
 UPLOAD_URI=waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/portable/$VERSION/
 

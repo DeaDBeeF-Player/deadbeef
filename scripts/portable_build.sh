@@ -1,6 +1,6 @@
-#!/bin/sh
-VERSION=`cat PORTABLE_VERSION | perl -ne 'chomp and print'`
-ORIGIN=`pwd | perl -ne 'chomp and print'`
+#!/bin/bash
+VERSION=$(<"build_data/VERSION")
+ORIGIN=$(pwd)
 AP=$ORIGIN/tools/apbuild
 export CC=$AP/apgcc
 export CXX=$AP/apgcc 
