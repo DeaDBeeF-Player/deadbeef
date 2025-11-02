@@ -5,7 +5,7 @@
 ; Version defined manually
 ;#define MyAppVersion "1.8.0"
 ; Version saved in deadbeef source ('PORTABLE' file)
-#define VerFile FileOpen("../../PORTABLE_VERSION")
+#define VerFile FileOpen("../../build_data/VERSION")
 #define MyAppVersion FileRead(VerFile)
 #expr FileClose(VerFile)
 ;#undef VerFile

@@ -23,12 +23,12 @@ jobs:
     - name: Run Tests
       run: scripts/test.sh
     - name: Build for Linux
-      run: TRAVIS_OS_NAME=linux travis/build.sh --debug
+      run: BUILD_OS_NAME=linux travis/build.sh --debug
     - name: Upload for Linux
       env:
           gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
           gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
-      run: TRAVIS_OS_NAME=linux travis/upload.sh --debug
+      run: BUILD_OS_NAME=linux travis/upload.sh --debug
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:

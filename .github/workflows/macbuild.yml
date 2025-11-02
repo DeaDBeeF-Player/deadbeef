@@ -4,6 +4,8 @@ jobs:
   build_mac:
     name: Mac Release Build
     runs-on: macos-latest
+    env:
+      GITHUB_BUILD_NUMBER: ${{ github.run_number }}
     steps:
     - name: Checkout for macOS
       uses: actions/checkout@v4
@@ -14,7 +16,7 @@ jobs:
       with:
         xcode-version: '16'
     - name: Build for macOS
-      run: TRAVIS_OS_NAME=osx travis/build.sh
+      run: BUILD_OS_NAME=osx travis/build.sh
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/macos@v2
       if: always()
@@ -25,7 +27,7 @@ jobs:
       env:
         gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
         gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
-      run: TRAVIS_OS_NAME=osx travis/upload.sh
+      run: BUILD_OS_NAME=osx travis/upload.sh
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:

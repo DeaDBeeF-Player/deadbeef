@@ -6,6 +6,22 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		2D3645AF2EB75FE800E7EA7A /* Setup Build Parameters */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 2D3645B02EB75FE800E7EA7A /* Build configuration list for PBXAggregateTarget "Setup Build Parameters" */;
+			buildPhases = (
+				2D3645B32EB75FFC00E7EA7A /* Setup Build Parameters */,
+			);
+			dependencies = (
+			);
+			name = "Setup Build Parameters";
+			packageProductDependencies = (
+			);
+			productName = "Setup Build Parameters";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		07021F4F1C27365800FC9AF9 /* asm_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F3D1C27365800FC9AF9 /* asm_arm.h */; };
 		07021F501C27365800FC9AF9 /* codeclib_misc.h in Headers */ = {isa = PBXBuildFile; fileRef = 07021F3E1C27365800FC9AF9 /* codeclib_misc.h */; };
@@ -5697,6 +5713,10 @@
 		2D31044F2D7B51C300B2E846 /* Weakify.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Weakify.h; sourceTree = "<group>"; };
 		2D35A24A2B74D60F006D9356 /* filereader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = filereader.h; sourceTree = "<group>"; };
 		2D35A24B2B74D60F006D9356 /* filereader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = filereader.c; sourceTree = "<group>"; };
+		2D3645A92EB74FD600E7EA7A /* ApplyVersion.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ApplyVersion.xcconfig; sourceTree = "<group>"; };
+		2D3645AB2EB7533300E7EA7A /* BUILD_NUMBER */ = {isa = PBXFileReference; lastKnownFileType = text; path = BUILD_NUMBER; sourceTree = "<group>"; };
+		2D3645AD2EB7539200E7EA7A /* VERSION */ = {isa = PBXFileReference; lastKnownFileType = text; path = VERSION; sourceTree = "<group>"; };
+		2D3645B82EB7613200E7EA7A /* BuildParameters.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildParameters.xcconfig; sourceTree = "<group>"; };
 		2D3992DF25C2038700CFA936 /* WeakRefWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakRefWrapper.h; sourceTree = "<group>"; };
 		2D3992E025C2038700CFA936 /* WeakRefWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WeakRefWrapper.m; sourceTree = "<group>"; };
 		2D3A4BB41D631530002C7098 /* medialib.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = medialib.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9889,6 +9909,17 @@
 			path = dial68;
 			sourceTree = "<group>";
 		};
+		2D3645AC2EB7533300E7EA7A /* build_data */ = {
+			isa = PBXGroup;
+			children = (
+				2D3645B82EB7613200E7EA7A /* BuildParameters.xcconfig */,
+				2D3645AD2EB7539200E7EA7A /* VERSION */,
+				2D3645AB2EB7533300E7EA7A /* BUILD_NUMBER */,
+			);
+			name = build_data;
+			path = ../build_data;
+			sourceTree = SOURCE_ROOT;
+		};
 		2D4458DD1C04F1E400230939 /* vfs_zip */ = {
 			isa = PBXGroup;
 			children = (
@@ -11677,6 +11708,7 @@
 		2DA9777324C5EC26002405DA /* xcodeconfig */ = {
 			isa = PBXGroup;
 			children = (
+				2D3645A92EB74FD600E7EA7A /* ApplyVersion.xcconfig */,
 				2DC6565C2744287000583E14 /* gtk2.xcconfig */,
 				2DA9777424C5EC26002405DA /* gtk3.xcconfig */,
 			);
@@ -12675,6 +12707,7 @@
 		4D1B3E7118379829003E6066 = {
 			isa = PBXGroup;
 			children = (
+				2D3645AC2EB7533300E7EA7A /* build_data */,
 				2DA9777324C5EC26002405DA /* xcodeconfig */,
 				2D92D19C29B9044300218F1D /* include */,
 				2D92D18C29B9039A00218F1D /* src */,
@@ -16621,6 +16654,9 @@
 					2D28F0541C283C75004A6E7B = {
 						CreatedOnToolsVersion = 6.2;
 					};
+					2D3645AF2EB75FE800E7EA7A = {
+						CreatedOnToolsVersion = 26.1;
+					};
 					2D3A4BB31D631530002C7098 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
@@ -16856,6 +16892,7 @@
 				2DF930431AB816DC0030C0CA /* wildmidi */,
 				07021EAB1C2734AC00FC9AF9 /* wmalib */,
 				07021F2F1C2734F100FC9AF9 /* wma */,
+				2D3645AF2EB75FE800E7EA7A /* Setup Build Parameters */,
 			);
 		};
 /* End PBXProject section */
@@ -17106,6 +17143,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2D3645B32EB75FFC00E7EA7A /* Setup Build Parameters */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../build_data/VERSION",
+				"$(SRCROOT)/../build_data/BUILD_NUMBER",
+				"$(SRCROOT)/scripts/setup_xcode_variables.sh",
+			);
+			name = "Setup Build Parameters";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/../build_data/BuildParameters.xcconfig",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/../scripts/setup_xcode_variables.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		07021EAC1C2734AC00FC9AF9 /* Sources */ = {
@@ -21861,6 +21923,22 @@
 			};
 			name = Release;
 		};
+		2D3645B12EB75FE800E7EA7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		2D3645B22EB75FE800E7EA7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		2D3A4BB61D631530002C7098 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -24515,6 +24593,7 @@
 		};
 		4D1B3EA918379829003E6066 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2D3645A92EB74FD600E7EA7A /* ApplyVersion.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
@@ -24575,6 +24654,7 @@
 		};
 		4D1B3EAA18379829003E6066 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2D3645A92EB74FD600E7EA7A /* ApplyVersion.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
@@ -25672,6 +25752,15 @@
 			buildConfigurations = (
 				2D2A135C19B647CF00AD1EB7 /* Debug */,
 				2D2A135D19B647CF00AD1EB7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D3645B02EB75FE800E7EA7A /* Build configuration list for PBXAggregateTarget "Setup Build Parameters" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D3645B12EB75FE800E7EA7A /* Debug */,
+				2D3645B22EB75FE800E7EA7A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

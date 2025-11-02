@@ -25,13 +25,13 @@ jobs:
           mingw-w64-x86_64-ffmpeg
     - name: Build for Windows
       shell: msys2 {0}
-      run: TRAVIS_OS_NAME=windows travis/build.sh
+      run: BUILD_OS_NAME=windows travis/build.sh
     - name: Upload for Windows
       env:
           gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
           gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
       shell: msys2 {0}
-      run: TRAVIS_OS_NAME=windows travis/upload.sh
+      run: BUILD_OS_NAME=windows travis/upload.sh
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:

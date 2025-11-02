@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 echo Decrypting id_ed25519...
 
 mkdir -p sshconfig
@@ -14,16 +16,19 @@ eval "$(ssh-agent -s)"
 chmod 600 sshconfig/id_ed25519
 ssh-add sshconfig/id_ed25519 || exit 1
 
-SSHOPTS="ssh -o StrictHostKeyChecking=no"
+SSHOPTS='-q -o StrictHostKeyChecking=no'
+SSH="ssh $SSHOPTS"
 
-VERSION=`tr -d '\r' < PORTABLE_VERSION`
+VERSION=$(<"build_data/VERSION")
 
-if [ ! -z $GITHUB_REF ]; then
-    TRAVIS_BRANCH=${GITHUB_REF#"refs/heads/"}
-    TRAVIS_BRANCH=${TRAVIS_BRANCH#"refs/tags/"}
-    echo "Ref: $GITHUB_REF"
-    echo "Branch/Tag: $TRAVIS_BRANCH"
+if [ -z $GITHUB_REF ]; then
+    exit 1
 fi
+
+BRANCH_NAME=${GITHUB_REF#"refs/heads/"}
+BRANCH_NAME=${BRANCH_NAME#"refs/tags/"}
+echo "Ref: $GITHUB_REF"
+echo "Branch/Tag: $BRANCH_NAME"
 
 DEBUG=false
 
@@ -34,30 +39,69 @@ for arg in "$@"; do
     fi
 done
 
+REMOTE_BASE="/home/frs/project/d/de/deadbeef/Builds/$BRANCH_NAME"
+REMOTE_URL="waker,deadbeef@frs.sourceforge.net"
 
-case "$TRAVIS_OS_NAME" in
+upload_files() {
+    local local_glob=$1
+    local subpath=$2
+
+    local remote_full="$REMOTE_BASE/$subpath"
+    rsync -e "$SSH" $local_glob "${REMOTE_URL}:$remote_full/"
+}
+
+create_dir() {
+    local subpath=$1
+    local full_path="$REMOTE_BASE/$subpath"
+
+    # Split the path into components
+    IFS='/' read -r -a dirs <<< "$full_path"
+
+    # Build SFTP commands for each folder
+    local sftp_cmds=""
+    local path=""
+    for d in "${dirs[@]}"; do
+        # Skip empty components (from leading /)
+        [ -z "$d" ] && continue
+        path="$path/$d"
+        sftp_cmds+="mkdir $path
+"
+    done
+    sftp_cmds+="bye
+"
+
+    # Run SFTP with the commands
+    sftp $SSHOPTS "$REMOTE_URL" <<< "$sftp_cmds"
+}
+
+set -x
+case "$BUILD_OS_NAME" in
     linux)
         echo Uploading linux artifacts...
-        if ! $DEBUG; then
-            # Do not upload packages / source for debug build
-            rsync -e "$SSHOPTS" deadbeef-*.tar.bz2 waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
-            rsync -e "$SSHOPTS" package_out/x86_64/debian/*.deb waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
-            rsync -e "$SSHOPTS" package_out/x86_64/arch/*.pkg.tar.xz waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
+        create_dir linux
+
+        # Upload packages / source only for release build
+        if [ "$DEBUG" != "true" ]; then
+            upload_files "deadbeef-*.tar.bz2" linux
+            upload_files "package_out/x86_64/debian/*.deb" linux
+            upload_files "package_out/x86_64/arch/*.pkg.tar.xz" linux
         fi
         # This will match the build tarballs and debug symbols
-        rsync -e "$SSHOPTS" portable_out/build/*.tar.bz2 waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/linux/$TRAVIS_BRANCH/ || exit 1
+        upload_files "portable_out/build/*.tar.bz2" linux
     ;;
     osx)
         echo Uploading mac artifacts...
-        rsync -e "$SSHOPTS" osx/build/Release/deadbeef-$VERSION-macos-universal.zip waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/macOS/$TRAVIS_BRANCH/ || exit 1
-        rsync -e "$SSHOPTS" osx/build/Release/deadbeef-$VERSION-macos-dSYM.zip waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/macOS/$TRAVIS_BRANCH/ || exit 1
+        create_dir macOS
+        upload_files "osx/build/Release/deadbeef-$VERSION-macos-universal.zip" macOS
+        upload_files "osx/build/Release/deadbeef-$VERSION-macos-dSYM.zip" macOS
     ;;
     windows)
         echo Uploading windows artifacts...
-        rsync -e "$SSHOPTS" bin/deadbeef-$VERSION-windows-x86_64.zip waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/windows/$TRAVIS_BRANCH/ || exit 1
-        rsync -e "$SSHOPTS" bin/deadbeef-$VERSION-windows-x86_64_DEBUG.zip waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/windows/$TRAVIS_BRANCH/ || exit 1
-        rsync -e "$SSHOPTS" bin/deadbeef-$VERSION-windows-x86_64.exe waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/windows/$TRAVIS_BRANCH/ || exit 1
-        rsync -e "$SSHOPTS" bin/deadbeef-$VERSION-windows-x86_64_DEBUG.exe waker,deadbeef@frs.sourceforge.net:/home/frs/project/d/de/deadbeef/travis/windows/$TRAVIS_BRANCH/ || exit 1
+        create_dir windows
+        upload_files "bin/deadbeef-$VERSION-windows-x86_64.zip" windows
+        upload_files "bin/deadbeef-$VERSION-windows-x86_64_DEBUG.zip" windows
+        upload_files "bin/deadbeef-$VERSION-windows-x86_64.exe" windows
+        upload_files "bin/deadbeef-$VERSION-windows-x86_64_DEBUG.exe" windows
         taskkill //IM ssh-agent.exe //F
     ;;
 esac

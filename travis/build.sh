@@ -10,7 +10,10 @@ for arg in "$@"; do
     fi
 done
 
-case "$TRAVIS_OS_NAME" in
+VERSION=$(<"build_data/VERSION")
+echo "${GITHUB_BUILD_NUMBER}" > build_data/BUILD_NUMBER
+
+case "$BUILD_OS_NAME" in
     linux)
         ls -l .
 #        echo "building for i686"
@@ -31,11 +34,8 @@ case "$TRAVIS_OS_NAME" in
     osx)
         echo "Install xcbeautify ..."
         brew install xcbeautify 1> /dev/null 2> /dev/null
-        echo "Patch Info.plist ..."
-        VERSION=`tr -d '\r' < PORTABLE_VERSION`
-        /usr/libexec/PlistBuddy -c "Set CFBundleShortVersionString $VERSION" plugins/cocoaui/deadbeef-Info.plist
-        rev=`git rev-parse --short HEAD`
-        /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $rev" plugins/cocoaui/deadbeef-Info.plist
+        echo "Write build number ..."
+        SRCROOT='./osx' ./scripts/setup_xcode_variables.sh
         echo "Build & run tests ..."
         mkdir -p osx/build/reports
         mkdir -p osx/build/Release
@@ -43,8 +43,8 @@ case "$TRAVIS_OS_NAME" in
         echo "Build DeaDBeeF.app ..."
         xcodebuild "MACOSX_DEPLOYMENT_TARGET=10.13" -project osx/deadbeef.xcodeproj -target DeaDBeeF -configuration Release | tee osx/build/Release/build.log | xcbeautify ; test ${PIPESTATUS[0]} -eq 0
         cd osx/build/Release
-        zip -r deadbeef-$VERSION-macos-universal.zip DeaDBeeF.app
-        zip -r deadbeef-$VERSION-macos-dSYM.zip *.dSYM
+        zip -r deadbeef-${VERSION}-macos-universal.zip DeaDBeeF.app
+        zip -r deadbeef-${VERSION}-macos-dSYM.zip *.dSYM
         cd ../../..
     ;;
     windows)
@@ -68,7 +68,6 @@ case "$TRAVIS_OS_NAME" in
         cp -r deadbeef-windows-deps/Windows-10-Icons bin/debug/share/icons/Windows-10-Icons
         cp -r deadbeef-windows-deps/Windows-10-Icons bin/release/share/icons/Windows-10-Icons
         echo "Making zip packages"
-        VERSION=`tr -d '\r' < PORTABLE_VERSION`
         mv bin/release bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-$VERSION-windows-x86_64.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/release
         mv bin/debug bin/deadbeef-x86_64 && (cd bin && $msys2 zip -q -r deadbeef-$VERSION-windows-x86_64_DEBUG.zip deadbeef-x86_64/) && mv bin/deadbeef-x86_64 bin/debug
         echo "Making installer packages"

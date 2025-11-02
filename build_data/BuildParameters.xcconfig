@@ -1,0 +1,6 @@
+// This file is generated / updated when running CI build script
+
+MARKETING_VERSION = devel
+BUILD_NUMBER = local
+GIT_REVISION = deadbeef
+SHORT_VERSION = $BUILD_NUMBER-$GIT_REVISION
