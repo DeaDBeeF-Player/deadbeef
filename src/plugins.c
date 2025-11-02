@@ -1264,34 +1264,39 @@ plug_load_all (void) {
         if (plug->plugin->type == DB_PLUGIN_DECODER) {
 //            trace ("found decoder plugin %s\n", plug->plugin->name);
             if (numdecoders >= MAX_DECODER_PLUGINS) {
-                break;
+                trace_err ("too many decoder plugins. plugin %s will not function correctly.\n", plug->plugin->name);
+                continue;
             }
             g_decoder_plugins[numdecoders++] = (DB_decoder_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_VFS) {
 //            trace ("found vfs plugin %s\n", plug->plugin->name);
             if (numvfs >= MAX_VFS_PLUGINS) {
-                break;
+                trace_err ("too many vfs plugins. plugin %s will not function correctly.\n", plug->plugin->name);
+                continue;
             }
             g_vfs_plugins[numvfs++] = (DB_vfs_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_OUTPUT) {
 //            trace ("found output plugin %s\n", plug->plugin->name);
             if (numoutput >= MAX_OUTPUT_PLUGINS) {
-                break;
+                trace_err ("too many output plugins. plugin %s will not function correctly.\n", plug->plugin->name);
+                continue;
             }
             g_output_plugins[numoutput++] = (DB_output_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_DSP) {
 //            trace ("found dsp plugin %s\n", plug->plugin->name);
             if (numdsp >= MAX_DSP_PLUGINS) {
-                break;
+                trace_err ("too many dsp plugins. plugin %s will not function correctly.\n", plug->plugin->name);
+                continue;
             }
             g_dsp_plugins[numdsp++] = (DB_dsp_t *)plug->plugin;
         }
         else if (plug->plugin->type == DB_PLUGIN_PLAYLIST) {
             if (numplaylist >= MAX_PLAYLIST_PLUGINS) {
-                break;
+                trace_err ("too many playlist plugins. plugin %s will not function correctly.\n", plug->plugin->name);
+                continue;
             }
             g_playlist_plugins[numplaylist++] = (DB_playlist_t *)plug->plugin;
         }
