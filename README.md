@@ -18,11 +18,11 @@ If you wish to chat with developers, join us on [Discord](https://discord.gg/GTV
 [![Windows Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Windows/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/windowsbuild.yml)
 [![macOS Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Mac/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/macbuild.yml)
 
-[Nightly GNU/Linux Builds](https://sourceforge.net/projects/deadbeef/files/travis/linux/master/)
+[Nightly GNU/Linux Builds](https://sourceforge.net/projects/deadbeef/files/Builds/master/linux/)
 
-[Nightly Windows Builds](https://sourceforge.net/projects/deadbeef/files/travis/windows/master/)
+[Nightly Windows Builds](https://sourceforge.net/projects/deadbeef/files/Builds/master/windows/)
 
-[Nightly macOS Builds](https://sourceforge.net/projects/deadbeef/files/travis/macOS/master/)
+[Nightly macOS Builds](https://sourceforge.net/projects/deadbeef/files/Builds/master/macOS/)
 
 
 ## Building DeaDBeeF from source
