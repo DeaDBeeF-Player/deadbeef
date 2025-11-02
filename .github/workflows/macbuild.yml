@@ -1,8 +1,8 @@
-name: Build for Mac
+name: Mac Release Build
 on: [ push, pull_request ]
 jobs:
   build_mac:
-    name: CI for macOS
+    name: Mac Release Build
     runs-on: macos-latest
     steps:
     - name: Checkout for macOS

@@ -1,8 +1,8 @@
-name: Build for Windows
+name: Windows Release Build
 on: [ push, pull_request ]
 jobs:
   build_windows:
-    name: CI for Windows
+    name: Windows Release Build
     runs-on: windows-latest
     steps:
     - name: Checkout for Windows

@@ -1,10 +1,10 @@
-name: Build Debug for Linux
+name: Linux Debug Build
 
 on: [ push, pull_request ]
 
 jobs:
   build_linux:
-    name: CI for Linux
+    name: Linux Debug Build
     runs-on: ubuntu-latest
     container: ubuntu:20.04
     steps:
