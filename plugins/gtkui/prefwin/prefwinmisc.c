@@ -96,7 +96,7 @@ prefwin_init_gui_misc_tab (GtkWidget *_prefwin) {
     const char **names = deadbeef->plug_get_gui_names ();
     for (int i = 0; names[i]; i++) {
         gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), names[i]);
-        if (!strcmp (names[i], deadbeef->conf_get_str_fast ("gui_plugin", "GTK2"))) {
+        if (!strcmp (names[i], deadbeef->conf_get_str_fast ("gui_plugin", "GTK3"))) {
             prefwin_set_combobox (combobox, i);
         }
     }

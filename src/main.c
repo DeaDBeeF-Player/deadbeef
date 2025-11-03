@@ -150,7 +150,7 @@ print_help (void) {
     fprintf (stdout, _ ("   --prev             Previous song in playlist\n"));
     fprintf (stdout, _ ("   --random           Random song in playlist\n"));
     fprintf (stdout, _ ("   --queue            Append file(s) to existing playlist\n"));
-    fprintf (stdout, _ ("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK2\"\n"));
+    fprintf (stdout, _ ("   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"));
     fprintf (stdout, _ ("   --nowplaying FMT   Print formatted track name to stdout\n"));
     fprintf (
         stdout,

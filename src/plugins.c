@@ -948,7 +948,7 @@ load_gui_plugin (const char **plugdirs) {
 #else
 
     char conf_gui_plug[100];
-    conf_get_str ("gui_plugin", "GTK2", conf_gui_plug, sizeof (conf_gui_plug));
+    conf_get_str ("gui_plugin", "GTK3", conf_gui_plug, sizeof (conf_gui_plug));
     char name[100];
 
     // try to load selected plugin
