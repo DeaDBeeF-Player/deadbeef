@@ -1,9 +1,9 @@
 pkgname = deadbeef-static
-pkgdesc = An audio player for GNU/Linux based on GTK2.
+pkgdesc = DeaDBeeF Audio Player.
 url = http://deadbeef.sourceforge.net
 packager = Oleksiy Yakovenko <waker@users.sf.net>
 license = GPL2
-depend = gtk2
+depend = gtk3
 depend = hicolor-icon-theme
 depend = desktop-file-utils
 optdepend = libx11: for global hotkeys plugin
