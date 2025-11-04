@@ -468,8 +468,10 @@ static inline vector_float4 vec4color (NSColor *color) {
         // unused / empty
         NSUInteger size = 12;
         id<MTLBuffer> buffer = [self.bufferLoop nextBufferForSize:size];
+        memset(buffer.contents, 0, size);
         [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
         id<MTLBuffer> lookupBuffer = [self.lookupBufferLoop nextBufferForSize:4];
+        memset(lookupBuffer.contents, 0, 4);
         [encoder setFragmentBuffer:lookupBuffer offset:0 atIndex:2];
     }
     else if (_draw_data.mode == DDB_ANALYZER_MODE_FREQUENCIES) {
