@@ -157,9 +157,14 @@ _create_sorted_tree(
         }
 
         if (is_leaf) {
-            ddb_playItem_t *it = next;
-            next = deadbeef->pl_get_next(it, PL_MAIN);
-            deadbeef->pl_item_unref(it);
+            while (next != NULL) {
+                ddb_playItem_t *it = next;
+                next = deadbeef->pl_get_next(it, PL_MAIN);
+                deadbeef->pl_item_unref(it);
+                if (next == NULL || !selected || deadbeef->pl_is_selected(next)) {
+                    break;
+                }
+            }
         }
         else {
             // recurse into subgroups
@@ -428,9 +433,14 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
         }
 
         if (is_leaf) {
-            ddb_playItem_t *it = next;
-            next = deadbeef->pl_get_next(it, PL_MAIN);
-            deadbeef->pl_item_unref(it);
+            while (next != NULL) {
+                ddb_playItem_t *it = next;
+                next = deadbeef->pl_get_next(it, PL_MAIN);
+                deadbeef->pl_item_unref(it);
+                if (next == NULL || !selected || deadbeef->pl_is_selected(next)) {
+                    break;
+                }
+            }
         }
         else {
             // recurse into subgroups
