@@ -39,7 +39,7 @@ static const int text_left_padding = 24;
 static const int text_right_padding = 24;
 
 static const int tab_overlap_size = 0;
-static const int tabs_left_margin = 0;
+static const int tabs_left_margin = 2;
 static const int tab_vert_padding = 0;
 
 static const int min_tab_size = 80;
@@ -124,7 +124,7 @@ static const int tab_close_btn_size = 12;
     self.isKeyWindow = self.window.isKeyWindow;
 
     NSMutableParagraphStyle *textStyle = [NSParagraphStyle.defaultParagraphStyle mutableCopy];
-    textStyle.alignment = NSTextAlignmentLeft;
+    textStyle.alignment = NSTextAlignmentCenter;
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
     NSFont *font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize weight:NSFontWeightSemibold];
@@ -143,7 +143,7 @@ static const int tab_close_btn_size = 12;
     };
 
     textStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    textStyle.alignment = NSTextAlignmentLeft;
+    textStyle.alignment = NSTextAlignmentCenter;
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
     font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize] weight:NSFontWeightMedium];
@@ -160,7 +160,7 @@ static const int tab_close_btn_size = 12;
     ];
 
     self.tabBackgroundColor = [
-        [self backgroundColorWithPercentage:self.isDarkMode ? 0 : 0.1] colorWithAlphaComponent:self.isKeyWindow ? 1 : 0.5
+        [self backgroundColorWithPercentage:self.isDarkMode ? 0.05 : 0.1] colorWithAlphaComponent:self.isKeyWindow ? 1 : 0.5
     ];
 }
 
@@ -337,7 +337,7 @@ static const int tab_close_btn_size = 12;
     NSBezierPath.defaultLineWidth = 1;
     if ((idx < selectedIdx - 1 || idx > selectedIdx) && (idx < _pointedTab - 1 || idx > _pointedTab)) {
         NSColor *clr = _hiddenVertLine.borderColor;
-        [[clr colorWithAlphaComponent:0.5] set];
+        [[clr colorWithAlphaComponent:0.25] set];
         NSBezierPath *line = [NSBezierPath bezierPath];
         [line moveToPoint:NSMakePoint(NSMaxX(tabRect) - 0.5, NSMinY(tabRect) + 5)];
         [line lineToPoint:NSMakePoint(NSMaxX(tabRect) - 0.5, NSMaxY(tabRect) - 5)];
@@ -401,8 +401,12 @@ static const int tab_close_btn_size = 12;
 
     [self updateDrawingConfiguration];
 
+    const CGFloat bg_radius = NSHeight(self.bounds) / 2;
+    NSBezierPath* bg = [NSBezierPath bezierPathWithRoundedRect:self.bounds xRadius:bg_radius yRadius:bg_radius];
+    [bg setClip];
+
     [self.tabBackgroundColor set];
-    NSRectFill(self.frame);
+    [bg fill];
 
     int cnt = deadbeef->plt_get_count ();
     int hscroll = self.scrollPos;
@@ -422,7 +426,6 @@ static const int tab_close_btn_size = 12;
     }
 
     [NSGraphicsContext.currentContext saveGraphicsState];
-    [NSBezierPath clipRect:self.frame];
 
     // draw selected
     // calc position for drawin selected tab

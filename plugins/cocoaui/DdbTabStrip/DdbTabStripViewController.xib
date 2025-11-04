@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="19455" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24412" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19455"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24412"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="DdbTabStripViewController">
             <connections>
+                <outlet property="tabButton" destination="Z7i-M8-Zm8" id="G7p-x7-JCt"/>
                 <outlet property="tabStripView" destination="p1u-sE-X5e" id="f1z-q4-jf6"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
             </connections>
@@ -18,7 +19,7 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="24"/>
             <subviews>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="p1u-sE-X5e" customClass="DdbTabStrip">
-                    <rect key="frame" x="0.0" y="0.0" width="447" height="24"/>
+                    <rect key="frame" x="8" y="0.0" width="432" height="24"/>
                     <subviews>
                         <box hidden="YES" horizontalHuggingPriority="750" fixedFrame="YES" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="4pG-Nr-X0v">
                             <rect key="frame" x="177" y="-36" width="5" height="96"/>
@@ -32,32 +33,33 @@
                         <outlet property="hiddenVertLine" destination="4pG-Nr-X0v" id="9yF-UA-AxV"/>
                     </connections>
                 </customView>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Z7i-M8-Zm8">
-                    <rect key="frame" x="451" y="2" width="25" height="19"/>
-                    <buttonCell key="cell" type="recessed" title="+" bezelStyle="recessed" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="erx-aT-tvU">
+                <button verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="Z7i-M8-Zm8">
+                    <rect key="frame" x="448" y="0.0" width="24" height="24"/>
+                    <buttonCell key="cell" type="recessed" bezelStyle="recessed" image="NSAddTemplate" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="erx-aT-tvU">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="systemBold" size="16"/>
+                        <font key="font" metaFont="systemBold" size="12"/>
                     </buttonCell>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="Z7i-M8-Zm8" secondAttribute="height" id="eRZ-UN-num"/>
+                    </constraints>
                     <connections>
                         <action selector="createNewPlaylistAction:" target="-2" id="JBG-nC-9HQ"/>
                     </connections>
                 </button>
-                <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="bHS-66-REk">
-                    <rect key="frame" x="0.0" y="-2" width="480" height="5"/>
-                </box>
             </subviews>
             <constraints>
                 <constraint firstItem="Z7i-M8-Zm8" firstAttribute="centerY" secondItem="p1u-sE-X5e" secondAttribute="centerY" id="G8s-Fo-ytN"/>
-                <constraint firstItem="bHS-66-REk" firstAttribute="top" secondItem="p1u-sE-X5e" secondAttribute="bottom" constant="-1" id="Hf4-aQ-36V"/>
+                <constraint firstItem="Z7i-M8-Zm8" firstAttribute="height" secondItem="p1u-sE-X5e" secondAttribute="height" id="Qmg-Rs-n9t"/>
                 <constraint firstItem="p1u-sE-X5e" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="aAu-6o-5OQ"/>
-                <constraint firstAttribute="trailing" secondItem="bHS-66-REk" secondAttribute="trailing" id="anF-1e-TYv"/>
-                <constraint firstAttribute="bottom" secondItem="bHS-66-REk" secondAttribute="bottom" id="duq-AA-mba"/>
-                <constraint firstAttribute="trailing" secondItem="Z7i-M8-Zm8" secondAttribute="trailing" constant="4" id="h8f-rT-d41"/>
-                <constraint firstItem="p1u-sE-X5e" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="je5-uR-olE"/>
-                <constraint firstItem="bHS-66-REk" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="uaQ-oQ-L7d"/>
-                <constraint firstItem="Z7i-M8-Zm8" firstAttribute="leading" secondItem="p1u-sE-X5e" secondAttribute="trailing" constant="4" id="wzd-uX-eve"/>
+                <constraint firstAttribute="trailing" secondItem="Z7i-M8-Zm8" secondAttribute="trailing" constant="8" id="h8f-rT-d41"/>
+                <constraint firstItem="p1u-sE-X5e" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="8" id="je5-uR-olE"/>
+                <constraint firstItem="Z7i-M8-Zm8" firstAttribute="leading" secondItem="p1u-sE-X5e" secondAttribute="trailing" constant="8" id="wzd-uX-eve"/>
+                <constraint firstAttribute="bottom" secondItem="p1u-sE-X5e" secondAttribute="bottom" id="xBL-Y5-lMV"/>
             </constraints>
             <point key="canvasLocation" x="139" y="114"/>
         </customView>
     </objects>
+    <resources>
+        <image name="NSAddTemplate" width="18" height="17"/>
+    </resources>
 </document>

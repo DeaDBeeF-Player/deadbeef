@@ -16,10 +16,15 @@ extern DB_functions_t *deadbeef;
 @interface DdbTabStripViewController ()
 
 @property (weak) IBOutlet DdbTabStrip *tabStripView;
+@property (weak) IBOutlet NSButton *tabButton;
 
 @end
 
 @implementation DdbTabStripViewController
+
+- (void)awakeFromNib {
+    self.tabButton.bezelStyle = NSBezelStyleCircular;
+}
 
 - (void)dealloc {
     // force-cleanup
