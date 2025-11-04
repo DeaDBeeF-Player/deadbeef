@@ -418,6 +418,7 @@ static void vis_callback (void *ctx, const ddb_audio_data_t *data) {
 
     if (_draw_data.points == NULL) {
         id<MTLBuffer> buffer = [self.bufferLoop nextBufferForSize:12];
+        memset(buffer.contents, 0, 12);
         [encoder setFragmentBuffer:buffer offset:0 atIndex:1];
     }
     else {
