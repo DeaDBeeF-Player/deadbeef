@@ -1817,6 +1817,10 @@ typedef struct {
     /// Get the root of scriptable tree, which contains dsp and encoder presets.
     /// This is used by GUI plugins for preset editing.
     ddb_scriptable_item_t * (*get_shared_scriptable_root)(void);
+
+    /// append zero-divided multivalue data to existing data
+    /// skip duplicates
+    void (*pl_append_meta_full) (ddb_playItem_t *it, const char *key, const char *value, int size);
 #endif
 } DB_functions_t;
 

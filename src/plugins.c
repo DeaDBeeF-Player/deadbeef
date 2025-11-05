@@ -620,6 +620,7 @@ static DB_functions_t deadbeef_api = {
 
     .plt_sort_v3 = plt_sort_v3,
     .get_shared_scriptable_root = _get_shared_scriptable_root,
+    .pl_append_meta_full = (void (*) (ddb_playItem_t *it, const char *key, const char *value, int size))pl_append_meta_full,
 };
 
 DB_functions_t *deadbeef = &deadbeef_api;
