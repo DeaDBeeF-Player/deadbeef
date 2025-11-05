@@ -618,6 +618,7 @@ _duplicate_did_activate (GtkButton *button, gpointer user_data) {
     char name[100];
     snprintf (name, sizeof (name), _ ("%s (Copy)"), scriptableItemPropertyValueForKey (item, "name"));
     scriptableItemSetUniqueNameUsingPrefixAndRoot (duplicate, name, self->scriptable);
+    scriptableItemFlagsRemove(duplicate, SCRIPTABLE_FLAG_IS_READONLY);
 
     _insert_node_at_selection (self, duplicate);
 }

@@ -50,6 +50,7 @@ extern DB_functions_t *deadbeef;
     char name[100];
     snprintf (name, sizeof (name), "%s (Copy)", scriptableItemPropertyValueForKey(item, "name"));
     scriptableItemSetUniqueNameUsingPrefixAndRoot(duplicate, name, self.scriptable);
+    scriptableItemFlagsRemove(duplicate, SCRIPTABLE_FLAG_IS_READONLY);
     [self insertItem:duplicate atIndex:index];
 }
 
