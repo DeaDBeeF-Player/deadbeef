@@ -1216,7 +1216,7 @@ _converter_write_tags (ddb_encoder_preset_t *encoder_preset, DB_playItem_t *it, 
                 break;
             }
             if (!deadbeef->pl_meta_exists (out_it, meta->key)) {
-                deadbeef->pl_append_meta (out_it, meta->key, meta->value);
+                deadbeef->pl_append_meta_full (out_it, meta->key, meta->value, meta->valuesize);
             }
             meta = meta->next;
         }
