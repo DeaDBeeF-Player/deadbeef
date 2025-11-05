@@ -466,7 +466,7 @@ static inline vector_float4 vec4color (NSColor *color) {
     // bar data
     if (_draw_data.bars == NULL) {
         // unused / empty
-        NSUInteger size = 12;
+        NSUInteger size = sizeof (struct SpectrumFragBar);
         id<MTLBuffer> buffer = [self.bufferLoop nextBufferForSize:size];
         memset(buffer.contents, 0, size);
         [encoder setFragmentBuffer:buffer offset:0 atIndex:1];

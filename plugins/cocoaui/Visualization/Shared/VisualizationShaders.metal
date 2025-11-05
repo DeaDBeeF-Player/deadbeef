@@ -117,6 +117,10 @@ spectrumFragmentShader(
         out.xyz = params.lineColor.xyz * line * lineAlpha + out.xyz * (1 - line * lineAlpha);
     }
 
+    if (params.barCount == 0) {
+        return out;
+    }
+
     int barIndex;
     float barWidth;
     if (!params.discreteFrequencies) {
