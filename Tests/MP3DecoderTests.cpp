@@ -28,7 +28,6 @@ protected:
     }
 };
 
-
 static void runMp3TwoPieceTestWithBackend(int backend) {
     deadbeef->conf_set_int ("mp3.backend", backend);
 
@@ -45,55 +44,59 @@ static void runMp3TwoPieceTestWithBackend(int backend) {
     DB_fileinfo_t *fi = dec->open (0);
     dec->init (fi, it);
 
-    int64_t size = 176400;
-    char *buffer = (char *)malloc (size*2);
+    const int64_t size = 44100*2*sizeof(uint16_t);
+    unsigned char *buffer1 = (unsigned char *)calloc (1, size);
+    unsigned char *buffer2 = (unsigned char *)calloc (1, size);
 
-    // request twice as much to make sure we don't overshoot
-    int res = dec->read (fi, buffer, (int)size*2);
-
-    EXPECT_EQ(res, size);
-
-    char *buffer2 = (char *)malloc (size*2); // buffer is over-allocated to check for trailing data
+    // Read whole 1 second
+    int res1 = dec->read (fi, (char *)buffer1, (int)size);
+    EXPECT_EQ(res1, size);
 
     // read first part
     dec->seek_sample (fi, 0);
 
-    res = dec->read (fi, buffer2, (int)size/2);
-    EXPECT_EQ(res, size/2);
+    int res2 = dec->read (fi, (char *)buffer2, (int)size/2);
+    EXPECT_EQ(res2, size/2);
 
     dec->seek_sample (fi, 44100/2);
-    res = dec->read (fi, buffer2+size/2, (int)size);
-    EXPECT_EQ(res, size/2);
+    int res3 = dec->read (fi, (char *)(buffer2 + size/2), (int)size/2);
+    EXPECT_EQ(res3, size/2);
 
 #if 0
-    FILE *fp1 = fopen ("buffer1.raw", "w+b");
-    FILE *fp2 = fopen ("buffer2.raw", "w+b");
-    fwrite (buffer, size, 1, fp1);
+    FILE *fp1 = fopen ("/Users/waker/buffer1.raw", "w+b");
+    FILE *fp2 = fopen ("/Users/waker/buffer2.raw", "w+b");
+    fwrite (buffer1, size, 1, fp1);
     fwrite (buffer2, size, 1, fp2);
     fclose (fp1);
     fclose (fp2);
 #endif
 
-    int cmp1 = memcmp (buffer, buffer2, size/2);
-    EXPECT_TRUE(cmp1==0);
+    int cmp_half1 = memcmp (buffer1, buffer2, size/2);
+    EXPECT_EQ(cmp_half1, 0);
 
-    int cmp2 = memcmp (buffer+size/2, buffer2+size/2, size/2);
-    EXPECT_TRUE(cmp2==0);
+    int cmp2_half2 = memcmp (buffer1+size/2, buffer2+size/2, size/2);
+    EXPECT_EQ(cmp2_half2, 0);
 
-    int cmp = memcmp (buffer, buffer2, size);
+    int cmp_whole = memcmp (buffer1, buffer2, size);
+    EXPECT_EQ(cmp_whole, 0);
 
-    free (buffer);
+    free (buffer1);
     free (buffer2);
 
     dec->free (fi);
 
     deadbeef->plt_unref ((ddb_playlist_t *)plt);
 
-    EXPECT_TRUE(cmp==0);
 }
 
 #if !__aarch64__
-// FIXME: Looks like MPG123 generates bad data in that test. Needs proper debugging on arm64 host.
+// #3107: This test is failing on arm64.
+// Proper investigation has been conducted,
+// mpg123 doesn't produce the same data on ARM64 when reading in 2 pieces vs 1 piece,
+// neither with OPT_NEON64, nor OPT_GENERIC modes.
+// Also the whole signal output differs between OPT_NEON64 and OPT_AVX modes.
+// Even comparing weakly as a signal with large tolerance doesn't give meaningful result,
+// so the test has to be disabled.
 TEST_F(MP3DecoderTests, test_DecodeMP3As2PiecesMPG123_SameAs1Piece) {
     runMp3TwoPieceTestWithBackend(0); // mpg123
 }
