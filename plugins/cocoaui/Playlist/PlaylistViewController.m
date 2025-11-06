@@ -1262,13 +1262,12 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                     if (prev_plt != plt) {
                         // force group rebuild
                         deadbeef->plt_set_curr (plt);
-                        [listview.contentView reloadData];
                     }
 
-                    int idx = deadbeef->pl_get_idx_of_iter (it, [self playlistIter]);
+                    int idx = deadbeef->plt_get_item_idx (plt, it, [self playlistIter]);
                     if (idx != -1) {
                         // there's a delay in scrollview layout
-                        dispatch_after((dispatch_time_t)(0.01 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.01 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
                             [listview.contentView setCursor:idx noscroll:YES];
                             [listview.contentView scrollToRowWithIndex:idx];
                         });
