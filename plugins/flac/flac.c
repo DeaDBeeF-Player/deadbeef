@@ -48,8 +48,7 @@
 static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;
 
-//#define trace(...) { fprintf(stderr, __VA_ARGS__); }
-#define trace(fmt,...)
+#define trace(...) { deadbeef->log_detailed (&plugin.decoder.plugin, 0, __VA_ARGS__); }
 
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
@@ -57,6 +56,7 @@ static DB_functions_t *deadbeef;
 typedef struct {
     DB_fileinfo_t info;
     FLAC__StreamDecoder *decoder;
+    FLAC__StreamDecoder *flac_decoder;
     int buffersize;
     char *buffer;
     int remaining; // bytes remaining in buffer from last read
@@ -310,7 +310,7 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     if (!info->file) {
         deadbeef->pl_lock ();
-	const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
+        const char *uri = strdupa (deadbeef->pl_find_meta (it, ":URI"));
         deadbeef->pl_unlock ();
         info->file = deadbeef->fopen (uri);
         if (!info->file) {
@@ -328,25 +328,21 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     deadbeef->pl_unlock();
 
     int isogg = 0;
-    int skip = 0;
-    if (ext && !strcasecmp (ext, "flac")) {
-        skip = deadbeef->junk_get_leading_size (info->file);
-        if (skip > 0) {
-            deadbeef->fseek (info->file, skip, SEEK_SET);
-        }
-        char sign[4];
-        if (deadbeef->fread (sign, 1, 4, info->file) != 4) {
-            trace ("cflac_init failed to read signature\n");
-            return -1;
-        }
-        if (strncmp (sign, "fLaC", 4)) {
-            trace ("cflac_init bad signature\n");
-            return -1;
-        }
+    int skip = deadbeef->junk_get_leading_size (info->file);
+    if (skip > 0) {
+        deadbeef->fseek (info->file, skip, SEEK_SET);
+    }
+    char sign[4];
+    if (deadbeef->fread (sign, 1, 4, info->file) != 4) {
+        trace ("flac: cflac_init failed to read signature\n");
+        return -1;
+    }
+
+    if (!strncmp (sign, "fLaC", 4)) {
         deadbeef->fseek (info->file, -4, SEEK_CUR);
     }
     else if (!FLAC_API_SUPPORTS_OGG_FLAC) {
-        trace ("flac: ogg transport support is not compiled into FLAC library\n");
+        trace ("flac: unsupported file format\n");
         return -1;
     }
     else {
@@ -360,19 +356,30 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         return -1;
     }
     FLAC__stream_decoder_set_md5_checking (info->decoder, 0);
-    if (isogg) {
-        status = FLAC__stream_decoder_init_ogg_stream (info->decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, info);
-    }
-    else {
-        status = FLAC__stream_decoder_init_stream (info->decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, info);
-    }
+    status = FLAC__stream_decoder_init_stream (info->decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, info);
     if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
-        trace ("cflac_init bad decoder status\n");
+        trace ("cflac_init: FLAC__stream_decoder_init_stream error\n");
         return -1;
     }
-    //_info->fmt.samplerate = -1;
+
+    if (isogg) {
+//        FLAC__stream_decoder_set_ogg_serial_number(info->decoder, 0);
+        info->flac_decoder = info->decoder;
+        info->decoder = FLAC__stream_decoder_new ();
+        status = FLAC__stream_decoder_init_ogg_stream (info->decoder, flac_read_cb, flac_seek_cb, flac_tell_cb, flac_length_cb, flac_eof_cb, cflac_write_callback, cflac_metadata_callback, cflac_error_callback, info);
+        if (status != FLAC__STREAM_DECODER_INIT_STATUS_OK) {
+            trace ("cflac_init: FLAC__stream_decoder_init_ogg_stream error\n");
+            return -1;
+        }
+    }
+
+    if (!FLAC__stream_decoder_reset(info->decoder)) {
+        trace("cflac_init: FLAC__stream_decoder_reset failed\n");
+        return -1;
+    }
+
     if (!FLAC__stream_decoder_process_until_end_of_metadata (info->decoder)) {
-        trace ("cflac_init metadata failed\n");
+        trace ("cflac_init: FLAC__stream_decoder_process_until_end_of_metadata failed\n");
         return -1;
     }
 
@@ -381,7 +388,7 @@ cflac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->readpos = 0;
 
     if (_info->fmt.samplerate <= 0) { // not a FLAC stream
-        fprintf (stderr, "corrupted/invalid flac stream\n");
+        trace ("cflac_init: corrupt/invalid flac stream\n");
         return -1;
     }
     info->bitrate = deadbeef->pl_find_meta_int(it, ":BITRATE", -1);
@@ -436,6 +443,9 @@ cflac_free (DB_fileinfo_t *_info) {
         if (info->decoder) {
             FLAC__stream_decoder_delete (info->decoder);
         }
+        if (info->flac_decoder) {
+            FLAC__stream_decoder_delete (info->flac_decoder);
+        }
         if (info->buffer) {
             free (info->buffer);
         }
@@ -485,6 +495,7 @@ cflac_read (DB_fileinfo_t *_info, char *bytes, int size) {
         }
         if (!FLAC__stream_decoder_process_single (info->decoder)) {
             trace ("FLAC__stream_decoder_process_single error\n");
+            FLAC__StreamDecoderState state = FLAC__stream_decoder_get_state (info->decoder);
             break;
         }
         if (FLAC__stream_decoder_get_state (info->decoder) == FLAC__STREAM_DECODER_END_OF_STREAM) {

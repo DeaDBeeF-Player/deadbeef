@@ -280,7 +280,7 @@ extern "C" {
 // default values for some common config variables should go here
 
 // network.ctmapping : content-type to plugin mapping
-#define DDB_DEFAULT_CTMAPPING "audio/mpeg {stdmpg ffmpeg} audio/x-mpeg {stdmpg ffmpeg} application/ogg {stdogg opus ffmpeg} audio/ogg {stdogg opus ffmpeg} audio/aac {aac ffmpeg} audio/aacp {aac ffmpeg} audio/x-m4a {aac ffmpeg} audio/wma {wma ffmpeg}"
+#define DDB_DEFAULT_CTMAPPING "audio/mpeg {stdmpg ffmpeg} audio/x-mpeg {stdmpg ffmpeg} application/ogg {stdogg opus stdflac ffmpeg} audio/ogg {stdogg opus stdflac ffmpeg} audio/aac {aac ffmpeg} audio/aacp {aac ffmpeg} audio/x-m4a {aac ffmpeg} audio/wma {wma ffmpeg}"
 
 ////////////////////////////
 // playlist structures
