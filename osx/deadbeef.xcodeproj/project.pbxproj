@@ -966,6 +966,7 @@
 		2D46221D226DBA57003997E9 /* FlippedClipView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D46221B226DBA57003997E9 /* FlippedClipView.h */; };
 		2D46221E226DBA57003997E9 /* FlippedClipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D46221C226DBA57003997E9 /* FlippedClipView.m */; };
 		2D4739B21F10ECBF008B95A3 /* psfmain.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D4739B11F10ECBF008B95A3 /* psfmain.c */; };
+		2D47817C2EBF7CC200408BBF /* liboggedit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D88E9F71B2AF6BC0072FD43 /* liboggedit.dylib */; };
 		2D48DBD62269B731002CACFD /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
 		2D48DBE42269B731002CACFD /* plugins.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B47481837EC47003E6066 /* plugins.c */; };
 		2D48DBF02269B731002CACFD /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D66DBA01F6181C400BFF76B /* AudioToolbox.framework */; };
@@ -3454,6 +3455,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D4458D81C04F1C000230939;
 			remoteInfo = vfs_zip;
+		};
+		2D47817A2EBF7CBC00408BBF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D1B3E7218379829003E6066 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D88E9F61B2AF6BC0072FD43;
+			remoteInfo = oggedit;
 		};
 		2D48DB852269B731002CACFD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -8356,6 +8364,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D47817C2EBF7CC200408BBF /* liboggedit.dylib in Frameworks */,
 				4D32FA6A19A64794000FFDE0 /* libflaclib.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16494,6 +16503,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				2D47817B2EBF7CBC00408BBF /* PBXTargetDependency */,
 				4D32FA6819A64768000FFDE0 /* PBXTargetDependency */,
 			);
 			name = flac;
@@ -19465,6 +19475,11 @@
 			isa = PBXTargetDependency;
 			target = 2D4458D81C04F1C000230939 /* vfs_zip */;
 			targetProxy = 2D4459F71C04F2C400230939 /* PBXContainerItemProxy */;
+		};
+		2D47817B2EBF7CBC00408BBF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2D88E9F61B2AF6BC0072FD43 /* oggedit */;
+			targetProxy = 2D47817A2EBF7CBC00408BBF /* PBXContainerItemProxy */;
 		};
 		2D48DB842269B731002CACFD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -25055,6 +25070,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					"USE_OGGEDIT=1",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -25075,6 +25091,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEAD_CODE_STRIPPING = YES;
 				EXECUTABLE_PREFIX = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "USE_OGGEDIT=1";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (

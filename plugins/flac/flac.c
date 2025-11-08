@@ -1167,7 +1167,7 @@ cflac_write_metadata_ogg (DB_playItem_t *it, FLAC__StreamMetadata_VorbisComment 
     char **tags = calloc(num_tags+1, sizeof(char **));
     for (size_t i = 0; i < num_tags; i++)
         tags[i] = (char *)vc->comments[i].entry;
-    const off_t file_size = oggedit_write_flac_metadata (deadbeef->fopen(fname), fname, 0, num_tags, tags);
+    const off_t file_size = oggedit_write_flac_metadata (deadbeef->fopen(fname), fname, 0, (int)num_tags, tags);
     if (file_size <= 0) {
         trace ("cflac_write_metadata_ogg: oggedit_write_flac_metadata failed: code %d\n", file_size);
         return -1;
