@@ -23,6 +23,7 @@
 
 #import "LogWindowController.h"
 #include <deadbeef/deadbeef.h>
+#import "Weakify.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -104,7 +105,9 @@ _cocoaui_logger_callback (DB_plugin_t *plugin, uint32 layers, const char *text, 
         return; // may happen in case of invalid UTF8 and such
     }
 
+    weakify(self);
     dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
         [self appendText:str];
 
         int autoopen = deadbeef->conf_get_int(conf_autoopen_key, conf_autoopen_default);

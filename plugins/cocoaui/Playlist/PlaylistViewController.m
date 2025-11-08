@@ -178,7 +178,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     if (it != NULL) {
         deadbeef->pl_item_ref (it);
     }
+    weakify(self);
     dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
         PlaylistView *listview = (PlaylistView *)self.view;
         [listview.contentView invalidateArtworkCacheForRow:(DdbListviewRow_t)it];
         if (it != NULL) {
@@ -1171,7 +1173,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             DB_playItem_t *track = ev->track;
             if (track) {
                 deadbeef->pl_item_ref (track);
+                weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
                     PlaylistView *listview = (PlaylistView *)self.view;
                     BOOL draw = NO;
                     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -1205,13 +1209,17 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         case DB_EV_PLAYLISTCHANGED: {
             if (p1 == 0) {
                 // a change requiring full reload -- such as adding/removing a track
+                weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
                     PlaylistView *listview = (PlaylistView *)self.view;
                     [listview.contentView reloadData];
                 });
             }
             else if (p1 == DDB_PLAYLIST_CHANGE_SEARCHRESULT) {
+                weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
                     PlaylistView *listview = (PlaylistView *)self.view;
                     if ([self playlistIter] == PL_SEARCH) {
                         [listview.contentView reloadData];
@@ -1219,7 +1227,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 });
             }
             else if (p1 == DDB_PLAYLIST_CHANGE_SELECTION) {
+                weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
                     PlaylistView *listview = (PlaylistView *)self.view;
                     if (ctx != (uintptr_t)listview) {
                         listview.contentView.needsDisplay = YES;
@@ -1227,7 +1237,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 });
             }
             else if (p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
+                weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
                     PlaylistView *listview = (PlaylistView *)self.view;
                     if (ctx != (uintptr_t)listview) {
                         listview.contentView.needsDisplay = YES;
@@ -1237,14 +1249,18 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         }
             break;
         case DB_EV_PLAYLISTSWITCHED: {
+            weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
                 PlaylistView *listview = (PlaylistView *)self.view;
                 [self setupPlaylist:listview];
             });
         }
             break;
         case DB_EV_TRACKFOCUSCURRENT: {
+            weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
                 PlaylistView *listview = (PlaylistView *)self.view;
                 DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
                 if (it) {
@@ -1281,7 +1297,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         }
             break;
         case DB_EV_CONFIGCHANGED: {
+            weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
                 [self configChanged];
             });
         }
@@ -1291,7 +1309,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 break;
             }
 
+            weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
                 PlaylistView *listview = (PlaylistView *)self.view;
                 deadbeef->pl_lock ();
                 ddb_playlist_t *plt = deadbeef->plt_get_curr ();

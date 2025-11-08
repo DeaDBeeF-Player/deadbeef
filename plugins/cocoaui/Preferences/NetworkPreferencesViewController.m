@@ -69,6 +69,10 @@ static NSString *kContentTypeMappingChangedNotification = @"ContentTypeMappingCh
 
 @implementation NetworkPreferencesViewController
 
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
     self = [super initWithCoder:coder];

@@ -8,6 +8,7 @@
 
 #import "LyricsViewController.h"
 #import "LyricsWidget.h"
+#import "Weakify.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -67,7 +68,9 @@ extern DB_functions_t *deadbeef;
 
 - (void)message:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     if (_id == DB_EV_CURSOR_MOVED) {
+        weakify(self);
         dispatch_async (dispatch_get_main_queue(), ^{
+            strongify(self);
             [self update];
         });
     }

@@ -75,7 +75,9 @@ static NSString * const lyricsNotAvailableString = @"Lyrics Not Available";
 
             NSString *lyrics = [self parseLyricsFromData:data response:response];
 
+            weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
                 [self updateWithLyrics:lyrics track:track];
             });
         }];

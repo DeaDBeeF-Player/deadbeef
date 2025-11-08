@@ -13,6 +13,7 @@
 #import "RenamePlaylistViewController.h"
 #import "DeletePlaylistConfirmationController.h"
 #import "TrackPropertiesWindowController.h"
+#import "Weakify.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -98,7 +99,9 @@ extern DB_functions_t *deadbeef;
                     ddb_playlist_t *plt_from = deadbeef->pl_get_playlist (ev->from);
                     ddb_playlist_t *plt_to = deadbeef->pl_get_playlist (ev->to);
                     if (plt_from != plt_to) {
+                        weakify(self);
                         dispatch_async(dispatch_get_main_queue(), ^{
+                            strongify(self);
                             [self updateSelectedRow];
                         });
                     }
@@ -110,7 +113,9 @@ extern DB_functions_t *deadbeef;
                     }
                 }
                 else if (!ev->from) {
+                    weakify(self);
                     dispatch_async(dispatch_get_main_queue(), ^{
+                        strongify(self);
                         [self updateSelectedRow];
                     });
                 }
@@ -119,7 +124,9 @@ extern DB_functions_t *deadbeef;
         break;
     case DB_EV_PLAYLISTSWITCHED:
         {
+            weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
                 [self updateSelectedRow];
             });
         }
@@ -129,7 +136,9 @@ extern DB_functions_t *deadbeef;
     case DB_EV_STOP:
     case DB_EV_TRACKINFOCHANGED:
         {
+            weakify(self);
             dispatch_async(dispatch_get_main_queue(), ^{
+                strongify(self);
                 [self reloadData];
             });
         }
@@ -138,14 +147,18 @@ extern DB_functions_t *deadbeef;
         {
             if (p1 == DDB_PLAYLIST_CHANGE_CONTENT
                 || p1 == DDB_PLAYLIST_CHANGE_TITLE) {
+                weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
                     [self reloadData];
                 });
             }
             else if (p1 == DDB_PLAYLIST_CHANGE_POSITION
                      || p1 == DDB_PLAYLIST_CHANGE_DELETED
                      || p1 == DDB_PLAYLIST_CHANGE_CREATED) {
+                weakify(self);
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    strongify(self);
                     [self reloadData];
                 });
             }

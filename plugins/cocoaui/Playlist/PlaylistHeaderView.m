@@ -38,6 +38,10 @@
 
 @implementation PlaylistHeaderView
 
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
 - (id<DdbListviewDelegate>)delegate {
     return self.listview.delegate;
 }

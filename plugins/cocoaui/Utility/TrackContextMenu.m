@@ -80,6 +80,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)dealloc {
     [self cleanup];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (void)cleanup {

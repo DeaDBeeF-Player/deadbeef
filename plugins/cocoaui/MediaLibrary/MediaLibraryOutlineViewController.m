@@ -140,7 +140,9 @@ _model_listener (struct scriptableModel_t *model, void *user_data) {
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == kPresetCtx) {
+        weakify(self);
         dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
             // NOTE: don't add a check for whether user changed to another preset.
             // This would break a refresh if the current preset changes settings.
             [self filterChanged];
@@ -177,12 +179,15 @@ _model_listener (struct scriptableModel_t *model, void *user_data) {
     }
     [self.mediaLibraryManager removeObserver:self forKeyPath:@"preset" context:kPresetCtx];
     [self disconnect];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 static void
 _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
     MediaLibraryOutlineViewController *ctl = (__bridge MediaLibraryOutlineViewController *)user_data;
+    weakify(ctl);
     dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(ctl);
         [ctl artworkEvent:event];
     });
 }
@@ -190,7 +195,9 @@ _artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t 
 static void
 _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     MediaLibraryOutlineViewController *ctl = (__bridge MediaLibraryOutlineViewController *)user_data;
+    weakify(ctl);
     dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(ctl);
         [ctl medialibEvent:event];
     });
 }
@@ -595,7 +602,9 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     void (^completionBlock)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) = ^(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) {
         NSImage *image = [self getImage:query coverInfo:cover error:error];
 
+        weakify(self);
         dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
             if (image != nil) {
                 NSString *key = [self albumArtCacheKeyForTrack:query->track];
                 self.albumArtCache[key] = image;

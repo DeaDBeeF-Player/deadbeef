@@ -90,6 +90,7 @@ static const int tab_close_btn_size = 12;
 - (void)dealloc {
     [self.trkProperties close];
     self.trkProperties = nil;
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (NSColor *)accentColor {
@@ -914,7 +915,9 @@ static const int tab_close_btn_size = 12;
 - (int)widgetMessage:(uint32_t)_id ctx:(uintptr_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     // redraw if playlist switches, recalculate tabs when title changes
     if (_id == DB_EV_PLAYLISTSWITCHED || _id == DB_EV_PLAYLISTCHANGED) {
+        weakify(self);
         dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
             switch (_id) {
             case DB_EV_PLAYLISTSWITCHED:
                 [self frameDidChange];

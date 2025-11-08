@@ -546,7 +546,9 @@ static char sb_text[512];
 }
 
 - (void)scriptableItemDidChange:(scriptableItem_t *)scriptable change:(ScriptableItemChange)change {
+    weakify(self);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        strongify(self);
         [self.tfQuerySelectViewController reloadData];
 
         // FIXME: save only when the dialog is closed

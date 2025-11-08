@@ -48,6 +48,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)dealloc {
     self.currentDspChain = nil; // required because of the setter
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (void)viewDidLoad {

@@ -11,6 +11,7 @@
 #import "CoverManager.h"
 #include <deadbeef/deadbeef.h>
 #include "artwork.h"
+#import "Weakify.h"
 
 extern DB_functions_t *deadbeef;
 
@@ -36,7 +37,9 @@ extern DB_functions_t *deadbeef;
 static void
 artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
     AlbumArtWidget *self = (__bridge AlbumArtWidget *)user_data;
+    weakify(self);
     dispatch_async(dispatch_get_main_queue(), ^{
+        strongify(self);
         if (self.track != NULL && (ddb_playItem_t *)p1 == self.track) {
             [self throttledUpdate];
         }
@@ -97,7 +100,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     if (self.throttleBlock != nil) {
         dispatch_block_cancel(self.throttleBlock);
     }
+    weakify(self);
     self.throttleBlock = dispatch_block_create(0, ^{
+        strongify(self);
         [self update];
         self.throttleBlock = nil;
     });
@@ -163,7 +168,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     switch (_id) {
     case DB_EV_PLAYLISTSWITCHED:
     case DB_EV_CURSOR_MOVED: {
+        weakify(self);
         dispatch_async(dispatch_get_main_queue(), ^{
+            strongify(self);
             [self throttledUpdate];
         });
     }

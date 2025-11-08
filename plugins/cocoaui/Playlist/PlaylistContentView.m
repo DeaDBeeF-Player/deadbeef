@@ -87,6 +87,7 @@ static int grouptitleheight = 22;
 - (void)cleanup
 {
     [self freeGroups];
+    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (void)coverManagerDidReset {

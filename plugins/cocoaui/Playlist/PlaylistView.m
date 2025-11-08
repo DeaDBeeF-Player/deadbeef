@@ -43,6 +43,10 @@ static int headerheight = 23;
 
 @implementation PlaylistView
 
+- (void)dealloc {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
 - (PlaylistView *)initWithFrame:(NSRect)rect {
     self = [super initWithFrame:rect];
     if (self) {
