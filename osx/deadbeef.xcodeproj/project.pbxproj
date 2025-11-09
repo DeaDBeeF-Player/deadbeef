@@ -25075,6 +25075,19 @@
 					"PACKAGE_VERSION=\\\"1.5.0\\\"",
 					"HAVE_SYS_PARAM_H=1",
 					"FLAC__HAS_OGG=1",
+					"FLAC__ALIGN_MALLOC_DATA=1",
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=arm64]" = (
+					"$(inherited)",
+					"FLAC__CPU_ARM64=1",
+					"FLAC__HAS_A64NEONINTRIN=1",
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64]" = (
+					"$(inherited)",
+					"FLAC__CPU_X86_64=1",
+					FLAC__HAS_X86INTRIN,
+					FLAC__USE_AVX,
+					HAVE_CPUID_H,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
@@ -25108,7 +25121,20 @@
 					"PACKAGE_VERSION=\\\"1.5.0\\\"",
 					"HAVE_SYS_PARAM_H=1",
 					"FLAC__HAS_OGG=1",
-					"NDEBUG=1",
+					"FLAC__ALIGN_MALLOC_DATA=1",
+					NDEBUG,
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=arm64]" = (
+					"$(inherited)",
+					"FLAC__CPU_ARM64=1",
+					"FLAC__HAS_A64NEONINTRIN=1",
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64]" = (
+					"$(inherited)",
+					"FLAC__CPU_X86_64=1",
+					FLAC__HAS_X86INTRIN,
+					FLAC__USE_AVX,
+					HAVE_CPUID_H,
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
