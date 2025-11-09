@@ -267,8 +267,7 @@ action_volume_down_cb (struct DB_plugin_action_s *action, ddb_action_context_t c
 int
 action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int var = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
-    var = 1 - var;
-    deadbeef->conf_set_int ("playlist.stop_after_current", var);
+    deadbeef->conf_set_int ("playlist.stop_after_current", !var);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     return 0;
 }
@@ -276,8 +275,7 @@ action_toggle_stop_after_current_cb (struct DB_plugin_action_s *action, ddb_acti
 int
 action_toggle_stop_after_queue_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int var = deadbeef->conf_get_int ("playlist.stop_after_queue", 0);
-    var = 1 - var;
-    deadbeef->conf_set_int ("playlist.stop_after_queue", var);
+    deadbeef->conf_set_int ("playlist.stop_after_queue", !var);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     return 0;
 }
@@ -285,8 +283,7 @@ action_toggle_stop_after_queue_cb (struct DB_plugin_action_s *action, ddb_action
 int
 action_toggle_stop_after_album_cb (struct DB_plugin_action_s *action, ddb_action_context_t ctx) {
     int var = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
-    var = 1 - var;
-    deadbeef->conf_set_int ("playlist.stop_after_album", var);
+    deadbeef->conf_set_int ("playlist.stop_after_album", !var);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
     return 0;
 }
