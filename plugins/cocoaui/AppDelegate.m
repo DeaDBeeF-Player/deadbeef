@@ -49,12 +49,91 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface AppDelegate () {
+@interface AppDelegate () <NSMenuDelegate> {
     char *_titleScript;
     char *_artistAlbumScript;
     int _listenerFileAddBeginAddIdentifier;
     int _listenerFileAddedIdentifier;
 }
+
+@property (unsafe_unretained) IBOutlet NSMenuItem *mainWindowToggleMenuItem;
+@property (unsafe_unretained) IBOutlet NSMenuItem *logWindowToggleMenuItem;
+@property (weak) IBOutlet NSMenuItem *equalizerWindowToggleMenuItem;
+
+
+@property (unsafe_unretained) IBOutlet NSMenu *mainMenu;
+@property (unsafe_unretained) IBOutlet NSMenu *dockMenu;
+
+
+@property (unsafe_unretained) IBOutlet NSWindow *addFilesWindow;
+@property (unsafe_unretained) IBOutlet NSTextField *addFilesLabel;
+- (IBAction)addFilesCancel:(id)sender;
+
+@property (unsafe_unretained) IBOutlet NSPanel *customSortPanel;
+@property (unsafe_unretained) IBOutlet NSTextField *customSortEntry;
+@property (unsafe_unretained) IBOutlet NSButton *customSortDescending;
+
+
+- (IBAction)customSortCancelAction:(id)sender;
+- (IBAction)customSortOKAction:(id)sender;
+
+- (IBAction)toggleDescendingSortOrderAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSMenuItem *descendingSortMode;
+
+- (IBAction)openPrefWindow:(id)sender;
+
+// file menu
+- (IBAction)openFilesAction:(id)sender;
+- (IBAction)addFilesAction:(id)sender;
+- (IBAction)addFoldersAction:(id)sender;
+- (IBAction)addLocationAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSPanel *addLocationPanel;
+- (IBAction)addLocationOKAction:(id)sender;
+- (IBAction)addLocationCancelAction:(id)sender;
+@property (unsafe_unretained) IBOutlet NSTextField *addLocationTextField;
+
+- (IBAction)newPlaylistAction:(id)sender;
+- (IBAction)loadPlaylistAction:(id)sender;
+- (IBAction)savePlaylistAction:(id)sender;
+
+
+// edit menu
+- (IBAction)clearAction:(id)sender;
+
+- (IBAction)sortPlaylistByTitle:(id)sender;
+- (IBAction)sortPlaylistByTrackNumber:(id)sender;
+- (IBAction)sortPlaylistByAlbum:(id)sender;
+- (IBAction)sortPlaylistByArtist:(id)sender;
+- (IBAction)sortPlaylistByDate:(id)sender;
+- (IBAction)sortPlaylistRandom:(id)sender;
+- (IBAction)sortPlaylistCustom:(id)sender;
+
+// playback menu
+- (IBAction)previousAction:(id)sender;
+- (IBAction)playAction:(id)sender;
+- (IBAction)pauseAction:(id)sender;
+- (IBAction)stopAction:(id)sender;
+- (IBAction)nextAction:(id)sender;
+
+@property (unsafe_unretained) IBOutlet NSMenuItem *orderLinear;
+@property (unsafe_unretained) IBOutlet NSMenuItem *orderRandom;
+@property (unsafe_unretained) IBOutlet NSMenuItem *orderShuffle;
+@property (unsafe_unretained) IBOutlet NSMenuItem *orderShuffleAlbums;
+- (IBAction)orderLinearAction:(id)sender;
+- (IBAction)orderRandomAction:(id)sender;
+- (IBAction)orderShuffleAction:(id)sender;
+- (IBAction)orderShuffleAlbumsAction:(id)sender;
+
+@property (unsafe_unretained) IBOutlet NSMenuItem *loopNone;
+@property (unsafe_unretained) IBOutlet NSMenuItem *loopAll;
+@property (unsafe_unretained) IBOutlet NSMenuItem *loopSingle;
+- (IBAction)loopNoneAction:(id)sender;
+- (IBAction)loopAllAction:(id)sender;
+- (IBAction)loopSingleAction:(id)sender;
+
+// window menu
+- (IBAction)showMainWinAction:(id)sender;
+- (IBAction)showLogWindowAction:(id)sender;
 
 @property (unsafe_unretained) IBOutlet NSMenuItem *cursorFollowsPlayback;
 @property (unsafe_unretained) IBOutlet NSMenuItem *scrollFollowsPlayback;
@@ -114,40 +193,6 @@ extern DB_functions_t *deadbeef;
 }
 
 - (void)configChanged {
-    NSMenuItem *shuffle_items[] = {
-        _orderLinear,
-        _orderShuffle,
-        _orderRandom,
-        _orderShuffleAlbums,
-        nil
-    };
-
-    ddb_shuffle_t shuffle = deadbeef->streamer_get_shuffle ();
-    for (ddb_shuffle_t i = 0; shuffle_items[i]; i++) {
-        shuffle_items[i].state = i==shuffle?NSControlStateValueOn:NSControlStateValueOff;
-    }
-
-    NSMenuItem *repeat_items[] = {
-        _loopAll,
-        _loopNone,
-        _loopSingle,
-        nil
-    };
-
-    ddb_repeat_t repeat = deadbeef->streamer_get_repeat ();
-    for (ddb_repeat_t i = 0; repeat_items[i]; i++) {
-        repeat_items[i].state = i==repeat?NSControlStateValueOn:NSControlStateValueOff;
-    }
-
-    _scrollFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSControlStateValueOn:NSControlStateValueOff;
-    _cursorFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSControlStateValueOn:NSControlStateValueOff;
-
-    _stopAfterCurrentTrack.state = deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSControlStateValueOn:NSControlStateValueOff;
-    _stopAfterCurrentAlbum.state = deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSControlStateValueOn:NSControlStateValueOff;
-    _stopAfterPlaybackQueue.state = deadbeef->conf_get_int ("playlist.stop_after_queue", 0)?NSControlStateValueOn:NSControlStateValueOff;
-
-    _descendingSortMode.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSControlStateValueOn : NSControlStateValueOff;
-
     [self volumeChanged];
 
     [_mainWindow updateTitleBarConfig];
@@ -751,9 +796,15 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)cursorFollowsPlaybackAction:(id)sender {
+    int state = self.cursorFollowsPlayback.state == NSControlStateValueOn;
+    deadbeef->conf_set_int ("playlist.scroll.cursorfollowplayback", !state);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 - (IBAction)scrollFollowsPlaybackAction:(id)sender {
+    int state = self.scrollFollowsPlayback.state == NSControlStateValueOn;
+    deadbeef->conf_set_int ("playlist.scroll.followplayback", !state);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 - (IBAction)stopAfterCurrentTrackAction:(id)sender {
@@ -1092,6 +1143,44 @@ main_cleanup_and_quit (void);
     [self.keyboardShortcutEditorViewController updateWithViewItem:viewItem];
 
     [self.keyboardShortcutEditorWindowController showWindow:nil];
+}
+
+#pragma mark - NSMenuDelegate
+
+- (void)menuNeedsUpdate:(NSMenu *)menu {
+    self.scrollFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1) ? NSControlStateValueOn : NSControlStateValueOff;
+    self.cursorFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1) ? NSControlStateValueOn : NSControlStateValueOff;
+
+    self.stopAfterCurrentTrack.state = deadbeef->conf_get_int ("playlist.stop_after_current", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+    self.stopAfterCurrentAlbum.state = deadbeef->conf_get_int ("playlist.stop_after_album", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+    self.stopAfterPlaybackQueue.state = deadbeef->conf_get_int ("playlist.stop_after_queue", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+
+    self.descendingSortMode.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSControlStateValueOn : NSControlStateValueOff;
+
+    NSMenuItem *shuffle_items[] = {
+        _orderLinear,
+        _orderShuffle,
+        _orderRandom,
+        _orderShuffleAlbums,
+        nil
+    };
+
+    ddb_shuffle_t shuffle = deadbeef->streamer_get_shuffle ();
+    for (ddb_shuffle_t i = 0; shuffle_items[i]; i++) {
+        shuffle_items[i].state = i==shuffle?NSControlStateValueOn:NSControlStateValueOff;
+    }
+
+    NSMenuItem *repeat_items[] = {
+        _loopAll,
+        _loopNone,
+        _loopSingle,
+        nil
+    };
+
+    ddb_repeat_t repeat = deadbeef->streamer_get_repeat ();
+    for (ddb_repeat_t i = 0; repeat_items[i]; i++) {
+        repeat_items[i].state = i==repeat?NSControlStateValueOn:NSControlStateValueOff;
+    }
 }
 
 @end
