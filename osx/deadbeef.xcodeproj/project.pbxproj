@@ -2506,6 +2506,9 @@
 		2DD062D02EC13F61006F3223 /* AddNewFieldWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD062CE2EC13F61006F3223 /* AddNewFieldWindowController.xib */; };
 		2DD062D12EC13F61006F3223 /* AddNewFieldWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062CD2EC13F61006F3223 /* AddNewFieldWindowController.m */; };
 		2DD062D32EC13F9E006F3223 /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD062D22EC13F9E006F3223 /* TrackProperties.xib */; };
+		2DD062D82EC145D5006F3223 /* EditSingleValueWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062D52EC145D5006F3223 /* EditSingleValueWindowController.h */; };
+		2DD062D92EC145D5006F3223 /* EditSingleValueWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD062D72EC145D5006F3223 /* EditSingleValueWindowController.xib */; };
+		2DD062DA2EC145D5006F3223 /* EditSingleValueWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062D62EC145D5006F3223 /* EditSingleValueWindowController.m */; };
 		2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; };
 		2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; };
 		2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; };
@@ -7153,6 +7156,9 @@
 		2DD062CD2EC13F61006F3223 /* AddNewFieldWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddNewFieldWindowController.m; sourceTree = "<group>"; };
 		2DD062CE2EC13F61006F3223 /* AddNewFieldWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddNewFieldWindowController.xib; sourceTree = "<group>"; };
 		2DD062D22EC13F9E006F3223 /* TrackProperties.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
+		2DD062D52EC145D5006F3223 /* EditSingleValueWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditSingleValueWindowController.h; sourceTree = "<group>"; };
+		2DD062D62EC145D5006F3223 /* EditSingleValueWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditSingleValueWindowController.m; sourceTree = "<group>"; };
+		2DD062D72EC145D5006F3223 /* EditSingleValueWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditSingleValueWindowController.xib; sourceTree = "<group>"; };
 		2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.76.100.dylib; path = deps/ffmpeg/lib/libavformat.58.76.100.dylib; sourceTree = "<group>"; };
 		2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.134.100.dylib; path = deps/ffmpeg/lib/libavcodec.58.134.100.dylib; sourceTree = "<group>"; };
 		2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.70.100.dylib; path = deps/ffmpeg/lib/libavutil.56.70.100.dylib; sourceTree = "<group>"; };
@@ -12177,6 +12183,7 @@
 			children = (
 				2DD062D22EC13F9E006F3223 /* TrackProperties.xib */,
 				2DD062CB2EC13F21006F3223 /* AddField */,
+				2DD062D42EC145B2006F3223 /* EditSingleValue */,
 				2DD062BB2EC1135E006F3223 /* TrackPropertiesListItem.h */,
 				2DD062BC2EC1135E006F3223 /* TrackPropertiesListItem.m */,
 				2DD062B72EC10E4E006F3223 /* TrackPropertiesListViewController.h */,
@@ -12637,6 +12644,16 @@
 				2DD062CE2EC13F61006F3223 /* AddNewFieldWindowController.xib */,
 			);
 			path = AddField;
+			sourceTree = "<group>";
+		};
+		2DD062D42EC145B2006F3223 /* EditSingleValue */ = {
+			isa = PBXGroup;
+			children = (
+				2DD062D52EC145D5006F3223 /* EditSingleValueWindowController.h */,
+				2DD062D62EC145D5006F3223 /* EditSingleValueWindowController.m */,
+				2DD062D72EC145D5006F3223 /* EditSingleValueWindowController.xib */,
+			);
+			path = EditSingleValue;
 			sourceTree = "<group>";
 		};
 		2DD3774C27412C53007AD315 /* Preferences */ = {
@@ -15336,6 +15353,7 @@
 				2DD062BD2EC1135E006F3223 /* TrackPropertiesListItem.h in Headers */,
 				2DC5A3022B0A125000CBDA66 /* scriptable_model.h in Headers */,
 				2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */,
+				2DD062D82EC145D5006F3223 /* EditSingleValueWindowController.h in Headers */,
 				2D9C0C25238DC2C100CE8C10 /* GroupByCustomWindowController.h in Headers */,
 				2D95F721293BA3B8002D8499 /* NSUndoManager+DdbUndoBuffer.h in Headers */,
 				2DDE52A624F821630096EF80 /* MediaLibraryOutlineView.h in Headers */,
@@ -17388,6 +17406,7 @@
 				2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */,
 				2DC65828274AB03800583E14 /* LyricsViewController.xib in Resources */,
 				2DD062D32EC13F9E006F3223 /* TrackProperties.xib in Resources */,
+				2DD062D92EC145D5006F3223 /* EditSingleValueWindowController.xib in Resources */,
 				2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */,
 				2D92D24329B92DFA00218F1D /* README in Resources */,
 				2DBCA6962794492D00D7432F /* Credits.rtf in Resources */,
@@ -19138,6 +19157,7 @@
 				2D8EE27524D03601005C5B4B /* MediaLibraryOutlineViewController.m in Sources */,
 				4D1B4A8F1837EC49003E6066 /* main.c in Sources */,
 				2DBF3D4427086AA900023138 /* MainContentViewController.m in Sources */,
+				2DD062DA2EC145D5006F3223 /* EditSingleValueWindowController.m in Sources */,
 				2D9EBB7325E45BAA00255592 /* DesignModeDeps.m in Sources */,
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
 				2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */,

@@ -52,14 +52,6 @@
 - (IBAction)cancelTrackPropertiesAction:(id)sender;
 - (IBAction)okTrackPropertiesAction:(id)sender;
 
-// edit value panel
-@property (strong) IBOutlet NSPanel *editValuePanel;
-@property (unsafe_unretained) IBOutlet NSTextField *fieldName;
-
-- (IBAction)cancelEditValuePanelAction:(id)sender;
-- (IBAction)okEditValuePanelAction:(id)sender;
-@property (unsafe_unretained) IBOutlet NSTextView *fieldValue;
-
 // edit multiple values panel
 @property (strong) IBOutlet NSPanel *editMultipleValuesPanel;
 - (IBAction)cancelEditMultipleValuesPanel:(id)sender;

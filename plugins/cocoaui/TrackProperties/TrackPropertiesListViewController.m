@@ -22,6 +22,7 @@
 */
 
 #import "AddNewFieldWindowController.h"
+#import "EditSingleValueWindowController.h"
 #import "MediaLibraryItem.h"
 #import "TrackPropertiesListViewController.h"
 #import "TrackPropertiesSingleLineFormatter.h"
@@ -87,7 +88,7 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     [store addObject:item];
 }
 
-@interface TrackPropertiesListViewController () <NSTableViewDataSource, NSTableViewDelegate, NSMenuDelegate, AddNewFieldWindowControllerDelegate>
+@interface TrackPropertiesListViewController () <NSTableViewDataSource, NSTableViewDelegate, NSMenuDelegate, AddNewFieldWindowControllerDelegate, EditSingleValueWindowControllerDelegate>
 
 @property (nonatomic) int iter;
 @property (nonatomic) DB_playItem_t **tracks;
@@ -100,6 +101,7 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 @property (nonatomic) NSMenuItem *editInPlaceItem;
 
 @property (nonatomic) AddNewFieldWindowController *addNewFieldWindowController;
+@property (nonatomic) EditSingleValueWindowController *editSingleValueWindowController;
 
 @end
 
@@ -432,11 +434,14 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
         return;
     }
 
-    self.fieldName.stringValue =  ((NSString *)self.store[idx][@"key"]).uppercaseString;
-    self.fieldValue.string =  self.store[idx][@"values"][0];
+    self.editSingleValueWindowController = [[EditSingleValueWindowController alloc] initWithWindowNibName:@"EditSingleValueWindowController"];
+    self.editSingleValueWindowController.delegate = self;
+    (void)self.editSingleValueWindowController.window;
 
-    [self.window beginSheet:self.editValuePanel completionHandler:^(NSModalResponse returnCode) {
-        self.isModified = YES;
+    self.editSingleValueWindowController.fieldName.stringValue =  ((NSString *)self.store[idx][@"key"]).uppercaseString;
+    self.editSingleValueWindowController.fieldValue.string =  self.store[idx][@"values"][0];
+
+    [self.window beginSheet:self.editSingleValueWindowController.window completionHandler:^(NSModalResponse returnCode) {
     }];
 #endif
 }
@@ -450,28 +455,6 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     NSInteger idx = ind.firstIndex;
 
     [self.tableView editColumn:1 row:idx withEvent:nil select:YES];
-}
-
-- (IBAction)cancelEditValuePanelAction:(id)sender {
-    // TODO
-#if 0
-    [NSApp endSheet:self.editValuePanel];
-#endif
-}
-
-- (IBAction)okEditValuePanelAction:(id)sender {
-    // TODO
-#if 0
-    NSIndexSet *ind = self.tableView.selectedRowIndexes;
-    NSInteger idx = ind.firstIndex;
-    if (![self.store[idx].values[0] isEqualToString:(self.fieldValue).string]) {
-        self.store[idx]values[0] = (self.fieldValue).string;
-        [self.metadataTableView reloadData];
-        self.isModified = YES;
-    }
-
-    [NSApp endSheet:self.editValuePanel];
-#endif
 }
 
 - (void)setSameValuesForIndex:(NSUInteger)idx value:(NSString *)value {
@@ -646,6 +629,22 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 
 - (void)addNewFieldDidEndWithResponse:(NSModalResponse)response {
     [self.view.window endSheet:self.addNewFieldWindowController.window returnCode:response];
+}
+
+#pragma mark - EditSingleValueWindowControllerDelegate
+
+- (void)editSingleValueDidEndWithResponse:(NSModalResponse)response {
+    if (response == NSModalResponseOK) {
+        NSIndexSet *ind = self.tableView.selectedRowIndexes;
+        NSInteger idx = ind.firstIndex;
+        if (![self.store[idx].values[0] isEqualToString:(self.editSingleValueWindowController.fieldValue).string]) {
+            self.store[idx].values[0] = (self.editSingleValueWindowController.fieldValue).string;
+            [self.tableView reloadData];
+            self.isModified = YES;
+        }
+    }
+
+    [NSApp endSheet:self.editSingleValueWindowController.window];
 }
 
 @end

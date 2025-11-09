@@ -1,4 +1,3 @@
-//
 /*
     DeaDBeeF -- the music player
     Copyright (C) 2009-2025 Oleksiy Yakovenko and other contributors
@@ -22,17 +21,26 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#import <Cocoa/Cocoa.h>
+#import "EditSingleValueWindowController.h"
 
-@protocol AddNewFieldWindowControllerDelegate
-- (BOOL)addNewFieldAlreadyExists:(NSString *)newFieldName;
-- (void)addNewFieldDidEndWithResponse:(NSModalResponse)response;
+@interface EditSingleValueWindowController ()
+
 @end
 
-@interface AddNewFieldWindowController : NSWindowController
+@implementation EditSingleValueWindowController
 
-@property (nonatomic,weak) id<AddNewFieldWindowControllerDelegate> delegate;
+- (void)windowDidLoad {
+    [super windowDidLoad];
 
-@property (weak,readonly) IBOutlet NSTextField *addFieldName;
+}
+
+- (IBAction)cancelEditValuePanelAction:(id)sender {
+    [self.delegate editSingleValueDidEndWithResponse:NSModalResponseCancel];
+}
+
+- (IBAction)okEditValuePanelAction:(id)sender {
+    [self.delegate editSingleValueDidEndWithResponse:NSModalResponseOK];
+}
+
 
 @end

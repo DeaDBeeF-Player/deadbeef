@@ -22,6 +22,7 @@
 */
 
 #import "AddNewFieldWindowController.h"
+#import "EditSingleValueWindowController.h"
 #import "MediaLibraryItem.h"
 #import "TrackPropertiesWindowController.h"
 #import "TrackPropertiesSingleLineFormatter.h"
@@ -33,7 +34,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface TrackPropertiesWindowController () <AddNewFieldWindowControllerDelegate>
+@interface TrackPropertiesWindowController () <AddNewFieldWindowControllerDelegate, EditSingleValueWindowControllerDelegate>
 
 /// Do not remove: used via binding
 @property (unsafe_unretained) BOOL singleValueSelected;
@@ -47,6 +48,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) TrackPropertiesMultipleFieldsTableData *multipleFieldsTableData;
 
 @property (nonatomic) AddNewFieldWindowController *addNewFieldWindowController;
+@property (nonatomic) EditSingleValueWindowController *editSingleValueWindowController;
 
 @end
 
@@ -722,11 +724,14 @@ _formatted_title_for_unknown_key(const char *key) {
         return;
     }
 
-    self.fieldName.stringValue =  ((NSString *)self.store[idx][@"key"]).uppercaseString;
-    self.fieldValue.string =  self.store[idx][@"values"][0];
+    self.editSingleValueWindowController = [[EditSingleValueWindowController alloc] initWithWindowNibName:@"EditSingleValueWindowController"];
+    self.editSingleValueWindowController.delegate = self;
+    (void)self.editSingleValueWindowController.window;
 
-    [self.window beginSheet:self.editValuePanel completionHandler:^(NSModalResponse returnCode) {
-        self.isModified = YES;
+    self.editSingleValueWindowController.fieldName.stringValue =  ((NSString *)self.store[idx][@"key"]).uppercaseString;
+    self.editSingleValueWindowController.fieldValue.string =  self.store[idx][@"values"][0];
+
+    [self.window beginSheet:self.editSingleValueWindowController.window completionHandler:^(NSModalResponse returnCode) {
     }];
 }
 
@@ -739,22 +744,6 @@ _formatted_title_for_unknown_key(const char *key) {
     NSInteger idx = ind.firstIndex;
 
     [self.metadataTableView editColumn:1 row:idx withEvent:nil select:YES];
-}
-
-- (IBAction)cancelEditValuePanelAction:(id)sender {
-    [NSApp endSheet:self.editValuePanel];
-}
-
-- (IBAction)okEditValuePanelAction:(id)sender {
-    NSIndexSet *ind = self.metadataTableView.selectedRowIndexes;
-    NSInteger idx = ind.firstIndex;
-    if (![self.store[idx][@"values"][0] isEqualToString:(self.fieldValue).string]) {
-        self.store[idx][@"values"][0] = (self.fieldValue).string;
-        [self.metadataTableView reloadData];
-        self.isModified = YES;
-    }
-
-    [NSApp endSheet:self.editValuePanel];
 }
 
 - (void)setSameValuesForIndex:(NSUInteger)idx value:(NSString *)value {
@@ -926,6 +915,22 @@ _formatted_title_for_unknown_key(const char *key) {
 
 - (void)addNewFieldDidEndWithResponse:(NSModalResponse)response {
     [self.window endSheet:self.addNewFieldWindowController.window returnCode:response];
+}
+
+#pragma mark - EditSingleValueWindowControllerDelegate
+
+- (void)editSingleValueDidEndWithResponse:(NSModalResponse)response {
+    if (response == NSModalResponseOK) {
+        NSIndexSet *ind = self.metadataTableView.selectedRowIndexes;
+        NSInteger idx = ind.firstIndex;
+        if (![self.store[idx][@"values"][0] isEqualToString:(self.editSingleValueWindowController.fieldValue).string]) {
+            self.store[idx][@"values"][0] = (self.editSingleValueWindowController.fieldValue).string;
+            [self.metadataTableView reloadData];
+            self.isModified = YES;
+        }
+    }
+
+    [NSApp endSheet:self.editSingleValueWindowController.window];
 }
 
 @end
