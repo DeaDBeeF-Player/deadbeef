@@ -25081,6 +25081,7 @@
 					"$(inherited)",
 					"FLAC__CPU_ARM64=1",
 					"FLAC__HAS_A64NEONINTRIN=1",
+					"FLAC__HAS_NEONINTRIN=1",
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64]" = (
 					"$(inherited)",
@@ -25128,6 +25129,7 @@
 					"$(inherited)",
 					"FLAC__CPU_ARM64=1",
 					"FLAC__HAS_A64NEONINTRIN=1",
+					"FLAC__HAS_NEONINTRIN=1",
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=x86_64]" = (
 					"$(inherited)",
