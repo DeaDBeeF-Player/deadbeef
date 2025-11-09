@@ -69,14 +69,6 @@
 @property (weak) IBOutlet NSTableView *multiValueTableView;
 @property (weak) IBOutlet NSTabView *multiValueTabView;
 
-// new field panel
-@property (unsafe_unretained) IBOutlet NSTextField *addFieldName;
-@property (strong) IBOutlet NSPanel *addFieldPanel;
-- (IBAction)cancelAddFieldPanelAction:(id)sender;
-- (IBAction)okAddFieldPanelAction:(id)sender;
-@property (weak) IBOutlet NSTextField *addFieldAlreadyExists;
-
-
 // menu
 - (IBAction)editValueAction:(id)sender;
 - (IBAction)editInPlaceAction:(id)sender;

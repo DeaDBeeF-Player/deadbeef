@@ -20,18 +20,20 @@
 
     3. This notice may not be removed or altered from any source distribution.
 */
+
+#import "AddNewFieldWindowController.h"
 #import "MediaLibraryItem.h"
 #import "TrackPropertiesWindowController.h"
-#include <deadbeef/deadbeef.h>
-#include "utf8.h"
-#include "trkproperties_shared.h"
 #import "TrackPropertiesSingleLineFormatter.h"
 #import "TrackPropertiesNullFormatter.h"
 #import "TrackPropertiesMultipleFieldsTableData.h"
+#include <deadbeef/deadbeef.h>
+#include "utf8.h"
+#include "trkproperties_shared.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface TrackPropertiesWindowController ()
+@interface TrackPropertiesWindowController () <AddNewFieldWindowControllerDelegate>
 
 /// Do not remove: used via binding
 @property (unsafe_unretained) BOOL singleValueSelected;
@@ -43,6 +45,8 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) BOOL progress_aborted;
 @property (nonatomic) BOOL close_after_writing;
 @property (nonatomic) TrackPropertiesMultipleFieldsTableData *multipleFieldsTableData;
+
+@property (nonatomic) AddNewFieldWindowController *addNewFieldWindowController;
 
 @end
 
@@ -807,20 +811,15 @@ _formatted_title_for_unknown_key(const char *key) {
 }
 
 - (IBAction)addNewField:(id)sender {
-    self.addFieldName.stringValue =  @"";
-    self.addFieldAlreadyExists.hidden =  YES;
+    self.addNewFieldWindowController = [[AddNewFieldWindowController alloc] initWithWindowNibName:@"AddNewFieldWindowController"];
+    self.addNewFieldWindowController.delegate = self;
 
-    [self.window beginSheet:self.addFieldPanel completionHandler:^(NSModalResponse returnCode) {
+    [self.window beginSheet:self.addNewFieldWindowController.window completionHandler:^(NSModalResponse returnCode) {
         if (returnCode != NSModalResponseOK) {
             return;
         }
-        NSString *key = self.addFieldName.stringValue;
-        for (NSUInteger i = 0; i < self.store.count; i++) {
-            if (NSOrderedSame == [key caseInsensitiveCompare:self.store[i][@"key"]]) {
-                self.addFieldAlreadyExists.hidden =  NO;
-                return;
-            }
-        }
+
+        NSString *key = self.addNewFieldWindowController.addFieldName.stringValue;
 
         char *title = _formatted_title_for_unknown_key(key.UTF8String);
         add_field (self.store, key.UTF8String, title, 0, self.tracks, self.numtracks);
@@ -829,14 +828,6 @@ _formatted_title_for_unknown_key(const char *key) {
         self.isModified = YES;
         [self.metadataTableView reloadData];
     }];
-}
-
-- (IBAction)cancelAddFieldPanelAction:(id)sender {
-    [self.window endSheet:self.addFieldPanel returnCode:NSModalResponseCancel];
-}
-
-- (IBAction)okAddFieldPanelAction:(id)sender {
-    [self.window endSheet:self.addFieldPanel returnCode:NSModalResponseOK];
 }
 
 - (IBAction)cancelEditMultipleValuesPanel:(id)sender {
@@ -919,6 +910,22 @@ _formatted_title_for_unknown_key(const char *key) {
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     self.singleValueSelected = self.metadataTableView.selectedRowIndexes.count == 1;
+}
+
+#pragma mark - AddNewFieldWindowControllerDelegate
+
+- (BOOL)addNewFieldAlreadyExists:(NSString *)newFieldName {
+    NSString *key = self.addNewFieldWindowController.addFieldName.stringValue;
+    for (NSUInteger i = 0; i < self.store.count; i++) {
+        if (NSOrderedSame == [key caseInsensitiveCompare:self.store[i][@"key"]]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)addNewFieldDidEndWithResponse:(NSModalResponse)response {
+    [self.window endSheet:self.addNewFieldWindowController.window returnCode:response];
 }
 
 @end

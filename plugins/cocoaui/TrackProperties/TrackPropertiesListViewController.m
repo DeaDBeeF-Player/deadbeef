@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#import "AddNewFieldWindowController.h"
 #import "MediaLibraryItem.h"
 #import "TrackPropertiesListViewController.h"
 #import "TrackPropertiesSingleLineFormatter.h"
@@ -86,11 +87,7 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     [store addObject:item];
 }
 
-@interface TrackPropertiesListViewController () <NSTableViewDataSource, NSTableViewDelegate, NSMenuDelegate>
-
-//@property (nonatomic) ddb_playlist_t *playlist;
-//@property (nonatomic) ddb_action_context_t context;
-//@property (nonatomic) NSArray<MediaLibraryItem *> *mediaLibraryItems;
+@interface TrackPropertiesListViewController () <NSTableViewDataSource, NSTableViewDelegate, NSMenuDelegate, AddNewFieldWindowControllerDelegate>
 
 @property (nonatomic) int iter;
 @property (nonatomic) DB_playItem_t **tracks;
@@ -101,6 +98,8 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 
 @property (nonatomic) NSMenuItem *editItem;
 @property (nonatomic) NSMenuItem *editInPlaceItem;
+
+@property (nonatomic) AddNewFieldWindowController *addNewFieldWindowController;
 
 @end
 
@@ -220,37 +219,37 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     NSMenuItem *cropItem = [menu addItemWithTitle:@"Crop" action:@selector(editCropAction:) keyEquivalent:@""];
     cropItem.target = self;
 
-//    [menu addItem:NSMenuItem.separatorItem];
-//
-//    NSMenuItem *cutItem = [menu addItemWithTitle:@"Cut" action:@selector(cutAction:) keyEquivalent:@""];
-//    cutItem.target = self;
-//
-//    NSMenuItem *copyItem = [menu addItemWithTitle:@"Copy" action:@selector(copyAction:) keyEquivalent:@""];
-//    copyItem.target = self;
-//
-//    NSMenuItem *pasteItem = [menu addItemWithTitle:@"Paste" action:@selector(pasteAction:) keyEquivalent:@""];
-//    pasteItem.target = self;
+    //    [menu addItem:NSMenuItem.separatorItem];
+    //
+    //    NSMenuItem *cutItem = [menu addItemWithTitle:@"Cut" action:@selector(cutAction:) keyEquivalent:@""];
+    //    cutItem.target = self;
+    //
+    //    NSMenuItem *copyItem = [menu addItemWithTitle:@"Copy" action:@selector(copyAction:) keyEquivalent:@""];
+    //    copyItem.target = self;
+    //
+    //    NSMenuItem *pasteItem = [menu addItemWithTitle:@"Paste" action:@selector(pasteAction:) keyEquivalent:@""];
+    //    pasteItem.target = self;
 
     [menu addItem:NSMenuItem.separatorItem];
 
     NSMenuItem *capitalizeItem = [menu addItemWithTitle:@"Capitalize" action:@selector(editCapitalizeAction:) keyEquivalent:@""];
     capitalizeItem.target = self;
 
-//    NSMenuItem *cleanUpItem = [menu addItemWithTitle:@"Clean Up" action:@selector(cleanUpAction:) keyEquivalent:@""];
-//    cleanUpItem.target = self;
-//    NSMenuItem *formatFromOtherFieldsItem = [menu addItemWithTitle:@"Format from Other Fields" action:@selector(formatFromOtherFieldsAction:) keyEquivalent:@""];
-//    formatFromOtherFieldsItem.target = self;
+    //    NSMenuItem *cleanUpItem = [menu addItemWithTitle:@"Clean Up" action:@selector(cleanUpAction:) keyEquivalent:@""];
+    //    cleanUpItem.target = self;
+    //    NSMenuItem *formatFromOtherFieldsItem = [menu addItemWithTitle:@"Format from Other Fields" action:@selector(formatFromOtherFieldsAction:) keyEquivalent:@""];
+    //    formatFromOtherFieldsItem.target = self;
 
     [menu addItem:NSMenuItem.separatorItem];
 
     NSMenuItem *addMewFieldItem = [menu addItemWithTitle:@"Add New Field…" action:@selector(addNewField:) keyEquivalent:@""];
     addMewFieldItem.target = self;
 
-//    NSMenuItem *pasteFieldsItem = [menu addItemWithTitle:@"Paste Fields" action:@selector(pasteFields:) keyEquivalent:@""];
-//    pasteFieldsItem.target = self;
+    //    NSMenuItem *pasteFieldsItem = [menu addItemWithTitle:@"Paste Fields" action:@selector(pasteFields:) keyEquivalent:@""];
+    //    pasteFieldsItem.target = self;
 
-//    NSMenuItem *automaticallyFillValuesItem = [menu addItemWithTitle:@"Automatically Fill Values…" action:@selector(automaticallyFillValuesAction:) keyEquivalent:@""];
-//    automaticallyFillValuesItem.target = self;
+    //    NSMenuItem *automaticallyFillValuesItem = [menu addItemWithTitle:@"Automatically Fill Values…" action:@selector(automaticallyFillValuesAction:) keyEquivalent:@""];
+    //    automaticallyFillValuesItem.target = self;
 
     return menu;
 }
@@ -529,45 +528,23 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 }
 
 - (IBAction)addNewField:(id)sender {
-    // TODO
-#if 0
-    self.addFieldName.stringValue =  @"";
-    self.addFieldAlreadyExists.hidden =  YES;
+    self.addNewFieldWindowController = [[AddNewFieldWindowController alloc] initWithWindowNibName:@"AddNewFieldWindowController"];
+    self.addNewFieldWindowController.delegate = self;
 
-    [self.window beginSheet:self.addFieldPanel completionHandler:^(NSModalResponse returnCode) {
+    [self.view.window beginSheet:self.addNewFieldWindowController.window completionHandler:^(NSModalResponse returnCode) {
         if (returnCode != NSModalResponseOK) {
             return;
         }
-        NSString *key = self.addFieldName.stringValue;
-        for (NSUInteger i = 0; i < self.store.count; i++) {
-            if (NSOrderedSame == [key caseInsensitiveCompare:self.store[i][@"key"]]) {
-                self.addFieldAlreadyExists.hidden =  NO;
-                return;
-            }
-        }
+
+        NSString *key = self.addNewFieldWindowController.addFieldName.stringValue;
 
         char *title = _formatted_title_for_unknown_key(key.UTF8String);
         add_field (self.store, key.UTF8String, title, 0, self.tracks, self.numtracks);
         free (title);
         title = NULL;
         self.isModified = YES;
-        [self.metadataTableView reloadData];
+        [self.tableView reloadData];
     }];
-#endif
-}
-
-- (IBAction)cancelAddFieldPanelAction:(id)sender {
-    // TODO
-#if 0
-    [self.window endSheet:self.addFieldPanel returnCode:NSModalResponseCancel];
-#endif
-}
-
-- (IBAction)okAddFieldPanelAction:(id)sender {
-    // TODO
-#if 0
-    [self.window endSheet:self.addFieldPanel returnCode:NSModalResponseOK];
-#endif
 }
 
 - (IBAction)cancelEditMultipleValuesPanel:(id)sender {
@@ -653,6 +630,22 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 - (void)menuNeedsUpdate:(NSMenu *)menu {
     self.editItem.enabled = self.tableView.selectedRowIndexes.count == 1;
     self.editInPlaceItem.enabled = self.tableView.selectedRowIndexes.count == 1;
+}
+
+#pragma mark - AddNewFieldWindowControllerDelegate
+
+- (BOOL)addNewFieldAlreadyExists:(NSString *)newFieldName {
+    NSString *key = self.addNewFieldWindowController.addFieldName.stringValue;
+    for (NSUInteger i = 0; i < self.store.count; i++) {
+        if (NSOrderedSame == [key caseInsensitiveCompare:self.store[i].key]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)addNewFieldDidEndWithResponse:(NSModalResponse)response {
+    [self.view.window endSheet:self.addNewFieldWindowController.window returnCode:response];
 }
 
 @end

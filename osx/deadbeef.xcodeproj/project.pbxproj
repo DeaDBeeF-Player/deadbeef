@@ -2405,7 +2405,6 @@
 		2DC6C64E294E1CB400A63CEB /* gtest-all.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2DC6C64D294E1CB300A63CEB /* gtest-all.cc */; };
 		2DC6C64F294E5E7900A63CEB /* AlbumArtImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9FD9E22607C68500F406D1 /* AlbumArtImageView.m */; };
 		2DC6C65A29539AAE00A63CEB /* ddb_dsp_libretro.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC80A8E1A9222F800C9397F /* TrackProperties.xib */; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
 		2DCB18382515F9680054BD06 /* about.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB18372515F95C0054BD06 /* about.txt */; };
@@ -2503,6 +2502,10 @@
 		2DD062C62EC115EE006F3223 /* TrackPropertiesNullFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062C42EC115EE006F3223 /* TrackPropertiesNullFormatter.m */; };
 		2DD062C92EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062C72EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.h */; };
 		2DD062CA2EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062C82EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.m */; };
+		2DD062CF2EC13F61006F3223 /* AddNewFieldWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062CC2EC13F61006F3223 /* AddNewFieldWindowController.h */; };
+		2DD062D02EC13F61006F3223 /* AddNewFieldWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD062CE2EC13F61006F3223 /* AddNewFieldWindowController.xib */; };
+		2DD062D12EC13F61006F3223 /* AddNewFieldWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062CD2EC13F61006F3223 /* AddNewFieldWindowController.m */; };
+		2DD062D32EC13F9E006F3223 /* TrackProperties.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD062D22EC13F9E006F3223 /* TrackProperties.xib */; };
 		2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; };
 		2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; };
 		2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; };
@@ -7041,7 +7044,6 @@
 		2DC6C620294DE70E00A63CEB /* GTMGoogleTestRunner.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GTMGoogleTestRunner.mm; sourceTree = "<group>"; };
 		2DC6C64D294E1CB300A63CEB /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "gtest-all.cc"; path = "googletest/googletest/src/gtest-all.cc"; sourceTree = "<group>"; };
 		2DC6C6502953995F00A63CEB /* ddb_dsp_libretro.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ddb_dsp_libretro.xcodeproj; path = ddb_dsp_libretro/Xcode/ddb_dsp_libretro/ddb_dsp_libretro.xcodeproj; sourceTree = "<group>"; };
-		2DC80A8E1A9222F800C9397F /* TrackProperties.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
 		2DCB18B82515F98E0054BD06 /* translators.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = translators.txt; path = ../../translators.txt; sourceTree = "<group>"; };
@@ -7147,6 +7149,10 @@
 		2DD062C42EC115EE006F3223 /* TrackPropertiesNullFormatter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesNullFormatter.m; sourceTree = "<group>"; };
 		2DD062C72EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesMultipleFieldsTableData.h; sourceTree = "<group>"; };
 		2DD062C82EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesMultipleFieldsTableData.m; sourceTree = "<group>"; };
+		2DD062CC2EC13F61006F3223 /* AddNewFieldWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddNewFieldWindowController.h; sourceTree = "<group>"; };
+		2DD062CD2EC13F61006F3223 /* AddNewFieldWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddNewFieldWindowController.m; sourceTree = "<group>"; };
+		2DD062CE2EC13F61006F3223 /* AddNewFieldWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddNewFieldWindowController.xib; sourceTree = "<group>"; };
+		2DD062D22EC13F9E006F3223 /* TrackProperties.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TrackProperties.xib; sourceTree = "<group>"; };
 		2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.76.100.dylib; path = deps/ffmpeg/lib/libavformat.58.76.100.dylib; sourceTree = "<group>"; };
 		2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.134.100.dylib; path = deps/ffmpeg/lib/libavcodec.58.134.100.dylib; sourceTree = "<group>"; };
 		2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.70.100.dylib; path = deps/ffmpeg/lib/libavutil.56.70.100.dylib; sourceTree = "<group>"; };
@@ -10260,7 +10266,6 @@
 				2D651D1B22722AD200375AE2 /* ScriptableSelectViewController.xib */,
 				2D828E5319E5679800EE874F /* Search.xib */,
 				2D747E3C24B64E9300BBB987 /* SplitViewMainWindow.xib */,
-				2DC80A8E1A9222F800C9397F /* TrackProperties.xib */,
 			);
 			path = XIB;
 			sourceTree = "<group>";
@@ -12170,6 +12175,8 @@
 		2DB52F6A24CF7CB50046D516 /* TrackProperties */ = {
 			isa = PBXGroup;
 			children = (
+				2DD062D22EC13F9E006F3223 /* TrackProperties.xib */,
+				2DD062CB2EC13F21006F3223 /* AddField */,
 				2DD062BB2EC1135E006F3223 /* TrackPropertiesListItem.h */,
 				2DD062BC2EC1135E006F3223 /* TrackPropertiesListItem.m */,
 				2DD062B72EC10E4E006F3223 /* TrackPropertiesListViewController.h */,
@@ -12620,6 +12627,16 @@
 				2DD062B42EC0B995006F3223 /* AlbumArtWidgetViewController.m */,
 			);
 			path = AlbumArt;
+			sourceTree = "<group>";
+		};
+		2DD062CB2EC13F21006F3223 /* AddField */ = {
+			isa = PBXGroup;
+			children = (
+				2DD062CC2EC13F61006F3223 /* AddNewFieldWindowController.h */,
+				2DD062CD2EC13F61006F3223 /* AddNewFieldWindowController.m */,
+				2DD062CE2EC13F61006F3223 /* AddNewFieldWindowController.xib */,
+			);
+			path = AddField;
 			sourceTree = "<group>";
 		};
 		2DD3774C27412C53007AD315 /* Preferences */ = {
@@ -15335,6 +15352,7 @@
 				2D9EF31E2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
 				2DC6580D274A994100583E14 /* TableViewWithReturnAction.h in Headers */,
+				2DD062CF2EC13F61006F3223 /* AddNewFieldWindowController.h in Headers */,
 				2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
 				2D78C55927568B4A00F96F9D /* medialibscanner.h in Headers */,
 				2D72047619DF2971000989C6 /* PlaylistViewController.h in Headers */,
@@ -17358,6 +17376,7 @@
 				4D2A6CA3183BC29400AC6BF5 /* btnprevTemplate.pdf in Resources */,
 				2DD377432740420C007AD315 /* AppearancePreferencesViewController.xib in Resources */,
 				2D29AE042B72C682001648B0 /* btnKeyboardTemplate.pdf in Resources */,
+				2DD062D02EC13F61006F3223 /* AddNewFieldWindowController.xib in Resources */,
 				4D2A6CA2183BC29400AC6BF5 /* btnpauseTemplate.pdf in Resources */,
 				2DB05FBC252E50FD0090635E /* iconDSPTemplate.pdf in Resources */,
 				2DB05F3A252E4DDB0090635E /* iconPlaybackTemplate.pdf in Resources */,
@@ -17368,6 +17387,7 @@
 				2D9EF31A2B6FB86F0042F6D8 /* KeyboardShortcutEditorViewController.xib in Resources */,
 				2DC657D82749581900583E14 /* DdbTabStripViewController.xib in Resources */,
 				2DC65828274AB03800583E14 /* LyricsViewController.xib in Resources */,
+				2DD062D32EC13F9E006F3223 /* TrackProperties.xib in Resources */,
 				2DB05E77252E3F3E0090635E /* iconPluginsTemplate.pdf in Resources */,
 				2D92D24329B92DFA00218F1D /* README in Resources */,
 				2DBCA6962794492D00D7432F /* Credits.rtf in Resources */,
@@ -17395,7 +17415,6 @@
 				4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */,
 				2DB05E36252E3CF10090635E /* iconSoundTemplate.pdf in Resources */,
 				2D2351281B13922400A62936 /* Converter.xib in Resources */,
-				2DC80A8F1A9222F800C9397F /* TrackProperties.xib in Resources */,
 				2D49856F1D5CF0E900E4D985 /* Log.xib in Resources */,
 				2D651D1A227227FA00375AE2 /* ScriptableNodeEditorViewController.xib in Resources */,
 				2D1A563A1D9FF9A4005E5CDD /* ReplayGain.xib in Resources */,
@@ -19169,6 +19188,7 @@
 				2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */,
 				2D92D33B29B9323600218F1D /* scope.c in Sources */,
 				2DC6582A274AB03800583E14 /* LyricsViewController.m in Sources */,
+				2DD062D12EC13F61006F3223 /* AddNewFieldWindowController.m in Sources */,
 				2D95F72A293BB295002D8499 /* DdbUndoBufferRetainer.m in Sources */,
 				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
