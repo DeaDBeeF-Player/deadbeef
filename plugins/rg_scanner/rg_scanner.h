@@ -28,17 +28,17 @@
 
 #include <deadbeef/deadbeef.h>
 
-enum {
+typedef enum {
     DDB_RG_SCAN_MODE_TRACK = 1,
     DDB_RG_SCAN_MODE_SINGLE_ALBUM = 2,
     DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS = 3,
-};
+} ddb_rg_scan_mode_t;
 
-enum {
+typedef enum {
     DDB_RG_SCAN_RESULT_SUCCESS = 0,
     DDB_RG_SCAN_RESULT_FILE_NOT_FOUND = -1,
     DDB_RG_SCAN_RESULT_INVALID_FILE = -2,
-};
+} ddb_rg_scan_result_type_t;
 
 #define DDB_RG_SCAN_DEFAULT_LOUDNESS 89.f
 
@@ -47,7 +47,7 @@ typedef struct {
     float album_gain;
     float track_peak;
     float album_peak;
-    int scan_result;
+    ddb_rg_scan_result_type_t scan_result;
 } ddb_rg_scanner_result_t;
 
 typedef struct {
@@ -55,7 +55,7 @@ typedef struct {
     int _size;
 
     // The scanning mode, one of DDB_RG_SCAN_MODE_*
-    int mode;
+    ddb_rg_scan_mode_t mode;
 
     // The list of tracks and results.
     // The caller is responsible to allocate and free these buffers.
