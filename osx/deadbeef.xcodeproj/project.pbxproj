@@ -2489,6 +2489,10 @@
 		2DD0628D2EC08647006F3223 /* fixed.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD0619B2EC08209006F3223 /* fixed.c */; };
 		2DD0628E2EC08647006F3223 /* fixed_intrin_avx2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD0619C2EC08209006F3223 /* fixed_intrin_avx2.c */; };
 		2DD0628F2EC08647006F3223 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DD061AD2EC08209006F3223 /* memory.c */; };
+		2DD062B02EC0B94F006F3223 /* AlbumArtWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062AE2EC0B94F006F3223 /* AlbumArtWidget.h */; };
+		2DD062B12EC0B94F006F3223 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062AF2EC0B94F006F3223 /* AlbumArtWidget.m */; };
+		2DD062B52EC0B995006F3223 /* AlbumArtWidgetViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062B32EC0B995006F3223 /* AlbumArtWidgetViewController.h */; };
+		2DD062B62EC0B995006F3223 /* AlbumArtWidgetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062B42EC0B995006F3223 /* AlbumArtWidgetViewController.m */; };
 		2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; };
 		2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; };
 		2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; };
@@ -2657,9 +2661,6 @@
 		2DE3B8902269F6BA00AFF9AE /* pltbrowser.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */; };
 		2DE3B8932269F6BA00AFF9AE /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE3B88C2269F6B900AFF9AE /* support.h */; };
 		2DE3B8962269F6D900AFF9AE /* pltbrowser_gtk3.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DE3B8742269F68B00AFF9AE /* pltbrowser_gtk3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE5562526075B8400285BF9 /* AlbumArtWidget.h */; };
-		2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE5562526075B8400285BF9 /* AlbumArtWidget.h */; };
-		2DE5562926075B8400285BF9 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE5562626075B8400285BF9 /* AlbumArtWidget.m */; };
 		2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE55ACC26C5A47F008F33FF /* medialibmanager.h */; };
 		2DE55ADF26C5A580008F33FF /* medialibmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DE55ACD26C5A47F008F33FF /* medialibmanager.c */; };
 		2DE77484275E89DF00890350 /* support.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE7747C275E89DD00890350 /* support.h */; };
@@ -7122,6 +7123,10 @@
 		2DD062022EC083ED006F3223 /* ordinals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ordinals.h; sourceTree = "<group>"; };
 		2DD062032EC083ED006F3223 /* stream_decoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stream_decoder.h; sourceTree = "<group>"; };
 		2DD062042EC083ED006F3223 /* stream_encoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stream_encoder.h; sourceTree = "<group>"; };
+		2DD062AE2EC0B94F006F3223 /* AlbumArtWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlbumArtWidget.h; sourceTree = "<group>"; };
+		2DD062AF2EC0B94F006F3223 /* AlbumArtWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumArtWidget.m; sourceTree = "<group>"; };
+		2DD062B32EC0B995006F3223 /* AlbumArtWidgetViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlbumArtWidgetViewController.h; sourceTree = "<group>"; };
+		2DD062B42EC0B995006F3223 /* AlbumArtWidgetViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumArtWidgetViewController.m; sourceTree = "<group>"; };
 		2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.76.100.dylib; path = deps/ffmpeg/lib/libavformat.58.76.100.dylib; sourceTree = "<group>"; };
 		2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.134.100.dylib; path = deps/ffmpeg/lib/libavcodec.58.134.100.dylib; sourceTree = "<group>"; };
 		2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.70.100.dylib; path = deps/ffmpeg/lib/libavutil.56.70.100.dylib; sourceTree = "<group>"; };
@@ -7276,8 +7281,6 @@
 		2DE3B87D2269F6B900AFF9AE /* support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = support.c; sourceTree = "<group>"; };
 		2DE3B87E2269F6B900AFF9AE /* pltbrowser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pltbrowser.c; sourceTree = "<group>"; };
 		2DE3B88C2269F6B900AFF9AE /* support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = support.h; sourceTree = "<group>"; };
-		2DE5562526075B8400285BF9 /* AlbumArtWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlbumArtWidget.h; sourceTree = "<group>"; };
-		2DE5562626075B8400285BF9 /* AlbumArtWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumArtWidget.m; sourceTree = "<group>"; };
 		2DE55ACC26C5A47F008F33FF /* medialibmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibmanager.h; sourceTree = "<group>"; };
 		2DE55ACD26C5A47F008F33FF /* medialibmanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibmanager.c; sourceTree = "<group>"; };
 		2DE77467275E893400890350 /* converter_gtk3.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = converter_gtk3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -12578,6 +12581,17 @@
 			path = "osx/deps/flac-1.5.0/include";
 			sourceTree = "<group>";
 		};
+		2DD062AD2EC0B926006F3223 /* AlbumArt */ = {
+			isa = PBXGroup;
+			children = (
+				2DD062AE2EC0B94F006F3223 /* AlbumArtWidget.h */,
+				2DD062AF2EC0B94F006F3223 /* AlbumArtWidget.m */,
+				2DD062B32EC0B995006F3223 /* AlbumArtWidgetViewController.h */,
+				2DD062B42EC0B995006F3223 /* AlbumArtWidgetViewController.m */,
+			);
+			path = AlbumArt;
+			sourceTree = "<group>";
+		};
 		2DD3774C27412C53007AD315 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
@@ -12786,12 +12800,11 @@
 		2DE5562426075B4200285BF9 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				2DD062AD2EC0B926006F3223 /* AlbumArt */,
 				2DC6C5F4294CE11B00A63CEB /* ChiptuneVoices */,
 				2DC65820274AB03700583E14 /* Lyrics */,
 				2DC657E6274A603A00583E14 /* PlaylistBrowser */,
 				2DC657D0274957FE00583E14 /* Tabs */,
-				2DE5562526075B8400285BF9 /* AlbumArtWidget.h */,
-				2DE5562626075B8400285BF9 /* AlbumArtWidget.m */,
 				2DC6583B274C361C00583E14 /* HolderWidget.h */,
 				2DC6583C274C361C00583E14 /* HolderWidget.m */,
 				2DE1D3E419B11539009B5BC6 /* PlaceholderWidget.h */,
@@ -13863,7 +13876,6 @@
 				2D25569D2E47680D00DA3757 /* scriptable_encoder.h in Headers */,
 				2DC65808274A876300583E14 /* DeletePlaylistConfirmationController.h in Headers */,
 				2D98B68C272D573700E655AE /* ScopeSettings.h in Headers */,
-				2DE5562826075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2D0212FC2DA0793600BAEA12 /* actionhandlers.h in Headers */,
 				2D9EBAAC25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2DC657F9274A7C4600583E14 /* RenamePlaylistViewController.h in Headers */,
@@ -15209,6 +15221,7 @@
 				2DF55C3F2270FCB9002C44DC /* ScriptableNodeEditorViewController.h in Headers */,
 				2DDBA26423E5F14A00051320 /* PlaylistHeaderView.h in Headers */,
 				2DC657CC2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
+				2DD062B52EC0B995006F3223 /* AlbumArtWidgetViewController.h in Headers */,
 				2DDBA26023E5EA3800051320 /* PlaylistLocalDragDropHolder.h in Headers */,
 				2D8E9C1B19ED5F7400EE1408 /* deadbeef.h in Headers */,
 				2DA273782406ED4100FB9BE1 /* GuiPreferencesWindowController.h in Headers */,
@@ -15222,7 +15235,6 @@
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
 				2DD3774A27404E11007AD315 /* VisualizationSettingsUtil.h in Headers */,
 				2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */,
-				2DE5562726075B8400285BF9 /* AlbumArtWidget.h in Headers */,
 				2DBC62D624CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h in Headers */,
 				0D568528271DC35E0026F700 /* ScopeWidget.h in Headers */,
 				2DC657F1274A7A6900583E14 /* PlaylistContextMenu.h in Headers */,
@@ -15250,6 +15262,7 @@
 				2DD6D0A519AE609F009308A5 /* DdbSeekBar.h in Headers */,
 				2D208EB02CE8D5FA002E4892 /* MetalBufferLoop.h in Headers */,
 				2DB1641A24FAB13400034E11 /* MediaLibraryManager.h in Headers */,
+				2DD062B02EC0B94F006F3223 /* AlbumArtWidget.h in Headers */,
 				2D30D0B425E2A5DD0023A299 /* DesignModeState.h in Headers */,
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
 				2D651D17227227C300375AE2 /* ScriptableNodeEditorWindowController.h in Headers */,
@@ -19022,7 +19035,6 @@
 				2D7C1FAE2946001B00163538 /* ShaderRenderer.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DC657A92746D9E400583E14 /* TabsWidget.m in Sources */,
-				2DE5562926075B8400285BF9 /* AlbumArtWidget.m in Sources */,
 				2DB52F7D24CF7CF20046D516 /* TrackContextMenu.m in Sources */,
 				2DDD7ABD25E1831000FA6FE5 /* PlaylistDataModel.m in Sources */,
 				2DDD796525E15ED200FA6FE5 /* PlaylistWidget.m in Sources */,
@@ -19088,6 +19100,7 @@
 				2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */,
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
 				2DC65829274AB03800583E14 /* LyricsWidget.m in Sources */,
+				2DD062B12EC0B94F006F3223 /* AlbumArtWidget.m in Sources */,
 				2DC657F3274A7A6900583E14 /* PlaylistContextMenu.m in Sources */,
 				2DD3775227412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m in Sources */,
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
@@ -19151,6 +19164,7 @@
 				2D9EF3142B6FB0800042F6D8 /* KeyboardShortcutManager.m in Sources */,
 				2D9EBAAD25E44A0700255592 /* WidgetSerializer.m in Sources */,
 				2D92F37D2B6D226F00BD07E8 /* UndoIntegration.m in Sources */,
+				2DD062B62EC0B995006F3223 /* AlbumArtWidgetViewController.m in Sources */,
 				2D92D32129B92F9100218F1D /* pluginsettings.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
