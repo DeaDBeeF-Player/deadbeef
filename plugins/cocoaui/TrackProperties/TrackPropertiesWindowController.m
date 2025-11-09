@@ -23,6 +23,7 @@
 
 #import "AddNewFieldWindowController.h"
 #import "EditSingleValueWindowController.h"
+#import "EditMultipleValuesWindowController.h"
 #import "MediaLibraryItem.h"
 #import "TrackPropertiesWindowController.h"
 #import "TrackPropertiesSingleLineFormatter.h"
@@ -34,7 +35,7 @@
 
 extern DB_functions_t *deadbeef;
 
-@interface TrackPropertiesWindowController () <AddNewFieldWindowControllerDelegate, EditSingleValueWindowControllerDelegate>
+@interface TrackPropertiesWindowController () <AddNewFieldWindowControllerDelegate, EditSingleValueWindowControllerDelegate, EditMultipleValuesWindowControllerDelegate>
 
 /// Do not remove: used via binding
 @property (unsafe_unretained) BOOL singleValueSelected;
@@ -49,6 +50,7 @@ extern DB_functions_t *deadbeef;
 
 @property (nonatomic) AddNewFieldWindowController *addNewFieldWindowController;
 @property (nonatomic) EditSingleValueWindowController *editSingleValueWindowController;
+@property (nonatomic) EditMultipleValuesWindowController *editMultipleValuesWindowController;
 
 @end
 
@@ -664,18 +666,22 @@ _formatted_title_for_unknown_key(const char *key) {
     NSInteger idx = ind.firstIndex;
 
     if (self.numtracks != 1) {
+        self.editMultipleValuesWindowController = [[EditMultipleValuesWindowController alloc] initWithWindowNibName:@"EditMultipleValuesWindowController"];
+        self.editMultipleValuesWindowController.delegate = self;
+        (void)self.editMultipleValuesWindowController.window;
+
         // Allow editing the previous value, if all tracks have the same
         BOOL isMult;
         NSString *value = [self fieldValueForIndex:idx store:self.store isMult:&isMult];
         if (!isMult) {
-            self.multiValueSingle.string = value;
+            self.editMultipleValuesWindowController.multiValueSingle.string = value;
         }
         else {
-            self.multiValueSingle.string = @"";
+            self.editMultipleValuesWindowController.multiValueSingle.string = @"";
         }
 
         NSString *key = self.store[idx][@"key"];
-        self.multiValueFieldName.stringValue =  key.uppercaseString;
+        self.editMultipleValuesWindowController.multiValueFieldName.stringValue =  key.uppercaseString;
 
         NSMutableArray<NSString *> *fields = [NSMutableArray new];
         NSMutableArray<NSString *> *items = [NSMutableArray new];
@@ -706,20 +712,10 @@ _formatted_title_for_unknown_key(const char *key) {
         self.multipleFieldsTableData = [TrackPropertiesMultipleFieldsTableData new];
         self.multipleFieldsTableData.fields = [[NSMutableArray alloc] initWithArray:fields copyItems:NO];
         self.multipleFieldsTableData.items = items;
-        self.multiValueTableView.delegate = self.multipleFieldsTableData;
-        self.multiValueTableView.dataSource = self.multipleFieldsTableData;
-        [self.window beginSheet:self.editMultipleValuesPanel completionHandler:^(NSModalResponse returnCode) {
-            if (returnCode == NSModalResponseOK) {
-                if ([(self.multiValueTabView).selectedTabViewItem.identifier isEqualToString:@"singleValue"]) {
-                    [self setSameValuesForIndex:(int)idx value:(self.multiValueSingle).textStorage.string];
-                }
-                else {
-                    for (int i = 0; i < self.numtracks; i++) {
-                        self.store[idx][@"values"] = [[NSMutableArray alloc] initWithArray:self.multipleFieldsTableData.fields copyItems:NO];
-                    }
-                }
-                self.isModified = YES;
-            }
+        self.editMultipleValuesWindowController.multiValueTableView.delegate = self.multipleFieldsTableData;
+        self.editMultipleValuesWindowController.multiValueTableView.dataSource = self.multipleFieldsTableData;
+        [self.editMultipleValuesWindowController.multiValueTableView reloadData];
+        [self.window beginSheet:self.editMultipleValuesWindowController.window completionHandler:^(NSModalResponse returnCode) {
         }];
         return;
     }
@@ -819,23 +815,6 @@ _formatted_title_for_unknown_key(const char *key) {
     }];
 }
 
-- (IBAction)cancelEditMultipleValuesPanel:(id)sender {
-    [self.window endSheet:self.editMultipleValuesPanel returnCode:NSModalResponseCancel];
-}
-
-- (IBAction)okEditMultipleValuesAction:(id)sender {
-    NSIndexSet *ind = self.metadataTableView.selectedRowIndexes;
-    NSInteger idx = ind.firstIndex;
-
-    self.isModified = YES;
-
-    self.store[idx][@"values"] = [[NSMutableArray alloc] initWithArray: self.multipleFieldsTableData.fields copyItems:NO];
-
-    [self.metadataTableView reloadData];
-
-    [self.window endSheet:self.editMultipleValuesPanel returnCode:NSModalResponseOK];
-}
-
 #pragma mark - NSTableViewDataSource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
@@ -930,7 +909,33 @@ _formatted_title_for_unknown_key(const char *key) {
         }
     }
 
-    [NSApp endSheet:self.editSingleValueWindowController.window];
+    [self.window endSheet:self.editSingleValueWindowController.window returnCode:response];
+}
+
+#pragma mark - EditMultipleValuesWindowControllerDelegate
+
+- (void)editMultipleValuedDidEndWithResponse:(NSModalResponse)response {
+    if (response == NSModalResponseOK) {
+        NSIndexSet *ind = self.metadataTableView.selectedRowIndexes;
+        NSInteger idx = ind.firstIndex;
+
+        self.isModified = YES;
+
+        self.store[idx][@"values"] = [[NSMutableArray alloc] initWithArray: self.multipleFieldsTableData.fields copyItems:NO];
+
+        [self.metadataTableView reloadData];
+
+        if ([(self.editMultipleValuesWindowController.multiValueTabView).selectedTabViewItem.identifier isEqualToString:@"singleValue"]) {
+            [self setSameValuesForIndex:(int)idx value:(self.editMultipleValuesWindowController.multiValueSingle).textStorage.string];
+        }
+        else {
+            for (int i = 0; i < self.numtracks; i++) {
+                self.store[idx][@"values"] = [[NSMutableArray alloc] initWithArray:self.multipleFieldsTableData.fields copyItems:NO];
+            }
+        }
+        self.isModified = YES;
+    }
+    [self.window endSheet:self.editMultipleValuesWindowController.window returnCode:response];
 }
 
 @end

@@ -23,8 +23,10 @@
 
 #import "AddNewFieldWindowController.h"
 #import "EditSingleValueWindowController.h"
+#import "EditMultipleValuesWindowController.h"
 #import "MediaLibraryItem.h"
 #import "TrackPropertiesListViewController.h"
+#import "TrackPropertiesMultipleFieldsTableData.h"
 #import "TrackPropertiesSingleLineFormatter.h"
 #include "utf8.h"
 #include "trkproperties_shared.h"
@@ -88,7 +90,7 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     [store addObject:item];
 }
 
-@interface TrackPropertiesListViewController () <NSTableViewDataSource, NSTableViewDelegate, NSMenuDelegate, AddNewFieldWindowControllerDelegate, EditSingleValueWindowControllerDelegate>
+@interface TrackPropertiesListViewController () <NSTableViewDataSource, NSTableViewDelegate, NSMenuDelegate, AddNewFieldWindowControllerDelegate, EditSingleValueWindowControllerDelegate, EditMultipleValuesWindowControllerDelegate>
 
 @property (nonatomic) int iter;
 @property (nonatomic) DB_playItem_t **tracks;
@@ -102,6 +104,8 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 
 @property (nonatomic) AddNewFieldWindowController *addNewFieldWindowController;
 @property (nonatomic) EditSingleValueWindowController *editSingleValueWindowController;
+@property (nonatomic) EditMultipleValuesWindowController *editMultipleValuesWindowController;
+@property (nonatomic) TrackPropertiesMultipleFieldsTableData *multipleFieldsTableData;
 
 @end
 
@@ -207,6 +211,7 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     [self.tableView reloadData];
 }
 
+// TODO: separate class
 - (NSMenu *)createContextMenu {
     NSMenu *menu = [NSMenu new];
     self.editItem = [menu addItemWithTitle:@"Edit" action:@selector(editValueAction:) keyEquivalent:@""];
@@ -364,8 +369,6 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 #pragma mark - Menu item actions
 
 - (IBAction)editValueAction:(id)sender {
-    // TODO
-#if 0
     NSIndexSet *ind = self.tableView.selectedRowIndexes;
     if (ind.count != 1) {
         return; // multiple fields can't be edited at the same time
@@ -374,18 +377,22 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     NSInteger idx = ind.firstIndex;
 
     if (self.numtracks != 1) {
+        self.editMultipleValuesWindowController = [[EditMultipleValuesWindowController alloc] initWithWindowNibName:@"EditMultipleValuesWindowController"];
+        self.editMultipleValuesWindowController.delegate = self;
+        (void)self.editMultipleValuesWindowController.window;
+
         // Allow editing the previous value, if all tracks have the same
         BOOL isMult;
         NSString *value = [self fieldValueForIndex:idx store:self.store isMult:&isMult];
         if (!isMult) {
-            self.multiValueSingle.string = value;
+            self.editMultipleValuesWindowController.multiValueSingle.string = value;
         }
         else {
-            self.multiValueSingle.string = @"";
+            self.editMultipleValuesWindowController.multiValueSingle.string = @"";
         }
 
-        NSString *key = self.store[idx][@"key"];
-        self.multiValueFieldName.stringValue =  key.uppercaseString;
+        NSString *key = self.store[idx].key;
+        self.editMultipleValuesWindowController.multiValueFieldName.stringValue =  key.uppercaseString;
 
         NSMutableArray<NSString *> *fields = [NSMutableArray new];
         NSMutableArray<NSString *> *items = [NSMutableArray new];
@@ -402,7 +409,7 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
         ctx.idx = -1;
         ctx.id = -1;
 
-        fields = self.store[idx][@"values"];
+        fields = self.store[idx].values;
 
         for (int i = 0; i < self.numtracks; i++) {
             char item[1000];
@@ -416,20 +423,10 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
         self.multipleFieldsTableData = [TrackPropertiesMultipleFieldsTableData new];
         self.multipleFieldsTableData.fields = [[NSMutableArray alloc] initWithArray:fields copyItems:NO];
         self.multipleFieldsTableData.items = items;
-        self.multiValueTableView.delegate = self.multipleFieldsTableData;
-        self.multiValueTableView.dataSource = self.multipleFieldsTableData;
-        [self.window beginSheet:self.editMultipleValuesPanel completionHandler:^(NSModalResponse returnCode) {
-            if (returnCode == NSModalResponseOK) {
-                if ([(self.multiValueTabView).selectedTabViewItem.identifier isEqualToString:@"singleValue"]) {
-                    [self setSameValuesForIndex:(int)idx value:(self.multiValueSingle).textStorage.string];
-                }
-                else {
-                    for (int i = 0; i < self.numtracks; i++) {
-                        self.store[idx][@"values"] = [[NSMutableArray alloc] initWithArray:self.multipleFieldsTableData.fields copyItems:NO];
-                    }
-                }
-                self.isModified = YES;
-            }
+        self.editMultipleValuesWindowController.multiValueTableView.delegate = self.multipleFieldsTableData;
+        self.editMultipleValuesWindowController.multiValueTableView.dataSource = self.multipleFieldsTableData;
+        [self.editMultipleValuesWindowController.multiValueTableView reloadData];
+        [self.view.window beginSheet:self.editMultipleValuesWindowController.window completionHandler:^(NSModalResponse returnCode) {
         }];
         return;
     }
@@ -438,12 +435,11 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     self.editSingleValueWindowController.delegate = self;
     (void)self.editSingleValueWindowController.window;
 
-    self.editSingleValueWindowController.fieldName.stringValue =  ((NSString *)self.store[idx][@"key"]).uppercaseString;
-    self.editSingleValueWindowController.fieldValue.string =  self.store[idx][@"values"][0];
+    self.editSingleValueWindowController.fieldName.stringValue =  ((NSString *)self.store[idx].key).uppercaseString;
+    self.editSingleValueWindowController.fieldValue.string =  self.store[idx].values[0];
 
-    [self.window beginSheet:self.editSingleValueWindowController.window completionHandler:^(NSModalResponse returnCode) {
+    [self.view.window beginSheet:self.editSingleValueWindowController.window completionHandler:^(NSModalResponse returnCode) {
     }];
-#endif
 }
 
 - (IBAction)editInPlaceAction:(id)sender {
@@ -529,30 +525,6 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
         [self.tableView reloadData];
     }];
 }
-
-- (IBAction)cancelEditMultipleValuesPanel:(id)sender {
-    // TODO
-#if 0
-    [self.window endSheet:self.editMultipleValuesPanel returnCode:NSModalResponseCancel];
-#endif
-}
-
-- (IBAction)okEditMultipleValuesAction:(id)sender {
-    // TODO
-#if 0
-    NSIndexSet *ind = self.tableView.selectedRowIndexes;
-    NSInteger idx = ind.firstIndex;
-
-    self.isModified = YES;
-
-    self.store[idx].values = [[NSMutableArray alloc] initWithArray: self.multipleFieldsTableData.fields copyItems:NO];
-
-    [self.tableView reloadData];
-
-    [self.window endSheet:self.editMultipleValuesPanel returnCode:NSModalResponseOK];
-#endif
-}
-
 
 #pragma mark - NSTableViewDataSource
 
@@ -645,6 +617,32 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     }
 
     [NSApp endSheet:self.editSingleValueWindowController.window];
+}
+
+#pragma mark - EditMultipleValuesWindowControllerDelegate
+
+- (void)editMultipleValuedDidEndWithResponse:(NSModalResponse)response {
+    if (response == NSModalResponseOK) {
+        NSIndexSet *ind = self.tableView.selectedRowIndexes;
+        NSInteger idx = ind.firstIndex;
+
+        self.isModified = YES;
+
+        self.store[idx].values = [[NSMutableArray alloc] initWithArray: self.multipleFieldsTableData.fields copyItems:NO];
+
+        [self.tableView reloadData];
+
+        if ([(self.editMultipleValuesWindowController.multiValueTabView).selectedTabViewItem.identifier isEqualToString:@"singleValue"]) {
+            [self setSameValuesForIndex:(int)idx value:(self.editMultipleValuesWindowController.multiValueSingle).textStorage.string];
+        }
+        else {
+            for (int i = 0; i < self.numtracks; i++) {
+                self.store[idx].values = [[NSMutableArray alloc] initWithArray:self.multipleFieldsTableData.fields copyItems:NO];
+            }
+        }
+        self.isModified = YES;
+    }
+    [self.view.window endSheet:self.editMultipleValuesWindowController.window returnCode:response];
 }
 
 @end

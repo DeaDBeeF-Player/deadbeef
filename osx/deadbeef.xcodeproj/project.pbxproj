@@ -2509,6 +2509,9 @@
 		2DD062D82EC145D5006F3223 /* EditSingleValueWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062D52EC145D5006F3223 /* EditSingleValueWindowController.h */; };
 		2DD062D92EC145D5006F3223 /* EditSingleValueWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD062D72EC145D5006F3223 /* EditSingleValueWindowController.xib */; };
 		2DD062DA2EC145D5006F3223 /* EditSingleValueWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062D62EC145D5006F3223 /* EditSingleValueWindowController.m */; };
+		2DD062DF2EC14A1A006F3223 /* EditMultipleValuesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062DC2EC14A1A006F3223 /* EditMultipleValuesWindowController.h */; };
+		2DD062E02EC14A1A006F3223 /* EditMultipleValuesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD062DE2EC14A1A006F3223 /* EditMultipleValuesWindowController.xib */; };
+		2DD062E12EC14A1A006F3223 /* EditMultipleValuesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062DD2EC14A1A006F3223 /* EditMultipleValuesWindowController.m */; };
 		2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; };
 		2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; };
 		2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; };
@@ -7159,6 +7162,9 @@
 		2DD062D52EC145D5006F3223 /* EditSingleValueWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditSingleValueWindowController.h; sourceTree = "<group>"; };
 		2DD062D62EC145D5006F3223 /* EditSingleValueWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditSingleValueWindowController.m; sourceTree = "<group>"; };
 		2DD062D72EC145D5006F3223 /* EditSingleValueWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditSingleValueWindowController.xib; sourceTree = "<group>"; };
+		2DD062DC2EC14A1A006F3223 /* EditMultipleValuesWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditMultipleValuesWindowController.h; sourceTree = "<group>"; };
+		2DD062DD2EC14A1A006F3223 /* EditMultipleValuesWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditMultipleValuesWindowController.m; sourceTree = "<group>"; };
+		2DD062DE2EC14A1A006F3223 /* EditMultipleValuesWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditMultipleValuesWindowController.xib; sourceTree = "<group>"; };
 		2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.76.100.dylib; path = deps/ffmpeg/lib/libavformat.58.76.100.dylib; sourceTree = "<group>"; };
 		2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.134.100.dylib; path = deps/ffmpeg/lib/libavcodec.58.134.100.dylib; sourceTree = "<group>"; };
 		2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.70.100.dylib; path = deps/ffmpeg/lib/libavutil.56.70.100.dylib; sourceTree = "<group>"; };
@@ -12183,6 +12189,7 @@
 			children = (
 				2DD062D22EC13F9E006F3223 /* TrackProperties.xib */,
 				2DD062CB2EC13F21006F3223 /* AddField */,
+				2DD062DB2EC14A04006F3223 /* EditMultipleValues */,
 				2DD062D42EC145B2006F3223 /* EditSingleValue */,
 				2DD062BB2EC1135E006F3223 /* TrackPropertiesListItem.h */,
 				2DD062BC2EC1135E006F3223 /* TrackPropertiesListItem.m */,
@@ -12654,6 +12661,16 @@
 				2DD062D72EC145D5006F3223 /* EditSingleValueWindowController.xib */,
 			);
 			path = EditSingleValue;
+			sourceTree = "<group>";
+		};
+		2DD062DB2EC14A04006F3223 /* EditMultipleValues */ = {
+			isa = PBXGroup;
+			children = (
+				2DD062DC2EC14A1A006F3223 /* EditMultipleValuesWindowController.h */,
+				2DD062DD2EC14A1A006F3223 /* EditMultipleValuesWindowController.m */,
+				2DD062DE2EC14A1A006F3223 /* EditMultipleValuesWindowController.xib */,
+			);
+			path = EditMultipleValues;
 			sourceTree = "<group>";
 		};
 		2DD3774C27412C53007AD315 /* Preferences */ = {
@@ -15339,6 +15356,7 @@
 				2DDF87D924027DA500CA8E91 /* PluginActionMenuItem.h in Headers */,
 				2DBF3D4327086AA900023138 /* MainContentViewController.h in Headers */,
 				2DC657E2274A5F6000583E14 /* PlaylistBrowserWidget.h in Headers */,
+				2DD062DF2EC14A1A006F3223 /* EditMultipleValuesWindowController.h in Headers */,
 				2DA30E792403292D001BAB8A /* PlaybackPreferencesViewController.h in Headers */,
 				2D9F6534241BE78C00D9D16E /* SeekbarOverlay.h in Headers */,
 				2D3CD9372409A091005875A9 /* PinnedGroupTitleView.h in Headers */,
@@ -17386,6 +17404,7 @@
 				2DDBDA392436678700C12A75 /* btnduplicateTemplate.pdf in Resources */,
 				2DB05F7B252E4F170090635E /* iconLibraryTemplate.pdf in Resources */,
 				2DBCA69B27944B2200D7432F /* COPYING.LGPLv2.1 in Resources */,
+				2DD062E02EC14A1A006F3223 /* EditMultipleValuesWindowController.xib in Resources */,
 				2DC655752741921700583E14 /* SpectrumAnalyzerPreferencesViewController.xib in Resources */,
 				2D3E0E1C1B39AAC20007ECC3 /* btnBrowseTemplate.pdf in Resources */,
 				4D877B36183BBF1F008A114B /* btnplayTemplate.pdf in Resources */,
@@ -19172,6 +19191,7 @@
 				2D92D33A29B9322700218F1D /* tftintutil.c in Sources */,
 				2DDE52A724F821630096EF80 /* MediaLibraryOutlineView.m in Sources */,
 				2DC657FA274A7C4600583E14 /* RenamePlaylistViewController.m in Sources */,
+				2DD062E12EC14A1A006F3223 /* EditMultipleValuesWindowController.m in Sources */,
 				2DD8865B2B71056E000434FB /* KeyboardShortcutConverter.m in Sources */,
 				2DC657C82748502F00583E14 /* SegmentedTabView.m in Sources */,
 				2DDD779025E153D000FA6FE5 /* WidgetFactory.m in Sources */,
