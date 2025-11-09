@@ -93,23 +93,26 @@ replaygain_init_settings (ddb_replaygain_settings_t *settings, playItem_t *it) {
     const char *albumpeak = pl_find_meta (it, ":REPLAYGAIN_ALBUMPEAK");
     const char *trackpeak = pl_find_meta (it, ":REPLAYGAIN_TRACKPEAK");
 
+    if (albumgain) {
+        settings->has_album_gain = 1;
+    }
+    if (trackgain) {
+        settings->has_track_gain = 1;
+    }
+
     if (settings->processing_flags & DDB_RG_PROCESSING_GAIN) {
         if (albumgain) {
             settings->albumgain = db_to_amp((float)atof (albumgain));
-            settings->has_album_gain = 1;
         }
         else if (trackgain) {
             settings->albumgain = db_to_amp((float)atof (trackgain));
-            settings->has_album_gain = 1;
         }
 
         if (trackgain) {
             settings->trackgain = db_to_amp((float)atof (trackgain));
-            settings->has_track_gain = 1;
         }
         else if (albumgain) {
             settings->trackgain = db_to_amp((float)atof (albumgain));
-            settings->has_track_gain = 1;
         }
     }
 

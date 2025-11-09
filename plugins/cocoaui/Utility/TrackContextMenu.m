@@ -136,6 +136,8 @@ extern DB_functions_t *deadbeef;
 
     rgMenu.autoenablesItems = NO;
 
+    self.rgScanPerFileItem = [rgMenu addItemWithTitle:@"Scan Per-file Track Gain If Not Scanned" action:@selector(rgScanTracksIfNotScanned:) keyEquivalent:@""];
+    self.rgScanPerFileItem.target = self;
     self.rgScanPerFileItem = [rgMenu addItemWithTitle:@"Scan Per-file Track Gain" action:@selector(rgScanTracks:) keyEquivalent:@""];
     self.rgScanPerFileItem.target = self;
     self.rgScanAsSingleAlbumItem = [rgMenu addItemWithTitle:@"Scan Selection as Single Album" action:@selector(rgScanAlbum:) keyEquivalent:@""];
@@ -143,7 +145,7 @@ extern DB_functions_t *deadbeef;
     self.rgScanAsAlbumsItem = [rgMenu addItemWithTitle:@"Scan Selection as Albums (By Tags)" action:@selector(rgScanAlbumsAuto:) keyEquivalent:@""];
     self.rgScanAsAlbumsItem.target = self;
     self.rgRemoveInformationItem = [rgMenu addItemWithTitle:@"Remove ReplayGain Information" action:@selector(rgRemove:) keyEquivalent:@""];
-    self.rgScanAsAlbumsItem.target = self;
+    self.rgRemoveInformationItem.target = self;
 
     self.rgMenuItem = [[NSMenuItem alloc] initWithTitle:@"ReplayGain" action:nil keyEquivalent:@""];
     self.rgMenuItem.submenu = rgMenu;
@@ -303,7 +305,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)rgRemove:(id)sender {
     int count;
-    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:YES];
+    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count filter:rgInfoFilterHasAny];
     if (!tracks) {
         return;
     }
@@ -323,6 +325,10 @@ extern DB_functions_t *deadbeef;
     [self rgScan:DDB_RG_SCAN_MODE_ALBUMS_FROM_TAGS];
 }
 
+- (void)rgScanTracksIfNotScanned:(id)sender {
+    [self rgScan:DDB_RG_SCAN_MODE_TRACK filter:rgInfoFilterHasNoTrack];
+}
+
 - (void)rgScanTracks:(id)sender {
     [self rgScan:DDB_RG_SCAN_MODE_TRACK];
 }
@@ -339,30 +345,66 @@ extern DB_functions_t *deadbeef;
     }
 }
 
-- (DB_playItem_t **)getSelectedTracksForRg:(int *)pcount withRgTags:(BOOL)withRgTags {
+typedef NS_ENUM(NSInteger,RgInfoFilter) {
+    rgInfoFilterPassAll,
+    rgInfoFilterHasNone,
+    rgInfoFilterHasAny,
+    rgInfoFilterHasTrack,
+    rgInfoFilterHasAlbum,
+    rgInfoFilterHasNoTrack,
+    rgInfoFilterHasNoAlbum,
+};
+
+- (DB_playItem_t **)getSelectedTracksForRg:(int *)pcount filter:(RgInfoFilter)filter {
     int numtracks = ddbUtilTrackListGetTrackCount(self.selectedTracksList);
     if (!numtracks) {
         return NULL;
     }
 
-    ddb_replaygain_settings_t __block s;
-    s._size = sizeof (ddb_replaygain_settings_t);
-
     ddb_playItem_t __block **tracks = calloc (numtracks, sizeof (ddb_playItem_t *));
     int __block n = 0;
     [self forEachTrack:^(DB_playItem_t *it) {
         assert (n < numtracks);
-        BOOL hasRgTags = NO;
-        if (withRgTags) {
-            deadbeef->replaygain_init_settings (&s, it);
+        ddb_replaygain_settings_t s = {0,};
+        s._size = sizeof (ddb_replaygain_settings_t);
+        deadbeef->replaygain_init_settings (&s, it);
+
+        switch (filter) {
+        case rgInfoFilterPassAll:
+            break;
+        case rgInfoFilterHasNone:
             if (s.has_album_gain || s.has_track_gain) {
-                hasRgTags = YES;
+                return NO;
             }
+            break;
+        case rgInfoFilterHasAny:
+            if (!s.has_album_gain && !s.has_track_gain) {
+                return NO;
+            }
+            break;
+        case rgInfoFilterHasTrack:
+            if (!s.has_track_gain) {
+                return NO;
+            }
+            break;
+        case rgInfoFilterHasAlbum:
+            if (!s.has_album_gain) {
+                return NO;
+            }
+            break;
+        case rgInfoFilterHasNoTrack:
+            if (s.has_track_gain) {
+                return NO;
+            }
+            break;
+        case rgInfoFilterHasNoAlbum:
+            if (s.has_album_gain) {
+                return NO;
+            }
+            break;
         }
-        if (!withRgTags || hasRgTags) {
-            deadbeef->pl_item_ref (it);
-            tracks[n++] = it;
-        }
+        deadbeef->pl_item_ref (it);
+        tracks[n++] = it;
         return YES;
     }];
 
@@ -374,9 +416,9 @@ extern DB_functions_t *deadbeef;
     return tracks;
 }
 
-- (void)rgScan:(int)mode {
+- (void)rgScan:(int)mode filter:(RgInfoFilter)filter {
     int count;
-    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count withRgTags:NO];
+    DB_playItem_t **tracks = [self getSelectedTracksForRg:&count filter:filter];
     if (!tracks) {
         return;
     }
@@ -386,6 +428,10 @@ extern DB_functions_t *deadbeef;
         deadbeef->plt_unref (plt);
     }
     [ReplayGainScannerController runScanner:mode forTracks:tracks count:count];
+}
+
+- (void)rgScan:(ddb_rg_scan_mode_t)mode {
+    [self rgScan:mode filter:rgInfoFilterPassAll];
 }
 
 #pragma mark -
