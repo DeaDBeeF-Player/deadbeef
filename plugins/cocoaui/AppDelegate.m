@@ -982,11 +982,27 @@ main_cleanup_and_quit (void);
     [_prefWindow showWindow:self];
 }
 
+- (IBAction)openDSPSettings:(id)sender {
+    if (!_prefWindow) {
+        _prefWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"Preferences"];
+    }
+    [_prefWindow switchToTab:@"DSP"];
+    [_prefWindow showWindow:self];
+}
+
 - (IBAction)openMedialibPrefs:(id)sender {
     if (!_prefWindow) {
         _prefWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"Preferences"];
     }
     [_prefWindow switchToTab:@"Medialib"];
+    [_prefWindow showWindow:self];
+}
+
+- (IBAction)openHotkeysPrefs:(id)sender {
+    if (!_prefWindow) {
+        _prefWindow = [[PreferencesWindowController alloc] initWithWindowNibName:@"Preferences"];
+    }
+    [_prefWindow switchToTab:@"Hotkeys"];
     [_prefWindow showWindow:self];
 }
 

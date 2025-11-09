@@ -18,7 +18,7 @@
                 <menuItem title="deadbeef" id="56">
                     <menu key="submenu" title="deadbeef" systemMenu="apple" id="57">
                         <items>
-                            <menuItem title="About deadbeef" id="58">
+                            <menuItem title="About DeaDBeeF" id="58">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="orderFrontStandardAboutPanel:" target="-2" id="142"/>
@@ -32,6 +32,24 @@
                                     <action selector="openPrefWindow:" target="494" id="crX-0Z-Tia"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Media Library Settings…" id="HK1-Mb-PhC">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="openMedialibPrefs:" target="494" id="R1o-Z1-H2s"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Hotkey Settings…" id="5uo-Ut-ipS">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="openHotkeysPrefs:" target="494" id="de0-ut-Gi5"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="DSP Settings…" id="de7-Xv-TmK">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="openDSPSettings:" target="494" id="7Zu-0d-jri"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="143">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -41,7 +59,7 @@
                             <menuItem isSeparatorItem="YES" id="144">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Hide deadbeef" keyEquivalent="h" id="134">
+                            <menuItem title="Hide DeaDBeeF" keyEquivalent="h" id="134">
                                 <connections>
                                     <action selector="hide:" target="-1" id="367"/>
                                 </connections>
@@ -60,7 +78,7 @@
                             <menuItem isSeparatorItem="YES" id="149">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Quit deadbeef" keyEquivalent="q" id="136">
+                            <menuItem title="Quit DeaDBeeF" keyEquivalent="q" id="136">
                                 <connections>
                                     <action selector="terminate:" target="-3" id="449"/>
                                 </connections>
@@ -643,12 +661,12 @@ CA
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" id="3qw-u3-kCU">
                         <items>
-                            <menuItem title="Deadbeef Help" keyEquivalent="?" id="BqJ-ib-iBJ">
+                            <menuItem title="DeaDBeeF Help" keyEquivalent="?" id="BqJ-ib-iBJ">
                                 <connections>
                                     <action selector="showHelp:" target="494" id="sxX-T5-mOw"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Changelog" id="nFw-NP-SSj">
+                            <menuItem title="ChangeLog" id="nFw-NP-SSj">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showChangelog:" target="494" id="HM1-Mc-ary"/>
