@@ -113,18 +113,6 @@
 - (IBAction)loopAllAction:(id)sender;
 - (IBAction)loopSingleAction:(id)sender;
 
-@property (unsafe_unretained) IBOutlet NSMenuItem *cursorFollowsPlayback;
-- (IBAction)cursorFollowsPlaybackAction:(id)sender;
-
-@property (unsafe_unretained) IBOutlet NSMenuItem *scrollFollowsPlayback;
-- (IBAction)scrollFollowsPlaybackAction:(id)sender;
-
-@property (unsafe_unretained) IBOutlet NSMenuItem *stopAfterCurrent;
-- (IBAction)stopAfterCurrentAction:(id)sender;
-
-@property (unsafe_unretained) IBOutlet NSMenuItem *stopAfterCurrentAlbum;
-- (IBAction)stopAfterCurrentAlbumAction:(id)sender;
-
 // window menu
 - (IBAction)showMainWinAction:(id)sender;
 - (IBAction)showLogWindowAction:(id)sender;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="22505" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24412" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24412"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -574,16 +574,22 @@ CA
                                     <action selector="scrollFollowsPlaybackAction:" target="494" id="uVm-Lh-feS"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Stop After Current" id="edx-c0-VoM">
+                            <menuItem title="Stop After Current Track" id="edx-c0-VoM">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="stopAfterCurrentAction:" target="494" id="0E9-6y-qkj"/>
+                                    <action selector="stopAfterCurrentTrackAction:" target="494" id="0E9-6y-qkj"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Stop After Current Album" id="6AV-SN-Cm9">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="stopAfterCurrentAlbumAction:" target="494" id="fSM-ZT-Ds9"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Stop After Playback Queue" id="WIb-Yd-Zx2">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="stopAfterPlaybackQueueAction:" target="494" id="LrS-F6-S2D"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -693,15 +699,16 @@ CA
                 <outlet property="orderShuffle" destination="15S-fQ-PaL" id="wGt-mg-WMg"/>
                 <outlet property="orderShuffleAlbums" destination="bea-Bv-Vnd" id="1sx-zb-fcn"/>
                 <outlet property="scrollFollowsPlayback" destination="xnA-bz-jxF" id="GX4-WF-zFx"/>
-                <outlet property="stopAfterCurrent" destination="edx-c0-VoM" id="Rig-DR-mKE"/>
                 <outlet property="stopAfterCurrentAlbum" destination="6AV-SN-Cm9" id="wVK-jy-HK2"/>
+                <outlet property="stopAfterCurrentTrack" destination="edx-c0-VoM" id="Rig-DR-mKE"/>
+                <outlet property="stopAfterPlaybackQueue" destination="WIb-Yd-Zx2" id="2fv-30-QHi"/>
             </connections>
         </customObject>
         <window title="Add Location" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="0MP-Eo-f3S" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="364" height="93"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1121"/>
             <view key="contentView" id="KVu-0k-T7v">
                 <rect key="frame" x="0.0" y="0.0" width="364" height="93"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -760,7 +767,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="163" y="199" width="368" height="68"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1121"/>
             <view key="contentView" id="UsQ-WG-CU4">
                 <rect key="frame" x="0.0" y="0.0" width="368" height="68"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -796,7 +803,7 @@ Gw
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="167" y="107" width="327" height="120"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="920"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2048" height="1121"/>
             <value key="minSize" type="size" width="327" height="120"/>
             <view key="contentView" id="30A-nz-a9e">
                 <rect key="frame" x="0.0" y="0.0" width="327" height="120"/>

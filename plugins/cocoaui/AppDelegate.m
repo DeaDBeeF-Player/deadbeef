@@ -56,6 +56,11 @@ extern DB_functions_t *deadbeef;
     int _listenerFileAddedIdentifier;
 }
 
+@property (unsafe_unretained) IBOutlet NSMenuItem *cursorFollowsPlayback;
+@property (unsafe_unretained) IBOutlet NSMenuItem *scrollFollowsPlayback;
+@property (unsafe_unretained) IBOutlet NSMenuItem *stopAfterCurrentTrack;
+@property (unsafe_unretained) IBOutlet NSMenuItem *stopAfterCurrentAlbum;
+@property (unsafe_unretained) IBOutlet NSMenuItem *stopAfterPlaybackQueue;
 
 @property (nonatomic) NowPlayable *nowPlayable;
 @property (nonatomic) BOOL equalizerAvailable;
@@ -137,8 +142,9 @@ extern DB_functions_t *deadbeef;
     _scrollFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1)?NSControlStateValueOn:NSControlStateValueOff;
     _cursorFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1)?NSControlStateValueOn:NSControlStateValueOff;
 
-    _stopAfterCurrent.state = deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSControlStateValueOn:NSControlStateValueOff;
+    _stopAfterCurrentTrack.state = deadbeef->conf_get_int ("playlist.stop_after_current", 0)?NSControlStateValueOn:NSControlStateValueOff;
     _stopAfterCurrentAlbum.state = deadbeef->conf_get_int ("playlist.stop_after_album", 0)?NSControlStateValueOn:NSControlStateValueOff;
+    _stopAfterPlaybackQueue.state = deadbeef->conf_get_int ("playlist.stop_after_queue", 0)?NSControlStateValueOn:NSControlStateValueOff;
 
     _descendingSortMode.state = deadbeef->conf_get_int ("cocoaui.sort_desc", 0) ? NSControlStateValueOn : NSControlStateValueOff;
 
@@ -750,17 +756,21 @@ main_cleanup_and_quit (void);
 - (IBAction)scrollFollowsPlaybackAction:(id)sender {
 }
 
-- (IBAction)stopAfterCurrentAction:(id)sender {
+- (IBAction)stopAfterCurrentTrackAction:(id)sender {
     int state = deadbeef->conf_get_int ("playlist.stop_after_current", 0);
-    state = 1 - state;
-    deadbeef->conf_set_int ("playlist.stop_after_current", state);
+    deadbeef->conf_set_int ("playlist.stop_after_current", !state);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 - (IBAction)stopAfterCurrentAlbumAction:(id)sender {
     int state = deadbeef->conf_get_int ("playlist.stop_after_album", 0);
-    state = 1 - state;
-    deadbeef->conf_set_int ("playlist.stop_after_album", state);
+    deadbeef->conf_set_int ("playlist.stop_after_album", !state);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (IBAction)stopAfterPlaybackQueueAction:(id)sender {
+    int var = deadbeef->conf_get_int ("playlist.stop_after_queue", 0);
+    deadbeef->conf_set_int ("playlist.stop_after_queue", !var);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
