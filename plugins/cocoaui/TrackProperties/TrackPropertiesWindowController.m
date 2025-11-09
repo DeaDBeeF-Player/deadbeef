@@ -25,119 +25,24 @@
 #include <deadbeef/deadbeef.h>
 #include "utf8.h"
 #include "trkproperties_shared.h"
-
-// Max length of a string displayed in the TableView
-// If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks
-#define MAX_GUI_FIELD_LEN 500
-
+#import "TrackPropertiesSingleLineFormatter.h"
+#import "TrackPropertiesNullFormatter.h"
+#import "TrackPropertiesMultipleFieldsTableData.h"
 
 extern DB_functions_t *deadbeef;
 
-@interface SingleLineFormatter : NSFormatter
-@end
-
-@implementation SingleLineFormatter
-- (NSString *)stringForObjectValue:(id)anObject {
-    if ([anObject isKindOfClass:[NSString class]]) {
-        NSString *str = anObject;
-        NSRange range = [str rangeOfString:@"\n"];
-        if (str.length >= MAX_GUI_FIELD_LEN && (range.location == NSNotFound || range.location >= MAX_GUI_FIELD_LEN)) {
-            range.location = MAX_GUI_FIELD_LEN;
-        }
-        if (range.location != NSNotFound ) {
-            return [[str substringToIndex:range.location-1] stringByAppendingString:@" (…)"];
-        }
-        else {
-            return str;
-        }
-    }
-    return @"";
-}
-
-- (NSString *)editingStringForObjectValue:(id)anObject {
-    return anObject;
-}
-
-- (BOOL)getObjectValue:(out id *)anObject
-             forString:(NSString *)string
-      errorDescription:(out NSString **)error {
-    *anObject = string;
-    return YES;
-}
-@end
-
-@interface NullFormatter : NSFormatter
-@end
-
-@implementation NullFormatter
-
-- (NSString *)stringForObjectValue:(id)anObject {
-    return anObject;
-}
-
-- (NSString *)editingStringForObjectValue:(id)anObject {
-    return @"";
-}
-
-- (BOOL)getObjectValue:(out id *)anObject
-             forString:(NSString *)string
-      errorDescription:(out NSString **)error {
-    *anObject = string;
-    return YES;
-}
-@end
-
-@interface MultipleFieldsTableData : NSObject<NSTableViewDataSource, NSTableViewDelegate>
-
-@property (nonatomic) NSArray<NSString *> *items;
-@property (nonatomic) NSMutableArray<NSString *> *fields;
-
-@end
-
-@implementation MultipleFieldsTableData
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    return self.fields.count;
-}
-
-- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
-    NSUserInterfaceItemIdentifier ident = tableColumn.identifier;
-    NSTableCellView *view = [tableView makeViewWithIdentifier:ident owner:self];
-    NSTextField *textView = view.textField;
-    if ([ident isEqualToString:@"Index"]) {
-        textView.stringValue = [NSString stringWithFormat:@"%d", (int)row+1];
-    }
-    else if ([ident isEqualToString:@"Item"]) {
-        textView.stringValue = self.items[row];
-    }
-    else if ([ident isEqualToString:@"Field"]) {
-        textView.formatter = [SingleLineFormatter new];
-        textView.stringValue = self.fields[row];
-        textView.target = self;
-        textView.action = @selector(fieldEditedAction:);
-        textView.identifier = [NSString stringWithFormat:@"%d", (int)row];
-    }
-    return view;
-}
-
-- (void)fieldEditedAction:(NSTextField *)sender {
-    NSString *value = sender.stringValue;
-    int row = sender.identifier.intValue;
-    self.fields[row] = value;
-    // FIXME: add modified flag
-}
-@end
-
-
 @interface TrackPropertiesWindowController ()
 
-@property (nonatomic) int iter;
+/// Do not remove: used via binding
+@property (unsafe_unretained) BOOL singleValueSelected;
+
 @property (nonatomic) DB_playItem_t **tracks;
 @property (nonatomic) int numtracks;
 @property (nonatomic) NSMutableArray *store;
 @property (nonatomic) NSMutableArray *propstore;
 @property (nonatomic) BOOL progress_aborted;
 @property (nonatomic) BOOL close_after_writing;
-@property (nonatomic) MultipleFieldsTableData *multipleFieldsTableData;
+@property (nonatomic) TrackPropertiesMultipleFieldsTableData *multipleFieldsTableData;
 
 @end
 
@@ -185,16 +90,6 @@ extern DB_functions_t *deadbeef;
     [self.metadataTableView reloadData];
     [self.propertiesTableView reloadData];
 }
-
-- (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
-    self.singleValueSelected = self.metadataTableView.selectedRowIndexes.count == 1;
-}
-
-
-- (void)buildTrackListForCtx:(int)ctx forPlaylist:(ddb_playlist_t *)plt {
-    trkproperties_build_track_list_for_ctx (plt, ctx, &_tracks, &_numtracks);
-}
-
 
 // NOTE: add_field gets called once for each unique key (e.g. Artist or Album),
 // which means it will usually contain 10-20 fields
@@ -289,12 +184,7 @@ _formatted_title_for_unknown_key(const char *key) {
     }
 }
 
-- (void)fillMetadata {
-    self.modified = NO;
-
-    deadbeef->pl_lock ();
-
-    [self fillMeta];
+- (void)fillProps {
     [self.propstore removeAllObjects];
 
     // hardcoded properties
@@ -322,6 +212,15 @@ _formatted_title_for_unknown_key(const char *key) {
     if (keys) {
         free (keys);
     }
+}
+
+- (void)fillMetadata {
+    self.isModified = NO;
+
+    deadbeef->pl_lock ();
+
+    [self fillMeta];
+    [self fillProps];
 
     deadbeef->pl_unlock ();
 }
@@ -335,7 +234,7 @@ _formatted_title_for_unknown_key(const char *key) {
     [self freeTrackList];
 
     if (self.playlist) {
-        [self buildTrackListForCtx:self.context forPlaylist:self.playlist];
+        trkproperties_build_track_list_for_ctx (self.playlist, self.context, &_tracks, &_numtracks);
     }
     else if (self.mediaLibraryItems) {
         NSInteger count = self.mediaLibraryItems.count;
@@ -375,7 +274,6 @@ _formatted_title_for_unknown_key(const char *key) {
     }
 }
 
-// NSTableView delegate
 - (NSMutableArray *)storeForTableView:(NSTableView *)aTableView {
     if (aTableView == self.metadataTableView) {
         return self.store;
@@ -385,30 +283,6 @@ _formatted_title_for_unknown_key(const char *key) {
     }
 
     return nil;
-}
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
-{
-    NSMutableArray *store = [self storeForTableView:aTableView];
-    if (!store) {
-        return 0;
-    }
-
-    return (NSInteger)store.count;
-}
-
-// when editing the "multiple values" cells, turn them into ""
-// this, unfortunately, is not undoable, so as soon as the user starts editing -- no way back
-- (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
-{
-    NSMutableArray *store = [self storeForTableView:aTableView];
-    if (!store) {
-        return;
-    }
-
-    if([aTableColumn.identifier isEqualToString:@"value"]){
-        ((NSTextFieldCell *)aCell).formatter = [SingleLineFormatter new];
-    }
 }
 
 - (NSString *)fieldValueForIndex:(NSInteger)rowIndex store:(NSMutableArray *)store isMult:(nullable BOOL *)isMult {
@@ -430,39 +304,6 @@ _formatted_title_for_unknown_key(const char *key) {
     }
 
     return val;
-}
-
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    NSMutableArray *store = [self storeForTableView:aTableView];
-    if (!store) {
-        return nil;
-    }
-
-    if ([aTableColumn.identifier isEqualToString:@"name"]) {
-        NSString *title = store[rowIndex][@"title"];
-        return title;
-    }
-    else if ([aTableColumn.identifier isEqualToString:@"value"]) {
-        return [self fieldValueForIndex:rowIndex store:store isMult:NULL];
-    }
-    return nil;
-}
-
-- (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    NSMutableArray *store = [self storeForTableView:aTableView];
-    if (!store) {
-        return;
-    }
-
-    NSMutableDictionary *dict = store[rowIndex];
-
-    NSMutableArray<NSString *> *values = dict[@"values"];
-    for (NSUInteger i = 0; i < values.count; i++) {
-        if ([values[i] isNotEqualTo:anObject]) {
-            values[i] = anObject;
-            self.modified = YES;
-        }
-    }
 }
 
 - (NSSet<NSString *> *)specialFields {
@@ -568,7 +409,7 @@ _formatted_title_for_unknown_key(const char *key) {
             deadbeef->plt_modified (plt);
             deadbeef->plt_unref (plt);
         }
-        self.modified = NO;
+        self.isModified = NO;
         if (self.close_after_writing) {
             [self.window close];
         }
@@ -578,7 +419,7 @@ _formatted_title_for_unknown_key(const char *key) {
 }
 
 - (IBAction)applyTrackPropertiesAction:(id)sender {
-    if (!self.modified) {
+    if (!self.isModified) {
         if (self.close_after_writing) {
             [self close];
         }
@@ -633,7 +474,7 @@ _formatted_title_for_unknown_key(const char *key) {
 }
 
 - (BOOL)windowShouldClose:(id)sender {
-    if (self.modified) {
+    if (self.isModified) {
         NSAlert *alert = [NSAlert new];
         [alert addButtonWithTitle:@"Yes"];
         [alert addButtonWithTitle:@"No"];
@@ -647,7 +488,7 @@ _formatted_title_for_unknown_key(const char *key) {
                 [self applyTrackPropertiesAction:alert];
             }
             else if (returnCode == NSAlertSecondButtonReturn){
-                self.modified = NO;
+                self.isModified = NO;
                 [self.window close];
             }
         }];
@@ -856,7 +697,7 @@ _formatted_title_for_unknown_key(const char *key) {
         deadbeef->pl_unlock ();
         deadbeef->tf_free (item_tf);
 
-        self.multipleFieldsTableData = [MultipleFieldsTableData new];
+        self.multipleFieldsTableData = [TrackPropertiesMultipleFieldsTableData new];
         self.multipleFieldsTableData.fields = [[NSMutableArray alloc] initWithArray:fields copyItems:NO];
         self.multipleFieldsTableData.items = items;
         self.multiValueTableView.delegate = self.multipleFieldsTableData;
@@ -871,7 +712,7 @@ _formatted_title_for_unknown_key(const char *key) {
                         self.store[idx][@"values"] = [[NSMutableArray alloc] initWithArray:self.multipleFieldsTableData.fields copyItems:NO];
                     }
                 }
-                self.modified = YES;
+                self.isModified = YES;
             }
         }];
         return;
@@ -881,7 +722,7 @@ _formatted_title_for_unknown_key(const char *key) {
     self.fieldValue.string =  self.store[idx][@"values"][0];
 
     [self.window beginSheet:self.editValuePanel completionHandler:^(NSModalResponse returnCode) {
-        self.modified = YES;
+        self.isModified = YES;
     }];
 }
 
@@ -906,7 +747,7 @@ _formatted_title_for_unknown_key(const char *key) {
     if (![self.store[idx][@"values"][0] isEqualToString:(self.fieldValue).string]) {
         self.store[idx][@"values"][0] = (self.fieldValue).string;
         [self.metadataTableView reloadData];
-        self.modified = YES;
+        self.isModified = YES;
     }
 
     [NSApp endSheet:self.editValuePanel];
@@ -924,10 +765,10 @@ _formatted_title_for_unknown_key(const char *key) {
 
     [ind enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         [self setSameValuesForIndex:(int)idx value:@""];
-        self.modified = YES;
+        self.isModified = YES;
     }];
 
-    if (self.modified) {
+    if (self.isModified) {
         [self.metadataTableView reloadData];
     }
 }
@@ -938,11 +779,11 @@ _formatted_title_for_unknown_key(const char *key) {
     for (NSUInteger i = 0; i < self.store.count; i++) {
         if (![ind containsIndex:i]) {
             [self setSameValuesForIndex:i value:@""];
-            self.modified = YES;
+            self.isModified = YES;
         }
     }
 
-    if (self.modified) {
+    if (self.isModified) {
         [self.metadataTableView reloadData];
     }
 }
@@ -956,11 +797,11 @@ _formatted_title_for_unknown_key(const char *key) {
             for (NSUInteger n = 0; n < values.count; n++) {
                 values[n] =  values[n].uppercaseString;
             }
-            self.modified = YES;
+            self.isModified = YES;
         }
     }
 
-    if (self.modified) {
+    if (self.isModified) {
         [self.metadataTableView reloadData];
     }
 }
@@ -985,7 +826,7 @@ _formatted_title_for_unknown_key(const char *key) {
         add_field (self.store, key.UTF8String, title, 0, self.tracks, self.numtracks);
         free (title);
         title = NULL;
-        self.modified = YES;
+        self.isModified = YES;
         [self.metadataTableView reloadData];
     }];
 }
@@ -1006,13 +847,78 @@ _formatted_title_for_unknown_key(const char *key) {
     NSIndexSet *ind = self.metadataTableView.selectedRowIndexes;
     NSInteger idx = ind.firstIndex;
 
-    self.modified = YES;
+    self.isModified = YES;
 
     self.store[idx][@"values"] = [[NSMutableArray alloc] initWithArray: self.multipleFieldsTableData.fields copyItems:NO];
 
     [self.metadataTableView reloadData];
 
     [self.window endSheet:self.editMultipleValuesPanel returnCode:NSModalResponseOK];
+}
+
+#pragma mark - NSTableViewDataSource
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
+{
+    NSMutableArray *store = [self storeForTableView:aTableView];
+    if (!store) {
+        return 0;
+    }
+
+    return (NSInteger)store.count;
+}
+
+- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+    NSMutableArray *store = [self storeForTableView:aTableView];
+    if (!store) {
+        return nil;
+    }
+
+    if ([aTableColumn.identifier isEqualToString:@"name"]) {
+        NSString *title = store[rowIndex][@"title"];
+        return title;
+    }
+    else if ([aTableColumn.identifier isEqualToString:@"value"]) {
+        return [self fieldValueForIndex:rowIndex store:store isMult:NULL];
+    }
+    return nil;
+}
+
+- (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
+    NSMutableArray *store = [self storeForTableView:aTableView];
+    if (!store) {
+        return;
+    }
+
+    NSMutableDictionary *dict = store[rowIndex];
+
+    NSMutableArray<NSString *> *values = dict[@"values"];
+    for (NSUInteger i = 0; i < values.count; i++) {
+        if ([values[i] isNotEqualTo:anObject]) {
+            values[i] = anObject;
+            self.isModified = YES;
+        }
+    }
+}
+
+#pragma mark - NSTableViewDelegate
+
+// when editing the "multiple values" cells, turn them into ""
+// this, unfortunately, is not undoable, so as soon as the user starts editing -- no way back
+- (void)tableView:(NSTableView *)aTableView willDisplayCell:(id)aCell forTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex
+{
+    NSMutableArray *store = [self storeForTableView:aTableView];
+    if (!store) {
+        return;
+    }
+
+    if([aTableColumn.identifier isEqualToString:@"value"]){
+        ((NSTextFieldCell *)aCell).formatter = [TrackPropertiesSingleLineFormatter new];
+    }
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
+    self.singleValueSelected = self.metadataTableView.selectedRowIndexes.count == 1;
 }
 
 @end

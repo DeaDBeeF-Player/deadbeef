@@ -1,0 +1,59 @@
+/*
+    DeaDBeeF -- the music player
+    Copyright (C) 2009-2025 Oleksiy Yakovenko and other contributors
+
+    This software is provided 'as-is', without any express or implied
+    warranty.  In no event will the authors be held liable for any damages
+    arising from the use of this software.
+
+    Permission is granted to anyone to use this software for any purpose,
+    including commercial applications, and to alter it and redistribute it
+    freely, subject to the following restrictions:
+
+    1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+
+    2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+
+    3. This notice may not be removed or altered from any source distribution.
+*/
+
+#import "TrackPropertiesSingleLineFormatter.h"
+
+// Max length of a string displayed in the TableView
+// If a string is longer -- it gets clipped, and appended with " (…)", like with linebreaks
+#define MAX_GUI_FIELD_LEN 500
+
+@implementation TrackPropertiesSingleLineFormatter
+- (NSString *)stringForObjectValue:(id)anObject {
+    if ([anObject isKindOfClass:[NSString class]]) {
+        NSString *str = anObject;
+        NSRange range = [str rangeOfString:@"\n"];
+        if (str.length >= MAX_GUI_FIELD_LEN && (range.location == NSNotFound || range.location >= MAX_GUI_FIELD_LEN)) {
+            range.location = MAX_GUI_FIELD_LEN;
+        }
+        if (range.location != NSNotFound ) {
+            return [[str substringToIndex:range.location-1] stringByAppendingString:@" (…)"];
+        }
+        else {
+            return str;
+        }
+    }
+    return @"";
+}
+
+- (NSString *)editingStringForObjectValue:(id)anObject {
+    return anObject;
+}
+
+- (BOOL)getObjectValue:(out id *)anObject
+             forString:(NSString *)string
+      errorDescription:(out NSString **)error {
+    *anObject = string;
+    return YES;
+}
+@end
+

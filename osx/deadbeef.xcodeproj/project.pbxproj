@@ -2493,6 +2493,16 @@
 		2DD062B12EC0B94F006F3223 /* AlbumArtWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062AF2EC0B94F006F3223 /* AlbumArtWidget.m */; };
 		2DD062B52EC0B995006F3223 /* AlbumArtWidgetViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062B32EC0B995006F3223 /* AlbumArtWidgetViewController.h */; };
 		2DD062B62EC0B995006F3223 /* AlbumArtWidgetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062B42EC0B995006F3223 /* AlbumArtWidgetViewController.m */; };
+		2DD062B92EC10E4E006F3223 /* TrackPropertiesListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062B72EC10E4E006F3223 /* TrackPropertiesListViewController.h */; };
+		2DD062BA2EC10E4E006F3223 /* TrackPropertiesListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062B82EC10E4E006F3223 /* TrackPropertiesListViewController.m */; };
+		2DD062BD2EC1135E006F3223 /* TrackPropertiesListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062BB2EC1135E006F3223 /* TrackPropertiesListItem.h */; };
+		2DD062BE2EC1135E006F3223 /* TrackPropertiesListItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062BC2EC1135E006F3223 /* TrackPropertiesListItem.m */; };
+		2DD062C12EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062BF2EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.h */; };
+		2DD062C22EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062C02EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.m */; };
+		2DD062C52EC115EE006F3223 /* TrackPropertiesNullFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062C32EC115EE006F3223 /* TrackPropertiesNullFormatter.h */; };
+		2DD062C62EC115EE006F3223 /* TrackPropertiesNullFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062C42EC115EE006F3223 /* TrackPropertiesNullFormatter.m */; };
+		2DD062C92EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062C72EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.h */; };
+		2DD062CA2EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062C82EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.m */; };
 		2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; };
 		2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; };
 		2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; };
@@ -7127,6 +7137,16 @@
 		2DD062AF2EC0B94F006F3223 /* AlbumArtWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumArtWidget.m; sourceTree = "<group>"; };
 		2DD062B32EC0B995006F3223 /* AlbumArtWidgetViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AlbumArtWidgetViewController.h; sourceTree = "<group>"; };
 		2DD062B42EC0B995006F3223 /* AlbumArtWidgetViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AlbumArtWidgetViewController.m; sourceTree = "<group>"; };
+		2DD062B72EC10E4E006F3223 /* TrackPropertiesListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesListViewController.h; sourceTree = "<group>"; };
+		2DD062B82EC10E4E006F3223 /* TrackPropertiesListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesListViewController.m; sourceTree = "<group>"; };
+		2DD062BB2EC1135E006F3223 /* TrackPropertiesListItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesListItem.h; sourceTree = "<group>"; };
+		2DD062BC2EC1135E006F3223 /* TrackPropertiesListItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesListItem.m; sourceTree = "<group>"; };
+		2DD062BF2EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesSingleLineFormatter.h; sourceTree = "<group>"; };
+		2DD062C02EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesSingleLineFormatter.m; sourceTree = "<group>"; };
+		2DD062C32EC115EE006F3223 /* TrackPropertiesNullFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesNullFormatter.h; sourceTree = "<group>"; };
+		2DD062C42EC115EE006F3223 /* TrackPropertiesNullFormatter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesNullFormatter.m; sourceTree = "<group>"; };
+		2DD062C72EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPropertiesMultipleFieldsTableData.h; sourceTree = "<group>"; };
+		2DD062C82EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackPropertiesMultipleFieldsTableData.m; sourceTree = "<group>"; };
 		2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.76.100.dylib; path = deps/ffmpeg/lib/libavformat.58.76.100.dylib; sourceTree = "<group>"; };
 		2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.134.100.dylib; path = deps/ffmpeg/lib/libavcodec.58.134.100.dylib; sourceTree = "<group>"; };
 		2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.70.100.dylib; path = deps/ffmpeg/lib/libavutil.56.70.100.dylib; sourceTree = "<group>"; };
@@ -12150,10 +12170,20 @@
 		2DB52F6A24CF7CB50046D516 /* TrackProperties */ = {
 			isa = PBXGroup;
 			children = (
-				2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */,
-				2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */,
+				2DD062BB2EC1135E006F3223 /* TrackPropertiesListItem.h */,
+				2DD062BC2EC1135E006F3223 /* TrackPropertiesListItem.m */,
+				2DD062B72EC10E4E006F3223 /* TrackPropertiesListViewController.h */,
+				2DD062B82EC10E4E006F3223 /* TrackPropertiesListViewController.m */,
 				2DD9F4E72A7A65FD00BC76DC /* TrackPropertiesManager.h */,
 				2DD9F4E82A7A65FD00BC76DC /* TrackPropertiesManager.m */,
+				2DD062C72EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.h */,
+				2DD062C82EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.m */,
+				2DD062C32EC115EE006F3223 /* TrackPropertiesNullFormatter.h */,
+				2DD062C42EC115EE006F3223 /* TrackPropertiesNullFormatter.m */,
+				2DD062BF2EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.h */,
+				2DD062C02EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.m */,
+				2DAF2BDF1A9232AF0052854F /* TrackPropertiesWindowController.h */,
+				2DAF2BE01A9232AF0052854F /* TrackPropertiesWindowController.m */,
 			);
 			path = TrackProperties;
 			sourceTree = "<group>";
@@ -15229,10 +15259,12 @@
 				2DC657D42749581900583E14 /* DdbTabStripViewController.h in Headers */,
 				2DCCCF7E26C43D080034F4BB /* medialibwidget.h in Headers */,
 				2DDD789C25E15C9E00FA6FE5 /* WidgetBase.h in Headers */,
+				2DD062C12EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.h in Headers */,
 				2D04701525E2D97D00F68459 /* WidgetMenuBuilder.h in Headers */,
 				2D20D12423F099F4008ACBE6 /* NSImage+Additions.h in Headers */,
 				2DEF494419C4DB4100B718C1 /* PlaylistView.h in Headers */,
 				4D62C0C81E4C9ACA005F9482 /* streamreader.h in Headers */,
+				2DD062C92EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.h in Headers */,
 				2DD3774A27404E11007AD315 /* VisualizationSettingsUtil.h in Headers */,
 				2D9EBAAB25E44A0700255592 /* WidgetSerializer.h in Headers */,
 				2DBC62D624CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.h in Headers */,
@@ -15284,6 +15316,7 @@
 				2DAF2BE11A9232AF0052854F /* TrackPropertiesWindowController.h in Headers */,
 				2DC657F8274A7C4600583E14 /* RenamePlaylistViewController.h in Headers */,
 				2DD3776027414BF6007AD315 /* ScopePreferencesViewController.h in Headers */,
+				2DD062BD2EC1135E006F3223 /* TrackPropertiesListItem.h in Headers */,
 				2DC5A3022B0A125000CBDA66 /* scriptable_model.h in Headers */,
 				2D54915722B1711E000FE7E3 /* HelpWindowController.h in Headers */,
 				2D9C0C25238DC2C100CE8C10 /* GroupByCustomWindowController.h in Headers */,
@@ -15310,6 +15343,7 @@
 				2D8030CD24B261A400539F9F /* MediaLibraryItem.h in Headers */,
 				2DCF73B41A952F8900495740 /* PreferencesWindowController.h in Headers */,
 				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
+				2DD062C52EC115EE006F3223 /* TrackPropertiesNullFormatter.h in Headers */,
 				2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
 				2D98B685272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */,
@@ -15347,6 +15381,7 @@
 				2D642EB01AE9152E00FC1F7B /* sort.h in Headers */,
 				2DC65807274A876300583E14 /* DeletePlaylistConfirmationController.h in Headers */,
 				2D95F725293BA3DA002D8499 /* DdbUndoBuffer.h in Headers */,
+				2DD062B92EC10E4E006F3223 /* TrackPropertiesListViewController.h in Headers */,
 				2DA8912125FFEB9B0084860D /* PlaylistGroup.h in Headers */,
 				2DA30B7F23F1C9A3003D22E3 /* PropertySheetContentView.h in Headers */,
 				2DB52F7C24CF7CF20046D516 /* TrackContextMenu.h in Headers */,
@@ -19032,6 +19067,7 @@
 				2DD6D0A619AE609F009308A5 /* DdbSeekBar.m in Sources */,
 				2DC6C5FA294CE14B00A63CEB /* ChiptuneVoicesViewController.m in Sources */,
 				2DEF494519C4DB4100B718C1 /* PlaylistView.m in Sources */,
+				2DD062C22EC115A3006F3223 /* TrackPropertiesSingleLineFormatter.m in Sources */,
 				2D7C1FAE2946001B00163538 /* ShaderRenderer.m in Sources */,
 				2D61723219B7A1BE008D4A26 /* DdbTabStrip.m in Sources */,
 				2DC657A92746D9E400583E14 /* TabsWidget.m in Sources */,
@@ -19065,8 +19101,10 @@
 				2D8D96AF1D10904A00A5C7E6 /* CoverManager.m in Sources */,
 				2DAA4041269AF880006D2754 /* WeakRefWrapper.m in Sources */,
 				2DBC62D724CCDEFC00AA20BF /* SpectrumAnalyzerVisualizationViewController.m in Sources */,
+				2DD062C62EC115EE006F3223 /* TrackPropertiesNullFormatter.m in Sources */,
 				2DA5E342238DB1A8005832B7 /* EditColumnWindowController.m in Sources */,
 				2DD3774B27404E11007AD315 /* VisualizationSettingsUtil.m in Sources */,
+				2DD062BE2EC1135E006F3223 /* TrackPropertiesListItem.m in Sources */,
 				2DD8865D2B72362E000434FB /* KeyboardShortcutManager+ViewController.h in Sources */,
 				2D98B687272D56F100E655AE /* ScopeVisualizationViewController.m in Sources */,
 				2DDF87DA24027DA500CA8E91 /* PluginActionMenuItem.m in Sources */,
@@ -19084,6 +19122,7 @@
 				2D9EBB7325E45BAA00255592 /* DesignModeDeps.m in Sources */,
 				2D90EF9A2438A5A600AF6F4B /* ScriptableErrorViewer.m in Sources */,
 				2DDD781825E1578C00FA6FE5 /* SplitterWidget.m in Sources */,
+				2DD062CA2EC1162C006F3223 /* TrackPropertiesMultipleFieldsTableData.m in Sources */,
 				2D1A564B1D9FFB10005E5CDD /* ReplayGainScannerController.m in Sources */,
 				2DC657D62749581900583E14 /* DdbTabStripViewController.m in Sources */,
 				2DD3774727404401007AD315 /* AppearancePreferencesViewController.m in Sources */,
@@ -19100,6 +19139,7 @@
 				2DA30B8023F1C9A3003D22E3 /* PropertySheetContentView.m in Sources */,
 				2D98613F226C814100BAACB1 /* PropertySheetViewController.m in Sources */,
 				2DC65829274AB03800583E14 /* LyricsWidget.m in Sources */,
+				2DD062BA2EC10E4E006F3223 /* TrackPropertiesListViewController.m in Sources */,
 				2DD062B12EC0B94F006F3223 /* AlbumArtWidget.m in Sources */,
 				2DC657F3274A7A6900583E14 /* PlaylistContextMenu.m in Sources */,
 				2DD3775227412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.m in Sources */,

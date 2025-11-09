@@ -40,8 +40,7 @@
 @property (nonatomic) ddb_action_context_t context;
 @property (nonatomic) NSArray<MediaLibraryItem *> *mediaLibraryItems;
 
-@property (unsafe_unretained) BOOL modified;
-@property (unsafe_unretained) BOOL singleValueSelected;
+@property (unsafe_unretained) BOOL isModified;
 
 // trkproperties window
 @property (unsafe_unretained) IBOutlet NSTableView *metadataTableView;
