@@ -53,6 +53,8 @@ typedef NS_ENUM(NSUInteger, TrackPropertiesListFlag) {
 
 @property (nonatomic) NSMutableArray<TrackPropertiesListItem *> *store;
 @property (nonatomic) BOOL isModified;
+@property (nonatomic,readonly) ddb_playItem_t **tracks;
+@property (nonatomic,readonly) int numtracks;
 
 - (void)loadFromPlaylist:(ddb_playlist_t *)playlist context:(ddb_action_context_t)context flags:(NSUInteger)flags;
 - (void)loadFromMediaLibraryItems:(NSArray<MediaLibraryItem *> *)mediaLibraryItems flags:(NSUInteger)flags;

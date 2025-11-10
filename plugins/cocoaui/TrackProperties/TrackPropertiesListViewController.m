@@ -22,6 +22,7 @@
 */
 
 #import "AddNewFieldWindowController.h"
+#import "DdbTableViewRightClickActivate.h"
 #import "EditSingleValueWindowController.h"
 #import "EditMultipleValuesWindowController.h"
 #import "MediaLibraryItem.h"
@@ -107,6 +108,8 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 @property (nonatomic) EditMultipleValuesWindowController *editMultipleValuesWindowController;
 @property (nonatomic) TrackPropertiesMultipleFieldsTableData *multipleFieldsTableData;
 
+@property (nonatomic) NSTableColumn *valueColumn;
+
 @end
 
 @implementation TrackPropertiesListViewController
@@ -128,6 +131,8 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     if (playlist != NULL) {
         trkproperties_build_track_list_for_ctx (playlist, context, &_tracks, &_numtracks);
     }
+
+    [self reloadData];
 }
 
 - (void)loadFromMediaLibraryItems:(NSArray<MediaLibraryItem *> *)mediaLibraryItems flags:(NSUInteger)flags {
@@ -152,18 +157,23 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 }
 
 - (void)loadView {
-    NSTableView *tableView = [NSTableView new];
-    tableView.usesAlternatingRowBackgroundColors = YES;
-    tableView.allowsMultipleSelection = YES;
-    tableView.allowsColumnReordering = NO;
-    tableView.allowsColumnResizing = YES;
-    tableView.allowsColumnSelection = NO;
-    tableView.allowsEmptySelection = YES;
-    tableView.allowsTypeSelect = YES;
-    tableView.allowsExpansionToolTips = YES;
-    tableView.headerView = [[NSTableHeaderView alloc] initWithFrame:NSMakeRect(0, 0, 400, 20)];
-    tableView.rowSizeStyle = NSTableViewRowSizeStyleDefault;
-    tableView.selectionHighlightStyle = NSTableViewSelectionHighlightStyleRegular;
+    DdbTableViewRightClickActivate *tableView = [DdbTableViewRightClickActivate new];
+    [tableView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+    [tableView setColumnAutoresizingStyle:NSTableViewLastColumnOnlyAutoresizingStyle];
+    [tableView setAllowsColumnReordering:NO];
+    [tableView setUsesAlternatingRowBackgroundColors:NO];
+    [tableView setAllowsExpansionToolTips:YES];
+    [tableView setAutosaveTableColumns:NO];
+
+    [tableView setBackgroundColor:[NSColor controlBackgroundColor]];
+    [tableView setGridColor:[NSColor gridColor]];
+    [tableView setIntercellSpacing:NSMakeSize(3, 2)];
+    [tableView setRowHeight:17.0];
+    [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleRegular];
+
+    if (@available(macOS 11.0, *)) {
+        tableView.style = NSTableViewStyleFullWidth;
+    }
     tableView.columnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     tableView.allowsMultipleSelection = YES;
 
@@ -178,17 +188,21 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     NSTableColumn *valueColumn = [[NSTableColumn alloc] initWithIdentifier:@"value"];
     valueColumn.title = @"Value";
     valueColumn.resizingMask = NSTableColumnUserResizingMask;
-    valueColumn.editable = YES;
     valueColumn.width = 300;
+    self.valueColumn = valueColumn;
+
+    // TODO: Handle case when the same table contains both editable and non-editable items
+    valueColumn.editable = (self.flags & TrackPropertiesListFlagMetadata) != 0;
 
     [tableView addTableColumn:nameColumn];
     [tableView addTableColumn:valueColumn];
 
     // Create scroll view container
-    NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 400, 300)];
-    scrollView.hasVerticalScroller = YES;
-    scrollView.hasHorizontalScroller = YES;
-    scrollView.autohidesScrollers = YES;
+    NSScrollView *scrollView = [NSScrollView new];
+    [scrollView setHasVerticalScroller:YES];
+    [scrollView setHasHorizontalScroller:YES];
+    [scrollView setAutohidesScrollers:YES];
+    [scrollView setBorderType:NSNoBorder];
     scrollView.documentView = tableView;
 
     tableView.autosaveName = @"TrackPropertiesTableView";
@@ -211,9 +225,10 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     [self.tableView reloadData];
 }
 
-// TODO: separate class
 - (NSMenu *)createContextMenu {
     NSMenu *menu = [NSMenu new];
+    menu.autoenablesItems = NO;
+
     self.editItem = [menu addItemWithTitle:@"Edit" action:@selector(editValueAction:) keyEquivalent:@""];
     self.editItem.target = self;
 
@@ -263,10 +278,15 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 
 - (void)reloadData {
     [self fillStore];
+    // TODO: Handle case when the same table contains both editable and non-editable items
+    self.valueColumn.editable = (self.flags & TrackPropertiesListFlagMetadata) != 0;
     [self.tableView reloadData];
 }
 
 - (void)fillStore {
+    if (self.store == nil) {
+        self.store = [NSMutableArray new];
+    }
     [self.store removeAllObjects];
     if (self.tracks == NULL) {
         return;

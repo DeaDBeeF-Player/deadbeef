@@ -970,11 +970,10 @@ static const int tab_close_btn_size = 12;
 - (void)trackContextMenuShowTrackProperties:(nonnull TrackContextMenu *)trackContextMenu {
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
-        self.trkProperties.context = DDB_ACTION_CTX_PLAYLIST;
         self.trkProperties.delegate = self;
     }
     ddb_playlist_t *plt = deadbeef->plt_get_for_idx ((int)self.clickedTabIndex);
-    self.trkProperties.playlist =  plt;
+    [self.trkProperties setPlaylist:plt context:DDB_ACTION_CTX_PLAYLIST];
     deadbeef->plt_unref (plt);
     [self.trkProperties showWindow:self];
 }

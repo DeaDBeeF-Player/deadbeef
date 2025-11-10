@@ -36,75 +36,7 @@
 
 @property (nonatomic,weak) id<TrackPropertiesWindowControllerDelegate> delegate;
 
-@property (nonatomic) ddb_playlist_t *playlist;
-@property (nonatomic) ddb_action_context_t context;
-@property (nonatomic) NSArray<MediaLibraryItem *> *mediaLibraryItems;
-
-@property (unsafe_unretained) BOOL isModified;
-
-// trkproperties window
-@property (unsafe_unretained) IBOutlet NSTableView *metadataTableView;
-@property (unsafe_unretained) IBOutlet NSTableView *propertiesTableView;
-@property (unsafe_unretained) IBOutlet NSTextField *filename;
-- (IBAction)applyTrackPropertiesAction:(id)sender;
-- (IBAction)configureTagWritingAction:(id)sender;
-- (IBAction)reloadTrackPropertiesAction:(id)sender;
-- (IBAction)cancelTrackPropertiesAction:(id)sender;
-- (IBAction)okTrackPropertiesAction:(id)sender;
-
-// menu
-- (IBAction)editValueAction:(id)sender;
-- (IBAction)editInPlaceAction:(id)sender;
-- (IBAction)editCropAction:(id)sender;
-- (IBAction)editCapitalizeAction:(id)sender;
-- (IBAction)addNewField:(id)sender;
-
-// metadata writing progress dialog
-@property (strong) IBOutlet NSPanel *progressPanel;
-@property (unsafe_unretained) IBOutlet NSTextField *currentTrackPath;
-- (IBAction)cancelWritingAction:(id)sender;
-
-// tag writer settings
-@property (strong) IBOutlet NSPanel *tagWriterSettingsPanel;
-- (IBAction)tagWriterSettingsCloseAction:(id)sender;
-
-@property (unsafe_unretained) IBOutlet NSButton *mp3WriteID3v2;
-@property (unsafe_unretained) IBOutlet NSButton *mp3WriteID3v1;
-@property (unsafe_unretained) IBOutlet NSButton *mp3WriteAPEv2;
-@property (unsafe_unretained) IBOutlet NSButton *mp3StripID3v2;
-@property (unsafe_unretained) IBOutlet NSButton *mp3StripID3v1;
-@property (unsafe_unretained) IBOutlet NSButton *mp3StripAPEv2;
-@property (unsafe_unretained) IBOutlet NSPopUpButton *mp3ID3v2Version;
-@property (unsafe_unretained) IBOutlet NSTextField *mp3ID3v1Charset;
-
-- (IBAction)mp3WriteID3v2Action:(id)sender;
-- (IBAction)mp3WriteID3v1Action:(id)sender;
-- (IBAction)mp3WriteAPEv2Action:(id)sender;
-- (IBAction)mp3StripID3v2Action:(id)sender;
-- (IBAction)mp3StripID3v1Action:(id)sender;
-- (IBAction)mp3StripAPEv2Action:(id)sender;
-- (IBAction)mp3ID3v2VersionChangeAction:(id)sender;
-- (IBAction)mp3ID3v1CharsetChangeAction:(id)sender;
-
-
-@property (unsafe_unretained) IBOutlet NSButton *apeWriteID3v2;
-@property (unsafe_unretained) IBOutlet NSButton *apeWriteAPEv2;
-@property (unsafe_unretained) IBOutlet NSButton *apeStripID3v2;
-@property (unsafe_unretained) IBOutlet NSButton *apeStripAPEv2;
-
-- (IBAction)apeWriteID3v2Action:(id)sender;
-- (IBAction)apeWriteAPEv2Action:(id)sender;
-- (IBAction)apeStripID3v2Action:(id)sender;
-- (IBAction)apeStripAPEv2Action:(id)sender;
-
-@property (unsafe_unretained) IBOutlet NSButton *wvWriteAPEv2;
-@property (unsafe_unretained) IBOutlet NSButton *wvWriteID3v1;
-@property (unsafe_unretained) IBOutlet NSButton *wvStripAPEv2;
-@property (unsafe_unretained) IBOutlet NSButton *wvStripID3v1;
-
-- (IBAction)wvWriteAPEv2Action:(id)sender;
-- (IBAction)wvWriteID3v1Action:(id)sender;
-- (IBAction)wvStripAPEv2Action:(id)sender;
-- (IBAction)wvStripID3v1Action:(id)sender;
+- (void)setPlaylist:(ddb_playlist_t *)playlist context:(ddb_action_context_t)context;
+- (void)setMediaLibraryItems:(NSArray<MediaLibraryItem *> *)mediaLibraryItems;
 
 @end

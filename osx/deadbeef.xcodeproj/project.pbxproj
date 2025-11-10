@@ -12187,10 +12187,10 @@
 		2DB52F6A24CF7CB50046D516 /* TrackProperties */ = {
 			isa = PBXGroup;
 			children = (
-				2DD062D22EC13F9E006F3223 /* TrackProperties.xib */,
 				2DD062CB2EC13F21006F3223 /* AddField */,
 				2DD062DB2EC14A04006F3223 /* EditMultipleValues */,
 				2DD062D42EC145B2006F3223 /* EditSingleValue */,
+				2DD062D22EC13F9E006F3223 /* TrackProperties.xib */,
 				2DD062BB2EC1135E006F3223 /* TrackPropertiesListItem.h */,
 				2DD062BC2EC1135E006F3223 /* TrackPropertiesListItem.m */,
 				2DD062B72EC10E4E006F3223 /* TrackPropertiesListViewController.h */,

@@ -51,11 +51,10 @@ static TrackPropertiesManager *_shared;
 - (void)displayTrackProperties {
     if (!self.trkProperties) {
         self.trkProperties = [[TrackPropertiesWindowController alloc] initWithWindowNibName:@"TrackProperties"];
-        self.trkProperties.context = DDB_ACTION_CTX_SELECTION;
         self.trkProperties.delegate = self;
     }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
-    self.trkProperties.playlist =  plt;
+    [self.trkProperties setPlaylist:plt context:DDB_ACTION_CTX_SELECTION];
     deadbeef->plt_unref (plt);
     [self.trkProperties showWindow:self];
 }
