@@ -191,8 +191,7 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     valueColumn.width = 300;
     self.valueColumn = valueColumn;
 
-    // TODO: Handle case when the same table contains both editable and non-editable items
-    valueColumn.editable = (self.flags & TrackPropertiesListFlagMetadata) != 0;
+    valueColumn.editable = (self.flags & TrackPropertiesListFlagEditable) != 0;
 
     [tableView addTableColumn:nameColumn];
     [tableView addTableColumn:valueColumn];
@@ -213,16 +212,13 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     self.tableView.dataSource = self;
     self.view = scrollView;
 
-    NSMenu *menu = [self createContextMenu];
-    menu.delegate = self;
-    tableView.menu = menu;
 
     [self viewDidLoad];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.tableView reloadData];
+    [self reloadData];
 }
 
 - (NSMenu *)createContextMenu {
@@ -279,8 +275,15 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 - (void)reloadData {
     [self fillStore];
     // TODO: Handle case when the same table contains both editable and non-editable items
-    self.valueColumn.editable = (self.flags & TrackPropertiesListFlagMetadata) != 0;
+    self.valueColumn.editable = (self.flags & TrackPropertiesListFlagEditable) != 0;
     [self.tableView reloadData];
+    if (self.flags & TrackPropertiesListFlagEditable) {
+        NSMenu *menu = [self createContextMenu];
+        menu.delegate = self;
+        self.tableView.menu = menu;
+    } else {
+        self.tableView.menu = nil;
+    }
 }
 
 - (void)fillStore {

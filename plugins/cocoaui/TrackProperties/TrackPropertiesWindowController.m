@@ -162,11 +162,11 @@ extern DB_functions_t *deadbeef;
     self.close_after_writing = NO;
 
     if (self.playlist) {
-        [self.metadataListViewController loadFromPlaylist:self.playlist context:self.context flags:TrackPropertiesListFlagMetadata];
+        [self.metadataListViewController loadFromPlaylist:self.playlist context:self.context flags:TrackPropertiesListFlagMetadata|TrackPropertiesListFlagEditable];
         [self.propertiesListViewController loadFromPlaylist:self.playlist context:self.context flags:TrackPropertiesListFlagProperties];
     }
     else if (self.mediaLibraryItems) {
-        [self.metadataListViewController loadFromMediaLibraryItems:self.mediaLibraryItems flags:TrackPropertiesListFlagMetadata];
+        [self.metadataListViewController loadFromMediaLibraryItems:self.mediaLibraryItems flags:TrackPropertiesListFlagMetadata|TrackPropertiesListFlagEditable];
         [self.propertiesListViewController loadFromMediaLibraryItems:self.mediaLibraryItems flags:TrackPropertiesListFlagProperties];
     }
 

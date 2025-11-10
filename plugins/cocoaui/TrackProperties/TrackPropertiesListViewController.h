@@ -47,6 +47,7 @@
 typedef NS_ENUM(NSUInteger, TrackPropertiesListFlag) {
     TrackPropertiesListFlagMetadata = 0x1,
     TrackPropertiesListFlagProperties = 0x2,
+    TrackPropertiesListFlagEditable = 0x4,
 };
 
 @interface TrackPropertiesListViewController : NSViewController
