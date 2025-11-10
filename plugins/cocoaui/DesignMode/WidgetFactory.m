@@ -19,6 +19,7 @@
 #import "ScopeWidget.h"
 #import "SplitterWidget.h"
 #import "TabsWidget.h"
+#import "SelectionPropertiesWidget.h"
 
 @interface WidgetRegistration : NSObject
 
@@ -103,6 +104,9 @@
     }];
     [self registerType:ChiptuneVoicesWidget.widgetType displayName:@"Chiptune Voices" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
         return [[ChiptuneVoicesWidget alloc] initWithDeps:self.deps];
+    }];
+    [self registerType:SelectionPropertiesWidget.widgetType displayName:@"Selection Properties" instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        return [[SelectionPropertiesWidget alloc] initWithDeps:self.deps];
     }];
 }
 

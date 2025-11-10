@@ -2406,6 +2406,8 @@
 		2DC6C64F294E5E7900A63CEB /* AlbumArtImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9FD9E22607C68500F406D1 /* AlbumArtImageView.m */; };
 		2DC6C65A29539AAE00A63CEB /* ddb_dsp_libretro.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DC6C6552953996000A63CEB /* ddb_dsp_libretro.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D026D891CAC5BBF00E27961 /* ffmpeg.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DC91D2A2EC28A4600594A63 /* SelectionPropertiesWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC91D292EC28A4600594A63 /* SelectionPropertiesWidget.m */; };
+		2DC91D2B2EC28A4600594A63 /* SelectionPropertiesWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DC91D282EC28A4600594A63 /* SelectionPropertiesWidget.h */; };
 		2DCA17A81B8F4F8400C0C6AE /* nullout.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B51581837F4E9003E6066 /* nullout.c */; };
 		2DCB18382515F9680054BD06 /* about.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB18372515F95C0054BD06 /* about.txt */; };
 		2DCB18782515F96A0054BD06 /* help.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2DCB18362515F9530054BD06 /* help.txt */; };
@@ -7050,6 +7052,8 @@
 		2DC6C620294DE70E00A63CEB /* GTMGoogleTestRunner.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GTMGoogleTestRunner.mm; sourceTree = "<group>"; };
 		2DC6C64D294E1CB300A63CEB /* gtest-all.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "gtest-all.cc"; path = "googletest/googletest/src/gtest-all.cc"; sourceTree = "<group>"; };
 		2DC6C6502953995F00A63CEB /* ddb_dsp_libretro.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ddb_dsp_libretro.xcodeproj; path = ddb_dsp_libretro/Xcode/ddb_dsp_libretro/ddb_dsp_libretro.xcodeproj; sourceTree = "<group>"; };
+		2DC91D282EC28A4600594A63 /* SelectionPropertiesWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SelectionPropertiesWidget.h; sourceTree = "<group>"; };
+		2DC91D292EC28A4600594A63 /* SelectionPropertiesWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SelectionPropertiesWidget.m; sourceTree = "<group>"; };
 		2DCB18362515F9530054BD06 /* help.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = help.txt; path = ../../help.txt; sourceTree = "<group>"; };
 		2DCB18372515F95C0054BD06 /* about.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = about.txt; path = ../../about.txt; sourceTree = "<group>"; };
 		2DCB18B82515F98E0054BD06 /* translators.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = translators.txt; path = ../../translators.txt; sourceTree = "<group>"; };
@@ -12898,6 +12902,8 @@
 				2DC657CB2749544000583E14 /* PlaylistWithTabsWidget.m */,
 				0D568526271DC35E0026F700 /* ScopeWidget.h */,
 				0D568527271DC35E0026F700 /* ScopeWidget.m */,
+				2DC91D282EC28A4600594A63 /* SelectionPropertiesWidget.h */,
+				2DC91D292EC28A4600594A63 /* SelectionPropertiesWidget.m */,
 				2D5F05EE25E306BC000A588C /* SpectrumAnalyzerWidget.h */,
 				2D5F05EF25E306BC000A588C /* SpectrumAnalyzerWidget.m */,
 				2DDD781425E1578C00FA6FE5 /* SplitterWidget.h */,
@@ -15350,6 +15356,7 @@
 				2DA2A0EE1BE7FE4700601670 /* u8_uc_map.h in Headers */,
 				2D651D17227227C300375AE2 /* ScriptableNodeEditorWindowController.h in Headers */,
 				2D0A002819C390E9006F7462 /* tf.h in Headers */,
+				2DC91D2B2EC28A4600594A63 /* SelectionPropertiesWidget.h in Headers */,
 				2D8D96AE1D10904A00A5C7E6 /* CoverManager.h in Headers */,
 				2DAA402D269AF864006D2754 /* TrackPositionFormatter.h in Headers */,
 				2D7C1FB229461C6900163538 /* SpectrumAnalyzerLabelsView.h in Headers */,
@@ -19232,6 +19239,7 @@
 				2D95F72A293BB295002D8499 /* DdbUndoBufferRetainer.m in Sources */,
 				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
+				2DC91D2A2EC28A4600594A63 /* SelectionPropertiesWidget.m in Sources */,
 				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
 				2D29ADFA2B72473B001648B0 /* keyboard_shortcut_serializer.c in Sources */,
