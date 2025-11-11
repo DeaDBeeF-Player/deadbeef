@@ -28,5 +28,6 @@
 @property (nonatomic) NSString *title;
 @property (nonatomic) NSString *key;
 @property (nonatomic) NSMutableArray<NSString *> *values;
+@property (nonatomic) BOOL isSectionTitle;
 
 @end

@@ -68,7 +68,7 @@ extern DB_functions_t *deadbeef;
             return;
         }
 
-        [self.trackPropertiesListViewController loadFromPlaylist:playlist context:DDB_ACTION_CTX_SELECTION flags:TrackPropertiesListFlagMetadata|TrackPropertiesListFlagProperties];
+        [self.trackPropertiesListViewController loadFromPlaylist:playlist context:DDB_ACTION_CTX_SELECTION flags:TrackPropertiesListFlagMetadata|TrackPropertiesListFlagProperties|TrackPropertiesListFlagSectionHeaders];
 
         deadbeef->plt_unref(playlist);
     });

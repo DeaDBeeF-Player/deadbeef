@@ -158,18 +158,19 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 
 - (void)loadView {
     DdbTableViewRightClickActivate *tableView = [DdbTableViewRightClickActivate new];
-    [tableView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-    [tableView setColumnAutoresizingStyle:NSTableViewLastColumnOnlyAutoresizingStyle];
-    [tableView setAllowsColumnReordering:NO];
-    [tableView setUsesAlternatingRowBackgroundColors:NO];
-    [tableView setAllowsExpansionToolTips:YES];
-    [tableView setAutosaveTableColumns:NO];
+    tableView.autoresizingMask = (NSViewWidthSizable | NSViewHeightSizable);
+    tableView.columnAutoresizingStyle = NSTableViewLastColumnOnlyAutoresizingStyle;
+    tableView.allowsColumnReordering = NO;
+    tableView.usesAlternatingRowBackgroundColors = NO;
+    tableView.allowsExpansionToolTips = YES;
+    tableView.autosaveTableColumns = NO;
+    tableView.focusRingType = NSFocusRingTypeNone;
 
-    [tableView setBackgroundColor:[NSColor controlBackgroundColor]];
-    [tableView setGridColor:[NSColor gridColor]];
-    [tableView setIntercellSpacing:NSMakeSize(3, 2)];
-    [tableView setRowHeight:17.0];
-    [tableView setSelectionHighlightStyle:NSTableViewSelectionHighlightStyleRegular];
+    tableView.backgroundColor = [NSColor controlBackgroundColor];
+    tableView.gridColor = [NSColor gridColor];
+    tableView.intercellSpacing = NSMakeSize(3, 2);
+    tableView.rowHeight = 17.0;
+    tableView.selectionHighlightStyle = NSTableViewSelectionHighlightStyleRegular;
 
     if (@available(macOS 11.0, *)) {
         tableView.style = NSTableViewStyleFullWidth;
@@ -198,10 +199,10 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 
     // Create scroll view container
     NSScrollView *scrollView = [NSScrollView new];
-    [scrollView setHasVerticalScroller:YES];
-    [scrollView setHasHorizontalScroller:YES];
-    [scrollView setAutohidesScrollers:YES];
-    [scrollView setBorderType:NSNoBorder];
+    scrollView.hasVerticalScroller = YES;
+    scrollView.hasHorizontalScroller = YES;
+    scrollView.autohidesScrollers = YES;
+    scrollView.borderType = NSNoBorder;
     scrollView.documentView = tableView;
 
     tableView.autosaveName = @"TrackPropertiesTableView";
@@ -300,9 +301,21 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     deadbeef->pl_lock ();
 
     if (self.flags & TrackPropertiesListFlagMetadata) {
+        if (self.flags & TrackPropertiesListFlagSectionHeaders) {
+            TrackPropertiesListItem *item = [TrackPropertiesListItem new];
+            item.title = @"Metadata";
+            item.isSectionTitle = YES;
+            [self.store addObject:item];
+        }
         [self fillMeta];
     }
     if (self.flags & TrackPropertiesListFlagProperties) {
+        if (self.flags & TrackPropertiesListFlagSectionHeaders) {
+            TrackPropertiesListItem *item = [TrackPropertiesListItem new];
+            item.title = @"Properties";
+            item.isSectionTitle = YES;
+            [self.store addObject:item];
+        }
         [self fillProps];
     }
 
@@ -561,8 +574,19 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
         return nil;
     }
 
+    TrackPropertiesListItem *item = store[rowIndex];
+
     if ([aTableColumn.identifier isEqualToString:@"name"]) {
-        NSString *title = store[rowIndex].title;
+        NSString *title = item.title;
+        if (item.isSectionTitle) {
+            NSDictionary *attributes = @{
+                NSFontAttributeName: [NSFont boldSystemFontOfSize:14],
+            };
+            return [[NSAttributedString alloc] initWithString:title attributes:attributes];
+        }
+        if (self.flags & TrackPropertiesListFlagSectionHeaders) {
+            title = [@"  " stringByAppendingString:title];
+        }
         return title;
     }
     else if ([aTableColumn.identifier isEqualToString:@"value"]) {
