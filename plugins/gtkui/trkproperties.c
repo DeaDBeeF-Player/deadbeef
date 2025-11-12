@@ -392,7 +392,7 @@ trkproperties_fill_prop (GtkListStore *store, DB_playItem_t **tracks, int numtra
             continue;
         }
 
-        char *title = _formatted_title_for_unknown_key(keys[k]);
+        char *title = _formatted_title_for_unknown_key(keys[k] + 1);
         add_field (store, keys[k], title, 1, tracks, numtracks);
         free (title);
         title = NULL;
