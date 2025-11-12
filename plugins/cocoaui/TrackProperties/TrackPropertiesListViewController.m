@@ -108,6 +108,7 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 @property (nonatomic) EditMultipleValuesWindowController *editMultipleValuesWindowController;
 @property (nonatomic) TrackPropertiesMultipleFieldsTableData *multipleFieldsTableData;
 
+@property (nonatomic) NSTableColumn *nameColumn;
 @property (nonatomic) NSTableColumn *valueColumn;
 
 @end
@@ -184,6 +185,7 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     nameColumn.resizingMask = NSTableColumnUserResizingMask;
     nameColumn.editable = NO;
     nameColumn.width = 120;
+    self.nameColumn = nameColumn;
 
     // --- Column 2: Value ---
     NSTableColumn *valueColumn = [[NSTableColumn alloc] initWithIdentifier:@"value"];
@@ -274,6 +276,13 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
 }
 
 - (void)reloadData {
+    BOOL useSmallFont = (self.flags & TrackPropertiesListFlagSmallFont) != 0;
+    CGFloat fontSize = useSmallFont ? NSFont.smallSystemFontSize : NSFont.systemFontSize;
+    NSFont *font = [NSFont systemFontOfSize:fontSize];
+    [self.nameColumn.dataCell setFont:font];
+    [self.valueColumn.dataCell setFont:font];
+    self.tableView.rowHeight = fontSize + 4;
+
     [self fillStore];
     // TODO: Handle case when the same table contains both editable and non-editable items
     self.valueColumn.editable = (self.flags & TrackPropertiesListFlagEditable) != 0;
@@ -579,8 +588,9 @@ add_field (NSMutableArray<TrackPropertiesListItem *> *store, const char *key, co
     if ([aTableColumn.identifier isEqualToString:@"name"]) {
         NSString *title = item.title;
         if (item.isSectionTitle) {
+            BOOL useSmallFont = (self.flags & TrackPropertiesListFlagSmallFont) != 0;
             NSDictionary *attributes = @{
-                NSFontAttributeName: [NSFont boldSystemFontOfSize:14],
+                NSFontAttributeName: [NSFont boldSystemFontOfSize:useSmallFont ? NSFont.smallSystemFontSize : NSFont.systemFontSize],
             };
             return [[NSAttributedString alloc] initWithString:title attributes:attributes];
         }
