@@ -1023,15 +1023,15 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     CGFloat min_y = (pinned ? viewportY+lv.contentView.grouptitle_height : y) + ART_PADDING_VERT;
     CGFloat max_y = grp_next_y;
 
-    CGFloat ypos = min_y;
-    if (min_y + art_width + ART_PADDING_VERT >= max_y) {
-        ypos = max_y - art_width - ART_PADDING_VERT;
-    }
-
     NSSize size = image.size;
     NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:size availableSize:availableSize];
     CGSize drawSize = [self.view convertSizeFromBacking:desiredSize];
     
+    CGFloat ypos = min_y;
+    if (min_y + drawSize.height + ART_PADDING_VERT >= max_y) {
+        ypos = max_y - drawSize.height - ART_PADDING_VERT;
+    }
+
     if (size.width < size.height) {
         plt_col_info_t *c = &self.columns[(int)col];
         if (c->alignment == ColumnAlignmentCenter) {
