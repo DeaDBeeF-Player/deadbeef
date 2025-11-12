@@ -44,6 +44,10 @@ const char *trkproperties_types[] = {
     "disc", "Disc Number",
     "numdiscs", "Total Discs",
     "comment", "Comment",
+    "discid", "Disc ID",
+    "encoder", "Encoder",
+    "lyrics", "Lyrics",
+    "band", "Band",
     NULL
 };
 
@@ -54,6 +58,15 @@ const char *trkproperties_hc_props[] = {
     ":TAGS", "Tag Type(s)",
     ":HAS_EMBEDDED_CUESHEET", "Embedded Cuesheet",
     ":DECODER", "Codec",
+    ":FILETYPE", "File Type",
+    ":STARTSAMPLE", "Start Sample",
+    ":ENDSAMPLE", "End Sample",
+    ":FILE_SIZE", "File Size",
+    ":BPS", "Bits Per Sample",
+    ":CHANNELS", "Channels",
+    ":SAMPLERATE", "Sample Rate",
+    ":BITRATE", "Bitrate",
+    ":MEDIALIB_SCAN_TIME", "Medialib Scan Time",
     NULL
 };
 
