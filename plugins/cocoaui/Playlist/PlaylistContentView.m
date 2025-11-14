@@ -202,19 +202,7 @@ static int grouptitleheight = 22;
         NSArray<DdbPlayItemPasteboardSerializer *> *draggedItems = [pboard readObjectsForClasses:classes options:options];
 
         for (DdbPlayItemPasteboardSerializer *holder in draggedItems) {
-            if (holder.plt == NULL) {
-                continue;
-            }
-
-            ddb_playItem_t **items;
-            ssize_t count = deadbeef->plt_get_items(holder.plt, &items);
-
-            [self.delegate dropPlayItems:(DdbListviewRow_t *)items before:row count:(int)count];
-
-            for (ssize_t i = 0; i < count; i++) {
-                deadbeef->pl_item_unref(items[i]);
-            }
-            free (items);
+            [self.delegate dropPlayItems:(DdbListviewRow_t *)holder.items before:row count:(int)holder.count];
         }
     }
     else if ([pboard.types containsObject:NSFilenamesPboardType]) {

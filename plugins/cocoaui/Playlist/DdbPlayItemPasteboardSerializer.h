@@ -14,10 +14,11 @@
 /// since they go through playlist saving and loading procedure.
 @interface DdbPlayItemPasteboardSerializer : NSObject<NSPasteboardReading, NSPasteboardWriting, NSSecureCoding>
 
-@property (nonnull,nonatomic,readonly) ddb_playlist_t *plt;
-
 - (instancetype _Nonnull)init NS_UNAVAILABLE;
 - (instancetype _Nonnull)initWithItem:(ddb_playItem_t * _Nullable)item;
 - (instancetype _Nonnull)initWithItems:(ddb_playItem_t * _Nonnull * _Nullable)items count:(NSInteger)count NS_DESIGNATED_INITIALIZER;
+
+@property (nonatomic,readonly) ddb_playItem_t  * _Nullable * _Nonnull items;
+@property (nonatomic,readonly) NSInteger count;
 
 @end

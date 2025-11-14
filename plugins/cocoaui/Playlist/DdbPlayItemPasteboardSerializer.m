@@ -13,7 +13,9 @@ extern DB_functions_t *deadbeef;
 
 @interface DdbPlayItemPasteboardSerializer()
 
-@property (nonatomic,readwrite) ddb_playlist_t *plt;
+@property (nonatomic) ddb_playItem_t **items;
+@property (nonatomic) NSInteger count;
+
 @end
 
 @implementation DdbPlayItemPasteboardSerializer
@@ -46,23 +48,23 @@ extern DB_functions_t *deadbeef;
         return self;
     }
 
-    ddb_playlist_t *plt = deadbeef->plt_alloc ("clipboard");
-    ddb_playItem_t *after = NULL;
+    _items = calloc(count, sizeof (ddb_playItem_t *));
     for (NSInteger i = 0; i < count; i++) {
-        deadbeef->plt_insert_item (plt, after, items[i]);
-        after = items[i];
+        _items[i] = deadbeef->pl_item_alloc();
+        deadbeef->pl_item_copy(_items[i], items[i]);
     }
-
-    self.plt = plt;
+    _count = count;
 
     return self;
 }
 
-- (void)dealloc
-{
-    if (self.plt != NULL) {
-        deadbeef->plt_unref (self.plt);
+- (void)dealloc {
+    for (NSInteger i = 0; i < _count; i++) {
+        deadbeef->pl_item_unref(_items[i]);
     }
+    _count = 0;
+    free (_items);
+    _items = NULL;
 }
 
 // NSCoding
@@ -81,22 +83,32 @@ extern DB_functions_t *deadbeef;
     ddb_playlist_t *plt = deadbeef->plt_alloc("clipboard");
     int res = deadbeef->plt_load_from_buffer (plt, data.bytes, data.length);
     if (res == 0) {
-        self.plt = plt;
+        size_t count = deadbeef->plt_get_items(plt, &_items);
+        _count = (NSInteger)count;
     }
-    else {
-        deadbeef->plt_unref (plt);
-    }
+
+    deadbeef->plt_unref (plt);
 
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    if (self.plt == NULL) {
+    if (_count == 0) {
         return;
     }
 
+    ddb_playlist_t *plt = deadbeef->plt_alloc("clipboard");
+
+    ddb_playItem_t *after = NULL;
+    for (NSInteger i = 0; i < _count; i++) {
+        after = deadbeef->plt_insert_item(plt, after, _items[i]);
+    }
+
     uint8_t *buffer = NULL;
-    ssize_t size = deadbeef->plt_save_to_buffer (self.plt, &buffer);
+    ssize_t size = deadbeef->plt_save_to_buffer (plt, &buffer);
+
+    deadbeef->plt_unref (plt);
+    plt = NULL;
 
     if (size == 0) {
         return;

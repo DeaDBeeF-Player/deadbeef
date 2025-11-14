@@ -515,7 +515,9 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
         playItems[count++] = playableItem.playItem;
     }
 
-    return [[DdbPlayItemPasteboardSerializer alloc] initWithItems:playItems count:count];
+    DdbPlayItemPasteboardSerializer *writer = [[DdbPlayItemPasteboardSerializer alloc] initWithItems:playItems count:count];
+    free (playItems);
+    return writer;
 }
 
 
