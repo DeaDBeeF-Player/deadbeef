@@ -461,7 +461,7 @@ static int grouptitleheight = 22;
 
         // draw album art
         int grp_next_y = grp_y + grp->height;
-        [self renderAlbumArtForGroup:grp groupIndex:groupIndex isPinnedGroup:(self.pinnedGroupTitleView.group == grp) nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:dirtyRect.origin.y clipRegion:dirtyRect];
+        [self renderAlbumArtForGroup:grp groupIndex:groupIndex isPinnedGroup:(self.pinnedGroupTitleView.group == grp) nextGroupCoord:grp_next_y yPos:grp_y + title_height viewportY:self.enclosingScrollView.documentVisibleRect.origin.y clipRegion:dirtyRect];
 
         idx += grp->num_items;
         grp_y += grp->height;

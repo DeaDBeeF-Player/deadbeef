@@ -1012,24 +1012,22 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             [lv.contentView drawGroup:grp];
         }];
     }
-    if (!image) {
+    if (image == nil) {
         // FIXME: the problem here is that if the cover is not found (yet) -- it won't draw anything, but the rect is already invalidated, and will come out as background color
         return;
     }
 
     NSRect drawRect;
 
-    int art_x = x + ART_PADDING_HORZ;
-    CGFloat min_y = (pinned ? viewportY+lv.contentView.grouptitle_height : y) + ART_PADDING_VERT;
-    CGFloat max_y = grp_next_y;
-
     NSSize size = image.size;
     NSSize desiredSize = [CoverManager.shared desiredSizeForImageSize:size availableSize:availableSize];
     CGSize drawSize = [self.view convertSizeFromBacking:desiredSize];
     
-    CGFloat ypos = min_y;
-    if (min_y + drawSize.height + ART_PADDING_VERT >= max_y) {
-        ypos = max_y - drawSize.height - ART_PADDING_VERT;
+    CGFloat art_x = x + ART_PADDING_HORZ;
+    CGFloat ypos = (pinned ? viewportY + lv.contentView.grouptitle_height : y) + ART_PADDING_VERT;
+
+    if (pinned && ypos + drawSize.height + ART_PADDING_VERT >= grp_next_y) {
+        ypos = grp_next_y - drawSize.height - ART_PADDING_VERT;
     }
 
     if (size.width < size.height) {
