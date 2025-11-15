@@ -1824,6 +1824,11 @@ pl_get_idx_of_iter (playItem_t *it, int iter) {
 playItem_t *
 plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
     LOCK;
+    // Inserting the same pointer to multiple playlists is an error.
+    assert(it->next[PL_MAIN] == NULL);
+    assert(it->next[PL_SEARCH] == NULL);
+    assert(it->prev[PL_MAIN] == NULL);
+    assert(it->prev[PL_SEARCH] == NULL);
     undo_insert_items(ddb_undomanager_get_buffer(ddb_undomanager_shared()), playlist, &it, 1);
     pl_item_ref (it);
     if (!after) {
