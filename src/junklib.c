@@ -4397,10 +4397,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
                 err = -1;
                 goto error; // size of frame is more than size of tag
             }
-            if (sz < 1) {
-//                err = 1;
-                break; // frame must be at least 1 byte long
-            }
+
             uint8_t flags1 = readptr[0];
             uint8_t flags2 = readptr[1];
             readptr += 2;
@@ -4543,9 +4540,7 @@ junk_id3v2_read_full (playItem_t *it, DB_id3v2_tag_t *tag_store, DB_FILE *fp) {
             if (readptr - tag >= size - sz) {
                 break; // size of frame is less than size of tag
             }
-            if (sz < 1) {
-                break; // frame must be at least 1 byte long
-            }
+
             if (!strcmp (frameid, "PIC")) {
                 // don't attempt to parse APIC when we're not planning to use it
                 if (tag_store == NULL) {
