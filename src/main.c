@@ -684,8 +684,11 @@ server_start (void) {
 #else
     srv_socket = db_socket_set_unix (&srv_local, &len);
 #    ifndef USE_ABSTRACT_SOCKET_NAME
-    if (unlink (srv_local.sun_path) < 0) {
-        perror ("INFO: unlink socket");
+    {
+        struct stat st;
+        if (stat(srv_local.sun_path, &st) == 0 && unlink (srv_local.sun_path) < 0) {
+            perror ("INFO: unlink socket");
+        }
     }
     len = offsetof (struct sockaddr_un, sun_path) + (int)strlen (srv_local.sun_path);
 #    endif
