@@ -41,8 +41,5 @@ set_button_action_label (const char *act, int action_ctx, GtkWidget *button);
 void
 gtkui_set_default_hotkeys (void);
 
-void
-gtkui_import_0_5_global_hotkeys (void);
-
 #endif // __GTKUI_HOTKEYS_H
 

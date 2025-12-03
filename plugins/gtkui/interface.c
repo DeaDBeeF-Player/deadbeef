@@ -1793,7 +1793,6 @@ create_prefwin (void)
   GtkWidget *hbox106;
   GtkWidget *label134;
   GtkWidget *hotkeys_set_key;
-  GtkWidget *hotkey_is_global;
   GtkWidget *hseparator6;
   GtkWidget *hbox120;
   GtkWidget *label145;
@@ -3051,10 +3050,6 @@ create_prefwin (void)
   gtk_widget_show (hotkeys_set_key);
   gtk_box_pack_start (GTK_BOX (hbox106), hotkeys_set_key, FALSE, FALSE, 0);
 
-  hotkey_is_global = gtk_check_button_new_with_mnemonic (_("Global hotkey"));
-  gtk_widget_show (hotkey_is_global);
-  gtk_box_pack_start (GTK_BOX (hbox106), hotkey_is_global, FALSE, FALSE, 0);
-
   hseparator6 = gtk_hseparator_new ();
   gtk_widget_show (hseparator6);
   gtk_box_pack_start (GTK_BOX (vbox36), hseparator6, FALSE, FALSE, 0);
@@ -3558,9 +3553,6 @@ create_prefwin (void)
   g_signal_connect ((gpointer) hotkeys_set_key, "key_press_event",
                     G_CALLBACK (on_hotkeys_set_key_key_press_event),
                     NULL);
-  g_signal_connect ((gpointer) hotkey_is_global, "toggled",
-                    G_CALLBACK (on_hotkey_is_global_toggled),
-                    NULL);
   g_signal_connect ((gpointer) hotkeys_apply, "clicked",
                     G_CALLBACK (on_hotkeys_apply_clicked),
                     NULL);
@@ -3833,7 +3825,6 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox106, "hbox106");
   GLADE_HOOKUP_OBJECT (prefwin, label134, "label134");
   GLADE_HOOKUP_OBJECT (prefwin, hotkeys_set_key, "hotkeys_set_key");
-  GLADE_HOOKUP_OBJECT (prefwin, hotkey_is_global, "hotkey_is_global");
   GLADE_HOOKUP_OBJECT (prefwin, hseparator6, "hseparator6");
   GLADE_HOOKUP_OBJECT (prefwin, hbox120, "hbox120");
   GLADE_HOOKUP_OBJECT (prefwin, label145, "label145");

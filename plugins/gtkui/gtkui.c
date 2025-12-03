@@ -1575,7 +1575,6 @@ gtkui_mainwin_init (void) {
         // check if any hotkeys were created manually (e.g. beta versions of 0.6)
         if (!deadbeef->conf_find ("hotkey.key", NULL)) {
             gtkui_set_default_hotkeys ();
-            gtkui_import_0_5_global_hotkeys ();
             DB_plugin_t *hkplug = deadbeef->plug_get_for_id ("hotkeys");
             if (hkplug) {
                 ((DB_hotkeys_plugin_t *)hkplug)->reset ();

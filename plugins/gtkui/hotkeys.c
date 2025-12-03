@@ -65,6 +65,14 @@ typedef struct
 #include "hotkeys.h"
 #include <deadbeef/strdupa.h>
 
+enum {
+    MODEL_IDX_KEYCOMBO = 0,
+    MODEL_IDX_ACTION = 1,
+    MODEL_IDX_CONTEXT = 2,
+    MODEL_IDX_ACTION_TITLE = 3,
+    MODEL_IDX_CONTEXT_ID = 4,
+};
+
 int gtkui_hotkeys_changed = 0;
 
 void
@@ -191,7 +199,7 @@ hotkeys_load (void) {
         const char *t = get_display_action_title (action->title);
         char title[100];
         unescape_forward_slash (t, title, sizeof (title));
-        gtk_list_store_set (hkstore, &iter, 0, keycombo, 1, title, 2, ctx_names[ctx], 3, isglobal, 4, action->name, 5, ctx, -1);
+        gtk_list_store_set (hkstore, &iter, MODEL_IDX_KEYCOMBO, keycombo, MODEL_IDX_ACTION, title, MODEL_IDX_CONTEXT, ctx_names[ctx], MODEL_IDX_ACTION_TITLE, action->name, MODEL_IDX_CONTEXT_ID, ctx, -1);
         n_items++;
 
 out:
@@ -211,10 +219,9 @@ hotkeys_save (void) {
     int i = 1;
     while (res) {
         GValue keycombo = {0,}, action = {0,}, context = {0,}, global = {0,};
-        gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, 0, &keycombo);
-        gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, 4, &action);
-        gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, 5, &context);
-        gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, 3, &global);
+        gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, MODEL_IDX_KEYCOMBO, &keycombo);
+        gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, MODEL_IDX_ACTION_TITLE, &action);
+        gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, MODEL_IDX_CONTEXT_ID, &context);
         char key[100];
         snprintf (key, sizeof (key), "hotkey.key%02d", i);
         char value[1000];
@@ -256,7 +263,7 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
         gboolean res = gtk_tree_model_iter_children (GTK_TREE_MODEL (store), &i, root_iter);
         if (!res) {
             gtk_tree_store_append (store, &i, root_iter);
-            gtk_tree_store_set (store, &i, 0, p, 1, NULL, 2, -1, -1);
+            gtk_tree_store_set (store, &i, MODEL_IDX_KEYCOMBO, p, MODEL_IDX_ACTION, NULL, MODEL_IDX_CONTEXT, -1, -1);
             memcpy (&newroot, &i, sizeof (GtkTreeIter));
             root_iter = &newroot;
         }
@@ -264,7 +271,7 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
             int found = 0;
             do {
                 GValue val = {0,};
-                gtk_tree_model_get_value (GTK_TREE_MODEL (store), &i, 0, &val);
+                gtk_tree_model_get_value (GTK_TREE_MODEL (store), &i, MODEL_IDX_KEYCOMBO, &val);
                 const char *n = g_value_get_string (&val);
                 if (n && !strcmp (n, p)) {
                     memcpy (&newroot, &i, sizeof (GtkTreeIter));
@@ -275,7 +282,7 @@ action_tree_append (const char *title, GtkTreeStore *store, GtkTreeIter *root_it
             } while (gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &i));
             if (!found) {
                 gtk_tree_store_append (store, &i, root_iter);
-                gtk_tree_store_set (store, &i, 0, p, 1, NULL, 2, -1, -1);
+                gtk_tree_store_set (store, &i, MODEL_IDX_KEYCOMBO, p, MODEL_IDX_ACTION, NULL, MODEL_IDX_CONTEXT, -1, -1);
                 memcpy (&newroot, &i, sizeof (GtkTreeIter));
                 root_iter = &newroot;
             }
@@ -296,8 +303,8 @@ typedef struct {
 static gboolean
 set_current_action (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
     GValue val = {0,}, ctx_val = {0,};
-    gtk_tree_model_get_value (model, iter, 1, &val);
-    gtk_tree_model_get_value (model, iter, 2, &ctx_val);
+    gtk_tree_model_get_value (model, iter, MODEL_IDX_ACTION, &val);
+    gtk_tree_model_get_value (model, iter, MODEL_IDX_CONTEXT, &ctx_val);
     actionbinding_t *binding = data;
     const char *name = g_value_get_string (&val);
     if (name && binding->name && !strcmp (binding->name, name) && binding->ctx == g_value_get_int (&ctx_val)) {
@@ -346,7 +353,7 @@ init_action_tree (GtkWidget *actions, const char *act, int ctx) {
                     if (actions->flags & DB_ACTION_COMMON) {
                         t = action_tree_append (actions->title, actions_store, &action_main_iter, &iter);
                         unescape_forward_slash (t, title, sizeof (title));
-                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_MAIN, -1);
+                        gtk_tree_store_set (actions_store, &iter, MODEL_IDX_KEYCOMBO, title, MODEL_IDX_ACTION, actions->name, MODEL_IDX_CONTEXT, DDB_ACTION_CTX_MAIN, -1);
                     }
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -354,15 +361,15 @@ init_action_tree (GtkWidget *actions, const char *act, int ctx) {
 #pragma GCC diagnostic pop
                         t = action_tree_append (actions->title, actions_store, &action_selection_iter, &iter);
                         unescape_forward_slash (t, title, sizeof (title));
-                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_SELECTION, -1);
+                        gtk_tree_store_set (actions_store, &iter, MODEL_IDX_KEYCOMBO, title, MODEL_IDX_ACTION, actions->name, MODEL_IDX_CONTEXT, DDB_ACTION_CTX_SELECTION, -1);
                         if (!(actions->flags & DB_ACTION_EXCLUDE_FROM_CTX_PLAYLIST)) {
                             t = action_tree_append (actions->title, actions_store, &action_playlist_iter, &iter);
                             unescape_forward_slash (t, title, sizeof (title));
-                            gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_PLAYLIST, -1);
+                            gtk_tree_store_set (actions_store, &iter, MODEL_IDX_KEYCOMBO, title, MODEL_IDX_ACTION, actions->name, MODEL_IDX_CONTEXT, DDB_ACTION_CTX_PLAYLIST, -1);
                         }
                         t = action_tree_append (actions->title, actions_store, &action_nowplaying_iter, &iter);
                         unescape_forward_slash (t, title, sizeof (title));
-                        gtk_tree_store_set (actions_store, &iter, 0, title, 1, actions->name, 2, DDB_ACTION_CTX_NOWPLAYING, -1);
+                        gtk_tree_store_set (actions_store, &iter, MODEL_IDX_KEYCOMBO, title, MODEL_IDX_ACTION, actions->name, MODEL_IDX_CONTEXT, DDB_ACTION_CTX_NOWPLAYING, -1);
                     }
                 }
                 else {
@@ -399,8 +406,8 @@ on_hotkeys_actions_clicked             (GtkButton       *button,
     }
     // get action name from iter
     GValue val_name = {0,}, val_ctx = {0,};
-    gtk_tree_model_get_value (model, &iter, 4, &val_name);
-    gtk_tree_model_get_value (model, &iter, 5, &val_ctx);
+    gtk_tree_model_get_value (model, &iter, MODEL_IDX_ACTION_TITLE, &val_name);
+    gtk_tree_model_get_value (model, &iter, MODEL_IDX_CONTEXT_ID, &val_ctx);
     const char *act = g_value_get_string (&val_name);
     int ctx = g_value_get_int (&val_ctx);
 
@@ -419,10 +426,10 @@ on_hotkeys_actions_clicked             (GtkButton       *button,
         int ctx = -1;
         if (path && gtk_tree_model_get_iter (model, &iter, path)) {
             GValue val = {0,};
-            gtk_tree_model_get_value (model, &iter, 1, &val);
+            gtk_tree_model_get_value (model, &iter, MODEL_IDX_ACTION, &val);
             name = g_value_get_string (&val);
             GValue val_ctx = {0,};
-            gtk_tree_model_get_value (model, &iter, 2, &val_ctx);
+            gtk_tree_model_get_value (model, &iter, MODEL_IDX_CONTEXT, &val_ctx);
             ctx = g_value_get_int (&val_ctx);
         }
         set_button_action_label (name, ctx, lookup_widget (prefwin, "hotkeys_actions"));
@@ -453,22 +460,17 @@ prefwin_init_hotkeys (GtkWidget *_prefwin) {
     gtk_tree_view_column_set_resizable (hk_col2, TRUE);
     GtkTreeViewColumn *hk_col3 = gtk_tree_view_column_new_with_attributes (_("Context"), gtk_cell_renderer_text_new (), "text", 2, NULL);
     gtk_tree_view_column_set_resizable (hk_col3, TRUE);
-    GtkTreeViewColumn *hk_col4 = gtk_tree_view_column_new_with_attributes (_("Is global"), gtk_cell_renderer_text_new (), "text", 3, NULL);
-    gtk_tree_view_column_set_resizable (hk_col4, TRUE);
     gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col1);
     gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col2);
     gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col3);
-    gtk_tree_view_append_column (GTK_TREE_VIEW (hotkeys), hk_col4);
     // column0: keycombo string
     // column1: action title
     // column2: context title
-    // column3: is_global
-    // column4: action title id (hidden)
-    // column5: context id (hidden)
-    GtkListStore *hkstore = gtk_list_store_new (6, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_INT);
+    // column3: action title id (hidden)
+    // column4: context id (hidden)
+    GtkListStore *hkstore = gtk_list_store_new (5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
 
     gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
 
     gtk_tree_view_set_model (GTK_TREE_VIEW (hotkeys), GTK_TREE_MODEL (hkstore));
@@ -523,26 +525,20 @@ on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
         gtk_widget_set_sensitive (actions, TRUE);
         // get action name from iter
         GValue val_name = {0,}, val_ctx = {0,};
-        gtk_tree_model_get_value (model, &iter, 4, &val_name);
-        gtk_tree_model_get_value (model, &iter, 5, &val_ctx);
+        gtk_tree_model_get_value (model, &iter, MODEL_IDX_ACTION_TITLE, &val_name);
+        gtk_tree_model_get_value (model, &iter, MODEL_IDX_CONTEXT_ID, &val_ctx);
         const char *name = g_value_get_string (&val_name);
 
         set_button_action_label (name, g_value_get_int (&val_ctx), actions);
 
-        gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), TRUE);
-        GValue val_isglobal = {0,};
-        gtk_tree_model_get_value (model, &iter, 3, &val_isglobal);
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "hotkey_is_global")), g_value_get_boolean (&val_isglobal));
         gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), TRUE);
         GValue val_keycombo = {0,};
-        gtk_tree_model_get_value (model, &iter, 0, &val_keycombo);
+        gtk_tree_model_get_value (model, &iter, MODEL_IDX_KEYCOMBO, &val_keycombo);
         const char *keycombo = g_value_get_string (&val_keycombo);
         gtk_button_set_label (GTK_BUTTON (lookup_widget (prefwin, "hotkeys_set_key")), keycombo ? keycombo : "");
     }
     else {
         gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
-        gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "hotkey_is_global")), FALSE);
         gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
         gtk_button_set_label (GTK_BUTTON (lookup_widget (prefwin, "hotkeys_set_key")), _("<Not set>"));
     }
@@ -561,7 +557,7 @@ on_hotkey_add_clicked                  (GtkButton       *button,
     GtkListStore *hkstore = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys)));
     GtkTreeIter iter;
     gtk_list_store_append (hkstore, &iter);
-    gtk_list_store_set (hkstore, &iter, 0, _("<Not set>"), 1, _("<Not set>"), 2, _("<Not set>"), 3, 0, 4, NULL, 5, -1, -1);
+    gtk_list_store_set (hkstore, &iter, MODEL_IDX_KEYCOMBO, _("<Not set>"), MODEL_IDX_ACTION, _("<Not set>"), MODEL_IDX_CONTEXT, _("<Not set>"),  MODEL_IDX_ACTION_TITLE, NULL, MODEL_IDX_CONTEXT_ID, -1, -1);
     GtkTreePath *path = gtk_tree_model_get_path (GTK_TREE_MODEL (hkstore), &iter);
     gtk_tree_view_set_cursor (GTK_TREE_VIEW (hotkeys), path, NULL, FALSE);
     gtk_tree_path_free (path);
@@ -582,10 +578,8 @@ on_hotkey_remove_clicked               (GtkButton       *button,
     gtk_tree_model_get_iter (GTK_TREE_MODEL (hkstore), &iter, path);
     gtk_list_store_remove (hkstore, &iter);
     set_button_action_label (NULL, 0, lookup_widget (prefwin, "hotkeys_actions"));
-    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lookup_widget (prefwin, "hotkey_is_global")), FALSE);
     gtk_button_set_label (GTK_BUTTON (lookup_widget (prefwin, "hotkeys_set_key")), _("<Not set>"));
     gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_actions"), FALSE);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkey_is_global"), FALSE);
     gtk_widget_set_sensitive (lookup_widget (prefwin, "hotkeys_set_key"), FALSE);
     gtkui_hotkeys_changed = 1;
 }
@@ -601,14 +595,14 @@ on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
     GtkTreeIter iter;
     if (path && gtk_tree_model_get_iter (model, &iter, path)) {
         GValue val = {0,};
-        gtk_tree_model_get_value (model, &iter, 1, &val);
+        gtk_tree_model_get_value (model, &iter, MODEL_IDX_ACTION, &val);
         const gchar *name = g_value_get_string (&val);
         DB_plugin_action_t *action = NULL;
         int ctx = 0;
         if (name) {
             action = find_action_by_name (name);
             GValue val_ctx = {0,};
-            gtk_tree_model_get_value (model, &iter, 2, &val_ctx);
+            gtk_tree_model_get_value (model, &iter, MODEL_IDX_CONTEXT, &val_ctx);
             ctx = g_value_get_int (&val_ctx);
         }
         // update the tree
@@ -623,32 +617,16 @@ on_hotkeys_actions_cursor_changed      (GtkTreeView     *treeview,
                     const char *t = get_display_action_title (action->title);
                     char title[100];
                     unescape_forward_slash (t, title, sizeof (title));
-                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, 1, title, 4, action->name, 5, ctx, 2, ctx_names[ctx], -1);
+                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, MODEL_IDX_ACTION, title, MODEL_IDX_ACTION_TITLE, action->name, MODEL_IDX_CONTEXT_ID, ctx, MODEL_IDX_CONTEXT, ctx_names[ctx], -1);
                 }
                 else {
-                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, 1, _("<Not set>"), 4, NULL, 2, _("<Not set>"), -1);
+                    gtk_list_store_set (GTK_LIST_STORE (model), &iter, MODEL_IDX_ACTION, _("<Not set>"), MODEL_IDX_ACTION_TITLE, NULL, MODEL_IDX_CONTEXT, _("<Not set>"), -1);
                 }
             }
         }
     }
 }
 
-
-void
-on_hotkey_is_global_toggled            (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
-    // update the tree
-    GtkWidget *hotkeys = lookup_widget (prefwin, "hotkeys_list");
-    GtkTreePath *path;
-    gtk_tree_view_get_cursor (GTK_TREE_VIEW (hotkeys), &path, NULL);
-    GtkTreeModel *model = gtk_tree_view_get_model (GTK_TREE_VIEW (hotkeys));
-    GtkTreeIter iter;
-    if (path && gtk_tree_model_get_iter (model, &iter, path)) {
-        gtk_list_store_set (GTK_LIST_STORE (model), &iter, 3, gtk_toggle_button_get_active (togglebutton), -1);
-    }
-    gtkui_hotkeys_changed = 1;
-}
 
 typedef struct {
     const char *name;
@@ -787,7 +765,7 @@ on_hotkeys_set_key_key_press_event     (GtkWidget       *widget,
 
         if (!curpath || gtk_tree_path_compare (iterpath, curpath)) {
             GValue keycombo = {0,};
-            gtk_tree_model_get_value (model, &iter, 0, &keycombo);
+            gtk_tree_model_get_value (model, &iter, MODEL_IDX_KEYCOMBO, &keycombo);
             const char *val = g_value_get_string (&keycombo);
             if (val && !strcmp (val, name)) {
                 gtk_tree_path_free (iterpath);
@@ -932,31 +910,4 @@ gtkui_set_default_hotkeys (void) {
     deadbeef->conf_set_str ("hotkey.key33", "\"Ctrl z\" 0 0 undo");
     deadbeef->conf_set_str ("hotkey.key34", "\"Ctrl Shift z\" 0 0 redo");
     deadbeef->conf_save ();
-}
-
-void
-gtkui_import_0_5_global_hotkeys (void) {
-    int n = 40;
-    deadbeef->conf_lock ();
-    DB_conf_item_t *item = deadbeef->conf_find ("hotkeys.key", NULL);
-    while (item) {
-        char *val = strdupa (item->value);
-        char *colon = strchr (val, ':');
-        if (colon) {
-            *colon++ = 0;
-            while (*colon && *colon == ' ') {
-                colon++;
-            }
-            if (*colon) {
-                char newkey[100];
-                char newval[100];
-                snprintf (newkey, sizeof (newkey), "hotkey.key%02d", n);
-                snprintf (newval, sizeof (newval), "\"%s\" 0 1 %s", val, colon);
-                deadbeef->conf_set_str (newkey, newval);
-                n++;
-            }
-        }
-        item = deadbeef->conf_find ("hotkeys.", item);
-    }
-    deadbeef->conf_unlock ();
 }

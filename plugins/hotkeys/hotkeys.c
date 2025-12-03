@@ -25,9 +25,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#if defined(__MINGW32__) || defined(__APPLE__)
-#    define NO_XLIB_H
-#endif
+
+#define NO_XLIB_H
+
 #ifndef NO_XLIB_H
 #    include <X11/Xlib.h>
 #endif
