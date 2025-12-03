@@ -205,10 +205,10 @@ static char sb_text[512];
     char sbtext_new[512] = "-";
     
     float pl_totaltime = roundf(deadbeef->pl_get_totaltime ());
-    int daystotal = (int)pl_totaltime / (3600*24);
-    int hourtotal = ((int)pl_totaltime / 3600) % 24;
-    int mintotal = ((int)pl_totaltime/60) % 60;
-    int sectotal = ((int)pl_totaltime) % 60;
+    int daystotal = (int)(int64_t)pl_totaltime / (3600 * 24);
+    int hourtotal = (int)((int64_t)pl_totaltime / 3600) % 24;
+    int mintotal = (int)((int64_t)pl_totaltime / 60) % 60;
+    int sectotal = (int)((int64_t)pl_totaltime) % 60;
 
     char totaltime_str[512] = "";
     if (daystotal == 0) {

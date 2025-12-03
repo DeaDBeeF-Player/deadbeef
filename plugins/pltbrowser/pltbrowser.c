@@ -203,10 +203,10 @@ fill_pltbrowser_rows (gpointer user_data)
         snprintf (num_items_str, sizeof (num_items_str), "%d", num_items);
 
         float pl_totaltime = deadbeef->plt_get_totaltime (plt);
-        int daystotal = (int)pl_totaltime / (3600*24);
-        int hourtotal = ((int)pl_totaltime / 3600) % 24;
-        int mintotal = ((int)pl_totaltime/60) % 60;
-        int sectotal = ((int)pl_totaltime) % 60;
+        int daystotal = (int)(int64_t)pl_totaltime / (3600 * 24);
+        int hourtotal = (int)((int64_t)pl_totaltime / 3600) % 24;
+        int mintotal = (int)((int64_t)pl_totaltime / 60) % 60;
+        int sectotal = (int)((int64_t)pl_totaltime) % 60;
 
         char totaltime_str[512] = "";
         if (daystotal == 0) {
