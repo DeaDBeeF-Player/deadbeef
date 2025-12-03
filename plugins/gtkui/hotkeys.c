@@ -167,8 +167,6 @@ hotkeys_load (void) {
     while (item) {
         char token[MAX_TOKEN];
         char keycombo[MAX_TOKEN];
-        int ctx;
-        int isglobal;
         DB_plugin_action_t *action;
         const char *script = item->value;
         if ((script = gettoken (script, keycombo)) == 0) {
@@ -177,14 +175,14 @@ hotkeys_load (void) {
         if ((script = gettoken (script, token)) == 0) {
             goto out;
         }
-        ctx = atoi (token);
+        int ctx = atoi (token);
         if (ctx < 0 || ctx >= DDB_ACTION_CTX_COUNT) {
             goto out;
         }
         if ((script = gettoken (script, token)) == 0) {
             goto out;
         }
-        isglobal = atoi (token);
+        // skip unused: int isglobal = atoi (token);
         if ((script = gettoken (script, token)) == 0) {
             goto out;
         }
@@ -218,14 +216,14 @@ hotkeys_save (void) {
     gboolean res = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (hkstore), &iter);
     int i = 1;
     while (res) {
-        GValue keycombo = {0,}, action = {0,}, context = {0,}, global = {0,};
+        GValue keycombo = {0,}, action = {0,}, context = {0,};
         gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, MODEL_IDX_KEYCOMBO, &keycombo);
         gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, MODEL_IDX_ACTION_TITLE, &action);
         gtk_tree_model_get_value (GTK_TREE_MODEL (hkstore), &iter, MODEL_IDX_CONTEXT_ID, &context);
         char key[100];
         snprintf (key, sizeof (key), "hotkey.key%02d", i);
         char value[1000];
-        snprintf (value, sizeof (value), "\"%s\" %d %d %s", g_value_get_string (&keycombo), g_value_get_int (&context), g_value_get_boolean (&global), g_value_get_string (&action));
+        snprintf (value, sizeof (value), "\"%s\" %d 0 %s", g_value_get_string (&keycombo), g_value_get_int (&context), g_value_get_string (&action));
         deadbeef->conf_set_str (key, value);
 
         res = gtk_tree_model_iter_next (GTK_TREE_MODEL (hkstore), &iter);
