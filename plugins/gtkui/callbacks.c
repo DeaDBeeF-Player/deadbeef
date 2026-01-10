@@ -522,6 +522,12 @@ on_mainwin_button_press_event (GtkWidget *widget, GdkEventButton *event, gpointe
         if (event->type == GDK_2BUTTON_PRESS) {
             deadbeef->sendmessage (DB_EV_TRACKFOCUSCURRENT, 0, 0, 0);
         }
+    } else if (event->type == GDK_BUTTON_PRESS){
+        if (event->button == 9 || event->button == 10) {
+            deadbeef->sendmessage (DB_EV_NEXT, 0, 0, 0);
+        } else if (event->button == 8) {
+            deadbeef->sendmessage (DB_EV_PREV, 0, 0, 0);
+        }
     }
 
     return FALSE;

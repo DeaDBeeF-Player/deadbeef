@@ -526,6 +526,7 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
             priv->header_sizing = i;
             priv->header_dragpt[0] -= (x + c->width);
         }
+        return TRUE;
     }
     else if (TEST_RIGHT_CLICK (event)) {
         if (priv->header_dragging != -1) {
@@ -536,8 +537,9 @@ ddb_listview_header_button_press_event           (GtkWidget       *widget,
         priv->header_prepare = 0;
         int idx = ddb_listview_header_get_column_idx_for_coord (header, event->x);
         header->delegate->context_menu (header, idx);
+        return TRUE;
     }
-    return TRUE;
+    return FALSE;
 }
 
 static gboolean
