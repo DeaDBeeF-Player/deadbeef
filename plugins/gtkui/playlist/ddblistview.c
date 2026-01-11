@@ -2995,6 +2995,7 @@ ddb_listview_list_button_press_event (GtkWidget *widget, GdkEventButton *event, 
     DdbListviewPrivate *priv = DDB_LISTVIEW_GET_PRIVATE (listview);
     if (TEST_LEFT_CLICK (event)) {
         ddb_listview_list_mouse1_pressed (listview, event->state, event->x, event->y, event->type);
+        return TRUE;
     }
     else if (TEST_RIGHT_CLICK (event)) {
         // get item under cursor
@@ -3016,8 +3017,9 @@ ddb_listview_list_button_press_event (GtkWidget *widget, GdkEventButton *event, 
             listview->delegate->list_context_menu (playlist, PL_MAIN);
             deadbeef->plt_unref (playlist);
         }
+        return TRUE;
     }
-    return TRUE;
+    return FALSE;
 }
 
 static gboolean

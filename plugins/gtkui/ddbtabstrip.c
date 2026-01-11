@@ -1289,6 +1289,7 @@ on_tabstrip_button_press_event (GtkWidget *widget, GdkEventButton *event) {
         ts->dragging = tab_clicked;
         ts->prev_x = event->x;
         tab_moved = 0;
+        return TRUE;
     }
     else if (TEST_RIGHT_CLICK (event)) {
         ddb_playlist_t *plt = deadbeef->plt_get_for_idx (tab_clicked);
@@ -1298,6 +1299,7 @@ on_tabstrip_button_press_event (GtkWidget *widget, GdkEventButton *event) {
         }
         gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (widget), NULL);
         gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time ());
+        return TRUE;
     }
     else if (event->button == 2) {
         if (tab_clicked == -1) {
@@ -1309,16 +1311,15 @@ on_tabstrip_button_press_event (GtkWidget *widget, GdkEventButton *event) {
             return TRUE;
         }
         else if (deadbeef->conf_get_int ("gtkui.mmb_delete_playlist", 1)) {
-            if (tab_clicked != -1) {
-                ddb_playlist_t *plt = deadbeef->plt_get_for_idx (tab_clicked);
-                if (plt != NULL) {
-                    gtkui_remove_playlist (plt);
-                    deadbeef->plt_unref (plt);
-                }
+            ddb_playlist_t *plt = deadbeef->plt_get_for_idx (tab_clicked);
+            if (plt != NULL) {
+                gtkui_remove_playlist (plt);
+                deadbeef->plt_unref (plt);
             }
+            return TRUE;
         }
     }
-    return TRUE;
+    return FALSE;
 }
 
 gboolean
