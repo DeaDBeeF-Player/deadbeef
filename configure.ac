@@ -270,6 +270,10 @@ AS_IF([test "${enable_staticlink}" != "no"], [
     ], [
     AC_CHECK_LIB([dispatch], [main], [HAVE_DISPATCH=yes])
 ])
+
+AC_CHECK_LIB([dispatch], [main], [], [
+    AC_MSG_ERROR([libdispatch not found. Please install libdispatch.])
+])
 DISPATCH_CFLAGS=-fblocks
 DISPATCH_LIBS="-ldispatch -lBlocksRuntime"
 AC_SUBST(DISPATCH_CFLAGS)
