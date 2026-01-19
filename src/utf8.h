@@ -66,6 +66,13 @@ int u8_strncpy (char *dest, const char* src, int num_chars);
  */
 int u8_strnbcpy (char *dest, const char* src, int num_bytes);
 
+/* Copies as many characters from src as would not exceed num_bytes in the destination;
+ Uses input_size as the input size.
+ \0 characters are copied as-is.
+ returns the number of bytes copied.
+*/
+int u8_strnbcpy_size (char *dest, const char* src, int input_size, int num_bytes);
+
 /* copy single utf8 character of up to num_bytes bytes large, only if num_bytes is large enough;
   return number of bytes copied
  */

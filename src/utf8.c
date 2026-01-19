@@ -278,6 +278,40 @@ int u8_strnbcpy (char *dest, const char* src, int num_bytes) {
     return nb - num_bytes;
 }
 
+/* Copies as many characters from src as would not exceed num_bytes in the destination */
+/* Uses input_size as the input size. */
+/* \0 characters are copied as-is. */
+/* returns the number of bytes copied. */
+int u8_strnbcpy_size (char *dest, const char* src, int input_size, int num_bytes) {
+    int32_t prev_index = 0;
+    int32_t index = 0;
+    int32_t nb = num_bytes;
+
+    while (index <= input_size && num_bytes > 0 && dest) {
+        if (src[index] == 0) {
+            *dest++ = 0;
+            num_bytes--;
+            prev_index = ++index;
+            continue;
+        }
+        u8_inc (src, &index);
+        if (index > input_size) {
+            break;
+        }
+        int32_t charlen = index - prev_index;
+        if (charlen > num_bytes) {
+            break;
+        }
+        memcpy (dest, &src[prev_index], charlen);
+        prev_index = index;
+        dest += charlen;
+        num_bytes -= charlen;
+    }
+    return nb - num_bytes;
+}
+
+
+
 /* copies a character from src to dest provided it does not exceed num_bytes */
 /* returns the number of bytes copied, not counting a null terminator, which is not written */
 int u8_charcpy (char *dest, const char *src, int num_bytes) {

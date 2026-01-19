@@ -552,12 +552,8 @@ ddb_iconv (const char *cs_out, const char *cs_in, char *out, int outlen, const c
     // to utf8 branch
     if (!strcasecmp (cs_out, UTF8_STR)) {
         if (!strcasecmp (cs_in, UTF8_STR)) {
-            int result = u8_strnbcpy(out, in, outlen-1);
-            out[result] = 0;
-            int valid = u8_valid (out, result, NULL);
-            if (valid) {
-                len = result;
-            }
+            int result = u8_strnbcpy_size(out, in, inlen, outlen);
+            len = result;
         }
         else if (!strcasecmp (cs_in, "cp1251")) {
             len = cp1251_to_utf8 (in, inlen, out, outlen);
