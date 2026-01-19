@@ -187,28 +187,21 @@ psfplug_seek (DB_fileinfo_t *_info, float time) {
 
 static void
 psfplug_add_meta (DB_playItem_t *it, const char *key, const char *value, const char *comment_title) {
-//    const char *res = NULL;
-    char tmp[200];
+    size_t tmpsize = 2048;
+    char *tmp = calloc (1, tmpsize);
     // check utf8
-    if (deadbeef->junk_recode (value, (int)strlen (value), tmp, sizeof (tmp), "utf-8") >= 0) {
+    if (deadbeef->junk_recode (value, (int)strlen (value), tmp, tmpsize, "utf-8") >= 0) {
         if (key) {
             deadbeef->pl_add_meta (it, key, value);
         }
-//        res = value;
     }
     // check shift-jis
-    if (deadbeef->junk_recode (value, (int)strlen (value), tmp, sizeof (tmp), "SHIFT-JIS") >= 0) {
+    if (deadbeef->junk_recode (value, (int)strlen (value), tmp, tmpsize, "SHIFT-JIS") >= 0) {
         if (key) {
             deadbeef->pl_add_meta (it, key, tmp);
         }
-//        res = tmp;
     }
-
-//    if (res) {
-//        char s[1024];
-//        snprintf (s, sizeof (s), "%s%s", comment_title, res);
-//        deadbeef->pl_append_meta (it, "comment", s);
-//    }
+    free (tmp);
 }
 
 static DB_playItem_t *
