@@ -255,7 +255,7 @@ AS_IF([test "${enable_gtk3}" = "yes"], [
 AM_CONDITIONAL(OS_OSX, test "x$OS_OSX" = "xyes")
 
 
-AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_shellexec}" = "yes"], [
+AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_shellexec}" = "yes" -o "${enable_medialib}" = "yes"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         JANSSON_CFLAGS="-I../../$LIB/include"
         JANSSON_LIBS=-ljansson
