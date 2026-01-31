@@ -287,7 +287,7 @@ int u8_strnbcpy_size (char *dest, const char* src, int input_size, int num_bytes
     int32_t index = 0;
     int32_t nb = num_bytes;
 
-    while (index <= input_size && num_bytes > 0 && dest) {
+    while (index < input_size && num_bytes > 0 && dest) {
         if (src[index] == 0) {
             *dest++ = 0;
             num_bytes--;
