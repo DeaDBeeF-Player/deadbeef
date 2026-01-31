@@ -278,6 +278,12 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_
     }
 
     pl_lock ();
+
+    if (playlist->count[iter] == 0) {
+        pl_unlock ();
+        return;
+    }
+
     struct timeval tm1;
     gettimeofday (&tm1, NULL);
     pl_sort_ascending = ascending;
