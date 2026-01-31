@@ -241,7 +241,7 @@ _create_tf_tree(medialib_source_t *source, ml_tree_item_t *root, int selected, c
     if (needs_sort) {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
-            .flags = DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_FAST_LOOKUP,
+            .flags = DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_FAST_LOOKUP | DDB_TF_FORCE_SORTABLE_TRACK_NUMBER,
             .plt = source->ml_playlist,
             .idx = -1,
         };
@@ -468,8 +468,19 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
 static void
 _create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, const char *track_tf, int selected, int needs_sort) {
     if (needs_sort) {
-        const char *sort_tf = "$directory_path(%path%)/[%album artist% - ]%album%/[%tracknumber%. ]%title%";
-        deadbeef->plt_sort_v2(source->ml_playlist, PL_MAIN, -1, sort_tf, DDB_SORT_ASCENDING);
+        ddb_tf_context_t ctx = {
+            ._size = sizeof (ddb_tf_context_t),
+            .flags = DDB_TF_CONTEXT_NO_DYNAMIC | DDB_TF_CONTEXT_NO_MUTEX_LOCK | DDB_TF_CONTEXT_FAST_LOOKUP | DDB_TF_FORCE_SORTABLE_TRACK_NUMBER,
+            .plt = source->ml_playlist,
+            .idx = -1,
+        };
+
+        const char *tf_sort = "$directory_path(%path%)/[%album artist% - ]%album%/[%tracknumber%. ]%title%";
+        char *tf_bytecode = deadbeef->tf_compile(tf_sort);
+
+        deadbeef->plt_sort_v3(&ctx, tf_bytecode, PL_MAIN, -1, DDB_SORT_ASCENDING);
+
+        deadbeef->tf_free(tf_bytecode);
     }
 
     char *track_tf_bc = deadbeef->tf_compile(track_tf);

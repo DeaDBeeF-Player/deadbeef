@@ -754,6 +754,9 @@ typedef enum {
     // Allow faster metadata lookups, but without "override" support.
     // This is mostly suitable for medialib tree formatting.
     DDB_TF_CONTEXT_FAST_LOOKUP = 64,
+
+    // Force track numbers to have more zero padding, to make sense when sorting
+    DDB_TF_FORCE_SORTABLE_TRACK_NUMBER = 128,
 #endif
 } ddb_tf_flags_t;
 

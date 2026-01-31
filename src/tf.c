@@ -2972,20 +2972,27 @@ _get_title_from_path(const char *path, const char **end) {
 }
 
 static int
-_get_tracknumber_from_string(const char *v, char *out, int outlen) {
+_get_tracknumber_from_string(const char *v, char *out, int outlen, int force_sortable) {
     const char *p = v;
+
     while (*p) {
         if (!isdigit (*p)) {
             break;
         }
         p++;
     }
-    if (p > v && *p == 0 && p-v == 1) {
-        return snprintf_clip (out, outlen, "%02d", atoi(v));
+
+    if (p > v && *p == 0 ) {
+        if (force_sortable) {
+            return snprintf_clip (out, outlen, "%05d", atoi(v));
+        }
+
+        if (p - v == 1) {
+            return snprintf_clip (out, outlen, "%02d", atoi(v));
+        }
     }
-    else {
-        return -1;
-    }
+
+    return -1;
 }
 
 /*
@@ -3122,7 +3129,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                 else if (!strcmp (name, "tracknumber")) {
                     const char *v = pl_find_meta_raw (it, "track");
                     if (v) {
-                        int l = _get_tracknumber_from_string(v, out, outlen);
+                        int l = _get_tracknumber_from_string(v, out, outlen, (ctx->flags & DDB_TF_FORCE_SORTABLE_TRACK_NUMBER) != 0);
                         if (l >= 0) {
                             out += l;
                             outlen -= l;
@@ -3824,7 +3831,7 @@ tf_eval_int (ddb_tf_context_t *ctx, const char *code, int size, char *out, int o
                             v = meta->value;
                         }
                         if (v) {
-                            int l = _get_tracknumber_from_string(v, out, outlen);
+                            int l = _get_tracknumber_from_string(v, out, outlen, (ctx->flags & DDB_TF_FORCE_SORTABLE_TRACK_NUMBER) != 0);
                             if (l >= 0) {
                                 out += l;
                                 outlen -= l;
