@@ -14,9 +14,9 @@ If you wish to chat with developers, join us on [Discord](https://discord.gg/GTV
 
 <sub><sup>NOTE: The macOS version has not been officially released, and has many unresolved issues and unimplemented features</sup></sub>
 
-[![Linux Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Linux/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/linuxbuild.yml)
-[![Windows Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Windows/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/windowsbuild.yml)
-[![macOS Build Status](https://github.com/DeaDBeeF-Player/deadbeef/workflows/Build%20for%20Mac/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/macbuild.yml)
+[![Linux Build Status](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/linuxbuild.yml/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/linuxbuild.yml)
+[![Windows Build Status](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/windowsbuild.yml/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/windowsbuild.yml)
+[![macOS Build Status](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/macbuild.yml/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/macbuild.yml)
 
 [Nightly GNU/Linux Builds](https://sourceforge.net/projects/deadbeef/files/Builds/master/linux/)
 
