@@ -253,6 +253,14 @@ plt_sort_random (playlist_t *playlist, int iter) {
 // version 1: title formatting v2
 static void
 plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_context, const char *tf_bytecode, const char *format, int order, int version, int is_autosorting) {
+
+    pl_lock ();
+
+    if (playlist->head[iter] == NULL || playlist->head[iter]->next[iter] == NULL) {
+        pl_unlock ();
+        return;
+    }
+
     int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
 
     if (tf_bytecode == NULL) {
@@ -261,6 +269,7 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_
                 plt_replace_meta (playlist, "autosort_mode", "random");
             }
             plt_sort_random (playlist, iter);
+            pl_unlock ();
             return;
         }
         if (!is_autosorting)
@@ -272,16 +281,10 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_
             }
         }
 
-        if (format == NULL || id == DB_COLUMN_FILENUMBER || !playlist->head[iter] || !playlist->head[iter]->next[iter]) {
+        if (format == NULL || id == DB_COLUMN_FILENUMBER) {
+            pl_unlock ();
             return;
         }
-    }
-
-    pl_lock ();
-
-    if (playlist->count[iter] == 0) {
-        pl_unlock ();
-        return;
     }
 
     struct timeval tm1;
@@ -289,7 +292,6 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_
     pl_sort_ascending = ascending;
     trace ("ascending: %d\n", ascending);
     pl_sort_id = id;
-
 
     char *free_tf_bytecode = NULL;
 
