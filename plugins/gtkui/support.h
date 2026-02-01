@@ -180,7 +180,9 @@ void                gtk_widget_get_allocation           (GtkWidget *widget,
 #endif
 
 #if !GTK_CHECK_VERSION(3,22,0)
-#define gtk_menu_popup_at_pointer(menu,trigger_event) gtk_menu_popup(menu, NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time())
+void
+gtk_menu_popup_at_pointer_fallback(GtkMenu *menu, const GdkEvent *trigger_event);
+#define gtk_menu_popup_at_pointer(menu,trigger_event) gtk_menu_popup_at_pointer_fallback(menu, trigger_event)
 #endif
 
 #if GTK_CHECK_VERSION(3,2,0)

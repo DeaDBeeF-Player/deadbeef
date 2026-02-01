@@ -8,6 +8,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <dlfcn.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
@@ -217,5 +218,30 @@ gtk_widget_get_allocation (GtkWidget *widget, GtkAllocation *allocation) {
 void
 gtk_widget_set_window(GtkWidget *widget, GdkWindow *window) {
     widget->window = window;
+}
+#endif
+
+#if !GTK_CHECK_VERSION(3,22,0)
+void
+gtk_menu_popup_at_pointer_fallback (GtkMenu *menu, const GdkEvent *trigger_event) {
+#if !GTK_CHECK_VERSION(3,0,0)
+    gtk_menu_popup (menu, NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time());
+#else
+    static void (* gtk_menu_popup_at_pointer_fn)(GtkMenu *menu, const GdkEvent *trigger_event);
+    static gboolean did_check = FALSE;
+    if (!did_check) {
+        did_check = TRUE;
+        void *handle = dlopen (NULL, RTLD_LAZY);
+        if (handle != NULL) {
+            gtk_menu_popup_at_pointer_fn = dlsym (handle, "gtk_menu_popup_at_pointer");
+            dlclose (handle);
+        }
+    }
+    if (gtk_menu_popup_at_pointer_fn != NULL) {
+        gtk_menu_popup_at_pointer_fn (menu, trigger_event);
+    } else {
+        gtk_menu_popup (menu, NULL, NULL, NULL, NULL, 3, gtk_get_current_event_time());
+    }
+#endif
 }
 #endif
