@@ -1,3 +1,28 @@
+version 1.10.1
+	Fixed: Playlist auto-naming regression
+	Fixed: Multiple slowness and stability issues in medialib
+	Fixed: Artwork cover search order
+	Fixed: Crash when probing media files on stack-constrained systems
+	Fixed: Crash when loading certain malformed ID3v2 tags
+	Fixed: Fix stability issues in OSS plugin
+	Fixed: Lost edits when clicking Apply in track properties
+	Fixed: Known performance issues in Artwork
+	Fixed: Prevent total playtime to be rounded to int (Jakub Wasylków)
+	Added: Lyrics plugin
+	Added: Improved corruption recovery in AAC, APE, MP3 files
+	Added: OPUS artwork support
+	Added: SID infinite looping
+	Added: New UI for DSP presets in Preferences
+	Added: An option to always resume in paused state (Jakub Wasylków)
+	Added: Enqueue action in file manager menus (dark-penguin)
+	Added: New album art display mode - Playing or Selected (Ed)
+	Added: Copy context menu action in Selection Properties (Ed)
+	Added: Action for opening DSP preferences (Ed)
+	Added: Stop After Queue mode (Ed)
+	Added: GTK3 is now default UI plugin, instead of GTK2
+	Added: FLAC (Ogg/FLAC) network streaming
+	Added: Mouse forward/backward buttons support (magusjanus)
+
 version 1.10.0
 	Fixed: Memory leak affecting DSD (Toad King)
 	Fixed: deadbeef.desktop format violations (Viorel Munteanu)
