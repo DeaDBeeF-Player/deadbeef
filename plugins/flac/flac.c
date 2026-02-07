@@ -1194,7 +1194,7 @@ cflac_write_metadata (DB_playItem_t *it) {
     FLAC__bool res = FLAC__metadata_chain_read (chain, deadbeef->pl_find_meta (it, ":URI"));
     FLAC__bool isogg = false;
 #if USE_OGGEDIT
-    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE) {
+    if (!res && FLAC__metadata_chain_status(chain) == FLAC__METADATA_CHAIN_STATUS_NOT_A_FLAC_FILE) {
         isogg = true;
         res = FLAC__metadata_chain_read_ogg (chain, deadbeef->pl_find_meta (it, ":URI"));
     }
