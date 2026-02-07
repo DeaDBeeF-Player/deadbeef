@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-07 11:36+0100\n"
+"POT-Creation-Date: 2026-02-07 11:49+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Arthur Țițeică <arthur.titeica@gmail.com>, 2013\n"
 "Language-Team: Romanian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/ro/)\n"
@@ -25,198 +25,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ro\n"
 "Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
-
-#: ../src/main.c:139
-#, c-format
-msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Utilizare: deadbeef [opțiuni] [--] [fișier(e)]\n"
-
-#: ../src/main.c:140
-#, c-format
-msgid "Options:\n"
-msgstr "Opțiuni:\n"
-
-#: ../src/main.c:141
-#, c-format
-msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  sau -h     Arată acest mesaj de ajutor și ieși\n"
-
-#: ../src/main.c:142
-#, c-format
-msgid "   --quit             Quit player\n"
-msgstr "   --quit             Ieșire din lector\n"
-
-#: ../src/main.c:143
-#, c-format
-msgid "   --version          Print version info and exit\n"
-msgstr "   --version          Arată detaliile versiunii și ieși\n"
-
-#: ../src/main.c:144
-#, c-format
-msgid "   --play             Start playback\n"
-msgstr "   --play             Pornește redarea\n"
-
-#: ../src/main.c:145
-#, c-format
-msgid "   --stop             Stop playback\n"
-msgstr "   --stop             Oprește redarea\n"
-
-#: ../src/main.c:146
-#, c-format
-msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Pune pauză redării\n"
-
-#: ../src/main.c:147
-#, c-format
-msgid "   --toggle-pause     Toggle pause\n"
-msgstr "   --toggle-pause     Comută starea de pauză\n"
-
-#: ../src/main.c:148
-#, c-format
-msgid ""
-"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Pornește redarea dacă e cazul sau comută starea de pauză\n"
-
-#: ../src/main.c:149
-#, c-format
-msgid "   --next             Next song in playlist\n"
-msgstr "   --next             Piesa următoare în lista de redare\n"
-
-#: ../src/main.c:150
-#, c-format
-msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             Piesa precedentă în lista de redare\n"
-
-#: ../src/main.c:151
-#, c-format
-msgid "   --random           Random song in playlist\n"
-msgstr "   --random           Piesă aleatoare din lista de redare\n"
-
-#: ../src/main.c:152
-#, c-format
-msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            Adaugă fișiere la lista de redare existentă\n"
-
-#: ../src/main.c:153
-#, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
-msgstr ""
-
-#: ../src/main.c:154
-#, c-format
-msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Arată în ieșirea standard numele formatat al piesei\n"
-
-#: ../src/main.c:157
-#, c-format
-msgid ""
-"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-"                      copy[r]ight, [e]lapsed\n"
-msgstr "                      Sintaxă FMT prefixată cu %%: [a]rtist, [t]itlu, al[b]um,\n                      [l]ungime, [n]umăr piesă, [y] pentru an, [c]omentariu,\n                      d[r]epturi de autor, durată r[e]dată\n"
-
-#: ../src/main.c:160
-#, c-format
-msgid ""
-"                      example: --nowplaying \"%%a - %%t\" should print "
-"\"artist - title\"\n"
-msgstr "exemplu: --redareacum \"%%a - %%t\" ar trebui sa arate \"artist - titlu\"\n"
-
-#: ../src/main.c:163
-#, c-format
-msgid "                      for more info, see %s\n"
-msgstr "                      pentru mai multe detalii, consultați %s\n"
-
-#: ../src/main.c:165
-#, c-format
-msgid "                      NOTE: --nowplaying is deprecated.\n"
-msgstr "NOTA: --redareacum nu mai este folosit.\n"
-
-#: ../src/main.c:168
-#, c-format
-msgid ""
-"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
-"title formatting\n"
-msgstr "--redareacum-tf FMT Afiseaza numele piesei formatate catre stdout, folosind noua formatare de titlu\n"
-
-#: ../src/main.c:171
-#, c-format
-msgid ""
-"                      FMT syntax: http://github.com/DeaDBeeF-"
-"Player/deadbeef/wiki/Title-formatting-2.0\n"
-msgstr ""
-
-#: ../src/main.c:174
-#, c-format
-msgid ""
-"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
-"should print \"artist - title\"\n"
-msgstr "exemplu: --redareacum-tf \"%%artist%% - %%titlu%%\" ar trebui sa arate \"artist - titlu\"\n"
-
-#: ../src/main.c:175
-#, c-format
-msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
-msgstr ""
-
-#: ../src/main.c:178
-#, c-format
-msgid ""
-"                      The NUM parameter can be specified in percents "
-"(absolute value or increment/decrement)\n"
-msgstr ""
-
-#: ../src/main.c:179
-#, c-format
-msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr ""
-
-#: ../src/main.c:180
-#, c-format
-msgid ""
-"                      Examples: --volume 80, --volume +10, --volume -5 or "
-"--volume -20dB\n"
-msgstr ""
-
-#: ../src/main.c:183
-#, c-format
-msgid ""
-"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
-"send commands to deadbeef itself.\n"
-msgstr ""
-
-#: ../src/main.c:184
-#, c-format
-msgid ""
-"                      To get plugin specific commands use --plugin=[PLUG] "
-"--help\n"
-msgstr ""
-
-#: ../src/main.c:187
-#, c-format
-msgid ""
-"   --plugin-list      List all available plugins including indication for "
-"plugins that support commands.\n"
-msgstr ""
-
-#: ../src/playlist.c:527 ../src/playlist.c:2871
-msgid "Default"
-msgstr "Implicit"
-
-#: ../src/playlist.c:3544 ../plugins/gtkui/widgets.c:2759
-msgid "Mono"
-msgstr "Mono"
-
-#: ../src/playlist.c:3544
-msgid "Stereo"
-msgstr "Stereo"
-
-#: ../src/playlist.c:4095
-msgid "Yes"
-msgstr "Da"
-
-#: ../src/playlist.c:4095
-msgid "No"
-msgstr "Nu"
 
 #: ../plugins/converter/converter.glade.h:1
 #: ../plugins/converter/interface.c:103
@@ -607,6 +415,7 @@ msgid "Source File"
 msgstr "Fișier sursă"
 
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
+#: ../plugins/lyrics/support.c:90 ../plugins/lyrics/support.c:114
 #: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
@@ -2350,6 +2159,46 @@ msgstr "Fișierul nu a fost găsit"
 msgid "Invalid file"
 msgstr "Fișierul nu este valid"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
+#, c-format
+msgid "%s (Copy)"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
+msgid "Can't do that"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
+msgid "Preset with this name already exists."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
+msgid "Try a different name."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
+msgid "This name is not allowed."
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:104
+msgid "Reset"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:109
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "Închide"
+
 #: ../plugins/gtkui/search.c:469
 msgid "Search [(%list_total% results)]"
 msgstr "Căutare [(%list_total% rezultate)]"
@@ -2416,6 +2265,26 @@ msgstr "Nu s-a putut adăuga câmpul"
 #: ../plugins/gtkui/trkproperties.c:1288
 msgid "Field with such name already exists, please try different name."
 msgstr "Un câmp cu acest nume există deja, încercați să-l redenumiți."
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
+#, no-c-format
+msgid "Undo"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr ""
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
+#, no-c-format
+msgid "Redo"
+msgstr ""
 
 #: ../plugins/gtkui/widgets.c:459
 #, c-format
@@ -2493,6 +2362,10 @@ msgstr ""
 #: ../plugins/gtkui/widgets.c:2756
 msgid "Multichannel"
 msgstr ""
+
+#: ../plugins/gtkui/widgets.c:2759 ../src/playlist.c:3544
+msgid "Mono"
+msgstr "Mono"
 
 #: ../plugins/gtkui/widgets.c:2765
 msgid "Scale"
@@ -2637,62 +2510,12 @@ msgstr ""
 msgid "Voices:"
 msgstr "Voci:"
 
-#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
-#, c-format
-msgid "Edit %s"
+#: ../plugins/lyrics/lyrics.c:57
+msgid "Lyrics Not Available"
 msgstr ""
 
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
-#, c-format
-msgid "%s (Copy)"
-msgstr ""
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
-msgid "Can't do that"
-msgstr ""
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
-msgid "Preset with this name already exists."
-msgstr ""
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
-msgid "Try a different name."
-msgstr ""
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
-msgid "This name is not allowed."
-msgstr ""
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
-msgid "Reset"
-msgstr ""
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "Închide"
-
-#: ../plugins/gtkui/undointegration.c:70
-#, c-format
-msgid "Undo %s"
-msgstr ""
-
-#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
-#, no-c-format
-msgid "Undo"
-msgstr ""
-
-#: ../plugins/gtkui/undointegration.c:77
-#, c-format
-msgid "Redo %s"
-msgstr ""
-
-#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
-#, no-c-format
-msgid "Redo"
+#: ../plugins/lyrics/lyrics.c:212
+msgid "Lyrics"
 msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
@@ -2859,6 +2682,204 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings.\n"
 msgstr ""
+
+#: ../src/actionhandlers.c:823
+#, c-format
+msgid "Copy of %s"
+msgstr ""
+
+#: ../src/actionhandlers.c:826
+#, c-format
+msgid "Copy of %s (%d)"
+msgstr ""
+
+#: ../src/main.c:139
+#, c-format
+msgid "Usage: deadbeef [options] [--] [file(s)]\n"
+msgstr "Utilizare: deadbeef [opțiuni] [--] [fișier(e)]\n"
+
+#: ../src/main.c:140
+#, c-format
+msgid "Options:\n"
+msgstr "Opțiuni:\n"
+
+#: ../src/main.c:141
+#, c-format
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr "   --help  sau -h     Arată acest mesaj de ajutor și ieși\n"
+
+#: ../src/main.c:142
+#, c-format
+msgid "   --quit             Quit player\n"
+msgstr "   --quit             Ieșire din lector\n"
+
+#: ../src/main.c:143
+#, c-format
+msgid "   --version          Print version info and exit\n"
+msgstr "   --version          Arată detaliile versiunii și ieși\n"
+
+#: ../src/main.c:144
+#, c-format
+msgid "   --play             Start playback\n"
+msgstr "   --play             Pornește redarea\n"
+
+#: ../src/main.c:145
+#, c-format
+msgid "   --stop             Stop playback\n"
+msgstr "   --stop             Oprește redarea\n"
+
+#: ../src/main.c:146
+#, c-format
+msgid "   --pause            Pause playback\n"
+msgstr "   --pause            Pune pauză redării\n"
+
+#: ../src/main.c:147
+#, c-format
+msgid "   --toggle-pause     Toggle pause\n"
+msgstr "   --toggle-pause     Comută starea de pauză\n"
+
+#: ../src/main.c:148
+#, c-format
+msgid ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+msgstr "   --play-pause       Pornește redarea dacă e cazul sau comută starea de pauză\n"
+
+#: ../src/main.c:149
+#, c-format
+msgid "   --next             Next song in playlist\n"
+msgstr "   --next             Piesa următoare în lista de redare\n"
+
+#: ../src/main.c:150
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr "   --prev             Piesa precedentă în lista de redare\n"
+
+#: ../src/main.c:151
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr "   --random           Piesă aleatoare din lista de redare\n"
+
+#: ../src/main.c:152
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr "   --queue            Adaugă fișiere la lista de redare existentă\n"
+
+#: ../src/main.c:153
+#, c-format
+msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
+msgstr ""
+
+#: ../src/main.c:154
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr "   --nowplaying FMT   Arată în ieșirea standard numele formatat al piesei\n"
+
+#: ../src/main.c:157
+#, c-format
+msgid ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
+msgstr "                      Sintaxă FMT prefixată cu %%: [a]rtist, [t]itlu, al[b]um,\n                      [l]ungime, [n]umăr piesă, [y] pentru an, [c]omentariu,\n                      d[r]epturi de autor, durată r[e]dată\n"
+
+#: ../src/main.c:160
+#, c-format
+msgid ""
+"                      example: --nowplaying \"%%a - %%t\" should print "
+"\"artist - title\"\n"
+msgstr "exemplu: --redareacum \"%%a - %%t\" ar trebui sa arate \"artist - titlu\"\n"
+
+#: ../src/main.c:163
+#, c-format
+msgid "                      for more info, see %s\n"
+msgstr "                      pentru mai multe detalii, consultați %s\n"
+
+#: ../src/main.c:165
+#, c-format
+msgid "                      NOTE: --nowplaying is deprecated.\n"
+msgstr "NOTA: --redareacum nu mai este folosit.\n"
+
+#: ../src/main.c:168
+#, c-format
+msgid ""
+"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
+"title formatting\n"
+msgstr "--redareacum-tf FMT Afiseaza numele piesei formatate catre stdout, folosind noua formatare de titlu\n"
+
+#: ../src/main.c:171
+#, c-format
+msgid ""
+"                      FMT syntax: http://github.com/DeaDBeeF-"
+"Player/deadbeef/wiki/Title-formatting-2.0\n"
+msgstr ""
+
+#: ../src/main.c:174
+#, c-format
+msgid ""
+"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
+"should print \"artist - title\"\n"
+msgstr "exemplu: --redareacum-tf \"%%artist%% - %%titlu%%\" ar trebui sa arate \"artist - titlu\"\n"
+
+#: ../src/main.c:175
+#, c-format
+msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
+msgstr ""
+
+#: ../src/main.c:178
+#, c-format
+msgid ""
+"                      The NUM parameter can be specified in percents "
+"(absolute value or increment/decrement)\n"
+msgstr ""
+
+#: ../src/main.c:179
+#, c-format
+msgid "                      or in dB [-50, 0] (if with suffix).\n"
+msgstr ""
+
+#: ../src/main.c:180
+#, c-format
+msgid ""
+"                      Examples: --volume 80, --volume +10, --volume -5 or "
+"--volume -20dB\n"
+msgstr ""
+
+#: ../src/main.c:183
+#, c-format
+msgid ""
+"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
+"send commands to deadbeef itself.\n"
+msgstr ""
+
+#: ../src/main.c:184
+#, c-format
+msgid ""
+"                      To get plugin specific commands use --plugin=[PLUG] "
+"--help\n"
+msgstr ""
+
+#: ../src/main.c:187
+#, c-format
+msgid ""
+"   --plugin-list      List all available plugins including indication for "
+"plugins that support commands.\n"
+msgstr ""
+
+#: ../src/playlist.c:527 ../src/playlist.c:2871
+msgid "Default"
+msgstr "Implicit"
+
+#: ../src/playlist.c:3544
+msgid "Stereo"
+msgstr "Stereo"
+
+#: ../src/playlist.c:4095
+msgid "Yes"
+msgstr "Da"
+
+#: ../src/playlist.c:4095
+msgid "No"
+msgstr "Nu"
 
 #: ../src/tf.c:2373
 msgid "mono"

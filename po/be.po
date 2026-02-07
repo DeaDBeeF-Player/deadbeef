@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-07 11:36+0100\n"
+"POT-Creation-Date: 2026-02-07 11:49+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Viačasłaŭ <viachaslavic@outlook.com>, 2024-2025\n"
 "Language-Team: Belarusian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/be/)\n"
@@ -32,198 +32,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: be\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
-
-#: ../src/main.c:139
-#, c-format
-msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Выкарыстаньне: deadbeef [опцыі] [--] [файл(ы)]\n"
-
-#: ../src/main.c:140
-#, c-format
-msgid "Options:\n"
-msgstr "Опцыі:\n"
-
-#: ../src/main.c:141
-#, c-format
-msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  або  -h    Надрукаваць даведку (гэтае паведамленьне) ды выйсьці\n"
-
-#: ../src/main.c:142
-#, c-format
-msgid "   --quit             Quit player\n"
-msgstr "   --quit             Выйсьці з плэера\n"
-
-#: ../src/main.c:143
-#, c-format
-msgid "   --version          Print version info and exit\n"
-msgstr "   --version          Надрукаваць інфармацыю пра вэрсію праграмы ды выйсьці\n"
-
-#: ../src/main.c:144
-#, c-format
-msgid "   --play             Start playback\n"
-msgstr "   --play             Пачаць прайграваньне\n"
-
-#: ../src/main.c:145
-#, c-format
-msgid "   --stop             Stop playback\n"
-msgstr "   --stop             Спыніць прайграваньне\n"
-
-#: ../src/main.c:146
-#, c-format
-msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Прыпыніць прайграваньне\n"
-
-#: ../src/main.c:147
-#, c-format
-msgid "   --toggle-pause     Toggle pause\n"
-msgstr "   --toggle-pause     Пераключыць паўзу\n"
-
-#: ../src/main.c:148
-#, c-format
-msgid ""
-"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Пачаць прайграваньне, калі спынена, інакш пераключыць паўзу\n"
-
-#: ../src/main.c:149
-#, c-format
-msgid "   --next             Next song in playlist\n"
-msgstr "   --next             Наступная песьня ў плэй-лісьце\n"
-
-#: ../src/main.c:150
-#, c-format
-msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             Папярэдняя песьня ў плэй-лісьце\n"
-
-#: ../src/main.c:151
-#, c-format
-msgid "   --random           Random song in playlist\n"
-msgstr "   --random           Выпадковая песьня ў плэй-лісьце\n"
-
-#: ../src/main.c:152
-#, c-format
-msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            Дадаць файл(ы) у існы плэй-ліст\n"
-
-#: ../src/main.c:153
-#, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
-msgstr ""
-
-#: ../src/main.c:154
-#, c-format
-msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying ФМТ   Надрукаваць адфарматаваную назву трэка ў stdout\n"
-
-#: ../src/main.c:157
-#, c-format
-msgid ""
-"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-"                      copy[r]ight, [e]lapsed\n"
-msgstr "                      %%-сынтаксіс ФМТ: [a]выканаўца, [t]назва, [b]альбом,\n                      [l]даўжыня, [n]нумар трэка, [y]год, [c]камэнтар,\n                      [r]аўтарскія правы, [e]прайшло часу\n"
-
-#: ../src/main.c:160
-#, c-format
-msgid ""
-"                      example: --nowplaying \"%%a - %%t\" should print "
-"\"artist - title\"\n"
-msgstr "                      напрыклад: --nowplaying «%%a - %%t» надрукуе «выканаўца - назва»\n"
-
-#: ../src/main.c:163
-#, c-format
-msgid "                      for more info, see %s\n"
-msgstr "                      для дадатковых зьвестак глядзіце %s\n"
-
-#: ../src/main.c:165
-#, c-format
-msgid "                      NOTE: --nowplaying is deprecated.\n"
-msgstr "                      НАТАТКА: --nowplaying састарэлы.\n"
-
-#: ../src/main.c:168
-#, c-format
-msgid ""
-"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
-"title formatting\n"
-msgstr "   --nowplaying-tf ФМТ  Надрукаваць у stdout адфарматаваную назву трэка, ужываючы новы фармат загалоўка\n"
-
-#: ../src/main.c:171
-#, c-format
-msgid ""
-"                      FMT syntax: http://github.com/DeaDBeeF-"
-"Player/deadbeef/wiki/Title-formatting-2.0\n"
-msgstr "                      Сінтаксіс ФМТ: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
-
-#: ../src/main.c:174
-#, c-format
-msgid ""
-"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
-"should print \"artist - title\"\n"
-msgstr "                      напрыклад: --nowplaying-tf «%%artist%% - %%title%%» надрукуе «выканаўца - назва»\n"
-
-#: ../src/main.c:175
-#, c-format
-msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
-msgstr "   --volume [ЛІК]     Вывесьці або задаць узровень гучнасьці deadbeef.\n"
-
-#: ../src/main.c:178
-#, c-format
-msgid ""
-"                      The NUM parameter can be specified in percents "
-"(absolute value or increment/decrement)\n"
-msgstr "                      Парамэтар ЛІК можа быць вызначаны ў адсотках (абсалютнае значэньне або павелічэньне ці памяншэньне)\n"
-
-#: ../src/main.c:179
-#, c-format
-msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr "                      або ў дБ [-50, 0] (калі з суфіксам).\n"
-
-#: ../src/main.c:180
-#, c-format
-msgid ""
-"                      Examples: --volume 80, --volume +10, --volume -5 or "
-"--volume -20dB\n"
-msgstr "                      Прыклады: --volume 80, --volume +10, --volume -5 або --volume -20dB\n"
-
-#: ../src/main.c:183
-#, c-format
-msgid ""
-"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
-"send commands to deadbeef itself.\n"
-msgstr "   --plugin=[PLUG]    Адправіць каманды да пэўнай убудовы. Ужывайце PLUG=main для адпраўкі каманд непасрэдна deadbeef.\n"
-
-#: ../src/main.c:184
-#, c-format
-msgid ""
-"                      To get plugin specific commands use --plugin=[PLUG] "
-"--help\n"
-msgstr "                      Каб даведацца пра каманды пэўнай убудовы, ужывайце --plugin=[PLUG] --help\n"
-
-#: ../src/main.c:187
-#, c-format
-msgid ""
-"   --plugin-list      List all available plugins including indication for "
-"plugins that support commands.\n"
-msgstr "   --plugin-list      Вывесьці сьпіс усіх убудоў зь індыкацыяй тых, якія падтрымліваюць каманды.\n"
-
-#: ../src/playlist.c:527 ../src/playlist.c:2871
-msgid "Default"
-msgstr "Прадвызначана"
-
-#: ../src/playlist.c:3544 ../plugins/gtkui/widgets.c:2759
-msgid "Mono"
-msgstr "Мона"
-
-#: ../src/playlist.c:3544
-msgid "Stereo"
-msgstr "Стэрэа"
-
-#: ../src/playlist.c:4095
-msgid "Yes"
-msgstr "Так"
-
-#: ../src/playlist.c:4095
-msgid "No"
-msgstr "Не"
 
 #: ../plugins/converter/converter.glade.h:1
 #: ../plugins/converter/interface.c:103
@@ -614,6 +422,7 @@ msgid "Source File"
 msgstr "Зыходны файл"
 
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
+#: ../plugins/lyrics/support.c:90 ../plugins/lyrics/support.c:114
 #: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
@@ -2357,6 +2166,46 @@ msgstr "Файл не існуе"
 msgid "Invalid file"
 msgstr "Няправільны файл"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
+#, c-format
+msgid "%s (Copy)"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
+msgid "Can't do that"
+msgstr ""
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
+msgid "Preset with this name already exists."
+msgstr "Набор наладаў з такой назвай ужо існуе."
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
+msgid "Try a different name."
+msgstr "Паспрабуйце іншую назву."
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
+msgid "This name is not allowed."
+msgstr "Гэта назва недапушчальная."
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:104
+msgid "Reset"
+msgstr "Скінуць "
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:109
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "Закрыць"
+
 #: ../plugins/gtkui/search.c:469
 msgid "Search [(%list_total% results)]"
 msgstr "Пошук [(%list_total% вынікаў)]"
@@ -2423,6 +2272,26 @@ msgstr "Немагчыма дадаць поле"
 #: ../plugins/gtkui/trkproperties.c:1288
 msgid "Field with such name already exists, please try different name."
 msgstr "Поле з такой назвай ужо існуе, паспрабуйце назваць інакш."
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr "Адрабіць %s"
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
+#, no-c-format
+msgid "Undo"
+msgstr "Адрабіць"
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr "Узнавіць %s"
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
+#, no-c-format
+msgid "Redo"
+msgstr "Узнавіць"
 
 #: ../plugins/gtkui/widgets.c:459
 #, c-format
@@ -2500,6 +2369,10 @@ msgstr "Рэжым адмалёўкі"
 #: ../plugins/gtkui/widgets.c:2756
 msgid "Multichannel"
 msgstr "Шматканальны"
+
+#: ../plugins/gtkui/widgets.c:2759 ../src/playlist.c:3544
+msgid "Mono"
+msgstr "Мона"
 
 #: ../plugins/gtkui/widgets.c:2765
 msgid "Scale"
@@ -2644,63 +2517,13 @@ msgstr "Кубічная шкала"
 msgid "Voices:"
 msgstr "Галасы:"
 
-#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
-#, c-format
-msgid "Edit %s"
+#: ../plugins/lyrics/lyrics.c:57
+msgid "Lyrics Not Available"
 msgstr ""
 
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
-#, c-format
-msgid "%s (Copy)"
+#: ../plugins/lyrics/lyrics.c:212
+msgid "Lyrics"
 msgstr ""
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
-msgid "Can't do that"
-msgstr ""
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
-msgid "Preset with this name already exists."
-msgstr "Набор наладаў з такой назвай ужо існуе."
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
-msgid "Try a different name."
-msgstr "Паспрабуйце іншую назву."
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
-msgid "This name is not allowed."
-msgstr "Гэта назва недапушчальная."
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
-msgid "Reset"
-msgstr "Скінуць "
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "Закрыць"
-
-#: ../plugins/gtkui/undointegration.c:70
-#, c-format
-msgid "Undo %s"
-msgstr "Адрабіць %s"
-
-#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
-#, no-c-format
-msgid "Undo"
-msgstr "Адрабіць"
-
-#: ../plugins/gtkui/undointegration.c:77
-#, c-format
-msgid "Redo %s"
-msgstr "Узнавіць %s"
-
-#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
-#, no-c-format
-msgid "Redo"
-msgstr "Узнавіць"
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
@@ -2866,6 +2689,204 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings.\n"
 msgstr "wildmidi: файл канфігурацыі freeparts ня знойдзены. Усталюйце пакунак timidity-freepats або вызначце шлях да файла freepats.cfg у наладах убудовы.\n"
+
+#: ../src/actionhandlers.c:823
+#, c-format
+msgid "Copy of %s"
+msgstr ""
+
+#: ../src/actionhandlers.c:826
+#, c-format
+msgid "Copy of %s (%d)"
+msgstr ""
+
+#: ../src/main.c:139
+#, c-format
+msgid "Usage: deadbeef [options] [--] [file(s)]\n"
+msgstr "Выкарыстаньне: deadbeef [опцыі] [--] [файл(ы)]\n"
+
+#: ../src/main.c:140
+#, c-format
+msgid "Options:\n"
+msgstr "Опцыі:\n"
+
+#: ../src/main.c:141
+#, c-format
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr "   --help  або  -h    Надрукаваць даведку (гэтае паведамленьне) ды выйсьці\n"
+
+#: ../src/main.c:142
+#, c-format
+msgid "   --quit             Quit player\n"
+msgstr "   --quit             Выйсьці з плэера\n"
+
+#: ../src/main.c:143
+#, c-format
+msgid "   --version          Print version info and exit\n"
+msgstr "   --version          Надрукаваць інфармацыю пра вэрсію праграмы ды выйсьці\n"
+
+#: ../src/main.c:144
+#, c-format
+msgid "   --play             Start playback\n"
+msgstr "   --play             Пачаць прайграваньне\n"
+
+#: ../src/main.c:145
+#, c-format
+msgid "   --stop             Stop playback\n"
+msgstr "   --stop             Спыніць прайграваньне\n"
+
+#: ../src/main.c:146
+#, c-format
+msgid "   --pause            Pause playback\n"
+msgstr "   --pause            Прыпыніць прайграваньне\n"
+
+#: ../src/main.c:147
+#, c-format
+msgid "   --toggle-pause     Toggle pause\n"
+msgstr "   --toggle-pause     Пераключыць паўзу\n"
+
+#: ../src/main.c:148
+#, c-format
+msgid ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+msgstr "   --play-pause       Пачаць прайграваньне, калі спынена, інакш пераключыць паўзу\n"
+
+#: ../src/main.c:149
+#, c-format
+msgid "   --next             Next song in playlist\n"
+msgstr "   --next             Наступная песьня ў плэй-лісьце\n"
+
+#: ../src/main.c:150
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr "   --prev             Папярэдняя песьня ў плэй-лісьце\n"
+
+#: ../src/main.c:151
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr "   --random           Выпадковая песьня ў плэй-лісьце\n"
+
+#: ../src/main.c:152
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr "   --queue            Дадаць файл(ы) у існы плэй-ліст\n"
+
+#: ../src/main.c:153
+#, c-format
+msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
+msgstr ""
+
+#: ../src/main.c:154
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr "   --nowplaying ФМТ   Надрукаваць адфарматаваную назву трэка ў stdout\n"
+
+#: ../src/main.c:157
+#, c-format
+msgid ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
+msgstr "                      %%-сынтаксіс ФМТ: [a]выканаўца, [t]назва, [b]альбом,\n                      [l]даўжыня, [n]нумар трэка, [y]год, [c]камэнтар,\n                      [r]аўтарскія правы, [e]прайшло часу\n"
+
+#: ../src/main.c:160
+#, c-format
+msgid ""
+"                      example: --nowplaying \"%%a - %%t\" should print "
+"\"artist - title\"\n"
+msgstr "                      напрыклад: --nowplaying «%%a - %%t» надрукуе «выканаўца - назва»\n"
+
+#: ../src/main.c:163
+#, c-format
+msgid "                      for more info, see %s\n"
+msgstr "                      для дадатковых зьвестак глядзіце %s\n"
+
+#: ../src/main.c:165
+#, c-format
+msgid "                      NOTE: --nowplaying is deprecated.\n"
+msgstr "                      НАТАТКА: --nowplaying састарэлы.\n"
+
+#: ../src/main.c:168
+#, c-format
+msgid ""
+"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
+"title formatting\n"
+msgstr "   --nowplaying-tf ФМТ  Надрукаваць у stdout адфарматаваную назву трэка, ужываючы новы фармат загалоўка\n"
+
+#: ../src/main.c:171
+#, c-format
+msgid ""
+"                      FMT syntax: http://github.com/DeaDBeeF-"
+"Player/deadbeef/wiki/Title-formatting-2.0\n"
+msgstr "                      Сінтаксіс ФМТ: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
+
+#: ../src/main.c:174
+#, c-format
+msgid ""
+"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
+"should print \"artist - title\"\n"
+msgstr "                      напрыклад: --nowplaying-tf «%%artist%% - %%title%%» надрукуе «выканаўца - назва»\n"
+
+#: ../src/main.c:175
+#, c-format
+msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
+msgstr "   --volume [ЛІК]     Вывесьці або задаць узровень гучнасьці deadbeef.\n"
+
+#: ../src/main.c:178
+#, c-format
+msgid ""
+"                      The NUM parameter can be specified in percents "
+"(absolute value or increment/decrement)\n"
+msgstr "                      Парамэтар ЛІК можа быць вызначаны ў адсотках (абсалютнае значэньне або павелічэньне ці памяншэньне)\n"
+
+#: ../src/main.c:179
+#, c-format
+msgid "                      or in dB [-50, 0] (if with suffix).\n"
+msgstr "                      або ў дБ [-50, 0] (калі з суфіксам).\n"
+
+#: ../src/main.c:180
+#, c-format
+msgid ""
+"                      Examples: --volume 80, --volume +10, --volume -5 or "
+"--volume -20dB\n"
+msgstr "                      Прыклады: --volume 80, --volume +10, --volume -5 або --volume -20dB\n"
+
+#: ../src/main.c:183
+#, c-format
+msgid ""
+"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
+"send commands to deadbeef itself.\n"
+msgstr "   --plugin=[PLUG]    Адправіць каманды да пэўнай убудовы. Ужывайце PLUG=main для адпраўкі каманд непасрэдна deadbeef.\n"
+
+#: ../src/main.c:184
+#, c-format
+msgid ""
+"                      To get plugin specific commands use --plugin=[PLUG] "
+"--help\n"
+msgstr "                      Каб даведацца пра каманды пэўнай убудовы, ужывайце --plugin=[PLUG] --help\n"
+
+#: ../src/main.c:187
+#, c-format
+msgid ""
+"   --plugin-list      List all available plugins including indication for "
+"plugins that support commands.\n"
+msgstr "   --plugin-list      Вывесьці сьпіс усіх убудоў зь індыкацыяй тых, якія падтрымліваюць каманды.\n"
+
+#: ../src/playlist.c:527 ../src/playlist.c:2871
+msgid "Default"
+msgstr "Прадвызначана"
+
+#: ../src/playlist.c:3544
+msgid "Stereo"
+msgstr "Стэрэа"
+
+#: ../src/playlist.c:4095
+msgid "Yes"
+msgstr "Так"
+
+#: ../src/playlist.c:4095
+msgid "No"
+msgstr "Не"
 
 #: ../src/tf.c:2373
 msgid "mono"

@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-07 11:36+0100\n"
+"POT-Creation-Date: 2026-02-07 11:49+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: pingplug <pingplug@foxmail.com>, 2016-2018,2021,2025\n"
 "Language-Team: Chinese (China) (http://app.transifex.com/deadbeef-player/deadbeef-player/language/zh_CN/)\n"
@@ -26,198 +26,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-#: ../src/main.c:139
-#, c-format
-msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "用法：deadbeef [选项] [--] [文件]\n"
-
-#: ../src/main.c:140
-#, c-format
-msgid "Options:\n"
-msgstr "选项：\n"
-
-#: ../src/main.c:141
-#, c-format
-msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  或  -h     打印帮助(这条消息)并退出\n"
-
-#: ../src/main.c:142
-#, c-format
-msgid "   --quit             Quit player\n"
-msgstr "   --quit             退出播放器\n"
-
-#: ../src/main.c:143
-#, c-format
-msgid "   --version          Print version info and exit\n"
-msgstr "   --version          打印版本信息并退出\n"
-
-#: ../src/main.c:144
-#, c-format
-msgid "   --play             Start playback\n"
-msgstr "   --play             开始播放\n"
-
-#: ../src/main.c:145
-#, c-format
-msgid "   --stop             Stop playback\n"
-msgstr "   --stop             停止播放\n"
-
-#: ../src/main.c:146
-#, c-format
-msgid "   --pause            Pause playback\n"
-msgstr "   --pause            暂停播放\n"
-
-#: ../src/main.c:147
-#, c-format
-msgid "   --toggle-pause     Toggle pause\n"
-msgstr "   --toggle-pause     切换暂停状态\n"
-
-#: ../src/main.c:148
-#, c-format
-msgid ""
-"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       若停止则开始播放，否则切换暂停状态\n"
-
-#: ../src/main.c:149
-#, c-format
-msgid "   --next             Next song in playlist\n"
-msgstr "   --next             播放列表中的下一首歌曲\n"
-
-#: ../src/main.c:150
-#, c-format
-msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             播放列表中的上一首歌曲\n"
-
-#: ../src/main.c:151
-#, c-format
-msgid "   --random           Random song in playlist\n"
-msgstr "   --random           播放列表中的任一首歌曲\n"
-
-#: ../src/main.c:152
-#, c-format
-msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            向现有的播放列表中追加文件\n"
-
-#: ../src/main.c:153
-#, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
-msgstr ""
-
-#: ../src/main.c:154
-#, c-format
-msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   向标准输出打印格式化的音轨名称\n"
-
-#: ../src/main.c:157
-#, c-format
-msgid ""
-"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-"                      copy[r]ight, [e]lapsed\n"
-msgstr "                      FMT %%-语法: [a]艺人, [t]标题, [b]专辑,\n                      [l]时长, [n]音轨号, [y]年代, [c]注释,\n                      [r]版权, [e]已播放时间\n"
-
-#: ../src/main.c:160
-#, c-format
-msgid ""
-"                      example: --nowplaying \"%%a - %%t\" should print "
-"\"artist - title\"\n"
-msgstr "示例： -- 正在播放 \"%%a - %%t\" 将显示为 \"artist - title\"\n"
-
-#: ../src/main.c:163
-#, c-format
-msgid "                      for more info, see %s\n"
-msgstr "                     更多信息，请参阅 %s\n"
-
-#: ../src/main.c:165
-#, c-format
-msgid "                      NOTE: --nowplaying is deprecated.\n"
-msgstr "注意： -- 正在播放已弃用。\n"
-
-#: ../src/main.c:168
-#, c-format
-msgid ""
-"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
-"title formatting\n"
-msgstr "-- 正在播放 使用 FMT 格式标准输出音轨名称\n"
-
-#: ../src/main.c:171
-#, c-format
-msgid ""
-"                      FMT syntax: http://github.com/DeaDBeeF-"
-"Player/deadbeef/wiki/Title-formatting-2.0\n"
-msgstr " FMT 语法:http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
-
-#: ../src/main.c:174
-#, c-format
-msgid ""
-"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
-"should print \"artist - title\"\n"
-msgstr "示例： -- 正在播放 \"%%artist%% - %%title%%\" 将显示为 “艺人 - 标题”\n"
-
-#: ../src/main.c:175
-#, c-format
-msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
-msgstr "--volume [NUM] 打印或者设置 deadbeef 音量\n"
-
-#: ../src/main.c:178
-#, c-format
-msgid ""
-"                      The NUM parameter can be specified in percents "
-"(absolute value or increment/decrement)\n"
-msgstr "                      该NUM参数可以用百分比来指定(绝对值或增量/减量)\n"
-
-#: ../src/main.c:179
-#, c-format
-msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr "                     或者使用 dB [-50, 0] (如果使用后缀)。\n"
-
-#: ../src/main.c:180
-#, c-format
-msgid ""
-"                      Examples: --volume 80, --volume +10, --volume -5 or "
-"--volume -20dB\n"
-msgstr "                      例如：--volume 80， --volume +10， --volume -5 或 --volume -20dB\n"
-
-#: ../src/main.c:183
-#, c-format
-msgid ""
-"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
-"send commands to deadbeef itself.\n"
-msgstr "   --plugin=[PLUG]    向指定插件发送指令。使用 PLUG=main 向deadbeef主程序发送指令。\n"
-
-#: ../src/main.c:184
-#, c-format
-msgid ""
-"                      To get plugin specific commands use --plugin=[PLUG] "
-"--help\n"
-msgstr "                      使用 --plugin=[PLUG] --help 以获得插件专用的指令\n"
-
-#: ../src/main.c:187
-#, c-format
-msgid ""
-"   --plugin-list      List all available plugins including indication for "
-"plugins that support commands.\n"
-msgstr "   --plugin-list      列出全部可用插件并指示支持指令的插件。\n"
-
-#: ../src/playlist.c:527 ../src/playlist.c:2871
-msgid "Default"
-msgstr "默认"
-
-#: ../src/playlist.c:3544 ../plugins/gtkui/widgets.c:2759
-msgid "Mono"
-msgstr "单声道"
-
-#: ../src/playlist.c:3544
-msgid "Stereo"
-msgstr "立体声"
-
-#: ../src/playlist.c:4095
-msgid "Yes"
-msgstr "是"
-
-#: ../src/playlist.c:4095
-msgid "No"
-msgstr "否"
 
 #: ../plugins/converter/converter.glade.h:1
 #: ../plugins/converter/interface.c:103
@@ -608,6 +416,7 @@ msgid "Source File"
 msgstr "源文件"
 
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
+#: ../plugins/lyrics/support.c:90 ../plugins/lyrics/support.c:114
 #: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
@@ -2351,6 +2160,46 @@ msgstr "文件不存在"
 msgid "Invalid file"
 msgstr "无效文件"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr "编辑 %s"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
+#, c-format
+msgid "%s (Copy)"
+msgstr "%s (复制)"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
+msgid "Can't do that"
+msgstr "无法这么做"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
+msgid "Preset with this name already exists."
+msgstr "同名预设已存在。"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
+msgid "Try a different name."
+msgstr "请尝试换一个名称。"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
+msgid "This name is not allowed."
+msgstr "不允许使用该名称。"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:104
+msgid "Reset"
+msgstr "重置"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:109
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "关闭"
+
 #: ../plugins/gtkui/search.c:469
 msgid "Search [(%list_total% results)]"
 msgstr "搜索 [(%list_total% 结果)]"
@@ -2417,6 +2266,26 @@ msgstr "无法添加字段"
 #: ../plugins/gtkui/trkproperties.c:1288
 msgid "Field with such name already exists, please try different name."
 msgstr "同名的字段已经存在，请尝试其他名称。"
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr "撤销 %s"
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
+#, no-c-format
+msgid "Undo"
+msgstr "撤销"
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr "重做 %s"
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
+#, no-c-format
+msgid "Redo"
+msgstr "重做"
 
 #: ../plugins/gtkui/widgets.c:459
 #, c-format
@@ -2494,6 +2363,10 @@ msgstr "渲染模式"
 #: ../plugins/gtkui/widgets.c:2756
 msgid "Multichannel"
 msgstr "多通道"
+
+#: ../plugins/gtkui/widgets.c:2759 ../src/playlist.c:3544
+msgid "Mono"
+msgstr "单声道"
 
 #: ../plugins/gtkui/widgets.c:2765
 msgid "Scale"
@@ -2638,63 +2511,13 @@ msgstr "三次曲线"
 msgid "Voices:"
 msgstr "语音："
 
-#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
-#, c-format
-msgid "Edit %s"
-msgstr "编辑 %s"
+#: ../plugins/lyrics/lyrics.c:57
+msgid "Lyrics Not Available"
+msgstr ""
 
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
-#, c-format
-msgid "%s (Copy)"
-msgstr "%s (复制)"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
-msgid "Can't do that"
-msgstr "无法这么做"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
-msgid "Preset with this name already exists."
-msgstr "同名预设已存在。"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
-msgid "Try a different name."
-msgstr "请尝试换一个名称。"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
-msgid "This name is not allowed."
-msgstr "不允许使用该名称。"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
-msgid "Reset"
-msgstr "重置"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "关闭"
-
-#: ../plugins/gtkui/undointegration.c:70
-#, c-format
-msgid "Undo %s"
-msgstr "撤销 %s"
-
-#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
-#, no-c-format
-msgid "Undo"
-msgstr "撤销"
-
-#: ../plugins/gtkui/undointegration.c:77
-#, c-format
-msgid "Redo %s"
-msgstr "重做 %s"
-
-#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
-#, no-c-format
-msgid "Redo"
-msgstr "重做"
+#: ../plugins/lyrics/lyrics.c:212
+msgid "Lyrics"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
@@ -2860,6 +2683,204 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings.\n"
 msgstr "wildmidi： 找不到 freepats 配置文件。请安装 timidity-freepats 软件包，或在插件设置中指定 freepats.cfg 的路径。\n"
+
+#: ../src/actionhandlers.c:823
+#, c-format
+msgid "Copy of %s"
+msgstr ""
+
+#: ../src/actionhandlers.c:826
+#, c-format
+msgid "Copy of %s (%d)"
+msgstr ""
+
+#: ../src/main.c:139
+#, c-format
+msgid "Usage: deadbeef [options] [--] [file(s)]\n"
+msgstr "用法：deadbeef [选项] [--] [文件]\n"
+
+#: ../src/main.c:140
+#, c-format
+msgid "Options:\n"
+msgstr "选项：\n"
+
+#: ../src/main.c:141
+#, c-format
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr "   --help  或  -h     打印帮助(这条消息)并退出\n"
+
+#: ../src/main.c:142
+#, c-format
+msgid "   --quit             Quit player\n"
+msgstr "   --quit             退出播放器\n"
+
+#: ../src/main.c:143
+#, c-format
+msgid "   --version          Print version info and exit\n"
+msgstr "   --version          打印版本信息并退出\n"
+
+#: ../src/main.c:144
+#, c-format
+msgid "   --play             Start playback\n"
+msgstr "   --play             开始播放\n"
+
+#: ../src/main.c:145
+#, c-format
+msgid "   --stop             Stop playback\n"
+msgstr "   --stop             停止播放\n"
+
+#: ../src/main.c:146
+#, c-format
+msgid "   --pause            Pause playback\n"
+msgstr "   --pause            暂停播放\n"
+
+#: ../src/main.c:147
+#, c-format
+msgid "   --toggle-pause     Toggle pause\n"
+msgstr "   --toggle-pause     切换暂停状态\n"
+
+#: ../src/main.c:148
+#, c-format
+msgid ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+msgstr "   --play-pause       若停止则开始播放，否则切换暂停状态\n"
+
+#: ../src/main.c:149
+#, c-format
+msgid "   --next             Next song in playlist\n"
+msgstr "   --next             播放列表中的下一首歌曲\n"
+
+#: ../src/main.c:150
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr "   --prev             播放列表中的上一首歌曲\n"
+
+#: ../src/main.c:151
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr "   --random           播放列表中的任一首歌曲\n"
+
+#: ../src/main.c:152
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr "   --queue            向现有的播放列表中追加文件\n"
+
+#: ../src/main.c:153
+#, c-format
+msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
+msgstr ""
+
+#: ../src/main.c:154
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr "   --nowplaying FMT   向标准输出打印格式化的音轨名称\n"
+
+#: ../src/main.c:157
+#, c-format
+msgid ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
+msgstr "                      FMT %%-语法: [a]艺人, [t]标题, [b]专辑,\n                      [l]时长, [n]音轨号, [y]年代, [c]注释,\n                      [r]版权, [e]已播放时间\n"
+
+#: ../src/main.c:160
+#, c-format
+msgid ""
+"                      example: --nowplaying \"%%a - %%t\" should print "
+"\"artist - title\"\n"
+msgstr "示例： -- 正在播放 \"%%a - %%t\" 将显示为 \"artist - title\"\n"
+
+#: ../src/main.c:163
+#, c-format
+msgid "                      for more info, see %s\n"
+msgstr "                     更多信息，请参阅 %s\n"
+
+#: ../src/main.c:165
+#, c-format
+msgid "                      NOTE: --nowplaying is deprecated.\n"
+msgstr "注意： -- 正在播放已弃用。\n"
+
+#: ../src/main.c:168
+#, c-format
+msgid ""
+"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
+"title formatting\n"
+msgstr "-- 正在播放 使用 FMT 格式标准输出音轨名称\n"
+
+#: ../src/main.c:171
+#, c-format
+msgid ""
+"                      FMT syntax: http://github.com/DeaDBeeF-"
+"Player/deadbeef/wiki/Title-formatting-2.0\n"
+msgstr " FMT 语法:http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
+
+#: ../src/main.c:174
+#, c-format
+msgid ""
+"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
+"should print \"artist - title\"\n"
+msgstr "示例： -- 正在播放 \"%%artist%% - %%title%%\" 将显示为 “艺人 - 标题”\n"
+
+#: ../src/main.c:175
+#, c-format
+msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
+msgstr "--volume [NUM] 打印或者设置 deadbeef 音量\n"
+
+#: ../src/main.c:178
+#, c-format
+msgid ""
+"                      The NUM parameter can be specified in percents "
+"(absolute value or increment/decrement)\n"
+msgstr "                      该NUM参数可以用百分比来指定(绝对值或增量/减量)\n"
+
+#: ../src/main.c:179
+#, c-format
+msgid "                      or in dB [-50, 0] (if with suffix).\n"
+msgstr "                     或者使用 dB [-50, 0] (如果使用后缀)。\n"
+
+#: ../src/main.c:180
+#, c-format
+msgid ""
+"                      Examples: --volume 80, --volume +10, --volume -5 or "
+"--volume -20dB\n"
+msgstr "                      例如：--volume 80， --volume +10， --volume -5 或 --volume -20dB\n"
+
+#: ../src/main.c:183
+#, c-format
+msgid ""
+"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
+"send commands to deadbeef itself.\n"
+msgstr "   --plugin=[PLUG]    向指定插件发送指令。使用 PLUG=main 向deadbeef主程序发送指令。\n"
+
+#: ../src/main.c:184
+#, c-format
+msgid ""
+"                      To get plugin specific commands use --plugin=[PLUG] "
+"--help\n"
+msgstr "                      使用 --plugin=[PLUG] --help 以获得插件专用的指令\n"
+
+#: ../src/main.c:187
+#, c-format
+msgid ""
+"   --plugin-list      List all available plugins including indication for "
+"plugins that support commands.\n"
+msgstr "   --plugin-list      列出全部可用插件并指示支持指令的插件。\n"
+
+#: ../src/playlist.c:527 ../src/playlist.c:2871
+msgid "Default"
+msgstr "默认"
+
+#: ../src/playlist.c:3544
+msgid "Stereo"
+msgstr "立体声"
+
+#: ../src/playlist.c:4095
+msgid "Yes"
+msgstr "是"
+
+#: ../src/playlist.c:4095
+msgid "No"
+msgstr "否"
 
 #: ../src/tf.c:2373
 msgid "mono"

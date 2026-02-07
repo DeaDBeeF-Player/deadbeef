@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-07 11:36+0100\n"
+"POT-Creation-Date: 2026-02-07 11:49+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: heskjestad, 2023-2025\n"
 "Language-Team: Norwegian Bokmål (http://app.transifex.com/deadbeef-player/deadbeef-player/language/nb/)\n"
@@ -20,198 +20,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: nb\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: ../src/main.c:139
-#, c-format
-msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "Bruk: deadbeef [innstillinger] [-] [fil(er)]\n"
-
-#: ../src/main.c:140
-#, c-format
-msgid "Options:\n"
-msgstr "Innstillinger:\n"
-
-#: ../src/main.c:141
-#, c-format
-msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  eller  -h     Skriv hjelpetekst (denne teksten) og avslutt\n"
-
-#: ../src/main.c:142
-#, c-format
-msgid "   --quit             Quit player\n"
-msgstr "   --quit             Avslutt spilleren\n"
-
-#: ../src/main.c:143
-#, c-format
-msgid "   --version          Print version info and exit\n"
-msgstr "   --version          Skriv versjonsinformasjon og avslutt\n"
-
-#: ../src/main.c:144
-#, c-format
-msgid "   --play             Start playback\n"
-msgstr "   --play             Start avspilling\n"
-
-#: ../src/main.c:145
-#, c-format
-msgid "   --stop             Stop playback\n"
-msgstr "   --stop             Stopp avspilling\n"
-
-#: ../src/main.c:146
-#, c-format
-msgid "   --pause            Pause playback\n"
-msgstr "   --pause            Pause avspilling\n"
-
-#: ../src/main.c:147
-#, c-format
-msgid "   --toggle-pause     Toggle pause\n"
-msgstr "   --toggle-pause     Slå av/på pause\n"
-
-#: ../src/main.c:148
-#, c-format
-msgid ""
-"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       Start avspilling hvis stoppet, slå av/på pause ellers\n"
-
-#: ../src/main.c:149
-#, c-format
-msgid "   --next             Next song in playlist\n"
-msgstr "   --next             Neste låt i spillelista\n"
-
-#: ../src/main.c:150
-#, c-format
-msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             Forrige låt i spillelista\n"
-
-#: ../src/main.c:151
-#, c-format
-msgid "   --random           Random song in playlist\n"
-msgstr "   --random           Tilfeldig låt i spillelista\n"
-
-#: ../src/main.c:152
-#, c-format
-msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            Legg til fil(er) i eksisterende spilleliste\n"
-
-#: ../src/main.c:153
-#, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
-msgstr ""
-
-#: ../src/main.c:154
-#, c-format
-msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   Skriv formatert spornavn til stdout\n"
-
-#: ../src/main.c:157
-#, c-format
-msgid ""
-"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-"                      copy[r]ight, [e]lapsed\n"
-msgstr "                      FMT %%-syntaks: [a]rtist, [t]itle, al[b]um,\n                      [l]ength, track[n]umber, [y]ear, [c]omment,\n                      copy[r]ight, [e]lapsed\n"
-
-#: ../src/main.c:160
-#, c-format
-msgid ""
-"                      example: --nowplaying \"%%a - %%t\" should print "
-"\"artist - title\"\n"
-msgstr "                      eksempel: --nowplaying \"%%a - %%t\" vil skrive \"artist - tittel\"\n"
-
-#: ../src/main.c:163
-#, c-format
-msgid "                      for more info, see %s\n"
-msgstr "                      for mer info, se %s\n"
-
-#: ../src/main.c:165
-#, c-format
-msgid "                      NOTE: --nowplaying is deprecated.\n"
-msgstr "                      NB: --nowplaying er foreldet.\n"
-
-#: ../src/main.c:168
-#, c-format
-msgid ""
-"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
-"title formatting\n"
-msgstr "   --nowplaying-tf FMT  Skriv formatert spornavn to stdout, med den nye typen tittelformatering\n"
-
-#: ../src/main.c:171
-#, c-format
-msgid ""
-"                      FMT syntax: http://github.com/DeaDBeeF-"
-"Player/deadbeef/wiki/Title-formatting-2.0\n"
-msgstr "                      FMT-syntaks: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
-
-#: ../src/main.c:174
-#, c-format
-msgid ""
-"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
-"should print \"artist - title\"\n"
-msgstr "                      eksempel: --nowplaying-tf \"%%artist%% - %%title%%\" vil skrive \"artist - tittel\"\n"
-
-#: ../src/main.c:175
-#, c-format
-msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
-msgstr "   --volume [NUM]     Skriv eller velg deadbeefs volumnivå.\n"
-
-#: ../src/main.c:178
-#, c-format
-msgid ""
-"                      The NUM parameter can be specified in percents "
-"(absolute value or increment/decrement)\n"
-msgstr "                      NUM-parameteren kan angis i prosent (absoluttverdi eller økning/reduksjon)\n"
-
-#: ../src/main.c:179
-#, c-format
-msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr "                      eller i dB [-50, 0] (bruk i så fall suffiks).\n"
-
-#: ../src/main.c:180
-#, c-format
-msgid ""
-"                      Examples: --volume 80, --volume +10, --volume -5 or "
-"--volume -20dB\n"
-msgstr "                      Eksempler: --volume 80, --volume +10, --volume -5 eller --volume -20dB\n"
-
-#: ../src/main.c:183
-#, c-format
-msgid ""
-"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
-"send commands to deadbeef itself.\n"
-msgstr "   --plugin=[PLUG]    Send kommando til valgt tillegg. Velg PLUG=main for å sende kommandoer til selve deadbeef.\n"
-
-#: ../src/main.c:184
-#, c-format
-msgid ""
-"                      To get plugin specific commands use --plugin=[PLUG] "
-"--help\n"
-msgstr "                      Bruk --plugin=[PLUG] --help for å liste ut kommandoer som er spesifikke for tillegget\n"
-
-#: ../src/main.c:187
-#, c-format
-msgid ""
-"   --plugin-list      List all available plugins including indication for "
-"plugins that support commands.\n"
-msgstr "   --plugin-list      Lister ut alle tilgjengelige tillegg og om de støtter kommandoer.\n"
-
-#: ../src/playlist.c:527 ../src/playlist.c:2871
-msgid "Default"
-msgstr "Standard"
-
-#: ../src/playlist.c:3544 ../plugins/gtkui/widgets.c:2759
-msgid "Mono"
-msgstr "Mono"
-
-#: ../src/playlist.c:3544
-msgid "Stereo"
-msgstr "Stereo"
-
-#: ../src/playlist.c:4095
-msgid "Yes"
-msgstr "Ja"
-
-#: ../src/playlist.c:4095
-msgid "No"
-msgstr "Nei"
 
 #: ../plugins/converter/converter.glade.h:1
 #: ../plugins/converter/interface.c:103
@@ -602,6 +410,7 @@ msgid "Source File"
 msgstr "Kildefil"
 
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
+#: ../plugins/lyrics/support.c:90 ../plugins/lyrics/support.c:114
 #: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
@@ -2345,6 +2154,46 @@ msgstr "Fant ikke fila"
 msgid "Invalid file"
 msgstr "Ugyldig fil"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr "Rediger %s"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
+#, c-format
+msgid "%s (Copy)"
+msgstr "%s (Kopier)"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
+msgid "Can't do that"
+msgstr "Ikke mulig"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
+msgid "Preset with this name already exists."
+msgstr "Fant et oppsett med samme navn."
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
+msgid "Try a different name."
+msgstr "Forsøk et annet navn."
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
+msgid "This name is not allowed."
+msgstr "Dette navnet kan ikke brukes."
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:104
+msgid "Reset"
+msgstr "Tilbakestill"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:109
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "Lukk"
+
 #: ../plugins/gtkui/search.c:469
 msgid "Search [(%list_total% results)]"
 msgstr "Søk [(%list_total% resultater)]"
@@ -2411,6 +2260,26 @@ msgstr "Klarte ikke å legge til felt"
 #: ../plugins/gtkui/trkproperties.c:1288
 msgid "Field with such name already exists, please try different name."
 msgstr "Det finnes allerede et felt som heter dette, forsøk et annet navn."
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr "Angre %s"
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
+#, no-c-format
+msgid "Undo"
+msgstr "Angre"
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr "Gjør om %s"
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
+#, no-c-format
+msgid "Redo"
+msgstr "Gjør om"
 
 #: ../plugins/gtkui/widgets.c:459
 #, c-format
@@ -2488,6 +2357,10 @@ msgstr "Opptegningsmetode"
 #: ../plugins/gtkui/widgets.c:2756
 msgid "Multichannel"
 msgstr "Flere kanaler"
+
+#: ../plugins/gtkui/widgets.c:2759 ../src/playlist.c:3544
+msgid "Mono"
+msgstr "Mono"
 
 #: ../plugins/gtkui/widgets.c:2765
 msgid "Scale"
@@ -2632,63 +2505,13 @@ msgstr "_Kubisk skala"
 msgid "Voices:"
 msgstr "Stemmer: "
 
-#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
-#, c-format
-msgid "Edit %s"
-msgstr "Rediger %s"
+#: ../plugins/lyrics/lyrics.c:57
+msgid "Lyrics Not Available"
+msgstr ""
 
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
-#, c-format
-msgid "%s (Copy)"
-msgstr "%s (Kopier)"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
-msgid "Can't do that"
-msgstr "Ikke mulig"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
-msgid "Preset with this name already exists."
-msgstr "Fant et oppsett med samme navn."
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
-msgid "Try a different name."
-msgstr "Forsøk et annet navn."
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
-msgid "This name is not allowed."
-msgstr "Dette navnet kan ikke brukes."
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
-msgid "Reset"
-msgstr "Tilbakestill"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "Lukk"
-
-#: ../plugins/gtkui/undointegration.c:70
-#, c-format
-msgid "Undo %s"
-msgstr "Angre %s"
-
-#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
-#, no-c-format
-msgid "Undo"
-msgstr "Angre"
-
-#: ../plugins/gtkui/undointegration.c:77
-#, c-format
-msgid "Redo %s"
-msgstr "Gjør om %s"
-
-#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
-#, no-c-format
-msgid "Redo"
-msgstr "Gjør om"
+#: ../plugins/lyrics/lyrics.c:212
+msgid "Lyrics"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
@@ -2854,6 +2677,204 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings.\n"
 msgstr "wildmidi: fant ikke oppsettsfila for freepats. Installér pakken timidity-freepats, eller angi stien til freepats.cfg i innstillingene til programtillegget.\n"
+
+#: ../src/actionhandlers.c:823
+#, c-format
+msgid "Copy of %s"
+msgstr ""
+
+#: ../src/actionhandlers.c:826
+#, c-format
+msgid "Copy of %s (%d)"
+msgstr ""
+
+#: ../src/main.c:139
+#, c-format
+msgid "Usage: deadbeef [options] [--] [file(s)]\n"
+msgstr "Bruk: deadbeef [innstillinger] [-] [fil(er)]\n"
+
+#: ../src/main.c:140
+#, c-format
+msgid "Options:\n"
+msgstr "Innstillinger:\n"
+
+#: ../src/main.c:141
+#, c-format
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr "   --help  eller  -h     Skriv hjelpetekst (denne teksten) og avslutt\n"
+
+#: ../src/main.c:142
+#, c-format
+msgid "   --quit             Quit player\n"
+msgstr "   --quit             Avslutt spilleren\n"
+
+#: ../src/main.c:143
+#, c-format
+msgid "   --version          Print version info and exit\n"
+msgstr "   --version          Skriv versjonsinformasjon og avslutt\n"
+
+#: ../src/main.c:144
+#, c-format
+msgid "   --play             Start playback\n"
+msgstr "   --play             Start avspilling\n"
+
+#: ../src/main.c:145
+#, c-format
+msgid "   --stop             Stop playback\n"
+msgstr "   --stop             Stopp avspilling\n"
+
+#: ../src/main.c:146
+#, c-format
+msgid "   --pause            Pause playback\n"
+msgstr "   --pause            Pause avspilling\n"
+
+#: ../src/main.c:147
+#, c-format
+msgid "   --toggle-pause     Toggle pause\n"
+msgstr "   --toggle-pause     Slå av/på pause\n"
+
+#: ../src/main.c:148
+#, c-format
+msgid ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+msgstr "   --play-pause       Start avspilling hvis stoppet, slå av/på pause ellers\n"
+
+#: ../src/main.c:149
+#, c-format
+msgid "   --next             Next song in playlist\n"
+msgstr "   --next             Neste låt i spillelista\n"
+
+#: ../src/main.c:150
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr "   --prev             Forrige låt i spillelista\n"
+
+#: ../src/main.c:151
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr "   --random           Tilfeldig låt i spillelista\n"
+
+#: ../src/main.c:152
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr "   --queue            Legg til fil(er) i eksisterende spilleliste\n"
+
+#: ../src/main.c:153
+#, c-format
+msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
+msgstr ""
+
+#: ../src/main.c:154
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr "   --nowplaying FMT   Skriv formatert spornavn til stdout\n"
+
+#: ../src/main.c:157
+#, c-format
+msgid ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
+msgstr "                      FMT %%-syntaks: [a]rtist, [t]itle, al[b]um,\n                      [l]ength, track[n]umber, [y]ear, [c]omment,\n                      copy[r]ight, [e]lapsed\n"
+
+#: ../src/main.c:160
+#, c-format
+msgid ""
+"                      example: --nowplaying \"%%a - %%t\" should print "
+"\"artist - title\"\n"
+msgstr "                      eksempel: --nowplaying \"%%a - %%t\" vil skrive \"artist - tittel\"\n"
+
+#: ../src/main.c:163
+#, c-format
+msgid "                      for more info, see %s\n"
+msgstr "                      for mer info, se %s\n"
+
+#: ../src/main.c:165
+#, c-format
+msgid "                      NOTE: --nowplaying is deprecated.\n"
+msgstr "                      NB: --nowplaying er foreldet.\n"
+
+#: ../src/main.c:168
+#, c-format
+msgid ""
+"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
+"title formatting\n"
+msgstr "   --nowplaying-tf FMT  Skriv formatert spornavn to stdout, med den nye typen tittelformatering\n"
+
+#: ../src/main.c:171
+#, c-format
+msgid ""
+"                      FMT syntax: http://github.com/DeaDBeeF-"
+"Player/deadbeef/wiki/Title-formatting-2.0\n"
+msgstr "                      FMT-syntaks: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
+
+#: ../src/main.c:174
+#, c-format
+msgid ""
+"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
+"should print \"artist - title\"\n"
+msgstr "                      eksempel: --nowplaying-tf \"%%artist%% - %%title%%\" vil skrive \"artist - tittel\"\n"
+
+#: ../src/main.c:175
+#, c-format
+msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
+msgstr "   --volume [NUM]     Skriv eller velg deadbeefs volumnivå.\n"
+
+#: ../src/main.c:178
+#, c-format
+msgid ""
+"                      The NUM parameter can be specified in percents "
+"(absolute value or increment/decrement)\n"
+msgstr "                      NUM-parameteren kan angis i prosent (absoluttverdi eller økning/reduksjon)\n"
+
+#: ../src/main.c:179
+#, c-format
+msgid "                      or in dB [-50, 0] (if with suffix).\n"
+msgstr "                      eller i dB [-50, 0] (bruk i så fall suffiks).\n"
+
+#: ../src/main.c:180
+#, c-format
+msgid ""
+"                      Examples: --volume 80, --volume +10, --volume -5 or "
+"--volume -20dB\n"
+msgstr "                      Eksempler: --volume 80, --volume +10, --volume -5 eller --volume -20dB\n"
+
+#: ../src/main.c:183
+#, c-format
+msgid ""
+"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
+"send commands to deadbeef itself.\n"
+msgstr "   --plugin=[PLUG]    Send kommando til valgt tillegg. Velg PLUG=main for å sende kommandoer til selve deadbeef.\n"
+
+#: ../src/main.c:184
+#, c-format
+msgid ""
+"                      To get plugin specific commands use --plugin=[PLUG] "
+"--help\n"
+msgstr "                      Bruk --plugin=[PLUG] --help for å liste ut kommandoer som er spesifikke for tillegget\n"
+
+#: ../src/main.c:187
+#, c-format
+msgid ""
+"   --plugin-list      List all available plugins including indication for "
+"plugins that support commands.\n"
+msgstr "   --plugin-list      Lister ut alle tilgjengelige tillegg og om de støtter kommandoer.\n"
+
+#: ../src/playlist.c:527 ../src/playlist.c:2871
+msgid "Default"
+msgstr "Standard"
+
+#: ../src/playlist.c:3544
+msgid "Stereo"
+msgstr "Stereo"
+
+#: ../src/playlist.c:4095
+msgid "Yes"
+msgstr "Ja"
+
+#: ../src/playlist.c:4095
+msgid "No"
+msgstr "Nei"
 
 #: ../src/tf.c:2373
 msgid "mono"

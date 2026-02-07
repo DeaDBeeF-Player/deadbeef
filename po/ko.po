@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-07 11:36+0100\n"
+"POT-Creation-Date: 2026-02-07 11:49+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: JungHee Lee <daemul72@gmail.com>, 2020-2023,2025\n"
 "Language-Team: Korean (http://app.transifex.com/deadbeef-player/deadbeef-player/language/ko/)\n"
@@ -23,198 +23,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ko\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-
-#: ../src/main.c:139
-#, c-format
-msgid "Usage: deadbeef [options] [--] [file(s)]\n"
-msgstr "사용법: deadbeef [옵션] [--] [파일]\n"
-
-#: ../src/main.c:140
-#, c-format
-msgid "Options:\n"
-msgstr "옵션:\n"
-
-#: ../src/main.c:141
-#, c-format
-msgid "   --help  or  -h     Print help (this message) and exit\n"
-msgstr "   --help  or  -h     도움말(이 메시지) 출력\n"
-
-#: ../src/main.c:142
-#, c-format
-msgid "   --quit             Quit player\n"
-msgstr "   --quit             프로그램 종료\n"
-
-#: ../src/main.c:143
-#, c-format
-msgid "   --version          Print version info and exit\n"
-msgstr "   --version          버전정보를 보임\n"
-
-#: ../src/main.c:144
-#, c-format
-msgid "   --play             Start playback\n"
-msgstr "   --play             재생 시작\n"
-
-#: ../src/main.c:145
-#, c-format
-msgid "   --stop             Stop playback\n"
-msgstr "   --stop             멈춤\n"
-
-#: ../src/main.c:146
-#, c-format
-msgid "   --pause            Pause playback\n"
-msgstr "   --pause            일시정지\n"
-
-#: ../src/main.c:147
-#, c-format
-msgid "   --toggle-pause     Toggle pause\n"
-msgstr "   --toggle-pause     전환 일시정지\n"
-
-#: ../src/main.c:148
-#, c-format
-msgid ""
-"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
-msgstr "   --play-pause       중지된 경우 재생 시작, 그렇지 않으면 일시 중지 전환\n"
-
-#: ../src/main.c:149
-#, c-format
-msgid "   --next             Next song in playlist\n"
-msgstr "   --next             재생목록의 다음 곡\n"
-
-#: ../src/main.c:150
-#, c-format
-msgid "   --prev             Previous song in playlist\n"
-msgstr "   --prev             재생목록의 이전 곡\n"
-
-#: ../src/main.c:151
-#, c-format
-msgid "   --random           Random song in playlist\n"
-msgstr "   --random           재생목록의 임의 곡\n"
-
-#: ../src/main.c:152
-#, c-format
-msgid "   --queue            Append file(s) to existing playlist\n"
-msgstr "   --queue            재생목록에 파일 추가\n"
-
-#: ../src/main.c:153
-#, c-format
-msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
-msgstr ""
-
-#: ../src/main.c:154
-#, c-format
-msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
-msgstr "   --nowplaying FMT   포맷된 곡 이름을 표준출력으로 인쇄\n"
-
-#: ../src/main.c:157
-#, c-format
-msgid ""
-"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
-"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
-"                      copy[r]ight, [e]lapsed\n"
-msgstr "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n                      [l]ength, track[n]umber, [y]ear, [c]omment,\n                      copy[r]ight, [e]lapsed\n"
-
-#: ../src/main.c:160
-#, c-format
-msgid ""
-"                      example: --nowplaying \"%%a - %%t\" should print "
-"\"artist - title\"\n"
-msgstr "                      예제: --nowplaying \"%%a - %%t\" 하면 \"아티스트 - 제목\"으로 나타납니다\n"
-
-#: ../src/main.c:163
-#, c-format
-msgid "                      for more info, see %s\n"
-msgstr "                      자세한 내용은 %s를 참조하십시오\n"
-
-#: ../src/main.c:165
-#, c-format
-msgid "                      NOTE: --nowplaying is deprecated.\n"
-msgstr "                      NOTE: --nowplaying은 삭제되었습니다.\n"
-
-#: ../src/main.c:168
-#, c-format
-msgid ""
-"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
-"title formatting\n"
-msgstr "   --nowplaying-tf FMT  새 제목 형식을 사용하여 포맷된 곡 이름을 표준출력으로 인쇄\n"
-
-#: ../src/main.c:171
-#, c-format
-msgid ""
-"                      FMT syntax: http://github.com/DeaDBeeF-"
-"Player/deadbeef/wiki/Title-formatting-2.0\n"
-msgstr "                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
-
-#: ../src/main.c:174
-#, c-format
-msgid ""
-"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
-"should print \"artist - title\"\n"
-msgstr "                      예제: --nowplaying-tf \"%%artist%% - %%title%%\" 하면 \"아티스트 - 제목\"으로 표시됩니다\n"
-
-#: ../src/main.c:175
-#, c-format
-msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
-msgstr "   --volume [NUM]     Deadbeef 음량 단계 인쇄 또는 지정\n.\n"
-
-#: ../src/main.c:178
-#, c-format
-msgid ""
-"                      The NUM parameter can be specified in percents "
-"(absolute value or increment/decrement)\n"
-msgstr "                      NUM 매개변수를 백분율로 지정할 수 있음 (절대 값 또는 증가/감소)\n"
-
-#: ../src/main.c:179
-#, c-format
-msgid "                      or in dB [-50, 0] (if with suffix).\n"
-msgstr "                      또는 dB [-50, 0] (suffix가 있는 경우).\n"
-
-#: ../src/main.c:180
-#, c-format
-msgid ""
-"                      Examples: --volume 80, --volume +10, --volume -5 or "
-"--volume -20dB\n"
-msgstr "                      예제: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"
-
-#: ../src/main.c:183
-#, c-format
-msgid ""
-"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
-"send commands to deadbeef itself.\n"
-msgstr "   --plugin=[PLUG]    특정 플러그인에 명령을 보냅니다. PLUG=main을 사용하여 deadbeef 자체에 명령을 보냅니다.\n"
-
-#: ../src/main.c:184
-#, c-format
-msgid ""
-"                      To get plugin specific commands use --plugin=[PLUG] "
-"--help\n"
-msgstr "                      플러그인 특정 명령을 얻으려면 --plugin=[PLUG] --help를 사용하십시오\n"
-
-#: ../src/main.c:187
-#, c-format
-msgid ""
-"   --plugin-list      List all available plugins including indication for "
-"plugins that support commands.\n"
-msgstr "   --plugin-list      명령을 지원하는 플러그인에 대한 표시를 포함하여 사용 가능한 모든 플러그인을 나열합니다.\n"
-
-#: ../src/playlist.c:527 ../src/playlist.c:2871
-msgid "Default"
-msgstr "기본"
-
-#: ../src/playlist.c:3544 ../plugins/gtkui/widgets.c:2759
-msgid "Mono"
-msgstr "모노"
-
-#: ../src/playlist.c:3544
-msgid "Stereo"
-msgstr "스테레오"
-
-#: ../src/playlist.c:4095
-msgid "Yes"
-msgstr "예"
-
-#: ../src/playlist.c:4095
-msgid "No"
-msgstr "아니오"
 
 #: ../plugins/converter/converter.glade.h:1
 #: ../plugins/converter/interface.c:103
@@ -605,6 +413,7 @@ msgid "Source File"
 msgstr "원본 파일"
 
 #: ../plugins/converter/support.c:90 ../plugins/converter/support.c:114
+#: ../plugins/lyrics/support.c:90 ../plugins/lyrics/support.c:114
 #: ../plugins/shellexecui/support.c:90 ../plugins/shellexecui/support.c:114
 #, c-format
 msgid "Couldn't find pixmap file: %s"
@@ -2348,6 +2157,46 @@ msgstr "파일을 찾을 수 없음"
 msgid "Invalid file"
 msgstr "잘못된 파일"
 
+#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
+#, c-format
+msgid "Edit %s"
+msgstr " %s 편집하기"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
+#, c-format
+msgid "%s (Copy)"
+msgstr "%s (복사하기)"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
+msgid "Can't do that"
+msgstr "그건 할 수 없어요"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
+msgid "Preset with this name already exists."
+msgstr "이름이 같은 프리셋이 이미 있습니다."
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
+msgid "Try a different name."
+msgstr "다른 이름을 사용해 보세요."
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
+msgid "This name is not allowed."
+msgstr "이 이름은 사용할 수 없습니다."
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:104
+msgid "Reset"
+msgstr "재설정"
+
+#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
+#: ../plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c:109
+#: ../plugins/shellexecui/interface.c:88
+#: ../plugins/shellexecui/shellexec.glade.h:2
+msgid "Close"
+msgstr "닫기"
+
 #: ../plugins/gtkui/search.c:469
 msgid "Search [(%list_total% results)]"
 msgstr "[(%list_total% 결과)] 검색"
@@ -2414,6 +2263,26 @@ msgstr "필드를 추가할 수 없습니다"
 #: ../plugins/gtkui/trkproperties.c:1288
 msgid "Field with such name already exists, please try different name."
 msgstr "이러한 이름의 필드가 이미 존재하므로 다른 이름을 시도해 보십시오."
+
+#: ../plugins/gtkui/undointegration.c:70
+#, c-format
+msgid "Undo %s"
+msgstr " %s 실행취소"
+
+#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
+#, no-c-format
+msgid "Undo"
+msgstr "실행취소"
+
+#: ../plugins/gtkui/undointegration.c:77
+#, c-format
+msgid "Redo %s"
+msgstr "%s 다시실행"
+
+#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
+#, no-c-format
+msgid "Redo"
+msgstr "다시실행"
 
 #: ../plugins/gtkui/widgets.c:459
 #, c-format
@@ -2491,6 +2360,10 @@ msgstr "렌더링 모드"
 #: ../plugins/gtkui/widgets.c:2756
 msgid "Multichannel"
 msgstr "다중채널"
+
+#: ../plugins/gtkui/widgets.c:2759 ../src/playlist.c:3544
+msgid "Mono"
+msgstr "모노"
 
 #: ../plugins/gtkui/widgets.c:2765
 msgid "Scale"
@@ -2635,63 +2508,13 @@ msgstr "_큐빅 스케일"
 msgid "Voices:"
 msgstr "음성:"
 
-#: ../plugins/gtkui/scriptable/gtkScriptable.c:33
-#, c-format
-msgid "Edit %s"
-msgstr " %s 편집하기"
+#: ../plugins/lyrics/lyrics.c:57
+msgid "Lyrics Not Available"
+msgstr ""
 
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:619
-#, c-format
-msgid "%s (Copy)"
-msgstr "%s (복사하기)"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:684
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:691
-msgid "Can't do that"
-msgstr "그건 할 수 없어요"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:685
-msgid "Preset with this name already exists."
-msgstr "이름이 같은 프리셋이 이미 있습니다."
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:686
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:693
-msgid "Try a different name."
-msgstr "다른 이름을 사용해 보세요."
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditViewController.c:692
-msgid "This name is not allowed."
-msgstr "이 이름은 사용할 수 없습니다."
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:103
-msgid "Reset"
-msgstr "재설정"
-
-#: ../plugins/gtkui/scriptable/gtkScriptableListEditWindowController.c:108
-#: ../plugins/shellexecui/interface.c:88
-#: ../plugins/shellexecui/shellexec.glade.h:2
-msgid "Close"
-msgstr "닫기"
-
-#: ../plugins/gtkui/undointegration.c:70
-#, c-format
-msgid "Undo %s"
-msgstr " %s 실행취소"
-
-#: ../plugins/gtkui/undointegration.c:74 ../translation/plugins.c:390
-#, no-c-format
-msgid "Undo"
-msgstr "실행취소"
-
-#: ../plugins/gtkui/undointegration.c:77
-#, c-format
-msgid "Redo %s"
-msgstr "%s 다시실행"
-
-#: ../plugins/gtkui/undointegration.c:81 ../translation/plugins.c:392
-#, no-c-format
-msgid "Redo"
-msgstr "다시실행"
+#: ../plugins/lyrics/lyrics.c:212
+msgid "Lyrics"
+msgstr ""
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
@@ -2857,6 +2680,204 @@ msgid ""
 "wildmidi: freepats config file not found. Please install timidity-freepats "
 "package, or specify path to freepats.cfg in the plugin settings.\n"
 msgstr "wildmidi: freepats 구성 파일을 찾을 수 없습니다. timidity-freepats 패키지를 설치하거나 플러그인 설정에서 freepats.cfg 경로를 지정하세요.\n"
+
+#: ../src/actionhandlers.c:823
+#, c-format
+msgid "Copy of %s"
+msgstr ""
+
+#: ../src/actionhandlers.c:826
+#, c-format
+msgid "Copy of %s (%d)"
+msgstr ""
+
+#: ../src/main.c:139
+#, c-format
+msgid "Usage: deadbeef [options] [--] [file(s)]\n"
+msgstr "사용법: deadbeef [옵션] [--] [파일]\n"
+
+#: ../src/main.c:140
+#, c-format
+msgid "Options:\n"
+msgstr "옵션:\n"
+
+#: ../src/main.c:141
+#, c-format
+msgid "   --help  or  -h     Print help (this message) and exit\n"
+msgstr "   --help  or  -h     도움말(이 메시지) 출력\n"
+
+#: ../src/main.c:142
+#, c-format
+msgid "   --quit             Quit player\n"
+msgstr "   --quit             프로그램 종료\n"
+
+#: ../src/main.c:143
+#, c-format
+msgid "   --version          Print version info and exit\n"
+msgstr "   --version          버전정보를 보임\n"
+
+#: ../src/main.c:144
+#, c-format
+msgid "   --play             Start playback\n"
+msgstr "   --play             재생 시작\n"
+
+#: ../src/main.c:145
+#, c-format
+msgid "   --stop             Stop playback\n"
+msgstr "   --stop             멈춤\n"
+
+#: ../src/main.c:146
+#, c-format
+msgid "   --pause            Pause playback\n"
+msgstr "   --pause            일시정지\n"
+
+#: ../src/main.c:147
+#, c-format
+msgid "   --toggle-pause     Toggle pause\n"
+msgstr "   --toggle-pause     전환 일시정지\n"
+
+#: ../src/main.c:148
+#, c-format
+msgid ""
+"   --play-pause       Start playback if stopped, toggle pause otherwise\n"
+msgstr "   --play-pause       중지된 경우 재생 시작, 그렇지 않으면 일시 중지 전환\n"
+
+#: ../src/main.c:149
+#, c-format
+msgid "   --next             Next song in playlist\n"
+msgstr "   --next             재생목록의 다음 곡\n"
+
+#: ../src/main.c:150
+#, c-format
+msgid "   --prev             Previous song in playlist\n"
+msgstr "   --prev             재생목록의 이전 곡\n"
+
+#: ../src/main.c:151
+#, c-format
+msgid "   --random           Random song in playlist\n"
+msgstr "   --random           재생목록의 임의 곡\n"
+
+#: ../src/main.c:152
+#, c-format
+msgid "   --queue            Append file(s) to existing playlist\n"
+msgstr "   --queue            재생목록에 파일 추가\n"
+
+#: ../src/main.c:153
+#, c-format
+msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
+msgstr ""
+
+#: ../src/main.c:154
+#, c-format
+msgid "   --nowplaying FMT   Print formatted track name to stdout\n"
+msgstr "   --nowplaying FMT   포맷된 곡 이름을 표준출력으로 인쇄\n"
+
+#: ../src/main.c:157
+#, c-format
+msgid ""
+"                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n"
+"                      [l]ength, track[n]umber, [y]ear, [c]omment,\n"
+"                      copy[r]ight, [e]lapsed\n"
+msgstr "                      FMT %%-syntax: [a]rtist, [t]itle, al[b]um,\n                      [l]ength, track[n]umber, [y]ear, [c]omment,\n                      copy[r]ight, [e]lapsed\n"
+
+#: ../src/main.c:160
+#, c-format
+msgid ""
+"                      example: --nowplaying \"%%a - %%t\" should print "
+"\"artist - title\"\n"
+msgstr "                      예제: --nowplaying \"%%a - %%t\" 하면 \"아티스트 - 제목\"으로 나타납니다\n"
+
+#: ../src/main.c:163
+#, c-format
+msgid "                      for more info, see %s\n"
+msgstr "                      자세한 내용은 %s를 참조하십시오\n"
+
+#: ../src/main.c:165
+#, c-format
+msgid "                      NOTE: --nowplaying is deprecated.\n"
+msgstr "                      NOTE: --nowplaying은 삭제되었습니다.\n"
+
+#: ../src/main.c:168
+#, c-format
+msgid ""
+"   --nowplaying-tf FMT  Print formatted track name to stdout, using the new "
+"title formatting\n"
+msgstr "   --nowplaying-tf FMT  새 제목 형식을 사용하여 포맷된 곡 이름을 표준출력으로 인쇄\n"
+
+#: ../src/main.c:171
+#, c-format
+msgid ""
+"                      FMT syntax: http://github.com/DeaDBeeF-"
+"Player/deadbeef/wiki/Title-formatting-2.0\n"
+msgstr "                      FMT syntax: http://github.com/DeaDBeeF-Player/deadbeef/wiki/Title-formatting-2.0\n"
+
+#: ../src/main.c:174
+#, c-format
+msgid ""
+"                      example: --nowplaying-tf \"%%artist%% - %%title%%\" "
+"should print \"artist - title\"\n"
+msgstr "                      예제: --nowplaying-tf \"%%artist%% - %%title%%\" 하면 \"아티스트 - 제목\"으로 표시됩니다\n"
+
+#: ../src/main.c:175
+#, c-format
+msgid "   --volume [NUM]     Print or set deadbeef volume level.\n"
+msgstr "   --volume [NUM]     Deadbeef 음량 단계 인쇄 또는 지정\n.\n"
+
+#: ../src/main.c:178
+#, c-format
+msgid ""
+"                      The NUM parameter can be specified in percents "
+"(absolute value or increment/decrement)\n"
+msgstr "                      NUM 매개변수를 백분율로 지정할 수 있음 (절대 값 또는 증가/감소)\n"
+
+#: ../src/main.c:179
+#, c-format
+msgid "                      or in dB [-50, 0] (if with suffix).\n"
+msgstr "                      또는 dB [-50, 0] (suffix가 있는 경우).\n"
+
+#: ../src/main.c:180
+#, c-format
+msgid ""
+"                      Examples: --volume 80, --volume +10, --volume -5 or "
+"--volume -20dB\n"
+msgstr "                      예제: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"
+
+#: ../src/main.c:183
+#, c-format
+msgid ""
+"   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to "
+"send commands to deadbeef itself.\n"
+msgstr "   --plugin=[PLUG]    특정 플러그인에 명령을 보냅니다. PLUG=main을 사용하여 deadbeef 자체에 명령을 보냅니다.\n"
+
+#: ../src/main.c:184
+#, c-format
+msgid ""
+"                      To get plugin specific commands use --plugin=[PLUG] "
+"--help\n"
+msgstr "                      플러그인 특정 명령을 얻으려면 --plugin=[PLUG] --help를 사용하십시오\n"
+
+#: ../src/main.c:187
+#, c-format
+msgid ""
+"   --plugin-list      List all available plugins including indication for "
+"plugins that support commands.\n"
+msgstr "   --plugin-list      명령을 지원하는 플러그인에 대한 표시를 포함하여 사용 가능한 모든 플러그인을 나열합니다.\n"
+
+#: ../src/playlist.c:527 ../src/playlist.c:2871
+msgid "Default"
+msgstr "기본"
+
+#: ../src/playlist.c:3544
+msgid "Stereo"
+msgstr "스테레오"
+
+#: ../src/playlist.c:4095
+msgid "Yes"
+msgstr "예"
+
+#: ../src/playlist.c:4095
+msgid "No"
+msgstr "아니오"
 
 #: ../src/tf.c:2373
 msgid "mono"
