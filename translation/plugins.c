@@ -1,3 +1,134 @@
+// external/ddb_dsp_libretro/coreplugin.c
+// xgettext:no-c-format
+_("Playback");
+// xgettext:no-c-format
+_("Previous or Restart Current Track");
+// xgettext:no-c-format
+_("Duplicate Playlist");
+// xgettext:no-c-format
+_("Reload Metadata");
+// xgettext:no-c-format
+_("Jump to Currently Playing Track");
+// xgettext:no-c-format
+_("Skip to");
+// xgettext:no-c-format
+_("Previous Genre");
+// xgettext:no-c-format
+_("Previous Composer");
+// xgettext:no-c-format
+_("Previous Artist");
+// xgettext:no-c-format
+_("Previous Album");
+// xgettext:no-c-format
+_("Next Genre");
+// xgettext:no-c-format
+_("Next Composer");
+// xgettext:no-c-format
+_("Next Artist");
+// xgettext:no-c-format
+_("Next Album");
+// xgettext:no-c-format
+_("Next Playlist");
+// xgettext:no-c-format
+_("Previous Playlist");
+// xgettext:no-c-format
+_("Switch to Playlist 10");
+// xgettext:no-c-format
+_("Switch to Playlist 9");
+// xgettext:no-c-format
+_("Switch to Playlist 8");
+// xgettext:no-c-format
+_("Switch to Playlist 7");
+// xgettext:no-c-format
+_("Switch to Playlist 6");
+// xgettext:no-c-format
+_("Switch to Playlist 5");
+// xgettext:no-c-format
+_("Switch to Playlist 4");
+// xgettext:no-c-format
+_("Switch to Playlist 3");
+// xgettext:no-c-format
+_("Switch to Playlist 2");
+// xgettext:no-c-format
+_("Switch to Playlist 1");
+// xgettext:no-c-format
+_("Edit");
+// xgettext:no-c-format
+_("Sort Randomize");
+// xgettext:no-c-format
+_("Sort by Date");
+// xgettext:no-c-format
+_("Sort by Artist");
+// xgettext:no-c-format
+_("Sort by Album");
+// xgettext:no-c-format
+_("Sort by Track Number");
+// xgettext:no-c-format
+_("Sort by Title");
+// xgettext:no-c-format
+_("Invert Selection");
+// xgettext:no-c-format
+_("Clear Playlist");
+// xgettext:no-c-format
+_("Remove from Playback Queue");
+// xgettext:no-c-format
+_("Add to Playback Queue");
+// xgettext:no-c-format
+_("Add to Front of Playback Queue");
+// xgettext:no-c-format
+_("Toggle in Playback Queue");
+// xgettext:no-c-format
+_("Move");
+// xgettext:no-c-format
+_("Move Tracks Down");
+// xgettext:no-c-format
+_("Move Tracks Up");
+// xgettext:no-c-format
+_("Toggle Mute");
+// xgettext:no-c-format
+_("Play");
+// xgettext:no-c-format
+_("Stop");
+// xgettext:no-c-format
+_("Previous");
+// xgettext:no-c-format
+_("Next");
+// xgettext:no-c-format
+_("Toggle Pause");
+// xgettext:no-c-format
+_("Play\\/Pause");
+// xgettext:no-c-format
+_("Play Next Album");
+// xgettext:no-c-format
+_("Play Previous Album");
+// xgettext:no-c-format
+_("Play Random Album");
+// xgettext:no-c-format
+_("Play Random");
+// xgettext:no-c-format
+_("Seek 1s Forward");
+// xgettext:no-c-format
+_("Seek 1s Backward");
+// xgettext:no-c-format
+_("Seek 5s Forward");
+// xgettext:no-c-format
+_("Seek 5s Backward");
+// xgettext:no-c-format
+_("Seek 1% Forward");
+// xgettext:no-c-format
+_("Seek 1% Backward");
+// xgettext:no-c-format
+_("Seek 5% Forward");
+// xgettext:no-c-format
+_("Seek 5% Backward");
+// xgettext:no-c-format
+_("Volume Up");
+// xgettext:no-c-format
+_("Volume Down");
+// xgettext:no-c-format
+_("Toggle Stop After Current Track");
+// xgettext:no-c-format
+_("Toggle Stop After Current Album");
 // external/ddb_output_pw/pw.c
 // xgettext:no-c-format
 _("PipeWire remote daemon name (empty for default)");
@@ -5,6 +136,11 @@ _("PipeWire remote daemon name (empty for default)");
 _("Custom properties (overrides existing ones):");
 // xgettext:no-c-format
 _("Use PipeWire volume control");
+// xgettext:no-c-format
+_("Buffer length (ms)");
+// plugins/aac/aac.c
+// xgettext:no-c-format
+_("Ignore corrupt frames");
 // plugins/adplug/plugin.c
 // xgettext:no-c-format
 _("Sample rate (real OPL is 49716Hz)");
@@ -163,8 +299,6 @@ _("Scan Per-file Track Gain");
 // xgettext:no-c-format
 _("Scan Per-file Track Gain If Not Scanned");
 // xgettext:no-c-format
-_("Edit");
-// xgettext:no-c-format
 _("Deselect All");
 // xgettext:no-c-format
 _("Select All");
@@ -186,8 +320,6 @@ _("Track Properties");
 _("Help");
 // xgettext:no-c-format
 _("Show Help Page");
-// xgettext:no-c-format
-_("Playback");
 // xgettext:no-c-format
 _("Cycle Repeat Mode");
 // xgettext:no-c-format
@@ -220,6 +352,8 @@ _("Show\\/Hide statusbar");
 _("Toggle Design Mode");
 // xgettext:no-c-format
 _("Preferences");
+// xgettext:no-c-format
+_("DSP Preferences");
 // xgettext:no-c-format
 _("Sort Custom");
 // xgettext:no-c-format
@@ -272,133 +406,6 @@ _("Add separators between plugin context menu items");
 _("Use unicode chars instead of images for track state");
 // xgettext:no-c-format
 _("Disable seekbar overlay text");
-// plugins/hotkeys/hotkeys.c
-// xgettext:no-c-format
-_("Previous or Restart Current Track");
-// xgettext:no-c-format
-_("Duplicate Playlist");
-// xgettext:no-c-format
-_("Reload Metadata");
-// xgettext:no-c-format
-_("Jump to Currently Playing Track");
-// xgettext:no-c-format
-_("Skip to");
-// xgettext:no-c-format
-_("Previous Genre");
-// xgettext:no-c-format
-_("Previous Composer");
-// xgettext:no-c-format
-_("Previous Artist");
-// xgettext:no-c-format
-_("Previous Album");
-// xgettext:no-c-format
-_("Next Genre");
-// xgettext:no-c-format
-_("Next Composer");
-// xgettext:no-c-format
-_("Next Artist");
-// xgettext:no-c-format
-_("Next Album");
-// xgettext:no-c-format
-_("Next Playlist");
-// xgettext:no-c-format
-_("Previous Playlist");
-// xgettext:no-c-format
-_("Switch to Playlist 10");
-// xgettext:no-c-format
-_("Switch to Playlist 9");
-// xgettext:no-c-format
-_("Switch to Playlist 8");
-// xgettext:no-c-format
-_("Switch to Playlist 7");
-// xgettext:no-c-format
-_("Switch to Playlist 6");
-// xgettext:no-c-format
-_("Switch to Playlist 5");
-// xgettext:no-c-format
-_("Switch to Playlist 4");
-// xgettext:no-c-format
-_("Switch to Playlist 3");
-// xgettext:no-c-format
-_("Switch to Playlist 2");
-// xgettext:no-c-format
-_("Switch to Playlist 1");
-// xgettext:no-c-format
-_("Sort Randomize");
-// xgettext:no-c-format
-_("Sort by Date");
-// xgettext:no-c-format
-_("Sort by Artist");
-// xgettext:no-c-format
-_("Sort by Album");
-// xgettext:no-c-format
-_("Sort by Track Number");
-// xgettext:no-c-format
-_("Sort by Title");
-// xgettext:no-c-format
-_("Invert Selection");
-// xgettext:no-c-format
-_("Clear Playlist");
-// xgettext:no-c-format
-_("Remove from Playback Queue");
-// xgettext:no-c-format
-_("Add to Playback Queue");
-// xgettext:no-c-format
-_("Add to Front of Playback Queue");
-// xgettext:no-c-format
-_("Toggle in Playback Queue");
-// xgettext:no-c-format
-_("Move");
-// xgettext:no-c-format
-_("Move Tracks Down");
-// xgettext:no-c-format
-_("Move Tracks Up");
-// xgettext:no-c-format
-_("Toggle Mute");
-// xgettext:no-c-format
-_("Play");
-// xgettext:no-c-format
-_("Stop");
-// xgettext:no-c-format
-_("Previous");
-// xgettext:no-c-format
-_("Next");
-// xgettext:no-c-format
-_("Toggle Pause");
-// xgettext:no-c-format
-_("Play\\/Pause");
-// xgettext:no-c-format
-_("Play Next Album");
-// xgettext:no-c-format
-_("Play Previous Album");
-// xgettext:no-c-format
-_("Play Random Album");
-// xgettext:no-c-format
-_("Play Random");
-// xgettext:no-c-format
-_("Seek 1s Forward");
-// xgettext:no-c-format
-_("Seek 1s Backward");
-// xgettext:no-c-format
-_("Seek 5s Forward");
-// xgettext:no-c-format
-_("Seek 5s Backward");
-// xgettext:no-c-format
-_("Seek 1% Forward");
-// xgettext:no-c-format
-_("Seek 1% Backward");
-// xgettext:no-c-format
-_("Seek 5% Forward");
-// xgettext:no-c-format
-_("Seek 5% Backward");
-// xgettext:no-c-format
-_("Volume Up");
-// xgettext:no-c-format
-_("Volume Down");
-// xgettext:no-c-format
-_("Toggle Stop After Current Track");
-// xgettext:no-c-format
-_("Toggle Stop After Current Album");
 // plugins/lastfm/lastfm.c
 // xgettext:no-c-format
 _("Lookup on Last.fm");
@@ -521,7 +528,7 @@ _("20K");
 // plugins/wildmidi/wildmidiplug.c
 // xgettext:no-c-format
 _("Timidity++ bank configuration file");
-// src/scriptable/scriptable_encoder.c
+// shared/scriptable/scriptable_encoder.c
 // xgettext:no-c-format
 _("File extension");
 // xgettext:no-c-format
@@ -548,3 +555,6 @@ _("Write FLAC tag");
 _("Write OggVorbis tag");
 // xgettext:no-c-format
 _("Write MP4 tag");
+// src/coreplugin.c
+// xgettext:no-c-format
+_("Toggle Stop After Queue");
