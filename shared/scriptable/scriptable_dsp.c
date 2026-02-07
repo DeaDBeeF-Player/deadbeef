@@ -607,8 +607,8 @@ scriptableDspConfigToDspChain (scriptableItem_t *item) {
     for (c = scriptableItemChildren(item); c != NULL; c = scriptableItemNext(c)) {
         const char *pluginId = scriptableItemPropertyValueForKey(c, "pluginId");
         DB_plugin_t *plugin = deadbeef->plug_get_for_id (pluginId);
-        if (plugin != NULL && plugin->type != DB_PLUGIN_DSP) {
-            break;
+        if (plugin == NULL || plugin->type != DB_PLUGIN_DSP) {
+            continue;
         }
         DB_dsp_t *dsp = (DB_dsp_t *)plugin;
 
@@ -630,6 +630,7 @@ scriptableDspConfigToDspChain (scriptableItem_t *item) {
         deadbeef->dsp_preset_free (head);
         return NULL;
     }
+
     return head;
 }
 
