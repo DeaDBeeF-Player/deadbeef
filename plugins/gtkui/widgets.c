@@ -2887,11 +2887,17 @@ spectrum_audio_listener (void *ctx, const ddb_audio_data_t *data) {
     // copy the input data for later consumption
     if (w->input_data.nframes != data->nframes || w->input_data.fmt->channels != data->fmt->channels) {
         free (w->input_data.data);
-        w->input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
+        w->input_data.data = NULL;
+
+        if (data->nframes > 0) {
+            w->input_data.data = malloc (data->nframes * data->fmt->channels * sizeof (float));
+        }
         w->input_data.nframes = data->nframes;
     }
     memcpy (w->input_data.fmt, data->fmt, sizeof (ddb_waveformat_t));
-    memcpy (w->input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
+    if (w->input_data.data != NULL && data->nframes > 0) {
+        memcpy (w->input_data.data, data->data, data->nframes * data->fmt->channels * sizeof (float));
+    }
     deadbeef->mutex_unlock (w->mutex);
 }
 
