@@ -452,14 +452,26 @@ pcm_write_samples_float_to_32 (const ddb_waveformat_t * restrict inputfmt, const
                 continue;
             }
             float fsample = (*((float*)(input + channelmap[c] * 4)));
-            if (fsample > (float)0x7fffffff/0x80000000) {
-                fsample = (float)0x7fffffff/0x80000000;
+
+            const int64_t imax = (int64_t)0x7fffffff;
+
+            // Need to use 64 bit intermediates here, otherwise precision loss is imminent
+            int64_t sample;
+            if (fsample > 0) {
+                sample = (int64_t)((double)fsample * (double)imax);
             }
-            else if (fsample < -1.f) {
-                fsample = -1.f;
+            else {
+                sample = (int64_t)((double)fsample * (double)(imax+1));
             }
-            int32_t sample = ftoi(fsample * (float)0x80000000);
-            *((int32_t *)(output + 4 * c)) = sample;
+
+            if (sample > imax) {
+                sample = imax;
+            }
+            else if (sample < -(int64_t)(imax+1)) {
+                sample = -(int64_t)(imax+1);
+            }
+
+            *((int32_t *)(output + 4 * c)) = (int32_t)sample;
         }
         input += 4 * inputfmt->channels;
         output += outputsamplesize;

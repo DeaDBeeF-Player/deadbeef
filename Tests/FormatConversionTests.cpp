@@ -76,3 +76,31 @@ TEST(FormatConversionTests, testConvertFromStereoToBackLeftFrontRight_LeftChanne
     EXPECT_TRUE(outsamples[2] == 0);
     EXPECT_TRUE(outsamples[3] == 0x4000);
 }
+
+TEST(FormatConversionTests, testConvertFromFloatToInt32_ResultCorrect) {
+    float samples[] = { -1.f, 0.f, 1.f, -1.1f, 1.1f, -0.5f, 0.5f };
+    int32_t outsamples[] = { 0, 0, 0, 0, 0, 0, 0 };
+
+    ddb_waveformat_t inputfmt = {
+        .bps = 32,
+        .channels = 1,
+        .samplerate = 44100,
+        .channelmask = DDB_SPEAKER_FRONT_LEFT,
+        .is_float = 1
+    };
+
+    ddb_waveformat_t outputfmt = {
+        .bps = 32,
+        .channels = 1,
+        .samplerate = 44100,
+        .channelmask = DDB_SPEAKER_FRONT_LEFT
+    };
+
+    int res = pcm_convert (&inputfmt, (const char *)samples, &outputfmt, (char *)outsamples, sizeof (samples));
+    EXPECT_EQ(res, 28);
+
+    int32_t expected[] = { (int32_t)-0x80000000, (int32_t)0, (int32_t)0x7fffffff, (int32_t)-0x80000000, (int32_t)0x7fffffff, (int32_t)-0x80000000/2, (int32_t)0x7fffffff/2 };
+    int cmp = memcmp(expected, outsamples, sizeof(outsamples));
+
+    EXPECT_EQ(cmp, 0);
+}
