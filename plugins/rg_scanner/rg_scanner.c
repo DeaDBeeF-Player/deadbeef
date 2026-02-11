@@ -210,6 +210,9 @@ rg_calc_track(track_state_t *st) {
                 st->settings->results[st->track_index].track_gain = -23 - loudness + st->settings->ref_loudness - 84;
             }
         }
+
+        ebur128_destroy(&st->gain_state[st->track_index]);
+        ebur128_destroy(&st->peak_state[st->track_index]);
     }
 
 error:
