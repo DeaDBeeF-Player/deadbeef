@@ -2535,6 +2535,7 @@
 		2DD3775D27414BD9007AD315 /* ScopePreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD3775A27414BD9007AD315 /* ScopePreferencesWindowController.xib */; };
 		2DD3776027414BF6007AD315 /* ScopePreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3775E27414BF6007AD315 /* ScopePreferencesViewController.h */; };
 		2DD3776127414BF6007AD315 /* ScopePreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3775F27414BF6007AD315 /* ScopePreferencesViewController.m */; };
+		2DD3BC5C2F3D0A33002A9B62 /* UTF8Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3BC5B2F3D0A33002A9B62 /* UTF8Tests.cpp */; };
 		2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2DD5262E2062F1DF002609C5 /* help-cocoa.txt */; };
 		2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */ = {isa = PBXBuildFile; fileRef = 2DCD78D319A665CA00EA50FA /* deadbeef.png */; };
 		2DD6C5DD279B278E00CABBE6 /* mp4p.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 2D71F1B124AE799B00E753D3 /* mp4p.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -7190,6 +7191,7 @@
 		2DD3775A27414BD9007AD315 /* ScopePreferencesWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScopePreferencesWindowController.xib; sourceTree = "<group>"; };
 		2DD3775E27414BF6007AD315 /* ScopePreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScopePreferencesViewController.h; sourceTree = "<group>"; };
 		2DD3775F27414BF6007AD315 /* ScopePreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScopePreferencesViewController.m; sourceTree = "<group>"; };
+		2DD3BC5B2F3D0A33002A9B62 /* UTF8Tests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UTF8Tests.cpp; sourceTree = "<group>"; };
 		2DD5262E2062F1DF002609C5 /* help-cocoa.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "help-cocoa.txt"; sourceTree = "<group>"; };
 		2DD6D0A319AE609F009308A5 /* DdbSeekBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DdbSeekBar.h; sourceTree = "<group>"; };
 		2DD6D0A419AE609F009308A5 /* DdbSeekBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbSeekBar.m; sourceTree = "<group>"; };
@@ -12088,6 +12090,7 @@
 				2DAA4C131AAF88FF00519559 /* TitleFormattingTests.cpp */,
 				2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.cpp */,
 				2D15721523785BD900985E47 /* VfsCurlTests.cpp */,
+				2DD3BC5B2F3D0A33002A9B62 /* UTF8Tests.cpp */,
 			);
 			name = Tests;
 			path = ../Tests;
@@ -18790,6 +18793,7 @@
 				2D25569E2E47681D00DA3757 /* scriptable_dsp.c in Sources */,
 				2D25569F2E47681D00DA3757 /* scriptable_encoder.c in Sources */,
 				2D78C55527568B0800F96F9D /* medialibsource.c in Sources */,
+				2DD3BC5C2F3D0A33002A9B62 /* UTF8Tests.cpp in Sources */,
 				2DA66EC81EDF4EF800E20989 /* StreamerTests.cpp in Sources */,
 				2D0214082DA12CA900BAEA12 /* MetacacheTests.cpp in Sources */,
 				2D135EF4226E47CE00BAAE84 /* ScriptableTests.cpp in Sources */,

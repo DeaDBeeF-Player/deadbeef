@@ -280,7 +280,8 @@ int u8_strnbcpy (char *dest, const char* src, int num_bytes) {
 
 /* Copies as many characters from src as would not exceed num_bytes in the destination */
 /* Uses input_size as the input size. */
-/* \0 characters are copied as-is. */
+/* \0 characters are copied as-is if present. */
+/* The resulting string is not guaranteed to be zero-terminated */
 /* returns the number of bytes copied. */
 int u8_strnbcpy_size (char *dest, const char* src, int input_size, int num_bytes) {
     int32_t prev_index = 0;
@@ -294,7 +295,7 @@ int u8_strnbcpy_size (char *dest, const char* src, int input_size, int num_bytes
             prev_index = ++index;
             continue;
         }
-        u8_inc (src, &index);
+        u8_inc_bounded (src, &index, input_size - index);
         if (index > input_size) {
             break;
         }
@@ -328,6 +329,27 @@ void u8_inc(const char *s, int32_t *i)
 {
     (void)(isutf(s[++(*i)]) || isutf(s[++(*i)]) ||
            isutf(s[++(*i)]) || ++(*i));
+}
+
+void u8_inc_bounded(const char *s, int32_t *i, int len)
+{
+    int end = (*i) + len;
+
+    if (*i >= end) return;
+
+    ++(*i);
+    if (isutf(s[*i])) return;
+    if (*i >= end) return;
+
+    ++(*i);
+    if (isutf(s[*i])) return;
+    if (*i >= end) return;
+
+    ++(*i);
+    if (isutf(s[*i])) return;
+    if (*i >= end) return;
+
+    ++(*i);
 }
 
 void u8_dec(const char *s, int32_t *i)
