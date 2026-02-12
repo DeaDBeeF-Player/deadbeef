@@ -909,7 +909,7 @@ _semicolon_separated_string_for_meta(DB_metaInfo_t *meta) {
 static void
 _iterate_semicolon_separated_substrings(const char *svalue, void (^completion_block)(const char *item)) {
     while (*svalue) {
-        char *semicolon = strchr(svalue, ';');
+        const char *semicolon = strchr(svalue, ';');
 
         size_t len;
         if (semicolon == NULL) {
