@@ -9,7 +9,8 @@ medialib_la_SOURCES =\
 	medialibdb.c\
 	medialibdb.h\
 	medialibfilesystem.h\
-	medialibfilesystem_inotify.c\
+	linux/medialibfilesystem_inotify.c\
+	linux/fsmonitor.c\
 	medialibscanner.c\
 	medialibscanner.h\
 	medialibsource.c\

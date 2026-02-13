@@ -1,6 +1,6 @@
 /*
     DeaDBeeF -- the music player
-    Copyright (C) 2009-2021 Oleksiy Yakovenko and other contributors
+    Copyright (C) 2009-2026 Oleksiy Yakovenko and other contributors
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -21,18 +21,22 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <stdio.h>
-#include "medialibsource.h"
+#ifndef __DDB_FSMONITOR
+#define __DDB_FSMONITOR
 
-struct ml_watch_s {
-};
+#include <stddef.h>
 
-ml_watch_t *
-ml_watch_fs_start (struct json_t *musicpathsJson, void (*eventCallback)(void *), void *userdata) {
-    return NULL;
-}
+typedef struct ddb_fsmonitor_s ddb_fsmonitor_t;
+
+typedef void (*ddb_fsmonitor_callback_t)(void *userdata);
+
+ddb_fsmonitor_t *
+ddb_fsmonitor_create(const char **paths,
+                     size_t count,
+                     ddb_fsmonitor_callback_t cb,
+                     void *userdata);
 
 void
-ml_watch_fs_stop (ml_watch_t *wrapper) {
-}
+ddb_fsmonitor_free(ddb_fsmonitor_t *m);
 
+#endif

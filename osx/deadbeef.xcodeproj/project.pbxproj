@@ -6290,7 +6290,6 @@
 		2D78C55827568B4A00F96F9D /* medialibscanner.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibscanner.c; sourceTree = "<group>"; };
 		2D78C55B27568D9600F96F9D /* medialibtree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = medialibtree.h; sourceTree = "<group>"; };
 		2D78C55C27568D9600F96F9D /* medialibtree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibtree.c; sourceTree = "<group>"; };
-		2D78C565275698D400F96F9D /* medialibfilesystem_inotify.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem_inotify.c; sourceTree = "<group>"; };
 		2D78C5672756990B00F96F9D /* medialibfilesystem_stub.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem_stub.c; sourceTree = "<group>"; };
 		2D7C1FAB2946001B00163538 /* ShaderRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderRenderer.h; sourceTree = "<group>"; };
 		2D7C1FAC2946001B00163538 /* ShaderRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShaderRenderer.m; sourceTree = "<group>"; };
@@ -6995,6 +6994,9 @@
 		2DBCA69827944B2200D7432F /* COPYING.GPLv2 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.GPLv2; path = ../../COPYING.GPLv2; sourceTree = "<group>"; };
 		2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; name = COPYING.LGPLv2.1; path = ../../COPYING.LGPLv2.1; sourceTree = "<group>"; };
 		2DBCA69C27944BB600D7432F /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../../ChangeLog; sourceTree = "<group>"; };
+		2DBD235A2F3FB3B1004F9EFF /* fsmonitor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsmonitor.h; sourceTree = "<group>"; };
+		2DBD235C2F3FB408004F9EFF /* fsmonitor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsmonitor.c; sourceTree = "<group>"; };
+		2DBD235E2F3FB460004F9EFF /* medialibfilesystem_inotify.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = medialibfilesystem_inotify.c; sourceTree = "<group>"; };
 		2DBF3D3F270868D400023138 /* MainContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainContentViewController.xib; sourceTree = "<group>"; };
 		2DBF3D4127086AA900023138 /* MainContentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainContentViewController.h; sourceTree = "<group>"; };
 		2DBF3D4227086AA900023138 /* MainContentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainContentViewController.m; sourceTree = "<group>"; };
@@ -10961,6 +10963,8 @@
 		2D887BC524B1C82A0078392F /* medialib */ = {
 			isa = PBXGroup;
 			children = (
+				2DBD23592F3FB395004F9EFF /* apple */,
+				2DBD23582F3FB38A004F9EFF /* linux */,
 				2D20924D2A9A077800CDBB2B /* scriptable_tfquery.c */,
 				2D20924C2A9A077800CDBB2B /* scriptable_tfquery.h */,
 				2D887BC724B1C82A0078392F /* medialib.c */,
@@ -10969,8 +10973,6 @@
 				2D78C54227568A4D00F96F9D /* medialibcommon.h */,
 				2D78C53B2756892300F96F9D /* medialibdb.c */,
 				2D78C53A2756892300F96F9D /* medialibdb.h */,
-				2D78C565275698D400F96F9D /* medialibfilesystem_inotify.c */,
-				2DB4E0682AE18ECA00028624 /* medialibfilesystem_mac.m */,
 				2D78C5672756990B00F96F9D /* medialibfilesystem_stub.c */,
 				2D78C53E27568A1300F96F9D /* medialibfilesystem.h */,
 				2D78C55827568B4A00F96F9D /* medialibscanner.c */,
@@ -12271,6 +12273,24 @@
 				2DBCA69927944B2200D7432F /* COPYING.LGPLv2.1 */,
 			);
 			name = Assets;
+			sourceTree = "<group>";
+		};
+		2DBD23582F3FB38A004F9EFF /* linux */ = {
+			isa = PBXGroup;
+			children = (
+				2DBD235E2F3FB460004F9EFF /* medialibfilesystem_inotify.c */,
+				2DBD235C2F3FB408004F9EFF /* fsmonitor.c */,
+				2DBD235A2F3FB3B1004F9EFF /* fsmonitor.h */,
+			);
+			path = linux;
+			sourceTree = "<group>";
+		};
+		2DBD23592F3FB395004F9EFF /* apple */ = {
+			isa = PBXGroup;
+			children = (
+				2DB4E0682AE18ECA00028624 /* medialibfilesystem_mac.m */,
+			);
+			path = apple;
 			sourceTree = "<group>";
 		};
 		2DC657D0274957FE00583E14 /* Tabs */ = {

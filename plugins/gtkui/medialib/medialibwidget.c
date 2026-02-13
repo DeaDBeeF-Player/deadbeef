@@ -61,6 +61,8 @@ enum {
 
 static void
 _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStore *store, GtkTreeIter *iter);
+static void
+_refresh_mediasource(w_medialib_viewer_t *mlv);
 
 static void
 _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, const ddb_medialib_item_t *item, GtkTreePath *parent_path) {
@@ -208,6 +210,16 @@ _medialib_content_did_change (void *user_data) {
     return FALSE;
 }
 
+static gboolean
+_medialib_refresh (void *user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+    if (plugin == NULL) {
+        return FALSE;
+    }
+    _refresh_mediasource(mlv);
+    return FALSE;
+}
+
 static void
 _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     switch (event) {
@@ -218,6 +230,8 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     case DDB_MEDIASOURCE_EVENT_ENABLED_DID_CHANGE:
         g_idle_add (_medialib_state_did_change, user_data);
         break;
+    case DDB_MEDIASOURCE_EVENT_OUT_OF_SYNC:
+        g_idle_add (_medialib_refresh, user_data);
     default:
         break;
     }
