@@ -40,6 +40,8 @@ typedef struct node {
 
 struct ddb_fsmonitor_s {
     int fd;
+    int mountinfo_wd;
+
     dispatch_queue_t queue;
     dispatch_source_t readSource;
 
@@ -111,6 +113,23 @@ add_recursive(ddb_fsmonitor_t *m, const char *path) {
 }
 
 static void
+handle_mount_change(ddb_fsmonitor_t *m) {
+    // Re-add all known paths.
+    // We duplicate the list first to avoid mutation issues.
+    node_t *n = m->nodes;
+
+    while (n) {
+        add_recursive(m, n->path);
+        n = n->next;
+    }
+
+    // Notify user once
+    if (m->cb)
+        m->cb(m->userdata);
+}
+
+
+static void
 handle_events(ddb_fsmonitor_t *m) {
     char buf[8192];
 
@@ -121,6 +140,13 @@ handle_events(ddb_fsmonitor_t *m) {
         while (i < len) {
             struct inotify_event *ev =
             (struct inotify_event *)&buf[i];
+
+            // Mountinfo detection
+            if (ev->wd == m->mountinfo_wd) {
+                handle_mount_change(m);
+                i += sizeof(struct inotify_event) + ev->len;
+                continue;
+            }
 
             node_t *node = node_find(m, ev->wd);
 
@@ -152,6 +178,7 @@ handle_events(ddb_fsmonitor_t *m) {
     }
 }
 
+
 ddb_fsmonitor_t *
 ddb_fsmonitor_create(const char **paths,
                      size_t count,
@@ -161,6 +188,14 @@ ddb_fsmonitor_create(const char **paths,
     ddb_fsmonitor_t *m = calloc(1, sizeof(*m));
 
     m->fd = inotify_init1(IN_NONBLOCK);
+
+    m->fd = inotify_init1(IN_NONBLOCK);
+    m->mountinfo_wd = inotify_add_watch(
+                                        m->fd,
+                                        "/proc/self/mountinfo",
+                                        IN_MODIFY
+                                        );
+
     m->queue = dispatch_queue_create("ddb.fsmonitor", 0);
     m->cb = cb;
     m->userdata = userdata;
