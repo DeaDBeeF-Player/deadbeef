@@ -790,6 +790,10 @@ static int decode_exp_vlc(WMADecodeContext *s, int ch)
         /* NOTE: this offset is the same as MPEG4 AAC ! */
         last_exp += code - 60;
 
+        if (last_exp > 68) {
+            return -1;
+        }
+
         v = pow_10_to_yover16_ptr[last_exp];
         if (v > max_scale)
         {
