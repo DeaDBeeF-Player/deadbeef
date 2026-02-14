@@ -207,23 +207,24 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
 
 #if !USE_FFMPEG
     while (size > 0) {
-        if (info->remaining == 0) {
+        int sould_read_next_packet = 1;
+        while (sould_read_next_packet && info->remaining == 0) {
+            sould_read_next_packet = 0;
             int errcount = 0;
             int res = 0;
-            uint8_t audiobuf_mem[info->wfx.packet_size]; // FIXME: it's not a good idea to allocate that much on stack
-            uint8_t* audiobuf = audiobuf_mem;
+            uint8_t *audiobuf_mem = calloc(1, info->wfx.packet_size);
+            if (audiobuf_mem == NULL) {
+                trace("wma: could not allocate memory for packet size: %d\n", (int)info->wfx.packet_size);
+                break;
+            }
+            uint8_t *audiobuf = audiobuf_mem;
             int audiobufsize = 0;
             int packetlength = 0;
     new_packet:
-            {
-                int pos = deadbeef->ftell (info->info.file);
-                res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->info.file);
-                int endpos = deadbeef->ftell (info->info.file);
-//                trace ("[1] packet pos: %d, packet size: %d (%d), data size: %d, blockalign: %d, audiobufsize: %d\n", pos, endpos-pos, info->wfx.packet_size, packetlength, info->wfx.blockalign, audiobufsize);
-            }
+            res = asf_read_packet(&audiobuf, &audiobufsize, &packetlength, &info->wfx, info->info.file);
             if (res > 0) {
                 int nb = audiobufsize / info->wfx.blockalign;
-                for (int b = 0; b < nb; b++) {
+                for (int b = 0; !sould_read_next_packet && b < nb; b++) {
                     wma_decode_superframe_init(&info->wmadec, audiobuf + b * info->wfx.blockalign, info->wfx.blockalign);
 
                     int n = 0;
@@ -237,11 +238,10 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                             /* Do the above, but for errors in decode. */
                             errcount++;
                             trace ("WMA decode error %d, errcount %d\n",wmares, errcount);
-                            if (errcount > 5) {
-                                break;
-                            } else {
-                                goto new_packet;
+                            if (errcount <= 5) {
+                                sould_read_next_packet = 1;
                             }
+                            break;
                         } else if (wmares > 0) {
                             if (wmares * info->wfx.channels * info->wfx.bitspersample / 8 > sizeof (info->buffer) - info->remaining) {
                                 fprintf (stderr, "WMA: decoding buffer is too small\n");
@@ -260,6 +260,7 @@ wmaplug_read (DB_fileinfo_t *_info, char *bytes, int size) {
                     }
                 }
             }
+            free (audiobuf_mem);
         }
 
         if (info->remaining == 0) {
