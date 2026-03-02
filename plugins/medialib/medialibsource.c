@@ -209,6 +209,9 @@ ml_free_source (ddb_mediasource_source_t *_source) {
         json_decref (source->musicpaths_json);
         source->musicpaths_json = NULL;
     }
+
+    free (source->folder_tree_sort_tf);
+    source->folder_tree_sort_tf = NULL;
 }
 
 void

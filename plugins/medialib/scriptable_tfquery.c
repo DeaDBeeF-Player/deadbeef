@@ -51,7 +51,7 @@ static const char _default_config[] =
     "]},"
     "{\"name\":\"Folders\",\"items\":["
     "\"%folder_tree%\","
-    "\"[%tracknumber%. ]%title%\""
+    "\"[%album artist% - ][%album% - ][%tracknumber%. ]%title%\""
     "]}"
     "]}";
 

@@ -73,6 +73,7 @@ typedef struct medialib_source_s {
 
     struct scriptableItem_s *last_build_tree_preset;
     int last_build_tree_playlist_modification_idx;
+    char *folder_tree_sort_tf;
 } medialib_source_t;
 
 ddb_mediasource_source_t *

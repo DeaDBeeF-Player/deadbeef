@@ -466,7 +466,7 @@ _create_sorted_folder_tree(ddb_playlist_t *plt, ml_tree_item_t *parent, int sele
 }
 
 static void
-_create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, const char *track_tf, int selected, int needs_sort) {
+_create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, const char *sort_tf, const char *track_tf, int selected, int needs_sort) {
     if (needs_sort) {
         ddb_tf_context_t ctx = {
             ._size = sizeof (ddb_tf_context_t),
@@ -475,19 +475,18 @@ _create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, const char 
             .idx = -1,
         };
 
-        const char *tf_sort = "$directory_path(%path%)/[%album artist% - ]%album%/[%tracknumber%. ]%title%";
-        char *tf_bytecode = deadbeef->tf_compile(tf_sort);
+        char *tf_bytecode = deadbeef->tf_compile (sort_tf);
 
-        deadbeef->plt_sort_v3(&ctx, tf_bytecode, PL_MAIN, -1, DDB_SORT_ASCENDING);
+        deadbeef->plt_sort_v3 (&ctx, tf_bytecode, PL_MAIN, -1, DDB_SORT_ASCENDING);
 
-        deadbeef->tf_free(tf_bytecode);
+        deadbeef->tf_free (tf_bytecode);
     }
 
-    char *track_tf_bc = deadbeef->tf_compile(track_tf);
+    char *track_tf_bc = deadbeef->tf_compile (track_tf);
 
-    _create_sorted_folder_tree(source->ml_playlist, root, selected, track_tf_bc, NULL, 0);
+    _create_sorted_folder_tree (source->ml_playlist, root, selected, track_tf_bc, NULL, 0);
 
-    deadbeef->tf_free(track_tf_bc);
+    deadbeef->tf_free (track_tf_bc);
 
     // squash single-item tree nodes
     ml_tree_item_t *prev = NULL;
@@ -497,13 +496,13 @@ _create_folder_tree(medialib_source_t *source, ml_tree_item_t *root, const char 
             new_head->next = head->next;
 
             if (head->track) {
-                deadbeef->pl_item_unref(head->track);
+                deadbeef->pl_item_unref (head->track);
             }
             if (head->text) {
-                deadbeef->metacache_remove_string(head->text);
+                deadbeef->metacache_remove_string (head->text);
             }
             if (head->path) {
-                deadbeef->metacache_remove_string(head->path);
+                deadbeef->metacache_remove_string (head->path);
             }
             free (head);
             head = new_head;
@@ -562,23 +561,36 @@ _create_item_tree_from_collection(const char *filter, scriptableItem_t *preset, 
 
     const char *tf = scriptableItemPropertyValueForKey(item, "name");
     if (!strcmp (tf, "%folder_tree%")) {
-        const char *track_tf = NULL;
-
         scriptableItem_t *compareItem = source->last_build_tree_preset != NULL ? scriptableItemChildren(source->last_build_tree_preset) : NULL;
         needs_sort = compareItem == NULL || source->last_build_tree_playlist_modification_idx != source->playlist_modification_idx;
-        const char *compareTf = compareItem != NULL ? scriptableItemPropertyValueForKey(compareItem, "name") : NULL;
-        if (!needs_sort && (compareTf == NULL || strcmp (compareTf, tf))) {
-            needs_sort = 1;
-        }
+
+        size_t sort_tf_size = 20000;
+        char *sort_tf = calloc (1, sort_tf_size + 1);
+
+        const char *track_tf = NULL;
 
         if (count < 2) {
             track_tf = "[%tracknumber%. ]%title%";
+            strncat (sort_tf, track_tf, sort_tf_size);
         }
         else {
-            item = scriptableItemNext(item);
-            track_tf = scriptableItemPropertyValueForKey(item, "name");
+            // Build sort tf from the remaining items, only for sorting purpose.
+            // The result will still be only folder tree, + the last tf item as leaf.
+            strncat (sort_tf, "$directory_path(%path%)", sort_tf_size);
+            while ((item = scriptableItemNext (item))) {
+                track_tf = scriptableItemPropertyValueForKey (item, "name");
+                strncat (sort_tf, "/", sort_tf_size);
+                strncat (sort_tf, track_tf, sort_tf_size);
+            }
         }
-        _create_folder_tree(source, root, track_tf, selected, needs_sort);
+        if (!needs_sort && (source->folder_tree_sort_tf == NULL || strcmp(source->folder_tree_sort_tf, sort_tf))) {
+            free (source->folder_tree_sort_tf);
+            source->folder_tree_sort_tf = strdup(sort_tf);
+            needs_sort = 1;
+        }
+
+        _create_folder_tree (source, root, sort_tf, track_tf, selected, needs_sort);
+        free (sort_tf);
     }
     else {
         const char **tfs = calloc(count, sizeof (char *));
@@ -586,6 +598,10 @@ _create_item_tree_from_collection(const char *filter, scriptableItem_t *preset, 
         scriptableItem_t *compareItem = source->last_build_tree_preset != NULL ? scriptableItemChildren(source->last_build_tree_preset) : NULL;
 
         needs_sort = compareItem == NULL || source->last_build_tree_playlist_modification_idx != source->playlist_modification_idx;
+        if (!needs_sort && source->folder_tree_sort_tf) {
+            free (source->folder_tree_sort_tf);
+            source->folder_tree_sort_tf = NULL;
+        }
         int index = 0;
         do {
             // First item already obtained
