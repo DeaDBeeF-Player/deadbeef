@@ -52,7 +52,6 @@ extern DB_functions_t *deadbeef;
 @implementation AlbumArtWidgetViewController
 
 - (void)loadView {
-    [super loadView];
     self.imageView = [AlbumArtImageView new];
     self.imageView.imageAlignment = NSImageAlignCenter;
     self.imageView.imageScaling = NSImageScaleProportionallyUpOrDown;
