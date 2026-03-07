@@ -8,8 +8,11 @@ version 1.10.1
 	Fixed: Lost edits when clicking Apply in track properties
 	Fixed: Known performance issues in Artwork
 	Fixed: Prevent total playtime to be rounded to int (Jakub Wasylków)
+	Fixed: Sample format conversion from float to int32
+	Fixed: Replaygain scanner memory leak
+	Fixed: Wrong title formatting/grouping in Folder mode
 	Added: Lyrics plugin
-	Added: Improved corruption recovery in AAC, APE, MP3 files
+	Added: Improved corruption recovery in AAC, APE, MP3, WMA files
 	Added: OPUS artwork support
 	Added: SID infinite looping
 	Added: New UI for DSP presets in Preferences
