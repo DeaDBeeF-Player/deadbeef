@@ -4,16 +4,16 @@
 # 
 # Translators:
 # Glenn de Groot, 2010
-# Heimen Stoffels <vistausss@fastmail.com>, 2021-2025
+# Heimen Stoffels <vistausss@fastmail.com>, 2021-2026
 # Heimen Stoffels <vistausss@fastmail.com>, 2019-2021
 # Pjotr, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-07 11:49+0100\n"
+"POT-Creation-Date: 2026-03-08 12:54+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>, 2021-2025\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>, 2021-2026\n"
 "Language-Team: Dutch (http://app.transifex.com/deadbeef-player/deadbeef-player/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -466,7 +466,7 @@ msgstr "Geselecteerd nummer"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:399
 msgid "Playing or Selected Track"
-msgstr ""
+msgstr "Spelend of geselecteerd nummer"
 
 #: ../plugins/gtkui/ctmapping.c:130
 msgid "Content-Type"
@@ -682,7 +682,7 @@ msgstr "Stoppen na huidig album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:46 ../plugins/gtkui/interface.c:413
 msgid "Stop after playback queue"
-msgstr ""
+msgstr "Stoppen na afspeelwachtrij"
 
 #: ../plugins/gtkui/deadbeef.glade.h:47 ../plugins/gtkui/interface.c:422
 msgid "Jump to current track"
@@ -955,7 +955,7 @@ msgstr "Vorige sessie hervatten bij opstarten"
 
 #: ../plugins/gtkui/deadbeef.glade.h:117 ../plugins/gtkui/interface.c:2148
 msgid "Always resume session in paused state"
-msgstr ""
+msgstr "Sessie altijd gepauzeerd herstellen"
 
 #: ../plugins/gtkui/deadbeef.glade.h:118 ../plugins/gtkui/interface.c:2152
 msgid "Don't add from archives when adding folders"
@@ -967,7 +967,7 @@ msgstr "‘Stoppen na huidig nummer’ wordt uitgeschakeld na triggeren"
 
 #: ../plugins/gtkui/deadbeef.glade.h:120 ../plugins/gtkui/interface.c:2160
 msgid "\"Stop after queue\" option will switch off after triggering"
-msgstr ""
+msgstr "‘Stoppen na afspeelwachtrij’ wordt uitgeschakeld na triggeren"
 
 #: ../plugins/gtkui/deadbeef.glade.h:121 ../plugins/gtkui/interface.c:2164
 msgid "\"Stop after current album\" option will switch off after triggering"
@@ -1538,7 +1538,7 @@ msgstr "Individuele waarden"
 
 #: ../plugins/gtkui/dspconfig.c:77
 msgid "New preset"
-msgstr ""
+msgstr "Nieuwe voorinstelling"
 
 #: ../plugins/gtkui/dspconfig.c:80 ../plugins/gtkui/trkproperties.c:1233
 msgid "Name:"
@@ -1546,15 +1546,15 @@ msgstr "Naam:"
 
 #: ../plugins/gtkui/dspconfig.c:82
 msgid "New Preset"
-msgstr ""
+msgstr "Nieuwe voorinstelling"
 
 #: ../plugins/gtkui/dspconfig.c:99
 msgid "Save as preset"
-msgstr ""
+msgstr "Opslaan als voorinstelling"
 
 #: ../plugins/gtkui/dspconfig.c:196
 msgid "DSP Preset:"
-msgstr ""
+msgstr "DSP-voorinstelling:"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
@@ -1757,8 +1757,8 @@ msgstr "HBox"
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1538 ../plugins/gtkui/widgets.c:3829
-#: ../plugins/gtkui/widgets.c:3916
+#: ../plugins/gtkui/gtkui.c:1538 ../plugins/gtkui/widgets.c:3835
+#: ../plugins/gtkui/widgets.c:3922
 msgid "Button"
 msgstr "Knop"
 
@@ -1888,7 +1888,7 @@ msgid "Track"
 msgstr "Nummer"
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/playlist/plcommon.c:896
-#: ../plugins/gtkui/widgets.c:3262 ../plugins/gtkui/widgets.c:3924
+#: ../plugins/gtkui/widgets.c:3268 ../plugins/gtkui/widgets.c:3930
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "None"
@@ -2350,7 +2350,7 @@ msgstr "Tabblad naar links verplaatsen"
 msgid "Move Tab Right"
 msgstr "Tabblad naar rechts verplaatsen"
 
-#: ../plugins/gtkui/widgets.c:2751 ../plugins/gtkui/widgets.c:3239
+#: ../plugins/gtkui/widgets.c:2751 ../plugins/gtkui/widgets.c:3245
 msgid "Rendering Mode"
 msgstr "Rendermodus"
 
@@ -2413,105 +2413,105 @@ msgstr "300 ms"
 msgid "500 ms"
 msgstr "500 ms"
 
-#: ../plugins/gtkui/widgets.c:3244
+#: ../plugins/gtkui/widgets.c:3250
 msgid "Discrete Frequencies"
 msgstr "Discrete frequenties"
 
-#: ../plugins/gtkui/widgets.c:3247
+#: ../plugins/gtkui/widgets.c:3253
 msgid "1/12 Octave Bands"
 msgstr "1/12 octaafbanden"
 
-#: ../plugins/gtkui/widgets.c:3250
+#: ../plugins/gtkui/widgets.c:3256
 msgid "1/24 Octave Bands"
 msgstr "1/24 octaafbanden"
 
-#: ../plugins/gtkui/widgets.c:3257
+#: ../plugins/gtkui/widgets.c:3263
 msgid "Gap Size"
 msgstr "Ruimte-overbrugging"
 
-#: ../plugins/gtkui/widgets.c:3265
+#: ../plugins/gtkui/widgets.c:3271
 msgid "1/2 Bar"
 msgstr "1/2 bar"
 
-#: ../plugins/gtkui/widgets.c:3268
+#: ../plugins/gtkui/widgets.c:3274
 msgid "1/3 Bar"
 msgstr "1/3 bar"
 
-#: ../plugins/gtkui/widgets.c:3271
+#: ../plugins/gtkui/widgets.c:3277
 msgid "1/4 Bar"
 msgstr "1/4 bar"
 
-#: ../plugins/gtkui/widgets.c:3274
+#: ../plugins/gtkui/widgets.c:3280
 msgid "1/5 Bar"
 msgstr "1/5 bar"
 
-#: ../plugins/gtkui/widgets.c:3277
+#: ../plugins/gtkui/widgets.c:3283
 msgid "1/6 Bar"
 msgstr "1/6 bar"
 
-#: ../plugins/gtkui/widgets.c:3280
+#: ../plugins/gtkui/widgets.c:3286
 msgid "1/7 Bar"
 msgstr "1/7 bar"
 
-#: ../plugins/gtkui/widgets.c:3283
+#: ../plugins/gtkui/widgets.c:3289
 msgid "1/8 Bar"
 msgstr "1/8 bar"
 
-#: ../plugins/gtkui/widgets.c:3286
+#: ../plugins/gtkui/widgets.c:3292
 msgid "1/9 Bar"
 msgstr "1/9 bar"
 
-#: ../plugins/gtkui/widgets.c:3289
+#: ../plugins/gtkui/widgets.c:3295
 msgid "1/10 Bar"
 msgstr "1/10 bar"
 
-#: ../plugins/gtkui/widgets.c:3552
+#: ../plugins/gtkui/widgets.c:3558
 msgid "Expand Box by 1 Item"
 msgstr "Veld uitbreiden met 1 item"
 
-#: ../plugins/gtkui/widgets.c:3557
+#: ../plugins/gtkui/widgets.c:3563
 msgid "Shrink Box by 1 Item"
 msgstr "Veld inperken met 1 item"
 
-#: ../plugins/gtkui/widgets.c:3562
+#: ../plugins/gtkui/widgets.c:3568
 msgid "Homogeneous"
 msgstr "Uniform"
 
-#: ../plugins/gtkui/widgets.c:3602
+#: ../plugins/gtkui/widgets.c:3608
 msgid "Expand"
 msgstr "Uitbreiden"
 
-#: ../plugins/gtkui/widgets.c:3608
+#: ../plugins/gtkui/widgets.c:3614
 msgid "Fill"
 msgstr "Opvullen"
 
-#: ../plugins/gtkui/widgets.c:4003
+#: ../plugins/gtkui/widgets.c:4009
 msgid "Configure Button"
 msgstr "Knop instellen"
 
-#: ../plugins/gtkui/widgets.c:4261
+#: ../plugins/gtkui/widgets.c:4267
 msgid "_dB Scale"
 msgstr "_dB-schaal"
 
-#: ../plugins/gtkui/widgets.c:4270
+#: ../plugins/gtkui/widgets.c:4276
 msgid "_Linear Scale"
 msgstr "_Lineaire schaal"
 
-#: ../plugins/gtkui/widgets.c:4279
+#: ../plugins/gtkui/widgets.c:4285
 msgid "_Cubic Scale"
 msgstr "Kubis_che schaal"
 
-#: ../plugins/gtkui/widgets.c:4399
+#: ../plugins/gtkui/widgets.c:4405
 msgid "Voices:"
 msgstr "Stemmen:"
 
 #: ../plugins/lyrics/lyrics.c:57
 msgid "Lyrics Not Available"
-msgstr ""
+msgstr "Er is geen songtekst beschikbaar"
 
 #: ../plugins/lyrics/lyrics.c:212
 msgid "Lyrics"
-msgstr ""
+msgstr "Songtekst"
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
@@ -2681,12 +2681,12 @@ msgstr "wildmidi: het freepats-configuratiebestand is niet aangetroffen. Install
 #: ../src/actionhandlers.c:823
 #, c-format
 msgid "Copy of %s"
-msgstr ""
+msgstr "Kopie van %s"
 
 #: ../src/actionhandlers.c:826
 #, c-format
 msgid "Copy of %s (%d)"
-msgstr ""
+msgstr "Kopie van %s (%d)"
 
 #: ../src/main.c:139
 #, c-format
@@ -2762,7 +2762,7 @@ msgstr "   --queue         Bestand(en) toevoegen aan afspeellijst\n"
 #: ../src/main.c:153
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN       Geef op welke GUI-plug-in moet worden gebruikt - standaard is dit ‘GTK3’\n"
 
 #: ../src/main.c:154
 #, c-format
@@ -3239,13 +3239,13 @@ msgstr "PipeWire-volumebediening gebruiken"
 #: ../translation/plugins.c:140
 #, no-c-format
 msgid "Buffer length (ms)"
-msgstr ""
+msgstr "Buffergrootte (ms)"
 
 #. plugins/aac/aac.c
 #: ../translation/plugins.c:143
 #, no-c-format
 msgid "Ignore corrupt frames"
-msgstr ""
+msgstr "Beschadigde frames overslaan"
 
 #. plugins/adplug/plugin.c
 #: ../translation/plugins.c:146
@@ -3711,7 +3711,7 @@ msgstr "Ontwerpmodus aan/uit"
 #: ../translation/plugins.c:356
 #, no-c-format
 msgid "DSP Preferences"
-msgstr ""
+msgstr "DSP-voorkeuren"
 
 #: ../translation/plugins.c:358
 #, no-c-format
@@ -4160,4 +4160,4 @@ msgstr "MP4 wegschrijven"
 #: ../translation/plugins.c:560
 #, no-c-format
 msgid "Toggle Stop After Queue"
-msgstr ""
+msgstr "Stoppen na afspeelwachtrij aan/uit"

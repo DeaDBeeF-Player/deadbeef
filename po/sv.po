@@ -3,22 +3,22 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Daniel, 2026
+# Karl Jonatan Nyberg, 2026
 # Jonatan Nyberg, 2017
-# Daniel, 2021-2022
-# Daniel, 2018-2021
+# Karl Jonatan Nyberg, 2021-2022
+# Karl Jonatan Nyberg, 2018-2021
 # efef6ec5b435a041fce803c7f8af77d2_2341d43, 2017-2018
 # Luna Jernberg <droidbittin@gmail.com>, 2024
-# Luna Jernberg <droidbittin@gmail.com>, 2024-2025
+# Luna Jernberg <droidbittin@gmail.com>, 2024-2026
 # Martin Bagge <brother@bsnet.se>, 2010
 # Martin Bagge <brother@bsnet.se>, 2010
 msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-07 11:49+0100\n"
+"POT-Creation-Date: 2026-03-08 12:54+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
-"Last-Translator: Daniel, 2026\n"
+"Last-Translator: Luna Jernberg <droidbittin@gmail.com>, 2024-2026\n"
 "Language-Team: Swedish (http://app.transifex.com/deadbeef-player/deadbeef-player/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -471,7 +471,7 @@ msgstr "Markerat spår"
 
 #: ../plugins/gtkui/covermanager/albumartwidget.c:399
 msgid "Playing or Selected Track"
-msgstr ""
+msgstr "Spelar eller markerat spår"
 
 #: ../plugins/gtkui/ctmapping.c:130
 msgid "Content-Type"
@@ -687,7 +687,7 @@ msgstr "Stoppa efter aktuellt album"
 
 #: ../plugins/gtkui/deadbeef.glade.h:46 ../plugins/gtkui/interface.c:413
 msgid "Stop after playback queue"
-msgstr ""
+msgstr "Stoppa efter uppspelningskön"
 
 #: ../plugins/gtkui/deadbeef.glade.h:47 ../plugins/gtkui/interface.c:422
 msgid "Jump to current track"
@@ -960,7 +960,7 @@ msgstr "Återuppta föregående session vid uppstart"
 
 #: ../plugins/gtkui/deadbeef.glade.h:117 ../plugins/gtkui/interface.c:2148
 msgid "Always resume session in paused state"
-msgstr ""
+msgstr "Återuppta alltid sessionen i pausat tillstånd"
 
 #: ../plugins/gtkui/deadbeef.glade.h:118 ../plugins/gtkui/interface.c:2152
 msgid "Don't add from archives when adding folders"
@@ -972,7 +972,7 @@ msgstr "Alternativet \"Stoppa efter aktuellt spår\" stängs av efter utlösning
 
 #: ../plugins/gtkui/deadbeef.glade.h:120 ../plugins/gtkui/interface.c:2160
 msgid "\"Stop after queue\" option will switch off after triggering"
-msgstr ""
+msgstr "\"Stoppa efter kö\" alternativet stängs av efter utlösning"
 
 #: ../plugins/gtkui/deadbeef.glade.h:121 ../plugins/gtkui/interface.c:2164
 msgid "\"Stop after current album\" option will switch off after triggering"
@@ -1543,7 +1543,7 @@ msgstr "Individuella värden"
 
 #: ../plugins/gtkui/dspconfig.c:77
 msgid "New preset"
-msgstr ""
+msgstr "Ny förinställning"
 
 #: ../plugins/gtkui/dspconfig.c:80 ../plugins/gtkui/trkproperties.c:1233
 msgid "Name:"
@@ -1551,15 +1551,15 @@ msgstr "Namn:"
 
 #: ../plugins/gtkui/dspconfig.c:82
 msgid "New Preset"
-msgstr ""
+msgstr "Ny förinställning"
 
 #: ../plugins/gtkui/dspconfig.c:99
 msgid "Save as preset"
-msgstr ""
+msgstr "Spara som förinställningar"
 
 #: ../plugins/gtkui/dspconfig.c:196
 msgid "DSP Preset:"
-msgstr ""
+msgstr "DSP-förinställning:"
 
 #: ../plugins/gtkui/eq.c:136
 msgid "Save DeaDBeeF EQ Preset"
@@ -1762,8 +1762,8 @@ msgstr "HBox"
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1538 ../plugins/gtkui/widgets.c:3829
-#: ../plugins/gtkui/widgets.c:3916
+#: ../plugins/gtkui/gtkui.c:1538 ../plugins/gtkui/widgets.c:3835
+#: ../plugins/gtkui/widgets.c:3922
 msgid "Button"
 msgstr "Knapp"
 
@@ -1893,7 +1893,7 @@ msgid "Track"
 msgstr "Spår"
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/playlist/plcommon.c:896
-#: ../plugins/gtkui/widgets.c:3262 ../plugins/gtkui/widgets.c:3924
+#: ../plugins/gtkui/widgets.c:3268 ../plugins/gtkui/widgets.c:3930
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "None"
@@ -2355,7 +2355,7 @@ msgstr "Flytta fliken till vänster"
 msgid "Move Tab Right"
 msgstr "Flytta fliken till höger"
 
-#: ../plugins/gtkui/widgets.c:2751 ../plugins/gtkui/widgets.c:3239
+#: ../plugins/gtkui/widgets.c:2751 ../plugins/gtkui/widgets.c:3245
 msgid "Rendering Mode"
 msgstr "Renderingsläge"
 
@@ -2418,105 +2418,105 @@ msgstr "300 ms"
 msgid "500 ms"
 msgstr "500 ms"
 
-#: ../plugins/gtkui/widgets.c:3244
+#: ../plugins/gtkui/widgets.c:3250
 msgid "Discrete Frequencies"
 msgstr "Diskreta frekvenser"
 
-#: ../plugins/gtkui/widgets.c:3247
+#: ../plugins/gtkui/widgets.c:3253
 msgid "1/12 Octave Bands"
 msgstr "1/12 oktavband"
 
-#: ../plugins/gtkui/widgets.c:3250
+#: ../plugins/gtkui/widgets.c:3256
 msgid "1/24 Octave Bands"
 msgstr "1/24 oktavband"
 
-#: ../plugins/gtkui/widgets.c:3257
+#: ../plugins/gtkui/widgets.c:3263
 msgid "Gap Size"
 msgstr "Mellanrumsstorlek"
 
-#: ../plugins/gtkui/widgets.c:3265
+#: ../plugins/gtkui/widgets.c:3271
 msgid "1/2 Bar"
 msgstr "1/2 takt"
 
-#: ../plugins/gtkui/widgets.c:3268
+#: ../plugins/gtkui/widgets.c:3274
 msgid "1/3 Bar"
 msgstr "1/3 takt"
 
-#: ../plugins/gtkui/widgets.c:3271
+#: ../plugins/gtkui/widgets.c:3277
 msgid "1/4 Bar"
 msgstr "1/4 takt"
 
-#: ../plugins/gtkui/widgets.c:3274
+#: ../plugins/gtkui/widgets.c:3280
 msgid "1/5 Bar"
 msgstr "1/5 takt"
 
-#: ../plugins/gtkui/widgets.c:3277
+#: ../plugins/gtkui/widgets.c:3283
 msgid "1/6 Bar"
 msgstr "1/6 takt"
 
-#: ../plugins/gtkui/widgets.c:3280
+#: ../plugins/gtkui/widgets.c:3286
 msgid "1/7 Bar"
 msgstr "1/7 takt"
 
-#: ../plugins/gtkui/widgets.c:3283
+#: ../plugins/gtkui/widgets.c:3289
 msgid "1/8 Bar"
 msgstr "1/8 takt"
 
-#: ../plugins/gtkui/widgets.c:3286
+#: ../plugins/gtkui/widgets.c:3292
 msgid "1/9 Bar"
 msgstr "1/9 takt"
 
-#: ../plugins/gtkui/widgets.c:3289
+#: ../plugins/gtkui/widgets.c:3295
 msgid "1/10 Bar"
 msgstr "1/10 takt"
 
-#: ../plugins/gtkui/widgets.c:3552
+#: ../plugins/gtkui/widgets.c:3558
 msgid "Expand Box by 1 Item"
 msgstr "Expandera låda med 1 artikel"
 
-#: ../plugins/gtkui/widgets.c:3557
+#: ../plugins/gtkui/widgets.c:3563
 msgid "Shrink Box by 1 Item"
 msgstr "Krymp låda med 1 artikel"
 
-#: ../plugins/gtkui/widgets.c:3562
+#: ../plugins/gtkui/widgets.c:3568
 msgid "Homogeneous"
 msgstr "Homogen"
 
-#: ../plugins/gtkui/widgets.c:3602
+#: ../plugins/gtkui/widgets.c:3608
 msgid "Expand"
 msgstr "Expandera"
 
-#: ../plugins/gtkui/widgets.c:3608
+#: ../plugins/gtkui/widgets.c:3614
 msgid "Fill"
 msgstr "Fyll"
 
-#: ../plugins/gtkui/widgets.c:4003
+#: ../plugins/gtkui/widgets.c:4009
 msgid "Configure Button"
 msgstr "Konfigurera knappen"
 
-#: ../plugins/gtkui/widgets.c:4261
+#: ../plugins/gtkui/widgets.c:4267
 msgid "_dB Scale"
 msgstr "_dB skala"
 
-#: ../plugins/gtkui/widgets.c:4270
+#: ../plugins/gtkui/widgets.c:4276
 msgid "_Linear Scale"
 msgstr "_Linjär skala"
 
-#: ../plugins/gtkui/widgets.c:4279
+#: ../plugins/gtkui/widgets.c:4285
 msgid "_Cubic Scale"
 msgstr "_Kubisk skala"
 
-#: ../plugins/gtkui/widgets.c:4399
+#: ../plugins/gtkui/widgets.c:4405
 msgid "Voices:"
 msgstr "Röster:"
 
 #: ../plugins/lyrics/lyrics.c:57
 msgid "Lyrics Not Available"
-msgstr ""
+msgstr "Sångtexter är inte tillgängligt"
 
 #: ../plugins/lyrics/lyrics.c:212
 msgid "Lyrics"
-msgstr ""
+msgstr "Sångtexter"
 
 #: ../plugins/pltbrowser/pltbrowser.c:170
 msgid " (paused)"
@@ -2686,12 +2686,12 @@ msgstr "wildmidi: freepats konfigurationsfil hittades inte. Installera timidity-
 #: ../src/actionhandlers.c:823
 #, c-format
 msgid "Copy of %s"
-msgstr ""
+msgstr "Kopia av %s"
 
 #: ../src/actionhandlers.c:826
 #, c-format
 msgid "Copy of %s (%d)"
-msgstr ""
+msgstr "Kopia av %s (%d)"
 
 #: ../src/main.c:139
 #, c-format
@@ -2767,7 +2767,7 @@ msgstr "   --queue            Lägg till fil(er) i nuvarande spellista\n"
 #: ../src/main.c:153
 #, c-format
 msgid "   --gui PLUGIN       Tells which GUI plugin to use, default is \"GTK3\"\n"
-msgstr ""
+msgstr "   --gui PLUGIN       Berättar vilken GUI-insticksmodul som ska användas, standard är \"GTK3\"\n"
 
 #: ../src/main.c:154
 #, c-format
@@ -3244,13 +3244,13 @@ msgstr "Använd PipeWire volymkontroll"
 #: ../translation/plugins.c:140
 #, no-c-format
 msgid "Buffer length (ms)"
-msgstr ""
+msgstr "Buffertlängd (ms)"
 
 #. plugins/aac/aac.c
 #: ../translation/plugins.c:143
 #, no-c-format
 msgid "Ignore corrupt frames"
-msgstr ""
+msgstr "Ignorera korrupta bildrutor"
 
 #. plugins/adplug/plugin.c
 #: ../translation/plugins.c:146
@@ -3716,7 +3716,7 @@ msgstr "Växla designläge"
 #: ../translation/plugins.c:356
 #, no-c-format
 msgid "DSP Preferences"
-msgstr ""
+msgstr "DSP egenskaper"
 
 #: ../translation/plugins.c:358
 #, no-c-format
@@ -4165,4 +4165,4 @@ msgstr "Skriv MP4-tagg"
 #: ../translation/plugins.c:560
 #, no-c-format
 msgid "Toggle Stop After Queue"
-msgstr ""
+msgstr "Växla stopp efter uppspelningskö"
