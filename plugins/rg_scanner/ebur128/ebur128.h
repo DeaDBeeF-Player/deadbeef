@@ -97,6 +97,16 @@ ebur128_state* ebur128_init(unsigned int channels,
                             unsigned long samplerate,
                             int mode);
 
+/** \brief Destroy temporary part of the library state.
+ *
+ * Release most of the allocated memory, but without releasing the whole state.
+ * The remaining state is enough for calling \ref ebur128_loudness_global,
+ * but probably for not much else.
+ *
+ *  @param st pointer to a library state.
+ */
+void ebur128_destroy_temp(ebur128_state** st);
+
 /** \brief Destroy library state.
  *
  *  @param st pointer to a library state.

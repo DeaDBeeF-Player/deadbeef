@@ -340,6 +340,32 @@ exit:
   return NULL;
 }
 
+void ebur128_destroy_temp(ebur128_state** st) {
+    struct ebur128_dq_entry* entry;
+    if (((*st)->mode & EBUR128_MODE_HISTOGRAM) == 0) {
+        free((*st)->d->block_energy_histogram);
+        (*st)->d->block_energy_histogram = NULL;
+        free((*st)->d->short_term_block_energy_histogram);
+        (*st)->d->short_term_block_energy_histogram = NULL;
+    }
+    free((*st)->d->audio_data);
+    (*st)->d->audio_data = NULL;
+    while (!SLIST_EMPTY(&(*st)->d->short_term_block_list)) {
+        entry = SLIST_FIRST(&(*st)->d->short_term_block_list);
+        SLIST_REMOVE_HEAD(&(*st)->d->short_term_block_list, entries);
+        free(entry);
+    }
+    free((*st)->d->channel_map);
+    (*st)->d->channel_map = NULL;
+    free((*st)->d->sample_peak);
+    (*st)->d->sample_peak = NULL;
+    free((*st)->d->true_peak);
+    (*st)->d->true_peak = NULL;
+#ifdef USE_SPEEX_RESAMPLER
+    ebur128_destroy_resampler(*st);
+#endif
+}
+
 void ebur128_destroy(ebur128_state** st) {
   struct ebur128_dq_entry* entry;
   free((*st)->d->block_energy_histogram);
