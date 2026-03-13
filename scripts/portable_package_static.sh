@@ -102,6 +102,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/medialib.so\
     $PLUGDIR/lyrics_gtk2.so\
     $PLUGDIR/lyrics_gtk3.so\
+    $PLUGDIR/mpris.so\
     $PIXMAPDIR\
     $SRCDIR/locale\
     || exit 1

@@ -266,8 +266,7 @@ AS_IF([test "${enable_gtk2}" = "yes" -o "${enable_gtk3}" = "yes" -o "${enable_sh
     ])
 ])
 
-AS_IF([test "${enable_staticlink}" != "no"], [
-    ], [
+AS_IF([test "${enable_staticlink}" != "no"], [], [
     AC_CHECK_LIB([dispatch], [main], [HAVE_DISPATCH=yes])
 ])
 
@@ -744,6 +743,19 @@ AS_IF([test "${enable_gme}" != "no" -a "${HAVE_ZLIB}" = "yes"], [
     HAVE_GME=yes
 ])
 
+dnl mpris plugin
+AS_IF([test "${enable_mpris}" != "no"], [
+    AS_IF([test "${enable_staticlink}" != "no"], [
+        HAVE_MPRIS=yes
+        MPRIS_LIBS="-L${GTK_ROOT_310}/lib -lglib-2.0 -lgio-2.0 -lgthread-2.0"
+        MPRIS_CFLAGS="${GTK3_310_CFLAGS}"
+    ], [
+        PKG_CHECK_MODULES(MPRIS, [glib-2.0 gio-2.0 gio-unix-2.0 gthread-2.0], HAVE_MPRIS=yes, HAVE_MPRIS=no)
+    ])
+    AC_SUBST(MPRIS_LIBS)
+    AC_SUBST(MPRIS_CFLAGS)
+])
+
 AS_IF([test "${HAVE_DBUS}" = "yes" -a "${enable_notify}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_NOTIFY=yes
@@ -864,7 +876,7 @@ AS_IF([test "${enable_soundtouch}" != "no"], [
     HAVE_SOUNDTOUCH=yes
 ])
 
-PLUGINS_DIRS="plugins/liboggedit plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/rg_scanner plugins/soundtouch plugins/medialib plugins/lyrics"
+PLUGINS_DIRS="plugins/liboggedit plugins/lastfm plugins/mp3 plugins/vorbis plugins/opus plugins/flac plugins/wavpack plugins/sndfile plugins/vfs_curl plugins/cdda plugins/gtkui plugins/alsa plugins/ffmpeg plugins/hotkeys plugins/oss plugins/artwork plugins/adplug plugins/ffap plugins/sid plugins/nullout plugins/supereq plugins/vtx plugins/gme plugins/pulse plugins/notify plugins/musepack plugins/wildmidi plugins/tta plugins/dca plugins/aac plugins/mms plugins/shellexec plugins/shellexecui plugins/dsp_libsrc plugins/m3u plugins/vfs_zip plugins/converter plugins/dumb plugins/shn plugins/psf plugins/mono2stereo plugins/alac plugins/wma plugins/pltbrowser plugins/coreaudio plugins/sc68 plugins/rg_scanner plugins/soundtouch plugins/medialib plugins/lyrics plugins/mpris"
 
 AM_CONDITIONAL(APE_USE_YASM, test "x$APE_USE_YASM" = "xyes")
 AM_CONDITIONAL(HAVE_VORBIS, test "x$HAVE_VORBISPLUGIN" = "xyes")
@@ -899,6 +911,7 @@ AM_CONDITIONAL(HAVE_MP3, test "x$HAVE_MP3" = "xyes")
 AM_CONDITIONAL(HAVE_LIBMAD, test "x$HAVE_LIBMAD" = "xyes")
 AM_CONDITIONAL(HAVE_LIBMPG123, test "x$HAVE_LIBMPG123" = "xyes")
 AM_CONDITIONAL(HAVE_LYRICS, test "x$HAVE_LYRICS" = "xyes")
+AM_CONDITIONAL(HAVE_MPRIS, test "x$HAVE_MPRIS" = "xyes")
 AM_CONDITIONAL(HAVE_OSS, test "x$HAVE_OSS" = "xyes")
 AM_CONDITIONAL(HAVE_SUPEREQ, test "x$HAVE_SUPEREQ" = "xyes")
 AM_CONDITIONAL(HAVE_NOTIFY, test "x$HAVE_NOTIFY" = "xyes")
@@ -1001,6 +1014,7 @@ plugins/rg_scanner/Makefile
 plugins/soundtouch/Makefile
 plugins/medialib/Makefile
 plugins/lyrics/Makefile
+plugins/mpris/Makefile
 po/Makefile.in
 intl/Makefile
 deadbeef.desktop
@@ -1059,6 +1073,7 @@ PRINT_PLUGIN_INFO([mono2stereo],[mono2stereo DSP plugin],[test "x$HAVE_MONO2STER
 PRINT_PLUGIN_INFO([mp3],[mp3 plugin],[test "x$HAVE_MP3" = "xyes"])
 PRINT_PLUGIN_INFO([    libmad],[libmad backend for mp3 plugin],[test "x$HAVE_LIBMAD" = "xyes"])
 PRINT_PLUGIN_INFO([    libmpg123],[libmpg123 backend for mp3 plugin],[test "x$HAVE_LIBMPG123" = "xyes"])
+PRINT_PLUGIN_INFO([mpris],[MPRIS plugin],[test "x$HAVE_MPRIS" = "xyes"])
 PRINT_PLUGIN_INFO([musepack],[musepack player plugin],[test "x$HAVE_MUSEPACK" = "xyes"])
 PRINT_PLUGIN_INFO([notify],[notification-daemon support plugin],[test "x$HAVE_NOTIFY" = "xyes"])
 PRINT_PLUGIN_INFO([nullout],[NULL output],[test "x$HAVE_NULLOUT" = "xyes"])
