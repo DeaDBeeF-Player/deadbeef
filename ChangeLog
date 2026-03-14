@@ -1,3 +1,7 @@
+version 1.10.2
+	Fixed: Regression in replaygain scanner, producing INF for album gain
+	Added: MPRIS plugin is now part of DeaDBeeF, replacing global hotkeys
+
 version 1.10.1
 	Fixed: Playlist auto-naming regression
 	Fixed: Multiple slowness and stability issues in medialib
