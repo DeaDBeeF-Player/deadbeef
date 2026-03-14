@@ -74,7 +74,7 @@ _save_as_preset(GtkButton *button,
     GtkWidget *dlg = create_entrydialog ();
     gtk_window_set_transient_for (GTK_WINDOW (dlg), GTK_WINDOW (mainwin));
     gtk_dialog_set_default_response (GTK_DIALOG (dlg), GTK_RESPONSE_OK);
-    gtk_window_set_title (GTK_WINDOW (dlg), _ ("New preset"));
+    gtk_window_set_title (GTK_WINDOW (dlg), _ ("New Preset"));
     GtkWidget *e;
     e = lookup_widget (dlg, "title_label");
     gtk_label_set_text (GTK_LABEL (e), _ ("Name:"));
@@ -96,7 +96,7 @@ _save_as_preset(GtkButton *button,
 }
 
 static void _add_buttons (gtkScriptableListEditViewController_t *view_controller, GtkBox *button_box, void *context) {
-    GtkWidget *button = gtk_button_new_with_label(_("Save as preset"));
+    GtkWidget *button = gtk_button_new_with_label(_("Save as Preset"));
     gtk_box_pack_end(button_box, button, FALSE, FALSE, 0);
     gtk_widget_show(button);
 

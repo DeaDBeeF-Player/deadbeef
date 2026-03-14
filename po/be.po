@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-07 11:49+0100\n"
+"POT-Creation-Date: 2026-03-14 14:03+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Viačasłaŭ <viachaslavic@outlook.com>, 2024-2025\n"
 "Language-Team: Belarusian (http://app.transifex.com/deadbeef-player/deadbeef-player/language/be/)\n"
@@ -1050,7 +1050,7 @@ msgstr "Плэер"
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/deadbeef.glade.h:137 ../plugins/gtkui/interface.c:2290
-#: ../translation/plugins.c:458
+#: ../translation/plugins.c:461
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "Закрываць плэй-лісты сярэдняй кнопкай мышы"
@@ -1385,7 +1385,7 @@ msgid "Strip APEv2"
 msgstr "Выразаць APEv2"
 
 #: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:4553
-#: ../translation/plugins.c:545
+#: ../translation/plugins.c:548
 #, no-c-format
 msgid "ID3v2 version"
 msgstr "Версія ID3v2"
@@ -1605,7 +1605,7 @@ msgid "Import Foobar2000 Preset"
 msgstr "Імпартаваць набор налад Foobar2000"
 
 #. plugins/notify/notify.c
-#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:442
+#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:445
 #, no-c-format
 msgid "Enable"
 msgstr "Уключыць"
@@ -1769,8 +1769,8 @@ msgstr "HBox"
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1538 ../plugins/gtkui/widgets.c:3829
-#: ../plugins/gtkui/widgets.c:3916
+#: ../plugins/gtkui/gtkui.c:1538 ../plugins/gtkui/widgets.c:3835
+#: ../plugins/gtkui/widgets.c:3922
 msgid "Button"
 msgstr "Кнопка"
 
@@ -1900,7 +1900,7 @@ msgid "Track"
 msgstr "Трэк"
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/playlist/plcommon.c:896
-#: ../plugins/gtkui/widgets.c:3262 ../plugins/gtkui/widgets.c:3924
+#: ../plugins/gtkui/widgets.c:3268 ../plugins/gtkui/widgets.c:3930
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "None"
@@ -2362,7 +2362,7 @@ msgstr "Перамясьціць укладку ўлева"
 msgid "Move Tab Right"
 msgstr "Перамясьціць укладку ўправа"
 
-#: ../plugins/gtkui/widgets.c:2751 ../plugins/gtkui/widgets.c:3239
+#: ../plugins/gtkui/widgets.c:2751 ../plugins/gtkui/widgets.c:3245
 msgid "Rendering Mode"
 msgstr "Рэжым адмалёўкі"
 
@@ -2425,95 +2425,95 @@ msgstr "300 мс"
 msgid "500 ms"
 msgstr "500 мс"
 
-#: ../plugins/gtkui/widgets.c:3244
+#: ../plugins/gtkui/widgets.c:3250
 msgid "Discrete Frequencies"
 msgstr "Дыскрэтныя чашчыні"
 
-#: ../plugins/gtkui/widgets.c:3247
+#: ../plugins/gtkui/widgets.c:3253
 msgid "1/12 Octave Bands"
 msgstr "Паласы 1/12 актавы"
 
-#: ../plugins/gtkui/widgets.c:3250
+#: ../plugins/gtkui/widgets.c:3256
 msgid "1/24 Octave Bands"
 msgstr "Паласы 1/24 актавы"
 
-#: ../plugins/gtkui/widgets.c:3257
+#: ../plugins/gtkui/widgets.c:3263
 msgid "Gap Size"
 msgstr "Памер зазору"
 
-#: ../plugins/gtkui/widgets.c:3265
+#: ../plugins/gtkui/widgets.c:3271
 msgid "1/2 Bar"
 msgstr "1/2 панэлі"
 
-#: ../plugins/gtkui/widgets.c:3268
+#: ../plugins/gtkui/widgets.c:3274
 msgid "1/3 Bar"
 msgstr "1/3 пліткі"
 
-#: ../plugins/gtkui/widgets.c:3271
+#: ../plugins/gtkui/widgets.c:3277
 msgid "1/4 Bar"
 msgstr "1/4 пліткі"
 
-#: ../plugins/gtkui/widgets.c:3274
+#: ../plugins/gtkui/widgets.c:3280
 msgid "1/5 Bar"
 msgstr "1/5 пліткі"
 
-#: ../plugins/gtkui/widgets.c:3277
+#: ../plugins/gtkui/widgets.c:3283
 msgid "1/6 Bar"
 msgstr "1/6 пліткі"
 
-#: ../plugins/gtkui/widgets.c:3280
+#: ../plugins/gtkui/widgets.c:3286
 msgid "1/7 Bar"
 msgstr "1/7 пліткі"
 
-#: ../plugins/gtkui/widgets.c:3283
+#: ../plugins/gtkui/widgets.c:3289
 msgid "1/8 Bar"
 msgstr "1/8 пліткі"
 
-#: ../plugins/gtkui/widgets.c:3286
+#: ../plugins/gtkui/widgets.c:3292
 msgid "1/9 Bar"
 msgstr "1/9 пліткі"
 
-#: ../plugins/gtkui/widgets.c:3289
+#: ../plugins/gtkui/widgets.c:3295
 msgid "1/10 Bar"
 msgstr "1/10 пліткі"
 
-#: ../plugins/gtkui/widgets.c:3552
+#: ../plugins/gtkui/widgets.c:3558
 msgid "Expand Box by 1 Item"
 msgstr "Пашырыць скрынку на 1 элемэнт"
 
-#: ../plugins/gtkui/widgets.c:3557
+#: ../plugins/gtkui/widgets.c:3563
 msgid "Shrink Box by 1 Item"
 msgstr "Звузіць скрынку на 1 элемэнт"
 
-#: ../plugins/gtkui/widgets.c:3562
+#: ../plugins/gtkui/widgets.c:3568
 msgid "Homogeneous"
 msgstr "Аднастайны"
 
-#: ../plugins/gtkui/widgets.c:3602
+#: ../plugins/gtkui/widgets.c:3608
 msgid "Expand"
 msgstr "Пашырыць"
 
-#: ../plugins/gtkui/widgets.c:3608
+#: ../plugins/gtkui/widgets.c:3614
 msgid "Fill"
 msgstr "Запоўніць"
 
-#: ../plugins/gtkui/widgets.c:4003
+#: ../plugins/gtkui/widgets.c:4009
 msgid "Configure Button"
 msgstr "Наладзіць кнопку"
 
-#: ../plugins/gtkui/widgets.c:4261
+#: ../plugins/gtkui/widgets.c:4267
 msgid "_dB Scale"
 msgstr "Шкала дБ"
 
-#: ../plugins/gtkui/widgets.c:4270
+#: ../plugins/gtkui/widgets.c:4276
 msgid "_Linear Scale"
 msgstr "Лінейная шкала"
 
-#: ../plugins/gtkui/widgets.c:4279
+#: ../plugins/gtkui/widgets.c:4285
 msgid "_Cubic Scale"
 msgstr "Кубічная шкала"
 
-#: ../plugins/gtkui/widgets.c:4399
+#: ../plugins/gtkui/widgets.c:4405
 msgid "Voices:"
 msgstr "Галасы:"
 
@@ -3908,268 +3908,274 @@ msgstr "Прымусовы вывад 16 біт"
 msgid "Backend"
 msgstr "Бэкенд"
 
-#: ../translation/plugins.c:444
+#. plugins/mpris/mpris.c
+#: ../translation/plugins.c:442
+#, no-c-format
+msgid "Disable shuffle and repeat"
+msgstr ""
+
+#: ../translation/plugins.c:447
 #, no-c-format
 msgid "Notification title format"
 msgstr "Фармат назвы апавяшчэньня"
 
-#: ../translation/plugins.c:446
+#: ../translation/plugins.c:449
 #, no-c-format
 msgid "Notification content format"
 msgstr "Фармат зьмесьціва апавяшчэньня"
 
-#: ../translation/plugins.c:448
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Show album art"
 msgstr "Паказваць вокладку альбома"
 
-#: ../translation/plugins.c:450
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "Album art size (px)"
 msgstr "Памер вокладкі альбома (пікс.)"
 
-#: ../translation/plugins.c:452
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "Don't reuse notifications (KDE quirk)"
 msgstr "Не выкарыстоўваць паўторна апавяшчэньні (выкрут KDE)"
 
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:458
 #, no-c-format
 msgid "Device file"
 msgstr "Файл прылады"
 
-#: ../translation/plugins.c:460
+#: ../translation/plugins.c:463
 #, no-c-format
 msgid "Highlight current playlist"
 msgstr "Падсьвечваць бягучы плэй-ліст"
 
-#: ../translation/plugins.c:462
+#: ../translation/plugins.c:465
 #, no-c-format
 msgid "Play on double-click"
 msgstr "Прайграваць падвойным націсканьнем"
 
 #. plugins/portaudio/portaudio.c
-#: ../translation/plugins.c:465
+#: ../translation/plugins.c:468
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
 msgstr "Памер буфэра (-1 - аптымальнае значэньне, абранае portaudio)"
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:470
 #, no-c-format
 msgid "Device name encoding"
 msgstr "Кадаваньне назвы прылады"
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:472
 #, no-c-format
 msgid "ASCII / UTF-8"
 msgstr "ASCII / UTF-8"
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:474
 #, no-c-format
 msgid "cp1250"
 msgstr "cp1250"
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:476
 #, no-c-format
 msgid "Defined below"
 msgstr "Вызначана ніжэй"
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:478
 #, no-c-format
 msgid "Custom device name encoding"
 msgstr "Адвольнае кадаваньне назвы прылады"
 
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:478
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr "Сэрвэр PulseAudio (пакіньце пустым для прадвызначанага)"
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:481
+#: ../translation/plugins.c:484
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr "Прадвызначаная працягласьць трэка (у хвілінах)"
 
-#: ../translation/plugins.c:483
+#: ../translation/plugins.c:486
 #, no-c-format
 msgid "Samplerate"
 msgstr "Чашчыня дыскрэтызацыі"
 
-#: ../translation/plugins.c:485
+#: ../translation/plugins.c:488
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr "Мінаць карацейшыя за (секунд)"
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:488
+#: ../translation/plugins.c:491
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "Наладзіць уласныя каманды абалонкі"
 
 #. plugins/shn/shnplugin.c
-#: ../translation/plugins.c:491
+#: ../translation/plugins.c:494
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "Адносны шлях табліцы пошуку"
 
-#: ../translation/plugins.c:493
+#: ../translation/plugins.c:496
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "Абсалютны шлях табліцы пошуку"
 
-#: ../translation/plugins.c:495
+#: ../translation/plugins.c:498
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Замена байтаў аўдыё (пераключаць, калі ўсё, што чуецца - статычнае)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:498
+#: ../translation/plugins.c:501
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "Уключыць HVSC Songlength DB"
 
-#: ../translation/plugins.c:500
+#: ../translation/plugins.c:503
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr "Поўны шлях да Songlengths.md5/.txt"
 
-#: ../translation/plugins.c:502
+#: ../translation/plugins.c:505
 #, no-c-format
 msgid "Bits per sample"
 msgstr "Бітаў на сэмпл"
 
-#: ../translation/plugins.c:504
+#: ../translation/plugins.c:507
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "Прадвызначаная даўжыня трэка (сэк.)"
 
-#: ../translation/plugins.c:506
+#: ../translation/plugins.c:509
 #, no-c-format
 msgid "Mono synth"
 msgstr "Сынхранізацыя мона"
 
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:509
+#: ../translation/plugins.c:512
 #, no-c-format
 msgid "Preamp"
 msgstr "Перадузмацненьне"
 
-#: ../translation/plugins.c:511
+#: ../translation/plugins.c:514
 #, no-c-format
 msgid "1.2K"
 msgstr "1.2K"
 
-#: ../translation/plugins.c:513
+#: ../translation/plugins.c:516
 #, no-c-format
 msgid "1.8K"
 msgstr "1.8K"
 
-#: ../translation/plugins.c:515
+#: ../translation/plugins.c:518
 #, no-c-format
 msgid "2.5K"
 msgstr "2.5K"
 
-#: ../translation/plugins.c:517
+#: ../translation/plugins.c:520
 #, no-c-format
 msgid "3.5K"
 msgstr "3.5K"
 
-#: ../translation/plugins.c:519
+#: ../translation/plugins.c:522
 #, no-c-format
 msgid "5K"
 msgstr "5K"
 
-#: ../translation/plugins.c:521
+#: ../translation/plugins.c:524
 #, no-c-format
 msgid "7K"
 msgstr "7K"
 
-#: ../translation/plugins.c:523
+#: ../translation/plugins.c:526
 #, no-c-format
 msgid "10K"
 msgstr "10K"
 
-#: ../translation/plugins.c:525
+#: ../translation/plugins.c:528
 #, no-c-format
 msgid "14K"
 msgstr "14K"
 
-#: ../translation/plugins.c:527
+#: ../translation/plugins.c:530
 #, no-c-format
 msgid "20K"
 msgstr "20K"
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:530
+#: ../translation/plugins.c:533
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Файл канфігурацыі для банка Timidity++"
 
 #. shared/scriptable/scriptable_encoder.c
-#: ../translation/plugins.c:533
+#: ../translation/plugins.c:536
 #, no-c-format
 msgid "File extension"
 msgstr "Пашырэньне файла"
 
-#: ../translation/plugins.c:535
+#: ../translation/plugins.c:538
 #, no-c-format
 msgid "Encoder command line"
 msgstr "Камандны радок кадавальніка"
 
-#: ../translation/plugins.c:537
+#: ../translation/plugins.c:540
 #, no-c-format
 msgid "Data transfer method"
 msgstr "Спосаб перадачы даных"
 
-#: ../translation/plugins.c:539
+#: ../translation/plugins.c:542
 #, no-c-format
 msgid "Pipe (stdin)"
 msgstr "Пайп (stdin)"
 
-#: ../translation/plugins.c:541
+#: ../translation/plugins.c:544
 #, no-c-format
 msgid "Temporary file"
 msgstr "Часовы файл"
 
-#: ../translation/plugins.c:543
+#: ../translation/plugins.c:546
 #, no-c-format
 msgid "Source file"
 msgstr "Зыходны файл"
 
-#: ../translation/plugins.c:547
+#: ../translation/plugins.c:550
 #, no-c-format
 msgid "Write ID3v2 tag"
 msgstr "Запісаць тэг ID3v2"
 
-#: ../translation/plugins.c:549
+#: ../translation/plugins.c:552
 #, no-c-format
 msgid "Write ID3v1 tag"
 msgstr "Запісаць тэг ID3v1"
 
-#: ../translation/plugins.c:551
+#: ../translation/plugins.c:554
 #, no-c-format
 msgid "Write APEv2 tag"
 msgstr "Запісаць тэг APEv2"
 
-#: ../translation/plugins.c:553
+#: ../translation/plugins.c:556
 #, no-c-format
 msgid "Write FLAC tag"
 msgstr "Запісаць тэг FLAC"
 
-#: ../translation/plugins.c:555
+#: ../translation/plugins.c:558
 #, no-c-format
 msgid "Write OggVorbis tag"
 msgstr "Запісаць тэг OggVorbis"
 
-#: ../translation/plugins.c:557
+#: ../translation/plugins.c:560
 #, no-c-format
 msgid "Write MP4 tag"
 msgstr "Запісаць тэг MP4"
 
 #. src/coreplugin.c
-#: ../translation/plugins.c:560
+#: ../translation/plugins.c:563
 #, no-c-format
 msgid "Toggle Stop After Queue"
 msgstr ""

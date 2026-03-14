@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-07 11:49+0100\n"
+"POT-Creation-Date: 2026-03-14 14:03+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Charles Monzat <c.monzat@laposte.net>, 2014,2017-2025\n"
 "Language-Team: French (http://app.transifex.com/deadbeef-player/deadbeef-player/language/fr/)\n"
@@ -1047,7 +1047,7 @@ msgstr "Lecteur"
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/deadbeef.glade.h:137 ../plugins/gtkui/interface.c:2290
-#: ../translation/plugins.c:458
+#: ../translation/plugins.c:461
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "Fermer les listes de lecture avec le bouton du milieu de la souris"
@@ -1382,7 +1382,7 @@ msgid "Strip APEv2"
 msgstr "Effacer APEv2"
 
 #: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:4553
-#: ../translation/plugins.c:545
+#: ../translation/plugins.c:548
 #, no-c-format
 msgid "ID3v2 version"
 msgstr "Version ID3v2"
@@ -1602,7 +1602,7 @@ msgid "Import Foobar2000 Preset"
 msgstr "Importer des préréglages de Foobar2000"
 
 #. plugins/notify/notify.c
-#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:442
+#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:445
 #, no-c-format
 msgid "Enable"
 msgstr "Activer"
@@ -1766,8 +1766,8 @@ msgstr "HBox"
 msgid "VBox"
 msgstr "VBox"
 
-#: ../plugins/gtkui/gtkui.c:1538 ../plugins/gtkui/widgets.c:3829
-#: ../plugins/gtkui/widgets.c:3916
+#: ../plugins/gtkui/gtkui.c:1538 ../plugins/gtkui/widgets.c:3835
+#: ../plugins/gtkui/widgets.c:3922
 msgid "Button"
 msgstr "Bouton"
 
@@ -1897,7 +1897,7 @@ msgid "Track"
 msgstr "Piste"
 
 #: ../plugins/gtkui/interface.c:2062 ../plugins/gtkui/playlist/plcommon.c:896
-#: ../plugins/gtkui/widgets.c:3262 ../plugins/gtkui/widgets.c:3924
+#: ../plugins/gtkui/widgets.c:3268 ../plugins/gtkui/widgets.c:3930
 #: ../translation/plugins.c:260
 #, no-c-format
 msgid "None"
@@ -2359,7 +2359,7 @@ msgstr "Déplacer l’onglet vers la gauche"
 msgid "Move Tab Right"
 msgstr "Déplacer l’onglet vers la droite"
 
-#: ../plugins/gtkui/widgets.c:2751 ../plugins/gtkui/widgets.c:3239
+#: ../plugins/gtkui/widgets.c:2751 ../plugins/gtkui/widgets.c:3245
 msgid "Rendering Mode"
 msgstr "Mode de rendu"
 
@@ -2422,95 +2422,95 @@ msgstr ""
 msgid "500 ms"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3244
+#: ../plugins/gtkui/widgets.c:3250
 msgid "Discrete Frequencies"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3247
+#: ../plugins/gtkui/widgets.c:3253
 msgid "1/12 Octave Bands"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3250
+#: ../plugins/gtkui/widgets.c:3256
 msgid "1/24 Octave Bands"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3257
+#: ../plugins/gtkui/widgets.c:3263
 msgid "Gap Size"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3265
+#: ../plugins/gtkui/widgets.c:3271
 msgid "1/2 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3268
+#: ../plugins/gtkui/widgets.c:3274
 msgid "1/3 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3271
+#: ../plugins/gtkui/widgets.c:3277
 msgid "1/4 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3274
+#: ../plugins/gtkui/widgets.c:3280
 msgid "1/5 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3277
+#: ../plugins/gtkui/widgets.c:3283
 msgid "1/6 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3280
+#: ../plugins/gtkui/widgets.c:3286
 msgid "1/7 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3283
+#: ../plugins/gtkui/widgets.c:3289
 msgid "1/8 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3286
+#: ../plugins/gtkui/widgets.c:3292
 msgid "1/9 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3289
+#: ../plugins/gtkui/widgets.c:3295
 msgid "1/10 Bar"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:3552
+#: ../plugins/gtkui/widgets.c:3558
 msgid "Expand Box by 1 Item"
 msgstr "Développer la case d’un élément"
 
-#: ../plugins/gtkui/widgets.c:3557
+#: ../plugins/gtkui/widgets.c:3563
 msgid "Shrink Box by 1 Item"
 msgstr "Réduire la case d’un élément"
 
-#: ../plugins/gtkui/widgets.c:3562
+#: ../plugins/gtkui/widgets.c:3568
 msgid "Homogeneous"
 msgstr "Homogène"
 
-#: ../plugins/gtkui/widgets.c:3602
+#: ../plugins/gtkui/widgets.c:3608
 msgid "Expand"
 msgstr "Développer"
 
-#: ../plugins/gtkui/widgets.c:3608
+#: ../plugins/gtkui/widgets.c:3614
 msgid "Fill"
 msgstr "Remplir"
 
-#: ../plugins/gtkui/widgets.c:4003
+#: ../plugins/gtkui/widgets.c:4009
 msgid "Configure Button"
 msgstr "Configurer le bouton"
 
-#: ../plugins/gtkui/widgets.c:4261
+#: ../plugins/gtkui/widgets.c:4267
 msgid "_dB Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4270
+#: ../plugins/gtkui/widgets.c:4276
 msgid "_Linear Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4279
+#: ../plugins/gtkui/widgets.c:4285
 msgid "_Cubic Scale"
 msgstr ""
 
-#: ../plugins/gtkui/widgets.c:4399
+#: ../plugins/gtkui/widgets.c:4405
 msgid "Voices:"
 msgstr "Voix :"
 
@@ -3905,268 +3905,274 @@ msgstr "Forcer la sortie à 16 bits"
 msgid "Backend"
 msgstr "Moteur"
 
-#: ../translation/plugins.c:444
+#. plugins/mpris/mpris.c
+#: ../translation/plugins.c:442
+#, no-c-format
+msgid "Disable shuffle and repeat"
+msgstr ""
+
+#: ../translation/plugins.c:447
 #, no-c-format
 msgid "Notification title format"
 msgstr "Format de titre de notification"
 
-#: ../translation/plugins.c:446
+#: ../translation/plugins.c:449
 #, no-c-format
 msgid "Notification content format"
 msgstr "Format de contenu de notification"
 
-#: ../translation/plugins.c:448
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Show album art"
 msgstr "Afficher la couverture de l’album"
 
-#: ../translation/plugins.c:450
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "Album art size (px)"
 msgstr "Taille de la couverture de l’album (px)"
 
-#: ../translation/plugins.c:452
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "Don't reuse notifications (KDE quirk)"
 msgstr "Ne pas réutiliser les notifications (bizarrerie de KDE)"
 
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:458
 #, no-c-format
 msgid "Device file"
 msgstr "Fichier du périphérique"
 
-#: ../translation/plugins.c:460
+#: ../translation/plugins.c:463
 #, no-c-format
 msgid "Highlight current playlist"
 msgstr "Surligner la liste de lecture actuelle"
 
-#: ../translation/plugins.c:462
+#: ../translation/plugins.c:465
 #, no-c-format
 msgid "Play on double-click"
 msgstr "Démarrer la lecture avec un double-clic"
 
 #. plugins/portaudio/portaudio.c
-#: ../translation/plugins.c:465
+#: ../translation/plugins.c:468
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
 msgstr "Taille du tampon (-1 pour utiliser la valeur optimale choisie par portaudio)"
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:470
 #, no-c-format
 msgid "Device name encoding"
 msgstr ""
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:472
 #, no-c-format
 msgid "ASCII / UTF-8"
 msgstr "ASCII / UTF-8"
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:474
 #, no-c-format
 msgid "cp1250"
 msgstr "cp1250"
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:476
 #, no-c-format
 msgid "Defined below"
 msgstr "Défini ci-dessous"
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:478
 #, no-c-format
 msgid "Custom device name encoding"
 msgstr ""
 
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:478
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr "Serveur PulseAudio (laisser vide pour le réglage par défaut)"
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:481
+#: ../translation/plugins.c:484
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr "Durée de morceau par défaut (en minutes)"
 
-#: ../translation/plugins.c:483
+#: ../translation/plugins.c:486
 #, no-c-format
 msgid "Samplerate"
 msgstr "Taux d’échantillonnage"
 
-#: ../translation/plugins.c:485
+#: ../translation/plugins.c:488
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr "Ignorer les durées inférieures à (en seconde) "
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:488
+#: ../translation/plugins.c:491
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "Configurer les commandes personnalisées de l’interface"
 
 #. plugins/shn/shnplugin.c
-#: ../translation/plugins.c:491
+#: ../translation/plugins.c:494
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "Chemin de table de recherche relatif"
 
-#: ../translation/plugins.c:493
+#: ../translation/plugins.c:496
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "Chemin de table de recherche absolu"
 
-#: ../translation/plugins.c:495
+#: ../translation/plugins.c:498
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Permuter les octets audio (basculez si tout ce que vous entendez est statique)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:498
+#: ../translation/plugins.c:501
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "Activer HVSC Songlenght DB"
 
-#: ../translation/plugins.c:500
+#: ../translation/plugins.c:503
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr "Chemin complet vers Songlengths.md5/.txt"
 
-#: ../translation/plugins.c:502
+#: ../translation/plugins.c:505
 #, no-c-format
 msgid "Bits per sample"
 msgstr "Bits par échantillon"
 
-#: ../translation/plugins.c:504
+#: ../translation/plugins.c:507
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "Longueur de morceau par défaut (sec)"
 
-#: ../translation/plugins.c:506
+#: ../translation/plugins.c:509
 #, no-c-format
 msgid "Mono synth"
 msgstr "Synthé mono"
 
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:509
+#: ../translation/plugins.c:512
 #, no-c-format
 msgid "Preamp"
 msgstr "Préampli"
 
-#: ../translation/plugins.c:511
+#: ../translation/plugins.c:514
 #, no-c-format
 msgid "1.2K"
 msgstr "1,2 K"
 
-#: ../translation/plugins.c:513
+#: ../translation/plugins.c:516
 #, no-c-format
 msgid "1.8K"
 msgstr "1,8 K"
 
-#: ../translation/plugins.c:515
+#: ../translation/plugins.c:518
 #, no-c-format
 msgid "2.5K"
 msgstr "2,5 K"
 
-#: ../translation/plugins.c:517
+#: ../translation/plugins.c:520
 #, no-c-format
 msgid "3.5K"
 msgstr "3,5 K"
 
-#: ../translation/plugins.c:519
+#: ../translation/plugins.c:522
 #, no-c-format
 msgid "5K"
 msgstr "5 K"
 
-#: ../translation/plugins.c:521
+#: ../translation/plugins.c:524
 #, no-c-format
 msgid "7K"
 msgstr "7 K"
 
-#: ../translation/plugins.c:523
+#: ../translation/plugins.c:526
 #, no-c-format
 msgid "10K"
 msgstr "10 K"
 
-#: ../translation/plugins.c:525
+#: ../translation/plugins.c:528
 #, no-c-format
 msgid "14K"
 msgstr "14 K"
 
-#: ../translation/plugins.c:527
+#: ../translation/plugins.c:530
 #, no-c-format
 msgid "20K"
 msgstr "20 K"
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:530
+#: ../translation/plugins.c:533
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Banque de fichier de configuration Timidity++ bank"
 
 #. shared/scriptable/scriptable_encoder.c
-#: ../translation/plugins.c:533
+#: ../translation/plugins.c:536
 #, no-c-format
 msgid "File extension"
 msgstr "Extension de fichier"
 
-#: ../translation/plugins.c:535
+#: ../translation/plugins.c:538
 #, no-c-format
 msgid "Encoder command line"
 msgstr ""
 
-#: ../translation/plugins.c:537
+#: ../translation/plugins.c:540
 #, no-c-format
 msgid "Data transfer method"
 msgstr ""
 
-#: ../translation/plugins.c:539
+#: ../translation/plugins.c:542
 #, no-c-format
 msgid "Pipe (stdin)"
 msgstr "Tube (stdin)"
 
-#: ../translation/plugins.c:541
+#: ../translation/plugins.c:544
 #, no-c-format
 msgid "Temporary file"
 msgstr "Fichier temporaire"
 
-#: ../translation/plugins.c:543
+#: ../translation/plugins.c:546
 #, no-c-format
 msgid "Source file"
 msgstr "Fichier source"
 
-#: ../translation/plugins.c:547
+#: ../translation/plugins.c:550
 #, no-c-format
 msgid "Write ID3v2 tag"
 msgstr "Écrire les balises ID3v2"
 
-#: ../translation/plugins.c:549
+#: ../translation/plugins.c:552
 #, no-c-format
 msgid "Write ID3v1 tag"
 msgstr "Écrire les balises ID3v1"
 
-#: ../translation/plugins.c:551
+#: ../translation/plugins.c:554
 #, no-c-format
 msgid "Write APEv2 tag"
 msgstr "Écrire les balises APEv2"
 
-#: ../translation/plugins.c:553
+#: ../translation/plugins.c:556
 #, no-c-format
 msgid "Write FLAC tag"
 msgstr "Écrire les balises FLAC"
 
-#: ../translation/plugins.c:555
+#: ../translation/plugins.c:558
 #, no-c-format
 msgid "Write OggVorbis tag"
 msgstr "Écrire les balises OggVorbis"
 
-#: ../translation/plugins.c:557
+#: ../translation/plugins.c:560
 #, no-c-format
 msgid "Write MP4 tag"
 msgstr "Écrire les balises MP4"
 
 #. src/coreplugin.c
-#: ../translation/plugins.c:560
+#: ../translation/plugins.c:563
 #, no-c-format
 msgid "Toggle Stop After Queue"
 msgstr ""

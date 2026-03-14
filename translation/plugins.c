@@ -437,6 +437,9 @@ _("Right mix");
 _("Force 16 bit output");
 // xgettext:no-c-format
 _("Backend");
+// plugins/mpris/mpris.c
+// xgettext:no-c-format
+_("Disable shuffle and repeat");
 // plugins/notify/notify.c
 // xgettext:no-c-format
 _("Enable");

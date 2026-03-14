@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-08 12:54+0100\n"
+"POT-Creation-Date: 2026-03-14 15:30+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Luna Jernberg <droidbittin@gmail.com>, 2024-2026\n"
 "Language-Team: Swedish (http://app.transifex.com/deadbeef-player/deadbeef-player/language/sv/)\n"
@@ -1043,7 +1043,7 @@ msgstr "Spelare"
 
 #. plugins/pltbrowser/pltbrowser.c
 #: ../plugins/gtkui/deadbeef.glade.h:137 ../plugins/gtkui/interface.c:2290
-#: ../translation/plugins.c:458
+#: ../translation/plugins.c:461
 #, no-c-format
 msgid "Close playlists with middle mouse button"
 msgstr "Stäng spellistor med mitten musknappen"
@@ -1378,7 +1378,7 @@ msgid "Strip APEv2"
 msgstr "Rensa APEv2"
 
 #: ../plugins/gtkui/deadbeef.glade.h:220 ../plugins/gtkui/interface.c:4553
-#: ../translation/plugins.c:545
+#: ../translation/plugins.c:548
 #, no-c-format
 msgid "ID3v2 version"
 msgstr "ID3v2 version"
@@ -1541,21 +1541,17 @@ msgstr "Enstaka värde"
 msgid "Individual Values"
 msgstr "Individuella värden"
 
-#: ../plugins/gtkui/dspconfig.c:77
-msgid "New preset"
+#: ../plugins/gtkui/dspconfig.c:77 ../plugins/gtkui/dspconfig.c:82
+msgid "New Preset"
 msgstr "Ny förinställning"
 
 #: ../plugins/gtkui/dspconfig.c:80 ../plugins/gtkui/trkproperties.c:1233
 msgid "Name:"
 msgstr "Namn:"
 
-#: ../plugins/gtkui/dspconfig.c:82
-msgid "New Preset"
-msgstr "Ny förinställning"
-
 #: ../plugins/gtkui/dspconfig.c:99
-msgid "Save as preset"
-msgstr "Spara som förinställningar"
+msgid "Save as Preset"
+msgstr ""
 
 #: ../plugins/gtkui/dspconfig.c:196
 msgid "DSP Preset:"
@@ -1598,7 +1594,7 @@ msgid "Import Foobar2000 Preset"
 msgstr "Importera inställningar från Foobar2000"
 
 #. plugins/notify/notify.c
-#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:442
+#: ../plugins/gtkui/eq.c:311 ../translation/plugins.c:445
 #, no-c-format
 msgid "Enable"
 msgstr "Aktivera"
@@ -3901,268 +3897,274 @@ msgstr "Tvinga 16 bitars utmatning"
 msgid "Backend"
 msgstr "Bakände"
 
-#: ../translation/plugins.c:444
+#. plugins/mpris/mpris.c
+#: ../translation/plugins.c:442
+#, no-c-format
+msgid "Disable shuffle and repeat"
+msgstr ""
+
+#: ../translation/plugins.c:447
 #, no-c-format
 msgid "Notification title format"
 msgstr "Titelformat för aviseringar"
 
-#: ../translation/plugins.c:446
+#: ../translation/plugins.c:449
 #, no-c-format
 msgid "Notification content format"
 msgstr "Innehållsformat för aviseringar"
 
-#: ../translation/plugins.c:448
+#: ../translation/plugins.c:451
 #, no-c-format
 msgid "Show album art"
 msgstr "Albumillustration"
 
-#: ../translation/plugins.c:450
+#: ../translation/plugins.c:453
 #, no-c-format
 msgid "Album art size (px)"
 msgstr "Albumkonststorlek (px)"
 
-#: ../translation/plugins.c:452
+#: ../translation/plugins.c:455
 #, no-c-format
 msgid "Don't reuse notifications (KDE quirk)"
 msgstr "Återanvänd inte aviseringar (KDE-besynnerlighet)"
 
 #. plugins/oss/oss.c
-#: ../translation/plugins.c:455
+#: ../translation/plugins.c:458
 #, no-c-format
 msgid "Device file"
 msgstr "Enhetsfil"
 
-#: ../translation/plugins.c:460
+#: ../translation/plugins.c:463
 #, no-c-format
 msgid "Highlight current playlist"
 msgstr "Markera aktuell spellista"
 
-#: ../translation/plugins.c:462
+#: ../translation/plugins.c:465
 #, no-c-format
 msgid "Play on double-click"
 msgstr "Spela på dubbelklick"
 
 #. plugins/portaudio/portaudio.c
-#: ../translation/plugins.c:465
+#: ../translation/plugins.c:468
 #, no-c-format
 msgid "Buffer size (-1 to use optimal value chosen by portaudio)"
 msgstr "Buffertstorlek (-1 för att använda optimalt värde valt av portaudio)"
 
-#: ../translation/plugins.c:467
+#: ../translation/plugins.c:470
 #, no-c-format
 msgid "Device name encoding"
 msgstr "Enhetsnamn kodning"
 
-#: ../translation/plugins.c:469
+#: ../translation/plugins.c:472
 #, no-c-format
 msgid "ASCII / UTF-8"
 msgstr "ASCII / UTF-8"
 
-#: ../translation/plugins.c:471
+#: ../translation/plugins.c:474
 #, no-c-format
 msgid "cp1250"
 msgstr "cp1250"
 
-#: ../translation/plugins.c:473
+#: ../translation/plugins.c:476
 #, no-c-format
 msgid "Defined below"
 msgstr "Definieras nedan"
 
-#: ../translation/plugins.c:475
+#: ../translation/plugins.c:478
 #, no-c-format
 msgid "Custom device name encoding"
 msgstr "Anpassat enhetsnamn kodning"
 
 #. plugins/pulse/pulse.c
-#: ../translation/plugins.c:478
+#: ../translation/plugins.c:481
 #, no-c-format
 msgid "PulseAudio server (leave empty for default)"
 msgstr "PulseAudio-server (lämna tom för standard)"
 
 #. plugins/sc68/in_sc68.c
-#: ../translation/plugins.c:481
+#: ../translation/plugins.c:484
 #, no-c-format
 msgid "Default song length (in minutes)"
 msgstr "Standard låtlängd (i minuter)"
 
-#: ../translation/plugins.c:483
+#: ../translation/plugins.c:486
 #, no-c-format
 msgid "Samplerate"
 msgstr "Samplingshastighet"
 
-#: ../translation/plugins.c:485
+#: ../translation/plugins.c:488
 #, no-c-format
 msgid "Skip when shorter than (sec)"
 msgstr "Hoppa över när kortare än (sek)"
 
 #. plugins/shellexecui/shellexecui.c
-#: ../translation/plugins.c:488
+#: ../translation/plugins.c:491
 #, no-c-format
 msgid "Configure Custom Shell Commands"
 msgstr "Konfigurera anpassade skalkommandon"
 
 #. plugins/shn/shnplugin.c
-#: ../translation/plugins.c:491
+#: ../translation/plugins.c:494
 #, no-c-format
 msgid "Relative seek table path"
 msgstr "Relativ söktabellsväg"
 
-#: ../translation/plugins.c:493
+#: ../translation/plugins.c:496
 #, no-c-format
 msgid "Absolute seek table path"
 msgstr "Absolut söktabellsväg"
 
-#: ../translation/plugins.c:495
+#: ../translation/plugins.c:498
 #, no-c-format
 msgid "Swap audio bytes (toggle if all you hear is static)"
 msgstr "Växla ljudbitar (växla om allt du hör är statiskt)"
 
 #. plugins/sid/plugin.c
-#: ../translation/plugins.c:498
+#: ../translation/plugins.c:501
 #, no-c-format
 msgid "Enable HVSC Songlength DB"
 msgstr "Aktivera HVSC Songlength DB"
 
-#: ../translation/plugins.c:500
+#: ../translation/plugins.c:503
 #, no-c-format
 msgid "Full path to Songlengths.md5/.txt"
 msgstr "Hela sökvägen till Songlengths.md5/.txt"
 
-#: ../translation/plugins.c:502
+#: ../translation/plugins.c:505
 #, no-c-format
 msgid "Bits per sample"
 msgstr "Bitar per sampling"
 
-#: ../translation/plugins.c:504
+#: ../translation/plugins.c:507
 #, no-c-format
 msgid "Default song length (sec)"
 msgstr "Standard låtlängd (sek)"
 
-#: ../translation/plugins.c:506
+#: ../translation/plugins.c:509
 #, no-c-format
 msgid "Mono synth"
 msgstr "Mono-synth"
 
 #. plugins/supereq/supereq.c
-#: ../translation/plugins.c:509
+#: ../translation/plugins.c:512
 #, no-c-format
 msgid "Preamp"
 msgstr "Förförstärkare"
 
-#: ../translation/plugins.c:511
+#: ../translation/plugins.c:514
 #, no-c-format
 msgid "1.2K"
 msgstr "1.2K"
 
-#: ../translation/plugins.c:513
+#: ../translation/plugins.c:516
 #, no-c-format
 msgid "1.8K"
 msgstr "1.8K"
 
-#: ../translation/plugins.c:515
+#: ../translation/plugins.c:518
 #, no-c-format
 msgid "2.5K"
 msgstr "2.5K"
 
-#: ../translation/plugins.c:517
+#: ../translation/plugins.c:520
 #, no-c-format
 msgid "3.5K"
 msgstr "3.5K"
 
-#: ../translation/plugins.c:519
+#: ../translation/plugins.c:522
 #, no-c-format
 msgid "5K"
 msgstr "5K"
 
-#: ../translation/plugins.c:521
+#: ../translation/plugins.c:524
 #, no-c-format
 msgid "7K"
 msgstr "7K"
 
-#: ../translation/plugins.c:523
+#: ../translation/plugins.c:526
 #, no-c-format
 msgid "10K"
 msgstr "10K"
 
-#: ../translation/plugins.c:525
+#: ../translation/plugins.c:528
 #, no-c-format
 msgid "14K"
 msgstr "14K"
 
-#: ../translation/plugins.c:527
+#: ../translation/plugins.c:530
 #, no-c-format
 msgid "20K"
 msgstr "20K"
 
 #. plugins/wildmidi/wildmidiplug.c
-#: ../translation/plugins.c:530
+#: ../translation/plugins.c:533
 #, no-c-format
 msgid "Timidity++ bank configuration file"
 msgstr "Timidity++ bankkonfigurationsfil"
 
 #. shared/scriptable/scriptable_encoder.c
-#: ../translation/plugins.c:533
+#: ../translation/plugins.c:536
 #, no-c-format
 msgid "File extension"
 msgstr "Filändelse"
 
-#: ../translation/plugins.c:535
+#: ../translation/plugins.c:538
 #, no-c-format
 msgid "Encoder command line"
 msgstr "Kodarens kommandorad"
 
-#: ../translation/plugins.c:537
+#: ../translation/plugins.c:540
 #, no-c-format
 msgid "Data transfer method"
 msgstr "Dataöverföringsmetod"
 
-#: ../translation/plugins.c:539
+#: ../translation/plugins.c:542
 #, no-c-format
 msgid "Pipe (stdin)"
 msgstr "Pipe (stdin)"
 
-#: ../translation/plugins.c:541
+#: ../translation/plugins.c:544
 #, no-c-format
 msgid "Temporary file"
 msgstr "Temporär fil"
 
-#: ../translation/plugins.c:543
+#: ../translation/plugins.c:546
 #, no-c-format
 msgid "Source file"
 msgstr "Källfil"
 
-#: ../translation/plugins.c:547
+#: ../translation/plugins.c:550
 #, no-c-format
 msgid "Write ID3v2 tag"
 msgstr "Skriv ID3v2-tagg"
 
-#: ../translation/plugins.c:549
+#: ../translation/plugins.c:552
 #, no-c-format
 msgid "Write ID3v1 tag"
 msgstr "Skriv ID3v1-tagg"
 
-#: ../translation/plugins.c:551
+#: ../translation/plugins.c:554
 #, no-c-format
 msgid "Write APEv2 tag"
 msgstr "Skriv APEv2-tagg"
 
-#: ../translation/plugins.c:553
+#: ../translation/plugins.c:556
 #, no-c-format
 msgid "Write FLAC tag"
 msgstr "Skriv FLAC-tagg"
 
-#: ../translation/plugins.c:555
+#: ../translation/plugins.c:558
 #, no-c-format
 msgid "Write OggVorbis tag"
 msgstr "Skriv OggVorbis-tagg"
 
-#: ../translation/plugins.c:557
+#: ../translation/plugins.c:560
 #, no-c-format
 msgid "Write MP4 tag"
 msgstr "Skriv MP4-tagg"
 
 #. src/coreplugin.c
-#: ../translation/plugins.c:560
+#: ../translation/plugins.c:563
 #, no-c-format
 msgid "Toggle Stop After Queue"
 msgstr "Växla stopp efter uppspelningskö"
