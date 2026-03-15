@@ -119,12 +119,15 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
     snprintf (s, sizeof (s), "%d.%d", p->version_major, p->version_minor);
     gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "plug_version")), s);
 
-    if (p->descr) {
+    const char *descr = p->descr ?: "";
+    const char *copyright = p->copyright ?: "";
+
+    {
         GtkTextView *tv = GTK_TEXT_VIEW (lookup_widget (w, "plug_description"));
 
         GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
 
-        gtk_text_buffer_set_text (buffer, p->descr, (gint)strlen(p->descr));
+        gtk_text_buffer_set_text (buffer, descr, (gint)strlen(descr));
         gtk_text_view_set_buffer (GTK_TEXT_VIEW (tv), buffer);
         g_object_unref (buffer);
     }
@@ -139,16 +142,13 @@ on_pref_pluginlist_cursor_changed      (GtkTreeView     *treeview,
         gtk_widget_set_sensitive (link, FALSE);
     }
 
-    GtkTextView *lictv = GTK_TEXT_VIEW (lookup_widget (w, "plug_license"));
-    if (p->copyright) {
+    {
+        GtkTextView *lictv = GTK_TEXT_VIEW (lookup_widget (w, "plug_license"));
         GtkTextBuffer *buffer = gtk_text_buffer_new (NULL);
 
-        gtk_text_buffer_set_text (buffer, p->copyright, (gint)strlen(p->copyright));
+        gtk_text_buffer_set_text (buffer, copyright, (gint)strlen(copyright));
         gtk_text_view_set_buffer (GTK_TEXT_VIEW (lictv), buffer);
         g_object_unref (buffer);
-    }
-    else {
-        gtk_text_view_set_buffer(lictv, NULL);
     }
 
     GtkWidget *plugin_actions_btnbox = lookup_widget (w, "plugin_actions_btnbox");
