@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DeaDBeeF Player\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-14 15:30+0100\n"
+"POT-Creation-Date: 2026-03-15 12:36+0100\n"
 "PO-Revision-Date: 2013-08-15 06:35+0000\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>, 2021-2026\n"
 "Language-Team: Dutch (http://app.transifex.com/deadbeef-player/deadbeef-player/language/nl/)\n"
@@ -1546,7 +1546,7 @@ msgstr "Naam:"
 
 #: ../plugins/gtkui/dspconfig.c:99
 msgid "Save as Preset"
-msgstr ""
+msgstr "Opslaan als voorinstelling"
 
 #: ../plugins/gtkui/dspconfig.c:196
 msgid "DSP Preset:"
@@ -3896,7 +3896,7 @@ msgstr "Backend"
 #: ../translation/plugins.c:442
 #, no-c-format
 msgid "Disable shuffle and repeat"
-msgstr ""
+msgstr "Willekeurige modus en herhalen uitschakelen"
 
 #: ../translation/plugins.c:447
 #, no-c-format
