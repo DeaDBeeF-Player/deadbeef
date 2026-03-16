@@ -6,13 +6,11 @@ DeaDBeeF is a multiple-platform music player for desktop operating systems.
 
 If you wish to chat with developers, join us on [Discord](https://discord.gg/GTVvgSqZrr).
 
-## Download official releases (only GNU/Linux and Windows)
+## Download official releases
 
 [Downloads Page](https://deadbeef.sourceforge.io/download.html)
 
 ## Download nightly (development) builds
-
-<sub><sup>NOTE: The macOS version has not been officially released, and has many unresolved issues and unimplemented features</sup></sub>
 
 [![Linux Build Status](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/linuxbuild.yml/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/linuxbuild.yml)
 [![Windows Build Status](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/windowsbuild.yml/badge.svg)](https://github.com/DeaDBeeF-Player/deadbeef/actions/workflows/windowsbuild.yml)
