@@ -943,6 +943,10 @@
 		2D2C515A2B6BE15900EAC44E /* undostack.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2C51572B6BE15800EAC44E /* undostack.h */; };
 		2D2C515B2B6BE15900EAC44E /* undostack.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2C51582B6BE15900EAC44E /* undostack.c */; };
 		2D2C515C2B6BE15900EAC44E /* undostack.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2C51582B6BE15900EAC44E /* undostack.c */; };
+		2D2F47072F689551000EF7EF /* actionhelp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2F47062F689551000EF7EF /* actionhelp.c */; };
+		2D2F47082F689551000EF7EF /* actionhelp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2F47052F689551000EF7EF /* actionhelp.h */; };
+		2D2F47092F689551000EF7EF /* actionhelp.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D2F47052F689551000EF7EF /* actionhelp.h */; };
+		2D2F470A2F689551000EF7EF /* actionhelp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D2F47062F689551000EF7EF /* actionhelp.c */; };
 		2D30D0B425E2A5DD0023A299 /* DesignModeState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D0B225E2A5DD0023A299 /* DesignModeState.h */; };
 		2D30D0B525E2A5DD0023A299 /* DesignModeState.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D30D0B325E2A5DD0023A299 /* DesignModeState.m */; };
 		2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */; };
@@ -5757,6 +5761,8 @@
 		2D2A14F019B64F2900AD1EB7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		2D2C51572B6BE15800EAC44E /* undostack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undostack.h; sourceTree = "<group>"; };
 		2D2C51582B6BE15900EAC44E /* undostack.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = undostack.c; sourceTree = "<group>"; };
+		2D2F47052F689551000EF7EF /* actionhelp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = actionhelp.h; sourceTree = "<group>"; };
+		2D2F47062F689551000EF7EF /* actionhelp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = actionhelp.c; sourceTree = "<group>"; };
 		2D30D0B225E2A5DD0023A299 /* DesignModeState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DesignModeState.h; sourceTree = "<group>"; };
 		2D30D0B325E2A5DD0023A299 /* DesignModeState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DesignModeState.m; sourceTree = "<group>"; };
 		2D30D20A25E2A8930023A299 /* WidgetTopLevelView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WidgetTopLevelView.h; sourceTree = "<group>"; };
@@ -11225,6 +11231,8 @@
 				2D7387D329BE5DA1003E3126 /* undo */,
 				2D0212FA2DA0793600BAEA12 /* actionhandlers.h */,
 				2D0212FB2DA0793600BAEA12 /* actionhandlers.c */,
+				2D2F47052F689551000EF7EF /* actionhelp.h */,
+				2D2F47062F689551000EF7EF /* actionhelp.c */,
 				2D1E1D8427AD9B25004DEF1D /* buffered_file_writer.h */,
 				2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */,
 				2DD9EF0419A5089F00189344 /* cocoautil.h */,
@@ -13848,6 +13856,7 @@
 				2DDD76C925E152BF00FA6FE5 /* DesignModeDefs.h in Headers */,
 				2D4020901F27BD7200D4EA4F /* cueutil.h in Headers */,
 				2D30D20D25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
+				2D2F47082F689551000EF7EF /* actionhelp.h in Headers */,
 				2DC657EB274A605E00583E14 /* PlaylistBrowserViewController.h in Headers */,
 				2DC657D52749581900583E14 /* DdbTabStripViewController.h in Headers */,
 				2DC657CD2749544000583E14 /* PlaylistWithTabsWidget.h in Headers */,
@@ -15327,6 +15336,7 @@
 				2D9793E9276E88140062585E /* gobjcache.h in Headers */,
 				2DC657BF2746F67600583E14 /* RenameTabViewController.h in Headers */,
 				2D828E5B19E56B4D00EE874F /* SearchViewController.h in Headers */,
+				2D2F47092F689551000EF7EF /* actionhelp.h in Headers */,
 				2DD3775127412EDA007AD315 /* SpectrumAnalyzerPreferencesViewController.h in Headers */,
 				2DD886562B70D83B000434FB /* KeyboardShortcutTextField.h in Headers */,
 				2DC657A72746D9E400583E14 /* TabsWidget.h in Headers */,
@@ -17553,6 +17563,7 @@
 				2D01D7E51AB2219C00BCD3C4 /* vfs.c in Sources */,
 				2D7387EB29BE5DA2003E3126 /* undo_playlist.c in Sources */,
 				2D7387EA29BE5DA2003E3126 /* undobuffer.c in Sources */,
+				2D2F47072F689551000EF7EF /* actionhelp.c in Sources */,
 				2D40208F1F27BD7200D4EA4F /* cueutil.c in Sources */,
 				2D7DE4A51E64CD7700AA0F83 /* streamreader.c in Sources */,
 				2D92D33D29B9324A00218F1D /* tftintutil.c in Sources */,
@@ -19093,6 +19104,7 @@
 				2D9C0C26238DC2C100CE8C10 /* GroupByCustomWindowController.m in Sources */,
 				2D92D33B29B9323600218F1D /* scope.c in Sources */,
 				2DC6582A274AB03800583E14 /* LyricsViewController.m in Sources */,
+				2D2F470A2F689551000EF7EF /* actionhelp.c in Sources */,
 				2DD062D12EC13F61006F3223 /* AddNewFieldWindowController.m in Sources */,
 				2D95F72A293BB295002D8499 /* DdbUndoBufferRetainer.m in Sources */,
 				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,

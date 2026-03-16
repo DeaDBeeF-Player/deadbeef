@@ -21,3 +21,10 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#ifndef actionhelp_h
+#define actionhelp_h
+
+char *
+build_actions_string (void);
+
+#endif /* actionhelp_h */

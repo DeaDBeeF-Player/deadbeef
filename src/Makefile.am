@@ -2,6 +2,7 @@ bin_PROGRAMS = deadbeef
 
 deadbeef_SOURCES =\
 	actionhandlers.c actionhandlers.h\
+	actionhelp.c actionhelp.h\
 	buffered_file_writer.c buffered_file_writer.h\
 	coreplugin.c coreplugin.h\
 	conf.c  conf.h\

@@ -89,6 +89,7 @@
 #include "tf.h"
 #include "logger.h"
 #include "metacache.h"
+#include "actionhelp.h"
 
 #include "scriptable/scriptable.h"
 #include "scriptable/scriptable_dsp.h"
@@ -178,10 +179,16 @@ print_help (void) {
         _ ("                      The NUM parameter can be specified in percents (absolute value or increment/decrement)\n"));
     fprintf (stdout, _ ("                      or in dB [-50, 0] (if with suffix).\n"));
     fprintf (stdout, _ ("                      Examples: --volume 80, --volume +10, --volume -5 or --volume -20dB\n"));
+
+    fprintf (stdout, _ ("   --actions          List all available actions.\n"));
+
+    fprintf (stdout, _ ("   --perform-action   Perform an action.\n"));
+    fprintf (stdout, _ ("                      Example: --perform-action=skip_to_next_album.\n"));
+
     fprintf (
         stdout,
         _ ("   --plugin=[PLUG]    Send commands to a specific plugin. Use PLUG=main to send commands to deadbeef itself.\n"));
-    fprintf (stdout, _ ("                      To get plugin specific commands use --plugin=[PLUG] --help\n"));
+    fprintf (stdout, _ ("                      To get plugin-specific commands use --plugin=[PLUG] --help\n"));
     fprintf (
         stdout,
         _ ("   --plugin-list      List all available plugins including indication for plugins that support commands.\n"));
@@ -261,6 +268,29 @@ _append_response (ddb_response_t *response, char *buffer, size_t size) {
     memcpy (impl->buffer + impl->buffer_size, buffer, size);
     impl->buffer_size = new_size;
     return 0;
+}
+
+static DB_plugin_action_t *
+find_action_by_name (const char *command) {
+    // find action with this name, and add to list
+    DB_plugin_action_t *actions = NULL;
+    DB_plugin_t **plugins = deadbeef->plug_get_list ();
+    for (int i = 0; plugins[i]; i++) {
+        DB_plugin_t *p = plugins[i];
+        if (p->get_actions) {
+            actions = p->get_actions (NULL);
+            while (actions) {
+                if (actions->name && actions->title && !strcasecmp (actions->name, command)) {
+                    break; // found
+                }
+                actions = actions->next;
+            }
+            if (actions) {
+                break;
+            }
+        }
+    }
+    return actions;
 }
 
 // this function executes server-side commands only
@@ -434,6 +464,39 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                     deadbeef->volume_get_db ());
             }
             return 0;
+        }
+        else if (!strcmp(parg, "--actions")) {
+            char *output = build_actions_string ();
+            if (output == NULL) {
+                return 0;
+            }
+            if (sendback) {
+                snprintf (sendback, sbsize, "\1%s", output);
+            } else {
+                puts(output);
+            }
+            free (output);
+            return 0;
+        }
+        else if (!strncmp (parg, "--perform-action=", strlen ("--perform-action="))) {
+            const char *action_name = parg + strlen ("--perform-action=");
+            DB_plugin_action_t *action = find_action_by_name (action_name);
+
+            if (action != NULL && action->callback2 != NULL) {
+                action->callback2 (action, DDB_ACTION_CTX_MAIN);
+                deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+            } else {
+                char response[500];
+                snprintf (response, sizeof(response), _("Failed to perform action \"%s\"\n"), action_name);
+                if (sendback) {
+                    snprintf (sendback, sbsize, "%s", response);
+                } else {
+                    puts (response);
+                }
+            }
+
+            parg += strlen(parg) + 1;
+            continue;
         }
         else if (!strncmp (parg, "--plugin=", strlen ("--plugin="))) {
             if (!strcmp (parg + strlen ("--plugin="), "main")) {
@@ -779,14 +842,16 @@ server_update (void) {
     else if (s2 != -1) {
         int size = -1;
         char *buf = read_entire_message (s2, &size);
-        char sendback[1024] = "";
+        size_t sendback_size = 128000;
+        char *sendback = calloc(sendback_size, 1);
+
         if (size > 0) {
             if (size == 1 && buf[0] == 0) {
                 // FIXME: that should be called right after activation of gui plugin
                 messagepump_push (DB_EV_ACTIVATED, 0, 0, 0);
             }
             else {
-                server_exec_command_line (buf, size, sendback, sizeof (sendback));
+                server_exec_command_line (buf, size, sendback, (int)sendback_size);
             }
         }
         if (sendback[0]) {
@@ -797,6 +862,7 @@ server_update (void) {
             send (s2, "", 1, 0);
         }
         db_socket_close (s2);
+        free (sendback);
 
         if (buf) {
             free (buf);
