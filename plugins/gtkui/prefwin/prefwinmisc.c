@@ -28,8 +28,12 @@
 #include "prefwin.h"
 #include "prefwinmisc.h"
 
+static int _initializing_prefwin = 0;
+
 void
 prefwin_init_gui_misc_tab (GtkWidget *_prefwin) {
+    _initializing_prefwin = 1;
+
     GtkWidget *w = _prefwin;
     prefwin_set_toggle_button("minimize_on_startup", deadbeef->conf_get_int ("gtkui.start_hidden", 0));
 
@@ -100,6 +104,8 @@ prefwin_init_gui_misc_tab (GtkWidget *_prefwin) {
             prefwin_set_combobox (combobox, i);
         }
     }
+
+    _initializing_prefwin = 0;
 }
 
 void
@@ -173,6 +179,9 @@ void
 on_titlebar_format_playing_changed     (GtkEditable     *editable,
                                         gpointer         user_data)
 {
+    if (_initializing_prefwin) {
+        return;
+    }
     const char *text = gtk_entry_get_text (GTK_ENTRY (editable));
     if (*text == 0) {
         text = NULL;
@@ -187,6 +196,9 @@ void
 on_titlebar_format_stopped_changed     (GtkEditable     *editable,
                                         gpointer         user_data)
 {
+    if (_initializing_prefwin) {
+        return;
+    }
     const char *text = gtk_entry_get_text (GTK_ENTRY (editable));
     if (*text == 0) {
         text = NULL;
