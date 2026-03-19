@@ -22,6 +22,7 @@
 */
 
 #include <gtk/gtk.h>
+#include <stdlib.h>
 #include "../gtkui.h"
 #include "../support.h"
 #include "prefwin.h"
@@ -61,7 +62,14 @@ prefwin_init_playback_tab (GtkWidget *_prefwin) {
     int active = deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1);
     prefwin_set_toggle_button("cli_add_to_playlist", active);
     gtk_widget_set_sensitive (lookup_widget (w, "cli_playlist_name"), active);
-    gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "cli_playlist_name")), deadbeef->conf_get_str_fast ("cli_add_playlist_name", "Default"));
+
+    {
+        size_t size = 1000;
+        char *playlist_name = calloc(size, 1);
+        deadbeef->conf_get_str ("cli_add_playlist_name", "Default", playlist_name, (int)size);
+        gtk_entry_set_text (GTK_ENTRY (lookup_widget (w, "cli_playlist_name")), playlist_name);
+        free (playlist_name);
+    }
 
     // resume last session
     prefwin_set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 1));

@@ -47,12 +47,13 @@ gtk_enum_sound_callback (const char *name, const char *desc, void *userdata) {
     GtkComboBox *combobox = GTK_COMBO_BOX (userdata);
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), desc);
 
-    deadbeef->conf_lock ();
-    const char *curr = deadbeef->conf_get_str_fast (_get_output_soundcard_conf_name(), "default");
-    if (!strcmp (curr, name)) {
-        gtk_combo_box_set_active (combobox, g_slist_length (output_device_names));
+    {
+        char soundcard_name[100];
+        deadbeef->conf_get_str (_get_output_soundcard_conf_name(), "default", soundcard_name, sizeof (soundcard_name));
+        if (!strcmp (soundcard_name, name)) {
+            gtk_combo_box_set_active (combobox, g_slist_length (output_device_names));
+        }
     }
-    deadbeef->conf_unlock ();
 
     output_device_names = g_slist_append (output_device_names, g_strdup (name));
 }
@@ -68,12 +69,13 @@ prefwin_fill_soundcards (void) {
 
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), _("Default Audio Device"));
 
-    deadbeef->conf_lock ();
-    const char *s = deadbeef->conf_get_str_fast (_get_output_soundcard_conf_name(), "default");
-    if (!strcmp (s, "default")) {
-        gtk_combo_box_set_active (combobox, 0);
+    {
+        char soundcard_name[100];
+        deadbeef->conf_get_str (_get_output_soundcard_conf_name(), "default", soundcard_name, sizeof (soundcard_name));
+        if (!strcmp (soundcard_name, "default")) {
+            gtk_combo_box_set_active (combobox, 0);
+        }
     }
-    deadbeef->conf_unlock ();
 
     if (output_device_names) {
         for (GSList *dev = output_device_names; dev; dev = dev->next) {
@@ -103,17 +105,18 @@ on_pref_output_plugin_changed          (GtkComboBox     *combobox,
     DB_output_t *prev = NULL;
     DB_output_t *new = NULL;
 
-    deadbeef->conf_lock ();
-    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "alsa");
-    for (int i = 0; out_plugs[i]; i++) {
-        if (!strcmp (out_plugs[i]->plugin.id, outplugname)) {
-            prev = out_plugs[i];
-        }
-        if (i == active) {
-            new = out_plugs[i];
+    {
+        char outplugname[100];
+        deadbeef->conf_get_str ("output_plugin", "alsa", outplugname, sizeof (outplugname));
+        for (int i = 0; out_plugs[i]; i++) {
+            if (!strcmp (out_plugs[i]->plugin.id, outplugname)) {
+                prev = out_plugs[i];
+            }
+            if (i == active) {
+                new = out_plugs[i];
+            }
         }
     }
-    deadbeef->conf_unlock ();
 
     if (!new) {
         fprintf (stderr, "failed to find output plugin selected in preferences window\n");
@@ -132,14 +135,13 @@ on_pref_soundcard_changed              (GtkComboBox     *combobox,
 {
     int active = gtk_combo_box_get_active (combobox);
     if (active >= 0 && active < g_slist_length(output_device_names)) {
-        deadbeef->conf_lock ();
-        const char *soundcard = deadbeef->conf_get_str_fast (_get_output_soundcard_conf_name(), "default");
+        char soundcard[100];
+        deadbeef->conf_get_str (_get_output_soundcard_conf_name(), "default", soundcard, sizeof (soundcard));
         const char *active_name = g_slist_nth_data (output_device_names, active);
         if (strcmp (soundcard, active_name)) {
             deadbeef->conf_set_str (_get_output_soundcard_conf_name(), active_name);
             deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
         }
-        deadbeef->conf_unlock ();
     }
 }
 
@@ -224,12 +226,15 @@ prefwin_init_sound_tab (GtkWidget *_prefwin) {
     GtkWidget *w = prefwin = _prefwin;
     GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "pref_output_plugin"));
 
-    const char *outplugname = deadbeef->conf_get_str_fast ("output_plugin", "alsa");
-    DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
-    for (int i = 0; out_plugs[i]; i++) {
-        gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), out_plugs[i]->plugin.name);
-        if (!strcmp (outplugname, out_plugs[i]->plugin.id)) {
-            gtk_combo_box_set_active (combobox, i);
+    {
+        char outplugname[100];
+        deadbeef->conf_get_str ("output_plugin", "alsa", outplugname, sizeof(outplugname));
+        DB_output_t **out_plugs = deadbeef->plug_get_output_list ();
+        for (int i = 0; out_plugs[i]; i++) {
+            gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), out_plugs[i]->plugin.name);
+            if (!strcmp (outplugname, out_plugs[i]->plugin.id)) {
+                gtk_combo_box_set_active (combobox, i);
+            }
         }
     }
 
@@ -263,9 +268,15 @@ prefwin_init_sound_tab (GtkWidget *_prefwin) {
     prefwin_set_toggle_button ("checkbutton_dependent_sr", use_dependent_samplerate);
 
     // direct samplerate value
-    gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_direct_sr")))), deadbeef->conf_get_str_fast ("streamer.samplerate", "44100"));
-    gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_sr_mult_48")))), deadbeef->conf_get_str_fast ("streamer.samplerate_mult_48", "48000"));
-    gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_sr_mult_44")))), deadbeef->conf_get_str_fast ("streamer.samplerate_mult_44", "44100"));
+    {
+        char samplerate[100];
+        deadbeef->conf_get_str ("streamer.samplerate", "44100", samplerate, sizeof (samplerate));
+        gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_direct_sr")))), samplerate);
+        deadbeef->conf_get_str ("streamer.samplerate_mult_48", "48000", samplerate, sizeof (samplerate));
+        gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_sr_mult_48")))), samplerate);
+        deadbeef->conf_get_str ("streamer.samplerate_mult_44", "44100", samplerate, sizeof (samplerate));
+        gtk_entry_set_text (GTK_ENTRY (gtk_bin_get_child (GTK_BIN (lookup_widget (w, "comboboxentry_sr_mult_44")))), samplerate);
+    }
 
     update_samplerate_widget_sensitivity (override_sr, use_dependent_samplerate);
 }

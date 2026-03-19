@@ -95,13 +95,17 @@ prefwin_init_gui_misc_tab (GtkWidget *_prefwin) {
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON (lookup_widget (w, "listview_group_spacing")), deadbeef->conf_get_int ("playlist.groups.spacing", 0));
 
-    // fill gui plugin list
-    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
-    const char **names = deadbeef->plug_get_gui_names ();
-    for (int i = 0; names[i]; i++) {
-        gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), names[i]);
-        if (!strcmp (names[i], deadbeef->conf_get_str_fast ("gui_plugin", "GTK3"))) {
-            prefwin_set_combobox (combobox, i);
+    {
+        char gui_plugin[100];
+        deadbeef->conf_get_str ("gui_plugin", "GTK3", gui_plugin, sizeof (gui_plugin));
+        // fill gui plugin list
+        GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "gui_plugin"));
+        const char **names = deadbeef->plug_get_gui_names ();
+        for (int i = 0; names[i]; i++) {
+            gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), names[i]);
+            if (!strcmp (names[i], gui_plugin)) {
+                prefwin_set_combobox (combobox, i);
+            }
         }
     }
 
