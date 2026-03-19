@@ -41,70 +41,73 @@ char *
 build_actions_string(void) {
     DB_plugin_t **plugins = plug_get_list();
 
-    const int MAX_DEPTH = 32;
     const int NAME_COLUMN = 40;
     const int INITIAL_BUF = 4096;
 
-    /* ---------- dynamic buffer ---------- */
-    size_t buf_capacity = INITIAL_BUF;
-    size_t buf_len = 0;
-    char *buf = malloc(buf_capacity);
+    size_t capacity = INITIAL_BUF;
+    size_t length = 0;
+
+    char *buf = malloc(capacity);
     if (!buf) {
         return NULL;
     }
+
     buf[0] = 0;
 
-    /* ---------- helper to append to buffer ---------- */
 #define APPEND(...) do { \
 int needed = snprintf(NULL, 0, __VA_ARGS__); \
-if (buf_len + needed + 1 > buf_capacity) { \
-buf_capacity = (buf_len + needed + 1) * 2; \
-buf = realloc(buf, buf_capacity); \
+if (length + needed + 1 > capacity) { \
+capacity = (length + needed + 1) * 2; \
+buf = realloc(buf, capacity); \
 } \
-buf_len += snprintf(buf + buf_len, buf_capacity - buf_len, __VA_ARGS__); \
-} while(0)
+length += snprintf(buf + length, capacity - length, __VA_ARGS__); \
+} while (0)
 
-    /* ---------- header ---------- */
-    APPEND("\n");
-    APPEND(_("List of all actions.\n"));
-    APPEND(_("Perform actions using \"--action=NAME\" command line argument.\n\n"));
     APPEND(_("Title"));
-    int header_pos = 5;
-    for (int i = header_pos; i < NAME_COLUMN; i++) {
+
+    for (int i = 5; i < NAME_COLUMN; i++) {
         APPEND(" ");
     }
-    APPEND("|  ");
-    APPEND(_("Name"));
-    APPEND("\n");
 
-    /* ---------- full-width divider ---------- */
-    int total_width = NAME_COLUMN + 40; // approximate total width
+    APPEND("|  %s\n", _("Name"));
+
+    int total_width = NAME_COLUMN + 40;
+
     for (int i = 0; i < total_width; i++) {
-        APPEND(i == NAME_COLUMN ? "|" : "-");
+        if (i == NAME_COLUMN) {
+            APPEND("|");
+        } else {
+            APPEND("-");
+        }
     }
+
     APPEND("\n");
 
-    /* ---------- collect actions ---------- */
-    int capacity = 64, count = 0;
-    DB_plugin_action_t **list = malloc(sizeof(DB_plugin_action_t *) * capacity);
+    // Build an alphabetically-sorted list of actions from all plugins
+
+    int cap_list = 64, count = 0;
+    DB_plugin_action_t **list = malloc(sizeof(*list) * cap_list);
+
     if (!list) {
         free(buf);
         return NULL;
     }
 
-    for (int pi = 0; plugins[pi] != NULL; pi++) {
-        DB_plugin_t *plugin = plugins[pi];
-        if (!plugin->get_actions) {
+    for (int i = 0; plugins[i]; i++) {
+        if (!plugins[i]->get_actions) {
             continue;
         }
-        DB_plugin_action_t *action = plugin->get_actions(NULL);
-        while (action) {
-            if (count == capacity) {
-                capacity *= 2;
-                list = realloc(list, sizeof(DB_plugin_action_t*) * capacity);
+
+        DB_plugin_action_t *a = plugins[i]->get_actions(NULL);
+
+        while (a) {
+            if (count == cap_list) {
+                cap_list *= 2;
+                list = realloc(list, sizeof(*list) * cap_list);
             }
-            list[count++] = action;
-            action = action->next;
+
+            list[count++] = a;
+            a = a->next;
         }
     }
 
@@ -113,70 +116,157 @@ buf_len += snprintf(buf + buf_len, buf_capacity - buf_len, __VA_ARGS__); \
         return buf;
     }
 
-    /* ---------- sort ---------- */
-    qsort(list, count, sizeof(DB_plugin_action_t *), action_alphasort);
+    qsort(list, count, sizeof(*list), action_alphasort);
 
-    /* ---------- tree printing ---------- */
-    char prev_parts[MAX_DEPTH][256];
-    int prev_depth = 0;
+    // Build action tree based on '/' separators
 
-    for (int ai = 0; ai < count; ai++) {
-        const char *src = list[ai]->title;
-        char parts[MAX_DEPTH][256];
+    const char *prev = "";
+
+    for (int i = 0; i < count; i++) {
+        const char *cur = list[i]->title;
+        const char *p_prev = prev;
+        const char *p_cur  = cur;
         int depth = 0;
 
-        /* split path handling escaped \/ */
-        while (*src && depth < MAX_DEPTH) {
-            int idx = 0;
-            while (*src) {
-                if (src[0] == '\\' && src[1] == '/') {
-                    parts[depth][idx++] = '/';
-                    src += 2;
+        while (*p_cur) {
+            const char *c_start = p_cur;
+            int c_len = 0;
+
+            while (*p_cur) {
+                if (p_cur[0] == '\\' && p_cur[1] == '/') {
+                    p_cur += 2;
+                    c_len++;
                     continue;
                 }
-                if (*src == '/') {
+
+                if (*p_cur == '/') {
                     break;
                 }
-                parts[depth][idx++] = *src++;
+
+                p_cur++;
+                c_len++;
             }
-            parts[depth][idx] = 0;
+
+            int match = 0;
+
+            if (*p_prev) {
+                const char *p_start = p_prev;
+                int p_len = 0;
+
+                while (*p_prev) {
+                    if (p_prev[0] == '\\' && p_prev[1] == '/') {
+                        p_prev += 2;
+                        p_len++;
+                        continue;
+                    }
+
+                    if (*p_prev == '/') {
+                        break;
+                    }
+
+                    p_prev++;
+                    p_len++;
+                }
+
+                if (c_len == p_len && strncmp(c_start, p_start, c_len) == 0) {
+                    match = 1;
+                }
+
+                if (*p_prev == '/') {
+                    p_prev++;
+                }
+            }
+
+            if (!match) {
+                const char *s = c_start;
+                int level = depth;
+
+                while (1) {
+                    int indent = level * 4;
+
+                    for (int k = 0; k < indent; k++) {
+                        APPEND(" ");
+                    }
+
+                    const char *tmp = s;
+                    int seg_len = 0;
+
+                    while (*tmp) {
+                        if (tmp[0] == '\\' && tmp[1] == '/') {
+                            tmp += 2;
+                            seg_len++;
+                            continue;
+                        }
+
+                        if (*tmp == '/') {
+                            break;
+                        }
+
+                        tmp++;
+                        seg_len++;
+                    }
+
+                    {
+                        const char *p = s;
+                        int remaining = seg_len;
+
+                        char *title = calloc(remaining + 1, 1);
+                        char *titlep = title;
+
+                        while (remaining > 0) {
+                            if (p[0] == '\\' && p[1] == '/') {
+                                *titlep++ = '/';
+                                p += 2;
+                                remaining--;
+                            } else {
+                                *titlep++ = *p++;
+                                remaining--;
+                            }
+                        }
+                        *titlep = 0;
+                        APPEND("%s", title);
+                        free(title);
+                        title = NULL;
+                        titlep = NULL;
+                    }
+
+                    if (*tmp == 0) {
+                        int pos = indent + seg_len;
+
+                        if (pos < NAME_COLUMN) {
+                            for (int k = pos; k < NAME_COLUMN; k++) {
+                                APPEND(" ");
+                            }
+                        } else {
+                            APPEND(" ");
+                        }
+
+                        APPEND("|  %s", list[i]->name);
+                    }
+
+                    APPEND("\n");
+
+                    if (*tmp == '/') {
+                        s = tmp + 1;
+                        level++;
+                    } else {
+                        break;
+                    }
+                }
+
+                break;
+            }
+
             depth++;
-            if (*src == '/') {
-                src++;
-            }
-            else {
+
+            if (*p_cur == '/') {
+                p_cur++;
+            } else {
                 break;
             }
         }
 
-        int shared = 0;
-        while (shared < depth
-               && shared < prev_depth
-               && strcmp(parts[shared], prev_parts[shared]) == 0) {
-            shared++;
-        }
-
-        for (int level = shared; level < depth; level++) {
-            int indent = level * 4;
-            for (int i = 0; i < indent; i++) {
-                APPEND(" ");
-            }
-            APPEND("%s", parts[level]);
-            int current_pos = indent + (int)strlen(parts[level]);
-            if (level == depth - 1) {
-                if (current_pos < NAME_COLUMN) {
-                    for (int i = current_pos; i < NAME_COLUMN; i++) {
-                        APPEND(" ");
-                    }
-                } else {
-                    APPEND(" ");
-                }
-                APPEND("|  %s", list[ai]->name);
-            }
-            APPEND("\n");
-            strcpy(prev_parts[level], parts[level]);
-        }
-        prev_depth = depth;
+        prev = cur;
     }
 
     free(list);
@@ -184,4 +274,3 @@ buf_len += snprintf(buf + buf_len, buf_capacity - buf_len, __VA_ARGS__); \
 
 #undef APPEND
 }
-
