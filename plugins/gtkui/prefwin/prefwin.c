@@ -176,8 +176,6 @@ _init_prefwin(void) {
 
     gtk_window_set_transient_for (GTK_WINDOW (w), GTK_WINDOW (mainwin));
 
-    deadbeef->conf_lock ();
-
     // output plugin selection
     prefwin_init_sound_tab (prefwin);
 
@@ -206,8 +204,6 @@ _init_prefwin(void) {
     if (PREFWIN_TAB_INDEX_HOTKEYS != -1) {
         prefwin_init_hotkeys (prefwin);
     }
-
-    deadbeef->conf_unlock ();
 
     g_signal_connect (GTK_DIALOG (prefwin), "response", G_CALLBACK (on_prefwin_response_cb), NULL);
 
