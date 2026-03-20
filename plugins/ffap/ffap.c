@@ -656,7 +656,11 @@ ape_free_ctx (APEContext *ape_ctx) {
     }
     for (i = 0; i < APE_FILTER_LEVELS; i++) {
         if (ape_ctx->filterbuf[i]) {
+#ifdef __MINGW32__
+            __mingw_aligned_free (ape_ctx->filterbuf[i]);
+#else
             free (ape_ctx->filterbuf[i]);
+#endif
             ape_ctx->filterbuf[i] = NULL;
         }
     }
