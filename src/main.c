@@ -476,9 +476,13 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 puts(output);
             }
             free (output);
-            return 0;
+            return 1;
         }
         else if (!strncmp (parg, "--perform-action=", strlen ("--perform-action="))) {
+            if (sendback == NULL) {
+                puts ("DeaDBeeF must be running in order to perform an action");
+                return 1;
+            }
             const char *action_name = parg + strlen ("--perform-action=");
             DB_plugin_action_t *action = find_action_by_name (action_name);
 
@@ -486,17 +490,11 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
                 action->callback2 (action, DDB_ACTION_CTX_MAIN);
                 deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
             } else {
-                char response[500];
-                snprintf (response, sizeof(response), _("Failed to perform action \"%s\"\n"), action_name);
-                if (sendback) {
-                    snprintf (sendback, sbsize, "%s", response);
-                } else {
-                    puts (response);
-                }
+                snprintf (sendback, sbsize, _("Failed to perform action \"%s\"\n"), action_name);
             }
 
             parg += strlen(parg) + 1;
-            continue;
+            return 1;
         }
         else if (!strncmp (parg, "--plugin=", strlen ("--plugin="))) {
             if (!strcmp (parg + strlen ("--plugin="), "main")) {
