@@ -1,0 +1,7 @@
+FROM deadbeef-builder-player-clang-20.04
+
+WORKDIR /usr/src/deadbeef
+COPY . /usr/src/deadbeef
+ENV BUILD_OS_NAME=linux
+
+CMD [ "bash", "scripts/test.sh"]

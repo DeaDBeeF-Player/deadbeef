@@ -16,18 +16,31 @@ echo "${GITHUB_BUILD_NUMBER}" > build_data/BUILD_NUMBER
 case "$BUILD_OS_NAME" in
     linux)
         ls -l .
+        HOST_ARCH="$(uname -m)"
+        case "$HOST_ARCH" in
+            x86_64)
+                BUILD_ARCH="x86_64"
+                ;;
+            aarch64|arm64)
+                BUILD_ARCH="aarch64"
+                ;;
+            *)
+                echo "Unsupported architecture: $arch"
+                exit 1
+                ;;
+        esac
 #        echo "building for i686"
 #        ARCH=i686 ./scripts/static_build.sh
 #        ARCH=i686 ./scripts/portable_package_static.sh
-        echo "Building for x86_64"
+        echo "Building for $BUILD_ARCH"
         echo "m4_define([DEADBEEF_VERSION], [$VERSION])" > "build_data/version.m4"
-        ARCH=x86_64 ./scripts/static_build.sh $@
-        ARCH=x86_64 ./scripts/portable_package_static.sh $@
+        ARCH=$BUILD_ARCH ./scripts/static_build.sh $@
+        ARCH=$BUILD_ARCH ./scripts/portable_package_static.sh $@
         if ! $DEBUG; then
             echo "Making deb package"
-            ARCH=x86_64 ./tools/packages/debian.sh
+            ARCH=$BUILD_ARCH ./tools/packages/debian.sh
             echo "Making arch package"
-            ARCH=x86_64 ./tools/packages/arch.sh
+            ARCH=$BUILD_ARCH ./tools/packages/arch.sh
             echo "Running make dist"
             make dist
         fi

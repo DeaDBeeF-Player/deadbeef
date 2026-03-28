@@ -2,6 +2,8 @@
 
 set -e
 
+echo "Building Arch package for arch $ARCH..."
+
 PWD=$(pwd)
 VERSION=$(<"build_data/VERSION")
 PACKAGE_VERSION=$(echo -n $VERSION | sed 's/-//')
@@ -9,6 +11,8 @@ VERSION_SUFFIX=$(<"build_data/VERSION_SUFFIX")
 if [[ "$ARCH" == "i686" ]]; then
     echo
 elif [[ "$ARCH" == "x86_64" ]]; then
+    echo
+elif [[ "$ARCH" == "aarch64" ]]; then
     echo
 else
     echo unknown arch $ARCH

@@ -65,6 +65,10 @@ case "$host" in
     AC_DEFINE(ARCH_PPC_64, 1, [architecture is ppc64])
     LIB="static-deps/lib-ppc-64"
     ;;
+  aarch64-*-* )
+    AC_DEFINE(ARCH_AARCH645, 1, [architecture is aarch64])
+    LIB="static-deps/lib-aarch64"
+    ;;
   *)
     AC_DEFINE(ARCH_UNKNOWN, 1, [architecture is unknown])
     ;;
@@ -747,7 +751,7 @@ dnl mpris plugin
 AS_IF([test "${enable_mpris}" != "no"], [
     AS_IF([test "${enable_staticlink}" != "no"], [
         HAVE_MPRIS=yes
-        MPRIS_LIBS="-L${GTK_ROOT_310}/lib -lglib-2.0 -lgio-2.0 -lgthread-2.0"
+        MPRIS_LIBS="-L${GTK_ROOT_310}/lib -L${GTK_ROOT_310}/lib/aarch64-linux-gnu -lglib-2.0 -lgio-2.0 -lgthread-2.0"
         MPRIS_CFLAGS="${GTK3_310_CFLAGS}"
     ], [
         PKG_CHECK_MODULES(MPRIS, [glib-2.0 gio-2.0 gio-unix-2.0 gthread-2.0], HAVE_MPRIS=yes, HAVE_MPRIS=no)

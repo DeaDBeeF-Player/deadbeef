@@ -16,16 +16,16 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "config.h"
-
 #ifdef HAVE_EXCEPTIONS
 #   include <new>
 #endif
 
-#include "resid.h"
-#include "resid-emu.h"
 #include <string.h>
 #include <string>
+
+#include "config.h"
+#include "resid.h"
+#include "resid-emu.h"
 
 char ReSID::m_credit[];
 

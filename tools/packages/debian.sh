@@ -2,6 +2,8 @@
 
 set -e
 
+echo "Building deb package for arch $ARCH..."
+
 PWD=$(pwd)
 VERSION=$(<"build_data/VERSION")
 PACKAGE_VERSION=$(echo -n $VERSION | sed 's/-/~/')
@@ -10,6 +12,8 @@ if [[ "$ARCH" == "i686" ]]; then
     PACKAGE_ARCH=i386
 elif [[ "$ARCH" == "x86_64" ]]; then
     PACKAGE_ARCH=amd64
+elif [[ "$ARCH" == "aarch64" ]]; then
+    PACKAGE_ARCH=arm64
 else
     echo Unknown arch $ARCH
     exit 1

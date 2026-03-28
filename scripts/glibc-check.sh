@@ -31,5 +31,7 @@ if [ ${#bad_versions[@]} -eq 0 ]; then
 else
     echo -e "❌ FAIL: $file uses GLIBC versions newer than $max_version:"
     printf '   - %s\n' "${bad_versions[@]}"
+#    echo "full dump:"
+#    readelf -W --dyn-syms "$file" 2>/dev/null
     exit 1
 fi

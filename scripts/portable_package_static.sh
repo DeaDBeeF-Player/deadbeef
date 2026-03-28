@@ -18,6 +18,8 @@ if [[ "$ARCH" == "i686" ]]; then
     echo arch: $ARCH
 elif [[ "$ARCH" == "x86_64" ]]; then
     echo arch: $ARCH
+elif [[ "$ARCH" == "aarch64" ]]; then
+    echo arch: $ARCH
 else
     echo unknown arch $ARCH
     exit 1

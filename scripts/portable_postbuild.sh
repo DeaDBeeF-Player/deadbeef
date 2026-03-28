@@ -1,11 +1,15 @@
 #!/bin/bash
 set -e
-set -x
+
+echo "portable_postbuild.sh for arch $ARCH..."
+
 VERSION=$(<"build_data/VERSION")
 OSTYPE=`uname -s`
 if [[ "$ARCH" == "i686" ]]; then
     echo arch: $ARCH
 elif [[ "$ARCH" == "x86_64" ]]; then
+    echo arch: $ARCH
+elif [[ "$ARCH" == "aarch64" ]]; then
     echo arch: $ARCH
 else
     echo unknown arch $ARCH
