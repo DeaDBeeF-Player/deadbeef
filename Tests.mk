@@ -7,8 +7,8 @@ CC=clang
 CXX=clang++
 
 ORIGIN=$(shell pwd)
-STATIC_DEPS:=$(ORIGIN)/static-deps
-STATIC_ROOT:=$(STATIC_DEPS)/lib-x86-64
+STATIC_DEPS?=$(ORIGIN)/static-deps/lib-x86-64
+STATIC_ROOT:=$(STATIC_DEPS)
 INCLUDE=-I external/googletest/googletest \
 	-I external/googletest/googletest/include \
 	-I external/googletest/googlemock/include \
