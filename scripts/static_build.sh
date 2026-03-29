@@ -73,6 +73,7 @@ elif [[ "$ARCH" == "aarch64" ]]; then
 
 # using clang requires higher version of libstdc++, than provided in staticdeps, so remove it
     rm $STATIC_DEPS/lib/aarch64-linux-gnu/libstdc*
+    rm $AP/ctype.h
 else
     echo unknown arch $ARCH
     exit 1
