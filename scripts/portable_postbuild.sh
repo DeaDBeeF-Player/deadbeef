@@ -7,10 +7,13 @@ VERSION=$(<"build_data/VERSION")
 OSTYPE=`uname -s`
 if [[ "$ARCH" == "i686" ]]; then
     echo arch: $ARCH
+    STATIC_DEPS=static-deps/lib-i686
 elif [[ "$ARCH" == "x86_64" ]]; then
     echo arch: $ARCH
+    STATIC_DEPS=static-deps/lib-x86-64
 elif [[ "$ARCH" == "aarch64" ]]; then
     echo arch: $ARCH
+    STATIC_DEPS=static-deps/lib-aarch64
 else
     echo unknown arch $ARCH
     exit -1
@@ -114,10 +117,10 @@ cp -r plugins/sc68/libsc68/file68/data68/Replay/*.bin $OUTDIR/plugins/data68/Rep
 
 # dynamic libs
 mkdir -p $OUTDIR/lib
-cp -r static-deps/lib-x86-64/lib/libBlocksRuntime.so* $OUTDIR/lib/
-cp -r static-deps/lib-x86-64/lib/libdispatch.so* $OUTDIR/lib/
-cp -r static-deps/lib-x86-64/lib/libcurl.so* $OUTDIR/lib/
-cp -r static-deps/lib-x86-64/lib/libmbed*.so* $OUTDIR/lib/
+cp -r $STATIC_DEPS/lib/libBlocksRuntime.so* $OUTDIR/lib/
+cp -r $STATIC_DEPS/lib/libdispatch.so* $OUTDIR/lib/
+cp -r $STATIC_DEPS/lib/libcurl.so* $OUTDIR/lib/
+cp -r $STATIC_DEPS/lib/libmbed*.so* $OUTDIR/lib/
 
 # translations
 mkdir -p $OUTDIR/locale
