@@ -80,11 +80,27 @@ case "$BUILD_OS_NAME" in
         echo Uploading linux artifacts...
         create_dir linux
 
+        HOST_ARCH="$(uname -m)"
+        case "$HOST_ARCH" in
+            x86_64)
+                BUILD_ARCH="x86_64"
+                ;;
+            aarch64|arm64)
+                BUILD_ARCH="aarch64"
+                ;;
+            *)
+                echo "Unsupported architecture: $arch"
+                exit 1
+                ;;
+        esac
+
         # Upload packages / source only for release build
-        if [ "$DEBUG" != "true" ]; then
-            upload_files "deadbeef-*.tar.bz2" linux
-            upload_files "package_out/x86_64/debian/*.deb" linux
-            upload_files "package_out/x86_64/arch/*.pkg.tar.xz" linux
+        if [[ "$DEBUG" != "true" ]]; then
+            if [[ "$BUILD_ARCH" == "x86_64" ]] ; then
+                upload_files "deadbeef-*.tar.bz2" linux
+            fi
+            upload_files "package_out/$BUILD_ARCH/debian/*.deb" linux
+            upload_files "package_out/$BUILD_ARCH/arch/*.pkg.tar.xz" linux
         fi
         # This will match the build tarballs and debug symbols
         upload_files "portable_out/build/*.tar.bz2" linux
