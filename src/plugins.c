@@ -870,7 +870,7 @@ plug_remove_plugin (void *p) {
 // d_name must be writable w/o sideeffects; contain valid .so name
 // l must be strlen(d_name)
 static int
-load_plugin (const char *plugdir, char *d_name, int l) {
+load_plugin (const char *plugdir, const char *d_name, int l) {
     // hack for osx to skip *.0.so files
     if (strstr (d_name, ".0.so")) {
         return -1;
@@ -911,30 +911,40 @@ load_plugin (const char *plugdir, char *d_name, int l) {
         }
 #endif
     }
-    d_name[l-sizeof (PLUGINEXT)+1] = 0;
-    strcat (d_name, "_load");
-#ifndef ANDROID
-    DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name);
-#else
-    DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, d_name+3);
+
+    char *d_name_copy = calloc(strlen(d_name) + 20, 1);
+    strcpy(d_name_copy, d_name);
+    d_name_copy[l-sizeof (PLUGINEXT)+1] = 0;
+    strcat (d_name_copy, "_load");
+
+    const char *load_name = d_name_copy;
+
+#ifdef ANDROID
+    load_name += 3;
 #endif
+
+    DB_plugin_t *(*plug_load)(DB_functions_t *api) = dlsym (handle, load_name);
     if (!plug_load) {
+        int err = 0;
         int android = 0;
 #ifdef ANDROID
         android = 1;
 #endif
-        dlclose (handle);
         // don't error after failing to load plugins starting with "lib",
         // e.g. attempting to load a plugin from "libmp4ff.so",
         // except android, where all plugins have lib prefix
         if (android || !has_lib_prefix) {
-            trace ("dlsym error: %s (%s)\n", dlerror (), d_name + 3);
-            return -1;
+            trace ("dlsym error: %s (%s)\n", dlerror (), load_name);
+            free (d_name_copy);
+            d_name_copy = NULL;
+            err = -1;
         }
-        return 0;
+        dlclose (handle);
+        return err;
     }
+    free (d_name_copy);
+    d_name_copy = NULL;
     if (plug_init_plugin (plug_load, handle) < 0) {
-        d_name[l-sizeof (PLUGINEXT)+1] = 0;
         dlclose (handle);
         return -1;
     }
