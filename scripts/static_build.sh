@@ -69,7 +69,7 @@ elif [[ "$ARCH" == "aarch64" ]]; then
     export GTK3_310_LIBS="-L${GTK_ROOT_310}/lib -L${GTK_ROOT_310}/lib/aarch64-linux-gnu -lgtk-3 -lgdk-3 -lpangocairo-1.0 -lpango-1.0 -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
 
     export GTK2_216_CFLAGS=$GTK3_310_CFLAGS
-    export GTK2_216_LIBS="-L${GTK_ROOT_216}/lib -lgtk-x11-2.0 -lpango-1.0 -lcairo -lgdk-x11-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
+    export GTK2_216_LIBS="-L${GTK_ROOT_216}/lib -L${GTK_ROOT_216}/lib/aarch64-linux-gnu -lgtk-x11-2.0 -lpango-1.0 -lcairo -lgdk-x11-2.0 -lgdk_pixbuf-2.0 -lgobject-2.0 -lgthread-2.0 -lglib-2.0"
 
 # using clang requires higher version of libstdc++, than provided in staticdeps, so remove it
     rm $STATIC_DEPS/lib/aarch64-linux-gnu/libstdc*
