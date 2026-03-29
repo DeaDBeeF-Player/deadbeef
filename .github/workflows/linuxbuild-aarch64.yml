@@ -1,0 +1,49 @@
+name: Linux Release Build AArch64
+
+on: [ push, pull_request, workflow_dispatch ]
+
+jobs:
+  build_linux:
+    name: Linux Release Build AArch64
+    runs-on: ubuntu-24.04-arm
+    container: ubuntu:20.04
+    steps:
+    - name: Install dependencies for Linux
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        apt-get -qq update
+        apt-get install -y -qq autopoint automake autoconf intltool libc6-dev yasm libglib2.0-bin perl wget zip bzip2 make libtool pkg-config fakeroot clang openssh-client rsync libglib2.0-dev-bin git
+    - name: Checkout for Linux
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+#    - name: Fetch static-deps
+#      run: ci_scripts/download-linux-static-deps.sh
+    - name: Fetch static-deps
+      uses: dawidd6/action-download-artifact@v6
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        repo: DeaDBeeF-Player/deadbeef-staticdeps
+        workflow: linuxbuild-aarch64.yml
+        name: ddb-static-deps-aarch64-latest.tar.bz2
+        branch: master
+    - name: Unpack static-deps
+      run: |
+        mkdir -p static-deps
+        tar jxf ddb-static-deps-aarch64-latest.tar.bz2 -C static-deps
+    - name: Run Tests
+      run: scripts/test.sh
+    - name: Build for Linux
+      run: BUILD_OS_NAME=linux ci_scripts/build.sh
+    - name: Upload for Linux
+      env:
+          gh_ed25519_key: ${{ secrets.GH_ENCRYPTED_ED25519_KEY }}
+          gh_ed25519_iv: ${{ secrets.GH_ENCRYPTED_ED25519_IV }}
+      run: BUILD_OS_NAME=linux ci_scripts/upload.sh
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux
+        path: portable_out/build/*.tar.bz2
+
