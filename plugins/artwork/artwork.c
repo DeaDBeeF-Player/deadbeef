@@ -688,12 +688,13 @@ error:
     return ret;
 }
 
+
+#ifdef USE_VFS_CURL
 static int
 web_lookups (const char *cache_path, ddb_cover_info_t *cover) {
     if (!cache_path) {
         return -1;
     }
-#ifdef USE_VFS_CURL
     if (artwork_enable_lfm) {
         if (!fetch_from_lastfm (cover->priv->artist, cover->priv->album, cache_path)) {
             cover->image_filename = strdup (cache_path);
@@ -727,10 +728,10 @@ web_lookups (const char *cache_path, ddb_cover_info_t *cover) {
         }
     }
 #    endif
-#endif
 
     return -1;
 }
+#endif
 
 static char *
 vfs_path (const char *fname) {
@@ -792,6 +793,7 @@ recheck_missing_artwork (const char *input_fname, const time_t cache_mtime) {
     return res;
 }
 
+#ifdef USE_VFS_CURL
 static void
 _touch (const char *path) {
     struct stat stat_struct;
@@ -809,6 +811,7 @@ _touch (const char *path) {
 #endif
     }
 }
+#endif
 
 static void
 _free_blob (ddb_cover_info_t *cover) {
@@ -842,6 +845,7 @@ process_query (ddb_cover_info_t *cover) {
     // If all sources are off: just return / do nothing.
     if (!artwork_enable_local
         && !artwork_enable_embedded
+#ifdef USE_VFS_CURL
         && !artwork_enable_lfm
         && !artwork_enable_wos
 #    if ENABLE_MUSICBRAINZ
@@ -850,6 +854,7 @@ process_query (ddb_cover_info_t *cover) {
 #   if ENABLE_ALBUMART_ORG
         && !artwork_enable_aao
 #   endif
+#endif
         ) {
         return;
     }
