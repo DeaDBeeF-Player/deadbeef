@@ -28,6 +28,8 @@
 #include "gettext.h"
 #include <deadbeef/deadbeef.h>
 
+#define RESTART_ON_PREV_INTERVAL 10.f
+
 extern DB_functions_t *deadbeef;
 
 int
@@ -774,7 +776,7 @@ action_prev_or_restart_cb (struct DB_plugin_action_s *action, ddb_action_context
         deadbeef->pl_item_unref (it);
         if (dur > 0) {
             float pos = deadbeef->streamer_get_playpos ();
-            if (pos > 3) {
+            if (pos > RESTART_ON_PREV_INTERVAL) {
                 deadbeef->sendmessage (DB_EV_SEEK, 0, 0, 0);
                 return 0;
             }
