@@ -230,4 +230,7 @@ action_undo(DB_plugin_action_t *act, ddb_action_context_t ctx);
 int
 action_redo(DB_plugin_action_t *act, ddb_action_context_t ctx);
 
+int
+action_ml_refresh_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
+
 #endif

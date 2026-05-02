@@ -53,3 +53,10 @@ scriptableModel_t *
 gtkui_medialib_get_model (void) {
     return _model;
 }
+
+void
+gtkui_medialib_refresh (void) {
+    if (_source != NULL && _plugin != NULL) {
+        _plugin->refresh (_source);
+    }
+}

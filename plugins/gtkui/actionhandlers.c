@@ -46,6 +46,7 @@
 #include "trkproperties.h"
 #include "wingeom.h"
 #include "undostack.h"
+#include "medialib/medialibmanager.h"
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -880,5 +881,11 @@ action_undo(DB_plugin_action_t *act, ddb_action_context_t ctx) {
 int
 action_redo(DB_plugin_action_t *act, ddb_action_context_t ctx) {
     gtkui_undostack_perform_redo();
+    return 0;
+}
+
+int
+action_ml_refresh_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
+    gtkui_medialib_refresh ();
     return 0;
 }

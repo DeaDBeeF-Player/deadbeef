@@ -21,4 +21,7 @@ gtkui_medialib_free (void);
 scriptableModel_t *
 gtkui_medialib_get_model (void);
 
+void
+gtkui_medialib_refresh (void);
+
 #endif /* medialibmanager_h */
