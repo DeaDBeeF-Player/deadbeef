@@ -1037,6 +1037,9 @@ static int grouptitleheight = 22;
             [self scrollPoint:NSMakePoint(vis.origin.x, (self.frame.size.height - sv.contentSize.height))];
             break;
         default:
+            if ([NSApp.mainMenu performKeyEquivalent:theEvent]) {
+                return;
+            }
             [super keyDown:theEvent];
             return;
         }
@@ -1477,4 +1480,3 @@ static int grouptitleheight = 22;
 }
 
 @end
-
