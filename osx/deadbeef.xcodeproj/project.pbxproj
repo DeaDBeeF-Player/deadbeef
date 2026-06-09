@@ -5634,17 +5634,17 @@
 		2D27AEE71D9D871600842D76 /* rg_scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rg_scanner.h; sourceTree = "<group>"; };
 		2D27AEEB1D9D873E00842D76 /* ebur128.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ebur128.c; sourceTree = "<group>"; };
 		2D27AEEC1D9D873E00842D76 /* ebur128.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ebur128.h; sourceTree = "<group>"; };
-		2D289EEA26B5404800A2BB67 /* dct36_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_neon64.S; path = "deps/mpg123-1.32.6/src/libmpg123/dct36_neon64.S"; sourceTree = SOURCE_ROOT; };
-		2D289EEC26B5406D00A2BB67 /* synth_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_float.S; path = "deps/mpg123-1.32.6/src/libmpg123/synth_neon64_float.S"; sourceTree = SOURCE_ROOT; };
-		2D289EED26B5406E00A2BB67 /* synth_neon64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_accurate.S; path = "deps/mpg123-1.32.6/src/libmpg123/synth_neon64_accurate.S"; sourceTree = SOURCE_ROOT; };
-		2D289EF026B5407B00A2BB67 /* synth_neon64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_s32.S; path = "deps/mpg123-1.32.6/src/libmpg123/synth_neon64_s32.S"; sourceTree = SOURCE_ROOT; };
-		2D289EF126B5407B00A2BB67 /* synth_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64.S; path = "deps/mpg123-1.32.6/src/libmpg123/synth_neon64.S"; sourceTree = SOURCE_ROOT; };
-		2D289EF426B540AA00A2BB67 /* dct64_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon64_float.S; path = "deps/mpg123-1.32.6/src/libmpg123/dct64_neon64_float.S"; sourceTree = SOURCE_ROOT; };
-		2D289EF726B540AB00A2BB67 /* dct64_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon64.S; path = "deps/mpg123-1.32.6/src/libmpg123/dct64_neon64.S"; sourceTree = SOURCE_ROOT; };
-		2D289EFC26B5411300A2BB67 /* synth_stereo_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64.S; path = "deps/mpg123-1.32.6/src/libmpg123/synth_stereo_neon64.S"; sourceTree = SOURCE_ROOT; };
-		2D289EFD26B5411400A2BB67 /* synth_stereo_neon64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_accurate.S; path = "deps/mpg123-1.32.6/src/libmpg123/synth_stereo_neon64_accurate.S"; sourceTree = SOURCE_ROOT; };
-		2D289EFE26B5411400A2BB67 /* synth_stereo_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_float.S; path = "deps/mpg123-1.32.6/src/libmpg123/synth_stereo_neon64_float.S"; sourceTree = SOURCE_ROOT; };
-		2D289EFF26B5411400A2BB67 /* synth_stereo_neon64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_s32.S; path = "deps/mpg123-1.32.6/src/libmpg123/synth_stereo_neon64_s32.S"; sourceTree = SOURCE_ROOT; };
+		2D289EEA26B5404800A2BB67 /* dct36_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_neon64.S; path = "deps/mpg123-1.33.6/src/libmpg123/dct36_neon64.S"; sourceTree = SOURCE_ROOT; };
+		2D289EEC26B5406D00A2BB67 /* synth_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_float.S; path = "deps/mpg123-1.33.6/src/libmpg123/synth_neon64_float.S"; sourceTree = SOURCE_ROOT; };
+		2D289EED26B5406E00A2BB67 /* synth_neon64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_accurate.S; path = "deps/mpg123-1.33.6/src/libmpg123/synth_neon64_accurate.S"; sourceTree = SOURCE_ROOT; };
+		2D289EF026B5407B00A2BB67 /* synth_neon64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64_s32.S; path = "deps/mpg123-1.33.6/src/libmpg123/synth_neon64_s32.S"; sourceTree = SOURCE_ROOT; };
+		2D289EF126B5407B00A2BB67 /* synth_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_neon64.S; path = "deps/mpg123-1.33.6/src/libmpg123/synth_neon64.S"; sourceTree = SOURCE_ROOT; };
+		2D289EF426B540AA00A2BB67 /* dct64_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon64_float.S; path = "deps/mpg123-1.33.6/src/libmpg123/dct64_neon64_float.S"; sourceTree = SOURCE_ROOT; };
+		2D289EF726B540AB00A2BB67 /* dct64_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_neon64.S; path = "deps/mpg123-1.33.6/src/libmpg123/dct64_neon64.S"; sourceTree = SOURCE_ROOT; };
+		2D289EFC26B5411300A2BB67 /* synth_stereo_neon64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64.S; path = "deps/mpg123-1.33.6/src/libmpg123/synth_stereo_neon64.S"; sourceTree = SOURCE_ROOT; };
+		2D289EFD26B5411400A2BB67 /* synth_stereo_neon64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_accurate.S; path = "deps/mpg123-1.33.6/src/libmpg123/synth_stereo_neon64_accurate.S"; sourceTree = SOURCE_ROOT; };
+		2D289EFE26B5411400A2BB67 /* synth_stereo_neon64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_float.S; path = "deps/mpg123-1.33.6/src/libmpg123/synth_stereo_neon64_float.S"; sourceTree = SOURCE_ROOT; };
+		2D289EFF26B5411400A2BB67 /* synth_stereo_neon64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_neon64_s32.S; path = "deps/mpg123-1.33.6/src/libmpg123/synth_stereo_neon64_s32.S"; sourceTree = SOURCE_ROOT; };
 		2D28F0411C283BE3004A6E7B /* aac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = aac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D28F0451C283BF7004A6E7B /* aac_parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aac_parser.c; sourceTree = "<group>"; };
 		2D28F0461C283BF7004A6E7B /* aac_parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aac_parser.h; sourceTree = "<group>"; };
@@ -5804,68 +5804,68 @@
 		2D56579A2AED73A30014443E /* gtkScriptable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtkScriptable.h; sourceTree = "<group>"; };
 		2D56580A2AEE63430014443E /* gtkScriptable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptable.c; sourceTree = "<group>"; };
 		2D5659C12AF7ACC10014443E /* AlbumNavigationTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlbumNavigationTests.cpp; sourceTree = "<group>"; };
-		2D565A831A40BCE200CE1F5D /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = abi_align.h; path = "../../osx/deps/mpg123-1.32.6/src/common/abi_align.h"; sourceTree = "<group>"; };
-		2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_x86_64.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/dct36_x86_64.S"; sourceTree = "<group>"; };
-		2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_x86_64_float.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/dct64_x86_64_float.S"; sourceTree = "<group>"; };
-		2D565A9D1A40BCE200CE1F5D /* dct64_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_x86_64.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/dct64_x86_64.S"; sourceTree = "<group>"; };
-		2D565A9E1A40BCE200CE1F5D /* dct64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dct64.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/dct64.c"; sourceTree = "<group>"; };
-		2D565AA01A40BCE200CE1F5D /* decode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decode.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/decode.h"; sourceTree = "<group>"; };
-		2D565AA11A40BCE200CE1F5D /* dither.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dither.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/dither.c"; sourceTree = "<group>"; };
-		2D565AA21A40BCE200CE1F5D /* dither.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dither.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/dither.h"; sourceTree = "<group>"; };
-		2D565AA41A40BCE200CE1F5D /* equalizer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = equalizer.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/equalizer.c"; sourceTree = "<group>"; };
-		2D565AA51A40BCE200CE1F5D /* feature.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = feature.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/feature.c"; sourceTree = "<group>"; };
-		2D565AA61A40BCE200CE1F5D /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/format.c"; sourceTree = "<group>"; };
-		2D565AA71A40BCE200CE1F5D /* frame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = frame.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/frame.c"; sourceTree = "<group>"; };
-		2D565AA81A40BCE200CE1F5D /* frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frame.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/frame.h"; sourceTree = "<group>"; };
-		2D565AA91A40BCE200CE1F5D /* gapless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gapless.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/gapless.h"; sourceTree = "<group>"; };
-		2D565AAA1A40BCE200CE1F5D /* getbits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = getbits.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/getbits.h"; sourceTree = "<group>"; };
-		2D565AAC1A40BCE200CE1F5D /* getcpuflags_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = getcpuflags_x86_64.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/getcpuflags_x86_64.S"; sourceTree = "<group>"; };
-		2D565AAD1A40BCE200CE1F5D /* getcpuflags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = getcpuflags.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/getcpuflags.h"; sourceTree = "<group>"; };
-		2D565AAF1A40BCE200CE1F5D /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/huffman.h"; sourceTree = "<group>"; };
-		2D565AB01A40BCE200CE1F5D /* icy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = icy.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/icy.c"; sourceTree = "<group>"; };
-		2D565AB11A40BCE200CE1F5D /* icy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = icy.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/icy.h"; sourceTree = "<group>"; };
-		2D565AB21A40BCE200CE1F5D /* icy2utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = icy2utf8.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/icy2utf8.c"; sourceTree = "<group>"; };
-		2D565AB31A40BCE200CE1F5D /* icy2utf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = icy2utf8.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/icy2utf8.h"; sourceTree = "<group>"; };
-		2D565AB41A40BCE200CE1F5D /* id3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = id3.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/id3.c"; sourceTree = "<group>"; };
-		2D565AB51A40BCE200CE1F5D /* id3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = id3.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/id3.h"; sourceTree = "<group>"; };
-		2D565AB61A40BCE200CE1F5D /* index.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = index.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/index.c"; sourceTree = "<group>"; };
-		2D565AB71A40BCE200CE1F5D /* index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = index.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/index.h"; sourceTree = "<group>"; };
-		2D565AB91A40BCE200CE1F5D /* l2tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = l2tables.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/l2tables.h"; sourceTree = "<group>"; };
-		2D565ABC1A40BCE200CE1F5D /* layer1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer1.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/layer1.c"; sourceTree = "<group>"; };
-		2D565ABD1A40BCE200CE1F5D /* layer2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer2.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/layer2.c"; sourceTree = "<group>"; };
-		2D565ABE1A40BCE200CE1F5D /* layer3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer3.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/layer3.c"; sourceTree = "<group>"; };
-		2D565AC11A40BCE200CE1F5D /* libmpg123.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libmpg123.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/libmpg123.c"; sourceTree = "<group>"; };
-		2D565AC41A40BCE200CE1F5D /* mangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mangle.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/mangle.h"; sourceTree = "<group>"; };
-		2D565AC51A40BCE200CE1F5D /* mpeghead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpeghead.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/mpeghead.h"; sourceTree = "<group>"; };
-		2D565AC71A40BCE200CE1F5D /* mpg123lib_intern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123lib_intern.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/mpg123lib_intern.h"; sourceTree = "<group>"; };
-		2D565AC81A40BCE200CE1F5D /* newhuffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = newhuffman.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/newhuffman.h"; sourceTree = "<group>"; };
-		2D565AC91A40BCE200CE1F5D /* ntom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ntom.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/ntom.c"; sourceTree = "<group>"; };
-		2D565ACA1A40BCE200CE1F5D /* optimize.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = optimize.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/optimize.c"; sourceTree = "<group>"; };
-		2D565ACB1A40BCE200CE1F5D /* optimize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = optimize.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/optimize.h"; sourceTree = "<group>"; };
-		2D565ACC1A40BCE200CE1F5D /* parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = parse.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/parse.c"; sourceTree = "<group>"; };
-		2D565ACD1A40BCE200CE1F5D /* parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = parse.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/parse.h"; sourceTree = "<group>"; };
-		2D565ACE1A40BCE200CE1F5D /* reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reader.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/reader.h"; sourceTree = "<group>"; };
-		2D565ACF1A40BCE200CE1F5D /* readers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = readers.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/readers.c"; sourceTree = "<group>"; };
-		2D565AD11A40BCE200CE1F5D /* stringbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stringbuf.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/stringbuf.c"; sourceTree = "<group>"; };
-		2D565AD41A40BCE200CE1F5D /* synth_8bit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_8bit.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_8bit.c"; sourceTree = "<group>"; };
-		2D565AD51A40BCE200CE1F5D /* synth_8bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth_8bit.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_8bit.h"; sourceTree = "<group>"; };
-		2D565ADD1A40BCE200CE1F5D /* synth_mono.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth_mono.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_mono.h"; sourceTree = "<group>"; };
-		2D565AE61A40BCE200CE1F5D /* synth_ntom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth_ntom.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_ntom.h"; sourceTree = "<group>"; };
-		2D565AE71A40BCE200CE1F5D /* synth_real.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_real.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_real.c"; sourceTree = "<group>"; };
-		2D565AE81A40BCE200CE1F5D /* synth_s32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_s32.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_s32.c"; sourceTree = "<group>"; };
-		2D565AED1A40BCE200CE1F5D /* synth_sse3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth_sse3d.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_sse3d.h"; sourceTree = "<group>"; };
-		2D565AFD1A40BCE200CE1F5D /* synth_stereo_x86_64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64_accurate.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_stereo_x86_64_accurate.S"; sourceTree = "<group>"; };
-		2D565AFE1A40BCE200CE1F5D /* synth_stereo_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64_float.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_stereo_x86_64_float.S"; sourceTree = "<group>"; };
-		2D565AFF1A40BCE200CE1F5D /* synth_stereo_x86_64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64_s32.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_stereo_x86_64_s32.S"; sourceTree = "<group>"; };
-		2D565B001A40BCE200CE1F5D /* synth_stereo_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_stereo_x86_64.S"; sourceTree = "<group>"; };
-		2D565B011A40BCE200CE1F5D /* synth_x86_64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64_accurate.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_x86_64_accurate.S"; sourceTree = "<group>"; };
-		2D565B021A40BCE200CE1F5D /* synth_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64_float.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_x86_64_float.S"; sourceTree = "<group>"; };
-		2D565B031A40BCE200CE1F5D /* synth_x86_64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64_s32.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_x86_64_s32.S"; sourceTree = "<group>"; };
-		2D565B041A40BCE200CE1F5D /* synth_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_x86_64.S"; sourceTree = "<group>"; };
-		2D565B051A40BCE200CE1F5D /* synth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth.c"; sourceTree = "<group>"; };
-		2D565B061A40BCE200CE1F5D /* synth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth.h"; sourceTree = "<group>"; };
-		2D565B071A40BCE200CE1F5D /* synths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synths.h; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synths.h"; sourceTree = "<group>"; };
-		2D565B091A40BCE200CE1F5D /* tabinit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tabinit.c; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/tabinit.c"; sourceTree = "<group>"; };
+		2D565A831A40BCE200CE1F5D /* abi_align.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = abi_align.h; path = "../../osx/deps/mpg123-1.33.6/src/common/abi_align.h"; sourceTree = "<group>"; };
+		2D565A8D1A40BCE200CE1F5D /* dct36_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_x86_64.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/dct36_x86_64.S"; sourceTree = "<group>"; };
+		2D565A9C1A40BCE200CE1F5D /* dct64_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_x86_64_float.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/dct64_x86_64_float.S"; sourceTree = "<group>"; };
+		2D565A9D1A40BCE200CE1F5D /* dct64_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_x86_64.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/dct64_x86_64.S"; sourceTree = "<group>"; };
+		2D565A9E1A40BCE200CE1F5D /* dct64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dct64.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/dct64.c"; sourceTree = "<group>"; };
+		2D565AA01A40BCE200CE1F5D /* decode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = decode.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/decode.h"; sourceTree = "<group>"; };
+		2D565AA11A40BCE200CE1F5D /* dither.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dither.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/dither.c"; sourceTree = "<group>"; };
+		2D565AA21A40BCE200CE1F5D /* dither.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dither.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/dither.h"; sourceTree = "<group>"; };
+		2D565AA41A40BCE200CE1F5D /* equalizer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = equalizer.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/equalizer.c"; sourceTree = "<group>"; };
+		2D565AA51A40BCE200CE1F5D /* feature.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = feature.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/feature.c"; sourceTree = "<group>"; };
+		2D565AA61A40BCE200CE1F5D /* format.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = format.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/format.c"; sourceTree = "<group>"; };
+		2D565AA71A40BCE200CE1F5D /* frame.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = frame.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/frame.c"; sourceTree = "<group>"; };
+		2D565AA81A40BCE200CE1F5D /* frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = frame.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/frame.h"; sourceTree = "<group>"; };
+		2D565AA91A40BCE200CE1F5D /* gapless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gapless.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/gapless.h"; sourceTree = "<group>"; };
+		2D565AAA1A40BCE200CE1F5D /* getbits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = getbits.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/getbits.h"; sourceTree = "<group>"; };
+		2D565AAC1A40BCE200CE1F5D /* getcpuflags_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = getcpuflags_x86_64.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/getcpuflags_x86_64.S"; sourceTree = "<group>"; };
+		2D565AAD1A40BCE200CE1F5D /* getcpuflags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = getcpuflags.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/getcpuflags.h"; sourceTree = "<group>"; };
+		2D565AAF1A40BCE200CE1F5D /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/huffman.h"; sourceTree = "<group>"; };
+		2D565AB01A40BCE200CE1F5D /* icy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = icy.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/icy.c"; sourceTree = "<group>"; };
+		2D565AB11A40BCE200CE1F5D /* icy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = icy.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/icy.h"; sourceTree = "<group>"; };
+		2D565AB21A40BCE200CE1F5D /* icy2utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = icy2utf8.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/icy2utf8.c"; sourceTree = "<group>"; };
+		2D565AB31A40BCE200CE1F5D /* icy2utf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = icy2utf8.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/icy2utf8.h"; sourceTree = "<group>"; };
+		2D565AB41A40BCE200CE1F5D /* id3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = id3.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/id3.c"; sourceTree = "<group>"; };
+		2D565AB51A40BCE200CE1F5D /* id3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = id3.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/id3.h"; sourceTree = "<group>"; };
+		2D565AB61A40BCE200CE1F5D /* index.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = index.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/index.c"; sourceTree = "<group>"; };
+		2D565AB71A40BCE200CE1F5D /* index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = index.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/index.h"; sourceTree = "<group>"; };
+		2D565AB91A40BCE200CE1F5D /* l2tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = l2tables.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/l2tables.h"; sourceTree = "<group>"; };
+		2D565ABC1A40BCE200CE1F5D /* layer1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer1.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/layer1.c"; sourceTree = "<group>"; };
+		2D565ABD1A40BCE200CE1F5D /* layer2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer2.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/layer2.c"; sourceTree = "<group>"; };
+		2D565ABE1A40BCE200CE1F5D /* layer3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = layer3.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/layer3.c"; sourceTree = "<group>"; };
+		2D565AC11A40BCE200CE1F5D /* libmpg123.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libmpg123.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/libmpg123.c"; sourceTree = "<group>"; };
+		2D565AC41A40BCE200CE1F5D /* mangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mangle.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/mangle.h"; sourceTree = "<group>"; };
+		2D565AC51A40BCE200CE1F5D /* mpeghead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpeghead.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/mpeghead.h"; sourceTree = "<group>"; };
+		2D565AC71A40BCE200CE1F5D /* mpg123lib_intern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123lib_intern.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/mpg123lib_intern.h"; sourceTree = "<group>"; };
+		2D565AC81A40BCE200CE1F5D /* newhuffman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = newhuffman.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/newhuffman.h"; sourceTree = "<group>"; };
+		2D565AC91A40BCE200CE1F5D /* ntom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ntom.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/ntom.c"; sourceTree = "<group>"; };
+		2D565ACA1A40BCE200CE1F5D /* optimize.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = optimize.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/optimize.c"; sourceTree = "<group>"; };
+		2D565ACB1A40BCE200CE1F5D /* optimize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = optimize.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/optimize.h"; sourceTree = "<group>"; };
+		2D565ACC1A40BCE200CE1F5D /* parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = parse.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/parse.c"; sourceTree = "<group>"; };
+		2D565ACD1A40BCE200CE1F5D /* parse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = parse.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/parse.h"; sourceTree = "<group>"; };
+		2D565ACE1A40BCE200CE1F5D /* reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reader.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/reader.h"; sourceTree = "<group>"; };
+		2D565ACF1A40BCE200CE1F5D /* readers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = readers.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/readers.c"; sourceTree = "<group>"; };
+		2D565AD11A40BCE200CE1F5D /* stringbuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = stringbuf.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/stringbuf.c"; sourceTree = "<group>"; };
+		2D565AD41A40BCE200CE1F5D /* synth_8bit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_8bit.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_8bit.c"; sourceTree = "<group>"; };
+		2D565AD51A40BCE200CE1F5D /* synth_8bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth_8bit.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_8bit.h"; sourceTree = "<group>"; };
+		2D565ADD1A40BCE200CE1F5D /* synth_mono.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth_mono.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_mono.h"; sourceTree = "<group>"; };
+		2D565AE61A40BCE200CE1F5D /* synth_ntom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth_ntom.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_ntom.h"; sourceTree = "<group>"; };
+		2D565AE71A40BCE200CE1F5D /* synth_real.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_real.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_real.c"; sourceTree = "<group>"; };
+		2D565AE81A40BCE200CE1F5D /* synth_s32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth_s32.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_s32.c"; sourceTree = "<group>"; };
+		2D565AED1A40BCE200CE1F5D /* synth_sse3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth_sse3d.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_sse3d.h"; sourceTree = "<group>"; };
+		2D565AFD1A40BCE200CE1F5D /* synth_stereo_x86_64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64_accurate.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_stereo_x86_64_accurate.S"; sourceTree = "<group>"; };
+		2D565AFE1A40BCE200CE1F5D /* synth_stereo_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64_float.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_stereo_x86_64_float.S"; sourceTree = "<group>"; };
+		2D565AFF1A40BCE200CE1F5D /* synth_stereo_x86_64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64_s32.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_stereo_x86_64_s32.S"; sourceTree = "<group>"; };
+		2D565B001A40BCE200CE1F5D /* synth_stereo_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_x86_64.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_stereo_x86_64.S"; sourceTree = "<group>"; };
+		2D565B011A40BCE200CE1F5D /* synth_x86_64_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64_accurate.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_x86_64_accurate.S"; sourceTree = "<group>"; };
+		2D565B021A40BCE200CE1F5D /* synth_x86_64_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64_float.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_x86_64_float.S"; sourceTree = "<group>"; };
+		2D565B031A40BCE200CE1F5D /* synth_x86_64_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64_s32.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_x86_64_s32.S"; sourceTree = "<group>"; };
+		2D565B041A40BCE200CE1F5D /* synth_x86_64.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_x86_64.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_x86_64.S"; sourceTree = "<group>"; };
+		2D565B051A40BCE200CE1F5D /* synth.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = synth.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth.c"; sourceTree = "<group>"; };
+		2D565B061A40BCE200CE1F5D /* synth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synth.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth.h"; sourceTree = "<group>"; };
+		2D565B071A40BCE200CE1F5D /* synths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = synths.h; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synths.h"; sourceTree = "<group>"; };
+		2D565B091A40BCE200CE1F5D /* tabinit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tabinit.c; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/tabinit.c"; sourceTree = "<group>"; };
 		2D5C6AD22752B6930073632B /* plmenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = plmenu.h; sourceTree = "<group>"; };
 		2D5C6AD32752B6930073632B /* plmenu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = plmenu.c; sourceTree = "<group>"; };
 		2D5D21401A4033B0001D5A79 /* lastfm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = lastfm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6183,13 +6183,13 @@
 		2D6EC2A41A42068F00DD1C72 /* mp3_mad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp3_mad.h; sourceTree = "<group>"; };
 		2D6EC2A71A42076B00DD1C72 /* mp3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mp3.h; sourceTree = "<group>"; };
 		2D6EC2AA1A4210D800DD1C72 /* mp3_mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp3_mpg123.h; sourceTree = "<group>"; };
-		2D6EC2B31A4217C500DD1C72 /* dct36_avx.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_avx.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/dct36_avx.S"; sourceTree = "<group>"; };
-		2D6EC2B51A42187A00DD1C72 /* dct64_avx_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_avx_float.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/dct64_avx_float.S"; sourceTree = "<group>"; };
-		2D6EC2B61A42187A00DD1C72 /* dct64_avx.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_avx.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/dct64_avx.S"; sourceTree = "<group>"; };
-		2D6EC2B91A4218CC00DD1C72 /* synth_stereo_avx_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_float.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_stereo_avx_float.S"; sourceTree = "<group>"; };
-		2D6EC2BB1A4218D300DD1C72 /* synth_stereo_avx_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_s32.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_stereo_avx_s32.S"; sourceTree = "<group>"; };
-		2D6EC2BD1A4218D900DD1C72 /* synth_stereo_avx.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_stereo_avx.S"; sourceTree = "<group>"; };
-		2D6EC2BF1A4218DF00DD1C72 /* synth_stereo_avx_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_accurate.S; path = "../../osx/deps/mpg123-1.32.6/src/libmpg123/synth_stereo_avx_accurate.S"; sourceTree = "<group>"; };
+		2D6EC2B31A4217C500DD1C72 /* dct36_avx.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct36_avx.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/dct36_avx.S"; sourceTree = "<group>"; };
+		2D6EC2B51A42187A00DD1C72 /* dct64_avx_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_avx_float.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/dct64_avx_float.S"; sourceTree = "<group>"; };
+		2D6EC2B61A42187A00DD1C72 /* dct64_avx.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = dct64_avx.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/dct64_avx.S"; sourceTree = "<group>"; };
+		2D6EC2B91A4218CC00DD1C72 /* synth_stereo_avx_float.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_float.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_stereo_avx_float.S"; sourceTree = "<group>"; };
+		2D6EC2BB1A4218D300DD1C72 /* synth_stereo_avx_s32.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_s32.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_stereo_avx_s32.S"; sourceTree = "<group>"; };
+		2D6EC2BD1A4218D900DD1C72 /* synth_stereo_avx.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_stereo_avx.S"; sourceTree = "<group>"; };
+		2D6EC2BF1A4218DF00DD1C72 /* synth_stereo_avx_accurate.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = synth_stereo_avx_accurate.S; path = "../../osx/deps/mpg123-1.33.6/src/libmpg123/synth_stereo_avx_accurate.S"; sourceTree = "<group>"; };
 		2D713FFB1A5D7D5900EFF139 /* playqueue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playqueue.c; sourceTree = "<group>"; };
 		2D713FFC1A5D7D5900EFF139 /* playqueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playqueue.h; sourceTree = "<group>"; };
 		2D715BE426C82ACC0022A8F0 /* prefwin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = prefwin.h; sourceTree = "<group>"; };
@@ -6421,12 +6421,12 @@
 		2D90EF982438A5A600AF6F4B /* ScriptableErrorViewer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScriptableErrorViewer.m; sourceTree = "<group>"; };
 		2D91773F1A0E8966004BC222 /* alac.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = alac.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D917E781A4046FE00C3EB44 /* libmpg123.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmpg123.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D92B7782C4831D4002BAF88 /* sample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sample.h; path = "deps/mpg123-1.32.6/src/common/sample.h"; sourceTree = SOURCE_ROOT; };
-		2D92B77A2C483205002BAF88 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = "deps/mpg123-1.32.6/src/common/debug.h"; sourceTree = SOURCE_ROOT; };
-		2D92B77C2C483363002BAF88 /* true.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = true.h; path = "deps/mpg123-1.32.6/src/common/true.h"; sourceTree = SOURCE_ROOT; };
+		2D92B7782C4831D4002BAF88 /* sample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sample.h; path = "deps/mpg123-1.33.6/src/common/sample.h"; sourceTree = SOURCE_ROOT; };
+		2D92B77A2C483205002BAF88 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = "deps/mpg123-1.33.6/src/common/debug.h"; sourceTree = SOURCE_ROOT; };
+		2D92B77C2C483363002BAF88 /* true.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = true.h; path = "deps/mpg123-1.33.6/src/common/true.h"; sourceTree = SOURCE_ROOT; };
 		2D92B77E2C483407002BAF88 /* mp3_mpg123.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mp3_mpg123.c; sourceTree = "<group>"; };
-		2D92B7812C483452002BAF88 /* lfs_wrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lfs_wrap.c; path = "deps/mpg123-1.32.6/src/libmpg123/lfs_wrap.c"; sourceTree = SOURCE_ROOT; };
-		2D92B7822C483452002BAF88 /* lfs_wrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lfs_wrap.h; path = "deps/mpg123-1.32.6/src/libmpg123/lfs_wrap.h"; sourceTree = SOURCE_ROOT; };
+		2D92B7812C483452002BAF88 /* lfs_wrap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lfs_wrap.c; path = "deps/mpg123-1.33.6/src/libmpg123/lfs_wrap.c"; sourceTree = SOURCE_ROOT; };
+		2D92B7822C483452002BAF88 /* lfs_wrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lfs_wrap.h; path = "deps/mpg123-1.33.6/src/libmpg123/lfs_wrap.h"; sourceTree = SOURCE_ROOT; };
 		2D92D1D229B92A8300218F1D /* viz.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = viz.c; sourceTree = "<group>"; };
 		2D92D1D329B92A8300218F1D /* viz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = viz.h; sourceTree = "<group>"; };
 		2D92D1EE29B92DF900218F1D /* mp4tagutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mp4tagutil.h; sourceTree = "<group>"; };
@@ -6893,9 +6893,9 @@
 		2DB05F7A252E4F160090635E /* iconLibraryTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconLibraryTemplate.pdf; sourceTree = "<group>"; };
 		2DB05FBB252E50FC0090635E /* iconDSPTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconDSPTemplate.pdf; sourceTree = "<group>"; };
 		2DB05FFC252E53220090635E /* iconGUISettingsTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = iconGUISettingsTemplate.pdf; sourceTree = "<group>"; };
-		2DB0C957295CFCE1007672B8 /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compat.h; path = "deps/mpg123-1.32.6/src/compat/compat.h"; sourceTree = SOURCE_ROOT; };
-		2DB0C958295CFCE2007672B8 /* compat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compat.c; path = "deps/mpg123-1.32.6/src/compat/compat.c"; sourceTree = SOURCE_ROOT; };
-		2DB0C95B295CFD5C007672B8 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = "deps/mpg123-1.32.6/src/include/mpg123.h"; sourceTree = SOURCE_ROOT; };
+		2DB0C957295CFCE1007672B8 /* compat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compat.h; path = "deps/mpg123-1.33.6/src/compat/compat.h"; sourceTree = SOURCE_ROOT; };
+		2DB0C958295CFCE2007672B8 /* compat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compat.c; path = "deps/mpg123-1.33.6/src/compat/compat.c"; sourceTree = SOURCE_ROOT; };
+		2DB0C95B295CFD5C007672B8 /* mpg123.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpg123.h; path = "deps/mpg123-1.33.6/src/include/mpg123.h"; sourceTree = SOURCE_ROOT; };
 		2DB1641824FAB13400034E11 /* MediaLibraryManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaLibraryManager.h; sourceTree = "<group>"; };
 		2DB1641924FAB13400034E11 /* MediaLibraryManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MediaLibraryManager.m; sourceTree = "<group>"; };
 		2DB2F73D240466AF00F7C000 /* PluginsPreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginsPreferencesViewController.h; sourceTree = "<group>"; };
@@ -6924,7 +6924,7 @@
 		2DB522F82AACF09600B6250A /* gtkScriptableSelectViewController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtkScriptableSelectViewController.c; sourceTree = "<group>"; };
 		2DB52F7A24CF7CF20046D516 /* TrackContextMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackContextMenu.h; sourceTree = "<group>"; };
 		2DB52F7B24CF7CF20046D516 /* TrackContextMenu.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrackContextMenu.m; sourceTree = "<group>"; };
-		2DB86E50295D01880011014C /* compat_str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compat_str.c; path = "deps/mpg123-1.32.6/src/compat/compat_str.c"; sourceTree = SOURCE_ROOT; };
+		2DB86E50295D01880011014C /* compat_str.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compat_str.c; path = "deps/mpg123-1.33.6/src/compat/compat_str.c"; sourceTree = SOURCE_ROOT; };
 		2DB951B426B07E7B00602876 /* decodedblock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = decodedblock.h; sourceTree = "<group>"; };
 		2DB951B526B07E7B00602876 /* decodedblock.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = decodedblock.c; sourceTree = "<group>"; };
 		2DB951C926B1E05300602876 /* SpectrumAnalyzerSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpectrumAnalyzerSettings.h; sourceTree = "<group>"; };
@@ -22920,7 +22920,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_FUNCTION = NO;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/mpg123-1.32.6/ports/Xcode\"";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/mpg123-1.33.6/ports/Xcode\"";
 				LD_DYLIB_INSTALL_NAME = "";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -22964,7 +22964,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_FUNCTION = NO;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/mpg123-1.32.6/ports/Xcode\"";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/deps/mpg123-1.33.6/ports/Xcode\"";
 				LD_DYLIB_INSTALL_NAME = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -25183,9 +25183,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/deps/libmad-0.15.1b\"",
-					"\"$(SRCROOT)/deps/mpg123-1.32.6/src/libmpg123\"",
-					"\"$(SRCROOT)/deps/mpg123-1.32.6/src/include\"",
-					"\"$(SRCROOT)/deps/mpg123-1.32.6/ports/Xcode\"",
+					"\"$(SRCROOT)/deps/mpg123-1.33.6/src/libmpg123\"",
+					"\"$(SRCROOT)/deps/mpg123-1.33.6/src/include\"",
+					"\"$(SRCROOT)/deps/mpg123-1.33.6/ports/Xcode\"",
 					"\"$(SRCROOT)/mpg123\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/../include\"",
@@ -25209,9 +25209,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/deps/libmad-0.15.1b\"",
-					"\"$(SRCROOT)/deps/mpg123-1.32.6/src/libmpg123\"",
-					"\"$(SRCROOT)/deps/mpg123-1.32.6/src/include\"",
-					"\"$(SRCROOT)/deps/mpg123-1.32.6/ports/Xcode\"",
+					"\"$(SRCROOT)/deps/mpg123-1.33.6/src/libmpg123\"",
+					"\"$(SRCROOT)/deps/mpg123-1.33.6/src/include\"",
+					"\"$(SRCROOT)/deps/mpg123-1.33.6/ports/Xcode\"",
 					"\"$(SRCROOT)/mpg123\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/../include\"",
