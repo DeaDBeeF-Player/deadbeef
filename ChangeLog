@@ -1,3 +1,6 @@
+version 1.10.3
+	Fixed: Update mpg123 to 1.33.6, to fix a CVE
+
 version 1.10.2
 	Fixed: Regression in replaygain scanner, producing INF for album gain
 	Added: MPRIS plugin is now part of DeaDBeeF, replacing global hotkeys
