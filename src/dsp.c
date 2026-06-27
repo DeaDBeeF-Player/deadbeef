@@ -337,21 +337,12 @@ streamer_dsp_init (void) {
     char fname[PATH_MAX];
     snprintf (fname, sizeof (fname), "%s/dspconfig", plug_get_config_dir ());
     _current_dsp_chain = streamer_dsp_chain_load (fname);
-    if (!_current_dsp_chain) {
-        // first run, let's add resampler
-        DB_dsp_t *src = (DB_dsp_t *)plug_get_for_id ("SRC");
-        if (src) {
-            ddb_dsp_context_t *inst = src->open ();
-            inst->enabled = 1;
-            src->set_param (inst, 0, "48000"); // samplerate
-            src->set_param (inst, 1, "2"); // quality=SINC_FASTEST
-            src->set_param (inst, 2, "1"); // auto
-            inst->next = _current_dsp_chain;
-            _current_dsp_chain = inst;
-        }
-    }
+    
+    // Do NOT auto-add the first-run SRC/resampler DSP.
+    // Do NOT bind SuperEQ as the special EQ backend, otherwise
+    // streamer_dsp_postinit() will auto-create a disabled SuperEQ node.
 
-    _eqplug = (DB_dsp_t *)plug_get_for_id ("supereq");
+    // _eqplug = (DB_dsp_t *)plug_get_for_id ("supereq");
     streamer_dsp_postinit ();
 
     // load legacy eq settings from pre-0.5

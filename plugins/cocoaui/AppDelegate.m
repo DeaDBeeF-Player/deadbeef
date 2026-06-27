@@ -622,8 +622,16 @@ main_cleanup_and_quit (void);
 }
 
 - (IBAction)addLocationAction:(id)sender {
+    CGFloat fontSize = [NSFont menuFontOfSize:0].pointSize;
+
+    // Same size as the menus, but with proper text-field metrics.
+    _addLocationTextField.controlSize = NSControlSizeRegular;
+    _addLocationTextField.font = [NSFont systemFontOfSize:fontSize];
+
     _addLocationTextField.stringValue = @"";
-    [_mainWindow.window beginSheet:_addLocationPanel completionHandler:^(NSModalResponse returnCode) {
+
+    [_mainWindow.window beginSheet:_addLocationPanel
+                completionHandler:^(NSModalResponse returnCode) {
         if (returnCode == NSModalResponseOK) {
             NSString *text = [self.addLocationTextField.stringValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 

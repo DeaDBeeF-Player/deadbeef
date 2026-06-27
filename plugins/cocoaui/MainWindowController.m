@@ -113,6 +113,11 @@ extern DB_functions_t *deadbeef;
 
 - (void)windowDidLoad {
     [super windowDidLoad];
+    
+    
+    // Match the standard macOS menu font size.
+    self.statusBar.font = [NSFont menuFontOfSize:0];
+    [self.statusBar invalidateIntrinsicContentSize];
 
     // This doesn't work reliably when set in XIB
 #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101600

@@ -70,8 +70,18 @@
     textStyle.alignment = NSTextAlignmentLeft;
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
+    NSFont *menuFont = [NSFont menuFontOfSize:0];
+    NSFont *boldMenuFont =
+        [[NSFontManager sharedFontManager]
+            convertFont:menuFont
+            toHaveTrait:NSBoldFontMask];
+    
+    if (boldMenuFont == nil) {
+        boldMenuFont = [NSFont boldSystemFontOfSize:menuFont.pointSize];
+    }
+
     self.titleAttributesCurrent = @{
-        NSFontAttributeName:[NSFont controlContentFontOfSize:NSFont.smallSystemFontSize],
+        NSFontAttributeName: boldMenuFont,
         NSBaselineOffsetAttributeName: @0,
         NSForegroundColorAttributeName: self.headerTextColor,
         NSParagraphStyleAttributeName: textStyle

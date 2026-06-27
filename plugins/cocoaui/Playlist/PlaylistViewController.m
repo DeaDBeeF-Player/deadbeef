@@ -427,22 +427,39 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     textStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
 
-    int rowheight = 18;
+    int rowheight = 32;
 
     self.groupTextAttrsDictionary = @{NSFontAttributeName: [NSFont boldSystemFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]]
                                  , NSBaselineOffsetAttributeName: @0.0f
                                  , NSForegroundColorAttributeName: NSColor.controlTextColor
                                  , NSParagraphStyleAttributeName: textStyle};
 
-    self.cellTextAttrsDictionary = @{NSFontAttributeName: [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]]
-                                , NSBaselineOffsetAttributeName: @0.0f
-                                , NSForegroundColorAttributeName: NSColor.controlTextColor
-                                , NSParagraphStyleAttributeName: textStyle};
+//    self.cellTextAttrsDictionary = @{NSFontAttributeName: [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]]
+//                                , NSBaselineOffsetAttributeName: @0.0f
+//                                , NSForegroundColorAttributeName: NSColor.controlTextColor
+//                                , NSParagraphStyleAttributeName: textStyle};
+//
+//    self.cellSelectedTextAttrsDictionary = @{NSFontAttributeName: [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]]
+//                                        , NSBaselineOffsetAttributeName: @0.0f
+//                                        , NSForegroundColorAttributeName: NSColor.alternateSelectedControlTextColor
+//                                        , NSParagraphStyleAttributeName: textStyle};
+    
+    NSFont *playlistFont = [NSFont systemFontOfSize:0];
 
-    self.cellSelectedTextAttrsDictionary = @{NSFontAttributeName: [NSFont controlContentFontOfSize:[NSFont systemFontSizeForControlSize:rowheight]]
-                                        , NSBaselineOffsetAttributeName: @0.0f
-                                        , NSForegroundColorAttributeName: NSColor.alternateSelectedControlTextColor
-                                        , NSParagraphStyleAttributeName: textStyle};
+    self.cellTextAttrsDictionary = @{
+        NSFontAttributeName: playlistFont,
+        NSBaselineOffsetAttributeName: @0.0f,
+        NSForegroundColorAttributeName: NSColor.controlTextColor,
+        NSParagraphStyleAttributeName: textStyle
+    };
+
+    self.cellSelectedTextAttrsDictionary = @{
+        NSFontAttributeName: playlistFont,
+        NSBaselineOffsetAttributeName: @0.0f,
+        NSForegroundColorAttributeName:
+            NSColor.alternateSelectedControlTextColor,
+        NSParagraphStyleAttributeName: textStyle
+    };
 
 
     // initialize group by str

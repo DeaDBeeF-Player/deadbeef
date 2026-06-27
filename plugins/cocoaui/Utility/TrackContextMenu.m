@@ -65,7 +65,8 @@ extern DB_functions_t *deadbeef;
 - (instancetype)initWithView:(NSView *)view {
     self = [super initWithTitle:@""];
     self.view = view;
-    self.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+//    self.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+    self.font = [NSFont menuFontOfSize:0];
 
     // A bit of a hack: we can't control view/menu lifecycle,
     // but here we hold references to some low level objects which we'd like to cleanup before quitting.
@@ -132,7 +133,8 @@ extern DB_functions_t *deadbeef;
     self.reloadMetadataItem.target = self;
 
     NSMenu *rgMenu = [[NSMenu alloc] initWithTitle:@"ReplayGain"];
-    rgMenu.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+//    rgMenu.font = [NSFont systemFontOfSize:NSFont.smallSystemFontSize];
+    rgMenu.font = [NSFont menuFontOfSize:0];
 
     rgMenu.autoenablesItems = NO;
 
@@ -161,7 +163,12 @@ extern DB_functions_t *deadbeef;
         self.removeFromQueueItem = [self addItemWithTitle:@"Remove from Playback Queue" action:@selector(removeFromPlaybackQueue) keyEquivalent:@""];
         self.removeFromQueueItem.target = self;
 
-        self.removeFromPlaylistItem = [self addItemWithTitle:@"Delete" action:@selector(delete:) keyEquivalent:@"\b"];
+//        self.removeFromPlaylistItem = [self addItemWithTitle:@"Delete" action:@selector(delete:) keyEquivalent:@"\b"];
+        
+        self.removeFromPlaylistItem =
+            [self addItemWithTitle:@"Delete"
+                            action:@selector(removeFromPlaylist:)
+                     keyEquivalent:@"\b"];
         self.removeFromPlaylistItem.target = self;
         self.removeFromPlaylistItem.keyEquivalentModifierMask = 0;
     }
@@ -637,12 +644,26 @@ _deleteCompleted (ddbDeleteFromDiskController_t ctl, int cancelled) {
     [((id<TrackContextMenuDelegate>)self.delegate) trackContextMenuShowTrackProperties:self];
 }
 
-- (void)delete:(id)sender {
+//- (void)delete:(id)sender {
+//    [self forEachTrack:^BOOL(DB_playItem_t *it) {
+//        deadbeef->plt_remove_item(self.playlist, it);
+//        return YES;
+//    }];
+//    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+//}
+
+- (void)removeFromPlaylist:(id)sender {
     [self forEachTrack:^BOOL(DB_playItem_t *it) {
         deadbeef->plt_remove_item(self.playlist, it);
         return YES;
     }];
-    deadbeef->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+
+    deadbeef->sendmessage(
+        DB_EV_PLAYLISTCHANGED,
+        0,
+        DDB_PLAYLIST_CHANGE_CONTENT,
+        0
+    );
 }
 
 @end
