@@ -178,7 +178,7 @@ ffmpeg_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     // Don't allow playing network streams.
     // Even when ffmpeg has network support, it's causing too many problems this way.
     const char *fname = deadbeef->pl_find_meta (it, ":URI");
-    if (!deadbeef->is_local_file (fname)) {
+    if (!deadbeef->is_local_file (fname) && !deadbeef->conf_get_int("ffmpeg.enable_network", 0)) {
         return -1;
     }
 
@@ -1080,6 +1080,7 @@ static const char settings_dlg[] =
     "property \"Use all extensions supported by ffmpeg\" checkbox ffmpeg.enable_all_exts 0;\n"
     "property \"File Extensions (separate with ';')\" entry ffmpeg.extensions \"" DEFAULT_EXTS "\";\n"
     "property \"Enable DoP output\" checkbox ffmpeg.enable_dop 0;\n"
+    "property \"Enable network streams\" checkbox ffmpeg.enable_network 0;\n"
 ;
 
 // define plugin interface
