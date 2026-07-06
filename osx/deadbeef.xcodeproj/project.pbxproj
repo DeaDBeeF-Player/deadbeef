@@ -759,9 +759,9 @@
 		2D1DC09C1DCB3A1500441A08 /* ddb_mono2stereo.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D1DC0961DCB39EC00441A08 /* ddb_mono2stereo.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1DC09F1DCB3B7500441A08 /* alac_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1DC09E1DCB3B7500441A08 /* alac_plugin.c */; };
 		2D1E1D9727AD9F07004DEF1D /* buffered_file_writer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E1D8527AD9B25004DEF1D /* buffered_file_writer.c */; };
-		2D1E1DCB27B90051004DEF1D /* libavcodec.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D1E1DCC27B90051004DEF1D /* libavformat.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D1E1DCB27B90051004DEF1D /* libavcodec.62.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.62.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D1E1DCC27B90051004DEF1D /* libavformat.62.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.62.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2D1E1DCD27B90051004DEF1D /* libavutil.60.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.60.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D1E215724F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E215524F9826C00E2895D /* DdbPlayItemPasteboardSerializer.h */; };
 		2D1E215824F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1E215624F9826C00E2895D /* DdbPlayItemPasteboardSerializer.m */; };
 		2D208EAF2CE8D5FA002E4892 /* MetalBufferLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D208EAE2CE8D5FA002E4892 /* MetalBufferLoop.m */; };
@@ -2494,12 +2494,12 @@
 		2DD062DF2EC14A1A006F3223 /* EditMultipleValuesWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD062DC2EC14A1A006F3223 /* EditMultipleValuesWindowController.h */; };
 		2DD062E02EC14A1A006F3223 /* EditMultipleValuesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD062DE2EC14A1A006F3223 /* EditMultipleValuesWindowController.xib */; };
 		2DD062E12EC14A1A006F3223 /* EditMultipleValuesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD062DD2EC14A1A006F3223 /* EditMultipleValuesWindowController.m */; };
-		2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */; };
-		2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */; };
-		2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */; };
-		2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2DD377012739B869007AD315 /* libavutil.56.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.56.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DD376F92739B5FF007AD315 /* libavcodec.62.28.102.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F12739B5B7007AD315 /* libavcodec.62.28.102.dylib */; };
+		2DD376FA2739B601007AD315 /* libavformat.62.12.102.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F02739B5B7007AD315 /* libavformat.62.12.102.dylib */; };
+		2DD376FB2739B603007AD315 /* libavutil.60.26.102.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD376F22739B5B8007AD315 /* libavutil.60.26.102.dylib */; };
+		2DD376FF2739B865007AD315 /* libavcodec.62.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FC2739B854007AD315 /* libavcodec.62.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DD377002739B867007AD315 /* libavformat.62.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FE2739B854007AD315 /* libavformat.62.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		2DD377012739B869007AD315 /* libavutil.60.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DD376FD2739B854007AD315 /* libavutil.60.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2DD377432740420C007AD315 /* AppearancePreferencesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DD377422740420C007AD315 /* AppearancePreferencesViewController.xib */; };
 		2DD3774627404401007AD315 /* AppearancePreferencesViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */; };
 		2DD3774727404401007AD315 /* AppearancePreferencesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */; };
@@ -4700,9 +4700,9 @@
 			files = (
 				2D9B2A6A2B17D70F006F058D /* wildmidi.dylib in Copy Plugins */,
 				2DC6C65A29539AAE00A63CEB /* ddb_dsp_libretro.dylib in Copy Plugins */,
-				2DD376FF2739B865007AD315 /* libavcodec.58.dylib in Copy Plugins */,
-				2DD377002739B867007AD315 /* libavformat.58.dylib in Copy Plugins */,
-				2DD377012739B869007AD315 /* libavutil.56.dylib in Copy Plugins */,
+				2DD376FF2739B865007AD315 /* libavcodec.62.dylib in Copy Plugins */,
+				2DD377002739B867007AD315 /* libavformat.62.dylib in Copy Plugins */,
+				2DD377012739B869007AD315 /* libavutil.60.dylib in Copy Plugins */,
 				2DA5AC1E25D0393C00947C19 /* libwavpacklib.dylib in Copy Plugins */,
 				2DC8263F24A7438A00DB756B /* ffmpeg.dylib in Copy Plugins */,
 				2D00F33124351EDF000FC130 /* ddb_soundtouch.dylib in Copy Plugins */,
@@ -4770,9 +4770,9 @@
 			files = (
 				2D255AC82E48CA3700DA3757 /* ddb_dsp_libretro.dylib in Copy Plugins */,
 				2D02127F2D9AFBF000BAEA12 /* lyrics_gtk3.dylib in Copy Plugins */,
-				2D1E1DCB27B90051004DEF1D /* libavcodec.58.dylib in Copy Plugins */,
-				2D1E1DCC27B90051004DEF1D /* libavformat.58.dylib in Copy Plugins */,
-				2D1E1DCD27B90051004DEF1D /* libavutil.56.dylib in Copy Plugins */,
+				2D1E1DCB27B90051004DEF1D /* libavcodec.62.dylib in Copy Plugins */,
+				2D1E1DCC27B90051004DEF1D /* libavformat.62.dylib in Copy Plugins */,
+				2D1E1DCD27B90051004DEF1D /* libavutil.60.dylib in Copy Plugins */,
 				2DE77496275E8AFB00890350 /* converter_gtk3.dylib in Copy Plugins */,
 				2DA5AB0625D033AA00947C19 /* libwavpacklib.dylib in Copy Plugins */,
 				2D1BEB962435BE4E003EFD61 /* ddb_soundtouch.dylib in Copy Plugins */,
@@ -7128,12 +7128,12 @@
 		2DD062DC2EC14A1A006F3223 /* EditMultipleValuesWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditMultipleValuesWindowController.h; sourceTree = "<group>"; };
 		2DD062DD2EC14A1A006F3223 /* EditMultipleValuesWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditMultipleValuesWindowController.m; sourceTree = "<group>"; };
 		2DD062DE2EC14A1A006F3223 /* EditMultipleValuesWindowController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditMultipleValuesWindowController.xib; sourceTree = "<group>"; };
-		2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.76.100.dylib; path = deps/ffmpeg/lib/libavformat.58.76.100.dylib; sourceTree = "<group>"; };
-		2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.134.100.dylib; path = deps/ffmpeg/lib/libavcodec.58.134.100.dylib; sourceTree = "<group>"; };
-		2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.70.100.dylib; path = deps/ffmpeg/lib/libavutil.56.70.100.dylib; sourceTree = "<group>"; };
-		2DD376FC2739B854007AD315 /* libavcodec.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.dylib; path = deps/ffmpeg/lib/libavcodec.58.dylib; sourceTree = "<group>"; };
-		2DD376FD2739B854007AD315 /* libavutil.56.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.56.dylib; path = deps/ffmpeg/lib/libavutil.56.dylib; sourceTree = "<group>"; };
-		2DD376FE2739B854007AD315 /* libavformat.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.dylib; path = deps/ffmpeg/lib/libavformat.58.dylib; sourceTree = "<group>"; };
+		2DD376F02739B5B7007AD315 /* libavformat.62.12.102.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.62.12.102.dylib; path = deps/ffmpeg/lib/libavformat.62.12.102.dylib; sourceTree = "<group>"; };
+		2DD376F12739B5B7007AD315 /* libavcodec.62.28.102.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.62.28.102.dylib; path = deps/ffmpeg/lib/libavcodec.62.28.102.dylib; sourceTree = "<group>"; };
+		2DD376F22739B5B8007AD315 /* libavutil.60.26.102.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.60.26.102.dylib; path = deps/ffmpeg/lib/libavutil.60.26.102.dylib; sourceTree = "<group>"; };
+		2DD376FC2739B854007AD315 /* libavcodec.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.62.dylib; path = deps/ffmpeg/lib/libavcodec.62.dylib; sourceTree = "<group>"; };
+		2DD376FD2739B854007AD315 /* libavutil.60.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.60.dylib; path = deps/ffmpeg/lib/libavutil.60.dylib; sourceTree = "<group>"; };
+		2DD376FE2739B854007AD315 /* libavformat.62.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.62.dylib; path = deps/ffmpeg/lib/libavformat.62.dylib; sourceTree = "<group>"; };
 		2DD377422740420C007AD315 /* AppearancePreferencesViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AppearancePreferencesViewController.xib; sourceTree = "<group>"; };
 		2DD3774427404401007AD315 /* AppearancePreferencesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppearancePreferencesViewController.h; sourceTree = "<group>"; };
 		2DD3774527404401007AD315 /* AppearancePreferencesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppearancePreferencesViewController.m; sourceTree = "<group>"; };
@@ -7993,9 +7993,9 @@
 				2D026DAD1CAC5CDF00E27961 /* CoreFoundation.framework in Frameworks */,
 				2D026DAB1CAC5CB900E27961 /* libbz2.dylib in Frameworks */,
 				2D026DA91CAC5CB900E27961 /* libz.dylib in Frameworks */,
-				2DD376F92739B5FF007AD315 /* libavcodec.58.134.100.dylib in Frameworks */,
-				2DD376FA2739B601007AD315 /* libavformat.58.76.100.dylib in Frameworks */,
-				2DD376FB2739B603007AD315 /* libavutil.56.70.100.dylib in Frameworks */,
+				2DD376F92739B5FF007AD315 /* libavcodec.62.28.102.dylib in Frameworks */,
+				2DD376FA2739B601007AD315 /* libavformat.62.12.102.dylib in Frameworks */,
+				2DD376FB2739B603007AD315 /* libavutil.60.26.102.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13049,12 +13049,12 @@
 				2DEE302E29BC8E9B00A293AD /* CoreImage.framework */,
 				2DEE302C29BC8E7E00A293AD /* CoreGraphics.framework */,
 				2D78C525275583E900F96F9D /* CoreServices.framework */,
-				2DD376FC2739B854007AD315 /* libavcodec.58.dylib */,
-				2DD376FE2739B854007AD315 /* libavformat.58.dylib */,
-				2DD376FD2739B854007AD315 /* libavutil.56.dylib */,
-				2DD376F12739B5B7007AD315 /* libavcodec.58.134.100.dylib */,
-				2DD376F02739B5B7007AD315 /* libavformat.58.76.100.dylib */,
-				2DD376F22739B5B8007AD315 /* libavutil.56.70.100.dylib */,
+				2DD376FC2739B854007AD315 /* libavcodec.62.dylib */,
+				2DD376FE2739B854007AD315 /* libavformat.62.dylib */,
+				2DD376FD2739B854007AD315 /* libavutil.60.dylib */,
+				2DD376F12739B5B7007AD315 /* libavcodec.62.28.102.dylib */,
+				2DD376F02739B5B7007AD315 /* libavformat.62.12.102.dylib */,
+				2DD376F22739B5B8007AD315 /* libavutil.60.26.102.dylib */,
 				2D6E2CF926AC157A008FCD4B /* Accelerate.framework */,
 				2D76DD3B24F6D693000EDA3E /* IOKit.framework */,
 				2D5D9C5924A7FB0200D632E4 /* libavcodec.dylib */,
