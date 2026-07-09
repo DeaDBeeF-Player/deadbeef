@@ -647,7 +647,9 @@ read_disc_cdtext (CdIo_t *cdio, DB_playItem_t **items, const track_t tracks)
     }
 
     for (track_t i = 0; i < tracks; i++) {
-        read_track_cdtext(cdio, deadbeef->pl_find_meta_int(items[i], "track", 0), items[i]);
+        if (items[i] != NULL) {
+            read_track_cdtext(cdio, deadbeef->pl_find_meta_int(items[i], "track", 0), items[i]);
+        }
     }
 
     return 1;
