@@ -355,6 +355,23 @@ csid_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     conf.playback = deadbeef->conf_get_int ("sid.mono", 0) ? sid2_mono : sid2_stereo;
     conf.sidEmulation = info->resid;
     conf.optimisation = 0;
+
+    // 0 = Auto (use whatever the tune itself specifies), 1 = force PAL, 2 = force NTSC
+    int clockmode = deadbeef->conf_get_int ("sid.clock", 0);
+    switch (clockmode) {
+    case 1:
+        conf.clockSpeed = SID2_CLOCK_PAL;
+        conf.clockForced = true;
+        break;
+    case 2:
+        conf.clockSpeed = SID2_CLOCK_NTSC;
+        conf.clockForced = true;
+        break;
+    default:
+        conf.clockSpeed = SID2_CLOCK_CORRECT;
+        conf.clockForced = false;
+        break;
+    }
     info->sidplay->config (conf);
     info->sidplay->load (info->tune);
 

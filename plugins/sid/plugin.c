@@ -26,6 +26,7 @@ static const char settings_dlg[] =
     "property \"Bits per sample\" select[2] sid.bps 0 16 8;\n"
     "property \"Default song length (sec)\" entry sid.defaultlength 180;\n"
     "property \"Mono synth\" checkbox sid.mono 0;\n"
+    "property \"Clock speed\" select[3] sid.clock 0 Auto PAL NTSC;\n"
 ;
 
 // define plugin interface
