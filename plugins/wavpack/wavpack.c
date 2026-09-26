@@ -53,6 +53,7 @@
 
 static ddb_decoder2_t plugin;
 static DB_functions_t *deadbeef;
+static int enable_dop = 0;
 
 typedef struct {
     DB_fileinfo_t info;
@@ -63,6 +64,10 @@ typedef struct {
     WavpackContext *ctx;
     int64_t startsample;
     int64_t endsample;
+    int output_dop;
+    uint8_t dop_marker;
+    uint8_t *dsd_pending;
+    int have_dsd_pending;
 } wvctx_t;
 
 static int
@@ -163,20 +168,58 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->ctx = WavpackOpenFileInput (wv_read_stream, info->file, error);
 #else
     int flags = OPEN_NORMALIZE;
-#if defined(DSD_FLAG) && defined(OPEN_DSD_AS_PCM)
-    flags = DSD_FLAG|OPEN_DSD_AS_PCM;
+
+#if defined(OPEN_DSD_NATIVE) && defined(OPEN_DSD_AS_PCM)
+    flags |= enable_dop ? OPEN_DSD_NATIVE : OPEN_DSD_AS_PCM;
+#elif defined(OPEN_DSD_AS_PCM)
+    flags |= OPEN_DSD_AS_PCM;
 #endif
+
     info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, flags, 0);
 #endif
     if (!info->ctx) {
         fprintf (stderr, "wavpack error: %s\n", error);
         return -1;
     }
+
+#if defined(QMODE_DSD_AUDIO)
+    int source_is_dsd = (WavpackGetQualifyMode (info->ctx) & QMODE_DSD_AUDIO) != 0;
+#else
+    int source_is_dsd = 0;
+#endif
+
+#if defined(OPEN_DSD_NATIVE)
+    info->output_dop = enable_dop && source_is_dsd;
+#else
+    info->output_dop = 0;
+#endif
+
+    info->dop_marker = 0x05;
+
     _info->plugin = &plugin.decoder;
-    _info->fmt.bps = WavpackGetBytesPerSample (info->ctx) * 8;
     _info->fmt.channels = WavpackGetNumChannels (info->ctx);
-    _info->fmt.samplerate = WavpackGetSampleRate (info->ctx);
-    _info->fmt.is_float = (WavpackGetMode (info->ctx) & MODE_FLOAT) ? 1 : 0;
+
+    if (info->output_dop) {
+        /* OPEN_DSD_NATIVE returns one byte containing 8 consecutive DSD bits
+           per channel, temporally MSB first. Two DSD bytes are packed into
+           each DoP frame. This matches the DoP framing used by DeaDBeeF's
+           FFmpeg decoder. */
+        _info->fmt.bps = 32;
+        _info->fmt.samplerate = WavpackGetSampleRate (info->ctx) / 2;
+        _info->fmt.is_float = 0;
+        _info->fmt.flags |= DDB_WAVEFORMAT_FLAG_IS_DOP;
+
+        info->dsd_pending = calloc (_info->fmt.channels, sizeof (*info->dsd_pending));
+        if (!info->dsd_pending) {
+            return -1;
+        }
+    }
+    else {
+        _info->fmt.bps = WavpackGetBytesPerSample (info->ctx) * 8;
+        _info->fmt.samplerate = WavpackGetSampleRate (info->ctx);
+        _info->fmt.is_float = (WavpackGetMode (info->ctx) & MODE_FLOAT) ? 1 : 0;
+        _info->fmt.flags &= ~DDB_WAVEFORMAT_FLAG_IS_DOP;
+    }
 
     // FIXME: streamer and maybe output plugins need to be fixed to support
     // arbitrary channelmask
@@ -220,6 +263,8 @@ wv_free (DB_fileinfo_t *_info) {
             WavpackCloseFile (info->ctx);
             info->ctx = NULL;
         }
+        free (info->dsd_pending);
+        info->dsd_pending = NULL;
         free (_info);
     }
 }
@@ -227,6 +272,85 @@ wv_free (DB_fileinfo_t *_info) {
 static int
 wv_read (DB_fileinfo_t *_info, char *bytes, int size) {
     wvctx_t *info = (wvctx_t *)_info;
+
+    if (info->output_dop) {
+        int channels = _info->fmt.channels;
+        int out_frame_size = channels * 4;
+        int out_capacity = size / out_frame_size;
+        int64_t current = WavpackGetSampleIndex64 (info->ctx);
+        int64_t remaining = info->endsample - current + 1;
+
+        if (remaining < 0) {
+            remaining = 0;
+        }
+
+        /* A pending byte has already been consumed from WavPack but has not
+           yet been emitted. Each DoP frame needs two DSD bytes per channel. */
+        int64_t available = remaining + (info->have_dsd_pending ? 1 : 0);
+        if (out_capacity > available / 2) {
+            out_capacity = (int)(available / 2);
+        }
+        if (out_capacity <= 0) {
+            return 0;
+        }
+
+        int input_frames = out_capacity * 2 - (info->have_dsd_pending ? 1 : 0);
+        int32_t *buffer = alloca ((size_t)input_frames * channels * sizeof (*buffer));
+        int got = WavpackUnpackSamples (info->ctx, buffer, input_frames);
+        int in_frame = 0;
+        int out_frames = 0;
+        uint32_t *out = (uint32_t *)bytes;
+
+        if (info->have_dsd_pending && got > 0) {
+            for (int ch = 0; ch < channels; ch++) {
+                uint8_t dsd0 = info->dsd_pending[ch];
+                uint8_t dsd1 = (uint8_t)buffer[ch];
+                *out++ = ((uint32_t)info->dop_marker << 24) |
+                         ((uint32_t)dsd0 << 16) |
+                         ((uint32_t)dsd1 << 8);
+            }
+            info->dop_marker = (uint8_t)~info->dop_marker;
+            info->have_dsd_pending = 0;
+            in_frame = 1;
+            out_frames++;
+        }
+
+        while (in_frame + 1 < got && out_frames < out_capacity) {
+            int32_t *a = buffer + (size_t)in_frame * channels;
+            int32_t *b = buffer + (size_t)(in_frame + 1) * channels;
+
+            for (int ch = 0; ch < channels; ch++) {
+                uint8_t dsd0 = (uint8_t)a[ch];
+                uint8_t dsd1 = (uint8_t)b[ch];
+                *out++ = ((uint32_t)info->dop_marker << 24) |
+                         ((uint32_t)dsd0 << 16) |
+                         ((uint32_t)dsd1 << 8);
+            }
+
+            info->dop_marker = (uint8_t)~info->dop_marker;
+            in_frame += 2;
+            out_frames++;
+        }
+
+        if (in_frame < got) {
+            int32_t *p = buffer + (size_t)in_frame * channels;
+            for (int ch = 0; ch < channels; ch++) {
+                info->dsd_pending[ch] = (uint8_t)p[ch];
+            }
+            info->have_dsd_pending = 1;
+        }
+
+        _info->readpos =
+            (float)(WavpackGetSampleIndex64 (info->ctx) - info->startsample) /
+            WavpackGetSampleRate (info->ctx);
+
+#ifndef TINYWV
+        deadbeef->streamer_set_bitrate (WavpackGetInstantBitrate (info->ctx) / 1000);
+#endif
+
+        return out_frames * out_frame_size;
+    }
+
     int currentsample = WavpackGetSampleIndex (info->ctx);
     int samplesize = _info->fmt.channels * _info->fmt.bps / 8;
     if (size / samplesize + currentsample > info->endsample) {
@@ -291,7 +415,10 @@ static int
 wv_seek_sample64 (DB_fileinfo_t *_info, int64_t sample) {
 #ifndef TINYWV
     wvctx_t *info = (wvctx_t *)_info;
-    WavpackSeekSample64 (info->ctx, sample + info->startsample);
+    int64_t wavpack_sample = info->output_dop ? sample * 2 : sample;
+    WavpackSeekSample64 (info->ctx, wavpack_sample + info->startsample);
+    info->have_dsd_pending = 0;
+    info->dop_marker = 0x05;
     _info->readpos = (float)((double)(WavpackGetSampleIndex64 (info->ctx) - info->startsample) / WavpackGetSampleRate (info->ctx));
 #endif
     return 0;
@@ -304,8 +431,7 @@ wv_seek_sample (DB_fileinfo_t *_info, int sample) {
 
 static int
 wv_seek (DB_fileinfo_t *_info, float sec) {
-    wvctx_t *info = (wvctx_t *)_info;
-    return wv_seek_sample64 (_info, (int64_t)((double)sec * (int64_t)WavpackGetSampleRate (info->ctx)));
+    return wv_seek_sample64 (_info, (int64_t)((double)sec * _info->fmt.samplerate));
 }
 
 static DB_playItem_t *
@@ -319,8 +445,10 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     WavpackContext *ctx = WavpackOpenFileInput (wv_read_stream, fp, error);
 #else
     int flags = 0;
-#if defined(DSD_FLAG) && defined(OPEN_DSD_AS_PCM)
-    flags = DSD_FLAG|OPEN_DSD_AS_PCM;
+#if defined(OPEN_DSD_NATIVE)
+    flags |= OPEN_DSD_NATIVE;
+#elif defined(OPEN_DSD_AS_PCM)
+    flags |= OPEN_DSD_AS_PCM;
 #endif
     WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, error, flags, 0);
 #endif
@@ -330,7 +458,15 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         return NULL;
     }
     int totalsamples = WavpackGetNumSamples (ctx);
+    /* For DSD, WavpackGetSampleRate() is the DSD-byte rate. Keep that rate
+       for duration and cue calculations; use the native bit rate only for
+       user-visible metadata below. */
     int samplerate = WavpackGetSampleRate (ctx);
+#if defined(QMODE_DSD_AUDIO)
+    int is_dsd = (WavpackGetQualifyMode (ctx) & QMODE_DSD_AUDIO) != 0;
+#else
+    int is_dsd = 0;
+#endif
     float duration = (float)totalsamples / samplerate;
 
     DB_playItem_t *it = deadbeef->pl_item_alloc_init (fname, plugin.decoder.plugin.id);
@@ -362,15 +498,21 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     char s[100];
     snprintf (s, sizeof (s), "%lld", (long long)deadbeef->fgetlength (fp));
     deadbeef->pl_add_meta (it, ":FILE_SIZE", s);
-    snprintf (s, sizeof (s), "%d", WavpackGetBytesPerSample (ctx) * 8);
+    snprintf (s, sizeof (s), "%d", is_dsd ? 1 : WavpackGetBytesPerSample (ctx) * 8);
     deadbeef->pl_add_meta (it, ":BPS", s);
     snprintf (s, sizeof (s), "%d", WavpackGetNumChannels (ctx));
     deadbeef->pl_add_meta (it, ":CHANNELS", s);
-    snprintf (s, sizeof (s), "%d", WavpackGetSampleRate (ctx));
+#if defined(QMODE_DSD_AUDIO)
+    snprintf (s, sizeof (s), "%u",
+              is_dsd ? WavpackGetNativeSampleRate (ctx) : WavpackGetSampleRate (ctx));
+#else
+    snprintf (s, sizeof (s), "%u", WavpackGetSampleRate (ctx));
+#endif
     deadbeef->pl_add_meta (it, ":SAMPLERATE", s);
     snprintf (s, sizeof (s), "%d", (int)(WavpackGetAverageBitrate (ctx, 1) / 1000));
     deadbeef->pl_add_meta (it, ":BITRATE", s);
-    snprintf (s, sizeof (s), "%s", (WavpackGetMode (ctx) & MODE_FLOAT) ? "FLOAT" : "INTEGER");
+    snprintf (s, sizeof (s), "%s",
+              is_dsd ? "DSD" : (WavpackGetMode (ctx) & MODE_FLOAT) ? "FLOAT" : "INTEGER");
     deadbeef->pl_add_meta (it, ":WAVPACK_MODE", s);
 
     DB_playItem_t *cue = deadbeef->plt_process_cue (plt, after, it,  totalsamples, samplerate);
@@ -435,13 +577,37 @@ wv_write_metadata (DB_playItem_t *it) {
     return deadbeef->junk_rewrite_tags (it, junk_flags, 0, NULL);
 }
 
+static void
+wv_init_from_config (void) {
+    deadbeef->conf_lock ();
+    enable_dop = deadbeef->conf_get_int ("wv.enable_dop", 0);
+    deadbeef->conf_unlock ();
+}
+
+static int
+wv_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    if (id == DB_EV_CONFIGCHANGED) {
+        wv_init_from_config ();
+    }
+    return 0;
+}
+
+static int
+wv_start (void) {
+    wv_init_from_config ();
+    return 0;
+}
+
+static const char settings_dlg[] =
+    "property \"Enable DoP output for DSD\" checkbox wv.enable_dop 0;\n";
+
 static const char *exts[] = { "wv", NULL };
 // define plugin interface
 static ddb_decoder2_t plugin = {
     .decoder.plugin.api_vmajor = DB_API_VERSION_MAJOR,
     .decoder.plugin.api_vminor = DB_API_VERSION_MINOR,
     .decoder.plugin.version_major = 1,
-    .decoder.plugin.version_minor = 0,
+    .decoder.plugin.version_minor = 1,
     .decoder.plugin.type = DB_PLUGIN_DECODER,
     .decoder.plugin.flags = DDB_PLUGIN_FLAG_IMPLEMENTS_DECODER2,
     .decoder.plugin.id = "wv",
@@ -476,6 +642,9 @@ static ddb_decoder2_t plugin = {
         "SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
     ,
     .decoder.plugin.website = "http://deadbeef.sf.net",
+    .decoder.plugin.start = wv_start,
+    .decoder.plugin.configdialog = settings_dlg,
+    .decoder.plugin.message = wv_message,
     .decoder.open = wv_open,
     .decoder.init = wv_init,
     .decoder.free = wv_free,
