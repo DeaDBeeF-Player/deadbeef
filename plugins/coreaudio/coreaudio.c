@@ -67,7 +67,7 @@ GetNumberAvailableNominalSampleRateRanges(void)
     AudioObjectPropertyAddress theAddress = {
         kAudioDevicePropertyAvailableNominalSampleRates,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster
+        kAudioObjectPropertyElementMain
     };
     UInt32 theSize = 0;
 
@@ -86,7 +86,7 @@ get_avail_samplerates(void)
     AudioObjectPropertyAddress theAddress = {
         kAudioDevicePropertyAvailableNominalSampleRates,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster
+        kAudioObjectPropertyElementMain
     };
 
     UInt32 num = GetNumberAvailableNominalSampleRateRanges ();
@@ -141,7 +141,7 @@ ca_apply_format (void) {
         AudioObjectPropertyAddress theAddress = {
             kAudioDevicePropertyStreamFormat,
             kAudioDevicePropertyScopeOutput,
-            kAudioObjectPropertyElementMaster
+            kAudioObjectPropertyElementMain
         };
         sz = sizeof (AudioStreamBasicDescription);
 
@@ -193,7 +193,7 @@ ca_get_deviceid (void) {
     AudioObjectPropertyAddress propertyAddress = {
         kAudioHardwarePropertyDevices,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster
+        kAudioObjectPropertyElementMain
     };
 
     UInt32 dataSize = 0;
@@ -248,7 +248,7 @@ ca_init (void) {
     AudioObjectPropertyAddress theAddress = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster
+        kAudioObjectPropertyElementMain
     };
 
     ca_free ();
@@ -268,7 +268,7 @@ ca_init (void) {
     sz = sizeof (device_name);
     theAddress.mSelector = kAudioDevicePropertyDeviceName;
     theAddress.mScope = kAudioDevicePropertyScopeOutput;
-    theAddress.mElement = kAudioObjectPropertyElementMaster;
+    theAddress.mElement = kAudioObjectPropertyElementMain;
     
     err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, device_name);
     if (err != noErr) {
@@ -278,7 +278,7 @@ ca_init (void) {
 
     sz = sizeof (default_format);
     theAddress.mSelector = kAudioDevicePropertyStreamFormat;
-    theAddress.mElement = kAudioObjectPropertyElementMaster;
+    theAddress.mElement = kAudioObjectPropertyElementMain;
     err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &default_format);
     if (err != noErr) {
         trace ("AudioObjectGetPropertyData kAudioDevicePropertyStreamFormat: %x\n", err);
@@ -317,7 +317,7 @@ ca_init (void) {
     AudioObjectPropertyAddress outputDeviceAddress = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster
+        kAudioObjectPropertyElementMain
     };
     AudioObjectAddPropertyListener(kAudioObjectSystemObject,
                                    &outputDeviceAddress,
@@ -326,7 +326,7 @@ ca_init (void) {
     UInt32 transportType = 0;
     sz = sizeof (transportType);
     theAddress.mScope = kAudioDevicePropertyScopeOutput;
-    theAddress.mElement = kAudioObjectPropertyElementMaster;
+    theAddress.mElement = kAudioObjectPropertyElementMain;
     theAddress.mSelector = kAudioDevicePropertyTransportType;
     err = AudioObjectGetPropertyData(device_id, &theAddress, 0, NULL, &sz, &transportType);
     if (err != noErr) {
@@ -532,7 +532,7 @@ ca_fmtchanged (AudioObjectID inObjectID, UInt32 inNumberAddresses, const AudioOb
     AudioObjectPropertyAddress theAddress = {
         kAudioDevicePropertyStreamFormat,
         kAudioDevicePropertyScopeOutput,
-        kAudioObjectPropertyElementMaster
+        kAudioObjectPropertyElementMain
     };
 
     deadbeef->mutex_lock (mutex);
@@ -608,7 +608,7 @@ static void ca_enum_soundcards (void (*callback)(const char *name, const char *d
     AudioObjectPropertyAddress propertyAddress = {
         kAudioHardwarePropertyDevices,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster
+        kAudioObjectPropertyElementMain
     };
 
     UInt32 dataSize = 0;
