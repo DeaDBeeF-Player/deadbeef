@@ -44,11 +44,14 @@ typedef struct {
     gboolean is_reloading;
     gboolean has_changed_selection;
     MlCellRendererPixbufDelegate pixbuf_cell_delegate;
+    GtkTreeViewColumn *column;
 
     GdkPixbuf *folder_icon;
     int reload_index;
     int64_t artwork_source_id;
     dispatch_queue_t background_queue;
+
+    int show_album_art;
 } w_medialib_viewer_t;
 
 enum {
@@ -61,6 +64,8 @@ enum {
 
 static void
 _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStore *store, GtkTreeIter *iter);
+static void
+_setup_columns (w_medialib_viewer_t *mlv);
 
 static void
 _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, const ddb_medialib_item_t *item, GtkTreePath *parent_path) {
@@ -422,6 +427,20 @@ w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
 
 static int
 w_medialib_viewer_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
+    w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
+    switch (id) {
+    case DB_EV_CONFIGCHANGED:
+        {
+            int new_value = deadbeef->conf_get_int ("gtkui.show_medialib_covers", 1);
+            gtkui_dispatch_on_main (^{
+                if (new_value != mlv->show_album_art) {
+                    mlv->show_album_art = new_value;
+                    _setup_columns (mlv);
+                }
+            });
+        }
+        break;
+    }
     return 0;
 }
 
@@ -810,6 +829,31 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     return mlv->folder_icon;
 }
 
+static void
+_setup_columns (w_medialib_viewer_t *mlv) {
+    if (mlv->column != NULL) {
+        gtk_tree_view_remove_column (mlv->tree, mlv->column);
+        mlv->column = NULL;
+    }
+
+    GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
+
+    GtkTreeViewColumn *col = gtk_tree_view_column_new ();
+    mlv->column = col;
+    gtk_tree_view_append_column (mlv->tree, col);
+    gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+    if (mlv->show_album_art) {
+        GtkCellRenderer *rend_pixbuf = GTK_CELL_RENDERER (ml_cell_renderer_pixbuf_new (&mlv->pixbuf_cell_delegate));
+        gtk_tree_view_column_pack_start (col, rend_pixbuf, FALSE);
+        gtk_tree_view_column_add_attribute (col, rend_pixbuf, "path", COL_PATH);
+        gtk_tree_view_column_add_attribute (col, rend_pixbuf, "pixbuf", COL_ICON);
+    }
+
+    gtk_tree_view_column_pack_start (col, rend_text, FALSE);
+    gtk_tree_view_column_add_attribute (col, rend_text, "text", COL_TITLE);
+
+}
+
 ddb_gtkui_widget_t *
 w_medialib_viewer_create (void) {
     w_medialib_viewer_t *w = calloc (1, sizeof (w_medialib_viewer_t));
@@ -818,6 +862,8 @@ w_medialib_viewer_create (void) {
     w->base.init = w_medialib_viewer_init;
     w->base.destroy = w_medialib_viewer_destroy;
     w->base.message = w_medialib_viewer_message;
+
+    w->show_album_art = deadbeef->conf_get_int ("gtkui.show_medialib_covers", 1);
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
@@ -906,18 +952,8 @@ w_medialib_viewer_create (void) {
     gtk_tree_view_set_model (GTK_TREE_VIEW (w->tree), GTK_TREE_MODEL (store));
 
     gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (w->tree), TRUE);
-    GtkCellRenderer *rend_pixbuf = GTK_CELL_RENDERER (ml_cell_renderer_pixbuf_new (&w->pixbuf_cell_delegate));
-    GtkCellRenderer *rend_text = gtk_cell_renderer_text_new ();
 
-    GtkTreeViewColumn *col = gtk_tree_view_column_new ();
-    gtk_tree_view_append_column (w->tree, col);
-    gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-    gtk_tree_view_column_pack_start (col, rend_pixbuf, FALSE);
-    gtk_tree_view_column_pack_start (col, rend_text, FALSE);
-
-    gtk_tree_view_column_add_attribute (col, rend_pixbuf, "path", COL_PATH);
-    gtk_tree_view_column_add_attribute (col, rend_pixbuf, "pixbuf", COL_ICON);
-    gtk_tree_view_column_add_attribute (col, rend_text, "text", COL_TITLE);
+    _setup_columns (w);
 
     gtk_tree_view_set_headers_clickable (GTK_TREE_VIEW (w->tree), FALSE);
     gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (w->tree), FALSE);
