@@ -26,6 +26,7 @@ extern DB_functions_t *deadbeef;
 // Other settings
 @property (nonatomic) BOOL cliAddToSpecificPlaylist;
 @property (nonatomic) NSString *cliSpecificPlaylist;
+@property (nonatomic) BOOL enqueueIncomingFiles;
 @property (nonatomic) BOOL resumeLastSession;
 @property (nonatomic) BOOL alwaysResumeSessionPaused;
 @property (nonatomic) BOOL ignoreArchives;
@@ -72,6 +73,7 @@ extern DB_functions_t *deadbeef;
     // playback
     _cliAddToSpecificPlaylist =  deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? YES : NO;
     _cliSpecificPlaylist = conf_get_nsstr ("cli_add_playlist_name", "Default");
+    _enqueueIncomingFiles = deadbeef->conf_get_int ("cocoaui.enqueue_incoming_files", 0) ? YES : NO;
     _resumeLastSession = deadbeef->conf_get_int ("resume_last_session", 1) ? YES : NO;
     _alwaysResumeSessionPaused = deadbeef->conf_get_int ("resume_always_paused", 0) ? YES : NO;
     _ignoreArchives = deadbeef->conf_get_int ("ignore_archives", 1) ? YES : NO;
@@ -147,6 +149,12 @@ extern DB_functions_t *deadbeef;
 - (void)setCliSpecificPlaylist:(NSString *)cliSpecificPlaylist {
     _cliSpecificPlaylist = cliSpecificPlaylist;
     conf_set_nsstr("cli_add_playlist_name", cliSpecificPlaylist);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setEnqueueIncomingFiles:(BOOL)enqueueIncomingFiles {
+    _enqueueIncomingFiles = enqueueIncomingFiles;
+    deadbeef->conf_set_int ("cocoaui.enqueue_incoming_files", enqueueIncomingFiles);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

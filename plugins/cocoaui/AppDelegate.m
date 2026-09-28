@@ -400,25 +400,27 @@ main_cleanup_and_quit (void);
     return YES;
 }
 
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
-    dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(aQueue, ^{
-        char str[100];
-        add_paths(filename.UTF8String, (int)filename.length, 0, str, 100);
-    });
-    return YES; // assume that everything went ok
-}
-
-
-- (void)application:(NSApplication *)sender openFiles:(NSArray *)filenames {
+- (void)addIncomingFiles:(NSArray<NSString *> *)filenames {
+    // either replace the current playlist contents and start playback, or append to it
+    int queue = deadbeef->conf_get_int ("cocoaui.enqueue_incoming_files", 0);
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         char str[100];
         NSArray *sortedFilenames = [filenames sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
         // building single paths string for the deadbeef function, paths must be separated by '\0'
         NSString *paths =[sortedFilenames componentsJoinedByString:@"\0"];
-        add_paths(paths.UTF8String, (int)[paths lengthOfBytesUsingEncoding:NSUTF8StringEncoding], 0, str, 100);
+        add_paths(paths.UTF8String, (int)[paths lengthOfBytesUsingEncoding:NSUTF8StringEncoding], queue, str, 100);
     });
+}
+
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
+    [self addIncomingFiles:@[filename]];
+    return YES; // assume that everything went ok
+}
+
+
+- (void)application:(NSApplication *)sender openFiles:(NSArray *)filenames {
+    [self addIncomingFiles:filenames];
 }
 
 
