@@ -77,6 +77,27 @@ static const char *_mp4_atom_map[] = {
     NULL, NULL
 };
 
+// Atoms which iTunes stores as big-endian integers, and their size in bytes
+static const struct {
+    const char *type;
+    uint32_t size;
+} _mp4_int_atoms[] = {
+    { "tmpo", 2 },
+    { "cpil", 1 },
+    { "pcst", 1 },
+    { NULL, 0 }
+};
+
+static uint32_t
+_mp4_int_atom_size (const char *type) {
+    for (int i = 0; _mp4_int_atoms[i].type; i++) {
+        if (!strcmp (_mp4_int_atoms[i].type, type)) {
+            return _mp4_int_atoms[i].size;
+        }
+    }
+    return 0;
+}
+
 /* For writing:
  * Load/get the existing udta atom
  * If present:
@@ -235,7 +256,14 @@ _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
         const char *value = m->value;
         const char *end = m->value + m->valuesize;
         while (value < end) {
-            if (!_mp4_atom_map[i] || strlen (_mp4_atom_map[i]) != 4) {
+            uint32_t int_size = _mp4_atom_map[i] ? _mp4_int_atom_size (_mp4_atom_map[i]) : 0;
+            char *numend = NULL;
+            double num = int_size ? strtod (value, &numend) : 0;
+            if (int_size && numend != value && num >= 0 && num <= (int_size == 1 ? INT8_MAX : INT16_MAX)) {
+                // iTunes only recognizes these atoms when stored as integers
+                mp4p_atom_append(ilst, mp4p_ilst_create_int(_mp4_atom_map[i], (int32_t)(num + 0.5), int_size));
+            }
+            else if (!_mp4_atom_map[i] || strlen (_mp4_atom_map[i]) != 4) {
                 mp4p_atom_append(ilst, mp4p_ilst_create_custom(_mp4_atom_map[i] ? _mp4_atom_map[i] : m->key, value));
             }
             else {
@@ -559,6 +587,18 @@ mp4_load_tags (mp4p_atom_t *mp4file, DB_playItem_t *it) {
                 if (!strcasecmp (name, _mp4_atom_map[i])) {
                     if (meta->text) {
                         deadbeef->pl_append_meta (it, _mp4_atom_map[i+1], meta->text);
+                    }
+                    else if (meta->blob
+                             && (meta->data_version_flags & 0xff) == MP4P_ILST_DATA_TYPE_BE_SIGNED_INT
+                             && meta->data_size >= 1 && meta->data_size <= 8) {
+                        // big-endian signed integer, e.g. tmpo written by iTunes
+                        int64_t value = (int8_t)meta->blob[0];
+                        for (uint32_t n = 1; n < meta->data_size; n++) {
+                            value = (int64_t)((uint64_t)value << 8) | meta->blob[n];
+                        }
+                        char s[30];
+                        snprintf (s, sizeof (s), "%lld", (long long)value);
+                        deadbeef->pl_replace_meta (it, _mp4_atom_map[i+1], s);
                     }
                     else if (meta->values) {
                         if (!memcmp (meta_atom->type, "trkn", 4)) {
