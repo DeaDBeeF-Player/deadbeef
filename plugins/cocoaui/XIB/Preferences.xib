@@ -338,11 +338,11 @@
             <point key="canvasLocation" x="145" y="862"/>
         </customView>
         <customView identifier="Playback" id="Zmc-ua-enY" userLabel="Playback View">
-            <rect key="frame" x="0.0" y="0.0" width="520" height="378"/>
+            <rect key="frame" x="0.0" y="0.0" width="520" height="405"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ySk-s8-tM7">
-                    <rect key="frame" x="181" y="190" width="319" height="24"/>
+                    <rect key="frame" x="181" y="217" width="319" height="24"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="YV9-Zx-yEt">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -363,7 +363,7 @@
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="Rqu-qW-OA7">
-                    <rect key="frame" x="20" y="194" width="153" height="16"/>
+                    <rect key="frame" x="20" y="221" width="153" height="16"/>
                     <buttonCell key="cell" type="check" title="Default playlist name:" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="cZj-Ac-CB1">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
@@ -393,7 +393,7 @@
                     </connections>
                 </button>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jCD-pm-VFD">
-                    <rect key="frame" x="34" y="314" width="89" height="16"/>
+                    <rect key="frame" x="34" y="341" width="89" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Source mode:" id="gnG-qq-c4U">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -401,7 +401,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OHh-mq-dNT">
-                    <rect key="frame" x="129" y="310" width="371" height="24"/>
+                    <rect key="frame" x="129" y="337" width="371" height="24"/>
                     <popUpButtonCell key="cell" type="push" title="By Playback Order" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="TkV-9B-QR1" id="E92-Zt-t0u">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="message"/>
@@ -420,7 +420,7 @@
                     </connections>
                 </popUpButton>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="WcI-yT-RjC">
-                    <rect key="frame" x="34" y="283" width="75" height="16"/>
+                    <rect key="frame" x="34" y="310" width="75" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Processing:" id="eON-pt-Eg0">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -428,7 +428,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="78i-nx-GgZ">
-                    <rect key="frame" x="115" y="279" width="385" height="24"/>
+                    <rect key="frame" x="115" y="306" width="385" height="24"/>
                     <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="VPT-9h-S6N" id="kHx-5R-lmz">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="message"/>
@@ -448,14 +448,14 @@
                     </connections>
                 </popUpButton>
                 <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="arn-tx-1Aq">
-                    <rect key="frame" x="191" y="255" width="278" height="16"/>
+                    <rect key="frame" x="191" y="282" width="278" height="16"/>
                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-12" maxValue="12" tickMarkPosition="below" numberOfTickMarks="25" sliderType="linear" id="Evm-9c-G7T"/>
                     <connections>
                         <binding destination="YqN-ZP-2eU" name="value" keyPath="self.rgPreampWithRg" id="FKU-Do-7dT"/>
                     </connections>
                 </slider>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="50R-70-80x">
-                    <rect key="frame" x="469" y="254" width="33" height="14"/>
+                    <rect key="frame" x="469" y="281" width="33" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="+0dB" id="JHv-qd-TUt">
                         <font key="font" metaFont="label" size="11"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -466,14 +466,14 @@
                     </connections>
                 </textField>
                 <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zKw-Aq-JuH">
-                    <rect key="frame" x="191" y="231" width="278" height="16"/>
+                    <rect key="frame" x="191" y="258" width="278" height="16"/>
                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="-12" maxValue="12" tickMarkPosition="below" numberOfTickMarks="25" sliderType="linear" id="fjS-kS-bqN"/>
                     <connections>
                         <binding destination="YqN-ZP-2eU" name="value" keyPath="self.rgPreampWithoutRg" id="eyP-P2-uhb"/>
                     </connections>
                 </slider>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UVS-UD-Ivp">
-                    <rect key="frame" x="34" y="254" width="151" height="16"/>
+                    <rect key="frame" x="34" y="281" width="151" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Preamp with RG info:" id="ht1-sb-ufq">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -481,7 +481,7 @@
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pUH-bn-6Sk">
-                    <rect key="frame" x="34" y="230" width="151" height="16"/>
+                    <rect key="frame" x="34" y="257" width="151" height="16"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Preamp without RG info:" id="aGB-Jo-lpu">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -489,7 +489,7 @@
                     </textFieldCell>
                 </textField>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dBd-wH-v4A">
-                    <rect key="frame" x="469" y="230" width="33" height="14"/>
+                    <rect key="frame" x="469" y="257" width="33" height="14"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="+0dB" id="cCa-sk-iJw">
                         <font key="font" metaFont="label" size="11"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -500,7 +500,7 @@
                     </connections>
                 </textField>
                 <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2WW-3v-yct">
-                    <rect key="frame" x="18" y="342" width="77" height="16"/>
+                    <rect key="frame" x="18" y="369" width="77" height="16"/>
                     <textFieldCell key="cell" lineBreakMode="clipping" title="ReplayGain" id="iy0-pC-6J0">
                         <font key="font" metaFont="systemBold"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -508,7 +508,7 @@
                     </textFieldCell>
                 </textField>
                 <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="o57-76-gIf">
-                    <rect key="frame" x="8" y="220" width="504" height="5"/>
+                    <rect key="frame" x="8" y="247" width="504" height="5"/>
                 </box>
                 <button verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vaP-mG-6h4">
                     <rect key="frame" x="20" y="85" width="480" height="16"/>
@@ -557,6 +557,16 @@
                     </buttonCell>
                     <connections>
                         <binding destination="YqN-ZP-2eU" name="value" keyPath="self.alwaysResumeSessionPaused" id="Vex-aX-ACI"/>
+                    </connections>
+                </button>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="eQf-3a-Nqb">
+                    <rect key="frame" x="20" y="193" width="480" height="16"/>
+                    <buttonCell key="cell" type="check" title="Enqueue incoming files by default" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Qk7-Wd-2Hs">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <binding destination="YqN-ZP-2eU" name="value" keyPath="self.enqueueIncomingFiles" id="Tn4-bL-8vX"/>
                     </connections>
                 </button>
             </subviews>
@@ -618,7 +628,10 @@
                 <constraint firstItem="arn-tx-1Aq" firstAttribute="firstBaseline" secondItem="50R-70-80x" secondAttribute="firstBaseline" id="qTT-Xa-GhM"/>
                 <constraint firstItem="OHh-mq-dNT" firstAttribute="firstBaseline" secondItem="jCD-pm-VFD" secondAttribute="baseline" id="rW2-6i-Rj6"/>
                 <constraint firstItem="9H9-w2-zUI" firstAttribute="trailing" secondItem="Ypp-Lr-7tH" secondAttribute="trailing" id="sdA-0R-cHc"/>
-                <constraint firstItem="elV-fL-38G" firstAttribute="top" secondItem="ySk-s8-tM7" secondAttribute="bottom" constant="8" id="spV-4L-z5P"/>
+                <constraint firstItem="elV-fL-38G" firstAttribute="top" secondItem="eQf-3a-Nqb" secondAttribute="bottom" constant="11" id="spV-4L-z5P"/>
+                <constraint firstItem="eQf-3a-Nqb" firstAttribute="top" secondItem="ySk-s8-tM7" secondAttribute="bottom" constant="8" id="Ra9-Mc-5Ye"/>
+                <constraint firstItem="eQf-3a-Nqb" firstAttribute="leading" secondItem="elV-fL-38G" secondAttribute="leading" id="Lp2-Xg-6Fh"/>
+                <constraint firstItem="eQf-3a-Nqb" firstAttribute="trailing" secondItem="elV-fL-38G" secondAttribute="trailing" id="Vc8-Hj-3Kd"/>
                 <constraint firstItem="zKw-Aq-JuH" firstAttribute="top" secondItem="arn-tx-1Aq" secondAttribute="bottom" constant="8" id="u9y-kZ-b5G"/>
                 <constraint firstItem="pUH-bn-6Sk" firstAttribute="firstBaseline" secondItem="zKw-Aq-JuH" secondAttribute="firstBaseline" id="vXP-Gx-oug"/>
                 <constraint firstItem="WcI-yT-RjC" firstAttribute="firstBaseline" secondItem="78i-nx-GgZ" secondAttribute="firstBaseline" id="vgV-GT-Qp6"/>
