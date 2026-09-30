@@ -168,12 +168,7 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     info->ctx = WavpackOpenFileInput (wv_read_stream, info->file, error);
 #else
     int flags = OPEN_NORMALIZE;
-
-#if defined(OPEN_DSD_NATIVE) && defined(OPEN_DSD_AS_PCM)
     flags |= enable_dop ? OPEN_DSD_NATIVE : OPEN_DSD_AS_PCM;
-#elif defined(OPEN_DSD_AS_PCM)
-    flags |= OPEN_DSD_AS_PCM;
-#endif
 
     info->ctx = WavpackOpenFileInputEx (&wsr, info->file, info->c_file, error, flags, 0);
 #endif
@@ -210,9 +205,6 @@ wv_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         _info->fmt.flags |= DDB_WAVEFORMAT_FLAG_IS_DOP;
 
         info->dsd_pending = calloc (_info->fmt.channels, sizeof (*info->dsd_pending));
-        if (!info->dsd_pending) {
-            return -1;
-        }
     }
     else {
         _info->fmt.bps = WavpackGetBytesPerSample (info->ctx) * 8;
@@ -444,12 +436,7 @@ wv_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
 #ifdef TINYWV
     WavpackContext *ctx = WavpackOpenFileInput (wv_read_stream, fp, error);
 #else
-    int flags = 0;
-#if defined(OPEN_DSD_NATIVE)
-    flags |= OPEN_DSD_NATIVE;
-#elif defined(OPEN_DSD_AS_PCM)
-    flags |= OPEN_DSD_AS_PCM;
-#endif
+    int flags = OPEN_DSD_NATIVE;
     WavpackContext *ctx = WavpackOpenFileInputEx (&wsr, fp, NULL, error, flags, 0);
 #endif
     if (!ctx) {
