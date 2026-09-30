@@ -921,7 +921,8 @@ project "ddb_gui_GTK3"
   }
 
   prebuildcommands {
-    "glib-compile-resources --sourcedir=plugins/gtkui --target=plugins/gtkui/gtkui-gresources.c --generate-source plugins/gtkui/gtkui.gresources.xml"
+    "glib-compile-resources --sourcedir=plugins/gtkui --target=plugins/gtkui/gtkui-gresources.c --generate-source plugins/gtkui/gtkui.gresources.xml",
+    "./scripts/gen_langnames.sh plugins/gtkui/langnames.h"
   }
 
   buildoptions {"-fblocks"}

@@ -1081,6 +1081,14 @@ on_enable_cp936_recoding_toggled       (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
 void
+on_enable_language_override_toggled    (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
+on_language_override_changed           (GtkComboBox     *combobox,
+                                        gpointer         user_data);
+
+void
 on_hotkeys_list_cursor_changed         (GtkTreeView     *treeview,
                                         gpointer         user_data);
 

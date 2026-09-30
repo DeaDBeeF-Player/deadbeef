@@ -27,6 +27,7 @@
 #include "../support.h"
 #include "prefwin.h"
 #include "prefwinmisc.h"
+#include "langnames.h"
 
 static int _initializing_prefwin = 0;
 
@@ -89,6 +90,42 @@ prefwin_init_gui_misc_tab (GtkWidget *_prefwin) {
 
     // enable cp936 recoding
     prefwin_set_toggle_button("enable_cp936_recoding", deadbeef->conf_get_int ("junk.enable_cp936_detection", 0));
+
+    // language override toggle
+    int override_language = deadbeef->conf_get_int ("gtkui.override_language", 0);
+    prefwin_set_toggle_button("enable_language_override", override_language);
+
+    // language selection from the list of LANGNAMES codes exactly (if language override enabled)
+    {
+        char lang[100];
+        deadbeef->conf_get_str ("gtkui.language",NULL,lang, sizeof(lang));
+
+        GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (w, "language_override_combo"));
+        gtk_combo_box_set_wrap_width (combobox, 4);
+        gtk_widget_set_sensitive (GTK_WIDGET (combobox), override_language);
+
+        int selected_language_idx = -1;
+        for (int i = 0; languages[i].code; i++) {
+            gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox), languages[i].name);
+            if (lang[0] && !strcmp (languages[i].code, lang)) {
+                selected_language_idx = i;
+            }
+        }
+
+        // first call tries to auto-detect current language
+        if (!lang[0]) {
+            const char * const *names = g_get_language_names ();
+            for (int n = 0; names[n] && selected_language_idx < 0; n++) {
+                for (int i = 0; languages[i].code && selected_language_idx < 0; i++) {
+                    if (!g_ascii_strcasecmp (names[n], languages[i].code)) {
+                        selected_language_idx = i;
+                    }
+                }
+            }
+        }
+
+        prefwin_set_combobox (combobox, selected_language_idx);
+    }
 
     // enable auto-sizing of columns
     prefwin_set_toggle_button("auto_size_columns", deadbeef->conf_get_int ("gtkui.autoresize_columns", 0));
@@ -238,6 +275,37 @@ on_enable_cp936_recoding_toggled       (GtkToggleButton *togglebutton,
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("junk.enable_cp936_detection", active);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_enable_language_override_toggled    (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("gtkui.override_language", active);
+
+    GtkWidget *combobox = lookup_widget (GTK_WIDGET (togglebutton), "language_override_combo");
+    if (combobox) {
+        gtk_widget_set_sensitive (combobox, active);
+    }
+
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+
+void
+on_language_override_changed           (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    if (_initializing_prefwin) {
+        return;
+    }
+    int idx = gtk_combo_box_get_active (combobox);
+    if (idx >= 0 && languages[idx].code) {
+        deadbeef->conf_set_str ("gtkui.language", languages[idx].code);
+        deadbeef->conf_remove_items ("gtkui.columns.");
+    }
 }
 
 

@@ -2,6 +2,12 @@ EXTRA_DIST = deadbeef.glade\
 	gtkui.gresources.xml\
 	gtk/menus.ui
 
+BUILT_SOURCES = langnames.h
+CLEANFILES = langnames.h
+
+langnames.h: $(top_srcdir)/po/LANGNAMES
+	$(AM_V_GEN) $(SHELL) $(top_srcdir)/scripts/gen_langnames.sh $@
+
 GTKUI_SOURCES = \
     ../../src/utf8.c\
 	actions.c actions.h\
@@ -124,8 +130,8 @@ ddb_gui_GTK3_la_OBJCFLAGS = $(GTK3_DEPS_CFLAGS) $(SM_CFLAGS) $(JANSSON_CFLAGS)
 
 nodist_ddb_gui_GTK3_la_SOURCES = gtkui-gresources.c
 
-BUILT_SOURCES=gtkui-gresources.c
-CLEANFILES=gtkui-gresources.c
+BUILT_SOURCES+=gtkui-gresources.c
+CLEANFILES+=gtkui-gresources.c
 
 resource_files = \
 	gtkui.gresources.xml	\
