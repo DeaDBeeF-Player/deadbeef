@@ -198,6 +198,10 @@ static NSString * const lyricsNotAvailableString = @"Lyrics Not Available";
 
     // A bit of a hack since deadbeef stores multiline values as 0-separated lines.
     DB_metaInfo_t *meta = deadbeef->pl_meta_for_key(self.track, "lyrics");
+    // ID3v2 USLT frames are loaded as "unsynced lyrics".
+    if (meta == NULL) {
+        meta = deadbeef->pl_meta_for_key(self.track, "unsynced lyrics");
+    }
     if (meta == NULL) {
         deadbeef->pl_unlock();
         [self fetchFromLyricsOvh];
