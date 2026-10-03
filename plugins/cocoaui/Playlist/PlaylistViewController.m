@@ -1579,19 +1579,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     // Also provide file URLs of local tracks, so that other apps can paste them
     NSMutableArray<id<NSPasteboardWriting>> *objects = [NSMutableArray arrayWithObject:holder];
-    NSMutableSet<NSString *> *paths = [NSMutableSet new];
-    deadbeef->pl_lock ();
-    for (ssize_t index = 0; index < count; index++) {
-        const char *uri = deadbeef->pl_find_meta_raw (items[index], ":URI");
-        if (uri != NULL && uri[0] == '/') {
-            NSString *path = @(uri);
-            if (path != nil && ![paths containsObject:path]) {
-                [paths addObject:path];
-                [objects addObject:[NSURL fileURLWithPath:path]];
-            }
-        }
-    }
-    deadbeef->pl_unlock ();
+    [objects addObjectsFromArray:[DdbPlayItemPasteboardSerializer fileURLsForItems:items count:count]];
 
     for (ssize_t index = 0; index < count; index++) {
         deadbeef->pl_item_unref (items[index]);
