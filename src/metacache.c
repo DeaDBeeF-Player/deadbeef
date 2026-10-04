@@ -25,15 +25,17 @@
   Oleksiy Yakovenko waker@users.sourceforge.net
 */
 #include <string.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "metacache.h"
 #include "threading.h"
 
+// NOTE: the deprecated metacache_ref / metacache_unref expect refcount at str-5
 typedef struct metacache_str_s {
     struct metacache_str_s *next;
-    size_t value_length;
+    uint32_t value_length;
     uint32_t refcount;
     char cmpidx; // positive means "equals", negative means "notequals"
     char str[1];
@@ -112,11 +114,12 @@ metacache_add_value (const char *value, size_t len) {
     if (!bucket->chain) {
         n_buckets++;
     }
-    data = malloc (sizeof (metacache_str_t) + len);
-    memset (data, 0, sizeof (metacache_str_t) + len);
+    // allocate only the header and the string, without the tail padding of the struct
+    data = malloc (offsetof (metacache_str_t, str) + len);
+    memset (data, 0, offsetof (metacache_str_t, str));
     data->refcount = 1;
     memcpy (data->str, value, len);
-    data->value_length = len;
+    data->value_length = (uint32_t)len;
     data->next = bucket->chain;
     bucket->chain = data;
     n_strings++;
