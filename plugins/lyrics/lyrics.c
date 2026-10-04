@@ -66,6 +66,10 @@ _update_ui(w_lyrics_t *lyrics) {
         *lyrics_buffer = 0;
         // A bit of a hack since deadbeef stores multiline values as 0-separated lines.
         DB_metaInfo_t *meta = deadbeef->pl_meta_for_key(lyrics->track, "lyrics");
+        // ID3v2 USLT frames are loaded as "unsynced lyrics".
+        if (meta == NULL) {
+            meta = deadbeef->pl_meta_for_key(lyrics->track, "unsynced lyrics");
+        }
         if (meta != NULL) {
             size_t value_size = meta->valuesize;
             if (value_size > buffer_size - 1) {
