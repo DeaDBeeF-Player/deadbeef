@@ -1682,6 +1682,26 @@ main (int argc, char *argv[]) {
     conf_init ();
     conf_load (); // required by some plugins at startup
 
+    // override the primary language: override language should occur after config_load() and before plug_load_all()
+    if (conf_get_int ("gtkui.override_language", 0)) {
+        const char *lang = conf_get_str_fast ("gtkui.language", NULL);
+        if (lang && *lang) {
+#ifdef _WIN32
+            _putenv_s ("LANGUAGE", lang);
+#else
+            setenv ("LANGUAGE", lang, 1);
+
+			// If LC_MESSAGES is C, POSIX, or C.UTF-8, LANGUAGE will be ignored
+			const char *cur = setlocale (LC_MESSAGES, NULL);
+			if (!cur || !strcmp (cur, "C") || !strcmp (cur, "POSIX") || !strncmp (cur, "C.", 2)) {
+				if (!setlocale (LC_MESSAGES, lang)) {
+					setlocale (LC_MESSAGES, "en_US.UTF-8");
+				}
+			}
+#endif
+        }
+    }
+
     if (use_gui_plugin[0]) {
         conf_set_str ("gui_plugin", use_gui_plugin);
     }

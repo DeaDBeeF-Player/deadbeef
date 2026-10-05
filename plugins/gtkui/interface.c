@@ -1632,6 +1632,10 @@ create_prefwin (void)
   GtkWidget *enable_shift_jis_recoding;
   GtkWidget *enable_cp1251_recoding;
   GtkWidget *enable_cp936_recoding;
+  GtkWidget *enable_language_override;
+  GtkWidget *hbox_language_override;
+  GtkWidget *label_language_override;
+  GtkWidget *language_override_combo;
   GtkWidget *hbox102;
   GtkWidget *label129;
   GtkWidget *gui_fps;
@@ -2219,6 +2223,22 @@ create_prefwin (void)
   enable_cp936_recoding = gtk_check_button_new_with_mnemonic (_("Enable Chinese CP936 detection and recoding"));
   gtk_widget_show (enable_cp936_recoding);
   gtk_box_pack_start (GTK_BOX (vbox9), enable_cp936_recoding, FALSE, FALSE, 0);
+
+  enable_language_override = gtk_check_button_new_with_mnemonic (_("Override language (changing requires restart)"));
+  gtk_widget_show (enable_language_override);
+  gtk_box_pack_start (GTK_BOX (vbox9), enable_language_override, FALSE, FALSE, 0);
+
+  hbox_language_override = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox_language_override);
+  gtk_box_pack_start (GTK_BOX (vbox9), hbox_language_override, FALSE, FALSE, 0);
+
+  label_language_override = gtk_label_new (_("Language:"));
+  gtk_widget_show (label_language_override);
+  gtk_box_pack_start (GTK_BOX (hbox_language_override), label_language_override, FALSE, FALSE, 0);
+
+  language_override_combo = gtk_combo_box_text_new ();
+  gtk_widget_show (language_override_combo);
+  gtk_box_pack_start (GTK_BOX (hbox_language_override), language_override_combo, TRUE, TRUE, 0);
 
   hbox102 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox102);
@@ -3367,6 +3387,12 @@ create_prefwin (void)
   g_signal_connect ((gpointer) enable_cp936_recoding, "toggled",
                     G_CALLBACK (on_enable_cp936_recoding_toggled),
                     NULL);
+  g_signal_connect ((gpointer) enable_language_override, "toggled",
+                    G_CALLBACK (on_enable_language_override_toggled),
+                    NULL);
+  g_signal_connect ((gpointer) language_override_combo, "changed",
+                    G_CALLBACK (on_language_override_changed),
+                    NULL);
   g_signal_connect ((gpointer) gui_fps, "value_changed",
                     G_CALLBACK (on_gui_fps_value_changed),
                     NULL);
@@ -3665,6 +3691,8 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, enable_shift_jis_recoding, "enable_shift_jis_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp1251_recoding, "enable_cp1251_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp936_recoding, "enable_cp936_recoding");
+  GLADE_HOOKUP_OBJECT (prefwin, enable_language_override, "enable_language_override");
+  GLADE_HOOKUP_OBJECT (prefwin, language_override_combo, "language_override_combo");
   GLADE_HOOKUP_OBJECT (prefwin, hbox102, "hbox102");
   GLADE_HOOKUP_OBJECT (prefwin, label129, "label129");
   GLADE_HOOKUP_OBJECT (prefwin, gui_fps, "gui_fps");

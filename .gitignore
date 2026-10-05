@@ -74,6 +74,7 @@ package_temp
 messages.mo
 .install
 .config
+plugins/gtkui/langnames.h
 plugins/libmp4ff/libmp4ff.a
 plugins/libparser/libparser.a
 xcuserdata
