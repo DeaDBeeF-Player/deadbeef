@@ -22,7 +22,6 @@
 */
 #include <deadbeef/deadbeef.h>
 #include <gtk/gtk.h>
-#include <dispatch/dispatch.h>
 #include <stdlib.h>
 #include <string.h>
 #ifdef HAVE_CONFIG_H
@@ -35,7 +34,6 @@
 
 
 #define DEFAULT_SEARCH_FIELDS "lyrics;unsynced lyrics"
-dispatch_queue_t sync_queue; // used to sync preferences
 static char *lyrics_fields;
 
 
@@ -74,12 +72,13 @@ _update_ui(w_lyrics_t *lyrics) {
         // A bit of a hack since deadbeef stores multiline values as 0-separated lines.
         DB_metaInfo_t *meta = NULL;
 
-        __block char *fields = NULL;
-        dispatch_sync (sync_queue, ^{
-            fields = strdup (lyrics_fields);
-        });
 
-        if (!fields) {
+        char *fields;
+        if (lyrics_fields != NULL) {
+            fields = strdup (lyrics_fields);
+        }
+
+        if (fields == NULL) {
             fields = strdup (DEFAULT_SEARCH_FIELDS);
         }
         
@@ -189,23 +188,24 @@ strings_equal (const char *s1, const char *s2) {
     return (s1 == s2) || (s1 && s2 && !strcasecmp (s1, s2));
 }
 
-static void
-_get_preferences (void) {
-    dispatch_sync(sync_queue, ^{
-        deadbeef->conf_lock ();
-        const char *new_lyrics_fields = deadbeef->conf_get_str_fast ("lyrics.fields", NULL);
-        if (!new_lyrics_fields || !new_lyrics_fields[0]) {
-            new_lyrics_fields = DEFAULT_SEARCH_FIELDS;
+static gboolean
+_get_preferences (gpointer w) {
+    deadbeef->conf_lock ();
+
+    const char *new_lyrics_fields = deadbeef->conf_get_str_fast ("lyrics.fields", NULL);
+    if (!new_lyrics_fields || !new_lyrics_fields[0]) {
+        new_lyrics_fields = DEFAULT_SEARCH_FIELDS;
+    }
+    if (!strings_equal (lyrics_fields, new_lyrics_fields)) {
+        char *old_lyrics_fields = lyrics_fields;
+        lyrics_fields = strdup (new_lyrics_fields);
+        if (old_lyrics_fields) {
+            free (old_lyrics_fields);
         }
-        if (!strings_equal (lyrics_fields, new_lyrics_fields)) {
-            char *old_lyrics_fields = lyrics_fields;
-            lyrics_fields = strdup (new_lyrics_fields);
-            if (old_lyrics_fields) {
-                free (old_lyrics_fields);
-            }
-        }
-        deadbeef->conf_unlock ();
-    });
+    }
+
+    deadbeef->conf_unlock ();
+    return FALSE;
 }
 
 
@@ -216,7 +216,7 @@ lyrics_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, 
         g_idle_add (_update, w);
         break;
     case DB_EV_CONFIGCHANGED:
-        _get_preferences ();
+        g_idle_add (_get_preferences, NULL);
         break;
     }
     return 0;
@@ -267,8 +267,7 @@ w_lyrics_create (void) {
 
 static int
 lyrics_start (void) {
-    sync_queue = dispatch_queue_create ("PrefSyncQueue", NULL);
-    _get_preferences ();
+    _get_preferences(NULL);
     return 0;
 }
 
@@ -284,10 +283,6 @@ lyrics_connect (void) {
 
 static int
 lyrics_stop (void) {
-    if (sync_queue) {
-        dispatch_release (sync_queue);
-        sync_queue = NULL;
-    }
     if (lyrics_fields) {
         free (lyrics_fields);
         lyrics_fields = NULL;
@@ -358,5 +353,3 @@ lyrics_gtk2_load (DB_functions_t *api) {
     deadbeef = api;
     return DB_PLUGIN(&plugin);
 }
-
-
