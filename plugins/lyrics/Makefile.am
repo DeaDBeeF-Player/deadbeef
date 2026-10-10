@@ -16,14 +16,14 @@ if HAVE_GTK2
 lyrics_gtk2_la_SOURCES = lyrics.c support.c support.h
 lyrics_gtk2_la_LDFLAGS = -module -avoid-version
 lyrics_gtk2_la_LIBADD = $(LDADD) $(GTK2_DEPS_LIBS)
-lyrics_gtk2_la_CFLAGS = $(CFLAGS) -std=c99 $(GTK2_DEPS_CFLAGS) -I@top_srcdir@/include -fPIC
+lyrics_gtk2_la_CFLAGS = $(CFLAGS) -std=c99 $(GTK2_DEPS_CFLAGS) -I@top_srcdir@/include -fPIC -fblocks
 endif
 
 if HAVE_GTK3
 lyrics_gtk3_la_SOURCES = lyrics.c
 lyrics_gtk3_la_LDFLAGS = -module -avoid-version
 lyrics_gtk3_la_LIBADD = $(LDADD) $(GTK3_DEPS_LIBS)
-lyrics_gtk3_la_CFLAGS = $(CFLAGS) -std=c99 $(GTK3_DEPS_CFLAGS) -I@top_srcdir@/include -fPIC
+lyrics_gtk3_la_CFLAGS = $(CFLAGS) -std=c99 $(GTK3_DEPS_CFLAGS) -I@top_srcdir@/include -fPIC -fblocks
 endif
 
 endif
