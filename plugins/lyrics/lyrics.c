@@ -1,6 +1,6 @@
 /*
     Lyrics widget plugin for DeaDBeeF Player
-    Copyright (C) 2009-2025 Oleksiy Yakovenko
+    Copyright (C) 2009-2026 Oleksiy Yakovenko
 
     This software is provided 'as-is', without any express or implied
     warranty.  In no event will the authors be held liable for any damages
@@ -31,6 +31,11 @@
 #include "../../gettext.h"
 #include "support.h"
 #include <stdbool.h>
+
+
+#define DEFAULT_SEARCH_FIELDS "lyrics;unsynced lyrics"
+static char *lyrics_fields;
+
 
 DB_functions_t *deadbeef;
 static ddb_gtkui_t *gtkui_plugin;
@@ -65,11 +70,35 @@ _update_ui(w_lyrics_t *lyrics) {
         char *lyrics_buffer = malloc(100000);
         *lyrics_buffer = 0;
         // A bit of a hack since deadbeef stores multiline values as 0-separated lines.
-        DB_metaInfo_t *meta = deadbeef->pl_meta_for_key(lyrics->track, "lyrics");
-        // ID3v2 USLT frames are loaded as "unsynced lyrics".
-        if (meta == NULL) {
-            meta = deadbeef->pl_meta_for_key(lyrics->track, "unsynced lyrics");
+        DB_metaInfo_t *meta = NULL;
+
+
+        char *fields;
+        if (lyrics_fields != NULL) {
+            fields = strdup (lyrics_fields);
         }
+
+        if (fields == NULL) {
+            fields = strdup (DEFAULT_SEARCH_FIELDS);
+        }
+        
+        const char *fields_end = fields + strlen (fields);
+        char *p;
+        while ((p = strrchr (fields, ';'))) {
+            *p = '\0';
+        }
+
+        // Go through a list of search fields
+        for (char *field = fields; field < fields_end; field += strlen (field) + 1) {
+            meta = deadbeef->pl_meta_for_key (lyrics->track, field);
+            if (meta != NULL) {
+                break;
+            }
+        }
+
+        
+        free (fields);
+
         if (meta != NULL) {
             size_t value_size = meta->valuesize;
             if (value_size > buffer_size - 1) {
@@ -155,10 +184,39 @@ _update(gpointer w) {
 }
 
 static int
+strings_equal (const char *s1, const char *s2) {
+    return (s1 == s2) || (s1 && s2 && !strcasecmp (s1, s2));
+}
+
+static gboolean
+_get_preferences (gpointer w) {
+    deadbeef->conf_lock ();
+
+    const char *new_lyrics_fields = deadbeef->conf_get_str_fast ("lyrics.fields", NULL);
+    if (!new_lyrics_fields || !new_lyrics_fields[0]) {
+        new_lyrics_fields = DEFAULT_SEARCH_FIELDS;
+    }
+    if (!strings_equal (lyrics_fields, new_lyrics_fields)) {
+        char *old_lyrics_fields = lyrics_fields;
+        lyrics_fields = strdup (new_lyrics_fields);
+        if (old_lyrics_fields) {
+            free (old_lyrics_fields);
+        }
+    }
+
+    deadbeef->conf_unlock ();
+    return FALSE;
+}
+
+
+static int
 lyrics_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     switch (id) {
     case DB_EV_CURSOR_MOVED:
         g_idle_add (_update, w);
+        break;
+    case DB_EV_CONFIGCHANGED:
+        g_idle_add (_get_preferences, NULL);
         break;
     }
     return 0;
@@ -208,13 +266,27 @@ w_lyrics_create (void) {
 }
 
 static int
+lyrics_start (void) {
+    _get_preferences(NULL);
+    return 0;
+}
+
+static int
 lyrics_connect (void) {
     gtkui_plugin = (ddb_gtkui_t *)deadbeef->plug_get_for_id (DDB_GTKUI_PLUGIN_ID);
     if(!gtkui_plugin) {
         return -1;
     }
     gtkui_plugin->w_reg_widget (_("Lyrics"), 0, w_lyrics_create, "lyrics", NULL);
+    return 0;
+}
 
+static int
+lyrics_stop (void) {
+    if (lyrics_fields) {
+        free (lyrics_fields);
+        lyrics_fields = NULL;
+    }
     return 0;
 }
 
@@ -225,6 +297,10 @@ lyrics_disconnect (void) {
     }
     return 0;
 }
+
+static const char settings_dlg[] =
+    "property \"Search lyrics in these metadata fields (; separated, in order)\" entry lyrics.fields \"" DEFAULT_SEARCH_FIELDS "\";\n";
+
 
 static DB_misc_t plugin = {
     DDB_PLUGIN_SET_API_VERSION
@@ -261,8 +337,11 @@ static DB_misc_t plugin = {
         "3. This notice may not be removed or altered from any source distribution.\n"
     ,
     .plugin.website = "http://deadbeef.sf.net",
+    .plugin.start = lyrics_start,
     .plugin.connect = lyrics_connect,
-    .plugin.disconnect = lyrics_disconnect
+    .plugin.disconnect = lyrics_disconnect,
+    .plugin.stop = lyrics_stop,
+    .plugin.configdialog = settings_dlg,
 };
 
 DB_plugin_t *
