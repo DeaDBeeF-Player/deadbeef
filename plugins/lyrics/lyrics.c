@@ -69,11 +69,11 @@ _update_ui(w_lyrics_t *lyrics) {
         size_t buffer_size = 100000;
         char *lyrics_buffer = malloc(100000);
         *lyrics_buffer = 0;
+
         // A bit of a hack since deadbeef stores multiline values as 0-separated lines.
         DB_metaInfo_t *meta = NULL;
 
-
-        char *fields;
+        char *fields = NULL;
         if (lyrics_fields != NULL) {
             fields = strdup (lyrics_fields);
         }
@@ -96,7 +96,6 @@ _update_ui(w_lyrics_t *lyrics) {
             }
         }
 
-        
         free (fields);
 
         if (meta != NULL) {
@@ -197,17 +196,18 @@ _get_preferences (gpointer w) {
         new_lyrics_fields = DEFAULT_SEARCH_FIELDS;
     }
     if (!strings_equal (lyrics_fields, new_lyrics_fields)) {
-        char *old_lyrics_fields = lyrics_fields;
+        free (lyrics_fields);
         lyrics_fields = strdup (new_lyrics_fields);
-        if (old_lyrics_fields) {
-            free (old_lyrics_fields);
-        }
     }
 
     deadbeef->conf_unlock ();
+
+    if (w != NULL) {
+        _update_ui (w);
+    }
+
     return FALSE;
 }
-
 
 static int
 lyrics_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
@@ -216,7 +216,7 @@ lyrics_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, 
         g_idle_add (_update, w);
         break;
     case DB_EV_CONFIGCHANGED:
-        g_idle_add (_get_preferences, NULL);
+        g_idle_add (_get_preferences, w);
         break;
     }
     return 0;
@@ -225,7 +225,6 @@ lyrics_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, uint32_t p1, 
 static void
 w_lyrics_init (struct ddb_gtkui_widget_s *w) {
 }
-
 
 static ddb_gtkui_widget_t *
 w_lyrics_create (void) {
@@ -299,8 +298,7 @@ lyrics_disconnect (void) {
 }
 
 static const char settings_dlg[] =
-    "property \"Search lyrics in these metadata fields (; separated, in order)\" entry lyrics.fields \"" DEFAULT_SEARCH_FIELDS "\";\n";
-
+    "property \"Search in metadata fields (; separated)\" entry lyrics.fields \"" DEFAULT_SEARCH_FIELDS "\";\n";
 
 static DB_misc_t plugin = {
     DDB_PLUGIN_SET_API_VERSION
