@@ -25,7 +25,7 @@ extern DB_functions_t *deadbeef;
 static int rowheight = 19;
 static int grouptitleheight = 22;
 
-@interface PlaylistContentView ()
+@interface PlaylistContentView () <NSDraggingSource>
 
 @property (nonatomic) NSPoint lastDragLocation;
 @property (nonatomic) BOOL draggingInView;
@@ -195,8 +195,8 @@ static int grouptitleheight = 22;
             [self.delegate dropItems:(int)from_playlist before:row indices:indices count:(int)length copy:op==NSDragOperationCopy];
             free(indices);
         }
-   }
-    if ([pboard.types containsObject:ddbPlaylistDataUTIType]) {
+    }
+    else if ([pboard.types containsObject:ddbPlaylistDataUTIType]) {
         NSArray *classes = @[[DdbPlayItemPasteboardSerializer class]];
         NSDictionary *options = @{};
         NSArray<DdbPlayItemPasteboardSerializer *> *draggedItems = [pboard readObjectsForClasses:classes options:options];
@@ -235,7 +235,7 @@ static int grouptitleheight = 22;
         case NSDraggingContextWithinApplication:
             return NSDragOperationCopy | NSDragOperationMove;
         case NSDraggingContextOutsideApplication:
-            return NSDragOperationNone; // FIXME
+            return NSDragOperationCopy; // file URLs of local tracks
     }
     return NSDragOperationNone;
 }
@@ -687,27 +687,54 @@ static int grouptitleheight = 22;
     if (_dragwait) {
         if (fabs (_lastpos.x - pt.x) > 3 || fabs (_lastpos.y - pt.y) > 3) {
             // begin dnd
-            NSPasteboard *pboard;
 
             // Need playlist identifier and all playlist items when dragging internally,
             // this is represented with the DdbListviewLocalDragDropHolder interface
 
-            pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
             ddb_playlist_t *plt = deadbeef->plt_get_curr ();
             PlaylistLocalDragDropHolder *data = [[PlaylistLocalDragDropHolder alloc] initWithSelectedItemsOfPlaylist:plt];
+
+            // Also provide file URLs of local tracks, so that they can be dropped into other apps
+            NSArray<NSURL *> *urls = @[];
+            ddb_playItem_t **items = NULL;
+            ssize_t count = deadbeef->plt_get_selected_items (plt, &items);
+            if (count > 0) {
+                urls = [DdbPlayItemPasteboardSerializer fileURLsForItems:items count:count];
+                for (ssize_t index = 0; index < count; index++) {
+                    deadbeef->pl_item_unref (items[index]);
+                }
+            }
+            free (items);
             deadbeef->plt_unref (plt);
-            [pboard declareTypes:@[ddbPlaylistItemsUTIType]  owner:self];
-            [pboard clearContents];
-            if (![pboard writeObjects:@[data]])
-                NSLog(@"Unable to write to pasteboard.");
+
+            // The drag badge shows the number of pasteboard items,
+            // so the playlist items are put into the same pasteboard item as the first URL
+            NSMutableArray<id<NSPasteboardWriting>> *objects = [NSMutableArray new];
+            if (urls.count > 0) {
+                NSPasteboardItem *firstItem = [NSPasteboardItem new];
+                [firstItem setData:[data pasteboardPropertyListForType:ddbPlaylistItemsUTIType] forType:ddbPlaylistItemsUTIType];
+                [firstItem setString:urls.firstObject.absoluteString forType:NSPasteboardTypeFileURL];
+                [objects addObject:firstItem];
+                [objects addObjectsFromArray:[urls subarrayWithRange:NSMakeRange(1, urls.count - 1)]];
+            }
+            else {
+                [objects addObject:data];
+            }
 
             NSImage *img = [NSImage imageNamed:NSImageNameMultipleDocuments];
+            NSRect frame = NSMakeRect(pt.x - img.size.width/2, pt.y - img.size.height/2, img.size.width, img.size.height);
 
-            NSPoint dpt = pt;
-            dpt.x -= img.size.width/2;
-            dpt.y += img.size.height;
+            // One dragging item per pasteboard item, only the first one has an image
+            NSMutableArray<NSDraggingItem *> *draggingItems = [NSMutableArray arrayWithCapacity:objects.count];
+            for (id<NSPasteboardWriting> object in objects) {
+                NSDraggingItem *draggingItem = [[NSDraggingItem alloc] initWithPasteboardWriter:object];
+                [draggingItem setDraggingFrame:frame contents:draggingItems.count == 0 ? img : nil];
+                [draggingItems addObject:draggingItem];
+            }
 
-            [self dragImage:img at:dpt offset:NSMakeSize(0.0, 0.0) event:event pasteboard:pboard source:self slideBack:YES];
+            NSDraggingSession *session = [self beginDraggingSessionWithItems:draggingItems event:event source:self];
+            session.animatesToStartingPositionsOnCancelOrFail = YES;
+            session.draggingFormation = NSDraggingFormationNone;
             _dragwait = NO;
 
         }

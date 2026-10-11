@@ -21,4 +21,8 @@
 @property (nonatomic,readonly) ddb_playItem_t  * _Nullable * _Nonnull items;
 @property (nonatomic,readonly) NSInteger count;
 
+/// File URLs of the local files referenced by the items, without duplicates.
+/// Used to allow dropping / pasting tracks into other apps.
++ (NSArray<NSURL *> * _Nonnull)fileURLsForItems:(ddb_playItem_t * _Nonnull * _Nullable)items count:(NSInteger)count;
+
 @end

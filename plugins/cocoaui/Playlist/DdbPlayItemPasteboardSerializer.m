@@ -58,6 +58,24 @@ extern DB_functions_t *deadbeef;
     return self;
 }
 
++ (NSArray<NSURL *> *)fileURLsForItems:(ddb_playItem_t **)items count:(NSInteger)count {
+    NSMutableArray<NSURL *> *urls = [NSMutableArray new];
+    NSMutableSet<NSString *> *paths = [NSMutableSet new];
+    deadbeef->pl_lock ();
+    for (NSInteger i = 0; i < count; i++) {
+        const char *uri = deadbeef->pl_find_meta_raw (items[i], ":URI");
+        if (uri != NULL && uri[0] == '/') {
+            NSString *path = @(uri);
+            if (path != nil && ![paths containsObject:path]) {
+                [paths addObject:path];
+                [urls addObject:[NSURL fileURLWithPath:path]];
+            }
+        }
+    }
+    deadbeef->pl_unlock ();
+    return urls;
+}
+
 - (void)dealloc {
     for (NSInteger i = 0; i < _count; i++) {
         deadbeef->pl_item_unref(_items[i]);
