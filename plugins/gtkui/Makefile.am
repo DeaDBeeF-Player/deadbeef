@@ -54,7 +54,7 @@ GTKUI_SOURCES = \
 	prefwin/prefwin.c prefwin/prefwin.h\
 	prefwin/prefwinappearance.c prefwin/prefwinappearance.h\
 	prefwin/prefwinmedialib.c prefwin/prefwinmedialib.h\
-	prefwin/prefwinmisc.c prefwin/prefwinmisc.h\
+	prefwin/prefwinmisc.c prefwin/prefwinmisc.h langnames.h\
 	prefwin/prefwinnetwork.c prefwin/prefwinnetwork.h\
 	prefwin/prefwinplayback.c prefwin/prefwinplayback.h\
 	prefwin/prefwinplugins.c prefwin/prefwinplugins.h\

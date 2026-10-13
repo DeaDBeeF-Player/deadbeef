@@ -2,6 +2,9 @@
 
 set -e
 
+# Generate langnames.h based on LANGNAMES
+./scripts/gen_langnames.sh plugins/gtkui/langnames.h
+
 ./tools/localize/localize.pl --c-source --output ./translation/plugins.c
 cd po
 PATH="/usr/local/opt/gettext/bin:$PATH" make update-po
