@@ -87,6 +87,9 @@ void
 pl_common_free (void);
 
 void
+pl_common_clear_thumb_cache (void);
+
+void
 pl_common_free_col_info (void *data);
 
 int

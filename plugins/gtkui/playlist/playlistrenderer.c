@@ -35,6 +35,134 @@
 
 extern DB_functions_t *deadbeef;
 
+#define SENTINEL_NO_ART   ((GdkPixbuf *)0x1)
+#define SENTINEL_PENDING  ((GdkPixbuf *)0x2)
+#define PLAYLIST_THUMB_CACHE_MAX 1000
+// "no art" and "pending" entries are retried after this long, in case a request was cancelled or art appeared later
+#define PLAYLIST_THUMB_RETRY_USEC (60 * G_USEC_PER_SEC)
+
+typedef struct {
+    char *key;
+    GdkPixbuf *thumb;
+    gint64 time;
+} playlist_thumb_entry_t;
+
+// LRU cache of scaled row thumbnails: the hash maps a key to its link in the queue, most recent first.
+static GHashTable *playlist_thumb_index;
+static GQueue playlist_thumb_lru = G_QUEUE_INIT;
+
+static gboolean
+_playlist_thumb_is_image (GdkPixbuf *thumb) {
+    return thumb != NULL && thumb != SENTINEL_NO_ART && thumb != SENTINEL_PENDING;
+}
+
+static void
+_playlist_thumb_entry_free (playlist_thumb_entry_t *entry) {
+    if (_playlist_thumb_is_image (entry->thumb)) {
+        g_object_unref (entry->thumb);
+    }
+    g_free (entry->key);
+    g_free (entry);
+}
+
+static playlist_thumb_entry_t *
+_playlist_thumb_cache_get (const char *key) {
+    GList *link = playlist_thumb_index ? g_hash_table_lookup (playlist_thumb_index, key) : NULL;
+    if (link == NULL) {
+        return NULL;
+    }
+    g_queue_unlink (&playlist_thumb_lru, link);
+    g_queue_push_head_link (&playlist_thumb_lru, link);
+    return link->data;
+}
+
+static void
+_playlist_thumb_cache_put (const char *key, GdkPixbuf *thumb) {
+    if (playlist_thumb_index == NULL) {
+        playlist_thumb_index = g_hash_table_new (g_str_hash, g_str_equal);
+    }
+
+    playlist_thumb_entry_t *entry = _playlist_thumb_cache_get (key);
+    if (entry != NULL) {
+        if (_playlist_thumb_is_image (entry->thumb)) {
+            g_object_unref (entry->thumb);
+        }
+    }
+    else {
+        if (g_queue_get_length (&playlist_thumb_lru) >= PLAYLIST_THUMB_CACHE_MAX) {
+            GList *evict = g_queue_pop_tail_link (&playlist_thumb_lru);
+            playlist_thumb_entry_t *old = evict->data;
+            g_hash_table_remove (playlist_thumb_index, old->key);
+            _playlist_thumb_entry_free (old);
+            g_list_free_1 (evict);
+        }
+        entry = g_new0 (playlist_thumb_entry_t, 1);
+        entry->key = g_strdup (key);
+        GList *link = g_list_alloc ();
+        link->data = entry;
+        g_queue_push_head_link (&playlist_thumb_lru, link);
+        g_hash_table_insert (playlist_thumb_index, entry->key, link);
+    }
+    entry->thumb = thumb;
+    entry->time = g_get_monotonic_time ();
+}
+
+void
+pl_common_clear_thumb_cache (void) {
+    if (playlist_thumb_index != NULL) {
+        g_hash_table_remove_all (playlist_thumb_index);
+    }
+    playlist_thumb_entry_t *entry;
+    while ((entry = g_queue_pop_head (&playlist_thumb_lru)) != NULL) {
+        _playlist_thumb_entry_free (entry);
+    }
+}
+
+static GdkPixbuf *
+_playlist_scale_thumb (GdkPixbuf *image, int avail_w, int avail_h) {
+    if (!image || avail_w <= 0 || avail_h <= 0) {
+        return NULL;
+    }
+    int pw = gdk_pixbuf_get_width (image);
+    int ph = gdk_pixbuf_get_height (image);
+    if (pw <= 0 || ph <= 0) {
+        return NULL;
+    }
+    double scale = min ((double)avail_w / pw, (double)avail_h / ph);
+    int draw_w = (int)(pw * scale);
+    int draw_h = (int)(ph * scale);
+    if (draw_w < 1) draw_w = 1;
+    if (draw_h < 1) draw_h = 1;
+    return gdk_pixbuf_scale_simple (image, draw_w, draw_h, GDK_INTERP_BILINEAR);
+}
+
+static void
+_playlist_draw_thumb (cairo_t *cr, GdkPixbuf *thumb, int x, int y, int width, int height, int align, int pad_x, int pad_y) {
+    int tw = gdk_pixbuf_get_width (thumb);
+    int th = gdk_pixbuf_get_height (thumb);
+    int draw_y = y + (height - th) / 2;
+    int draw_x;
+    if (align == 1) {
+        draw_x = x + width - pad_x - tw;
+    }
+    else if (align == 2) {
+        draw_x = x + (width - tw) / 2;
+    }
+    else {
+        draw_x = x + pad_x;
+    }
+
+    cairo_save (cr);
+    cairo_rectangle (cr, x, y, width, height);
+    cairo_clip (cr);
+
+    gdk_cairo_set_source_pixbuf (cr, thumb, draw_x, draw_y);
+    cairo_rectangle (cr, draw_x, draw_y, tw, th);
+    cairo_fill (cr);
+
+    cairo_restore (cr);
+}
+
 static gboolean
 tf_redraw_cb (gpointer user_data) {
     DdbListview *lv = user_data;
@@ -66,6 +194,76 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             gdk_cairo_set_source_pixbuf (cr, pixbuf, x + width/2 - 8, y + height/2 - 8);
             cairo_rectangle (cr, x + width/2 - 8, y + height/2 - 8, 16, 16);
             cairo_fill (cr);
+        }
+    }
+    else if (it && info->id == DB_COLUMN_TRACK_ART) {
+        DB_playItem_t *track = (DB_playItem_t *)it;
+        const int pad_x = 2;
+        const int pad_y = 1;
+        const int avail_w = width - pad_x * 2;
+        const int avail_h = height - pad_y * 2;
+
+        if (avail_w > 0 && avail_h > 0) {
+            // Key by album (folder + album tag), not by track: the cover manager caches per track,
+            // so this way each album's cover is decoded and scaled once for all of its tracks.
+            const char *uri = deadbeef->pl_find_meta (track, ":URI");
+            const char *album = deadbeef->pl_find_meta (track, "album");
+            const char *slash = (uri && album) ? strrchr (uri, '/') : NULL;
+            int dir_len = slash ? (int)(slash - uri) : (uri ? (int)strlen (uri) : 0);
+            char thumb_key[1024];
+            snprintf (thumb_key, sizeof (thumb_key), "%dx%d:%.*s|%s", avail_w, avail_h, dir_len, uri ? uri : "", album ? album : "");
+
+            playlist_thumb_entry_t *entry = _playlist_thumb_cache_get (thumb_key);
+            if (entry != NULL && !_playlist_thumb_is_image (entry->thumb) && g_get_monotonic_time () - entry->time > PLAYLIST_THUMB_RETRY_USEC) {
+                entry = NULL;
+            }
+
+            if (entry != NULL) {
+                if (_playlist_thumb_is_image (entry->thumb)) {
+                    _playlist_draw_thumb (cr, entry->thumb, x, y, width, height, align, pad_x, pad_y);
+                }
+            }
+            else {
+                _playlist_thumb_cache_put (thumb_key, SENTINEL_PENDING);
+
+                deadbeef->pl_item_ref (track);
+                char *saved_key = strdup (thumb_key);
+                GWeakRef *listview_ref = g_new0 (GWeakRef, 1);
+                g_weak_ref_init (listview_ref, listview);
+
+                GdkPixbuf *image = covermanager_cover_for_track_no_default (covermanager_shared (), track, 0, ^(GdkPixbuf *img) {
+                    deadbeef->pl_item_unref (track);
+                    GdkPixbuf *scaled = img != NULL ? _playlist_scale_thumb (img, avail_w, avail_h) : NULL;
+                    _playlist_thumb_cache_put (saved_key, scaled ? scaled : SENTINEL_NO_ART);
+                    free (saved_key);
+
+                    // the playlist may have been destroyed while the cover was loading
+                    GtkWidget *widget = g_weak_ref_get (listview_ref);
+                    if (widget != NULL) {
+                        if (scaled != NULL) {
+                            gtk_widget_queue_draw (widget);
+                        }
+                        g_object_unref (widget);
+                    }
+                    g_weak_ref_clear (listview_ref);
+                    g_free (listview_ref);
+                });
+
+                if (image != NULL) {
+                    // the cover was cached: the block above is not called
+                    deadbeef->pl_item_unref (track);
+                    free (saved_key);
+                    g_weak_ref_clear (listview_ref);
+                    g_free (listview_ref);
+
+                    GdkPixbuf *scaled = _playlist_scale_thumb (image, avail_w, avail_h);
+                    _playlist_thumb_cache_put (thumb_key, scaled ? scaled : SENTINEL_NO_ART);
+                    if (scaled != NULL) {
+                        _playlist_draw_thumb (cr, scaled, x, y, width, height, align, pad_x, pad_y);
+                    }
+                    gobj_unref (image);
+                }
+            }
         }
     }
     else if (it) {
