@@ -62,7 +62,7 @@ struct pl_preset_column_format {
     char *format;
 };
 
-#define PRESET_COLUMN_NUMITEMS 14
+#define PRESET_COLUMN_NUMITEMS 15
 
 static struct pl_preset_column_format pl_preset_column_formats[PRESET_COLUMN_NUMITEMS];
 
@@ -73,6 +73,7 @@ init_preset_column_struct(void) {
         {DB_COLUMN_FILENUMBER, _("Item Index"), NULL},
         {DB_COLUMN_PLAYING, _("Playing"), NULL},
         {DB_COLUMN_ALBUM_ART, _("Album Art"), NULL},
+        {DB_COLUMN_TRACK_ART, _("Track Cover Art"), NULL},
         {DB_COLUMN_STANDARD, _("Artist - Album"), COLUMN_FORMAT_ARTISTALBUM},
         {DB_COLUMN_STANDARD, _("Artist"), COLUMN_FORMAT_ARTIST},
         {DB_COLUMN_STANDARD, _("Album"), COLUMN_FORMAT_ALBUM},
@@ -138,6 +139,7 @@ pl_common_free (void) {
         g_object_unref(buffering16_pixbuf);
         buffering16_pixbuf = NULL;
     }
+    pl_common_clear_thumb_cache ();
 }
 
 static col_info_t *
@@ -744,7 +746,8 @@ on_add_column_activate                 (GtkMenuItem     *menuitem,
         int align = gtk_combo_box_get_active (GTK_COMBO_BOX (lookup_widget (dlg, "align")));
         DdbListview *listview = get_context_menu_listview (menuitem);
         int before = get_context_menu_column (menuitem);
-        ddb_listview_column_insert (listview, before, title, 100, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, clr_override, clr, inf);
+        int def_width = (inf->id == DB_COLUMN_TRACK_ART) ? 36 : 100;
+        ddb_listview_column_insert (listview, before, title, def_width, align, inf->id == DB_COLUMN_ALBUM_ART ? min_group_height : NULL, inf->id == DB_COLUMN_ALBUM_ART, clr_override, clr, inf);
         ddb_listview_refresh (listview, DDB_LIST_CHANGED | DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_HSCROLL);
     }
     gtk_widget_destroy (dlg);
