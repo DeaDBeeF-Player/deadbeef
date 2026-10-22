@@ -772,6 +772,7 @@ _drag_data_get (GtkWidget *widget, GdkDragContext *context, GtkSelectionData *se
 static void
 _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
     g_object_ref (img);
+    int64_t reload_index = mlv->reload_index;
     dispatch_async (mlv->background_queue, ^{
         // scale
         GtkAllocation a;
@@ -785,8 +786,10 @@ _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
             GtkTreeStore *store = mlv->store;
             GtkTreeIter iter;
             GtkTreeModel *model = GTK_TREE_MODEL (mlv->store);
-            gtk_tree_model_get_iter (model, &iter, path);
-            gtk_tree_store_set (store, &iter, COL_ICON, scaled_img, -1);
+            // the tree may have been reloaded while the image was being scaled
+            if (reload_index == mlv->reload_index && gtk_tree_model_get_iter (model, &iter, path)) {
+                gtk_tree_store_set (store, &iter, COL_ICON, scaled_img, -1);
+            }
             g_object_unref (scaled_img);
             gtk_tree_path_free (path);
             g_object_unref (img);
@@ -806,12 +809,16 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
 
     w_medialib_viewer_t *mlv = ctx;
     if (mlv->is_reloading) {
+        gtk_tree_path_free (path);
         return NULL;
     }
     GtkTreeModel *model = GTK_TREE_MODEL (mlv->store);
 
     GtkTreeIter iter;
-    gtk_tree_model_get_iter (model, &iter, path);
+    if (!gtk_tree_model_get_iter (model, &iter, path)) {
+        gtk_tree_path_free (path);
+        return NULL;
+    }
     gboolean is_folder = gtk_tree_model_iter_has_child (model, &iter);
     if (is_folder) {
         if (!_art_mode_shows_folders (mlv->art_mode)) {
@@ -826,6 +833,7 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
         child_path = NULL;
     }
     else if (!_art_mode_shows_tracks (mlv->art_mode)) {
+        gtk_tree_path_free (path);
         return NULL; // leaf
     }
 
@@ -834,11 +842,8 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     ddb_playItem_t *track = g_value_get_pointer (&value);
     g_value_unset (&value);
 
-    if (track == NULL) {
-        return is_folder ? mlv->folder_icon : NULL;
-    }
-
-    if (mlv->artwork_source_id == 0) {
+    if (track == NULL || mlv->artwork_source_id == 0) {
+        gtk_tree_path_free (path);
         return is_folder ? mlv->folder_icon : NULL;
     }
 
@@ -851,10 +856,14 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
             if (reload_index == mlv->reload_index && img != NULL) {
                 _receive_cover (mlv, path, img);
             }
+            else {
+                gtk_tree_path_free (path);
+            }
         });
 
     if (cached_cover != NULL) {
         _receive_cover (mlv, path, cached_cover);
+        g_object_unref (cached_cover);
     }
     return is_folder ? mlv->folder_icon : NULL;
 }
