@@ -2294,7 +2294,7 @@ static const char settings_dlg[] =
     "property \"Add separators between plugin context menu items\" checkbox gtkui.action_separators 0;\n"
     "property \"Use unicode chars instead of images for track state\" checkbox gtkui.unicode_playstate 0;\n"
     "property \"Disable seekbar overlay text\" checkbox gtkui.disable_seekbar_overlay 0;\n"
-    "property \"Show album art on media library folders\" checkbox gtkui.show_medialib_covers 1;\n";
+    "property \"Show album art in media library\" select[4] gtkui.show_medialib_covers 1 \"None\" \"Folders\" \"Tracks\" \"Folders and tracks\";\n";
 
 #pragma mark - Obsolete cover art API stubs
 
