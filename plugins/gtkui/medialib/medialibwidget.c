@@ -70,6 +70,10 @@ typedef struct {
     dispatch_queue_t background_queue;
 
     int art_mode;
+
+    // Rows which already requested artwork since the last reload, including those without any,
+    // so redrawing doesn't query the artwork plugin again.
+    GHashTable *art_requested;
 } w_medialib_viewer_t;
 
 enum {
@@ -174,6 +178,7 @@ static void
 _reload_content (w_medialib_viewer_t *mlv) {
     // populate the tree
     mlv->reload_index++;
+    g_hash_table_remove_all (mlv->art_requested);
 
     GtkTreeStore *store = mlv->store;
 
@@ -437,6 +442,10 @@ w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
     }
     free (mlv->search_text);
     mlv->search_text = NULL;
+    if (mlv->art_requested != NULL) {
+        g_hash_table_destroy (mlv->art_requested);
+        mlv->art_requested = NULL;
+    }
     if (mlv->folder_icon) {
         g_object_unref (mlv->folder_icon);
         mlv->folder_icon = NULL;
@@ -797,6 +806,29 @@ _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
     });
 }
 
+// Returns the first track of the album that the given track belongs to, so that all tracks of an album
+// request the same cover and the cover manager loads the image once per album instead of once per track.
+static ddb_playItem_t *
+_first_track_of_album (GtkTreeModel *model, GtkTreeIter *leaf, ddb_playItem_t *track) {
+    GtkTreeIter parent, first;
+    if (!gtk_tree_model_iter_parent (model, &parent, leaf) || !gtk_tree_model_iter_children (model, &first, &parent)) {
+        return track;
+    }
+    GValue value = { 0 };
+    gtk_tree_model_get_value (model, &first, COL_TRACK, &value);
+    ddb_playItem_t *first_track = g_value_get_pointer (&value);
+    g_value_unset (&value);
+    if (first_track == NULL || first_track == track) {
+        return track;
+    }
+    deadbeef->pl_lock ();
+    const char *a = deadbeef->pl_find_meta (track, "album");
+    const char *b = deadbeef->pl_find_meta (first_track, "album");
+    int same = a != NULL && b != NULL && !strcmp (a, b);
+    deadbeef->pl_unlock ();
+    return same ? first_track : track;
+}
+
 static GdkPixbuf *
 _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     if (pathstr == NULL) {
@@ -837,10 +869,19 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
         return NULL; // leaf
     }
 
+    if (g_hash_table_contains (mlv->art_requested, pathstr)) {
+        gtk_tree_path_free (path);
+        return is_folder ? mlv->folder_icon : NULL;
+    }
+    g_hash_table_add (mlv->art_requested, g_strdup (pathstr));
+
     GValue value = { 0 };
     gtk_tree_model_get_value (model, &iter, COL_TRACK, &value);
     ddb_playItem_t *track = g_value_get_pointer (&value);
     g_value_unset (&value);
+    if (track != NULL && !is_folder) {
+        track = _first_track_of_album (model, &iter, track);
+    }
 
     if (track == NULL || mlv->artwork_source_id == 0) {
         gtk_tree_path_free (path);
@@ -903,6 +944,7 @@ w_medialib_viewer_create (void) {
     w->base.message = w_medialib_viewer_message;
 
     w->art_mode = deadbeef->conf_get_int ("gtkui.show_medialib_covers", MEDIALIB_ART_FOLDERS);
+    w->art_requested = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
