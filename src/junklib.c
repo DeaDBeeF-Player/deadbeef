@@ -69,7 +69,7 @@ int enable_shift_jis_detection = 0;
 
 #define MAX_TEXT_FRAME_SIZE 10000
 #define MAX_CUESHEET_FRAME_SIZE 10000
-#define MAX_APEV2_FRAME_SIZE 2000000
+#define MAX_APEV2_FRAME_SIZE (16 * 1024 * 1024)
 #define MAX_ID3V2_FRAME_SIZE 100000
 
 #define UTF8_STR "utf-8"
