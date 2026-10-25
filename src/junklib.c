@@ -3966,7 +3966,7 @@ junk_id3v2_load_txx (const char *sb_charset, int version_major, playItem_t *it, 
         }
     }
 
-    if (val) {
+    if (val && synched_size > 0) {
         // skip utf8 BOM (can be produced by iconv FEFF/FFFE)
         size_t l = strlen (val);
         uint8_t bom[] = { 0xEF, 0xBB, 0xBF };
@@ -4086,6 +4086,10 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                     added = 1;
                     if (synched_size > MAX_TEXT_FRAME_SIZE) {
                         trace ("frame %s is too big, discard\n", frameid);
+                        break;
+                    }
+                    if (synched_size <= 0) {
+                        trace ("frame %s has zero or negative size, discard\n", frameid);
                         break;
                     }
 
@@ -4253,7 +4257,7 @@ junk_id3v2_detect_charset (DB_id3v2_tag_t *id3v2_tag) {
     char *p = buf;
 
     for (DB_id3v2_frame_t *frm = id3v2_tag->frames; frm; frm = frm->next) {
-        if (frm->id[0] == 'T' && sz >= frm->size && frm->data[0] == 0) {
+        if (frm->id[0] == 'T' && sz >= frm->size && frm->size > 0 && frm->data[0] == 0) {
             memcpy (p, frm->data+1, frm->size-1);
             p += frm->size-1;
             sz -= frm->size-1;
