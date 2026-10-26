@@ -118,6 +118,35 @@ settings_data_init (settings_data_t *settings_data, const char *layout) {
         if (!script) {
             break;
         }
+
+        // label: the key is the alignment (l, c, r), there's no default value
+        if (!strcmp (type, "label")) {
+            settings_data_add_property (settings_data, PROP_LABEL, NULL, labeltext, NULL);
+            settings_property_t *prop = &settings_data->props[settings_data->nprops-1];
+            if (!strncmp (key, "l", 1)) {
+                prop->label_alignment = PROP_LABEL_ALIGN_LEFT;
+            }
+            else if (!strncmp (key, "r", 1)) {
+                prop->label_alignment = PROP_LABEL_ALIGN_RIGHT;
+            }
+            else {
+                prop->label_alignment = PROP_LABEL_ALIGN_CENTER;
+            }
+
+            if (!strcmp (key, ";")) {
+                continue;
+            }
+
+            char skip[MAX_TOKEN] = "";
+            do {
+                script = gettoken_warn_eof (script, skip);
+                if (!script) {
+                    break;
+                }
+            } while (strcmp (skip, ";"));
+            continue;
+        }
+
         char def[MAX_TOKEN];
 
         script = gettoken_warn_eof (script, def);

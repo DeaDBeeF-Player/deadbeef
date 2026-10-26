@@ -278,6 +278,52 @@
             continue;
         }
 
+        if (_settingsData.props[i].type == PROP_LABEL) {
+            NSTextField *lbl = [NSTextField new];
+            NSString *title = @(_settingsData.props[i].title);
+            lbl.stringValue = title;
+            lbl.bezeled = NO;
+            lbl.drawsBackground = NO;
+            lbl.editable = NO;
+            lbl.selectable = NO;
+            lbl.cell.truncatesLastVisibleLine = YES;
+            lbl.cell.scrollable = NO;
+            lbl.cell.wraps = NO;
+            lbl.cell.lineBreakMode = NSLineBreakByTruncatingTail;
+            lbl.font = self.fontLabel;
+
+            switch (_settingsData.props[i].label_alignment) {
+            case PROP_LABEL_ALIGN_LEFT:
+                lbl.alignment = NSTextAlignmentLeft;
+                break;
+            case PROP_LABEL_ALIGN_RIGHT:
+                lbl.alignment = NSTextAlignmentRight;
+                break;
+            default:
+                lbl.alignment = NSTextAlignmentCenter;
+                break;
+            }
+
+            lbl.translatesAutoresizingMaskIntoConstraints = NO;
+            [view addSubview:lbl];
+
+            // the label spans the whole row, and doesn't take part in the label column alignment
+            CGFloat offs = box.isStackView ? 0 : 8;
+            [lbl.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:offs].active = YES;
+            [lbl.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-20].active = YES;
+            if (box.previousField) {
+                [lbl.topAnchor constraintEqualToAnchor:box.previousField.bottomAnchor constant:8].active = YES;
+            }
+            else {
+                [lbl.topAnchor constraintEqualToAnchor:view.topAnchor constant:8].active = YES;
+            }
+            box.previousField = lbl;
+            contentHeight += unit_h;
+
+            i++;
+            continue;
+        }
+
         NSView *currLabel;
 
         BOOL isVert = NO;

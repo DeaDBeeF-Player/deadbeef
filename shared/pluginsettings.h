@@ -42,6 +42,14 @@ enum {
     PROP_ITEMSELECT,
     PROP_HBOX,
     PROP_VBOX,
+    PROP_LABEL,
+};
+
+// label alignment
+enum {
+    PROP_LABEL_ALIGN_CENTER,
+    PROP_LABEL_ALIGN_LEFT,
+    PROP_LABEL_ALIGN_RIGHT,
 };
 
 typedef struct {
@@ -55,6 +63,8 @@ typedef struct {
     const char *select_options;
     // always ends with >, e.g. "DSPPreset>"
     char *itemlist_type;
+    // for "label": one of PROP_LABEL_ALIGN_*
+    int label_alignment;
 } settings_property_t;
 
 typedef struct {
