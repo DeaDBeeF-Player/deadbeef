@@ -28,7 +28,7 @@ extern DB_functions_t *deadbeef;
 
 @interface SearchViewController() <NSControlTextEditingDelegate>
 
-@property (unsafe_unretained) IBOutlet NSTextField *entry;
+@property (unsafe_unretained) IBOutlet NSSearchField *entry;
 @property (unsafe_unretained) IBOutlet PlaylistView *listview;
 
 @end
@@ -58,9 +58,26 @@ extern DB_functions_t *deadbeef;
     return "cocoaui.search.pin_groups";
 }
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+
+    // Show the standard clear button; NSSearchFieldCell displays it only while the field is non-empty.
+    NSSearchFieldCell *searchCell = self.entry.cell;
+    if (searchCell.cancelButtonCell == nil) {
+        searchCell.cancelButtonCell = [NSSearchFieldCell new].cancelButtonCell;
+    }
+}
+
 - (void)controlTextDidChange:(NSNotification *)notification {
-    NSTextField *textField = notification.object;
-    NSString *val = textField.stringValue;
+    [self searchWithString:self.entry.stringValue];
+}
+
+// Sent by the clear button.
+- (IBAction)searchFieldAction:(NSSearchField *)sender {
+    [self searchWithString:sender.stringValue];
+}
+
+- (void)searchWithString:(NSString *)val {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_search_process (plt, val.UTF8String);

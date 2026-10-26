@@ -24,20 +24,21 @@
                 <rect key="frame" x="0.0" y="0.0" width="480" height="272"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YUk-Qq-4iU">
-                        <rect key="frame" x="5" y="248" width="470" height="19"/>
+                    <searchField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YUk-Qq-4iU">
+                        <rect key="frame" x="5" y="245" width="470" height="22"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="19" id="i4s-8S-Enc"/>
+                            <constraint firstAttribute="height" constant="22" id="i4s-8S-Enc"/>
                         </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter the search terms here" drawsBackground="YES" usesSingleLineMode="YES" id="dr1-ne-XQt">
+                        <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" placeholderString="Enter the search terms here" usesSingleLineMode="YES" bezelStyle="round" sendsSearchStringImmediately="YES" id="dr1-ne-XQt">
                             <font key="font" metaFont="label" size="11"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
+                        </searchFieldCell>
                         <connections>
+                            <action selector="searchFieldAction:" target="W5J-RI-hQb" id="b7Qe-9k-Act"/>
                             <outlet property="delegate" destination="W5J-RI-hQb" id="ods-9y-HIJ"/>
                         </connections>
-                    </textField>
+                    </searchField>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="3rg-sN-E4j" customClass="PlaylistView">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="248"/>
                     </customView>
