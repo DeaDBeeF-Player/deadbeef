@@ -1,0 +1,11 @@
+title AAC VBR 256kbps (Apple afconvert)
+ext m4a
+encoder afconvert %i %o -f m4af -d aac -s 3 -b 256000
+method 1
+id3v2_version 0
+tag_id3v2 0
+tag_id3v1 0
+tag_apev2 0
+tag_flac 0
+tag_oggvorbis 0
+tag_mp4 1

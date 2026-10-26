@@ -4840,6 +4840,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7A1C0DE02F0000010000AAA1 /* convpresets_macos */ = {isa = PBXFileReference; lastKnownFileType = folder; path = convpresets_macos; sourceTree = "<group>"; };
 		07021F191C2734AC00FC9AF9 /* libwmalib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwmalib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		07021F2E1C2734D700FC9AF9 /* libasflib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libasflib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		07021F3A1C2734F100FC9AF9 /* wma.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wma.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9783,6 +9784,7 @@
 			isa = PBXGroup;
 			children = (
 				2DF622B81B335DF400C70C7D /* convpresets */,
+				7A1C0DE02F0000010000AAA1 /* convpresets_macos */,
 				2D2351231B138F3200A62936 /* converter.c */,
 				2D2351241B138F3200A62936 /* converter.h */,
 			);
@@ -15883,6 +15885,7 @@
 				2D48DBCC2269B731002CACFD /* Sources */,
 				2D48DBEF2269B731002CACFD /* Frameworks */,
 				2D48DBF62269B731002CACFD /* Resources */,
+				7A1C0DE02F00000300000041 /* Copy macOS Converter Presets */,
 				2D48DC362269B731002CACFD /* Headers */,
 				2DE1B37024A8B34D0070CD7C /* Copy Plugins */,
 				2DE1B37124A8B3A20070CD7C /* Copy SC68 replays */,
@@ -16346,6 +16349,7 @@
 				2DC65733274428F200583E14 /* Sources */,
 				2DC65737274428F200583E14 /* Frameworks */,
 				2DC6573F274428F200583E14 /* Resources */,
+				7A1C0DE02F00000300000042 /* Copy macOS Converter Presets */,
 				2DC65743274428F200583E14 /* Headers */,
 				2DC6574B274428F200583E14 /* Copy Plugins */,
 				2DC6577B274428F200583E14 /* Copy SC68 replays */,
@@ -16582,6 +16586,7 @@
 				4D1B3E7618379829003E6066 /* Sources */,
 				4D1B3E7718379829003E6066 /* Frameworks */,
 				4D1B3E7818379829003E6066 /* Resources */,
+				7A1C0DE02F00000300000043 /* Copy macOS Converter Presets */,
 				2DE1B36B24A8A6060070CD7C /* Copy SC68 replays */,
 				4DA7719C1945B91400EB0AC1 /* Headers */,
 				2DE1B22024A89E550070CD7C /* Copy Plugins */,
@@ -17375,6 +17380,72 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		7A1C0DE02F00000300000041 /* Copy macOS Converter Presets */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../plugins/converter/convpresets_macos",
+			);
+			name = "Copy macOS Converter Presets";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/convpresets/AAC_VBR_192Kbps_(Apple_afconvert).txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/convpresets/AAC_VBR_256Kbps_(Apple_afconvert).txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/convpresets/AAC_VBR_320Kbps_(Apple_afconvert).txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/convpresets\"\ncp -R \"$SRCROOT/../plugins/converter/convpresets_macos/.\" \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/convpresets/\"\n";
+		};
+		7A1C0DE02F00000300000042 /* Copy macOS Converter Presets */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../plugins/converter/convpresets_macos",
+			);
+			name = "Copy macOS Converter Presets";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/convpresets/AAC_VBR_192Kbps_(Apple_afconvert).txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/convpresets/AAC_VBR_256Kbps_(Apple_afconvert).txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/convpresets/AAC_VBR_320Kbps_(Apple_afconvert).txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/convpresets\"\ncp -R \"$SRCROOT/../plugins/converter/convpresets_macos/.\" \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/convpresets/\"\n";
+		};
+		7A1C0DE02F00000300000043 /* Copy macOS Converter Presets */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../plugins/converter/convpresets_macos",
+			);
+			name = "Copy macOS Converter Presets";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/convpresets/AAC_VBR_192Kbps_(Apple_afconvert).txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/convpresets/AAC_VBR_256Kbps_(Apple_afconvert).txt",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/convpresets/AAC_VBR_320Kbps_(Apple_afconvert).txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/convpresets\"\ncp -R \"$SRCROOT/../plugins/converter/convpresets_macos/.\" \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/convpresets/\"\n";
+		};
 		2D3645B32EB75FFC00E7EA7A /* Setup Build Parameters */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
