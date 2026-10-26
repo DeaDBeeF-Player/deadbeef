@@ -9,6 +9,7 @@
 #import "NowPlayable.h"
 #import <MediaPlayer/MediaPlayer.h>
 #include <deadbeef/deadbeef.h>
+#include "artwork.h"
 #import "Weakify.h"
 
 extern DB_functions_t *deadbeef;
@@ -18,6 +19,11 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSTimer *updateTimer;
 @property (nonatomic) char *artist_tf;
 @property (nonatomic) char *album_tf;
+
+@property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
+@property (nonatomic) int64_t sourceId;
+@property (nonatomic) ddb_playItem_t *coverTrack; // the track, for which the cover was requested (referenced)
+@property (nonatomic) MPMediaItemArtwork *artwork;
 
 @end
 
@@ -33,6 +39,10 @@ extern DB_functions_t *deadbeef;
     _artist_tf = deadbeef->tf_compile ("$if2(%artist%,Unknown Artist)");
     _album_tf = deadbeef->tf_compile ("$if2(%album%,Unknown Album)");
 
+    _artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+    if (_artwork_plugin != NULL) {
+        _sourceId = _artwork_plugin->allocate_source_id ();
+    }
 
     MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
     infoCenter.nowPlayingInfo = @{
@@ -99,7 +109,18 @@ extern DB_functions_t *deadbeef;
             deadbeef->tf_eval (&ctx, self.album_tf, text, sizeof (text));
             info[MPMediaItemPropertyAlbumTitle] = @(text);
 
+            if (it != self.coverTrack) {
+                [self requestCoverForTrack:it];
+            }
+
             deadbeef->pl_item_unref (it);
+        }
+        else if (self.coverTrack != NULL) {
+            [self resetCover];
+        }
+
+        if (self.artwork != nil) {
+            info[MPMediaItemPropertyArtwork] = self.artwork;
         }
 
         info[MPNowPlayingInfoPropertyMediaType] = @(MPNowPlayingInfoMediaTypeAudio);
@@ -137,6 +158,69 @@ extern DB_functions_t *deadbeef;
 
     deadbeef->tf_free (_artist_tf);
     deadbeef->tf_free (_album_tf);
+
+    if (_coverTrack != NULL) {
+        deadbeef->pl_item_unref (_coverTrack);
+        _coverTrack = NULL;
+    }
+}
+
+- (void)resetCover {
+    if (self.coverTrack != NULL) {
+        deadbeef->pl_item_unref (self.coverTrack);
+        self.coverTrack = NULL;
+    }
+    self.artwork = nil;
+}
+
+static void
+cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    void (^completionBlock)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) = (void (^)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error))CFBridgingRelease (query->user_data);
+    completionBlock (query, cover, error);
+}
+
+- (void)requestCoverForTrack:(ddb_playItem_t *)track {
+    [self resetCover];
+    if (self.artwork_plugin == NULL) {
+        return;
+    }
+
+    self.coverTrack = track;
+    deadbeef->pl_item_ref (track);
+
+    ddb_artwork_plugin_t *artworkPlugin = self.artwork_plugin;
+    weakify(self);
+    void (^completionBlock)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) = ^(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) {
+        NSImage *image;
+        if (!error && cover != NULL && cover->image_filename != NULL) {
+            image = [[NSImage alloc] initWithContentsOfFile:@(cover->image_filename)];
+        }
+        if (cover != NULL) {
+            artworkPlugin->cover_info_release (cover);
+        }
+
+        ddb_playItem_t *queryTrack = query->track;
+        free (query);
+
+        dispatch_async (dispatch_get_main_queue (), ^{
+            strongify(self);
+            // Ignore the result if the track has changed in the meantime
+            if (self != nil && image != nil && self.coverTrack == queryTrack) {
+                self.artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:image.size requestHandler:^NSImage * _Nonnull(CGSize size) {
+                    return image;
+                }];
+            }
+            deadbeef->pl_item_unref (queryTrack);
+        });
+    };
+
+    ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
+    query->_size = sizeof (ddb_cover_query_t);
+    query->user_data = (void *)CFBridgingRetain (completionBlock);
+    query->track = track;
+    query->source_id = self.sourceId;
+    deadbeef->pl_item_ref (track);
+    self.artwork_plugin->cover_get (query, cover_get_callback);
 }
 
 - (MPRemoteCommandHandlerStatus)togglePlayPauseCommand:(MPRemoteCommandEvent *)sender {
