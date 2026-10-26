@@ -388,6 +388,8 @@ main_cleanup_and_quit (void);
     [self updateDockNowPlaying];
 
     id<DesignModeStateProtocol> state = DesignModeState.sharedInstance;
+    // Make sure all nested splitters have their final sizes before applying the persisted divider positions
+    [self.mainWindow.window.contentView layoutSubtreeIfNeeded];
     [state.rootWidget configure];
 
     [self.mainWindow.window recalculateKeyViewLoop];
