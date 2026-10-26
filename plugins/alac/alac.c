@@ -388,7 +388,9 @@ int32_t entropy_decode_value(alac_file* alac,
 		value = readbits(alac, readSampleSize);
 		
 		// mask value
-		value &= (((uint32_t)0xffffffff) >> (32 - readSampleSize));
+		if (readSampleSize < 32) {
+			value &= (((uint32_t)0xffffffff) >> (32 - readSampleSize));
+		}
 		
 		x = value;
 	}
@@ -768,6 +770,57 @@ void deinterlace_24(int32_t *buffer_a, int32_t *buffer_b,
 	
 }
 
+static void deinterlace_32(int32_t *buffer_a, int32_t *buffer_b,
+                          int uncompressed_bytes,
+                          int32_t *uncompressed_bytes_buffer_a, int32_t *uncompressed_bytes_buffer_b,
+                          void *buffer_out,
+                          int numchannels, int numsamples,
+                          uint8_t interlacing_shift,
+                          uint8_t interlacing_leftweight)
+{
+    int i;
+    if (numsamples <= 0) return;
+
+    for (i = 0; i < numsamples; i++)
+    {
+        uint32_t left, right;
+
+        if (interlacing_leftweight)
+        {
+            int32_t difference = buffer_b[i];
+            int32_t midright = buffer_a[i];
+            right = midright - ((difference * interlacing_leftweight) >> interlacing_shift);
+            left = right + difference;
+        }
+        else
+        {
+            left = buffer_a[i];
+            right = buffer_b[i];
+        }
+
+        if (uncompressed_bytes)
+        {
+            uint32_t mask = ~(0xFFFFFFFFu << (uncompressed_bytes * 8));
+            left <<= (uncompressed_bytes * 8);
+            right <<= (uncompressed_bytes * 8);
+
+            left |= uncompressed_bytes_buffer_a[i] & mask;
+            right |= uncompressed_bytes_buffer_b[i] & mask;
+        }
+
+        /* output is always little endian */
+        uint8_t *out = (uint8_t *)buffer_out + i * numchannels * 4;
+        out[0] = left & 0xFF;
+        out[1] = (left >> 8) & 0xFF;
+        out[2] = (left >> 16) & 0xFF;
+        out[3] = (left >> 24) & 0xFF;
+        out[4] = right & 0xFF;
+        out[5] = (right >> 8) & 0xFF;
+        out[6] = (right >> 16) & 0xFF;
+        out[7] = (right >> 24) & 0xFF;
+    }
+}
+
 void decode_frame(alac_file *alac,
                   unsigned char *inbuffer, int insize,
                   void *outbuffer, int *outputsize)
@@ -915,9 +968,11 @@ void decode_frame(alac_file *alac,
                     audiobits = readbits(alac, 16);
                     /* special case of sign extension..
                      * as we'll be ORing the low 16bits into this */
-                    audiobits = audiobits << (alac->setinfo_sample_size - 16);
+                    audiobits = (uint32_t)audiobits << (alac->setinfo_sample_size - 16);
                     audiobits |= readbits(alac, alac->setinfo_sample_size - 16);
-					audiobits = SignExtend24(audiobits);
+                    if (alac->setinfo_sample_size < 32) {
+                        audiobits = SignExtend24(audiobits);
+                    }
 
                     alac->outputsamples_buffer_a[i] = audiobits;
                 }
@@ -960,8 +1015,31 @@ void decode_frame(alac_file *alac,
 			}
 			break;
 		}
-        case 20:
         case 32:
+        {
+            int i;
+            for (i = 0; i < outputsamples; i++)
+            {
+                uint32_t sample = alac->outputsamples_buffer_a[i];
+
+                if (uncompressed_bytes)
+                {
+                    uint32_t mask;
+                    sample = sample << (uncompressed_bytes * 8);
+                    mask = ~(0xFFFFFFFFu << (uncompressed_bytes * 8));
+                    sample |= alac->uncompressed_bytes_buffer_a[i] & mask;
+                }
+
+                /* output is always little endian */
+                uint8_t *out = (uint8_t *)outbuffer + i * alac->numchannels * 4;
+                out[0] = sample & 0xFF;
+                out[1] = (sample >> 8) & 0xFF;
+                out[2] = (sample >> 16) & 0xFF;
+                out[3] = (sample >> 24) & 0xFF;
+            }
+            break;
+        }
+        case 20:
             fprintf(stderr, "FIXME: unimplemented sample size %i\n", alac->setinfo_sample_size);
             break;
         default:
@@ -1008,6 +1086,9 @@ void decode_frame(alac_file *alac,
         }
 
         readsamplesize = alac->setinfo_sample_size - (uncompressed_bytes * 8) + 1;
+        if (readsamplesize > 32) {
+            readsamplesize = 32;
+        }
 
         if (!isnotcompressed)
         { /* compressed */
@@ -1146,14 +1227,18 @@ void decode_frame(alac_file *alac,
                     int32_t audiobits_a, audiobits_b;
 
                     audiobits_a = readbits(alac, 16);
-                    audiobits_a = audiobits_a << (alac->setinfo_sample_size - 16);
+                    audiobits_a = (uint32_t)audiobits_a << (alac->setinfo_sample_size - 16);
                     audiobits_a |= readbits(alac, alac->setinfo_sample_size - 16);
-					audiobits_a = SignExtend24(audiobits_a);
+                    if (alac->setinfo_sample_size < 32) {
+                        audiobits_a = SignExtend24(audiobits_a);
+                    }
 
                     audiobits_b = readbits(alac, 16);
-                    audiobits_b = audiobits_b << (alac->setinfo_sample_size - 16);
+                    audiobits_b = (uint32_t)audiobits_b << (alac->setinfo_sample_size - 16);
                     audiobits_b |= readbits(alac, alac->setinfo_sample_size - 16);
-					audiobits_b = SignExtend24(audiobits_b);
+                    if (alac->setinfo_sample_size < 32) {
+                        audiobits_b = SignExtend24(audiobits_b);
+                    }
 					
                     alac->outputsamples_buffer_a[i] = audiobits_a;
                     alac->outputsamples_buffer_b[i] = audiobits_b;
@@ -1191,8 +1276,21 @@ void decode_frame(alac_file *alac,
                            interlacing_leftweight);			
 			break;
 		}
-        case 20:
         case 32:
+        {
+            deinterlace_32(alac->outputsamples_buffer_a,
+                           alac->outputsamples_buffer_b,
+                           uncompressed_bytes,
+                           alac->uncompressed_bytes_buffer_a,
+                           alac->uncompressed_bytes_buffer_b,
+                           outbuffer,
+                           alac->numchannels,
+                           outputsamples,
+                           interlacing_shift,
+                           interlacing_leftweight);
+            break;
+        }
+        case 20:
             fprintf(stderr, "FIXME: unimplemented sample size %i\n", alac->setinfo_sample_size);
             break;
         default:

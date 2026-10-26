@@ -64,7 +64,7 @@ int host_bigendian = 1;
 int host_bigendian = 0;
 #endif
 
-#define BUFFER_SIZE (1024*24)
+#define BUFFER_SIZE (1024*32)
 #define IN_BUFFER_SIZE (1024*80)
 
 typedef struct {
