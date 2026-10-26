@@ -71,6 +71,9 @@ prefwin_init_playback_tab (GtkWidget *_prefwin) {
         free (playlist_name);
     }
 
+    // enqueue incoming files
+    prefwin_set_toggle_button("enqueue_incoming_files_by_default", deadbeef->conf_get_int ("cli_enqueue_incoming_files", 0));
+
     // resume last session
     prefwin_set_toggle_button("resume_last_session", deadbeef->conf_get_int ("resume_last_session", 1));
 
@@ -218,4 +221,13 @@ on_reset_autostopalbum_toggled         (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("playlist.stop_after_album_reset", gtk_toggle_button_get_active (togglebutton));
+}
+
+void
+on_enqueue_incoming_files_by_default_toggled
+                                        (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    deadbeef->conf_set_int ("cli_enqueue_incoming_files", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }

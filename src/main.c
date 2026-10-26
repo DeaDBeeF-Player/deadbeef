@@ -307,7 +307,9 @@ server_exec_command_line (const char *cmdline, int len, char *sendback, int sbsi
     }
     const char *parg = cmdline;
     const char *pend = cmdline + len;
-    int queue = 0;
+    // files passed without --queue (e.g. opened from a file manager) replace the playlist contents,
+    // unless the "Enqueue incoming files by default" option is enabled
+    int queue = conf_get_int ("cli_enqueue_incoming_files", 0);
     while (parg < pend) {
         if (strlen (parg) >= 2 && parg[0] == '-' && parg[1] != '-') {
             parg += strlen (parg);

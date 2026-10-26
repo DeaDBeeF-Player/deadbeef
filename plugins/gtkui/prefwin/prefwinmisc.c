@@ -27,7 +27,7 @@
 #include "../support.h"
 #include "prefwin.h"
 #include "prefwinmisc.h"
-#include "langnames.h"
+#include "../langnames.h"
 
 static int _initializing_prefwin = 0;
 

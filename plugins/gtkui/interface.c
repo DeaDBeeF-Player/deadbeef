@@ -1613,6 +1613,7 @@ create_prefwin (void)
   GtkWidget *hbox66;
   GtkWidget *cli_add_to_playlist;
   GtkWidget *cli_playlist_name;
+  GtkWidget *enqueue_incoming_files_by_default;
   GtkWidget *resume_last_session;
   GtkWidget *resume_always_paused;
   GtkWidget *ignore_archives;
@@ -2145,6 +2146,10 @@ create_prefwin (void)
   gtk_box_pack_start (GTK_BOX (hbox66), cli_playlist_name, TRUE, TRUE, 0);
   gtk_entry_set_invisible_char (GTK_ENTRY (cli_playlist_name), 9679);
 
+  enqueue_incoming_files_by_default = gtk_check_button_new_with_mnemonic (_("Enqueue incoming files by default"));
+  gtk_widget_show (enqueue_incoming_files_by_default);
+  gtk_box_pack_start (GTK_BOX (vbox8), enqueue_incoming_files_by_default, FALSE, FALSE, 0);
+
   resume_last_session = gtk_check_button_new_with_mnemonic (_("Resume previous session on startup"));
   gtk_widget_show (resume_last_session);
   gtk_box_pack_start (GTK_BOX (vbox8), resume_last_session, FALSE, FALSE, 0);
@@ -2224,7 +2229,7 @@ create_prefwin (void)
   gtk_widget_show (enable_cp936_recoding);
   gtk_box_pack_start (GTK_BOX (vbox9), enable_cp936_recoding, FALSE, FALSE, 0);
 
-  enable_language_override = gtk_check_button_new_with_mnemonic (_("Override language (changing requires restart)"));
+  enable_language_override = gtk_check_button_new_with_mnemonic (_("Override language"));
   gtk_widget_show (enable_language_override);
   gtk_box_pack_start (GTK_BOX (vbox9), enable_language_override, FALSE, FALSE, 0);
 
@@ -3348,6 +3353,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) cli_playlist_name, "changed",
                     G_CALLBACK (on_cli_playlist_name_changed),
                     NULL);
+  g_signal_connect ((gpointer) enqueue_incoming_files_by_default, "toggled",
+                    G_CALLBACK (on_enqueue_incoming_files_by_default_toggled),
+                    NULL);
   g_signal_connect ((gpointer) resume_last_session, "toggled",
                     G_CALLBACK (on_resume_last_session_toggled),
                     NULL);
@@ -3672,6 +3680,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, hbox66, "hbox66");
   GLADE_HOOKUP_OBJECT (prefwin, cli_add_to_playlist, "cli_add_to_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, cli_playlist_name, "cli_playlist_name");
+  GLADE_HOOKUP_OBJECT (prefwin, enqueue_incoming_files_by_default, "enqueue_incoming_files_by_default");
   GLADE_HOOKUP_OBJECT (prefwin, resume_last_session, "resume_last_session");
   GLADE_HOOKUP_OBJECT (prefwin, resume_always_paused, "resume_always_paused");
   GLADE_HOOKUP_OBJECT (prefwin, ignore_archives, "ignore_archives");
@@ -3692,6 +3701,8 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp1251_recoding, "enable_cp1251_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp936_recoding, "enable_cp936_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_language_override, "enable_language_override");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox_language_override, "hbox_language_override");
+  GLADE_HOOKUP_OBJECT (prefwin, label_language_override, "label_language_override");
   GLADE_HOOKUP_OBJECT (prefwin, language_override_combo, "language_override_combo");
   GLADE_HOOKUP_OBJECT (prefwin, hbox102, "hbox102");
   GLADE_HOOKUP_OBJECT (prefwin, label129, "label129");
