@@ -49,6 +49,7 @@ TEST_C_SOURCES=$(wildcard \
 	plugins/shellexec/*.c \
 	plugins/vfs_curl/*.c \
 	shared/*.c \
+	shared/analyzer/*.c \
 	shared/scriptable/*.c \
 	shared/undo/*.c \
 	shared/filereader/*.c \
@@ -81,6 +82,7 @@ VPATH=src \
 	$(addprefix plugins/,libparser m3u mp3 nullout shellexec vfs_curl) \
 	$(addprefix external/,mp4p/src wcwidth googletest/googletest/src) \
 	shared \
+	shared/analyzer \
 	shared/scriptable \
 	shared/undo \
 	shared/filereader \

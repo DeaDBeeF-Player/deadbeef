@@ -60,7 +60,7 @@ static float
 _freq_for_bin (ddb_analyzer_t *analyzer, int bin);
 
 static float
-_interpolate_bin_with_ratio (float *fft_data, int bin, float ratio);
+_interpolate_bin_with_ratio (float *fft_data, int fft_size, int bin, float ratio);
 
 #pragma mark - Public
 
@@ -145,7 +145,7 @@ ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
         float *fft_data = analyzer->fft_data + ch * analyzer->fft_size;
         ddb_analyzer_bar_t *bar = analyzer->bars;
         for (int i = 0; i < analyzer->bar_count; i++, bar++) {
-            float norm_h = _interpolate_bin_with_ratio (fft_data, bar->bin, bar->ratio);
+            float norm_h = _interpolate_bin_with_ratio (fft_data, analyzer->fft_size, bar->bin, bar->ratio);
 
             if (norm_h < exp_lower_bound) {
                 norm_h = exp_lower_bound;
@@ -153,7 +153,7 @@ ddb_analyzer_tick (ddb_analyzer_t *analyzer) {
 
             // if the bar spans more than one bin, find the max value
             for (int b = bar->bin + 1; b <= bar->last_bin; b++) {
-                float val = analyzer->fft_data[b];
+                float val = fft_data[b];
                 if (val > norm_h) {
                     norm_h = val;
                 }
@@ -462,9 +462,10 @@ _tempered_scale_bands_precalc (ddb_analyzer_t *analyzer) {
 }
 
 static float
-_interpolate_bin_with_ratio (float *fft_data, int bin, float ratio) {
+_interpolate_bin_with_ratio (float *fft_data, int fft_size, int bin, float ratio) {
     float a = fft_data[bin];
-    float b = fft_data[bin + 1];
+    // the last bin has no neighbour to interpolate with
+    float b = bin + 1 < fft_size ? fft_data[bin + 1] : a;
 
     float result;
 
