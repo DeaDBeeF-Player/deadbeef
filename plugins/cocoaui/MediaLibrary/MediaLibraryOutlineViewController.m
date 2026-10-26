@@ -106,6 +106,12 @@ _model_listener (struct scriptableModel_t *model, void *user_data) {
     self.searchField.target = self;
     self.searchField.action = @selector(searchFieldAction:);
 
+    // Show the standard clear button; NSSearchFieldCell displays it only while the field is non-empty.
+    NSSearchFieldCell *searchCell = self.searchField.cell;
+    if (searchCell.cancelButtonCell == nil) {
+        searchCell.cancelButtonCell = [NSSearchFieldCell new].cancelButtonCell;
+    }
+
     self.medialibPlugin = (DB_mediasource_t *)deadbeef->plug_get_for_id ("medialib");
     self.artworkPlugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
 
