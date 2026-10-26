@@ -56,6 +56,8 @@ static void *kPresetCtx = &kPresetCtx;
 
 @property (nonatomic) NSImage *folderImage;
 
+@property (nonatomic) BOOL showAlbumArt;
+
 @property (nonatomic) BOOL hasChangedSelection;
 
 @end
@@ -129,6 +131,7 @@ _model_listener (struct scriptableModel_t *model, void *user_data) {
     self.outlineView.target = self;
 
     self.albumArtCache = [NSMutableDictionary new];
+    self.showAlbumArt = deadbeef->conf_get_int ("cocoaui.show_medialib_covers", 1) ? YES : NO;
 
     self.selectedItems = [NSMutableArray new];
 
@@ -454,6 +457,15 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
 }
 
 - (int)widgetMessage:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
+    if (_id == DB_EV_CONFIGCHANGED) {
+        BOOL showAlbumArt = deadbeef->conf_get_int ("cocoaui.show_medialib_covers", 1) ? YES : NO;
+        dispatch_async (dispatch_get_main_queue (), ^{
+            if (showAlbumArt != self.showAlbumArt) {
+                self.showAlbumArt = showAlbumArt;
+                [self.outlineView reloadData];
+            }
+        });
+    }
     return 0;
 }
 
@@ -647,7 +659,8 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         if (mlItem.numberOfChildren) {
             it = [mlItem childAtIndex:0].playItem;
         }
-        if (item == self.medialibRootItem) {
+        // Without album art use the text-only cell, so that no space is reserved for the image
+        if (item == self.medialibRootItem || !self.showAlbumArt) {
             view = [outlineView makeViewWithIdentifier:@"TextCell" owner:self];
         }
         else {
@@ -658,6 +671,11 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         }
         else {
             view.textField.stringValue = mlItem.stringValue;
+
+            if (!self.showAlbumArt) {
+                return view;
+            }
+
             view.imageView.image = nil;
 
             if (mlItem.coverImage == nil && mlItem.children.count != 0) {

@@ -21,6 +21,7 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSString *titlebarPlaying;
 @property (nonatomic) NSString *titlebarStopped;
 @property (nonatomic) BOOL displaySelectionTimeInStatusBar;
+@property (nonatomic) BOOL showMedialibCovers;
 
 // GUI Playlist properties
 @property (nonatomic) BOOL mmbDeletePlaylist;
@@ -50,6 +51,7 @@ extern DB_functions_t *deadbeef;
     _titlebarPlaying = conf_get_nsstr ("cocoaui.titlebar_playing", DEFAULT_TITLEBAR_PLAYING_VALUE);
     _titlebarStopped = conf_get_nsstr ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_STOPPED_VALUE);
     _displaySelectionTimeInStatusBar = deadbeef->conf_get_int ("cocoaui.statusbar_seltime", 0) ? YES : NO;
+    _showMedialibCovers = deadbeef->conf_get_int ("cocoaui.show_medialib_covers", 1) ? YES : NO;
 
     // gui/misc -> playlist
     _mmbDeletePlaylist =  deadbeef->conf_get_int ("cocoaui.mmb_delete_playlist", 1) ? YES : NO;
@@ -97,6 +99,12 @@ extern DB_functions_t *deadbeef;
 - (void)setDisplaySelectionTimeInStatusBar:(BOOL)displaySelectionTimeInStatusBar {
     _displaySelectionTimeInStatusBar = displaySelectionTimeInStatusBar;
     deadbeef->conf_set_int ("cocoaui.statusbar_seltime", displaySelectionTimeInStatusBar);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+- (void)setShowMedialibCovers:(BOOL)showMedialibCovers {
+    _showMedialibCovers = showMedialibCovers;
+    deadbeef->conf_set_int ("cocoaui.show_medialib_covers", showMedialibCovers);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
