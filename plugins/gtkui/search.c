@@ -396,10 +396,25 @@ search_message (uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
 
 ///////// searchwin playlist navigation and rendering
 
+static void
+_searchentry_icon_pressed (GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data) {
+    if (icon_pos == GTK_ENTRY_ICON_SECONDARY) {
+        // triggers "changed", which updates the search and hides the icon
+        gtk_entry_set_text (entry, "");
+    }
+}
+
 void
 on_searchentry_changed                 (GtkEditable     *editable,
                                         gpointer         user_data)
 {
+    // show the clear icon only while the entry is non-empty
+    GtkEntry *entry = GTK_ENTRY (editable);
+    gtk_entry_set_icon_from_icon_name (
+        entry,
+        GTK_ENTRY_ICON_SECONDARY,
+        *gtk_entry_get_text (entry) ? "edit-clear-symbolic" : NULL);
+
     DdbListview *listview = playlist_visible();
     if (listview) {
         ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -467,6 +482,8 @@ search_playlist_init (GtkWidget *mainwin) {
     searchwin = create_searchwin ();
     gtk_window_set_transient_for (GTK_WINDOW (searchwin), GTK_WINDOW (mainwin));
     window_title_bytecode = deadbeef->tf_compile (_("Search [(%list_total% results)]"));
+    GtkWidget *entry = lookup_widget (searchwin, "searchentry");
+    g_signal_connect ((gpointer)entry, "icon-press", G_CALLBACK (_searchentry_icon_pressed), NULL);
     DdbListview *listview = DDB_LISTVIEW (lookup_widget (searchwin, "searchlist"));
     _playlist_controller = playlist_controller_new(listview, TRUE);
 }
