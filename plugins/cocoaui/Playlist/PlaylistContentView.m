@@ -10,6 +10,7 @@
 #import "PlaylistContentView.h"
 #import "PlaylistGroup.h"
 #import "PlaylistView.h"
+#import "QuickLookViewController.h"
 #import "DdbShared.h"
 #import "DdbPlayItemPasteboardSerializer.h"
 #import "PlaylistLocalDragDropHolder.h"
@@ -1026,6 +1027,12 @@ static int grouptitleheight = 22;
             return;
         }
 
+        if (0 == (theEvent.modifierFlags & NSEventModifierFlagDeviceIndependentFlagsMask)
+            && keyChar == ' ') { // space key without mods
+            [self toggleQuickLook];
+            return;
+        }
+
         switch (keyChar) {
         case NSDownArrowFunctionKey:
             if (theEvent.modifierFlags & NSEventModifierFlagCommand) {
@@ -1177,6 +1184,45 @@ static int grouptitleheight = 22;
     }
     else {
         self.needsDisplay = YES;
+    }
+
+    [self updateQuickLook];
+}
+
+/// Center of the cursor row (clamped to the visible area) in screen coordinates
+- (NSPoint)quickLookOriginForCursor {
+    NSRect vis = self.enclosingScrollView.documentVisibleRect;
+    NSPoint point = NSMakePoint (NSMidX (vis), NSMidY (vis));
+
+    PlaylistGroup *grp;
+    int even, cursor, group_y;
+    NSRect rect;
+    if ([self getDrawInfo:self.dataModel.cursor group:&grp isEven:&even cursor:&cursor group_y:&group_y rect:&rect] != -1) {
+        point.y = MIN (MAX (NSMidY (rect), NSMinY (vis)), NSMaxY (vis));
+    }
+    NSRect windowRect = [self convertRect:NSMakeRect (point.x, point.y, 0, 0) toView:nil];
+    return [self.window convertRectToScreen:windowRect].origin;
+}
+
+- (void)updateQuickLook {
+    if (!QuickLookViewController.shared.isVisible) {
+        return;
+    }
+    DdbListviewRow_t row = [self.dataModel rowForIndex:self.dataModel.cursor];
+    if (row != self.dataModel.invalidRow) {
+        [QuickLookViewController.shared updateWithTrack:(DB_playItem_t *)row zoomOrigin:[self quickLookOriginForCursor]];
+        [self.dataModel unrefRow:row];
+    }
+}
+
+- (void)toggleQuickLook {
+    DdbListviewRow_t row = [self.dataModel rowForIndex:self.dataModel.cursor];
+    if (row != self.dataModel.invalidRow) {
+        [QuickLookViewController.shared toggleForTrack:(DB_playItem_t *)row zoomOrigin:[self quickLookOriginForCursor]];
+        [self.dataModel unrefRow:row];
+    }
+    else if (QuickLookViewController.shared.isVisible) {
+        [QuickLookViewController.shared toggleForTrack:NULL zoomOrigin:[self quickLookOriginForCursor]];
     }
 }
 

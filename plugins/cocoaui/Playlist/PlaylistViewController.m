@@ -1055,6 +1055,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 - (void)selectionChanged:(DdbListviewRow_t)row {
     PlaylistView *lv = (PlaylistView *)self.view;
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, (uintptr_t)lv, DDB_PLAYLIST_CHANGE_SELECTION, 0);
+    [lv.contentView updateQuickLook];
 }
 
 - (BOOL)hasDND {

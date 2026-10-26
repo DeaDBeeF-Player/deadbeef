@@ -26,6 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setCursor:(int)cursor noscroll:(BOOL)noscroll;
 
+/// Refresh the quicklook panel (if visible) for the cursor track
+- (void)updateQuickLook;
+
 - (void)scrollToRowWithIndex:(int)idx;
 - (void)scrollVerticalPosition:(CGFloat)verticalPosition;
 

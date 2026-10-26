@@ -3005,6 +3005,7 @@
 		4DE28473205BE0B20023063E /* HelpViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DE28470205BE0B20023063E /* HelpViewer.xib */; };
 		83BA8E501D542D0D00D345EE /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83BA8E4F1D542D0D00D345EE /* VideoToolbox.framework */; };
 		83BA8E5F1D542D2700D345EE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83BA8E5E1D542D2700D345EE /* CoreMedia.framework */; };
+		A1B2C3D4E5F60718293A4B03 /* QuickLookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B02 /* QuickLookViewController.m */; };
 		E96D62CB2C97C15E009CB254 /* woodyopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E96D62292C97C145009CB254 /* woodyopl.cpp */; };
 		E96D62CC2C97C15E009CB254 /* cmfmcsop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E96D622A2C97C146009CB254 /* cmfmcsop.cpp */; };
 		E96D62CD2C97C15E009CB254 /* mididata.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D622B2C97C146009CB254 /* mididata.h */; };
@@ -7720,6 +7721,8 @@
 		4DE28470205BE0B20023063E /* HelpViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HelpViewer.xib; sourceTree = "<group>"; };
 		83BA8E4F1D542D0D00D345EE /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		83BA8E5E1D542D2700D345EE /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		A1B2C3D4E5F60718293A4B01 /* QuickLookViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuickLookViewController.h; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B02 /* QuickLookViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuickLookViewController.m; sourceTree = "<group>"; };
 		E96D62292C97C145009CB254 /* woodyopl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = woodyopl.cpp; sourceTree = "<group>"; };
 		E96D622A2C97C146009CB254 /* cmfmcsop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cmfmcsop.cpp; sourceTree = "<group>"; };
 		E96D622B2C97C146009CB254 /* mididata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mididata.h; sourceTree = "<group>"; };
@@ -13667,6 +13670,7 @@
 				2DA3720B2370B7C3005E64A3 /* NowPlayable */,
 				2DDBA26623E5FBA000051320 /* Playlist */,
 				2D9FA3862404515500276E00 /* Preferences */,
+				A1B2C3D4E5F60718293A4B04 /* QuickLook */,
 				2D9FA3952404526800276E00 /* Scriptable */,
 				2D747E2424B64E3400BBB987 /* SplitViewMainWindow */,
 				2D0B1C8619C5CF4A00CED0B5 /* Supporting files */,
@@ -13707,6 +13711,15 @@
 			);
 			name = cocoaui;
 			path = plugins/cocoaui;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60718293A4B04 /* QuickLook */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60718293A4B01 /* QuickLookViewController.h */,
+				A1B2C3D4E5F60718293A4B02 /* QuickLookViewController.m */,
+			);
+			path = QuickLook;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -19128,6 +19141,7 @@
 				2D29AE022B7288C9001648B0 /* BorderedTableRowView.m in Sources */,
 				2DDBA24E23E5E66D00051320 /* PlaylistContentView.m in Sources */,
 				2D72047719DF2971000989C6 /* PlaylistViewController.m in Sources */,
+				A1B2C3D4E5F60718293A4B03 /* QuickLookViewController.m in Sources */,
 				2DC657EC274A605E00583E14 /* PlaylistBrowserViewController.m in Sources */,
 				2D98B681272B272300E655AE /* VisualizationShaders.metal in Sources */,
 				2D7387EF29BE5DF7003E3126 /* NSUndoManager+DdbUndoBuffer.m in Sources */,
