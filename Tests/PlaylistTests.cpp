@@ -134,6 +134,37 @@ TEST(PlaylistTests, test_PlaylistAutosort) {
     plt_unref(plt);
 }
 
+TEST(PlaylistTests, test_MoveSelectedItemsToAnotherPlaylist_SelectionPlaybackTimeIsPreserved) {
+    messagepump_init();
+
+    playlist_t *from = plt_alloc("from");
+    playlist_t *to = plt_alloc("to");
+
+    playItem_t *it_A = pl_item_alloc();
+    playItem_t *it_B = pl_item_alloc();
+
+    playItem_t *tail = plt_insert_item(from, NULL, it_A);
+    plt_set_item_duration(from, it_A, 10);
+    tail = plt_insert_item(from, tail, it_B);
+    plt_set_item_duration(from, it_B, 20);
+
+    plt_select_all(from);
+    EXPECT_EQ(30, plt_get_selection_playback_time(from));
+    EXPECT_EQ(0, plt_get_selection_playback_time(to));
+
+    uint32_t indexes[] = {0, 1};
+    plt_move_items(to, PL_MAIN, from, NULL, indexes, 2);
+
+    EXPECT_EQ(0, plt_get_selection_playback_time(from));
+    EXPECT_EQ(30, plt_get_selection_playback_time(to));
+
+    pl_item_unref(it_A);
+    pl_item_unref(it_B);
+
+    plt_unref(from);
+    plt_unref(to);
+}
+
 TEST (PlaylistTests, test_LoadDBPLWithRelativepaths) {
     using ::testing::StartsWith;
     ddb_playlist_t *plt = deadbeef->plt_alloc ("test");

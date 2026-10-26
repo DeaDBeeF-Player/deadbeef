@@ -49,6 +49,7 @@
 - (void)updateVolumeBar;
 - (void)updateTitleBarConfig;
 - (void)updateTitleBar;
+- (void)updateSonginfo;
 
 - (void)cleanup;
 

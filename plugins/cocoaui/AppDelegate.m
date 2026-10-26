@@ -197,6 +197,7 @@ extern DB_functions_t *deadbeef;
 
     [_mainWindow updateTitleBarConfig];
     [_mainWindow updateTitleBar];
+    [_mainWindow updateSonginfo];
 }
 
 static int fileadd_cancelled = 0;

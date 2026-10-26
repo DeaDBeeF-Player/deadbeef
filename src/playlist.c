@@ -1873,6 +1873,11 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
         playlist->totaltime += dur;
     }
 
+    // the item may be inserted already selected (e.g. moved from another playlist, or copied)
+    if (it->selected) {
+        playlist->recalc_seltime = 1;
+    }
+
     plt_modified (playlist);
 
     UNLOCK;

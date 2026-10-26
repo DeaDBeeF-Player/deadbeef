@@ -189,8 +189,21 @@
                                             <binding destination="jtP-FH-nkX" name="value" keyPath="self.titlebarStopped" id="FZM-rT-URR"/>
                                         </connections>
                                     </textField>
+                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="sT1-Sb-aR1">
+                                        <rect key="frame" x="20" y="45" width="434" height="16"/>
+                                        <buttonCell key="cell" type="check" title="Display selection playback time in status bar" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="sT2-Sb-aR2">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="jtP-FH-nkX" name="value" keyPath="self.displaySelectionTimeInStatusBar" id="sT3-Sb-aR3"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstItem="sT1-Sb-aR1" firstAttribute="leading" secondItem="zMC-Ss-j3s" secondAttribute="leading" id="sT4-Sb-aR4"/>
+                                    <constraint firstItem="sT1-Sb-aR1" firstAttribute="trailing" secondItem="zMC-Ss-j3s" secondAttribute="trailing" id="sT5-Sb-aR5"/>
+                                    <constraint firstItem="sT1-Sb-aR1" firstAttribute="top" secondItem="usM-X5-aNf" secondAttribute="bottom" constant="8" id="sT6-Sb-aR6"/>
                                     <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="usM-X5-aNf" secondAttribute="bottom" constant="20" id="7fz-wl-9F6"/>
                                     <constraint firstItem="nXp-DV-5XR" firstAttribute="firstBaseline" secondItem="zMC-Ss-j3s" secondAttribute="baseline" constant="20" id="Fku-BC-yem"/>
                                     <constraint firstItem="3Ja-ME-qNM" firstAttribute="firstBaseline" secondItem="usM-X5-aNf" secondAttribute="firstBaseline" id="Lu8-tG-ZZr"/>

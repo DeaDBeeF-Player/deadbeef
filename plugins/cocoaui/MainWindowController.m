@@ -49,6 +49,7 @@ extern DB_functions_t *deadbeef;
     char *_titlebar_stopped_script;
     char *_titlebar_stopped_subtitle_script;
     char *_statusbar_playing_script;
+    char *_statusbar_stopped_script;
     int _prevSeekBarPos;
     int _deletePlaylistIndex;
 }
@@ -221,23 +222,28 @@ static char sb_text[512];
         snprintf (totaltime_str, sizeof (totaltime_str), _("%d days %d:%02d:%02d"), daystotal, hourtotal, mintotal, sectotal);
     }
     
-    DB_playItem_t *track = deadbeef->streamer_get_playing_track_safe ();
-    
-    if (!output || (output->state () == DDB_PLAYBACK_STATE_STOPPED || !track)) {
-        snprintf (sbtext_new, sizeof (sbtext_new), _("Stopped | %d tracks | %s total playtime"), deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+    if (!_statusbar_playing_script || !_statusbar_stopped_script) {
+        [self updateTitleBarConfig];
     }
-    else {
-        ddb_tf_context_t ctx = {
-            ._size = sizeof (ddb_tf_context_t),
-            .it = track,
-            .iter = PL_MAIN,
-        };
 
-        char buffer[200];
-        deadbeef->tf_eval (&ctx, _statusbar_playing_script, buffer, sizeof (buffer));
-        snprintf (sbtext_new, sizeof (sbtext_new), "%s | %d tracks | %s total playtime", buffer, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+    DB_playItem_t *track = deadbeef->streamer_get_playing_track_safe ();
+
+    ddb_tf_context_t ctx = {
+        ._size = sizeof (ddb_tf_context_t),
+        .it = track,
+        .iter = PL_MAIN,
+        .plt = deadbeef->plt_get_curr (),
+    };
+
+    char buffer[200];
+    BOOL stopped = !output || output->state () == DDB_PLAYBACK_STATE_STOPPED || !track;
+    deadbeef->tf_eval (&ctx, stopped ? _statusbar_stopped_script : _statusbar_playing_script, buffer, sizeof (buffer));
+    snprintf (sbtext_new, sizeof (sbtext_new), _("%s | %d tracks | %s total playtime"), buffer, deadbeef->pl_getcount (PL_MAIN), totaltime_str);
+
+    if (ctx.plt) {
+        deadbeef->plt_unref (ctx.plt);
     }
-    
+
     if (strcmp (sbtext_new, sb_text)) {
         strcpy (sb_text, sbtext_new);
         self.statusBar.stringValue = @(sb_text);
@@ -452,6 +458,11 @@ static char sb_text[512];
         deadbeef->tf_free (_statusbar_playing_script);
         _statusbar_playing_script = NULL;
     }
+
+    if (_statusbar_stopped_script) {
+        deadbeef->tf_free (_statusbar_stopped_script);
+        _statusbar_stopped_script = NULL;
+    }
 }
 
 - (void)updateTitleBarConfig {
@@ -471,7 +482,14 @@ static char sb_text[512];
     deadbeef->conf_get_str ("cocoaui.titlebar_stopped", DEFAULT_TITLEBAR_SUBTITLE_STOPPED_VALUE, script, sizeof (script));
     _titlebar_stopped_subtitle_script = deadbeef->tf_compile (script);
 
-    _statusbar_playing_script = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%");
+    if (deadbeef->conf_get_int ("cocoaui.statusbar_seltime", 0)) {
+        _statusbar_playing_script = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length% | %selection_playback_time% selection playtime");
+        _statusbar_stopped_script = deadbeef->tf_compile ("Stopped | %selection_playback_time% selection playtime");
+    }
+    else {
+        _statusbar_playing_script = deadbeef->tf_compile ("$if2($strcmp(%ispaused%,),Paused | )$if2($upper(%codec%),-) |[ %playback_bitrate% kbps |][ %samplerate%Hz |][ %:BPS% bit |][ %channels% |] %playback_time% / %length%");
+        _statusbar_stopped_script = deadbeef->tf_compile ("Stopped");
+    }
 }
 
 - (void)updateTitleBar {
