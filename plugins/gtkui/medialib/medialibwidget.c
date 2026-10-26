@@ -456,7 +456,21 @@ _search_text_did_change (GtkEditable *editable, gpointer user_data) {
         mlv->search_text = strdup (text);
     }
 
+    // show the clear icon only while the entry is non-empty
+    gtk_entry_set_icon_from_icon_name (
+        mlv->search_entry,
+        GTK_ENTRY_ICON_SECONDARY,
+        *text ? "edit-clear-symbolic" : NULL);
+
     _reload_content (mlv);
+}
+
+static void
+_search_icon_pressed (GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEvent *event, gpointer user_data) {
+    if (icon_pos == GTK_ENTRY_ICON_SECONDARY) {
+        // triggers "changed", which updates the search and hides the icon
+        gtk_entry_set_text (entry, "");
+    }
 }
 
 static int
@@ -962,6 +976,7 @@ w_medialib_viewer_create (void) {
     gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 
     g_signal_connect ((gpointer)w->search_entry, "changed", G_CALLBACK (_search_text_did_change), w);
+    g_signal_connect ((gpointer)w->search_entry, "icon-press", G_CALLBACK (_search_icon_pressed), w);
     g_signal_connect ((gpointer)w->tree, "row-activated", G_CALLBACK (_treeview_row_did_activate), w);
     g_signal_connect ((gpointer)w->tree, "button_press_event", G_CALLBACK (_treeview_row_mousedown), w);
     g_signal_connect ((gpointer)configure_button, "clicked", G_CALLBACK (_configure_did_activate), w);
