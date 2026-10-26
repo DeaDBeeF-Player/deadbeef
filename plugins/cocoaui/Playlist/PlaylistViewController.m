@@ -78,6 +78,9 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) ddb_artwork_plugin_t *artwork_plugin;
 @property (nonatomic) int64_t sourceId;
 
+// Set while the saved scroll position is being restored, to avoid overwriting it with intermediate values
+@property (nonatomic) BOOL isRestoringScrollPosition;
+
 @end
 
 @implementation PlaylistViewController
@@ -1116,12 +1119,17 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         }
         deadbeef->plt_unref (plt);
 
+        // reloading resizes the content, which reports intermediate scroll positions
+        self.isRestoringScrollPosition = YES;
         [listview.contentView reloadData];
         deadbeef->pl_unlock ();
 
         // there's a delay in scrollview layout
+        weakify(self);
         dispatch_after((dispatch_time_t)(0.01 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            strongify(self);
             [listview.contentView scrollVerticalPosition:scroll];
+            self.isRestoringScrollPosition = NO;
         });
     }
 }
@@ -1481,6 +1489,9 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 }
 
 - (void)scrollChanged:(CGFloat)pos {
+    if (self.isRestoringScrollPosition) {
+        return;
+    }
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
     if (plt) {
         deadbeef->plt_set_scroll (plt, (int)pos);
