@@ -89,7 +89,7 @@ ogg_parse_artwork_comment (const char *comment, int comment_length, ddb_cover_in
     uint8_t *buffer = decoded_blob;
     int buffer_size = decoded_size;
 
-    /*int32_t picture_type = */ READ_UINT32 ();
+    int32_t picture_type = READ_UINT32 ();
     int32_t mime_size = READ_UINT32 ();
     mime_type = calloc (1, mime_size + 1);
     READ_BUF (mime_type, mime_size);
@@ -115,10 +115,17 @@ ogg_parse_artwork_comment (const char *comment, int comment_length, ddb_cover_in
     /*uint32_t palette_size = */ READ_UINT32 ();
     uint32_t picture_data_len = READ_UINT32 ();
 
+    if (cover == NULL) {
+        // only checking, if this is a valid picture
+        free (decoded_blob);
+        return 0;
+    }
+
     cover->priv->blob_size = picture_data_len;
     cover->priv->blob_image_size = picture_data_len;
     cover->priv->blob = (char *)decoded_blob;
     cover->priv->blob_image_offset = buffer - decoded_blob;
+    cover->cover_type = artwork_cover_type_for_picture_type (picture_type);
     return 0;
 
 error:

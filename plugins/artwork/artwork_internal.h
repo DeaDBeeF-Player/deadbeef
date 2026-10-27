@@ -59,6 +59,16 @@ struct ddb_cover_info_priv_s {
     struct ddb_cover_info_s *next;
 };
 
+// Returns the cover type for the picture type used by ID3v2 APIC, FLAC PICTURE, and Vorbis METADATA_BLOCK_PICTURE.
+static inline ddb_artwork_cover_type_t
+artwork_cover_type_for_picture_type (int picture_type) {
+    if (picture_type < 0 || picture_type > 20) {
+        return DDB_ARTWORK_COVER_TYPE_OTHER;
+    }
+    // The cover types are in the same order as the picture types, starting with DDB_ARTWORK_COVER_TYPE_OTHER
+    return (ddb_artwork_cover_type_t)(DDB_ARTWORK_COVER_TYPE_OTHER + picture_type);
+}
+
 size_t artwork_http_request(const char *url, char *buffer, const size_t max_bytes);
 
 void artwork_abort_all_http_requests (void);

@@ -27,6 +27,8 @@
 #include <deadbeef/deadbeef.h>
 #include "artwork.h"
 
+/// Parses a METADATA_BLOCK_PICTURE comment. Returns 0 if it's a valid picture.
+/// If @c cover is NULL, the picture is only validated, otherwise it's loaded into @c cover.
 int
 ogg_parse_artwork_comment (const char *comment, int comment_length, ddb_cover_info_t *cover);
 

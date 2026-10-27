@@ -462,16 +462,6 @@ id3v2_skip_str (int enc, const uint8_t *ptr, const uint8_t *end) {
     }
 }
 
-// Returns the cover type for the ID3v2 picture type.
-static ddb_artwork_cover_type_t
-id3v2_cover_type_for_picture_type (int picture_type) {
-    if (picture_type < 0 || picture_type > 20) {
-        return DDB_ARTWORK_COVER_TYPE_OTHER;
-    }
-    // The cover types are in the same order as the ID3v2 picture types, starting with DDB_ARTWORK_COVER_TYPE_OTHER
-    return (ddb_artwork_cover_type_t)(DDB_ARTWORK_COVER_TYPE_OTHER + picture_type);
-}
-
 // Returns the pointer to the image data in the APIC/PIC frame.
 // If @c wanted_picture_type is not -1, only the frames of this ID3v2 picture type are accepted.
 // If @c out_picture_type is not NULL, it receives the ID3v2 picture type of the frame.
@@ -529,10 +519,45 @@ id3v2_artwork (
     return data;
 }
 
+// The names in the parentheses of the "Cover Art (...)" APEv2 item keys, in the order of the ID3v2 picture types.
+static const char *apev2_cover_names[] = {
+    "other", "icon", "other icon", "front", "back", "leaflet", "media", "lead artist", "artist", "conductor", "band",
+    "composer", "lyricist", "recording location", "during recording", "during performance", "video screen capture",
+    "fish", "illustration", "band logo", "publisher logo",
+};
+
+static ddb_artwork_cover_type_t
+apev2_cover_type_for_key (const char *key) {
+    // key is "Cover Art (name)"
+    const char *name = key + strlen ("cover art (");
+    const size_t len = strlen (name);
+    if (len > 0 && name[len - 1] == ')') {
+        for (int i = 0; i < sizeof (apev2_cover_names) / sizeof (apev2_cover_names[0]); i++) {
+            if (strlen (apev2_cover_names[i]) == len - 1 && !strncasecmp (name, apev2_cover_names[i], len - 1)) {
+                return artwork_cover_type_for_picture_type (i);
+            }
+        }
+    }
+    return DDB_ARTWORK_COVER_TYPE_OTHER;
+}
+
+// Returns the pointer to the image data in the "Cover Art" item.
+// Only the front cover is accepted, unless @c all_covers is set.
+// If @c out_type is not NULL, it receives the cover type.
 static const uint8_t *
-apev2_artwork (const DB_apev2_frame_t *f) {
-    if (strcasecmp (f->key, "cover art (front)")) {
+apev2_artwork (const DB_apev2_frame_t *f, int all_covers, ddb_artwork_cover_type_t *out_type) {
+    ddb_artwork_cover_type_t type;
+    if (!strcasecmp (f->key, "cover art (front)")) {
+        type = DDB_ARTWORK_COVER_TYPE_FRONT;
+    }
+    else if (all_covers && !strncasecmp (f->key, "cover art (", strlen ("cover art ("))) {
+        type = apev2_cover_type_for_key (f->key);
+    }
+    else {
         return NULL;
+    }
+    if (out_type != NULL) {
+        *out_type = type;
     }
 
     const uint8_t *data = f->data;
@@ -598,7 +623,7 @@ id3_extract_art (ddb_cover_info_t *cover) {
                 cover->priv->blob_size = f->size;
                 cover->priv->blob_image_offset = (uint64_t)((char *)image_data - (char *)cover->priv->blob);
                 cover->priv->blob_image_size = sz;
-                cover->cover_type = id3v2_cover_type_for_picture_type (picture_type);
+                cover->cover_type = artwork_cover_type_for_picture_type (picture_type);
                 err = 0;
                 break;
             }
@@ -612,45 +637,25 @@ id3_extract_art (ddb_cover_info_t *cover) {
 }
 
 static int
-artwork_cover_count_in_track (ddb_playItem_t *track) {
-    if (track == NULL) {
-        return 0;
-    }
-
-    char *path = NULL;
-    deadbeef->pl_lock ();
-    const char *uri = deadbeef->pl_find_meta (track, ":URI");
-    if (uri != NULL) {
-        path = strdup (uri);
-    }
-    deadbeef->pl_unlock ();
-
-    if (path == NULL) {
-        return 0;
-    }
-
+id3_cover_count (const char *path) {
     int count = 0;
-    if (deadbeef->is_local_file (path)) {
-        DB_id3v2_tag_t id3v2_tag;
-        memset (&id3v2_tag, 0, sizeof (id3v2_tag));
-        DB_FILE *fp = deadbeef->fopen (path);
-        if (fp != NULL) {
-            if (!deadbeef->junk_id3v2_read_full (NULL, &id3v2_tag, fp)) {
-                int minor_version = id3v2_tag.version[0];
-                for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; f = f->next) {
-                    // Count the same frames, which id3_extract_art can load
-                    const uint8_t *image_data = id3v2_artwork (f, minor_version, -1, NULL);
-                    if (image_data != NULL && image_data < f->data + f->size) {
-                        count++;
-                    }
+    DB_id3v2_tag_t id3v2_tag;
+    memset (&id3v2_tag, 0, sizeof (id3v2_tag));
+    DB_FILE *fp = deadbeef->fopen (path);
+    if (fp != NULL) {
+        if (!deadbeef->junk_id3v2_read_full (NULL, &id3v2_tag, fp)) {
+            int minor_version = id3v2_tag.version[0];
+            for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; f = f->next) {
+                // Count the same frames, which id3_extract_art can load
+                const uint8_t *image_data = id3v2_artwork (f, minor_version, -1, NULL);
+                if (image_data != NULL && image_data < f->data + f->size) {
+                    count++;
                 }
             }
-            deadbeef->junk_id3v2_free (&id3v2_tag);
-            deadbeef->fclose (fp);
         }
+        deadbeef->junk_id3v2_free (&id3v2_tag);
+        deadbeef->fclose (fp);
     }
-
-    free (path);
     return count;
 }
 
@@ -661,12 +666,18 @@ apev2_extract_art (ddb_cover_info_t *cover) {
     memset (&apev2_tag, 0, sizeof (apev2_tag));
     DB_FILE *apev2_fp = deadbeef->fopen (cover->priv->filepath);
     if (apev2_fp && !deadbeef->junk_apev2_read_full (NULL, &apev2_tag, apev2_fp)) {
+        const int use_cover_index = (cover->priv->query_flags & DDB_ARTWORK_USE_COVER_INDEX) != 0;
+        int index = 0;
         DB_apev2_frame_t *fprev = NULL;
-        for (DB_apev2_frame_t *f = apev2_tag.frames; f; f = f->next) {
-            const uint8_t *image_data = apev2_artwork (f);
+        for (DB_apev2_frame_t *f = apev2_tag.frames; f; fprev = f, f = f->next) {
+            ddb_artwork_cover_type_t type = DDB_ARTWORK_COVER_TYPE_DEFAULT;
+            const uint8_t *image_data = apev2_artwork (f, use_cover_index, &type);
             if (image_data) {
                 const size_t sz = f->size - (image_data - f->data);
                 if (sz <= 0) {
+                    continue;
+                }
+                if (use_cover_index && index++ != cover->priv->cover_index) {
                     continue;
                 }
                 // steal the frame memory from DB_id3v2_tag_t
@@ -681,10 +692,10 @@ apev2_extract_art (ddb_cover_info_t *cover) {
                 cover->priv->blob_size = f->size;
                 cover->priv->blob_image_offset = (uint64_t)((char *)image_data - (char *)cover->priv->blob);
                 cover->priv->blob_image_size = sz;
+                cover->cover_type = type;
                 err = 0;
                 break;
             }
-            fprev = f;
         }
     }
     deadbeef->junk_apev2_free (&apev2_tag);
@@ -692,6 +703,28 @@ apev2_extract_art (ddb_cover_info_t *cover) {
         deadbeef->fclose (apev2_fp);
     }
     return err;
+}
+
+static int
+apev2_cover_count (const char *path) {
+    int count = 0;
+    DB_apev2_tag_t apev2_tag;
+    memset (&apev2_tag, 0, sizeof (apev2_tag));
+    DB_FILE *fp = deadbeef->fopen (path);
+    if (fp != NULL) {
+        if (!deadbeef->junk_apev2_read_full (NULL, &apev2_tag, fp)) {
+            for (DB_apev2_frame_t *f = apev2_tag.frames; f; f = f->next) {
+                // Count the same items, which apev2_extract_art can load
+                const uint8_t *image_data = apev2_artwork (f, 1, NULL);
+                if (image_data != NULL && image_data < f->data + f->size) {
+                    count++;
+                }
+            }
+        }
+        deadbeef->junk_apev2_free (&apev2_tag);
+        deadbeef->fclose (fp);
+    }
+    return count;
 }
 
 static int
@@ -762,6 +795,105 @@ error:
         fp = NULL;
     }
     return ret;
+}
+
+
+static uint32_t
+mp4_read_be32 (const uint8_t *p) {
+    return ((uint32_t)p[0] << 24) | ((uint32_t)p[1] << 16) | ((uint32_t)p[2] << 8) | p[3];
+}
+
+// The mp4p library only loads the first `data` subatom of the `covr` atom, so the images are read from the file here:
+// every `data` subatom of every `covr` atom in `ilst` is a cover.
+// If @c cover is NULL: returns the number of covers, or -1 on failure.
+// Otherwise: loads the cover at @c index into @c cover, and returns 0 on success, or -1 on failure.
+static int
+mp4_scan_covers (const char *path, ddb_cover_info_t *cover, int index) {
+    if (!strcasestr (path, ".mp4") && !strcasestr (path, ".m4a") && !strcasestr (path, ".m4b")) {
+        return -1;
+    }
+
+    int result = -1;
+    int count = 0;
+    mp4p_atom_t *mp4file = NULL;
+    uint8_t *image_blob = NULL;
+
+    DB_FILE *fp = deadbeef->fopen (path);
+    if (!fp) {
+        return -1;
+    }
+
+    mp4p_file_callbacks_t callbacks = { 0 };
+    callbacks.ptrhandle = fp;
+    mp4_init_ddb_file_callbacks (&callbacks);
+    mp4file = mp4p_open (&callbacks);
+    if (!mp4file) {
+        goto error;
+    }
+
+    int found = 0;
+    for (mp4p_atom_t *covr = mp4_get_cover_atom (mp4file); covr && !found; covr = covr->next) {
+        if (mp4p_atom_type_compare (covr, "covr")) {
+            continue;
+        }
+
+        uint64_t offs = covr->pos + 8;
+        const uint64_t end = covr->pos + covr->size;
+        while (offs + 16 <= end) {
+            // `data` subatom: size, "data", version and flags, locale
+            uint8_t header[16];
+            if (deadbeef->fseek (fp, offs, SEEK_SET) != 0 || deadbeef->fread (header, 1, sizeof (header), fp) != sizeof (header)) {
+                break;
+            }
+            const uint32_t box_size = mp4_read_be32 (header);
+            if (box_size < 16 || offs + box_size > end) {
+                break;
+            }
+            const uint32_t image_size = box_size - 16;
+            if (!memcmp (header + 4, "data", 4) && image_size > 0) {
+                if (cover != NULL && count == index) {
+                    image_blob = malloc (image_size);
+                    if (image_blob == NULL || deadbeef->fread (image_blob, 1, image_size, fp) != image_size) {
+                        goto error;
+                    }
+                    cover->priv->blob = (char *)image_blob;
+                    image_blob = NULL;
+                    cover->priv->blob_size = image_size;
+                    cover->priv->blob_image_size = image_size;
+                    found = 1;
+                    break;
+                }
+                count++;
+            }
+            offs += box_size;
+        }
+    }
+
+    if (cover != NULL) {
+        result = found ? 0 : -1;
+    }
+    else {
+        result = count;
+    }
+
+error:
+    free (image_blob);
+    if (mp4file) {
+        mp4p_atom_free_list (mp4file);
+    }
+    deadbeef->fclose (fp);
+    return result;
+}
+
+static int
+mp4_extract_art_at_index (ddb_cover_info_t *cover, int index) {
+    return mp4_scan_covers (cover->priv->filepath, cover, index);
+}
+
+static int
+mp4_cover_count (const char *path) {
+    int count = mp4_scan_covers (path, NULL, 0);
+    return count < 0 ? 0 : count;
 }
 
 
@@ -911,6 +1043,114 @@ _consume_blob (ddb_cover_info_t *cover, const char *cache_path) {
     }
 }
 
+typedef enum {
+    EMBEDDED_FORMAT_NONE,
+    EMBEDDED_FORMAT_FLAC,
+    EMBEDDED_FORMAT_ID3V2,
+    EMBEDDED_FORMAT_APEV2,
+    EMBEDDED_FORMAT_MP4,
+    EMBEDDED_FORMAT_OGG,
+    EMBEDDED_FORMAT_OPUS,
+} embedded_format_t;
+
+// Returns the number of covers in the file, and the tag format they're in.
+// If there are covers in multiple tag formats, the covers of the first format in this order are used:
+// FLAC, ID3v2, APEv2, MP4, Ogg Vorbis, Opus.
+static int
+embedded_cover_count (const char *path, embedded_format_t *out_format) {
+    embedded_format_t format = EMBEDDED_FORMAT_NONE;
+    int count = 0;
+#ifdef USE_METAFLAC
+    if (count == 0 && (count = flac_cover_count (path)) > 0) {
+        format = EMBEDDED_FORMAT_FLAC;
+    }
+#endif
+    if (count == 0 && (count = id3_cover_count (path)) > 0) {
+        format = EMBEDDED_FORMAT_ID3V2;
+    }
+    if (count == 0 && (count = apev2_cover_count (path)) > 0) {
+        format = EMBEDDED_FORMAT_APEV2;
+    }
+    if (count == 0 && (count = mp4_cover_count (path)) > 0) {
+        format = EMBEDDED_FORMAT_MP4;
+    }
+#ifdef USE_OGG
+    if (count == 0 && (count = ogg_cover_count (path)) > 0) {
+        format = EMBEDDED_FORMAT_OGG;
+    }
+#endif
+#ifdef USE_OPUS
+    if (count == 0 && (count = opus_cover_count (path)) > 0) {
+        format = EMBEDDED_FORMAT_OPUS;
+    }
+#endif
+    if (out_format != NULL) {
+        *out_format = format;
+    }
+    return count;
+}
+
+static int
+artwork_cover_count_in_track (ddb_playItem_t *track) {
+    if (track == NULL) {
+        return 0;
+    }
+
+    char *path = NULL;
+    deadbeef->pl_lock ();
+    const char *uri = deadbeef->pl_find_meta (track, ":URI");
+    if (uri != NULL) {
+        path = strdup (uri);
+    }
+    deadbeef->pl_unlock ();
+
+    if (path == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    if (deadbeef->is_local_file (path)) {
+        count = embedded_cover_count (path, NULL);
+    }
+
+    free (path);
+    return count;
+}
+
+// Loads the embedded cover at the @c cover_index of the @c cover.
+// Returns 0 on success: the image is then in the @c blob.
+static int
+extract_embedded_art_at_index (ddb_cover_info_t *cover) {
+    embedded_format_t format;
+    int count = embedded_cover_count (cover->priv->filepath, &format);
+    if (cover->priv->cover_index >= count) {
+        return -1;
+    }
+
+    switch (format) {
+#ifdef USE_METAFLAC
+    case EMBEDDED_FORMAT_FLAC:
+        return flac_extract_art_at_index (cover, cover->priv->cover_index);
+#endif
+    case EMBEDDED_FORMAT_ID3V2:
+        return id3_extract_art (cover);
+    case EMBEDDED_FORMAT_APEV2:
+        return apev2_extract_art (cover);
+    case EMBEDDED_FORMAT_MP4:
+        return mp4_extract_art_at_index (cover, cover->priv->cover_index);
+#ifdef USE_OGG
+    case EMBEDDED_FORMAT_OGG:
+        return ogg_extract_art_at_index (cover, cover->priv->cover_index);
+#endif
+#ifdef USE_OPUS
+    case EMBEDDED_FORMAT_OPUS:
+        return opus_extract_art_at_index (cover, cover->priv->cover_index);
+#endif
+    default:
+        return -1;
+    }
+}
+
 // Tries to extract the embedded cover from all supported tag formats, in order.
 // Returns 0 on success: the image is then in the @c blob, or in @c image_filename.
 static int
@@ -994,8 +1234,7 @@ process_embedded_query (ddb_cover_info_t *cover) {
 
     int err;
     if (cover->priv->query_flags & DDB_ARTWORK_USE_COVER_INDEX) {
-        // Covers by index are only supported in id3v2 for now
-        err = id3_extract_art (cover);
+        err = extract_embedded_art_at_index (cover);
     }
     else {
         err = extract_embedded_art (cover);

@@ -110,7 +110,7 @@ typedef struct ddb_cover_query_s {
     /// The index of the cover to load, from 0 to the number returned by @c cover_count_in_track minus 1.
     /// Only used when the @c DDB_ARTWORK_USE_COVER_INDEX flag is set, in which case the index must be valid:
     /// the query fails otherwise, including when @c _size doesn't cover this field.
-    /// Currently only supported for covers embedded in ID3v2 tags.
+    /// Supported for covers embedded in FLAC, ID3v2, APEv2, MP4, Ogg Vorbis and Opus tags.
     /// Added in API 2.1.
     int cover_index;
 } ddb_cover_query_t;
@@ -202,7 +202,9 @@ typedef struct {
 
     /// Returns the number of covers embedded in the file of the @c track.
     /// The covers can be loaded by passing their index in `ddb_cover_query_t.cover_index`.
-    /// This function is synchronous, and reads the file; currently only ID3v2 tags are supported.
+    /// This function is synchronous, and reads the file.
+    /// If the file has covers in multiple tag formats, the first format in this order is used:
+    /// FLAC, ID3v2, APEv2, MP4, Ogg Vorbis, Opus.
     int
     (*cover_count_in_track) (ddb_playItem_t *track);
 } ddb_artwork_plugin_t;

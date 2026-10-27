@@ -71,24 +71,26 @@ copus_ftell (void *stream) {
     return deadbeef->ftell (stream);
 }
 
-int
-opus_extract_art (ddb_cover_info_t *cover) {
-    int err = -1;
-    if (!strcasestr (cover->priv->filepath, ".ogg")
-        && !strcasestr (cover->priv->filepath, ".oga")
-        && !strcasestr (cover->priv->filepath, ".opus")) {
+// If @c cover is NULL: returns the number of pictures, or -1 on failure.
+// Otherwise: loads the picture at @c index into @c cover, and returns 0 on success, or -1 on failure.
+static int
+opus_scan (const char *path, ddb_cover_info_t *cover, int index) {
+    int result = -1;
+    if (!strcasestr (path, ".ogg")
+        && !strcasestr (path, ".oga")
+        && !strcasestr (path, ".opus")) {
         return -1;
     }
 
     DB_FILE *fp = NULL;
 
-    fp = deadbeef->fopen (cover->priv->filepath);
+    fp = deadbeef->fopen (path);
     if (!fp) {
-        trace ("opus_extract_art: failed to fopen %s\n", cover->priv->filepath);
+        trace ("opus_extract_art: failed to fopen %s\n", path);
         return -1;
     }
     if (fp->vfs->is_streaming ()) {
-        trace ("opus_extract_art: failed to fopen %s\n", cover->priv->filepath);
+        trace ("opus_extract_art: failed to fopen %s\n", path);
         deadbeef->fclose (fp);
         return -1;
     }
@@ -110,14 +112,38 @@ opus_extract_art (ddb_cover_info_t *cover) {
         goto error;
     }
 
+    int count = 0;
     for (int i = 0; i < ot->comments; i++) {
-        if (0 == ogg_parse_artwork_comment (ot->user_comments[i], ot->comment_lengths[i], cover)) {
-            err = 0;
-            break;
+        const int load = cover != NULL && count == index;
+        if (0 == ogg_parse_artwork_comment (ot->user_comments[i], ot->comment_lengths[i], load ? cover : NULL)) {
+            if (load) {
+                result = 0;
+                break;
+            }
+            count++;
         }
+    }
+    if (cover == NULL) {
+        result = count;
     }
 
 error:
     op_free (opus_file);
-    return err;
+    return result;
+}
+
+int
+opus_extract_art (ddb_cover_info_t *cover) {
+    return opus_scan (cover->priv->filepath, cover, 0);
+}
+
+int
+opus_extract_art_at_index (ddb_cover_info_t *cover, int index) {
+    return opus_scan (cover->priv->filepath, cover, index);
+}
+
+int
+opus_cover_count (const char *path) {
+    int count = opus_scan (path, NULL, 0);
+    return count < 0 ? 0 : count;
 }

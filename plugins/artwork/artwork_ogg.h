@@ -29,4 +29,12 @@
 int
 ogg_extract_art (ddb_cover_info_t *cover);
 
+/// Loads the picture at @c index; returns 0 on success.
+int
+ogg_extract_art_at_index (ddb_cover_info_t *cover, int index);
+
+/// Returns the number of pictures in the file at @c path.
+int
+ogg_cover_count (const char *path);
+
 #endif /* artwork_ogg_h */

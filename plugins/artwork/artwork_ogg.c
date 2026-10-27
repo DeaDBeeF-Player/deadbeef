@@ -59,24 +59,26 @@ cvorbis_ftell (void *datasource) {
     return deadbeef->ftell (datasource);
 }
 
-int
-ogg_extract_art (ddb_cover_info_t *cover) {
-    int err = -1;
-    if (!strcasestr (cover->priv->filepath, ".ogg")
-        && !strcasestr (cover->priv->filepath, ".oga")) {
+// If @c cover is NULL: returns the number of pictures, or -1 on failure.
+// Otherwise: loads the picture at @c index into @c cover, and returns 0 on success, or -1 on failure.
+static int
+ogg_scan (const char *path, ddb_cover_info_t *cover, int index) {
+    int result = -1;
+    if (!strcasestr (path, ".ogg")
+        && !strcasestr (path, ".oga")) {
         return -1;
     }
 
     DB_FILE *fp = NULL;
     OggVorbis_File vorbis_file;
 
-    fp = deadbeef->fopen (cover->priv->filepath);
+    fp = deadbeef->fopen (path);
     if (!fp) {
-        trace ("ogg_extract_art: failed to fopen %s\n", cover->priv->filepath);
+        trace ("ogg_extract_art: failed to fopen %s\n", path);
         return -1;
     }
     if (fp->vfs->is_streaming ()) {
-        trace ("ogg_extract_art: failed to fopen %s\n", cover->priv->filepath);
+        trace ("ogg_extract_art: failed to fopen %s\n", path);
         deadbeef->fclose(fp);
         return -1;
     }
@@ -99,18 +101,38 @@ ogg_extract_art (ddb_cover_info_t *cover) {
         goto error;
     }
 
-    // TODO: currently it will just return the first picture,
-    // but would be great to be able to enumerate / return all pictures,
-    // as well as prioritize by picture type.
-
+    int count = 0;
     for (int i = 0; i < vc->comments; i++) {
-        if (0 == ogg_parse_artwork_comment (vc->user_comments[i], vc->comment_lengths[i], cover)) {
-            err = 0;
-            break;
+        const int load = cover != NULL && count == index;
+        if (0 == ogg_parse_artwork_comment (vc->user_comments[i], vc->comment_lengths[i], load ? cover : NULL)) {
+            if (load) {
+                result = 0;
+                break;
+            }
+            count++;
         }
+    }
+    if (cover == NULL) {
+        result = count;
     }
 
 error:
     ov_clear (&vorbis_file);
-    return err;
+    return result;
+}
+
+int
+ogg_extract_art (ddb_cover_info_t *cover) {
+    return ogg_scan (cover->priv->filepath, cover, 0);
+}
+
+int
+ogg_extract_art_at_index (ddb_cover_info_t *cover, int index) {
+    return ogg_scan (cover->priv->filepath, cover, index);
+}
+
+int
+ogg_cover_count (const char *path) {
+    int count = ogg_scan (path, NULL, 0);
+    return count < 0 ? 0 : count;
 }

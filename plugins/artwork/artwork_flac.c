@@ -21,6 +21,7 @@
     3. This notice may not be removed or altered from any source distribution.
 */
 
+#include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <deadbeef/deadbeef.h>
@@ -61,12 +62,15 @@ static FLAC__IOCallbacks flac_iocb = {
     .close = NULL
 };
 
-int
-flac_extract_art (ddb_cover_info_t *cover) {
-    if (!strcasestr (cover->priv->filepath, ".flac") && !strcasestr (cover->priv->filepath, ".oga")) {
+// Scans the picture blocks which have image data.
+// If @c cover is NULL: returns the number of pictures, or -1 on failure.
+// Otherwise: loads the picture at @c index into @c cover, and returns 0 on success, or -1 on failure.
+static int
+flac_scan (const char *path, ddb_cover_info_t *cover, int index) {
+    if (!strcasestr (path, ".flac") && !strcasestr (path, ".oga")) {
         return -1;
     }
-    int err = -1;
+    int result = -1;
     DB_FILE *file = NULL;
     FLAC__Metadata_Iterator *iterator = NULL;
 
@@ -75,9 +79,9 @@ flac_extract_art (ddb_cover_info_t *cover) {
         return -1;
     }
 
-    file = deadbeef->fopen (cover->priv->filepath);
+    file = deadbeef->fopen (path);
     if (!file) {
-        trace ("artwork: failed to open %s\n", cover->priv->filepath);
+        trace ("artwork: failed to open %s\n", path);
         goto error;
     }
 
@@ -89,36 +93,45 @@ flac_extract_art (ddb_cover_info_t *cover) {
 #endif
     deadbeef->fclose (file);
     if (!res) {
-        trace ("artwork: failed to read metadata from flac: %s\n", cover->priv->filepath);
+        trace ("artwork: failed to read metadata from flac: %s\n", path);
         goto error;
     }
 
-    FLAC__StreamMetadata *picture = 0;
     iterator = FLAC__metadata_iterator_new ();
     if (!iterator) {
         goto error;
     }
+
+    int count = 0;
+    int found = 0;
     FLAC__metadata_iterator_init (iterator, chain);
     do {
         FLAC__StreamMetadata *block = FLAC__metadata_iterator_get_block (iterator);
-        if (block->type == FLAC__METADATA_TYPE_PICTURE) {
-            picture = block;
+        if (block->type != FLAC__METADATA_TYPE_PICTURE) {
+            continue;
         }
-    } while (FLAC__metadata_iterator_next (iterator) && 0 == picture);
+        FLAC__StreamMetadata_Picture *pic = &block->data.picture;
+        if (pic->data_length == 0) {
+            continue;
+        }
+        if (cover != NULL && count == index) {
+            trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
+            cover->priv->blob = malloc (pic->data_length);
+            memcpy (cover->priv->blob, pic->data, pic->data_length);
+            cover->priv->blob_size = pic->data_length;
+            cover->priv->blob_image_size = pic->data_length;
+            cover->cover_type = artwork_cover_type_for_picture_type ((int)pic->type);
+            found = 1;
+            break;
+        }
+        count++;
+    } while (FLAC__metadata_iterator_next (iterator));
 
-    if (!picture) {
-        trace ("%s doesn't have an embedded cover\n", cover->priv->filepath);
-        goto error;
+    if (cover != NULL) {
+        result = found ? 0 : -1;
     }
-
-    FLAC__StreamMetadata_Picture *pic = &picture->data.picture;
-    if (pic && pic->data_length > 0) {
-        trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
-        cover->priv->blob = malloc (pic->data_length);
-        memcpy (cover->priv->blob, pic->data, pic->data_length);
-        cover->priv->blob_size = pic->data_length;
-        cover->priv->blob_image_size = pic->data_length;
-        err = 0;
+    else {
+        result = count;
     }
 error:
     if (chain) {
@@ -127,6 +140,22 @@ error:
     if (iterator) {
         FLAC__metadata_iterator_delete (iterator);
     }
-    return err;
+    return result;
+}
+
+int
+flac_extract_art (ddb_cover_info_t *cover) {
+    return flac_scan (cover->priv->filepath, cover, 0);
+}
+
+int
+flac_extract_art_at_index (ddb_cover_info_t *cover, int index) {
+    return flac_scan (cover->priv->filepath, cover, index);
+}
+
+int
+flac_cover_count (const char *path) {
+    int count = flac_scan (path, NULL, 0);
+    return count < 0 ? 0 : count;
 }
 #endif
