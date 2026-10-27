@@ -92,10 +92,10 @@ $(BUILD)/%.o: %.c
 	$(CC) -std=c99 $(CFLAGS) -c $< -o $@
 
 $(BUILD)/%.o: %.cpp
-	$(CXX) -std=c++14 $(CFLAGS) -c $< -o $@
+	$(CXX) -std=c++17 $(CFLAGS) -c $< -o $@
 
 $(BUILD)/%.o: %.cc
-	$(CXX) -std=c++14 $(CFLAGS) -c $< -o $@
+	$(CXX) -std=c++17 $(CFLAGS) -c $< -o $@
 
 $(BUILD)/runtests: $(TEST_C_OBJS) $(GOOGLE_TEST_OBJS) $(TEST_CPP_OBJS)
 	$(CXX) $(LDFLAGS) $(TEST_C_OBJS) $(GOOGLE_TEST_OBJS) $(TEST_CPP_OBJS) $(LIBRARIES) -o $@
