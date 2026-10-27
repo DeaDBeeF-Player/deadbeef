@@ -52,7 +52,8 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSScrollView *artworkScrollView;
 @property (nonatomic) NSTableView *artworkTableView;
 @property (nonatomic) NSTextField *artworkMessageLabel;
-@property (nonatomic) NSImage *artworkImage;
+// Rows of the artwork table: dictionaries with @"name" and @"image" keys
+@property (nonatomic) NSArray<NSDictionary *> *artworkItems;
 @property (nonatomic) NSUInteger artworkGeneration;
 
 @property (nonatomic) ddb_playlist_t *playlist;
@@ -248,12 +249,78 @@ static NSString *const ArtworkPictureColumnID = @"Picture";
     self.artworkMessageLabel = label;
 }
 
-// Shows either the message (if non-nil) or the table with the artwork (if image is available).
+static NSString *
+artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
+    switch (coverType) {
+    case DDB_ARTWORK_COVER_TYPE_OTHER:
+        return @"Other";
+    case DDB_ARTWORK_COVER_TYPE_FILE_ICON:
+        return @"File Icon (32x32 PNG)";
+    case DDB_ARTWORK_COVER_TYPE_OTHER_FILE_ICON:
+        return @"Other File Icon";
+    case DDB_ARTWORK_COVER_TYPE_FRONT:
+        return @"Front Cover";
+    case DDB_ARTWORK_COVER_TYPE_BACK:
+        return @"Back Cover";
+    case DDB_ARTWORK_COVER_TYPE_LEAFLET_PAGE:
+        return @"Leaflet Page";
+    case DDB_ARTWORK_COVER_TYPE_MEDIA:
+        return @"Media";
+    case DDB_ARTWORK_COVER_TYPE_LEAD_ARTIST:
+        return @"Lead Artist";
+    case DDB_ARTWORK_COVER_TYPE_ARTIST:
+        return @"Artist";
+    case DDB_ARTWORK_COVER_TYPE_CONDUCTOR:
+        return @"Conductor";
+    case DDB_ARTWORK_COVER_TYPE_BAND:
+        return @"Band / Orchestra";
+    case DDB_ARTWORK_COVER_TYPE_COMPOSER:
+        return @"Composer";
+    case DDB_ARTWORK_COVER_TYPE_LYRICIST:
+        return @"Lyricist";
+    case DDB_ARTWORK_COVER_TYPE_RECORDING_LOCATION:
+        return @"Recording Location";
+    case DDB_ARTWORK_COVER_TYPE_DURING_RECORDING:
+        return @"During Recording";
+    case DDB_ARTWORK_COVER_TYPE_DURING_PERFORMANCE:
+        return @"During Performance";
+    case DDB_ARTWORK_COVER_TYPE_VIDEO_SCREEN_CAPTURE:
+        return @"Video Screen Capture";
+    case DDB_ARTWORK_COVER_TYPE_BRIGHT_FISH:
+        return @"A Bright Coloured Fish";
+    case DDB_ARTWORK_COVER_TYPE_ILLUSTRATION:
+        return @"Illustration";
+    case DDB_ARTWORK_COVER_TYPE_BAND_LOGO:
+        return @"Band / Artist Logotype";
+    case DDB_ARTWORK_COVER_TYPE_PUBLISHER_LOGO:
+        return @"Publisher / Studio Logotype";
+    case DDB_ARTWORK_COVER_TYPE_DEFAULT:
+        break;
+    }
+    return @"Cover";
+}
+
+// Shows either the message (if non-nil) or the table with the artwork (if there are items to show).
 - (void)showArtworkMessage:(NSString *)message {
     self.artworkMessageLabel.stringValue = message ?: @"";
     self.artworkMessageLabel.hidden = message == nil;
-    self.artworkScrollView.hidden = message != nil || self.artworkImage == nil;
+    self.artworkScrollView.hidden = message != nil || self.artworkItems.count == 0;
     [self.artworkTableView reloadData];
+}
+
+- (void)requestArtworkForTrack:(DB_playItem_t *)track
+                        plugin:(ddb_artwork_plugin_t *)plugin
+                    coverIndex:(int)coverIndex
+                         flags:(uint32_t)flags
+                    completion:(void (^)(NSImage *image, ddb_artwork_cover_type_t coverType))completion {
+    ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
+    query->_size = sizeof (ddb_cover_query_t);
+    query->track = track;
+    query->flags = flags;
+    query->cover_index = coverIndex;
+    deadbeef->pl_item_ref (track);
+    query->user_data = (void *)CFBridgingRetain (completion);
+    plugin->cover_get (query, artwork_cover_callback);
 }
 
 - (void)reloadArtwork {
@@ -263,7 +330,7 @@ static NSString *const ArtworkPictureColumnID = @"Picture";
 
     // Invalidate any pending load
     self.artworkGeneration++;
-    self.artworkImage = nil;
+    self.artworkItems = nil;
 
     int numtracks = self.metadataListViewController.numtracks;
     if (numtracks > 1) {
@@ -277,40 +344,82 @@ static NSString *const ArtworkPictureColumnID = @"Picture";
         return;
     }
 
-    // Loading: hide everything until the result arrives
+    // Loading: hide everything until the results arrive
     self.artworkMessageLabel.hidden = YES;
     self.artworkScrollView.hidden = YES;
     [self.artworkTableView reloadData];
 
     DB_playItem_t *track = self.metadataListViewController.tracks[0];
+
+    // Load every cover embedded in the file. If there are none (or the file format doesn't support it),
+    // fall back to the regular lookup of a single cover, which also searches local files and online services.
+    int count = 0;
+    if (plugin->plugin.plugin.version_minor >= 1) {
+        count = plugin->cover_count_in_track (track);
+    }
+    BOOL onlyEmbedded = count > 0;
+    NSUInteger numRequests = onlyEmbedded ? count : 1;
+
     NSUInteger generation = self.artworkGeneration;
     __weak TrackPropertiesWindowController *weakSelf = self;
 
-    void (^completion)(NSImage *) = ^(NSImage *image) {
-        TrackPropertiesWindowController *strongSelf = weakSelf;
-        if (strongSelf == nil || strongSelf.artworkGeneration != generation) {
-            return;
-        }
-        strongSelf.artworkImage = image;
-        [strongSelf showArtworkMessage:image ? nil : @"No artwork found."];
-    };
+    // Accessed on the main thread only
+    NSMutableArray *results = [NSMutableArray new];
+    for (NSUInteger i = 0; i < numRequests; i++) {
+        [results addObject:NSNull.null];
+    }
+    __block NSUInteger pending = numRequests;
 
-    ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
-    query->_size = sizeof (ddb_cover_query_t);
-    query->track = track;
-    deadbeef->pl_item_ref (track);
-    query->user_data = (void *)CFBridgingRetain (completion);
-    plugin->cover_get (query, artwork_cover_callback);
+    for (NSUInteger i = 0; i < numRequests; i++) {
+        void (^completion)(NSImage *, ddb_artwork_cover_type_t) = ^(NSImage *image, ddb_artwork_cover_type_t coverType) {
+            TrackPropertiesWindowController *strongSelf = weakSelf;
+            if (strongSelf == nil || strongSelf.artworkGeneration != generation) {
+                return;
+            }
+            if (image != nil) {
+                // The regular lookup is for the front cover
+                if (!onlyEmbedded && coverType == DDB_ARTWORK_COVER_TYPE_DEFAULT) {
+                    coverType = DDB_ARTWORK_COVER_TYPE_FRONT;
+                }
+                results[i] = @{ @"name": artworkNameForCoverType (coverType), @"image": image };
+            }
+            pending--;
+            if (pending != 0) {
+                return;
+            }
+
+            NSMutableArray<NSDictionary *> *items = [NSMutableArray new];
+            for (id result in results) {
+                if (result != NSNull.null) {
+                    [items addObject:result];
+                }
+            }
+            strongSelf.artworkItems = items;
+            [strongSelf showArtworkMessage:items.count != 0 ? nil : @"No artwork found."];
+        };
+
+        [self requestArtworkForTrack:track
+                              plugin:plugin
+                          coverIndex:(int)i
+                               flags:onlyEmbedded ? DDB_ARTWORK_USE_COVER_INDEX : 0
+                          completion:completion];
+    }
 }
 
 // Called by the artwork plugin on a non-main thread.
 static void
 artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
-    void (^completion)(NSImage *) = (void (^)(NSImage *))CFBridgingRelease (query->user_data);
+    void (^completion)(NSImage *, ddb_artwork_cover_type_t) =
+        (void (^)(NSImage *, ddb_artwork_cover_type_t))CFBridgingRelease (query->user_data);
     BOOL cancelled = (query->flags & DDB_ARTWORK_FLAG_CANCELLED) != 0;
     NSString *path = nil;
+    ddb_artwork_cover_type_t coverType = DDB_ARTWORK_COVER_TYPE_DEFAULT;
     if (!cancelled && error == 0 && cover != NULL && cover->cover_found && cover->image_filename != NULL) {
         path = @(cover->image_filename);
+        // cover_type was added in API 2.1
+        if (cover->_size >= offsetof (ddb_cover_info_t, cover_type) + sizeof (cover->cover_type)) {
+            coverType = cover->cover_type;
+        }
     }
     deadbeef->pl_item_unref (query->track);
     free (query);
@@ -331,7 +440,7 @@ artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
             }
         }
         dispatch_async (dispatch_get_main_queue (), ^{
-            completion (cancelled ? nil : image);
+            completion (cancelled ? nil : image, coverType);
         });
     });
 }
@@ -342,7 +451,7 @@ artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
     if (tableView != self.artworkTableView) {
         return 0;
     }
-    return self.artworkImage != nil ? 1 : 0;
+    return self.artworkItems.count;
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
@@ -383,11 +492,12 @@ artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         }
     }
 
+    NSDictionary *item = self.artworkItems[row];
     if ([tableColumn.identifier isEqualToString:ArtworkPictureColumnID]) {
-        cell.imageView.image = self.artworkImage;
+        cell.imageView.image = item[@"image"];
     }
     else {
-        cell.textField.stringValue = @"Front Cover";
+        cell.textField.stringValue = item[@"name"];
     }
     return cell;
 }

@@ -28,14 +28,64 @@
 #include <time.h>
 
 #define DDB_ARTWORK_MAJOR_VERSION 2
-#define DDB_ARTWORK_MINOR_VERSION 0
+#define DDB_ARTWORK_MINOR_VERSION 1
 
 /// The flags below can be used in the `flags` member of the `ddb_cover_query_t` structure,
 /// and can be OR'ed together.
 enum {
     /// Loading of the cover was cancelled, and result should be ignored
     DDB_ARTWORK_FLAG_CANCELLED = (1<<0),
+
+    /// Only look for the cover embedded in the track's file: skip local image files and online services.
+    /// Added in API 2.1.
+    DDB_ARTWORK_ONLY_EMBEDDED = (1<<1),
+
+    /// Load the cover at the index specified in `ddb_cover_query_t.cover_index`.
+    /// Implies @c DDB_ARTWORK_ONLY_EMBEDDED.
+    /// Without this flag the @c cover_index is ignored, and the best cover is searched using all the enabled sources.
+    /// Added in API 2.1.
+    DDB_ARTWORK_USE_COVER_INDEX = (1<<2),
 };
+
+/// Cover types, reported in `ddb_cover_info_t.cover_type`.
+/// The types other than @c DDB_ARTWORK_COVER_TYPE_DEFAULT correspond to the ID3v2 APIC picture types,
+/// which are also used by FLAC, Ogg Vorbis, Opus, and WMA.
+/// Added in API 2.1.
+typedef enum {
+    /// The type is not known, e.g. the cover was found in a local folder, or in a tag format without cover types
+    DDB_ARTWORK_COVER_TYPE_DEFAULT = 0,
+    DDB_ARTWORK_COVER_TYPE_OTHER = 1,
+    /// 32x32 PNG file icon
+    DDB_ARTWORK_COVER_TYPE_FILE_ICON = 2,
+    DDB_ARTWORK_COVER_TYPE_OTHER_FILE_ICON = 3,
+    DDB_ARTWORK_COVER_TYPE_FRONT = 4,
+    DDB_ARTWORK_COVER_TYPE_BACK = 5,
+    DDB_ARTWORK_COVER_TYPE_LEAFLET_PAGE = 6,
+    /// e.g. label side of CD
+    DDB_ARTWORK_COVER_TYPE_MEDIA = 7,
+    /// Lead artist / lead performer / soloist
+    DDB_ARTWORK_COVER_TYPE_LEAD_ARTIST = 8,
+    /// Artist / performer
+    DDB_ARTWORK_COVER_TYPE_ARTIST = 9,
+    DDB_ARTWORK_COVER_TYPE_CONDUCTOR = 10,
+    /// Band / orchestra
+    DDB_ARTWORK_COVER_TYPE_BAND = 11,
+    DDB_ARTWORK_COVER_TYPE_COMPOSER = 12,
+    /// Lyricist / text writer
+    DDB_ARTWORK_COVER_TYPE_LYRICIST = 13,
+    DDB_ARTWORK_COVER_TYPE_RECORDING_LOCATION = 14,
+    DDB_ARTWORK_COVER_TYPE_DURING_RECORDING = 15,
+    DDB_ARTWORK_COVER_TYPE_DURING_PERFORMANCE = 16,
+    /// Movie / video screen capture
+    DDB_ARTWORK_COVER_TYPE_VIDEO_SCREEN_CAPTURE = 17,
+    /// A bright coloured fish
+    DDB_ARTWORK_COVER_TYPE_BRIGHT_FISH = 18,
+    DDB_ARTWORK_COVER_TYPE_ILLUSTRATION = 19,
+    /// Band / artist logotype
+    DDB_ARTWORK_COVER_TYPE_BAND_LOGO = 20,
+    /// Publisher / studio logotype
+    DDB_ARTWORK_COVER_TYPE_PUBLISHER_LOGO = 21,
+} ddb_artwork_cover_type_t;
 
 /// This structure needs to be passed to cover_get.
 /// It must remain in memory until the callback is called.
@@ -56,6 +106,13 @@ typedef struct ddb_cover_query_s {
 
     /// A unique ID identifying the source of the query. This allows to cancel all queries for a single source.
     int64_t source_id;
+
+    /// The index of the cover to load, from 0 to the number returned by @c cover_count_in_track minus 1.
+    /// Only used when the @c DDB_ARTWORK_USE_COVER_INDEX flag is set, in which case the index must be valid:
+    /// the query fails otherwise, including when @c _size doesn't cover this field.
+    /// Currently only supported for covers embedded in ID3v2 tags.
+    /// Added in API 2.1.
+    int cover_index;
 } ddb_cover_query_t;
 
 typedef struct ddb_cover_info_priv_s ddb_cover_info_priv_t;
@@ -71,6 +128,10 @@ typedef struct ddb_cover_info_s {
     int cover_found; // set to 1 if the cover was found
 
     char *image_filename; // A name of file with the image
+
+    /// The type of the cover, if known; @c DDB_ARTWORK_COVER_TYPE_DEFAULT otherwise.
+    /// Added in API 2.1: only access it if @c _size covers this field.
+    ddb_artwork_cover_type_t cover_type;
 } ddb_cover_info_t;
 
 /// The `error` is 0 on success, or negative value on failure.
@@ -136,6 +197,14 @@ typedef struct {
     /// Cancel all queries with the specified source_id
     void
     (*cancel_queries_with_source_id) (int64_t source_id);
+
+    // Added in API 2.1: check that `plugin.version_minor` is at least 1 before calling.
+
+    /// Returns the number of covers embedded in the file of the @c track.
+    /// The covers can be loaded by passing their index in `ddb_cover_query_t.cover_index`.
+    /// This function is synchronous, and reads the file; currently only ID3v2 tags are supported.
+    int
+    (*cover_count_in_track) (ddb_playItem_t *track);
 } ddb_artwork_plugin_t;
 
 #endif /*__ARTWORK_H*/

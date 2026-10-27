@@ -32,6 +32,7 @@
 #include <fnmatch.h>
 #include <libgen.h>
 #include <limits.h>
+#include <stddef.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -461,8 +462,25 @@ id3v2_skip_str (int enc, const uint8_t *ptr, const uint8_t *end) {
     }
 }
 
+// Returns the cover type for the ID3v2 picture type.
+static ddb_artwork_cover_type_t
+id3v2_cover_type_for_picture_type (int picture_type) {
+    if (picture_type < 0 || picture_type > 20) {
+        return DDB_ARTWORK_COVER_TYPE_OTHER;
+    }
+    // The cover types are in the same order as the ID3v2 picture types, starting with DDB_ARTWORK_COVER_TYPE_OTHER
+    return (ddb_artwork_cover_type_t)(DDB_ARTWORK_COVER_TYPE_OTHER + picture_type);
+}
+
+// Returns the pointer to the image data in the APIC/PIC frame.
+// If @c wanted_picture_type is not -1, only the frames of this ID3v2 picture type are accepted.
+// If @c out_picture_type is not NULL, it receives the ID3v2 picture type of the frame.
 static const uint8_t *
-id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version, int type) {
+id3v2_artwork (
+    const DB_id3v2_frame_t *f,
+    int minor_version,
+    int wanted_picture_type,
+    int *out_picture_type) {
     if ((minor_version > 2 && strcmp (f->id, "APIC")) || (minor_version == 2 && strcmp (f->id, "PIC"))) {
         return NULL;
     }
@@ -488,15 +506,18 @@ id3v2_artwork (const DB_id3v2_frame_t *f, int minor_version, int type) {
             trace ("artwork: corrupted id3v2 APIC frame\n");
             return NULL;
         }
-        if (type == -1 || *mime_end == type) {
-            trace ("artwork: picture type=%d\n", *mime_end);
-            return NULL;
-        }
-        trace ("artwork: mime-type=%s, picture type: %d\n", data, *mime_end);
         data = mime_end;
     }
     else {
         data += 3; // image format
+    }
+    const int picture_type = *data;
+    trace ("artwork: picture type: %d\n", picture_type);
+    if (wanted_picture_type != -1 && picture_type != wanted_picture_type) {
+        return NULL;
+    }
+    if (out_picture_type != NULL) {
+        *out_picture_type = picture_type;
     }
     data++; // picture type
     data = id3v2_skip_str (enc, data, end); // description
@@ -541,16 +562,28 @@ id3_extract_art (ddb_cover_info_t *cover) {
     DB_FILE *id3v2_fp = deadbeef->fopen (cover->priv->filepath);
     if (id3v2_fp && !deadbeef->junk_id3v2_read_full (NULL, &id3v2_tag, id3v2_fp)) {
         int minor_version = id3v2_tag.version[0];
-        DB_id3v2_frame_t *fprev = NULL;
-        for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; f = f->next) {
-            const uint8_t *image_data = id3v2_artwork (f, minor_version, 3);
-            if (!image_data) {
-                // try any cover if front is not available
-                image_data = id3v2_artwork (f, minor_version, 0);
-            }
-            if (image_data) {
+
+        // Index of the cover to load, or -1 to prefer the front cover, and fall back to any cover.
+        const int use_cover_index = (cover->priv->query_flags & DDB_ARTWORK_USE_COVER_INDEX) != 0;
+        const int cover_index = cover->priv->cover_index;
+        // Without the index, prefer the front cover (picture type 3), and fall back to any cover.
+        const int passes[2] = { use_cover_index ? -1 : 3, -1 };
+        const int num_passes = use_cover_index ? 1 : 2;
+
+        for (int pass = 0; pass < num_passes && err != 0; pass++) {
+            int index = 0;
+            DB_id3v2_frame_t *fprev = NULL;
+            for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; fprev = f, f = f->next) {
+                int picture_type = 0;
+                const uint8_t *image_data = id3v2_artwork (f, minor_version, passes[pass], &picture_type);
+                if (!image_data) {
+                    continue;
+                }
                 const size_t sz = f->size - (image_data - f->data);
                 if (sz <= 0) {
+                    continue;
+                }
+                if (use_cover_index && index++ != cover_index) {
                     continue;
                 }
                 // steal the frame memory from DB_id3v2_tag_t
@@ -565,10 +598,10 @@ id3_extract_art (ddb_cover_info_t *cover) {
                 cover->priv->blob_size = f->size;
                 cover->priv->blob_image_offset = (uint64_t)((char *)image_data - (char *)cover->priv->blob);
                 cover->priv->blob_image_size = sz;
+                cover->cover_type = id3v2_cover_type_for_picture_type (picture_type);
                 err = 0;
                 break;
             }
-            fprev = f;
         }
     }
     deadbeef->junk_id3v2_free (&id3v2_tag);
@@ -576,6 +609,49 @@ id3_extract_art (ddb_cover_info_t *cover) {
         deadbeef->fclose (id3v2_fp);
     }
     return err;
+}
+
+static int
+artwork_cover_count_in_track (ddb_playItem_t *track) {
+    if (track == NULL) {
+        return 0;
+    }
+
+    char *path = NULL;
+    deadbeef->pl_lock ();
+    const char *uri = deadbeef->pl_find_meta (track, ":URI");
+    if (uri != NULL) {
+        path = strdup (uri);
+    }
+    deadbeef->pl_unlock ();
+
+    if (path == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    if (deadbeef->is_local_file (path)) {
+        DB_id3v2_tag_t id3v2_tag;
+        memset (&id3v2_tag, 0, sizeof (id3v2_tag));
+        DB_FILE *fp = deadbeef->fopen (path);
+        if (fp != NULL) {
+            if (!deadbeef->junk_id3v2_read_full (NULL, &id3v2_tag, fp)) {
+                int minor_version = id3v2_tag.version[0];
+                for (DB_id3v2_frame_t *f = id3v2_tag.frames; f; f = f->next) {
+                    // Count the same frames, which id3_extract_art can load
+                    const uint8_t *image_data = id3v2_artwork (f, minor_version, -1, NULL);
+                    if (image_data != NULL && image_data < f->data + f->size) {
+                        count++;
+                    }
+                }
+            }
+            deadbeef->junk_id3v2_free (&id3v2_tag);
+            deadbeef->fclose (fp);
+        }
+    }
+
+    free (path);
+    return count;
 }
 
 static int
@@ -835,6 +911,104 @@ _consume_blob (ddb_cover_info_t *cover, const char *cache_path) {
     }
 }
 
+// Tries to extract the embedded cover from all supported tag formats, in order.
+// Returns 0 on success: the image is then in the @c blob, or in @c image_filename.
+static int
+extract_embedded_art (ddb_cover_info_t *cover) {
+#ifdef USE_METAFLAC
+    // try to load embedded from flac metadata
+    trace ("trying to load artwork from Flac tag for %s\n", cover->priv->filepath);
+    if (!flac_extract_art (cover)) {
+        return 0;
+    }
+#endif
+
+    // try to load embedded from id3v2
+    trace ("trying to load artwork from id3v2 tag for %s\n", cover->priv->filepath);
+    if (!id3_extract_art (cover)) {
+        return 0;
+    }
+
+    // try to load embedded from apev2
+    trace ("trying to load artwork from apev2 tag for %s\n", cover->priv->filepath);
+    if (!apev2_extract_art (cover)) {
+        return 0;
+    }
+
+    // try to load embedded from mp4
+    trace ("trying to load artwork from mp4 tag for %s\n", cover->priv->filepath);
+    if (!mp4_extract_art (cover)) {
+        return 0;
+    }
+
+#ifdef USE_OGG
+    trace ("trying to load artwork from ogg tag for %s\n", cover->priv->filepath);
+    if (!ogg_extract_art (cover)) {
+        return 0;
+    }
+#endif
+
+#ifdef USE_OPUS
+    trace ("trying to load artwork from opus tag for %s\n", cover->priv->filepath);
+    if (!opus_extract_art (cover)) {
+        return 0;
+    }
+#endif
+
+    return -1;
+}
+
+// Cover files for the queries with @c DDB_ARTWORK_ONLY_EMBEDDED and/or a cover index are kept separately,
+// so that they don't replace the regular cached covers.
+static int
+make_embedded_cache_path (ddb_cover_info_t *cover, char *outpath, size_t outsize) {
+    const char *base = cover->priv->track_cache_path[0] ? cover->priv->track_cache_path : cover->priv->album_cache_path;
+    size_t len = strlen (base);
+    if (len == 0) {
+        return -1;
+    }
+    if (len > 4 && !strcmp (base + len - 4, ".jpg")) {
+        len -= 4;
+    }
+    if (!(cover->priv->query_flags & DDB_ARTWORK_USE_COVER_INDEX)) {
+        snprintf (outpath, outsize, "%.*s.embedded.jpg", (int)len, base);
+    }
+    else {
+        snprintf (outpath, outsize, "%.*s.embedded-%d.jpg", (int)len, base, cover->priv->cover_index);
+    }
+    return 0;
+}
+
+// Handles queries which request a cover by index, or only the embedded cover.
+// Never touches the regular caches, local files, or online services.
+static void
+process_embedded_query (ddb_cover_info_t *cover) {
+    if (!deadbeef->is_local_file (cover->priv->filepath)) {
+        return;
+    }
+
+    char cache_path[PATH_MAX];
+    if (make_embedded_cache_path (cover, cache_path, sizeof (cache_path)) < 0) {
+        return;
+    }
+
+    int err;
+    if (cover->priv->query_flags & DDB_ARTWORK_USE_COVER_INDEX) {
+        // Covers by index are only supported in id3v2 for now
+        err = id3_extract_art (cover);
+    }
+    else {
+        err = extract_embedded_art (cover);
+    }
+
+    if (err) {
+        return;
+    }
+
+    _consume_blob (cover, cache_path);
+    cover->cover_found = cover->image_filename != NULL;
+}
+
 // Behavior:
 // Found in cache: сache path is returned
 // Local cover: save to cache & return path
@@ -842,6 +1016,11 @@ _consume_blob (ddb_cover_info_t *cover, const char *cache_path) {
 // Web cover: save_to_local ? save_to_local&return_path : save_to_cache&return_path
 static void
 process_query (ddb_cover_info_t *cover) {
+    if (cover->priv->query_flags & (DDB_ARTWORK_USE_COVER_INDEX | DDB_ARTWORK_ONLY_EMBEDDED)) {
+        process_embedded_query (cover);
+        return;
+    }
+
     // If all sources are off: just return / do nothing.
     if (!artwork_enable_local
         && !artwork_enable_embedded
@@ -922,57 +1101,11 @@ process_query (ddb_cover_info_t *cover) {
     }
 
     if (artwork_enable_embedded && islocal) {
-#ifdef USE_METAFLAC
-        // try to load embedded from flac metadata
-        trace ("trying to load artwork from Flac tag for %s\n", cover->priv->filepath);
-        if (!flac_extract_art (cover)) {
+        if (!extract_embedded_art (cover)) {
             _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
             cover->cover_found = 1;
             return;
         }
-#endif
-
-        // try to load embedded from id3v2
-        trace ("trying to load artwork from id3v2 tag for %s\n", cover->priv->filepath);
-        if (!id3_extract_art (cover)) {
-            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
-            cover->cover_found = 1;
-            return;
-        }
-
-        // try to load embedded from apev2
-        trace ("trying to load artwork from apev2 tag for %s\n", cover->priv->filepath);
-        if (!apev2_extract_art (cover)) {
-            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
-            cover->cover_found = 1;
-            return;
-        }
-
-        // try to load embedded from mp4
-        trace ("trying to load artwork from mp4 tag for %s\n", cover->priv->filepath);
-        if (!mp4_extract_art (cover)) {
-            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
-            cover->cover_found = 1;
-            return;
-        }
-
-#ifdef USE_OGG
-        trace ("trying to load artwork from ogg tag for %s\n", cover->priv->filepath);
-        if (!ogg_extract_art (cover)) {
-            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
-            cover->cover_found = 1;
-            return;
-        }
-#endif
-
-#ifdef USE_OPUS
-        trace ("trying to load artwork from opus tag for %s\n", cover->priv->filepath);
-        if (!opus_extract_art (cover)) {
-            _consume_blob (cover, simplified_cache ? cover->priv->album_cache_path : cover->priv->track_cache_path);
-            cover->cover_found = 1;
-            return;
-        }
-#endif
     }
 
 #ifdef USE_VFS_CURL
@@ -1116,7 +1249,9 @@ cover_cache_find (ddb_cover_info_t *cover) {
 
         ddb_cover_info_t *cached_cover = cover_cache[i];
 
-        if (!strcmp (cover->priv->filepath, cached_cover->priv->filepath)) {
+        if (!strcmp (cover->priv->filepath, cached_cover->priv->filepath)
+            && cover->priv->cover_index == cached_cover->priv->cover_index
+            && cover->priv->query_flags == cached_cover->priv->query_flags) {
             return cached_cover;
         }
     }
@@ -1136,7 +1271,6 @@ cover_cache_remove (ddb_cover_info_t *cover) {
         if (!strcmp (cover->priv->filepath, cached_cover->priv->filepath)) {
             cover_info_release (cached_cover);
             cover_cache[i] = NULL;
-            break;
         }
     }
 }
@@ -1341,9 +1475,30 @@ _execute_callback (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_c
 
 #pragma mark - Squashing multiple similar queries into one
 
+// The @c cover_index field was added in API 2.1, older clients may pass a smaller struct.
+// Returns the index of the cover to load, if @c DDB_ARTWORK_USE_COVER_INDEX is set, and the index is valid.
+// Returns -1 if the index is invalid, or 0 if the flag is not set (the index is not used then).
+static int
+query_cover_index (const ddb_cover_query_t *query) {
+    if (!(query->flags & DDB_ARTWORK_USE_COVER_INDEX)) {
+        return 0;
+    }
+    if (query->_size < offsetof (ddb_cover_query_t, cover_index) + sizeof (query->cover_index)) {
+        return -1;
+    }
+    if (query->cover_index < 0) {
+        return -1;
+    }
+    return query->cover_index;
+}
+
 static int
 queries_squashable (ddb_cover_query_t *query1, ddb_cover_query_t *query2) {
     if (query1->flags != query2->flags) {
+        return 0;
+    }
+
+    if (query_cover_index (query1) != query_cover_index (query2)) {
         return 0;
     }
 
@@ -1518,7 +1673,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
 #endif
 
     dispatch_async (process_queue, ^{
-        if (!query->track) {
+        if (!query->track || query_cover_index (query) < 0) {
             _end_query (query, callback, -1, NULL);
             return;
         }
@@ -1527,6 +1682,8 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         __block ddb_cover_info_t *cover = sync_cover_info_alloc ();
 
         _init_cover_metadata (cover, query->track);
+        cover->priv->cover_index = query_cover_index (query);
+        cover->priv->query_flags = query->flags & (DDB_ARTWORK_ONLY_EMBEDDED | DDB_ARTWORK_USE_COVER_INDEX);
 
         __block int cancel_job = 0;
         dispatch_sync (sync_queue, ^{
@@ -1844,10 +2001,8 @@ invalidate_playitem_cache (DB_plugin_action_t *action, ddb_action_context_t ctx)
             if (deadbeef->pl_is_selected (it)) {
                 ddb_cover_info_t *cover = sync_cover_info_alloc ();
                 _init_cover_metadata (cover, it);
-                ddb_cover_info_t *cached_cover = cover_cache_find (cover);
-                if (cached_cover) {
-                    cover_cache_remove (cover);
-                }
+                // removes all cached variants (cover types) of this file
+                cover_cache_remove (cover);
 
                 if (cover->priv->album_cache_path[0]) {
                     remove_cache_item (cover->priv->album_cache_path);
@@ -2058,6 +2213,7 @@ ddb_artwork_plugin_t plugin = {
     .default_image_path = artwork_default_image_path,
     .allocate_source_id = artwork_allocate_source_id,
     .cancel_queries_with_source_id = artwork_cancel_queries_with_source_id,
+    .cover_count_in_track = artwork_cover_count_in_track,
 };
 
 DB_plugin_t *
