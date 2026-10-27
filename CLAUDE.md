@@ -145,6 +145,10 @@ GTK UI: user-visible strings are wrapped in `_("...")` for gettext.
 - Unit tests are mostly GoogleTest (`TEST(SuiteName, case_name_expectation)`, e.g. `read_wrap_success`) in
   `Tests/*Tests.cpp`. They use the fake plugins `Tests/fakein.c`/`fakeout.c` and the bootstrap in `testbootstrap.c`.
   Add new test files to both `Tests.mk` and the Xcode `Tests` target.
+- Xcode runs GoogleTest cases through `Tests/GoogleTestRunner/GTMGoogleTestRunner.mm`, which registers them with XCTest
+  at runtime, so Xcode sees all of them as a single `GTMGoogleTestRunner` item. There is no way to execute individual
+  GoogleTest cases or suites through Xcode or `xcodebuild` (`-only-testing` on a case or suite name runs 0 tests);
+  only the whole `GTMGoogleTestRunner` class can be run. XCTest-based tests (`*.m`, `*.mm`) are not affected.
 - Prefer adding a regression test in `Tests/` for core and parser fixes (junklib, cueutil, tf, playlist, m3u, mp3parser, ...).
 
 ## Git conventions
