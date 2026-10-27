@@ -61,6 +61,47 @@ static const char key[] = "METADATA_BLOCK_PICTURE=";
     }
 
 int
+ogg_artwork_comment_is_picture (const char *comment, int comment_length) {
+    const size_t key_length = sizeof (key) - 1;
+    if (comment_length < 0 || (size_t)comment_length <= key_length || strncasecmp (comment, key, key_length)) {
+        return 0;
+    }
+
+    // Decode only the beginning of the picture block, which has the picture type, and the mime type:
+    // 4 bytes picture type, 4 bytes mime type size, followed by the mime type string.
+    // The base64 text is cut at the multiple of 4 characters, so that it can be decoded on its own.
+    char prefix[257];
+    size_t prefix_length = (size_t)comment_length - key_length;
+    if (prefix_length > sizeof (prefix) - 1) {
+        prefix_length = sizeof (prefix) - 1;
+    }
+    prefix_length &= ~(size_t)3;
+    if (prefix_length < 16) {
+        return 0;
+    }
+    memcpy (prefix, comment + key_length, prefix_length);
+    prefix[prefix_length] = 0;
+
+    uint8_t decoded[sizeof (prefix)];
+    const int decoded_size = Base64decode ((char *)decoded, prefix);
+    if (decoded_size < 8) {
+        return 0;
+    }
+
+    const uint32_t mime_size = (uint32_t)decoded[4] << 24 | (uint32_t)decoded[5] << 16 | (uint32_t)decoded[6] << 8 | decoded[7];
+    if (mime_size >= 16 || 8 + mime_size > (uint32_t)decoded_size) {
+        return 0;
+    }
+
+    char mime_type[16];
+    memcpy (mime_type, decoded + 8, mime_size);
+    mime_type[mime_size] = 0;
+
+    return !strcasecmp (mime_type, "image/") || !strcasecmp (mime_type, "image/png")
+        || !strcasecmp (mime_type, "image/jpeg");
+}
+
+int
 ogg_parse_artwork_comment (const char *comment, int comment_length, ddb_cover_info_t *cover) {
     uint8_t *decoded_blob = NULL;
     char *mime_type = NULL;
@@ -114,11 +155,8 @@ ogg_parse_artwork_comment (const char *comment, int comment_length, ddb_cover_in
     /*uint32_t depth = */ READ_UINT32 ();
     /*uint32_t palette_size = */ READ_UINT32 ();
     uint32_t picture_data_len = READ_UINT32 ();
-
-    if (cover == NULL) {
-        // only checking, if this is a valid picture
-        free (decoded_blob);
-        return 0;
+    if (picture_data_len > (uint32_t)buffer_size) {
+        goto error; // truncated picture data
     }
 
     cover->priv->blob_size = picture_data_len;

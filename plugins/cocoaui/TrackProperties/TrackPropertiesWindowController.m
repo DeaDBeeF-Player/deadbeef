@@ -174,6 +174,22 @@ extern DB_functions_t *deadbeef;
 static void
 artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover);
 
+static ddb_artwork_plugin_t *
+artworkPlugin (void) {
+    return (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+}
+
+static void
+cancelArtworkQueries (int64_t sourceId) {
+    if (sourceId == 0) {
+        return;
+    }
+    ddb_artwork_plugin_t *plugin = artworkPlugin ();
+    if (plugin != NULL) {
+        plugin->cancel_queries_with_source_id (sourceId);
+    }
+}
+
 static NSString *const ArtworkNameColumnID = @"Name";
 static NSString *const ArtworkPictureColumnID = @"Picture";
 
@@ -342,12 +358,7 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
 // The queries which are already being processed by the artwork plugin can't be interrupted.
 - (void)cancelArtworkLoading {
     self.artworkGeneration++;
-    if (self.artworkSourceId != 0) {
-        ddb_artwork_plugin_t *plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
-        if (plugin != NULL) {
-            plugin->cancel_queries_with_source_id (self.artworkSourceId);
-        }
-    }
+    cancelArtworkQueries (self.artworkSourceId);
     [self.artworkProgressIndicator stopAnimation:nil];
 }
 
@@ -356,12 +367,7 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
 }
 
 - (void)dealloc {
-    if (_artworkSourceId != 0) {
-        ddb_artwork_plugin_t *plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
-        if (plugin != NULL) {
-            plugin->cancel_queries_with_source_id (_artworkSourceId);
-        }
-    }
+    cancelArtworkQueries (_artworkSourceId);
 }
 
 - (void)reloadArtwork {
@@ -375,11 +381,11 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
 
     int numtracks = self.metadataListViewController.numtracks;
     if (numtracks > 1) {
-        [self showArtworkMessage:@"Artwork editing is not supported in multiple selection"];
+        [self showArtworkMessage:@"Artwork can't be shown for multiple tracks. Select a single track."];
         return;
     }
 
-    ddb_artwork_plugin_t *plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+    ddb_artwork_plugin_t *plugin = artworkPlugin ();
     if (numtracks != 1 || plugin == NULL) {
         [self showArtworkMessage:@"No artwork found."];
         return;
@@ -467,7 +473,7 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
         [self requestArtworkForTrack:track
                               plugin:plugin
                           coverIndex:(int)i
-                               flags:onlyEmbedded ? DDB_ARTWORK_USE_COVER_INDEX : 0
+                               flags:(onlyEmbedded ? DDB_ARTWORK_USE_COVER_INDEX : 0) | DDB_ARTWORK_SKIP_CACHE
                           completion:completion];
     }
 }
@@ -479,10 +485,19 @@ artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         (void (^)(NSImage *, ddb_artwork_cover_type_t))CFBridgingRelease (query->user_data);
     BOOL cancelled = (query->flags & DDB_ARTWORK_FLAG_CANCELLED) != 0;
     NSString *path = nil;
+    NSData *memoryData = nil;
     ddb_artwork_cover_type_t coverType = DDB_ARTWORK_COVER_TYPE_DEFAULT;
-    if (!cancelled && error == 0 && cover != NULL && cover->cover_found && cover->image_filename != NULL) {
-        path = @(cover->image_filename);
-        // cover_type was added in API 2.1
+    if (!cancelled && error == 0 && cover != NULL && cover->cover_found) {
+        // cover_type, image_data and image_data_size were added in API 2.1
+        if (cover->image_filename != NULL) {
+            path = @(cover->image_filename);
+        }
+        else if (
+            cover->_size >= offsetof (ddb_cover_info_t, image_data_size) + sizeof (cover->image_data_size)
+            && cover->image_data != NULL) {
+            // the covers loaded with DDB_ARTWORK_SKIP_CACHE are in memory
+            memoryData = [NSData dataWithBytes:cover->image_data length:cover->image_data_size];
+        }
         if (cover->_size >= offsetof (ddb_cover_info_t, cover_type) + sizeof (cover->cover_type)) {
             coverType = cover->cover_type;
         }
@@ -493,14 +508,15 @@ artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
     // Load the image in the background, and release the cover only after that
     dispatch_async (dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSImage *image = nil;
+        NSData *data = memoryData;
         if (path != nil) {
-            NSData *data = [NSData dataWithContentsOfFile:path];
-            if (data != nil) {
-                image = [[NSImage alloc] initWithData:data];
-            }
+            data = [NSData dataWithContentsOfFile:path];
+        }
+        if (data != nil) {
+            image = [[NSImage alloc] initWithData:data];
         }
         if (cover != NULL) {
-            ddb_artwork_plugin_t *plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+            ddb_artwork_plugin_t *plugin = artworkPlugin ();
             if (plugin != NULL) {
                 plugin->cover_info_release (cover);
             }

@@ -114,14 +114,16 @@ opus_scan (const char *path, ddb_cover_info_t *cover, int index) {
 
     int count = 0;
     for (int i = 0; i < ot->comments; i++) {
-        const int load = cover != NULL && count == index;
-        if (0 == ogg_parse_artwork_comment (ot->user_comments[i], ot->comment_lengths[i], load ? cover : NULL)) {
-            if (load) {
-                result = 0;
-                break;
-            }
-            count++;
+        if (!ogg_artwork_comment_is_picture (ot->user_comments[i], ot->comment_lengths[i])) {
+            continue;
         }
+        if (cover != NULL && count == index) {
+            if (0 == ogg_parse_artwork_comment (ot->user_comments[i], ot->comment_lengths[i], cover)) {
+                result = 0;
+            }
+            break;
+        }
+        count++;
     }
     if (cover == NULL) {
         result = count;

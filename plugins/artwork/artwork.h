@@ -45,6 +45,13 @@ enum {
     /// Without this flag the @c cover_index is ignored, and the best cover is searched using all the enabled sources.
     /// Added in API 2.1.
     DDB_ARTWORK_USE_COVER_INDEX = (1<<2),
+
+    /// Don't use the cache at all: the cached covers are not read, and the loaded covers are not written to the cache.
+    /// The covers embedded in the tags are returned in memory (@c image_data), instead of a cache file.
+    /// The covers found in local folders are returned as is, without copying them to the cache.
+    /// The online services are not queried, because they rely on the cache.
+    /// Added in API 2.1.
+    DDB_ARTWORK_SKIP_CACHE = (1<<3),
 };
 
 /// Cover types, reported in `ddb_cover_info_t.cover_type`.
@@ -127,11 +134,18 @@ typedef struct ddb_cover_info_s {
 
     int cover_found; // set to 1 if the cover was found
 
-    char *image_filename; // A name of file with the image
+    char *image_filename; // A name of file with the image, can be NULL if @c image_data is set
 
     /// The type of the cover, if known; @c DDB_ARTWORK_COVER_TYPE_DEFAULT otherwise.
     /// Added in API 2.1: only access it if @c _size covers this field.
     ddb_artwork_cover_type_t cover_type;
+
+    /// The image data, set instead of @c image_filename when the cover is loaded in memory,
+    /// i.e. when the @c DDB_ARTWORK_SKIP_CACHE flag is used.
+    /// It remains valid until the @c cover is released.
+    /// Added in API 2.1: only access it if @c _size covers this field.
+    const void *image_data;
+    size_t image_data_size;
 } ddb_cover_info_t;
 
 /// The `error` is 0 on success, or negative value on failure.

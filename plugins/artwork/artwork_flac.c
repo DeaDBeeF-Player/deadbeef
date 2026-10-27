@@ -117,6 +117,9 @@ flac_scan (const char *path, ddb_cover_info_t *cover, int index) {
         if (cover != NULL && count == index) {
             trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
             cover->priv->blob = malloc (pic->data_length);
+            if (cover->priv->blob == NULL) {
+                break;
+            }
             memcpy (cover->priv->blob, pic->data, pic->data_length);
             cover->priv->blob_size = pic->data_length;
             cover->priv->blob_image_size = pic->data_length;

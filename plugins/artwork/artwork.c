@@ -529,12 +529,19 @@ static const char *apev2_cover_names[] = {
 static ddb_artwork_cover_type_t
 apev2_cover_type_for_key (const char *key) {
     // key is "Cover Art (name)"
-    const char *name = key + strlen ("cover art (");
+    static const char prefix[] = "cover art (";
+    if (strncasecmp (key, prefix, sizeof (prefix) - 1)) {
+        return DDB_ARTWORK_COVER_TYPE_OTHER;
+    }
+    const char *name = key + sizeof (prefix) - 1;
     const size_t len = strlen (name);
+    if (!strcasecmp (name, "disc)")) {
+        return DDB_ARTWORK_COVER_TYPE_MEDIA;
+    }
     if (len > 0 && name[len - 1] == ')') {
-        for (int i = 0; i < sizeof (apev2_cover_names) / sizeof (apev2_cover_names[0]); i++) {
+        for (size_t i = 0; i < sizeof (apev2_cover_names) / sizeof (apev2_cover_names[0]); i++) {
             if (strlen (apev2_cover_names[i]) == len - 1 && !strncasecmp (name, apev2_cover_names[i], len - 1)) {
-                return artwork_cover_type_for_picture_type (i);
+                return artwork_cover_type_for_picture_type ((int)i);
             }
         }
     }
@@ -1030,6 +1037,17 @@ _free_blob (ddb_cover_info_t *cover) {
     cover->priv->blob_image_size = 0;
 }
 
+// Makes the blob image available to the caller via @c image_data, without writing it anywhere.
+// The blob is freed with the cover.
+static void
+_expose_blob (ddb_cover_info_t *cover) {
+    if (cover->image_filename != NULL || cover->priv->blob == NULL) {
+        return;
+    }
+    cover->image_data = cover->priv->blob + cover->priv->blob_image_offset;
+    cover->image_data_size = cover->priv->blob_image_size;
+}
+
 static void
 _consume_blob (ddb_cover_info_t *cover, const char *cache_path) {
     if (cover->image_filename != NULL) {
@@ -1227,8 +1245,10 @@ process_embedded_query (ddb_cover_info_t *cover) {
         return;
     }
 
+    const int skip_cache = (cover->priv->query_flags & DDB_ARTWORK_SKIP_CACHE) != 0;
+
     char cache_path[PATH_MAX];
-    if (make_embedded_cache_path (cover, cache_path, sizeof (cache_path)) < 0) {
+    if (!skip_cache && make_embedded_cache_path (cover, cache_path, sizeof (cache_path)) < 0) {
         return;
     }
 
@@ -1244,8 +1264,62 @@ process_embedded_query (ddb_cover_info_t *cover) {
         return;
     }
 
-    _consume_blob (cover, cache_path);
-    cover->cover_found = cover->image_filename != NULL;
+    if (skip_cache) {
+        _expose_blob (cover);
+        cover->cover_found = cover->image_filename != NULL || cover->image_data != NULL;
+    }
+    else {
+        _consume_blob (cover, cache_path);
+        cover->cover_found = cover->image_filename != NULL;
+    }
+}
+
+// Searches for a cover image file in the local folders, and inside the scannable VFS containers.
+// Returns 0 if found: the file name is then in @c image_filename.
+static int
+find_local_cover (ddb_cover_info_t *cover) {
+    char *fname_copy = strdup (cover->priv->filepath);
+    if (!fname_copy) {
+        return -1;
+    }
+
+    char *vfs_fname = vfs_path (fname_copy);
+    if (vfs_fname) {
+        /* Search inside scannable VFS containers */
+        DB_vfs_t *plugin = scandir_plug (vfs_fname);
+        if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
+            free (fname_copy);
+            return 0;
+        }
+    }
+
+    /* Search in file directory */
+    if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
+        free (fname_copy);
+        return 0;
+    }
+
+    free (fname_copy);
+    return -1;
+}
+
+// Handles the regular queries with @c DDB_ARTWORK_SKIP_CACHE: local files and embedded covers only,
+// nothing is read from or written to the cache.
+static void
+process_uncached_query (ddb_cover_info_t *cover) {
+    if (!deadbeef->is_local_file (cover->priv->filepath)) {
+        return;
+    }
+
+    if (artwork_enable_local && !find_local_cover (cover)) {
+        cover->cover_found = 1;
+        return;
+    }
+
+    if (artwork_enable_embedded && !extract_embedded_art (cover)) {
+        _expose_blob (cover);
+        cover->cover_found = cover->image_filename != NULL || cover->image_data != NULL;
+    }
 }
 
 // Behavior:
@@ -1257,6 +1331,11 @@ static void
 process_query (ddb_cover_info_t *cover) {
     if (cover->priv->query_flags & (DDB_ARTWORK_USE_COVER_INDEX | DDB_ARTWORK_ONLY_EMBEDDED)) {
         process_embedded_query (cover);
+        return;
+    }
+
+    if (cover->priv->query_flags & DDB_ARTWORK_SKIP_CACHE) {
+        process_uncached_query (cover);
         return;
     }
 
@@ -1312,31 +1391,10 @@ process_query (ddb_cover_info_t *cover) {
         }
     }
 
-    if (artwork_enable_local && islocal) {
-        char *fname_copy = strdup (cover->priv->filepath);
-        if (fname_copy) {
-            char *vfs_fname = vfs_path (fname_copy);
-            if (vfs_fname) {
-                /* Search inside scannable VFS containers */
-                DB_vfs_t *plugin = scandir_plug (vfs_fname);
-                if (plugin && !local_image_file (vfs_fname, fname_copy, plugin, cover)) {
-                    free (fname_copy);
-                    copy_file (cover->image_filename, cover->priv->album_cache_path);
-                    cover->cover_found = 1;
-                    return;
-                }
-            }
-
-            /* Search in file directory */
-            if (!local_image_file (dirname (vfs_fname ? vfs_fname : fname_copy), NULL, NULL, cover)) {
-                free (fname_copy);
-                copy_file (cover->image_filename, cover->priv->album_cache_path);
-                cover->cover_found = 1;
-                return;
-            }
-
-            free (fname_copy);
-        }
+    if (artwork_enable_local && islocal && !find_local_cover (cover)) {
+        copy_file (cover->image_filename, cover->priv->album_cache_path);
+        cover->cover_found = 1;
+        return;
     }
 
     if (artwork_enable_embedded && islocal) {
@@ -1702,7 +1760,7 @@ _execute_callback (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_c
 
     // Make all the callbacks (and free the chain), with data if a file was written
     if (cover_found) {
-        trace ("artwork fetcher: cover art file found: %s\n", cover->image_filename);
+        trace ("artwork fetcher: cover art found: %s\n", cover->image_filename ? cover->image_filename : "(in memory)");
         sync_cover_info_ref (cover);
         _end_query (query, callback, 0, cover);
     }
@@ -1806,7 +1864,9 @@ static void
 callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query_t *query) {
     __block artwork_query_t *squashed_queries = NULL;
     dispatch_sync (sync_queue, ^{
-        cover_update_cache (cover);
+        if (!(cover->priv->query_flags & DDB_ARTWORK_SKIP_CACHE)) {
+            cover_update_cache (cover);
+        }
         // find & remove from the queries list
         artwork_query_t *q = query_head;
         artwork_query_t *prev = NULL;
@@ -1922,7 +1982,8 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
 
         _init_cover_metadata (cover, query->track);
         cover->priv->cover_index = query_cover_index (query);
-        cover->priv->query_flags = query->flags & (DDB_ARTWORK_ONLY_EMBEDDED | DDB_ARTWORK_USE_COVER_INDEX);
+        cover->priv->query_flags =
+            query->flags & (DDB_ARTWORK_ONLY_EMBEDDED | DDB_ARTWORK_USE_COVER_INDEX | DDB_ARTWORK_SKIP_CACHE);
 
         __block int cancel_job = 0;
         dispatch_sync (sync_queue, ^{
@@ -1939,7 +2000,8 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         // check the cache
         __block int found_in_cache = 0;
         dispatch_sync (sync_queue, ^{
-            ddb_cover_info_t *cached_cover = cover_cache_find (cover);
+            ddb_cover_info_t *cached_cover =
+                (cover->priv->query_flags & DDB_ARTWORK_SKIP_CACHE) ? NULL : cover_cache_find (cover);
             if (cached_cover) {
                 found_in_cache = 1;
                 cached_cover->priv->timestamp = time (NULL);
