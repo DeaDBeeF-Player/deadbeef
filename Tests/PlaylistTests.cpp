@@ -8,6 +8,8 @@
 
 #include <deadbeef/deadbeef.h>
 #include <deadbeef/common.h>
+#include "conf.h"
+#include "logger.h"
 #include "messagepump.h"
 #include "plmeta.h"
 #include "pltmeta.h"
@@ -163,6 +165,41 @@ TEST(PlaylistTests, test_MoveSelectedItemsToAnotherPlaylist_SelectionPlaybackTim
 
     plt_unref(from);
     plt_unref(to);
+}
+
+class PlaylistAddFilesTests: public ::testing::Test {
+protected:
+    void SetUp() override {
+        ddb_logger_init ();
+        conf_init ();
+        conf_enable_saving (0);
+    }
+
+    void TearDown() override {
+        conf_free ();
+        ddb_logger_free ();
+    }
+};
+
+TEST_F(PlaylistAddFilesTests, test_InsertStreamUrlWhileAddingFiles_GoesToTargetPlaylistNotAddFilesPlaylist) {
+    messagepump_init();
+
+    playlist_t *curr = plt_alloc("curr");
+    playlist_t *scratch = plt_alloc("scratch");
+
+    EXPECT_EQ(0, plt_add_files_begin(curr, 0));
+
+    int abort = 0;
+    playItem_t *it = plt_insert_file2(0, scratch, NULL, "http://example.com/stream", &abort, NULL, NULL);
+    EXPECT_NE(nullptr, it);
+
+    plt_add_files_end(curr, 0);
+
+    EXPECT_EQ(1, plt_get_item_count(scratch, PL_MAIN));
+    EXPECT_EQ(0, plt_get_item_count(curr, PL_MAIN));
+
+    plt_unref(scratch);
+    plt_unref(curr);
 }
 
 TEST (PlaylistTests, test_LoadDBPLWithRelativepaths) {

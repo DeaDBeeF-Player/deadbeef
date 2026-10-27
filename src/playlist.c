@@ -1110,7 +1110,7 @@ plt_insert_file_int (
 
             playItem_t *it = pl_item_alloc_init (fname, NULL);
             pl_replace_meta (it, ":FILETYPE", "content");
-            after = plt_insert_item (addfiles_playlist ? addfiles_playlist : plt, after, it);
+            after = plt_insert_item (plt, after, it);
             pl_item_unref (it);
             if (callback_with_result) {
                 callback_with_result (DDB_INSERT_FILE_RESULT_SUCCESS, fname, user_data);
