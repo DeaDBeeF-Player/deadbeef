@@ -31,6 +31,7 @@
 #import "TrackPropertiesSingleLineFormatter.h"
 #import "TrackPropertiesWindowController.h"
 #include <deadbeef/deadbeef.h>
+#include "../../../plugins/artwork/artwork.h"
 #include "utf8.h"
 #include "trkproperties_shared.h"
 
@@ -46,6 +47,13 @@ extern DB_functions_t *deadbeef;
 
 @property (weak) IBOutlet NSView *metadataTableContainerView;
 @property (weak) IBOutlet NSView *propertiesTableContainerView;
+
+// artwork tab (created in code)
+@property (nonatomic) NSScrollView *artworkScrollView;
+@property (nonatomic) NSTableView *artworkTableView;
+@property (nonatomic) NSTextField *artworkMessageLabel;
+@property (nonatomic) NSImage *artworkImage;
+@property (nonatomic) NSUInteger artworkGeneration;
 
 @property (nonatomic) ddb_playlist_t *playlist;
 @property (nonatomic) ddb_action_context_t context;
@@ -153,6 +161,235 @@ extern DB_functions_t *deadbeef;
         [self.propertiesListViewController.view.topAnchor constraintEqualToAnchor:self.propertiesTableContainerView.topAnchor],
         [self.propertiesListViewController.view.bottomAnchor constraintEqualToAnchor:self.propertiesTableContainerView.bottomAnchor],
     ]];
+
+    [self setupArtworkTab];
+}
+
+#pragma mark - Artwork tab
+
+static void
+artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover);
+
+static NSString *const ArtworkNameColumnID = @"Name";
+static NSString *const ArtworkPictureColumnID = @"Picture";
+
+- (NSTabView *)findTabView {
+    for (NSView *view in self.window.contentView.subviews) {
+        if ([view isKindOfClass:NSTabView.class]) {
+            return (NSTabView *)view;
+        }
+    }
+    return nil;
+}
+
+- (void)setupArtworkTab {
+    NSTabView *tabView = [self findTabView];
+    if (tabView == nil) {
+        return;
+    }
+
+    NSView *container = [[NSView alloc] initWithFrame:NSZeroRect];
+
+    NSTableView *tableView = [[NSTableView alloc] initWithFrame:NSZeroRect];
+    tableView.allowsMultipleSelection = NO;
+    tableView.allowsEmptySelection = YES;
+    tableView.rowHeight = 96;
+    tableView.columnAutoresizingStyle = NSTableViewLastColumnOnlyAutoresizingStyle;
+
+    NSTableColumn *nameColumn = [[NSTableColumn alloc] initWithIdentifier:ArtworkNameColumnID];
+    nameColumn.title = @"Name";
+    nameColumn.width = 150;
+    nameColumn.minWidth = 40;
+    [tableView addTableColumn:nameColumn];
+
+    NSTableColumn *pictureColumn = [[NSTableColumn alloc] initWithIdentifier:ArtworkPictureColumnID];
+    pictureColumn.title = @"Picture";
+    pictureColumn.width = 280;
+    pictureColumn.minWidth = 40;
+    [tableView addTableColumn:pictureColumn];
+
+    tableView.dataSource = self;
+    tableView.delegate = self;
+
+    NSScrollView *scrollView = [[NSScrollView alloc] initWithFrame:NSZeroRect];
+    scrollView.translatesAutoresizingMaskIntoConstraints = NO;
+    scrollView.hasVerticalScroller = YES;
+    scrollView.autohidesScrollers = YES;
+    scrollView.borderType = NSNoBorder;
+    scrollView.documentView = tableView;
+    scrollView.hidden = YES;
+    [container addSubview:scrollView];
+
+    NSTextField *label = [NSTextField wrappingLabelWithString:@""];
+    label.translatesAutoresizingMaskIntoConstraints = NO;
+    label.alignment = NSTextAlignmentCenter;
+    label.textColor = NSColor.secondaryLabelColor;
+    label.hidden = YES;
+    [container addSubview:label];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [scrollView.leadingAnchor constraintEqualToAnchor:container.leadingAnchor],
+        [scrollView.trailingAnchor constraintEqualToAnchor:container.trailingAnchor],
+        [scrollView.topAnchor constraintEqualToAnchor:container.topAnchor],
+        [scrollView.bottomAnchor constraintEqualToAnchor:container.bottomAnchor],
+        [label.centerXAnchor constraintEqualToAnchor:container.centerXAnchor],
+        [label.centerYAnchor constraintEqualToAnchor:container.centerYAnchor],
+        [label.leadingAnchor constraintGreaterThanOrEqualToAnchor:container.leadingAnchor constant:8],
+        [label.trailingAnchor constraintLessThanOrEqualToAnchor:container.trailingAnchor constant:-8],
+    ]];
+
+    NSTabViewItem *item = [[NSTabViewItem alloc] initWithIdentifier:@"3"];
+    item.label = @"Artwork";
+    item.view = container;
+    [tabView addTabViewItem:item];
+
+    self.artworkScrollView = scrollView;
+    self.artworkTableView = tableView;
+    self.artworkMessageLabel = label;
+}
+
+// Shows either the message (if non-nil) or the table with the artwork (if image is available).
+- (void)showArtworkMessage:(NSString *)message {
+    self.artworkMessageLabel.stringValue = message ?: @"";
+    self.artworkMessageLabel.hidden = message == nil;
+    self.artworkScrollView.hidden = message != nil || self.artworkImage == nil;
+    [self.artworkTableView reloadData];
+}
+
+- (void)reloadArtwork {
+    if (self.artworkTableView == nil) {
+        return;
+    }
+
+    // Invalidate any pending load
+    self.artworkGeneration++;
+    self.artworkImage = nil;
+
+    int numtracks = self.metadataListViewController.numtracks;
+    if (numtracks > 1) {
+        [self showArtworkMessage:@"Artwork editing is not supported in multiple selection"];
+        return;
+    }
+
+    ddb_artwork_plugin_t *plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+    if (numtracks != 1 || plugin == NULL) {
+        [self showArtworkMessage:@"No artwork found."];
+        return;
+    }
+
+    // Loading: hide everything until the result arrives
+    self.artworkMessageLabel.hidden = YES;
+    self.artworkScrollView.hidden = YES;
+    [self.artworkTableView reloadData];
+
+    DB_playItem_t *track = self.metadataListViewController.tracks[0];
+    NSUInteger generation = self.artworkGeneration;
+    __weak TrackPropertiesWindowController *weakSelf = self;
+
+    void (^completion)(NSImage *) = ^(NSImage *image) {
+        TrackPropertiesWindowController *strongSelf = weakSelf;
+        if (strongSelf == nil || strongSelf.artworkGeneration != generation) {
+            return;
+        }
+        strongSelf.artworkImage = image;
+        [strongSelf showArtworkMessage:image ? nil : @"No artwork found."];
+    };
+
+    ddb_cover_query_t *query = calloc (1, sizeof (ddb_cover_query_t));
+    query->_size = sizeof (ddb_cover_query_t);
+    query->track = track;
+    deadbeef->pl_item_ref (track);
+    query->user_data = (void *)CFBridgingRetain (completion);
+    plugin->cover_get (query, artwork_cover_callback);
+}
+
+// Called by the artwork plugin on a non-main thread.
+static void
+artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
+    void (^completion)(NSImage *) = (void (^)(NSImage *))CFBridgingRelease (query->user_data);
+    BOOL cancelled = (query->flags & DDB_ARTWORK_FLAG_CANCELLED) != 0;
+    NSString *path = nil;
+    if (!cancelled && error == 0 && cover != NULL && cover->cover_found && cover->image_filename != NULL) {
+        path = @(cover->image_filename);
+    }
+    deadbeef->pl_item_unref (query->track);
+    free (query);
+
+    // Load the image in the background, and release the cover only after that
+    dispatch_async (dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSImage *image = nil;
+        if (path != nil) {
+            NSData *data = [NSData dataWithContentsOfFile:path];
+            if (data != nil) {
+                image = [[NSImage alloc] initWithData:data];
+            }
+        }
+        if (cover != NULL) {
+            ddb_artwork_plugin_t *plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+            if (plugin != NULL) {
+                plugin->cover_info_release (cover);
+            }
+        }
+        dispatch_async (dispatch_get_main_queue (), ^{
+            completion (cancelled ? nil : image);
+        });
+    });
+}
+
+#pragma mark - NSTableViewDataSource / NSTableViewDelegate (artwork table)
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    if (tableView != self.artworkTableView) {
+        return 0;
+    }
+    return self.artworkImage != nil ? 1 : 0;
+}
+
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
+    if (tableView != self.artworkTableView) {
+        return nil;
+    }
+
+    NSTableCellView *cell = [tableView makeViewWithIdentifier:tableColumn.identifier owner:self];
+    if (cell == nil) {
+        cell = [[NSTableCellView alloc] initWithFrame:NSZeroRect];
+        cell.identifier = tableColumn.identifier;
+
+        if ([tableColumn.identifier isEqualToString:ArtworkPictureColumnID]) {
+            NSImageView *imageView = [NSImageView new];
+            imageView.translatesAutoresizingMaskIntoConstraints = NO;
+            imageView.imageScaling = NSImageScaleProportionallyUpOrDown;
+            imageView.imageAlignment = NSImageAlignLeft;
+            [cell addSubview:imageView];
+            cell.imageView = imageView;
+            [NSLayoutConstraint activateConstraints:@[
+                [imageView.leadingAnchor constraintEqualToAnchor:cell.leadingAnchor constant:2],
+                [imageView.trailingAnchor constraintEqualToAnchor:cell.trailingAnchor constant:-2],
+                [imageView.topAnchor constraintEqualToAnchor:cell.topAnchor constant:2],
+                [imageView.bottomAnchor constraintEqualToAnchor:cell.bottomAnchor constant:-2],
+            ]];
+        }
+        else {
+            NSTextField *textField = [NSTextField labelWithString:@""];
+            textField.translatesAutoresizingMaskIntoConstraints = NO;
+            textField.lineBreakMode = NSLineBreakByTruncatingTail;
+            [cell addSubview:textField];
+            cell.textField = textField;
+            [NSLayoutConstraint activateConstraints:@[
+                [textField.leadingAnchor constraintEqualToAnchor:cell.leadingAnchor constant:2],
+                [textField.trailingAnchor constraintEqualToAnchor:cell.trailingAnchor constant:-2],
+                [textField.centerYAnchor constraintEqualToAnchor:cell.centerYAnchor],
+            ]];
+        }
+    }
+
+    if ([tableColumn.identifier isEqualToString:ArtworkPictureColumnID]) {
+        cell.imageView.image = self.artworkImage;
+    }
+    else {
+        cell.textField.stringValue = @"Front Cover";
+    }
+    return cell;
 }
 
 - (void)reloadContent {
@@ -188,6 +425,8 @@ extern DB_functions_t *deadbeef;
     if (self.filename) {
         self.filename.stringValue = fname;
     }
+
+    [self reloadArtwork];
 }
 
 - (NSSet<NSString *> *)specialFields {
