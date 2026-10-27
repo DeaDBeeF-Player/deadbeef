@@ -52,9 +52,12 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSScrollView *artworkScrollView;
 @property (nonatomic) NSTableView *artworkTableView;
 @property (nonatomic) NSTextField *artworkMessageLabel;
+@property (nonatomic) NSProgressIndicator *artworkProgressIndicator;
 // Rows of the artwork table: dictionaries with @"name" and @"image" keys
 @property (nonatomic) NSArray<NSDictionary *> *artworkItems;
 @property (nonatomic) NSUInteger artworkGeneration;
+// Identifies the artwork queries of this window, so that they can be cancelled in bulk
+@property (nonatomic) int64_t artworkSourceId;
 
 @property (nonatomic) ddb_playlist_t *playlist;
 @property (nonatomic) ddb_action_context_t context;
@@ -228,7 +231,16 @@ static NSString *const ArtworkPictureColumnID = @"Picture";
     label.hidden = YES;
     [container addSubview:label];
 
+    NSProgressIndicator *progressIndicator = [[NSProgressIndicator alloc] initWithFrame:NSZeroRect];
+    progressIndicator.translatesAutoresizingMaskIntoConstraints = NO;
+    progressIndicator.style = NSProgressIndicatorStyleSpinning;
+    progressIndicator.indeterminate = YES;
+    progressIndicator.displayedWhenStopped = NO;
+    [container addSubview:progressIndicator];
+
     [NSLayoutConstraint activateConstraints:@[
+        [progressIndicator.centerXAnchor constraintEqualToAnchor:container.centerXAnchor],
+        [progressIndicator.centerYAnchor constraintEqualToAnchor:container.centerYAnchor],
         [scrollView.leadingAnchor constraintEqualToAnchor:container.leadingAnchor],
         [scrollView.trailingAnchor constraintEqualToAnchor:container.trailingAnchor],
         [scrollView.topAnchor constraintEqualToAnchor:container.topAnchor],
@@ -247,6 +259,7 @@ static NSString *const ArtworkPictureColumnID = @"Picture";
     self.artworkScrollView = scrollView;
     self.artworkTableView = tableView;
     self.artworkMessageLabel = label;
+    self.artworkProgressIndicator = progressIndicator;
 }
 
 static NSString *
@@ -302,6 +315,7 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
 
 // Shows either the message (if non-nil) or the table with the artwork (if there are items to show).
 - (void)showArtworkMessage:(NSString *)message {
+    [self.artworkProgressIndicator stopAnimation:nil];
     self.artworkMessageLabel.stringValue = message ?: @"";
     self.artworkMessageLabel.hidden = message == nil;
     self.artworkScrollView.hidden = message != nil || self.artworkItems.count == 0;
@@ -317,10 +331,37 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
     query->_size = sizeof (ddb_cover_query_t);
     query->track = track;
     query->flags = flags;
+    query->source_id = self.artworkSourceId;
     query->cover_index = coverIndex;
     deadbeef->pl_item_ref (track);
     query->user_data = (void *)CFBridgingRetain (completion);
     plugin->cover_get (query, artwork_cover_callback);
+}
+
+// Cancels the queued artwork queries, and makes the results of the running ones to be ignored.
+// The queries which are already being processed by the artwork plugin can't be interrupted.
+- (void)cancelArtworkLoading {
+    self.artworkGeneration++;
+    if (self.artworkSourceId != 0) {
+        ddb_artwork_plugin_t *plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+        if (plugin != NULL) {
+            plugin->cancel_queries_with_source_id (self.artworkSourceId);
+        }
+    }
+    [self.artworkProgressIndicator stopAnimation:nil];
+}
+
+- (void)windowWillClose:(NSNotification *)notification {
+    [self cancelArtworkLoading];
+}
+
+- (void)dealloc {
+    if (_artworkSourceId != 0) {
+        ddb_artwork_plugin_t *plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+        if (plugin != NULL) {
+            plugin->cancel_queries_with_source_id (_artworkSourceId);
+        }
+    }
 }
 
 - (void)reloadArtwork {
@@ -328,8 +369,8 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
         return;
     }
 
-    // Invalidate any pending load
-    self.artworkGeneration++;
+    // Cancel and invalidate any pending load
+    [self cancelArtworkLoading];
     self.artworkItems = nil;
 
     int numtracks = self.metadataListViewController.numtracks;
@@ -344,24 +385,49 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
         return;
     }
 
-    // Loading: hide everything until the results arrive
+    if (self.artworkSourceId == 0) {
+        self.artworkSourceId = plugin->allocate_source_id ();
+    }
+
+    // Loading: show the progress indicator until all the results arrive
     self.artworkMessageLabel.hidden = YES;
     self.artworkScrollView.hidden = YES;
     [self.artworkTableView reloadData];
+    [self.artworkProgressIndicator startAnimation:nil];
 
     DB_playItem_t *track = self.metadataListViewController.tracks[0];
-
-    // Load every cover embedded in the file. If there are none (or the file format doesn't support it),
-    // fall back to the regular lookup of a single cover, which also searches local files and online services.
-    int count = 0;
-    if (plugin->plugin.plugin.version_minor >= 1) {
-        count = plugin->cover_count_in_track (track);
-    }
-    BOOL onlyEmbedded = count > 0;
-    NSUInteger numRequests = onlyEmbedded ? count : 1;
-
     NSUInteger generation = self.artworkGeneration;
     __weak TrackPropertiesWindowController *weakSelf = self;
+
+    // Counting the covers reads the file, so it's done in the background.
+    // The track is referenced, because the track list can be replaced in the meantime.
+    deadbeef->pl_item_ref (track);
+    dispatch_async (dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        int count = 0;
+        if (plugin->plugin.plugin.version_minor >= 1) {
+            count = plugin->cover_count_in_track (track);
+        }
+
+        dispatch_async (dispatch_get_main_queue (), ^{
+            TrackPropertiesWindowController *strongSelf = weakSelf;
+            if (strongSelf != nil && strongSelf.artworkGeneration == generation) {
+                [strongSelf requestArtworkForTrack:track plugin:plugin coverCount:count generation:generation];
+            }
+            // the queries hold their own references
+            deadbeef->pl_item_unref (track);
+        });
+    });
+}
+
+// Loads every cover embedded in the file (@c count of them). If there are none (or the file format doesn't support it),
+// falls back to the regular lookup of a single cover, which also searches local files and online services.
+- (void)requestArtworkForTrack:(DB_playItem_t *)track
+                        plugin:(ddb_artwork_plugin_t *)plugin
+                    coverCount:(int)count
+                    generation:(NSUInteger)generation {
+    __weak TrackPropertiesWindowController *weakSelf = self;
+    BOOL onlyEmbedded = count > 0;
+    NSUInteger numRequests = onlyEmbedded ? count : 1;
 
     // Accessed on the main thread only
     NSMutableArray *results = [NSMutableArray new];
