@@ -73,6 +73,7 @@ copus_ftell (void *stream) {
 
 // If @c cover is NULL: returns the number of pictures, or -1 on failure.
 // Otherwise: loads the picture at @c index into @c cover, and returns 0 on success, or -1 on failure.
+// If @c index is -1, loads the first picture which can be loaded.
 static int
 opus_scan (const char *path, ddb_cover_info_t *cover, int index) {
     int result = -1;
@@ -117,11 +118,16 @@ opus_scan (const char *path, ddb_cover_info_t *cover, int index) {
         if (!ogg_artwork_comment_is_picture (ot->user_comments[i], ot->comment_lengths[i])) {
             continue;
         }
-        if (cover != NULL && count == index) {
+        if (cover != NULL && (index < 0 || count == index)) {
             if (0 == ogg_parse_artwork_comment (ot->user_comments[i], ot->comment_lengths[i], cover)) {
                 result = 0;
+                break;
             }
-            break;
+            if (index >= 0) {
+                break;
+            }
+            // index -1: this picture is corrupt, try the next one
+            continue;
         }
         count++;
     }
@@ -136,7 +142,7 @@ error:
 
 int
 opus_extract_art (ddb_cover_info_t *cover) {
-    return opus_scan (cover->priv->filepath, cover, 0);
+    return opus_scan (cover->priv->filepath, cover, -1);
 }
 
 int

@@ -61,6 +61,7 @@ cvorbis_ftell (void *datasource) {
 
 // If @c cover is NULL: returns the number of pictures, or -1 on failure.
 // Otherwise: loads the picture at @c index into @c cover, and returns 0 on success, or -1 on failure.
+// If @c index is -1, loads the first picture which can be loaded.
 static int
 ogg_scan (const char *path, ddb_cover_info_t *cover, int index) {
     int result = -1;
@@ -106,11 +107,16 @@ ogg_scan (const char *path, ddb_cover_info_t *cover, int index) {
         if (!ogg_artwork_comment_is_picture (vc->user_comments[i], vc->comment_lengths[i])) {
             continue;
         }
-        if (cover != NULL && count == index) {
+        if (cover != NULL && (index < 0 || count == index)) {
             if (0 == ogg_parse_artwork_comment (vc->user_comments[i], vc->comment_lengths[i], cover)) {
                 result = 0;
+                break;
             }
-            break;
+            if (index >= 0) {
+                break;
+            }
+            // index -1: this picture is corrupt, try the next one
+            continue;
         }
         count++;
     }
@@ -125,7 +131,7 @@ error:
 
 int
 ogg_extract_art (ddb_cover_info_t *cover) {
-    return ogg_scan (cover->priv->filepath, cover, 0);
+    return ogg_scan (cover->priv->filepath, cover, -1);
 }
 
 int
