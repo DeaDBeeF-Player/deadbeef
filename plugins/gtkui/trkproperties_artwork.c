@@ -466,6 +466,12 @@ _tab_destroyed (GtkWidget *widget, gpointer user_data) {
 
 void
 trkproperties_artwork_create_tab (GtkNotebook *notebook) {
+    // Without the artwork plugin (or with the one which can't list the embedded covers), the tab would be useless
+    ddb_artwork_plugin_t *plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
+    if (plugin == NULL || plugin->plugin.plugin.version_minor < 1) {
+        return;
+    }
+
     GtkWidget *page = gtk_vbox_new (FALSE, 8);
     gtk_container_set_border_width (GTK_CONTAINER (page), 12);
 

@@ -203,6 +203,12 @@ static NSString *const ArtworkPictureColumnID = @"Picture";
 }
 
 - (void)setupArtworkTab {
+    // Without the artwork plugin (or with the one which can't list the embedded covers), the tab would be useless
+    ddb_artwork_plugin_t *plugin = artworkPlugin ();
+    if (plugin == NULL || plugin->plugin.plugin.version_minor < 1) {
+        return;
+    }
+
     NSTabView *tabView = [self findTabView];
     if (tabView == nil) {
         return;
