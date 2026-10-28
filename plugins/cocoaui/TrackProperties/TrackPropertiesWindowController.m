@@ -425,16 +425,19 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
     });
 }
 
-// Loads every cover embedded in the file (@c count of them). If there are none (or the file format doesn't support it),
-// falls back to the regular lookup of a single cover, which also searches local folders.
-// The lookup uses DDB_ARTWORK_SKIP_CACHE, so the disk cache and online services are not used.
+// Loads every cover embedded in the file (@c count of them), one query per cover.
+// Only the covers embedded in the file are shown: the queries don't search local folders or online services,
+// and don't use the cache, so that the images are returned in memory.
 - (void)requestArtworkForTrack:(DB_playItem_t *)track
                         plugin:(ddb_artwork_plugin_t *)plugin
                     coverCount:(int)count
                     generation:(NSUInteger)generation {
     __weak TrackPropertiesWindowController *weakSelf = self;
-    BOOL onlyEmbedded = count > 0;
-    NSUInteger numRequests = onlyEmbedded ? count : 1;
+    if (count <= 0) {
+        [self showArtworkMessage:@"No artwork found."];
+        return;
+    }
+    NSUInteger numRequests = count;
 
     // Accessed on the main thread only
     NSMutableArray *results = [NSMutableArray new];
@@ -450,10 +453,6 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
                 return;
             }
             if (image != nil) {
-                // The regular lookup is for the front cover
-                if (!onlyEmbedded && coverType == DDB_ARTWORK_COVER_TYPE_DEFAULT) {
-                    coverType = DDB_ARTWORK_COVER_TYPE_FRONT;
-                }
                 results[i] = @{ @"name": artworkNameForCoverType (coverType), @"image": image };
             }
             pending--;
@@ -474,7 +473,7 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
         [self requestArtworkForTrack:track
                               plugin:plugin
                           coverIndex:(int)i
-                               flags:(onlyEmbedded ? DDB_ARTWORK_USE_COVER_INDEX : 0) | DDB_ARTWORK_SKIP_CACHE
+                               flags:DDB_ARTWORK_ONLY_EMBEDDED | DDB_ARTWORK_USE_COVER_INDEX | DDB_ARTWORK_SKIP_CACHE
                           completion:completion];
     }
 }
