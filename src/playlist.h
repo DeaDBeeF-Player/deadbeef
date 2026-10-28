@@ -150,6 +150,9 @@ plt_get_sel_count (int plt);
 int
 plt_add (int before, const char *title);
 
+int
+plt_add2 (int before, const char *title);
+
 playlist_t *
 plt_append (const char *title);
 

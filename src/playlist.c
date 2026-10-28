@@ -401,13 +401,42 @@ plt_alloc (const char *title) {
     return plt;
 }
 
+// must be called with the playlist lock held
+static int
+_plt_title_exists (const char *title) {
+    for (playlist_t *p = _playlists_head; p; p = p->next) {
+        if (!strcasecmp (p->title, title)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int
 plt_add (int before, const char *title) {
+    return plt_add2 (before, title);
+}
+
+int
+plt_add2 (int before, const char *title) {
     assert (before >= 0);
-    playlist_t *plt = plt_alloc (title);
-    plt_modified (plt);
 
     LOCK;
+    playlist_t *plt;
+    if (title) {
+        plt = plt_alloc (title);
+    }
+    else {
+        // generate a unique title: "New Playlist", "New Playlist (1)", ...
+        char name[100];
+        snprintf (name, sizeof (name), "%s", _ ("New Playlist"));
+        for (int idx = 1; _plt_title_exists (name); idx++) {
+            snprintf (name, sizeof (name), _ ("New Playlist (%d)"), idx);
+        }
+        plt = plt_alloc (name);
+    }
+    plt_modified (plt);
+
     playlist_t *p_before = NULL;
     playlist_t *p_after = _playlists_head;
 

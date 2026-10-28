@@ -15,6 +15,7 @@
 #include "pltmeta.h"
 #include "plugins.h"
 #include "sort.h"
+#include <string>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
@@ -320,4 +321,77 @@ TEST(PlaylistTests, test_IsRelativePathWin32_RelativeWithFoldersPath_True) {
 TEST(PlaylistTests, test_IsRelativePathWin32_WeirdPath_True) {
     int res = is_relative_path_win32 ("something:something");
     EXPECT_TRUE(res);
+}
+
+class PlaylistAddTests: public ::testing::Test {
+protected:
+    void SetUp() override {
+        ddb_logger_init ();
+        conf_init ();
+        conf_enable_saving (0);
+        messagepump_init ();
+        // plt_remove never removes the last remaining playlist, make sure there's one to keep
+        if (plt_get_count () == 0) {
+            plt_add2 (0, "Baseline");
+        }
+        _initialCount = plt_get_count ();
+    }
+
+    void TearDown() override {
+        // remove all playlists added by the test
+        while (plt_get_count () > _initialCount) {
+            int count = plt_get_count ();
+            plt_remove (count - 1);
+            if (plt_get_count () == count) {
+                break;
+            }
+        }
+        conf_free ();
+        ddb_logger_free ();
+    }
+
+    int _initialCount = 0;
+
+    static std::string
+    TitleAt (int idx) {
+        playlist_t *plt = plt_get_for_idx (idx);
+        char title[100];
+        plt_get_title (plt, title, sizeof (title));
+        plt_unref (plt);
+        return title;
+    }
+};
+
+TEST_F(PlaylistAddTests, test_AddWithTitle_UsesTitleAsIs) {
+    int idx = plt_add2 (plt_get_count (), "My Playlist");
+    EXPECT_EQ ("My Playlist", TitleAt (idx));
+
+    int idx2 = plt_add2 (plt_get_count (), "My Playlist");
+    EXPECT_EQ ("My Playlist", TitleAt (idx2));
+}
+
+TEST_F(PlaylistAddTests, test_AddWithNullTitle_GeneratesUniqueTitles) {
+    int idx1 = plt_add2 (plt_get_count (), NULL);
+    int idx2 = plt_add2 (plt_get_count (), NULL);
+    int idx3 = plt_add2 (plt_get_count (), NULL);
+
+    EXPECT_EQ ("New Playlist", TitleAt (idx1));
+    EXPECT_EQ ("New Playlist (1)", TitleAt (idx2));
+    EXPECT_EQ ("New Playlist (2)", TitleAt (idx3));
+}
+
+TEST_F(PlaylistAddTests, test_AddWithNullTitle_ExistingTitleDiffersByCase_GeneratesUniqueTitle) {
+    plt_add2 (plt_get_count (), "new playlist");
+    int idx = plt_add2 (plt_get_count (), NULL);
+
+    EXPECT_EQ ("New Playlist (1)", TitleAt (idx));
+}
+
+TEST_F(PlaylistAddTests, test_AddWithNullTitle_FreedTitleIsReused) {
+    plt_add2 (plt_get_count (), NULL);
+    int idx2 = plt_add2 (plt_get_count (), NULL);
+    plt_remove (idx2);
+
+    int idx3 = plt_add2 (plt_get_count (), NULL);
+    EXPECT_EQ ("New Playlist (1)", TitleAt (idx3));
 }

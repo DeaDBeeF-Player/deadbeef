@@ -271,6 +271,7 @@ static DB_functions_t deadbeef_api = {
     .plt_get_head = (DB_playItem_t * (*) (int plt))plt_get_head,
     .plt_get_sel_count = plt_get_sel_count,
     .plt_add = plt_add,
+    .plt_add2 = plt_add2,
     .plt_remove = plt_remove,
     .plt_clear = (void (*)(ddb_playlist_t *))plt_clear,
     .pl_clear = pl_clear,

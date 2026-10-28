@@ -74,6 +74,7 @@ extern "C" {
 // that there's a better replacement in the newer deadbeef versions.
 
 // API version history:
+// 1.20 -- deadbeef-1.10.4
 // 1.19 -- deadbeef-1.10.1
 // 1.18 -- deadbeef-1.10.0
 // 1.17 -- deadbeef-1.9.6
@@ -106,7 +107,7 @@ extern "C" {
 // 0.1 -- deadbeef-0.2.0
 
 #define DB_API_VERSION_MAJOR 1
-#define DB_API_VERSION_MINOR 19
+#define DB_API_VERSION_MINOR 20
 
 #if defined(__clang__)
 
@@ -141,6 +142,12 @@ extern "C" {
 
 #ifndef DDB_API_LEVEL
 #define DDB_API_LEVEL DB_API_VERSION_MINOR
+#endif
+
+#if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 20)
+#define DEPRECATED_120 DDB_DEPRECATED("since deadbeef API 1.20")
+#else
+#define DEPRECATED_120
 #endif
 
 #if (DDB_WARN_DEPRECATED && DDB_API_LEVEL >= 19)
@@ -957,7 +964,8 @@ typedef struct {
 
     // add new playlist into position before nr. 'before', with title='title'
     // returns index of new playlist
-    int (*plt_add) (int before, const char *title);
+    // deprecated since API 1.20, use plt_add2
+    int (*plt_add) (int before, const char *title) DEPRECATED_120;
 
     // remove playlist nr. plt
     void (*plt_remove) (int plt);
@@ -1824,6 +1832,13 @@ typedef struct {
     /// append zero-divided multivalue data to existing data
     /// skip duplicates
     void (*pl_append_meta_full) (ddb_playItem_t *it, const char *key, const char *value, int size);
+#endif
+
+#if (DDB_API_LEVEL >= 20)
+    /// Same as plt_add, but if title is NULL, a unique title is generated
+    /// ("New Playlist", "New Playlist (1)", ...).
+    /// Returns index of new playlist.
+    int (*plt_add2) (int before, const char *title);
 #endif
 } DB_functions_t;
 
