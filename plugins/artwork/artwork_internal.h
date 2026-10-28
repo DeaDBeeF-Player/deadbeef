@@ -41,8 +41,10 @@ struct ddb_cover_info_priv_s {
     char artist[1000];
     char title[1000];
     int is_compilation;
-    int cover_index; // requested cover index, only valid with @c DDB_ARTWORK_USE_COVER_INDEX
-    uint32_t query_flags; // the @c DDB_ARTWORK_ONLY_EMBEDDED, @c DDB_ARTWORK_USE_COVER_INDEX, and @c DDB_ARTWORK_SKIP_CACHE flags, if requested
+    int cover_index; // requested cover index, only valid with @c DDB_ARTWORK_FLAG_USE_COVER_INDEX
+    // the @c DDB_ARTWORK_FLAG_ONLY_EMBEDDED, @c DDB_ARTWORK_FLAG_USE_COVER_INDEX,
+    // and @c DDB_ARTWORK_FLAG_SKIP_CACHE flags, if requested
+    uint32_t query_flags;
 
     char track_cache_path[PATH_MAX];
     char album_cache_path[PATH_MAX];

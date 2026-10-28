@@ -473,7 +473,9 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
         [self requestArtworkForTrack:track
                               plugin:plugin
                           coverIndex:(int)i
-                               flags:DDB_ARTWORK_ONLY_EMBEDDED | DDB_ARTWORK_USE_COVER_INDEX | DDB_ARTWORK_SKIP_CACHE
+                               flags:DDB_ARTWORK_FLAG_ONLY_EMBEDDED
+                                   | DDB_ARTWORK_FLAG_USE_COVER_INDEX
+                                   | DDB_ARTWORK_FLAG_SKIP_CACHE
                           completion:completion];
     }
 }
@@ -495,7 +497,7 @@ artwork_cover_callback (int error, ddb_cover_query_t *query, ddb_cover_info_t *c
         else if (
             cover->_size >= offsetof (ddb_cover_info_t, image_data_size) + sizeof (cover->image_data_size)
             && cover->image_data != NULL) {
-            // the covers loaded with DDB_ARTWORK_SKIP_CACHE are in memory
+            // the covers loaded with DDB_ARTWORK_FLAG_SKIP_CACHE are in memory
             memoryData = [NSData dataWithBytes:cover->image_data length:cover->image_data_size];
         }
         if (cover->_size >= offsetof (ddb_cover_info_t, cover_type) + sizeof (cover->cover_type)) {

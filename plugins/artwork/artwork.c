@@ -596,7 +596,7 @@ id3_extract_art (ddb_cover_info_t *cover) {
         int minor_version = id3v2_tag.version[0];
 
         // Index of the cover to load, or -1 to prefer the front cover, and fall back to any cover.
-        const int use_cover_index = (cover->priv->query_flags & DDB_ARTWORK_USE_COVER_INDEX) != 0;
+        const int use_cover_index = (cover->priv->query_flags & DDB_ARTWORK_FLAG_USE_COVER_INDEX) != 0;
         const int cover_index = cover->priv->cover_index;
         // Without the index, prefer the front cover (picture type 3), and fall back to any cover.
         const int passes[2] = { use_cover_index ? -1 : 3, -1 };
@@ -673,7 +673,7 @@ apev2_extract_art (ddb_cover_info_t *cover) {
     memset (&apev2_tag, 0, sizeof (apev2_tag));
     DB_FILE *apev2_fp = deadbeef->fopen (cover->priv->filepath);
     if (apev2_fp && !deadbeef->junk_apev2_read_full (NULL, &apev2_tag, apev2_fp)) {
-        const int use_cover_index = (cover->priv->query_flags & DDB_ARTWORK_USE_COVER_INDEX) != 0;
+        const int use_cover_index = (cover->priv->query_flags & DDB_ARTWORK_FLAG_USE_COVER_INDEX) != 0;
         int index = 0;
         DB_apev2_frame_t *fprev = NULL;
         for (DB_apev2_frame_t *f = apev2_tag.frames; f; fprev = f, f = f->next) {
@@ -1216,7 +1216,7 @@ extract_embedded_art (ddb_cover_info_t *cover) {
     return -1;
 }
 
-// Cover files for the queries with @c DDB_ARTWORK_ONLY_EMBEDDED and/or a cover index are kept separately,
+// Cover files for the queries with @c DDB_ARTWORK_FLAG_ONLY_EMBEDDED and/or a cover index are kept separately,
 // so that they don't replace the regular cached covers.
 static int
 make_embedded_cache_path (ddb_cover_info_t *cover, char *outpath, size_t outsize) {
@@ -1228,7 +1228,7 @@ make_embedded_cache_path (ddb_cover_info_t *cover, char *outpath, size_t outsize
     if (len > 4 && !strcmp (base + len - 4, ".jpg")) {
         len -= 4;
     }
-    if (!(cover->priv->query_flags & DDB_ARTWORK_USE_COVER_INDEX)) {
+    if (!(cover->priv->query_flags & DDB_ARTWORK_FLAG_USE_COVER_INDEX)) {
         snprintf (outpath, outsize, "%.*s.embedded.jpg", (int)len, base);
     }
     else {
@@ -1245,7 +1245,7 @@ process_embedded_query (ddb_cover_info_t *cover) {
         return;
     }
 
-    const int skip_cache = (cover->priv->query_flags & DDB_ARTWORK_SKIP_CACHE) != 0;
+    const int skip_cache = (cover->priv->query_flags & DDB_ARTWORK_FLAG_SKIP_CACHE) != 0;
 
     char cache_path[PATH_MAX];
     if (!skip_cache && make_embedded_cache_path (cover, cache_path, sizeof (cache_path)) < 0) {
@@ -1253,7 +1253,7 @@ process_embedded_query (ddb_cover_info_t *cover) {
     }
 
     int err;
-    if (cover->priv->query_flags & DDB_ARTWORK_USE_COVER_INDEX) {
+    if (cover->priv->query_flags & DDB_ARTWORK_FLAG_USE_COVER_INDEX) {
         err = extract_embedded_art_at_index (cover);
     }
     else {
@@ -1303,7 +1303,7 @@ find_local_cover (ddb_cover_info_t *cover) {
     return -1;
 }
 
-// Handles the regular queries with @c DDB_ARTWORK_SKIP_CACHE: local files and embedded covers only,
+// Handles the regular queries with @c DDB_ARTWORK_FLAG_SKIP_CACHE: local files and embedded covers only,
 // nothing is read from or written to the cache.
 static void
 process_uncached_query (ddb_cover_info_t *cover) {
@@ -1329,12 +1329,12 @@ process_uncached_query (ddb_cover_info_t *cover) {
 // Web cover: save_to_local ? save_to_local&return_path : save_to_cache&return_path
 static void
 process_query (ddb_cover_info_t *cover) {
-    if (cover->priv->query_flags & (DDB_ARTWORK_USE_COVER_INDEX | DDB_ARTWORK_ONLY_EMBEDDED)) {
+    if (cover->priv->query_flags & (DDB_ARTWORK_FLAG_USE_COVER_INDEX | DDB_ARTWORK_FLAG_ONLY_EMBEDDED)) {
         process_embedded_query (cover);
         return;
     }
 
-    if (cover->priv->query_flags & DDB_ARTWORK_SKIP_CACHE) {
+    if (cover->priv->query_flags & DDB_ARTWORK_FLAG_SKIP_CACHE) {
         process_uncached_query (cover);
         return;
     }
@@ -1773,11 +1773,11 @@ _execute_callback (ddb_cover_callback_t callback, ddb_cover_info_t *cover, ddb_c
 #pragma mark - Squashing multiple similar queries into one
 
 // The @c cover_index field was added in API 2.1, older clients may pass a smaller struct.
-// Returns the index of the cover to load, if @c DDB_ARTWORK_USE_COVER_INDEX is set, and the index is valid.
+// Returns the index of the cover to load, if @c DDB_ARTWORK_FLAG_USE_COVER_INDEX is set, and the index is valid.
 // Returns -1 if the index is invalid, or 0 if the flag is not set (the index is not used then).
 static int
 query_cover_index (const ddb_cover_query_t *query) {
-    if (!(query->flags & DDB_ARTWORK_USE_COVER_INDEX)) {
+    if (!(query->flags & DDB_ARTWORK_FLAG_USE_COVER_INDEX)) {
         return 0;
     }
     if (query->_size < offsetof (ddb_cover_query_t, cover_index) + sizeof (query->cover_index)) {
@@ -1864,7 +1864,7 @@ static void
 callback_and_free_squashed (ddb_cover_info_t *cover, ddb_cover_query_t *query) {
     __block artwork_query_t *squashed_queries = NULL;
     dispatch_sync (sync_queue, ^{
-        if (!(cover->priv->query_flags & DDB_ARTWORK_SKIP_CACHE)) {
+        if (!(cover->priv->query_flags & DDB_ARTWORK_FLAG_SKIP_CACHE)) {
             cover_update_cache (cover);
         }
         // find & remove from the queries list
@@ -1982,8 +1982,8 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
 
         _init_cover_metadata (cover, query->track);
         cover->priv->cover_index = query_cover_index (query);
-        cover->priv->query_flags =
-            query->flags & (DDB_ARTWORK_ONLY_EMBEDDED | DDB_ARTWORK_USE_COVER_INDEX | DDB_ARTWORK_SKIP_CACHE);
+        cover->priv->query_flags = query->flags
+            & (DDB_ARTWORK_FLAG_ONLY_EMBEDDED | DDB_ARTWORK_FLAG_USE_COVER_INDEX | DDB_ARTWORK_FLAG_SKIP_CACHE);
 
         __block int cancel_job = 0;
         dispatch_sync (sync_queue, ^{
@@ -2001,7 +2001,7 @@ cover_get (ddb_cover_query_t *query, ddb_cover_callback_t callback) {
         __block int found_in_cache = 0;
         dispatch_sync (sync_queue, ^{
             ddb_cover_info_t *cached_cover =
-                (cover->priv->query_flags & DDB_ARTWORK_SKIP_CACHE) ? NULL : cover_cache_find (cover);
+                (cover->priv->query_flags & DDB_ARTWORK_FLAG_SKIP_CACHE) ? NULL : cover_cache_find (cover);
             if (cached_cover) {
                 found_in_cache = 1;
                 cached_cover->priv->timestamp = time (NULL);
