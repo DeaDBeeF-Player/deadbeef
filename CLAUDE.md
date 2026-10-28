@@ -25,6 +25,8 @@ Build systems: autotools (`configure.ac`, `Makefile.am` per dir) for Linux, prem
 Xcode for macOS. Generated files (`Makefile.in`, `configure`, `config.h`, `autom4te.cache`, `testbuild/`) are untracked
 build artifacts; don't edit them. When adding or removing source files, update **every** relevant build system: the
 `Makefile.am` of that dir, `premake5.lua`, and the Xcode project (use the Xcode tools to add files to targets).
+Every file added to the Xcode project must be inserted at its alphabetically sorted position within its group (and
+within the target's build phases), not appended at the end.
 
 ## First-party vs third-party code
 
@@ -119,11 +121,12 @@ C / C++ / Obj-C common:
   Metadata strings come from the metacache (`metacache_add_string`/`metacache_remove_string`) where applicable.
 - C code should stay portable (Linux/macOS/Windows via mingw). Guard platform code with `#ifdef __APPLE__`,
   `#ifdef __linux__`, `#ifdef _WIN32`.
-- New 1st-party C files get the zlib license header block like in `src/streamer.c` (see `shortlicense.zlib`).
-  Plugins may be GPL/LGPL; check the plugin's `COPYING` and match the neighbors.
+- Every new 1st-party source file (C, C++, Obj-C, headers, ...) must contain the license header block from
+  `shortlicense.zlib` in the repo root, copied verbatim, and it is the only file header: remove the default Xcode-template header
+  (`//  File.m`, `//  Created by ...`) from new files. Plugins may be GPL/LGPL; check the plugin's `COPYING` and match the neighbors.
 
 Objective-C (cocoaui):
-- Xcode-template file header (`//  File.m`, `//  DeaDBeeF`, `//  Created by ...`, `//  Copyright © YEAR Oleksiy Yakovenko. All rights reserved.`).
+- Existing files have the Xcode-template file header (`//  File.m`, `//  DeaDBeeF`, `//  Created by ...`, `//  Copyright © YEAR Oleksiy Yakovenko. All rights reserved.`); new files use the zlib license header instead (see above).
 - `#import` for Obj-C headers, ARC, `@property (nonatomic)` with class extensions for private state.
 - Method braces are usually on the same line: `- (void)foo {`. Early-return guard style (`if (!self) { return nil; }`).
 - UI is built from XIBs in `plugins/cocoaui/XIB` or next to their controllers; controllers are `*ViewController` /

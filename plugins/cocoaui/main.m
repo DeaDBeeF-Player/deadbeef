@@ -23,6 +23,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "AppDelegate.h"
+#import "DdbCocoaUI.h"
 #include <deadbeef/deadbeef.h>
 #import "DdbUndoBuffer.h"
 #import "NSUndoManager+DdbUndoBuffer.h"
@@ -49,17 +50,24 @@ int cocoaui_message (uint32_t _id, uintptr_t ctx, uint32_t p1, uint32_t p2) {
     return [appDelegate ddb_message:_id ctx:ctx p1:p1 p2:p2];
 }
 
-DB_gui_t plugin = {
-    .plugin.type = DB_PLUGIN_GUI,
-    DDB_PLUGIN_SET_API_VERSION
-    .plugin.version_major = 1,
-    .plugin.version_minor = 0,
-    .plugin.id = "cocoaui",
-    .plugin.name = "Cocoa UI",
-    .plugin.start = cocoaui_start,
-    .plugin.stop = cocoaui_stop,
-    .plugin.message = cocoaui_message,
+static id<DdbCocoaUIProtocol>
+cocoaui_get_api (void) {
+    return DdbCocoaUI.sharedInstance;
+}
+
+ddb_cocoaui_api_t plugin = {
+    .gui.plugin.type = DB_PLUGIN_GUI,
+    .gui.plugin.api_vmajor = DB_API_VERSION_MAJOR,
+    .gui.plugin.api_vminor = DB_API_VERSION_MINOR,
+    .gui.plugin.version_major = 1,
+    .gui.plugin.version_minor = 0,
+    .gui.plugin.id = "cocoaui",
+    .gui.plugin.name = "Cocoa UI",
+    .gui.plugin.start = cocoaui_start,
+    .gui.plugin.stop = cocoaui_stop,
+    .gui.plugin.message = cocoaui_message,
     // NSApplicationMain doesn't return, so it doesn't seem it's possible to cleanup
+    .get_api = cocoaui_get_api,
 };
 
 DB_plugin_t *cocoaui_load (DB_functions_t *_deadbeef) {

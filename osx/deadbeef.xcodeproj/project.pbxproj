@@ -1709,6 +1709,9 @@
 		2D932A8330926E1C00933201 /* trkproperties_artwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D932A8130926E1C00933201 /* trkproperties_artwork.h */; };
 		2D932A9430926E5800933201 /* trkproperties_artwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D932A9330926E5800933201 /* trkproperties_artwork.c */; };
 		2D932A9530926E5800933201 /* trkproperties_artwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D932A9330926E5800933201 /* trkproperties_artwork.c */; };
+		2D932AA13092896C00933201 /* cocoaui_api.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D932AA03092896C00933201 /* cocoaui_api.h */; };
+		2D932AB23092896D00933201 /* DdbCocoaUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D932AB13092896D00933201 /* DdbCocoaUI.h */; };
+		2D932AB43092896F00933201 /* DdbCocoaUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D932AB33092896F00933201 /* DdbCocoaUI.m */; };
 		2D95F6B72939283D002D8499 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D95F6BA29392884002D8499 /* artwork_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6B829392884002D8499 /* artwork_ogg.h */; };
 		2D95F6BB29392884002D8499 /* artwork_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F6B929392884002D8499 /* artwork_ogg.c */; };
@@ -6470,6 +6473,9 @@
 		2D92F37F2B6D23FF00BD07E8 /* undointegration.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = undointegration.c; sourceTree = "<group>"; };
 		2D932A8130926E1C00933201 /* trkproperties_artwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trkproperties_artwork.h; sourceTree = "<group>"; };
 		2D932A9330926E5800933201 /* trkproperties_artwork.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trkproperties_artwork.c; sourceTree = "<group>"; };
+		2D932AA03092896C00933201 /* cocoaui_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cocoaui_api.h; sourceTree = "<group>"; };
+		2D932AB13092896D00933201 /* DdbCocoaUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbCocoaUI.h; sourceTree = "<group>"; };
+		2D932AB33092896F00933201 /* DdbCocoaUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbCocoaUI.m; sourceTree = "<group>"; };
 		2D95F6B829392884002D8499 /* artwork_ogg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_ogg.h; sourceTree = "<group>"; };
 		2D95F6B929392884002D8499 /* artwork_ogg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_ogg.c; sourceTree = "<group>"; };
 		2D95F6BF29392F17002D8499 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
@@ -13700,6 +13706,9 @@
 				2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */,
 				2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */,
 				2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */,
+				2D932AA03092896C00933201 /* cocoaui_api.h */,
+				2D932AB13092896D00933201 /* DdbCocoaUI.h */,
+				2D932AB33092896F00933201 /* DdbCocoaUI.m */,
 				2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */,
 				2DA5E340238DB1A8005832B7 /* EditColumnWindowController.m */,
 				2DEBA1CF23E207A3000E4135 /* EqualizerWindowController.h */,
@@ -15282,6 +15291,7 @@
 				2D7C1FAD2946001B00163538 /* ShaderRenderer.h in Headers */,
 				2D6D81EF1CCF9E0B00028788 /* DdbTableViewRightClickActivate.h in Headers */,
 				2DE1D3E619B11539009B5BC6 /* PlaceholderWidget.h in Headers */,
+				2D932AA13092896C00933201 /* cocoaui_api.h in Headers */,
 				2DDD781625E1578C00FA6FE5 /* SplitterWidget.h in Headers */,
 				2D1A564A1D9FFB10005E5CDD /* ReplayGainScannerController.h in Headers */,
 				2DA5E341238DB1A8005832B7 /* EditColumnWindowController.h in Headers */,
@@ -15345,6 +15355,7 @@
 				2D046F7D25E2B55200F68459 /* MainWindow.h in Headers */,
 				2DD062C52EC115EE006F3223 /* TrackPropertiesNullFormatter.h in Headers */,
 				2D98B67F272B272300E655AE /* ScopeShaderTypes.h in Headers */,
+				2D932AB23092896D00933201 /* DdbCocoaUI.h in Headers */,
 				2D747E4024B6580A00BBB987 /* MainWindowSidebarViewController.h in Headers */,
 				2D98B685272D56F100E655AE /* ScopeVisualizationViewController.h in Headers */,
 				2DA30E7424032550001BAB8A /* NetworkPreferencesViewController.h in Headers */,
@@ -19211,6 +19222,7 @@
 				2D95F72A293BB295002D8499 /* DdbUndoBufferRetainer.m in Sources */,
 				2D04701625E2D97D00F68459 /* WidgetMenuBuilder.m in Sources */,
 				2D828E5C19E56B4D00EE874F /* SearchViewController.m in Sources */,
+				2D932AB43092896F00933201 /* DdbCocoaUI.m in Sources */,
 				2DC91D2A2EC28A4600594A63 /* SelectionPropertiesWidget.m in Sources */,
 				2D747E3924B64E7600BBB987 /* SidebarSplitViewItem.m in Sources */,
 				2D6D81F01CCF9E0B00028788 /* DdbTableViewRightClickActivate.m in Sources */,
