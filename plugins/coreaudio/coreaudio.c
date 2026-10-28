@@ -183,11 +183,77 @@ OSStatus propertiesChanged(AudioObjectID inObjectID,
     return noErr;
 }
 
+static int
+ca_get_device_string (AudioDeviceID dev, AudioObjectPropertySelector selector, char *buf, size_t size) {
+    AudioObjectPropertyAddress addr = {
+        selector,
+        kAudioObjectPropertyScopeGlobal,
+        kAudioObjectPropertyElementMain
+    };
+    CFStringRef str = NULL;
+    UInt32 dataSize = sizeof (str);
+    OSStatus status = AudioObjectGetPropertyData (dev, &addr, 0, NULL, &dataSize, &str);
+    if (kAudioHardwareNoError != status || !str) {
+        trace ("AudioObjectGetPropertyData (%x) failed: %i\n", (unsigned)selector, status);
+        return -1;
+    }
+    Boolean ok = CFStringGetCString (str, buf, size, kCFStringEncodingUTF8);
+    CFRelease (str);
+    return ok ? 0 : -1;
+}
+
+static int
+ca_device_has_output (AudioDeviceID dev) {
+    AudioObjectPropertyAddress addr = {
+        kAudioDevicePropertyStreamConfiguration,
+        kAudioDevicePropertyScopeOutput,
+        kAudioObjectPropertyElementMain
+    };
+    UInt32 dataSize = 0;
+    OSStatus status = AudioObjectGetPropertyDataSize (dev, &addr, 0, NULL, &dataSize);
+    if (kAudioHardwareNoError != status) {
+        trace ("AudioObjectGetPropertyDataSize (kAudioDevicePropertyStreamConfiguration) failed: %i\n", status);
+        return 0;
+    }
+    AudioBufferList *bufferList = malloc (dataSize);
+    status = AudioObjectGetPropertyData (dev, &addr, 0, NULL, &dataSize, bufferList);
+    int res = (kAudioHardwareNoError == status && bufferList->mNumberBuffers != 0);
+    free (bufferList);
+    return res;
+}
+
+// Returns the name used to list and select the device.
+// If another output device has the same name, " (UID)" is appended to keep them distinct.
+static int
+ca_get_device_display_name (const AudioDeviceID *devices, UInt32 count, UInt32 index, char *buf, size_t size) {
+    if (ca_get_device_string (devices[index], kAudioDevicePropertyDeviceNameCFString, buf, size) < 0) {
+        return -1;
+    }
+
+    for (UInt32 i = 0; i < count; i++) {
+        if (i == index || !ca_device_has_output (devices[i])) {
+            continue;
+        }
+        char other[256];
+        if (ca_get_device_string (devices[i], kAudioDevicePropertyDeviceNameCFString, other, sizeof (other)) < 0
+            || strcmp (buf, other)) {
+            continue;
+        }
+        char uid[256];
+        if (ca_get_device_string (devices[index], kAudioDevicePropertyDeviceUID, uid, sizeof (uid)) == 0) {
+            size_t len = strlen (buf);
+            snprintf (buf + len, size - len, " (%s)", uid);
+        }
+        break;
+    }
+    return 0;
+}
+
 static void
 ca_get_deviceid (void) {
     device_id = 0;
 
-    char newdev[100];
+    char newdev[256];
     deadbeef->conf_get_str ("coreaudio_soundcard", "", newdev, sizeof (newdev));
 
     AudioObjectPropertyAddress propertyAddress = {
@@ -215,22 +281,12 @@ ca_get_deviceid (void) {
     }
 
     // find device with specified name
-    propertyAddress.mScope = kAudioDevicePropertyScopeOutput;
-    for(UInt32 i = 0; i < deviceCount; ++i) {
-        // Query device name
-        CFStringRef deviceName = NULL;
-        dataSize = sizeof(deviceName);
-        propertyAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
-        status = AudioObjectGetPropertyData(audioDevices[i], &propertyAddress, 0, NULL, &dataSize, &deviceName);
-        if(kAudioHardwareNoError != status) {
-            trace ("AudioObjectGetPropertyData (kAudioDevicePropertyDeviceNameCFString) failed: %i\n", status);
+    for (UInt32 i = 0; i < deviceCount; ++i) {
+        char buf[256];
+        if (ca_get_device_display_name (audioDevices, deviceCount, i, buf, sizeof (buf)) < 0) {
             continue;
         }
-
-        char buf[100];
-        CFStringGetCString(deviceName, buf, sizeof(buf), kCFStringEncodingUTF8);
-        CFRelease(deviceName);
-        if (!strcmp (buf, newdev)) {
+        if (!strcmp (buf, newdev) && ca_device_has_output (audioDevices[i])) {
             device_id = audioDevices[i];
             break;
         }
@@ -630,51 +686,17 @@ static void ca_enum_soundcards (void (*callback)(const char *name, const char *d
     }
 
     // Iterate through all the devices and determine which are output-capable
-    propertyAddress.mScope = kAudioDevicePropertyScopeOutput;
-    for(UInt32 i = 0; i < deviceCount; ++i) {
-        // Query device UID
-        CFStringRef deviceUID = NULL;
-        dataSize = sizeof(deviceUID);
-        propertyAddress.mSelector = kAudioDevicePropertyDeviceUID;
-        status = AudioObjectGetPropertyData(audioDevices[i], &propertyAddress, 0, NULL, &dataSize, &deviceUID);
-        if(kAudioHardwareNoError != status) {
-            trace ("AudioObjectGetPropertyData (kAudioDevicePropertyDeviceUID) failed: %i\n", status);
+    for (UInt32 i = 0; i < deviceCount; ++i) {
+        if (!ca_device_has_output (audioDevices[i])) {
             continue;
         }
-
-        // Query device name
-        CFStringRef deviceName = NULL;
-        dataSize = sizeof(deviceName);
-        propertyAddress.mSelector = kAudioDevicePropertyDeviceNameCFString;
-        status = AudioObjectGetPropertyData(audioDevices[i], &propertyAddress, 0, NULL, &dataSize, &deviceName);
-        if(kAudioHardwareNoError != status) {
-            trace ("AudioObjectGetPropertyData (kAudioDevicePropertyDeviceNameCFString) failed: %i\n", status);
+        char buf[256];
+        if (ca_get_device_display_name (audioDevices, deviceCount, i, buf, sizeof (buf)) < 0) {
             continue;
         }
-
-        // test for number of channels
-        dataSize = 0;
-        propertyAddress.mSelector = kAudioDevicePropertyStreamConfiguration;
-        status = AudioObjectGetPropertyDataSize(audioDevices[i], &propertyAddress, 0, NULL, &dataSize);
-        if(kAudioHardwareNoError != status) {
-            trace ("AudioObjectGetPropertyDataSize (kAudioDevicePropertyStreamConfiguration) failed: %i\n", status);
-            continue;
-        }
-
-        AudioBufferList *bufferList = malloc(dataSize);
-        status = AudioObjectGetPropertyData(audioDevices[i], &propertyAddress, 0, NULL, &dataSize, bufferList);
-        if(kAudioHardwareNoError != status || 0 == bufferList->mNumberBuffers) {
-            free(bufferList);
-            continue;
-        }
-
         if (callback) {
-            char buf[100];
-            CFStringGetCString(deviceName, buf, sizeof(buf), kCFStringEncodingUTF8);
             callback (buf, "", userdata);
         }
-
-        free(bufferList);
     }
 
     free(audioDevices);
