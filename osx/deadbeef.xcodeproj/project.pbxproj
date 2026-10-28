@@ -1697,12 +1697,18 @@
 		2D92D33C29B9323600218F1D /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21C29B92DF900218F1D /* analyzer.c */; };
 		2D92D33D29B9324A00218F1D /* tftintutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D1F329B92DF900218F1D /* tftintutil.c */; };
 		2D92D33E29B9324A00218F1D /* pluginsettings.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21729B92DF900218F1D /* pluginsettings.c */; };
+		2D92D4A02F1A000100AAAAAA /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21C29B92DF900218F1D /* analyzer.c */; };
+		2D92D4A02F1A000200AAAAAA /* AnalyzerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D4A02F1A000300AAAAAA /* AnalyzerTests.cpp */; };
 		2D92F37C2B6D226F00BD07E8 /* UndoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92F37A2B6D226F00BD07E8 /* UndoIntegration.h */; };
 		2D92F37D2B6D226F00BD07E8 /* UndoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D92F37B2B6D226F00BD07E8 /* UndoIntegration.m */; };
 		2D92F3822B6D250D00BD07E8 /* undointegration.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92F37F2B6D23FF00BD07E8 /* undointegration.c */; };
 		2D92F3832B6D250E00BD07E8 /* undointegration.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92F37F2B6D23FF00BD07E8 /* undointegration.c */; };
 		2D92F3842B6D25C400BD07E8 /* undointegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92F37E2B6D23FE00BD07E8 /* undointegration.h */; };
 		2D92F3852B6D25C400BD07E8 /* undointegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D92F37E2B6D23FE00BD07E8 /* undointegration.h */; };
+		2D932A8230926E1C00933201 /* trkproperties_artwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D932A8130926E1C00933201 /* trkproperties_artwork.h */; };
+		2D932A8330926E1C00933201 /* trkproperties_artwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D932A8130926E1C00933201 /* trkproperties_artwork.h */; };
+		2D932A9430926E5800933201 /* trkproperties_artwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D932A9330926E5800933201 /* trkproperties_artwork.c */; };
+		2D932A9530926E5800933201 /* trkproperties_artwork.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D932A9330926E5800933201 /* trkproperties_artwork.c */; };
 		2D95F6B72939283D002D8499 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D95F6BA29392884002D8499 /* artwork_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6B829392884002D8499 /* artwork_ogg.h */; };
 		2D95F6BB29392884002D8499 /* artwork_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F6B929392884002D8499 /* artwork_ogg.c */; };
@@ -1794,8 +1800,6 @@
 		2DA04EF823B6AAA40070AC01 /* shellexecutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */; };
 		2DA0ACE91AA71516007EDD43 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
 		2DA0ACEE1AA71E7C007EDD43 /* in_sc68.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		2D92D4A02F1A000100AAAAAA /* analyzer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D21C29B92DF900218F1D /* analyzer.c */; };
-		2D92D4A02F1A000200AAAAAA /* AnalyzerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D92D4A02F1A000300AAAAAA /* AnalyzerTests.cpp */; };
 		2DA21F4D298680990077BD4C /* RingBufTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DA21F4C298680990077BD4C /* RingBufTests.cpp */; };
 		2DA21F6029868F9C0077BD4C /* resizable_buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA21F5E29868F930077BD4C /* resizable_buffer.c */; };
 		2DA24AE119E7203A00E34920 /* asyn-ares.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DA24A0F19E7203700E34920 /* asyn-ares.c */; };
@@ -4842,7 +4846,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7A1C0DE02F0000010000AAA1 /* convpresets_macos */ = {isa = PBXFileReference; lastKnownFileType = folder; path = convpresets_macos; sourceTree = "<group>"; };
 		07021F191C2734AC00FC9AF9 /* libwmalib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwmalib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		07021F2E1C2734D700FC9AF9 /* libasflib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libasflib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		07021F3A1C2734F100FC9AF9 /* wma.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wma.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6460,10 +6463,13 @@
 		2D92D21C29B92DF900218F1D /* analyzer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analyzer.c; sourceTree = "<group>"; };
 		2D92D21D29B92DF900218F1D /* growableBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = growableBuffer.h; sourceTree = "<group>"; };
 		2D92D21E29B92DF900218F1D /* ctmap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ctmap.c; sourceTree = "<group>"; };
+		2D92D4A02F1A000300AAAAAA /* AnalyzerTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnalyzerTests.cpp; sourceTree = "<group>"; };
 		2D92F37A2B6D226F00BD07E8 /* UndoIntegration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UndoIntegration.h; sourceTree = "<group>"; };
 		2D92F37B2B6D226F00BD07E8 /* UndoIntegration.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UndoIntegration.m; sourceTree = "<group>"; };
 		2D92F37E2B6D23FE00BD07E8 /* undointegration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = undointegration.h; sourceTree = "<group>"; };
 		2D92F37F2B6D23FF00BD07E8 /* undointegration.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = undointegration.c; sourceTree = "<group>"; };
+		2D932A8130926E1C00933201 /* trkproperties_artwork.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trkproperties_artwork.h; sourceTree = "<group>"; };
+		2D932A9330926E5800933201 /* trkproperties_artwork.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = trkproperties_artwork.c; sourceTree = "<group>"; };
 		2D95F6B829392884002D8499 /* artwork_ogg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_ogg.h; sourceTree = "<group>"; };
 		2D95F6B929392884002D8499 /* artwork_ogg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_ogg.c; sourceTree = "<group>"; };
 		2D95F6BF29392F17002D8499 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
@@ -6593,7 +6599,6 @@
 		2DA04EF523B6AA6E0070AC01 /* shellexecutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = shellexecutil.c; sourceTree = "<group>"; };
 		2DA0ABE11AA71055007EDD43 /* in_sc68.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = in_sc68.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA0ACEA1AA7162C007EDD43 /* in_sc68.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = in_sc68.c; sourceTree = "<group>"; };
-		2D92D4A02F1A000300AAAAAA /* AnalyzerTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnalyzerTests.cpp; sourceTree = "<group>"; };
 		2DA21F4C298680990077BD4C /* RingBufTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RingBufTests.cpp; sourceTree = "<group>"; };
 		2DA21F5D29868F930077BD4C /* resizable_buffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = resizable_buffer.h; sourceTree = "<group>"; };
 		2DA21F5E29868F930077BD4C /* resizable_buffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = resizable_buffer.c; sourceTree = "<group>"; };
@@ -7723,6 +7728,7 @@
 		4DC96E6D1E4CC9670093CFD3 /* dsp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dsp.c; sourceTree = "<group>"; };
 		4DC96E6E1E4CC9670093CFD3 /* dsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dsp.h; sourceTree = "<group>"; };
 		4DE28470205BE0B20023063E /* HelpViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HelpViewer.xib; sourceTree = "<group>"; };
+		7A1C0DE02F0000010000AAA1 /* convpresets_macos */ = {isa = PBXFileReference; lastKnownFileType = folder; path = convpresets_macos; sourceTree = "<group>"; };
 		83BA8E4F1D542D0D00D345EE /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		83BA8E5E1D542D2700D345EE /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		A1B2C3D4E5F60718293A4B01 /* QuickLookViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuickLookViewController.h; sourceTree = "<group>"; };
@@ -12778,6 +12784,8 @@
 				2DE3B5882269BB4300AFF9AE /* tfimport.h */,
 				2DE3B5CD2269BB4300AFF9AE /* trkproperties.c */,
 				2DE3B5802269BB4300AFF9AE /* trkproperties.h */,
+				2D932A8130926E1C00933201 /* trkproperties_artwork.h */,
+				2D932A9330926E5800933201 /* trkproperties_artwork.c */,
 				2DE3B6952269BB4300AFF9AE /* widgets.c */,
 				2DE3B5B72269BB4300AFF9AE /* widgets.h */,
 				2DE3B5C02269BB4300AFF9AE /* wingeom.c */,
@@ -14806,6 +14814,7 @@
 				2DC6568F2744289C00583E14 /* plcommon.h in Headers */,
 				2DC656902744289C00583E14 /* progress.h in Headers */,
 				2DC656912744289C00583E14 /* eq.h in Headers */,
+				2D932A8230926E1C00933201 /* trkproperties_artwork.h in Headers */,
 				2DC656922744289C00583E14 /* hotkeys.h in Headers */,
 				2DC656932744289C00583E14 /* search.h in Headers */,
 				2D5C6AD42752B6930073632B /* plmenu.h in Headers */,
@@ -14897,6 +14906,7 @@
 				2DE3B8032269BF3100AFF9AE /* plcommon.h in Headers */,
 				2DE3B7C12269BF1300AFF9AE /* progress.h in Headers */,
 				2DE3B7F22269BF3100AFF9AE /* eq.h in Headers */,
+				2D932A8330926E1C00933201 /* trkproperties_artwork.h in Headers */,
 				2DE3B7DB2269BF1700AFF9AE /* hotkeys.h in Headers */,
 				2DE3B8062269BF3100AFF9AE /* search.h in Headers */,
 				2D5C6AD52752B6930073632B /* plmenu.h in Headers */,
@@ -17384,6 +17394,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		2D3645B32EB75FFC00E7EA7A /* Setup Build Parameters */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../build_data/VERSION",
+				"$(SRCROOT)/../build_data/BUILD_NUMBER",
+				"$(SRCROOT)/scripts/setup_xcode_variables.sh",
+			);
+			name = "Setup Build Parameters";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/../build_data/BuildParameters.xcconfig",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/../scripts/setup_xcode_variables.sh\n";
+		};
 		7A1C0DE02F00000300000041 /* Copy macOS Converter Presets */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -17449,28 +17481,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mkdir -p \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/convpresets\"\ncp -R \"$SRCROOT/../plugins/converter/convpresets_macos/.\" \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/convpresets/\"\n";
-		};
-		2D3645B32EB75FFC00E7EA7A /* Setup Build Parameters */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../build_data/VERSION",
-				"$(SRCROOT)/../build_data/BUILD_NUMBER",
-				"$(SRCROOT)/scripts/setup_xcode_variables.sh",
-			);
-			name = "Setup Build Parameters";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/../build_data/BuildParameters.xcconfig",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "${SRCROOT}/../scripts/setup_xcode_variables.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -18845,6 +18855,7 @@
 				2D92D31529B92F8700218F1D /* analyzer.c in Sources */,
 				2DC656C42744289C00583E14 /* search.c in Sources */,
 				2DC656C52744289C00583E14 /* ddbequalizer.c in Sources */,
+				2D932A9430926E5800933201 /* trkproperties_artwork.c in Sources */,
 				2DC656C62744289C00583E14 /* ddb_splitter_size_mode.c in Sources */,
 				2D60EB06277238E000C28A44 /* searchplaylist.c in Sources */,
 				2DC656C72744289C00583E14 /* ddbvolumebar.c in Sources */,
@@ -18958,6 +18969,7 @@
 				2D92D31829B92F8700218F1D /* analyzer.c in Sources */,
 				2DE3B7E42269BF3100AFF9AE /* search.c in Sources */,
 				2DE3B7EC2269BF3100AFF9AE /* ddbequalizer.c in Sources */,
+				2D932A9530926E5800933201 /* trkproperties_artwork.c in Sources */,
 				2DE3B7CE2269BF1700AFF9AE /* ddb_splitter_size_mode.c in Sources */,
 				2D60EB07277238E000C28A44 /* searchplaylist.c in Sources */,
 				2DE3B7FE2269BF3100AFF9AE /* ddbvolumebar.c in Sources */,

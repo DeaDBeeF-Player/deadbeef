@@ -44,6 +44,7 @@
 #include "support.h"
 #include "tagwritersettings.h"
 #include "trkproperties.h"
+#include "trkproperties_artwork.h"
 #include "wingeom.h"
 #include "../../src/utf8.h"
 
@@ -438,6 +439,8 @@ trkproperties_fill_metadata (void) {
     if (keys) {
         free (keys);
     }
+
+    trkproperties_artwork_reload (tracks, numtracks);
 }
 
 void
@@ -446,6 +449,7 @@ show_track_properties_dlg_with_current_track_list (void) {
     GtkTreeView *proptree;
     if (!trackproperties) {
         trackproperties = create_trackproperties ();
+        trkproperties_artwork_create_tab (GTK_NOTEBOOK (lookup_widget (trackproperties, "trkproperties_notebook")));
         gtk_window_set_transient_for (GTK_WINDOW (trackproperties), GTK_WINDOW (mainwin));
         wingeom_restore (trackproperties, "trkproperties", -1, -1, 300, 400, 0);
 
