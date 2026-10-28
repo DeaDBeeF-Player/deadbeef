@@ -426,7 +426,8 @@ artworkNameForCoverType (ddb_artwork_cover_type_t coverType) {
 }
 
 // Loads every cover embedded in the file (@c count of them). If there are none (or the file format doesn't support it),
-// falls back to the regular lookup of a single cover, which also searches local files and online services.
+// falls back to the regular lookup of a single cover, which also searches local folders.
+// The lookup uses DDB_ARTWORK_SKIP_CACHE, so the disk cache and online services are not used.
 - (void)requestArtworkForTrack:(DB_playItem_t *)track
                         plugin:(ddb_artwork_plugin_t *)plugin
                     coverCount:(int)count

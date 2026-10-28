@@ -114,6 +114,10 @@ flac_scan (const char *path, ddb_cover_info_t *cover, int index) {
         if (pic->data_length == 0) {
             continue;
         }
+        // A picture with the "-->" mime type is a link: the data is a URL, and not an image
+        if (pic->mime_type != NULL && !strcmp (pic->mime_type, "-->")) {
+            continue;
+        }
         if (cover != NULL && count == index) {
             trace ("found flac cover art of %d bytes (%s)\n", pic->data_length, pic->description);
             cover->priv->blob = malloc (pic->data_length);
