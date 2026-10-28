@@ -35,8 +35,14 @@
 #include "../../gettext.h"
 #include "../artwork/artwork.h"
 #include "gtkui.h"
+#include "support.h"
 #include "trkproperties.h"
 #include "trkproperties_artwork.h"
+
+// GtkSpinner is not available before GTK 2.20, the "Loading..." label is displayed instead
+#if GTK_CHECK_VERSION(2, 20, 0)
+#    define USE_SPINNER 1
+#endif
 
 // The pictures are scaled down to fit this size
 #define PICTURE_MAX_HEIGHT 96
@@ -138,7 +144,9 @@ _stop_progress (void) {
     if (_ui.spinner == NULL) {
         return;
     }
+#ifdef USE_SPINNER
     gtk_spinner_stop (GTK_SPINNER (_ui.spinner));
+#endif
     gtk_widget_hide (_ui.spinner);
 }
 
@@ -150,7 +158,9 @@ _show_progress (void) {
     gtk_widget_hide (_ui.message_label);
     gtk_widget_hide (_ui.scrolled);
     gtk_widget_show (_ui.spinner);
+#ifdef USE_SPINNER
     gtk_spinner_start (GTK_SPINNER (_ui.spinner));
+#endif
 }
 
 static void
@@ -509,8 +519,12 @@ trkproperties_artwork_create_tab (GtkNotebook *notebook) {
     gtk_misc_set_alignment (GTK_MISC (message_label), 0.5f, 0.5f);
     gtk_box_pack_start (GTK_BOX (page), message_label, TRUE, TRUE, 0);
 
+#ifdef USE_SPINNER
     GtkWidget *spinner = gtk_spinner_new ();
     gtk_widget_set_size_request (spinner, 32, 32);
+#else
+    GtkWidget *spinner = gtk_label_new (_("Loading..."));
+#endif
     gtk_box_pack_start (GTK_BOX (page), spinner, TRUE, FALSE, 0);
 
     // The Close button at the bottom, like in the other tabs. The dialog can have no title bar, e.g. in tiling window
