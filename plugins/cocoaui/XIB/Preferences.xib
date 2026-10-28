@@ -611,6 +611,9 @@
                         <binding destination="YqN-ZP-2eU" name="value" keyPath="self.alwaysResumeSessionPaused" id="Vex-aX-ACI"/>
                     </connections>
                 </button>
+                <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Ipl-Bx-1Xp">
+                    <rect key="frame" x="8" y="180" width="504" height="5"/>
+                </box>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="eQf-3a-Nqb">
                     <rect key="frame" x="20" y="193" width="480" height="16"/>
                     <buttonCell key="cell" type="check" title="Enqueue incoming files by default" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Qk7-Wd-2Hs">
@@ -685,7 +688,10 @@
                 <constraint firstItem="arn-tx-1Aq" firstAttribute="firstBaseline" secondItem="50R-70-80x" secondAttribute="firstBaseline" id="qTT-Xa-GhM"/>
                 <constraint firstItem="OHh-mq-dNT" firstAttribute="firstBaseline" secondItem="jCD-pm-VFD" secondAttribute="baseline" id="rW2-6i-Rj6"/>
                 <constraint firstItem="9H9-w2-zUI" firstAttribute="trailing" secondItem="Ypp-Lr-7tH" secondAttribute="trailing" id="sdA-0R-cHc"/>
-                <constraint firstItem="elV-fL-38G" firstAttribute="top" secondItem="eQf-3a-Nqb" secondAttribute="bottom" constant="11" id="spV-4L-z5P"/>
+                <constraint firstItem="elV-fL-38G" firstAttribute="top" secondItem="Ipl-Bx-1Xp" secondAttribute="bottom" constant="8" id="spV-4L-z5P"/>
+                <constraint firstItem="Ipl-Bx-1Xp" firstAttribute="top" secondItem="eQf-3a-Nqb" secondAttribute="bottom" constant="8" id="Ipl-Cn-6Xq"/>
+                <constraint firstItem="Ipl-Bx-1Xp" firstAttribute="leading" secondItem="o57-76-gIf" secondAttribute="leading" id="Ipl-Cn-7Xr"/>
+                <constraint firstItem="Ipl-Bx-1Xp" firstAttribute="trailing" secondItem="o57-76-gIf" secondAttribute="trailing" id="Ipl-Cn-8Xs"/>
                 <constraint firstItem="eQf-3a-Nqb" firstAttribute="top" secondItem="ySk-s8-tM7" secondAttribute="bottom" constant="8" id="Ra9-Mc-5Ye"/>
                 <constraint firstItem="eQf-3a-Nqb" firstAttribute="leading" secondItem="elV-fL-38G" secondAttribute="leading" id="Lp2-Xg-6Fh"/>
                 <constraint firstItem="eQf-3a-Nqb" firstAttribute="trailing" secondItem="elV-fL-38G" secondAttribute="trailing" id="Vc8-Hj-3Kd"/>
