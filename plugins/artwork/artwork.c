@@ -1810,6 +1810,12 @@ queries_squashable (ddb_cover_query_t *query1, ddb_cover_query_t *query2) {
         return 1;
     }
 
+    // These queries are about the covers embedded in one specific file,
+    // they can't be shared with another file, even if the metadata is the same.
+    if (query1->flags & (DDB_ARTWORK_FLAG_ONLY_EMBEDDED | DDB_ARTWORK_FLAG_USE_COVER_INDEX)) {
+        return uri1 != NULL && uri2 != NULL && !strcmp (uri1, uri2);
+    }
+
     // if all metadata is defined -- compare tracknr, title, album, artist
     ddb_tf_context_t ctx = { 0 };
     ctx._size = sizeof (ddb_tf_context_t);
