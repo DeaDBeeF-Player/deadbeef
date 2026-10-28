@@ -345,7 +345,7 @@ clipboard_activate_dest_playlist (const char *pdata, ddb_playlist_t *plt, int ct
         int playlist = -1;
         if (clip_ctx && clip_ctx->plt_title) {
             int cnt = deadbeef->plt_get_count ();
-            playlist = deadbeef->plt_add (cnt, clip_ctx->plt_title);
+            playlist = deadbeef->plt_add2 (cnt, clip_ctx->plt_title);
         }
         else {
             playlist = gtkui_add_new_playlist ();
