@@ -1712,6 +1712,8 @@
 		2D932AA13092896C00933201 /* cocoaui_api.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D932AA03092896C00933201 /* cocoaui_api.h */; };
 		2D932AB23092896D00933201 /* DdbCocoaUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D932AB13092896D00933201 /* DdbCocoaUI.h */; };
 		2D932AB43092896F00933201 /* DdbCocoaUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D932AB33092896F00933201 /* DdbCocoaUI.m */; };
+		2D932AB63092913000933201 /* PluginWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D932AB53092913000933201 /* PluginWidget.h */; };
+		2D932AB83092913800933201 /* PluginWidget.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D932AB73092913800933201 /* PluginWidget.m */; };
 		2D95F6B72939283D002D8499 /* libogglib.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D7C37EC1B2C40520029DE0A /* libogglib.dylib */; };
 		2D95F6BA29392884002D8499 /* artwork_ogg.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D95F6B829392884002D8499 /* artwork_ogg.h */; };
 		2D95F6BB29392884002D8499 /* artwork_ogg.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D95F6B929392884002D8499 /* artwork_ogg.c */; };
@@ -6476,6 +6478,8 @@
 		2D932AA03092896C00933201 /* cocoaui_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cocoaui_api.h; sourceTree = "<group>"; };
 		2D932AB13092896D00933201 /* DdbCocoaUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbCocoaUI.h; sourceTree = "<group>"; };
 		2D932AB33092896F00933201 /* DdbCocoaUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbCocoaUI.m; sourceTree = "<group>"; };
+		2D932AB53092913000933201 /* PluginWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginWidget.h; sourceTree = "<group>"; };
+		2D932AB73092913800933201 /* PluginWidget.m */ = {isa = PBXFileReference; path = PluginWidget.m; sourceTree = "<group>"; };
 		2D95F6B829392884002D8499 /* artwork_ogg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_ogg.h; sourceTree = "<group>"; };
 		2D95F6B929392884002D8499 /* artwork_ogg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_ogg.c; sourceTree = "<group>"; };
 		2D95F6BF29392F17002D8499 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
@@ -12848,6 +12852,8 @@
 				2DDD796225E15ED200FA6FE5 /* PlaylistWidget.m */,
 				2DC657CA2749544000583E14 /* PlaylistWithTabsWidget.h */,
 				2DC657CB2749544000583E14 /* PlaylistWithTabsWidget.m */,
+				2D932AB53092913000933201 /* PluginWidget.h */,
+				2D932AB73092913800933201 /* PluginWidget.m */,
 				0D568526271DC35E0026F700 /* ScopeWidget.h */,
 				0D568527271DC35E0026F700 /* ScopeWidget.m */,
 				2DC91D282EC28A4600594A63 /* SelectionPropertiesWidget.h */,
@@ -13702,11 +13708,11 @@
 				2D6202AF1B90800A00594746 /* XIB */,
 				4DA72BD91838EAAB00A98C62 /* AppDelegate.h */,
 				4DA72BDA1838EAAB00A98C62 /* AppDelegate.m */,
+				2D932AA03092896C00933201 /* cocoaui_api.h */,
 				2DE0072B1B30B5FE0016DA68 /* ConverterWindowController.h */,
 				2DE0072C1B30B5FE0016DA68 /* ConverterWindowController.m */,
 				2D8D96AC1D10904A00A5C7E6 /* CoverManager.h */,
 				2D8D96AD1D10904A00A5C7E6 /* CoverManager.m */,
-				2D932AA03092896C00933201 /* cocoaui_api.h */,
 				2D932AB13092896D00933201 /* DdbCocoaUI.h */,
 				2D932AB33092896F00933201 /* DdbCocoaUI.m */,
 				2DA5E33F238DB1A8005832B7 /* EditColumnWindowController.h */,
@@ -15343,6 +15349,7 @@
 				2DC657C62748502F00583E14 /* SegmentedTabView.h in Headers */,
 				2D9EF31E2B6FBC390042F6D8 /* KeyboardShortcutEditorWindowController.h in Headers */,
 				2DF55C432270FF7E002C44DC /* ScriptablePropertySheetDataSource.h in Headers */,
+				2D932AB63092913000933201 /* PluginWidget.h in Headers */,
 				2DC6580D274A994100583E14 /* TableViewWithReturnAction.h in Headers */,
 				2DD062CF2EC13F61006F3223 /* AddNewFieldWindowController.h in Headers */,
 				2D30D20C25E2A8930023A299 /* WidgetTopLevelView.h in Headers */,
@@ -19194,6 +19201,7 @@
 				2DA30E7A2403292D001BAB8A /* PlaybackPreferencesViewController.m in Sources */,
 				2D92D33C29B9323600218F1D /* analyzer.c in Sources */,
 				2D747E3A24B64E7600BBB987 /* SidebarSplitViewController.m in Sources */,
+				2D932AB83092913800933201 /* PluginWidget.m in Sources */,
 				2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */,
 				2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */,
 				2D5F05F225E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */,

@@ -22,6 +22,9 @@
 */
 
 #import "DdbCocoaUI.h"
+#import "DesignModeDeps.h"
+#import "PluginWidget.h"
+#import "WidgetFactory.h"
 
 @implementation DdbCocoaUI
 
@@ -32,6 +35,21 @@
         instance = [DdbCocoaUI new];
     });
     return instance;
+}
+
+#pragma mark - DdbCocoaUIProtocol
+
+- (void)registerWidgetType:(NSString *)type
+               displayName:(NSString *)displayName
+                   factory:(id<DdbCocoaWidgetProtocol> (^)(id<DdbCocoaWidgetHostProtocol> host))factory {
+    [WidgetFactory.sharedInstance registerType:type displayName:displayName instantiatorBlock:^id<WidgetProtocol> _Nonnull{
+        // Not captured, because the shared deps can be freed on cleanup
+        return [[PluginWidget alloc] initWithDeps:DesignModeDeps.sharedInstance type:type factory:factory];
+    }];
+}
+
+- (void)unregisterWidgetType:(NSString *)type {
+    [WidgetFactory.sharedInstance unregisterType:type];
 }
 
 @end
