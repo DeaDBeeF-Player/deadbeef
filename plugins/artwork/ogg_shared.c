@@ -53,7 +53,7 @@ static const char key[] = "METADATA_BLOCK_PICTURE=";
 
 #define READ_BUF(buf, size)               \
     {                                     \
-        if (buffer_size < size)           \
+        if (buffer_size < 0 || (size_t)buffer_size < (size_t)(size)) \
             goto error; \
         memcpy (buf, buffer, size);       \
         buffer += size;                   \
@@ -131,8 +131,15 @@ ogg_parse_artwork_comment (const char *comment, int comment_length, ddb_cover_in
     int buffer_size = decoded_size;
 
     int32_t picture_type = READ_UINT32 ();
-    int32_t mime_size = READ_UINT32 ();
-    mime_type = calloc (1, mime_size + 1);
+    // The sizes are unsigned: a corrupt size must not become negative, and pass the bounds checks
+    uint32_t mime_size = READ_UINT32 ();
+    if (mime_size > (uint32_t)buffer_size) {
+        goto error;
+    }
+    mime_type = calloc (1, (size_t)mime_size + 1);
+    if (mime_type == NULL) {
+        goto error;
+    }
     READ_BUF (mime_type, mime_size);
     mime_type[mime_size] = 0;
 
@@ -144,8 +151,14 @@ ogg_parse_artwork_comment (const char *comment, int comment_length, ddb_cover_in
 
     free (mime_type);
     mime_type = NULL;
-    int32_t descr_size = READ_UINT32 ();
-    descr = calloc (1, descr_size + 1);
+    uint32_t descr_size = READ_UINT32 ();
+    if (descr_size > (uint32_t)buffer_size) {
+        goto error;
+    }
+    descr = calloc (1, (size_t)descr_size + 1);
+    if (descr == NULL) {
+        goto error;
+    }
     READ_BUF (descr, descr_size);
     descr[descr_size] = 0;
     free (descr);
