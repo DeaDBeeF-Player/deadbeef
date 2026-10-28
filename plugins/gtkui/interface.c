@@ -1610,10 +1610,14 @@ create_prefwin (void)
   GtkWidget *global_preamp;
   GtkWidget *label126a;
   GtkWidget *label162;
+  GtkWidget *hbox152;
+  GtkWidget *label189;
+  GtkWidget *combobox_cli_incoming_playlist;
   GtkWidget *hbox66;
   GtkWidget *cli_add_to_playlist;
   GtkWidget *cli_playlist_name;
   GtkWidget *enqueue_incoming_files_by_default;
+  GtkWidget *hseparator8;
   GtkWidget *resume_last_session;
   GtkWidget *resume_always_paused;
   GtkWidget *ignore_archives;
@@ -2133,11 +2137,25 @@ create_prefwin (void)
   gtk_frame_set_label_widget (GTK_FRAME (frame14), label162);
   gtk_label_set_use_markup (GTK_LABEL (label162), TRUE);
 
+  hbox152 = gtk_hbox_new (FALSE, 8);
+  gtk_widget_show (hbox152);
+  gtk_box_pack_start (GTK_BOX (vbox8), hbox152, FALSE, FALSE, 0);
+
+  label189 = gtk_label_new (_("Incoming files playlist:"));
+  gtk_widget_show (label189);
+  gtk_box_pack_start (GTK_BOX (hbox152), label189, FALSE, FALSE, 0);
+
+  combobox_cli_incoming_playlist = gtk_combo_box_text_new ();
+  gtk_widget_show (combobox_cli_incoming_playlist);
+  gtk_box_pack_start (GTK_BOX (hbox152), combobox_cli_incoming_playlist, TRUE, TRUE, 0);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox_cli_incoming_playlist), _("Default playlist specified below"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combobox_cli_incoming_playlist), _("Create new playlist each time"));
+
   hbox66 = gtk_hbox_new (FALSE, 8);
   gtk_widget_show (hbox66);
   gtk_box_pack_start (GTK_BOX (vbox8), hbox66, FALSE, FALSE, 0);
 
-  cli_add_to_playlist = gtk_check_button_new_with_mnemonic (_("Add files from command line (or file manager) to this playlist:"));
+  cli_add_to_playlist = gtk_check_button_new_with_mnemonic (_("Default playlist name:"));
   gtk_widget_show (cli_add_to_playlist);
   gtk_box_pack_start (GTK_BOX (hbox66), cli_add_to_playlist, FALSE, FALSE, 0);
 
@@ -2149,6 +2167,10 @@ create_prefwin (void)
   enqueue_incoming_files_by_default = gtk_check_button_new_with_mnemonic (_("Enqueue incoming files by default"));
   gtk_widget_show (enqueue_incoming_files_by_default);
   gtk_box_pack_start (GTK_BOX (vbox8), enqueue_incoming_files_by_default, FALSE, FALSE, 0);
+
+  hseparator8 = gtk_hseparator_new ();
+  gtk_widget_show (hseparator8);
+  gtk_box_pack_start (GTK_BOX (vbox8), hseparator8, FALSE, TRUE, 0);
 
   resume_last_session = gtk_check_button_new_with_mnemonic (_("Resume previous session on startup"));
   gtk_widget_show (resume_last_session);
@@ -3347,6 +3369,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) global_preamp, "value_changed",
                     G_CALLBACK (on_global_preamp_value_changed),
                     NULL);
+  g_signal_connect ((gpointer) combobox_cli_incoming_playlist, "changed",
+                    G_CALLBACK (on_combobox_cli_incoming_playlist_changed),
+                    NULL);
   g_signal_connect ((gpointer) cli_add_to_playlist, "toggled",
                     G_CALLBACK (on_cli_add_to_playlist_toggled),
                     NULL);
@@ -3677,10 +3702,14 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, global_preamp, "global_preamp");
   GLADE_HOOKUP_OBJECT (prefwin, label126a, "label126a");
   GLADE_HOOKUP_OBJECT (prefwin, label162, "label162");
+  GLADE_HOOKUP_OBJECT (prefwin, hbox152, "hbox152");
+  GLADE_HOOKUP_OBJECT (prefwin, label189, "label189");
+  GLADE_HOOKUP_OBJECT (prefwin, combobox_cli_incoming_playlist, "combobox_cli_incoming_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, hbox66, "hbox66");
   GLADE_HOOKUP_OBJECT (prefwin, cli_add_to_playlist, "cli_add_to_playlist");
   GLADE_HOOKUP_OBJECT (prefwin, cli_playlist_name, "cli_playlist_name");
   GLADE_HOOKUP_OBJECT (prefwin, enqueue_incoming_files_by_default, "enqueue_incoming_files_by_default");
+  GLADE_HOOKUP_OBJECT (prefwin, hseparator8, "hseparator8");
   GLADE_HOOKUP_OBJECT (prefwin, resume_last_session, "resume_last_session");
   GLADE_HOOKUP_OBJECT (prefwin, resume_always_paused, "resume_always_paused");
   GLADE_HOOKUP_OBJECT (prefwin, ignore_archives, "ignore_archives");

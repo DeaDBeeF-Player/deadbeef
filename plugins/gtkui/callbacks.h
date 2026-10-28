@@ -1548,3 +1548,8 @@ void
 on_enqueue_incoming_files_by_default_toggled
                                         (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
+
+void
+on_combobox_cli_incoming_playlist_changed
+                                        (GtkComboBox     *combobox,
+                                        gpointer         user_data);

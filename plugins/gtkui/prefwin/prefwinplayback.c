@@ -30,6 +30,18 @@
 
 static GtkWidget *prefwin;
 
+// the specific playlist options only apply when incoming files go to the default playlist
+static void
+update_cli_playlist_sensitivity (void) {
+    GtkComboBox *combobox = GTK_COMBO_BOX (lookup_widget (prefwin, "combobox_cli_incoming_playlist"));
+    int use_default = gtk_combo_box_get_active (combobox) != 1;
+    GtkWidget *check = lookup_widget (prefwin, "cli_add_to_playlist");
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (check));
+
+    gtk_widget_set_sensitive (check, use_default);
+    gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), use_default && active);
+}
+
 void
 prefwin_init_playback_tab (GtkWidget *_prefwin) {
     GtkWidget *w = prefwin = _prefwin;
@@ -59,9 +71,17 @@ prefwin_init_playback_tab (GtkWidget *_prefwin) {
     prefwin_set_scale("global_preamp", deadbeef->conf_get_int ("replaygain.preamp_without_rg", 0));
 
     // cli playlist
+    {
+        char mode[20];
+        deadbeef->conf_get_str ("cli_incoming_playlist", "default", mode, sizeof (mode));
+        prefwin_set_combobox (
+            GTK_COMBO_BOX (lookup_widget (w, "combobox_cli_incoming_playlist")),
+            !strcmp (mode, "new") ? 1 : 0);
+    }
+
     int active = deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1);
     prefwin_set_toggle_button("cli_add_to_playlist", active);
-    gtk_widget_set_sensitive (lookup_widget (w, "cli_playlist_name"), active);
+    update_cli_playlist_sensitivity ();
 
     {
         size_t size = 1000;
@@ -147,7 +167,7 @@ on_cli_add_to_playlist_toggled         (GtkToggleButton *togglebutton,
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("cli_add_to_specific_playlist", active);
-    gtk_widget_set_sensitive (lookup_widget (prefwin, "cli_playlist_name"), active);
+    update_cli_playlist_sensitivity ();
 }
 
 
@@ -229,5 +249,16 @@ on_enqueue_incoming_files_by_default_toggled
                                         gpointer         user_data)
 {
     deadbeef->conf_set_int ("cli_enqueue_incoming_files", gtk_toggle_button_get_active (togglebutton));
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_combobox_cli_incoming_playlist_changed
+                                        (GtkComboBox     *combobox,
+                                        gpointer         user_data)
+{
+    int active = gtk_combo_box_get_active (combobox);
+    deadbeef->conf_set_str ("cli_incoming_playlist", active == 1 ? "new" : "default");
+    update_cli_playlist_sensitivity ();
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
