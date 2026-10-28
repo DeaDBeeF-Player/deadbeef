@@ -405,7 +405,7 @@ main_cleanup_and_quit (void);
 
 - (void)addIncomingFiles:(NSArray<NSString *> *)filenames {
     // either replace the current playlist contents and start playback, or append to it
-    int queue = deadbeef->conf_get_int ("cocoaui.enqueue_incoming_files", 0);
+    int queue = deadbeef->conf_get_int ("cli_enqueue_incoming_files", 0);
     dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(aQueue, ^{
         char str[100];

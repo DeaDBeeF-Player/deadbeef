@@ -367,6 +367,30 @@
             <rect key="frame" x="0.0" y="0.0" width="520" height="405"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ipl-Lb-3Xc">
+                    <rect key="frame" x="18" y="219" width="150" height="16"/>
+                    <textFieldCell key="cell" lineBreakMode="clipping" title="Incoming files playlist:" id="Ipl-Lc-4Xd">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ipl-Pu-5Xe">
+                    <rect key="frame" x="174" y="215" width="326" height="24"/>
+                    <popUpButtonCell key="cell" type="push" title="Default playlist specified below" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Ipl-It-6Xf" id="Ipl-Pc-7Xg">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="message"/>
+                        <menu key="menu" id="Ipl-Mn-8Xh">
+                            <items>
+                                <menuItem title="Default playlist specified below" state="on" id="Ipl-It-6Xf"/>
+                                <menuItem title="Create new playlist each time" id="Ipl-It-9Xi"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <binding destination="YqN-ZP-2eU" name="selectedIndex" keyPath="self.cliIncomingPlaylistIdx" id="Ipl-Bd-0Xj"/>
+                    </connections>
+                </popUpButton>
                 <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ySk-s8-tM7">
                     <rect key="frame" x="181" y="217" width="319" height="24"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="YV9-Zx-yEt">
@@ -376,6 +400,7 @@
                     </textFieldCell>
                     <connections>
                         <binding destination="YqN-ZP-2eU" name="value" keyPath="self.cliSpecificPlaylist" id="lLR-Iy-Ucz"/>
+                        <binding destination="YqN-ZP-2eU" name="enabled" keyPath="self.cliSpecificPlaylistEnabled" id="Ipl-Bd-1Xa"/>
                     </connections>
                 </textField>
                 <button verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="elV-fL-38G">
@@ -396,6 +421,7 @@
                     </buttonCell>
                     <connections>
                         <binding destination="YqN-ZP-2eU" name="value" keyPath="self.cliAddToSpecificPlaylist" id="5ux-xH-mT9"/>
+                        <binding destination="YqN-ZP-2eU" name="enabled" keyPath="self.cliSpecificPlaylistEnabled" id="Ipl-Bd-2Xb"/>
                     </connections>
                 </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="zCE-Xa-7cL">
@@ -647,7 +673,12 @@
                 <constraint firstItem="ySk-s8-tM7" firstAttribute="baseline" secondItem="Rqu-qW-OA7" secondAttribute="baseline" id="hPk-Id-tyt"/>
                 <constraint firstItem="o57-76-gIf" firstAttribute="leading" secondItem="Zmc-ua-enY" secondAttribute="leading" constant="8" id="l2x-8I-eYC"/>
                 <constraint firstItem="UVS-UD-Ivp" firstAttribute="leading" secondItem="WcI-yT-RjC" secondAttribute="leading" id="lP4-bo-VSj"/>
-                <constraint firstItem="ySk-s8-tM7" firstAttribute="top" secondItem="o57-76-gIf" secondAttribute="bottom" constant="8" id="nY4-QT-QUH"/>
+                <constraint firstItem="ySk-s8-tM7" firstAttribute="top" secondItem="Ipl-Pu-5Xe" secondAttribute="bottom" constant="8" id="nY4-QT-QUH"/>
+                <constraint firstItem="Ipl-Pu-5Xe" firstAttribute="top" secondItem="o57-76-gIf" secondAttribute="bottom" constant="8" id="Ipl-Cn-1Xk"/>
+                <constraint firstItem="Ipl-Pu-5Xe" firstAttribute="leading" secondItem="Ipl-Lb-3Xc" secondAttribute="trailing" constant="8" id="Ipl-Cn-2Xl"/>
+                <constraint firstItem="Ipl-Pu-5Xe" firstAttribute="trailing" secondItem="OHh-mq-dNT" secondAttribute="trailing" id="Ipl-Cn-3Xm"/>
+                <constraint firstItem="Ipl-Lb-3Xc" firstAttribute="firstBaseline" secondItem="Ipl-Pu-5Xe" secondAttribute="firstBaseline" id="Ipl-Cn-4Xn"/>
+                <constraint firstItem="Ipl-Lb-3Xc" firstAttribute="leading" secondItem="2WW-3v-yct" secondAttribute="leading" id="Ipl-Cn-5Xo"/>
                 <constraint firstItem="vaP-mG-6h4" firstAttribute="leading" secondItem="2WW-3v-yct" secondAttribute="leading" id="oj7-pg-2xN"/>
                 <constraint firstItem="ySk-s8-tM7" firstAttribute="leading" secondItem="Rqu-qW-OA7" secondAttribute="trailing" constant="8" symbolic="YES" id="p9U-95-d02"/>
                 <constraint firstAttribute="trailing" secondItem="OHh-mq-dNT" secondAttribute="trailing" constant="20" id="q3e-KC-kgM"/>

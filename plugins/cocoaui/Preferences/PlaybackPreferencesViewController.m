@@ -24,6 +24,10 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSString *rgPreampWithoutRgLabel;
 
 // Other settings
+// 0: default playlist, 1: new playlist for each open operation
+@property (nonatomic) NSInteger cliIncomingPlaylistIdx;
+// the specific playlist options only apply when incoming files go to the default playlist
+@property (nonatomic, readonly) BOOL cliSpecificPlaylistEnabled;
 @property (nonatomic) BOOL cliAddToSpecificPlaylist;
 @property (nonatomic) NSString *cliSpecificPlaylist;
 @property (nonatomic) BOOL enqueueIncomingFiles;
@@ -71,9 +75,11 @@ extern DB_functions_t *deadbeef;
 
     // Other settings
     // playback
+    NSString *incomingPlaylist = conf_get_nsstr ("cli_incoming_playlist", "default");
+    _cliIncomingPlaylistIdx = [incomingPlaylist isEqualToString:@"new"] ? 1 : 0;
     _cliAddToSpecificPlaylist =  deadbeef->conf_get_int ("cli_add_to_specific_playlist", 1) ? YES : NO;
     _cliSpecificPlaylist = conf_get_nsstr ("cli_add_playlist_name", "Default");
-    _enqueueIncomingFiles = deadbeef->conf_get_int ("cocoaui.enqueue_incoming_files", 0) ? YES : NO;
+    _enqueueIncomingFiles = deadbeef->conf_get_int ("cli_enqueue_incoming_files", 0) ? YES : NO;
     _resumeLastSession = deadbeef->conf_get_int ("resume_last_session", 1) ? YES : NO;
     _alwaysResumeSessionPaused = deadbeef->conf_get_int ("resume_always_paused", 0) ? YES : NO;
     _ignoreArchives = deadbeef->conf_get_int ("ignore_archives", 1) ? YES : NO;
@@ -140,6 +146,20 @@ extern DB_functions_t *deadbeef;
 
 #pragma mark - Other settings
 
++ (NSSet<NSString *> *)keyPathsForValuesAffectingCliSpecificPlaylistEnabled {
+    return [NSSet setWithObject:@"cliIncomingPlaylistIdx"];
+}
+
+- (BOOL)cliSpecificPlaylistEnabled {
+    return _cliIncomingPlaylistIdx == 0;
+}
+
+- (void)setCliIncomingPlaylistIdx:(NSInteger)cliIncomingPlaylistIdx {
+    _cliIncomingPlaylistIdx = cliIncomingPlaylistIdx;
+    conf_set_nsstr ("cli_incoming_playlist", cliIncomingPlaylistIdx == 1 ? @"new" : @"default");
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
 - (void)setCliAddToSpecificPlaylist:(BOOL)cliAddToSpecificPlaylist {
     _cliAddToSpecificPlaylist = cliAddToSpecificPlaylist;
     deadbeef->conf_set_int ("cli_add_to_specific_playlist", cliAddToSpecificPlaylist);
@@ -154,7 +174,7 @@ extern DB_functions_t *deadbeef;
 
 - (void)setEnqueueIncomingFiles:(BOOL)enqueueIncomingFiles {
     _enqueueIncomingFiles = enqueueIncomingFiles;
-    deadbeef->conf_set_int ("cocoaui.enqueue_incoming_files", enqueueIncomingFiles);
+    deadbeef->conf_set_int ("cli_enqueue_incoming_files", enqueueIncomingFiles);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

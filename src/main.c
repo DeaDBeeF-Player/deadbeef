@@ -588,12 +588,23 @@ add_paths (const char *paths, int len, int queue, char *sendback, int sbsize) {
     const char *parg = paths;
     const char *pend = paths + len;
 
-    if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
+    char incoming_mode[20];
+    conf_get_str ("cli_incoming_playlist", "default", incoming_mode, sizeof (incoming_mode));
+    int new_playlist = !strcmp (incoming_mode, "new");
+
+    if (new_playlist) {
+        // every open operation goes to its own new playlist
+        int idx = plt_add2 (plt_get_count (), NULL);
+        if (idx >= 0) {
+            plt_set_curr_idx (idx);
+        }
+    }
+    else if (conf_get_int ("cli_add_to_specific_playlist", 1)) {
         char str[200];
         conf_get_str ("cli_add_playlist_name", "Default", str, sizeof (str));
         int idx = plt_find (str);
         if (idx < 0) {
-            idx = plt_add (plt_get_count (), str);
+            idx = plt_add2 (plt_get_count (), str);
         }
         if (idx >= 0) {
             plt_set_curr_idx (idx);
@@ -609,7 +620,7 @@ add_paths (const char *paths, int len, int queue, char *sendback, int sbsize) {
         return 1;
     }
     // add files
-    if (!queue) {
+    if (!queue && !new_playlist) {
         plt_clear (curr_plt);
         messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         plt_reset_cursor (curr_plt);
