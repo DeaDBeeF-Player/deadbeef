@@ -340,6 +340,12 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     }
 
     [self updateNormalizedDividerPosition];
+
+    // The divider index is only present when the user drags the divider. Other resizes are caused by the layout pass
+    // (e.g. on startup), and must not re-save the layout.
+    if (notification.userInfo[@"NSSplitViewDividerIndex"] == nil) {
+        return;
+    }
     [self.deps.state layoutDidChange];
 }
 
