@@ -78,7 +78,7 @@
 
 - (void)segmentedTabViewAction:(SegmentedTabView *)sender {
     [self configure];
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithoutUndo];
 }
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
@@ -145,7 +145,7 @@
     [self.segmentedTabView setLabel:name forSegment:index];
     self.labels[index] = name;
 
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Rename Tab"];
 }
 
 - (void)removeTabItemForChild:(id<WidgetProtocol>)child {
@@ -173,7 +173,7 @@
 
     [self removeTabItemForChild:self.childWidgets[index]];
 
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Remove Tab"];
 }
 
 - (void)addNewTab:(NSMenuItem *)sender {
@@ -190,7 +190,7 @@
         [self.segmentedTabView selectTabViewItemAtIndex:self.childWidgets.count-1];
     }
 
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Add Tab"];
 }
 
 - (void)moveTabLeft:(NSMenuItem *)sender {
@@ -221,7 +221,7 @@
         [self.segmentedTabView selectTabViewItemAtIndex:index];
     }
 
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Move Tab"];
 }
 
 - (void)moveTabRight:(NSMenuItem *)sender {
@@ -252,7 +252,7 @@
         [self.segmentedTabView selectTabViewItemAtIndex:index];
     }
 
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Move Tab"];
 }
 
 - (void)appendChild:(id<WidgetProtocol>)child {

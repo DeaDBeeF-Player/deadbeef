@@ -61,6 +61,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)load;
 - (void)layoutDidChange;
 
+/// Same as @c layoutDidChange, and if the layout has changed, registers an undo operation named @c actionName.
+- (void)layoutDidChangeWithActionName:(nullable NSString *)actionName;
+
+/// Same as @c layoutDidChange, but the change is not undoable (e.g. selecting a tab).
+- (void)layoutDidChangeWithoutUndo;
+
+/// Group all layout changes between these calls (e.g. dragging a divider) into a single undo operation.
+- (void)beginCoalescingUndo;
+- (void)endCoalescingUndo;
+
 /// Layout of the main window, in the same format as saved to "cocoaui.layout".
 - (nullable NSDictionary *)currentLayoutDictionary;
 
@@ -82,6 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,readonly) id<WidgetFactoryProtocol> factory;
 @property (nonatomic,readonly) id<WidgetSerializerProtocol> serializer;
 @property (nonatomic,readonly) id<WidgetMenuBuilderProtocol> menuBuilder;
+@property (nullable,nonatomic,readonly) NSUndoManager *undoManager;
 
 @end
 

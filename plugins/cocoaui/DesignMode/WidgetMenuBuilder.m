@@ -176,7 +176,7 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
     return menu;
 }
 
-- (void)replaceWidget:(id<WidgetProtocol>)widget withNewWidget:(id<WidgetProtocol>)newWidget {
+- (void)replaceWidget:(id<WidgetProtocol>)widget withNewWidget:(id<WidgetProtocol>)newWidget actionName:(NSString *)actionName {
     if (widget.parentWidget == nil) {
         [widget removeChild:widget.childWidgets.firstObject];
         [widget appendChild:newWidget];
@@ -188,13 +188,13 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
         }
     }
 
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:actionName];
 }
 
 - (void)createWidget:(NSMenuItem *)sender {
     MenuItemData *data = sender.representedObject;
     id<WidgetProtocol> widget = [self.deps.factory createWidgetWithType:data.createType];
-    [self replaceWidget:data.targetWidget withNewWidget:widget];
+    [self replaceWidget:data.targetWidget withNewWidget:widget actionName:@"Replace Widget"];
 }
 
 - (void)deleteWidget:(NSMenuItem *)sender {
@@ -203,7 +203,7 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
 
     if (data.targetWidget != nil && parentWidget != nil) {
         [parentWidget removeChild:data.targetWidget];
-        [self.deps.state layoutDidChange];
+        [self.deps.state layoutDidChangeWithActionName:@"Delete Widget"];
     }
 }
 
@@ -240,7 +240,7 @@ static NSPasteboardType const ddbWidgetUTIType = @"org.deadbeef.widget";
         }
 
         MenuItemData *menuItemdata = sender.representedObject;
-        [self replaceWidget:menuItemdata.targetWidget withNewWidget:widget];
+        [self replaceWidget:menuItemdata.targetWidget withNewWidget:widget actionName:@"Paste Widget"];
     }
 }
 

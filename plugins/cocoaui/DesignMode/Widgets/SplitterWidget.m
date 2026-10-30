@@ -16,11 +16,31 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     HoldingModeSecond = 2,
 };
 
+#pragma mark - DesignModeSplitView
+
+/// Reports the beginning and the end of the divider drag, so the whole drag can be a single undo operation.
+@interface DesignModeSplitView : NSSplitView
+
+@property (nonatomic,weak) id<DesignModeStateProtocol> state;
+
+@end
+
+@implementation DesignModeSplitView
+
+- (void)mouseDown:(NSEvent *)event {
+    // The divider is dragged inside of the super's mouseDown, which returns on mouse up.
+    [self.state beginCoalescingUndo];
+    [super mouseDown:event];
+    [self.state endCoalescingUndo];
+}
+
+@end
+
 #pragma mark - HSplitterWidget
 
 @interface HSplitterWidget() <NSSplitViewDelegate>
 
-@property (nonatomic) NSSplitView *splitView;
+@property (nonatomic) DesignModeSplitView *splitView;
 @property (nonatomic,weak) id<DesignModeDepsProtocol> deps;
 
 @property (nonatomic) CGFloat normalizedDividerPosition;
@@ -55,7 +75,8 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 
     _deps = deps;
 
-    _splitView = [[NSSplitView alloc] initWithFrame:NSZeroRect];
+    _splitView = [[DesignModeSplitView alloc] initWithFrame:NSZeroRect];
+    _splitView.state = deps.state;
     _splitView.arrangesAllSubviews = NO;
     _splitView.vertical = !self.isVertical; // The NSSplitView.vertical means the divider line orientation
 
@@ -305,28 +326,28 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
 
 - (void)holdFirstAction:(NSMenuItem *)sender {
     self.holdingMode = HoldingModeFirst;
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Change Splitter Mode"];
 }
 
 - (void)holdSecondAction:(NSMenuItem *)sender {
     self.holdingMode = HoldingModeSecond;
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Change Splitter Mode"];
 }
 
 - (void)holdProportionalAction:(NSMenuItem *)sender {
     self.holdingMode = HoldingModeProportional;
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Change Splitter Mode"];
 }
 
 - (void)lockAction:(NSMenuItem *)sender {
     self.isLocked = !self.isLocked;
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Lock Splitter"];
 }
 
 - (void)thickDividerToggleAction:(NSMenuItem *)sender {
     BOOL isThick = (self.splitView.dividerStyle != NSSplitViewDividerStyleThick);
     self.splitView.dividerStyle = isThick ? NSSplitViewDividerStyleThick : NSSplitViewDividerStyleThin;
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Change Divider Size"];
 }
 
 #pragma mark - NSSplitViewDelegate
@@ -346,7 +367,7 @@ typedef NS_ENUM(NSInteger,HoldingMode) {
     if (notification.userInfo[@"NSSplitViewDividerIndex"] == nil) {
         return;
     }
-    [self.deps.state layoutDidChange];
+    [self.deps.state layoutDidChangeWithActionName:@"Move Splitter"];
 }
 
 - (CGFloat)splitView:(NSSplitView *)splitView constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)dividerIndex {

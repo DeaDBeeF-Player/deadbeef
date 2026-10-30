@@ -20,6 +20,11 @@ static DesignModeState *_sharedInstance;
 @property (nonatomic,readwrite) id<WidgetProtocol> rootWidget;
 @property (nonatomic) BOOL isLoading;
 @property (nonatomic,copy) NSDictionary *previousLayout;
+@property (nonatomic) NSInteger coalescingUndoDepth;
+@property (nonatomic) BOOL coalescedUndoRegistered;
+
+- (BOOL)restoreLayoutDictionary:(NSDictionary *)layout actionName:(NSString *)actionName;
+- (void)layoutDidChange:(nullable NSString *)actionName registerUndo:(BOOL)registerUndo;
 
 @end
 
@@ -94,12 +99,61 @@ static DesignModeState *_sharedInstance;
 
     [self.rootWidget appendChild:layoutWidget];
 
-    self.previousLayout = json;
+    // Always have a valid previous layout, so that the first change is undoable.
+    self.previousLayout = json ?: [self currentLayoutDictionary];
 
     self.isLoading = NO;
 }
 
 - (void)layoutDidChange {
+    [self layoutDidChangeWithActionName:nil];
+}
+
+- (void)beginCoalescingUndo {
+    if (self.coalescingUndoDepth++ == 0) {
+        self.coalescedUndoRegistered = NO;
+    }
+}
+
+- (void)endCoalescingUndo {
+    if (self.coalescingUndoDepth > 0) {
+        self.coalescingUndoDepth--;
+    }
+}
+
+- (void)registerUndoForLayout:(NSDictionary *)oldLayout actionName:(NSString *)actionName {
+    NSUndoManager *undoManager = self.deps.undoManager;
+    if (undoManager == nil || oldLayout == nil) {
+        return;
+    }
+
+    // While coalescing, the first registered operation already holds the layout from before the first change.
+    // Undo and redo are never coalesced.
+    BOOL isUndoOrRedo = undoManager.isUndoing || undoManager.isRedoing;
+    if (self.coalescingUndoDepth > 0 && !isUndoOrRedo) {
+        if (self.coalescedUndoRegistered) {
+            return;
+        }
+        self.coalescedUndoRegistered = YES;
+    }
+
+    NSString *name = [actionName copy] ?: @"Change Layout";
+    [undoManager registerUndoWithTarget:self handler:^(DesignModeState *target) {
+        // Registers the inverse operation (redo) via layoutDidChange.
+        [target restoreLayoutDictionary:oldLayout actionName:name];
+    }];
+    [undoManager setActionName:name];
+}
+
+- (void)layoutDidChangeWithoutUndo {
+    [self layoutDidChange:nil registerUndo:NO];
+}
+
+- (void)layoutDidChangeWithActionName:(NSString *)actionName {
+    [self layoutDidChange:actionName registerUndo:YES];
+}
+
+- (void)layoutDidChange:(NSString *)actionName registerUndo:(BOOL)registerUndo {
     if (self.isLoading) {
         return;
     }
@@ -109,7 +163,11 @@ static DesignModeState *_sharedInstance;
         return;
     }
 
+    NSDictionary *oldLayout = self.previousLayout;
     self.previousLayout = dict;
+    if (registerUndo) {
+        [self registerUndoForLayout:oldLayout actionName:actionName];
+    }
 
     NSError *err;
     NSData *dt = [NSJSONSerialization dataWithJSONObject:dict options:0 error:&err];
@@ -125,6 +183,10 @@ static DesignModeState *_sharedInstance;
 }
 
 - (BOOL)applyLayoutDictionary:(NSDictionary *)layout {
+    return [self restoreLayoutDictionary:layout actionName:@"Apply Layout"];
+}
+
+- (BOOL)restoreLayoutDictionary:(NSDictionary *)layout actionName:(NSString *)actionName {
     id<WidgetProtocol> newWidget = [self.deps.serializer loadFromDictionary:layout];
     if (newWidget == nil) {
         return NO;
@@ -137,7 +199,7 @@ static DesignModeState *_sharedInstance;
     }
     [self.rootWidget appendChild:newWidget];
 
-    [self layoutDidChange];
+    [self layoutDidChangeWithActionName:actionName];
     return YES;
 }
 

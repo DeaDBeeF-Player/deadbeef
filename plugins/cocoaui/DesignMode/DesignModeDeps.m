@@ -6,6 +6,7 @@
 //  Copyright © 2021 Oleksiy Yakovenko. All rights reserved.
 //
 
+#import "AppDelegate.h"
 #import "DesignModeDeps.h"
 #import "DesignModeState.h"
 #import "WidgetFactory.h"
@@ -63,6 +64,11 @@ static DesignModeDeps *instance;
         _menuBuilder = WidgetMenuBuilder.sharedInstance;
     }
     return _menuBuilder;
+}
+
+- (NSUndoManager *)undoManager {
+    AppDelegate *appDelegate = (AppDelegate *)NSApp.delegate;
+    return appDelegate.mainWindow.window.undoManager;
 }
 
 
