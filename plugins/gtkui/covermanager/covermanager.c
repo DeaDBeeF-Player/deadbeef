@@ -428,7 +428,11 @@ covermanager_free (covermanager_t *impl) {
         impl->pending_requests = NULL;
     }
 
-    g_list_free_full (impl->listeners, free);
+    // NOTE: g_list_free_full is not available in the old glib used by the GTK2 build
+    for (GList *l = impl->listeners; l != NULL; l = l->next) {
+        free (l->data);
+    }
+    g_list_free (impl->listeners);
     impl->listeners = NULL;
 
     free (impl->default_cover_path);
