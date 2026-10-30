@@ -2726,6 +2726,18 @@
 		2DFF25533095219D004C03E7 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DFF25523095219D004C03E7 /* UniformTypeIdentifiers.framework */; };
 		2DFF2561309524A6004C03E7 /* LayoutManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF2560309524A6004C03E7 /* LayoutManagerTests.m */; };
 		2DFF25623095260AA04C03E7 /* LayoutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF25403095219D004C03E7 /* LayoutManager.m */; };
+		2DFF256D30952990004C03E7 /* GtkLayoutManagerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF256C30952990004C03E7 /* GtkLayoutManagerTests.cpp */; };
+		2DFF258430952A10004C03E7 /* layoutmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258030952A10004C03E7 /* layoutmanager.c */; };
+		2DFF258530952A10004C03E7 /* layoutmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258030952A10004C03E7 /* layoutmanager.c */; };
+		2DFF258630952A10004C03E7 /* layoutmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258030952A10004C03E7 /* layoutmanager.c */; };
+		2DFF258730952A10004C03E7 /* layoutmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF258130952A10004C03E7 /* layoutmanager.h */; };
+		2DFF258830952A10004C03E7 /* layoutmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF258130952A10004C03E7 /* layoutmanager.h */; };
+		2DFF258930952A10004C03E7 /* layoutmenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258230952A10004C03E7 /* layoutmenu.c */; };
+		2DFF258A30952A10004C03E7 /* layoutmenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258230952A10004C03E7 /* layoutmenu.c */; };
+		2DFF258B30952A10004C03E7 /* layoutmenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF258330952A10004C03E7 /* layoutmenu.h */; };
+		2DFF258C30952A10004C03E7 /* layoutmenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF258330952A10004C03E7 /* layoutmenu.h */; };
+		2DFF258E30952A10004C03E7 /* ui_layouts in Resources */ = {isa = PBXBuildFile; fileRef = 2DFF258D30952A10004C03E7 /* ui_layouts */; };
+		2DFF258F30952A10004C03E7 /* ui_layouts in Resources */ = {isa = PBXBuildFile; fileRef = 2DFF258D30952A10004C03E7 /* ui_layouts */; };
 		4D0B0CEE20162D95004162DA /* FormatConversionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B0CED20162D95004162DA /* FormatConversionTests.cpp */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
@@ -7358,6 +7370,12 @@
 		2DFF25503095219D004C03E7 /* UILayouts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = UILayouts; sourceTree = "<group>"; };
 		2DFF25523095219D004C03E7 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
 		2DFF2560309524A6004C03E7 /* LayoutManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LayoutManagerTests.m; sourceTree = "<group>"; };
+		2DFF256C30952990004C03E7 /* GtkLayoutManagerTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GtkLayoutManagerTests.cpp; sourceTree = "<group>"; };
+		2DFF258030952A10004C03E7 /* layoutmanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = layoutmanager.c; sourceTree = "<group>"; };
+		2DFF258130952A10004C03E7 /* layoutmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = layoutmanager.h; sourceTree = "<group>"; };
+		2DFF258230952A10004C03E7 /* layoutmenu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = layoutmenu.c; sourceTree = "<group>"; };
+		2DFF258330952A10004C03E7 /* layoutmenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = layoutmenu.h; sourceTree = "<group>"; };
+		2DFF258D30952A10004C03E7 /* ui_layouts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ui_layouts; sourceTree = "<group>"; };
 		4D0B0CED20162D95004162DA /* FormatConversionTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormatConversionTests.cpp; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* DeaDBeeF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeaDBeeF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -12035,6 +12053,7 @@
 				2DA66ECA1EDF4F2C00E20989 /* fakeout.h */,
 				4D0B0CED20162D95004162DA /* FormatConversionTests.cpp */,
 				2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.cpp */,
+				2DFF256C30952990004C03E7 /* GtkLayoutManagerTests.cpp */,
 				2D7F38021B2858AC00692A7B /* JunklibTests.cpp */,
 				2DFF2560309524A6004C03E7 /* LayoutManagerTests.m */,
 				2DA59D9025D00A8E00947C19 /* M3UTests.cpp */,
@@ -12743,6 +12762,7 @@
 				2DD81C2D25152D86008C716C /* pixmaps */,
 				2D60EAAA277109BD00C28A44 /* playlist */,
 				2D715BF826C833240022A8F0 /* prefwin */,
+				2DFF258D30952A10004C03E7 /* ui_layouts */,
 				2DCB18372515F95C0054BD06 /* about.txt */,
 				2DCB18F82515F9AB0054BD06 /* COPYING.GPLv2 */,
 				2DCB18F92515F9AB0054BD06 /* COPYING.LGPLv2.1 */,
@@ -12789,6 +12809,10 @@
 				2DE3B5AD2269BB4300AFF9AE /* hotkeys.h */,
 				2DE3B5872269BB4300AFF9AE /* interface.c */,
 				2DE3B5C72269BB4300AFF9AE /* interface.h */,
+				2DFF258030952A10004C03E7 /* layoutmanager.c */,
+				2DFF258130952A10004C03E7 /* layoutmanager.h */,
+				2DFF258230952A10004C03E7 /* layoutmenu.c */,
+				2DFF258330952A10004C03E7 /* layoutmenu.h */,
 				2DE3B6912269BB4300AFF9AE /* namedicons.c */,
 				2DE3B5BB2269BB4300AFF9AE /* namedicons.h */,
 				2D5C6AD32752B6930073632B /* plmenu.c */,
@@ -14808,6 +14832,8 @@
 				2DC656702744289C00583E14 /* tfimport.h in Headers */,
 				2DC656712744289C00583E14 /* namedicons.h in Headers */,
 				2DC656722744289C00583E14 /* interface.h in Headers */,
+				2DFF258730952A10004C03E7 /* layoutmanager.h in Headers */,
+				2DFF258B30952A10004C03E7 /* layoutmenu.h in Headers */,
 				2DC656732744289C00583E14 /* ddbcellrenderertextmultiline.h in Headers */,
 				2DC656742744289C00583E14 /* gtkui.h in Headers */,
 				2DC656752744289C00583E14 /* clipboard.h in Headers */,
@@ -14900,6 +14926,8 @@
 				2DE3B7CA2269BF1300AFF9AE /* tfimport.h in Headers */,
 				2DE3B7E22269BF3100AFF9AE /* namedicons.h in Headers */,
 				2DE3B7E72269BF3100AFF9AE /* interface.h in Headers */,
+				2DFF258830952A10004C03E7 /* layoutmanager.h in Headers */,
+				2DFF258C30952A10004C03E7 /* layoutmenu.h in Headers */,
 				2DE3B7EF2269BF3100AFF9AE /* ddbcellrenderertextmultiline.h in Headers */,
 				2DE3B7CC2269BF1300AFF9AE /* gtkui.h in Headers */,
 				2DE3B7F72269BF3100AFF9AE /* clipboard.h in Headers */,
@@ -17303,6 +17331,7 @@
 				2D92D24529B92DFA00218F1D /* README in Resources */,
 				2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */,
 				2D48DC2F2269B731002CACFD /* convpresets in Resources */,
+				2DFF258E30952A10004C03E7 /* ui_layouts in Resources */,
 				2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17358,6 +17387,7 @@
 				2D92D24429B92DFA00218F1D /* README in Resources */,
 				2DC65740274428F200583E14 /* Images.xcassets in Resources */,
 				2DC65741274428F200583E14 /* convpresets in Resources */,
+				2DFF258F30952A10004C03E7 /* ui_layouts in Resources */,
 				2DC65742274428F200583E14 /* deadbeef.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -18786,6 +18816,8 @@
 				2D15721623785BD900985E47 /* VfsCurlTests.cpp in Sources */,
 				4D6CF18B20EB783900811034 /* MP3ParserTests.cpp in Sources */,
 				2D78C5682756990B00F96F9D /* medialibfilesystem_stub.c in Sources */,
+				2DFF258630952A10004C03E7 /* layoutmanager.c in Sources */,
+				2DFF256D30952990004C03E7 /* GtkLayoutManagerTests.cpp in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* TaggingTests.mm in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
@@ -18859,6 +18891,8 @@
 				2DC656A42744289C00583E14 /* eq.c in Sources */,
 				2DC656A52744289C00583E14 /* deadbeefapp.c in Sources */,
 				2DC656A62744289C00583E14 /* interface.c in Sources */,
+				2DFF258430952A10004C03E7 /* layoutmanager.c in Sources */,
+				2DFF258930952A10004C03E7 /* layoutmenu.c in Sources */,
 				2DC656A72744289C00583E14 /* namedicons.c in Sources */,
 				2DC656A82744289C00583E14 /* prefwinplugins.c in Sources */,
 				2D5657012AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */,
@@ -18973,6 +19007,8 @@
 				2DE3B7C02269BF1300AFF9AE /* eq.c in Sources */,
 				2DE3B8022269BF3100AFF9AE /* deadbeefapp.c in Sources */,
 				2DE3B7C92269BF1300AFF9AE /* interface.c in Sources */,
+				2DFF258530952A10004C03E7 /* layoutmanager.c in Sources */,
+				2DFF258A30952A10004C03E7 /* layoutmenu.c in Sources */,
 				2DE3B8092269BF3100AFF9AE /* namedicons.c in Sources */,
 				2D715C1F26C83A010022A8F0 /* prefwinplugins.c in Sources */,
 				2D5657022AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */,

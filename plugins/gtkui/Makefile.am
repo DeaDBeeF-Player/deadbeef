@@ -1,6 +1,7 @@
 EXTRA_DIST = deadbeef.glade\
 	gtkui.gresources.xml\
-	gtk/menus.ui
+	gtk/menus.ui\
+	ui_layouts
 
 GTKUI_SOURCES = \
     ../../src/utf8.c\
@@ -19,6 +20,8 @@ GTKUI_SOURCES = \
 	fileman.c\
 	gtkui.c gtkui.h\
 	gtkui_deletefromdisk.c gtkui_deletefromdisk.h\
+	layoutmanager.c layoutmanager.h\
+	layoutmenu.c layoutmenu.h\
 	plmenu.c plmenu.h\
 	pluginconf.c pluginconf.h\
 	progress.c progress.h\
@@ -137,3 +140,33 @@ gtkui-gresources.c: $(resource_files)
 
 endif
 
+# Built-in UI layouts. Everything matching ui_layouts/*.ddblayout is installed,
+# only if at least one GTK UI is built.
+if HAVE_GTK2
+GTKUI_INSTALL_UI_LAYOUTS = yes
+else
+if HAVE_GTK3
+GTKUI_INSTALL_UI_LAYOUTS = yes
+endif
+endif
+
+uilayoutsdir = $(libdir)/deadbeef/ui_layouts
+
+install-data-local:
+	@if test -n "$(GTKUI_INSTALL_UI_LAYOUTS)"; then \
+	  $(MKDIR_P) "$(DESTDIR)$(uilayoutsdir)" || exit 1; \
+	  for f in $(srcdir)/ui_layouts/*.ddblayout; do \
+	    test -f "$$f" || continue; \
+	    echo " $(INSTALL_DATA) '$$f' '$(DESTDIR)$(uilayoutsdir)'"; \
+	    $(INSTALL_DATA) "$$f" "$(DESTDIR)$(uilayoutsdir)" || exit 1; \
+	  done; \
+	fi
+
+uninstall-local:
+	@if test -n "$(GTKUI_INSTALL_UI_LAYOUTS)"; then \
+	  for f in $(srcdir)/ui_layouts/*.ddblayout; do \
+	    test -f "$$f" || continue; \
+	    echo " rm -f '$(DESTDIR)$(uilayoutsdir)/'`basename \"$$f\"`"; \
+	    rm -f "$(DESTDIR)$(uilayoutsdir)/"`basename "$$f"`; \
+	  done; \
+	fi

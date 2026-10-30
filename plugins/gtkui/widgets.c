@@ -746,6 +746,37 @@ w_save (void) {
     deadbeef->conf_save ();
 }
 
+json_t *
+w_save_layout_to_json (void) {
+    if (rootwidget == NULL || rootwidget->children == NULL) {
+        return NULL;
+    }
+    return _save_widget_to_json (rootwidget->children);
+}
+
+int
+w_load_layout_from_json (json_t *layout) {
+    if (rootwidget == NULL) {
+        return -1;
+    }
+
+    ddb_gtkui_widget_t *w = NULL;
+    w_create_from_json (layout, &w);
+    if (w == NULL) {
+        return -1;
+    }
+
+    if (rootwidget->children != NULL) {
+        w_replace (rootwidget, rootwidget->children, w);
+    }
+    else {
+        w_append (rootwidget, w);
+    }
+
+    w_save ();
+    return 0;
+}
+
 static void
 on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
     ddb_gtkui_widget_t *ui_widget = g_object_get_data (G_OBJECT (menuitem), associated_widget_data_id);

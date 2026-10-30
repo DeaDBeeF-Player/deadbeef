@@ -1328,6 +1328,8 @@ project "resources"
       "cp pixmaps/*.png bin/%{cfg.buildcfg}/pixmaps/",
       "mkdir -p bin/%{cfg.buildcfg}/plugins/convpresets",
       "cp -r plugins/converter/convpresets bin/%{cfg.buildcfg}/plugins/",
+      "mkdir -p bin/%{cfg.buildcfg}/plugins/ui_layouts",
+      "cp plugins/gtkui/ui_layouts/*.ddblayout bin/%{cfg.buildcfg}/plugins/ui_layouts/",
     }
     buildoutputs {'%{file.directory}/%{file.basename}.c_fake'}
 
