@@ -66,6 +66,8 @@ static void
 _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStore *store, GtkTreeIter *iter);
 static void
 _setup_columns (w_medialib_viewer_t *mlv);
+static void
+_covermanager_did_reset (void *user_data);
 
 static void
 _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, const ddb_medialib_item_t *item, GtkTreePath *parent_path) {
@@ -403,6 +405,7 @@ w_medialib_viewer_init (struct ddb_gtkui_widget_s *w) {
 static void
 w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
     w_medialib_viewer_t *mlv = (w_medialib_viewer_t *)w;
+    covermanager_remove_listener (covermanager_shared (), _covermanager_did_reset, mlv);
     if (mlv->background_queue != NULL) {
         dispatch_release (mlv->background_queue);
         mlv->background_queue = NULL;
@@ -759,8 +762,28 @@ _drag_data_get (GtkWidget *widget, GdkDragContext *context, GtkSelectionData *se
     tracks = NULL;
 }
 
+static gboolean
+_reset_icon (GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer data) {
+    gtk_tree_store_set (GTK_TREE_STORE (model), iter, COL_ICON, NULL, -1);
+    return FALSE;
+}
+
+// Called on the main thread, after the covermanager has dropped its cached covers.
+static void
+_covermanager_did_reset (void *user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+
+    // Ignore the covers which are still being loaded or scaled with the old settings
+    mlv->reload_index++;
+
+    // The cells request the covers again when they become visible
+    gtk_tree_model_foreach (GTK_TREE_MODEL (mlv->store), _reset_icon, NULL);
+    gtk_widget_queue_draw (GTK_WIDGET (mlv->tree));
+}
+
 static void
 _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
+    int reload_index = mlv->reload_index;
     g_object_ref (img);
     dispatch_async (mlv->background_queue, ^{
         // scale
@@ -775,8 +798,10 @@ _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
             GtkTreeStore *store = mlv->store;
             GtkTreeIter iter;
             GtkTreeModel *model = GTK_TREE_MODEL (mlv->store);
-            gtk_tree_model_get_iter (model, &iter, path);
-            gtk_tree_store_set (store, &iter, COL_ICON, scaled_img, -1);
+            // The tree was reloaded, or the covers were reset, while the cover was being scaled
+            if (reload_index == mlv->reload_index && gtk_tree_model_get_iter (model, &iter, path)) {
+                gtk_tree_store_set (store, &iter, COL_ICON, scaled_img, -1);
+            }
             g_object_unref (scaled_img);
             gtk_tree_path_free (path);
             g_object_unref (img);
@@ -949,6 +974,7 @@ w_medialib_viewer_create (void) {
     if (artwork_plugin != NULL) {
         w->artwork_source_id = artwork_plugin->allocate_source_id ();
     }
+    covermanager_add_listener (covermanager_shared (), _covermanager_did_reset, w);
     w->pixbuf_cell_delegate.ctx = w;
     w->pixbuf_cell_delegate.cell_did_became_visible = _pixbuf_cell_did_become_visible;
     w->background_queue = dispatch_queue_create ("MedialibBackgroundQueue", NULL);

@@ -27,7 +27,7 @@
 #include <string.h>
 #include "../gtkui.h"
 #include <deadbeef/deadbeef.h>
-#include "../../artwork/artwork.h"
+#include "../covermanager/covermanager.h"
 #include "mainplaylist.h"
 #include "playlistcontroller.h"
 #include "plcommon.h"
@@ -36,7 +36,6 @@
 extern DB_functions_t *deadbeef;
 
 struct playlist_controller_s {
-    ddb_artwork_plugin_t *artwork_plugin;
     DdbListview *listview;
     gboolean is_search;
     // Set when the owner is done with the controller. The callbacks scheduled earlier can still run after that,
@@ -67,26 +66,11 @@ _controller_destroy (void *owner) {
     free (owner);
 }
 
-static gboolean
-_dispatch_on_main_wrapper (void *context) {
-    void (^block)(void) = context;
-    block ();
-    Block_release(block);
-    return FALSE;
-}
-
+// Called on the main thread, after the covermanager has dropped its cached covers.
 static void
-_dispatch_on_main(void (^block)(void)) {
-    dispatch_block_t copy_block = Block_copy(block);
-    g_idle_add(_dispatch_on_main_wrapper, copy_block);
-}
-
-static void
-_artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
-    _dispatch_on_main(^{
-        playlist_controller_t *ctl = user_data;
-        ddb_listview_reset_artwork (ctl->listview);
-    });
+_covermanager_did_reset (void *user_data) {
+    playlist_controller_t *ctl = user_data;
+    ddb_listview_reset_artwork (ctl->listview);
 }
 
 playlist_controller_t *
@@ -94,10 +78,8 @@ playlist_controller_new(DdbListview *listview, gboolean is_search) {
     playlist_controller_t *ctl = calloc (1, sizeof (playlist_controller_t));
     ctl->is_search = is_search;
 
-    ctl->artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id("artwork2");
-
-    if (ctl->artwork_plugin != NULL) {
-        ctl->artwork_plugin->add_listener(_artwork_listener, ctl);
+    if (covermanager_shared () != NULL) {
+        covermanager_add_listener (covermanager_shared (), _covermanager_did_reset, ctl);
     }
 
     g_object_ref_sink(listview);
@@ -121,8 +103,8 @@ playlist_controller_new(DdbListview *listview, gboolean is_search) {
 
 void
 playlist_controller_free(playlist_controller_t *ctl) {
-    if (ctl->artwork_plugin) {
-        ctl->artwork_plugin->remove_listener(_artwork_listener, ctl);
+    if (covermanager_shared () != NULL) {
+        covermanager_remove_listener (covermanager_shared (), _covermanager_did_reset, ctl);
     }
 
     ctl->detached = TRUE;
