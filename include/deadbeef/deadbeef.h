@@ -871,6 +871,13 @@ typedef struct {
     void (*set_action_name)(const char *action_name);
     void (*free_buffer)(struct ddb_undobuffer_s *undobuffer);
     void (*execute_buffer)(struct ddb_undobuffer_s *undobuffer);
+
+    /// Append a custom operation to the current undo buffer, to be sent to the UI plugin by @c undo_process.
+    /// When the buffer is executed (undo or redo), @c perform is called with @c ctx.
+    /// It is expected to restore the previous state, and to append the opposite operation using this function.
+    /// @c deinit is called with @c ctx when the operation is freed, whether or not it was executed. Can be NULL.
+    /// To be called on main thread.
+    void (*append_custom_operation)(void *ctx, void (*perform)(void *ctx), void (*deinit)(void *ctx));
 } ddb_undo_interface_t;
 
 typedef struct {

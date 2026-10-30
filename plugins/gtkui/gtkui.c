@@ -1246,6 +1246,7 @@ init_widget_layout (void) {
         abort (); // could not recover
     }
     w_append (rootwidget, w);
+    w_reset_undo_snapshot ();
 }
 
 static DB_plugin_t *supereq_plugin;

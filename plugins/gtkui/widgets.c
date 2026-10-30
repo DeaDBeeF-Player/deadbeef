@@ -49,6 +49,7 @@
 #include "playlist/playlistcontroller.h"
 #include "support.h"
 #include "trkproperties.h"
+#include "undointegration.h"
 #ifdef DDB_WARN_DEPRECATED
 #    undef DDB_WARN_DEPRECATED
 #endif
@@ -56,6 +57,12 @@
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }
 #define trace(fmt, ...)
+
+// The layout as of the last save: this is what the next undo operation restores.
+static char *_undo_snapshot;
+
+// Set while the layout is being restored by undo/redo: the opposite operation is then processed by the undo stack.
+static int _undo_performing;
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
 #define max(x, y) ((x) > (y) ? (x) : (y))
@@ -312,6 +319,9 @@ w_free (void) {
         free (cr);
     }
     w_creators = NULL;
+
+    free (_undo_snapshot);
+    _undo_snapshot = NULL;
 
     if (rootwidget != NULL) {
         w_remove (NULL, rootwidget);
@@ -737,13 +747,60 @@ w_save_to_conf (const char *key, ddb_gtkui_widget_t *val) {
     return 0;
 }
 
+static char *
+_dump_current_layout (void) {
+    json_t *layout = w_save_layout_to_json ();
+    if (layout == NULL) {
+        return NULL;
+    }
+    char *str = json_dumps (layout, JSON_COMPACT);
+    json_delete (layout);
+    return str;
+}
+
 void
-w_save (void) {
+w_reset_undo_snapshot (void) {
+    free (_undo_snapshot);
+    _undo_snapshot = _dump_current_layout ();
+}
+
+static int
+_restore_layout_from_string (const char *layout_str, const char *action_name);
+
+static void
+_layout_undo_perform (void *ctx) {
+    _undo_performing = 1;
+    _restore_layout_from_string (ctx, NULL);
+    _undo_performing = 0;
+}
+
+void
+w_save_with_action (const char *action_name) {
     if (rootwidget == NULL) {
         return;
     }
     w_save_to_conf (DDB_GTKUI_CONF_LAYOUT, rootwidget->children);
     deadbeef->conf_save ();
+
+    char *current = _dump_current_layout ();
+    if (current == NULL) {
+        return;
+    }
+    if (_undo_snapshot != NULL && strcmp (current, _undo_snapshot) && ddb_undo != NULL) {
+        // the undo operation holds the previous layout
+        ddb_undo->append_custom_operation (strdup (_undo_snapshot), _layout_undo_perform, free);
+        if (!_undo_performing) {
+            ddb_undo->set_action_name (action_name != NULL ? action_name : _("Change Layout"));
+            deadbeef->undo_process ();
+        }
+    }
+    free (_undo_snapshot);
+    _undo_snapshot = current;
+}
+
+void
+w_save (void) {
+    w_save_with_action (NULL);
 }
 
 json_t *
@@ -754,8 +811,8 @@ w_save_layout_to_json (void) {
     return _save_widget_to_json (rootwidget->children);
 }
 
-int
-w_load_layout_from_json (json_t *layout) {
+static int
+_load_layout (json_t *layout, const char *action_name) {
     if (rootwidget == NULL) {
         return -1;
     }
@@ -773,8 +830,24 @@ w_load_layout_from_json (json_t *layout) {
         w_append (rootwidget, w);
     }
 
-    w_save ();
+    w_save_with_action (action_name);
     return 0;
+}
+
+int
+w_load_layout_from_json (json_t *layout) {
+    return _load_layout (layout, _("Apply Layout"));
+}
+
+static int
+_restore_layout_from_string (const char *layout_str, const char *action_name) {
+    json_t *layout = json_loads (layout_str, 0, NULL);
+    if (layout == NULL) {
+        return -1;
+    }
+    int res = _load_layout (layout, action_name);
+    json_delete (layout);
+    return res;
 }
 
 static void
@@ -793,7 +866,7 @@ on_replace_activate (GtkMenuItem *menuitem, gpointer user_data) {
             ui_widget = w;
         }
     }
-    w_save ();
+    w_save_with_action (_("Replace Widget"));
 }
 
 static void
@@ -812,7 +885,7 @@ on_delete_activate (GtkMenuItem *menuitem, gpointer user_data) {
         ui_widget = w_create ("placeholder");
         w_append (parent, ui_widget);
     }
-    w_save ();
+    w_save_with_action (_("Delete Widget"));
 }
 
 static void
@@ -841,7 +914,7 @@ on_cut_activate (GtkMenuItem *menuitem, gpointer user_data) {
         ui_widget = w_create ("placeholder");
         w_append (parent, ui_widget);
     }
-    w_save ();
+    w_save_with_action (_("Cut Widget"));
 }
 
 static void
@@ -880,7 +953,7 @@ on_paste_activate (GtkMenuItem *menuitem, gpointer user_data) {
     if (layout != NULL) {
         w_create_from_json (layout, &w);
         w_replace (parent, ui_widget, w);
-        w_save ();
+        w_save_with_action (_("Paste Widget"));
         ui_widget = w;
         json_delete (layout);
     }
@@ -1399,7 +1472,7 @@ on_splitter_lock_c1_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data
         sp->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C1;
         sp->size1 = ddb_splitter_get_child1_size (DDB_SPLITTER (sp->box));
         ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_LOCK_C1);
-        w_save ();
+        w_save_with_action (_("Change Splitter Mode"));
     }
 }
 
@@ -1410,7 +1483,7 @@ on_splitter_lock_c2_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data
         sp->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C2;
         sp->size2 = ddb_splitter_get_child2_size (DDB_SPLITTER (sp->box));
         ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_LOCK_C2);
-        w_save ();
+        w_save_with_action (_("Change Splitter Mode"));
     }
 }
 
@@ -1420,13 +1493,13 @@ on_splitter_lock_prop_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_da
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem))) {
         sp->locked = DDB_SPLITTER_SIZE_MODE_PROP;
         ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_PROP);
-        w_save ();
+        w_save_with_action (_("Change Splitter Mode"));
     }
 }
 
 static void
 on_splitter_drag_finished (DdbSplitter *splitter, gpointer user_data) {
-    w_save ();
+    w_save_with_action (_("Move Splitter"));
 }
 
 void
@@ -1736,7 +1809,7 @@ on_rename_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
         gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (w->base.widget), child, gtk_entry_get_text (GTK_ENTRY (e)));
-        w_save ();
+        w_save_with_action (_("Rename Tab"));
     }
     gtk_widget_destroy (dlg);
 }
@@ -1745,13 +1818,13 @@ static void
 on_remove_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
     w_tabs_t *w = user_data;
     tabs_remove_tab (w, w->clicked_page);
-    w_save ();
+    w_save_with_action (_("Remove Tab"));
 }
 
 static void
 on_add_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
     tabs_add_tab (user_data);
-    w_save ();
+    w_save_with_action (_("Add Tab"));
 }
 
 static void
@@ -1806,7 +1879,7 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
 #endif
             gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page - 1);
             w->clicked_page--;
-            w_save ();
+            w_save_with_action (_("Move Tab"));
             break;
         }
         prev = c;
@@ -2232,7 +2305,7 @@ on_playlist_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_
     w_playlist_t *w = user_data;
     w->hideheaders = !gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
     ddb_listview_show_header (DDB_LISTVIEW (w->listview), !w->hideheaders);
-    w_save ();
+    w_save_with_action (_("Toggle Column Headers"));
 }
 
 static void
@@ -2653,7 +2726,7 @@ _scope_menu_activate (GtkWidget *self, gpointer user_data) {
     else if (self == s->fragment_duration_500ms_item) {
         s->scope.fragment_duration = 500;
     }
-    w_save ();
+    w_save_with_action (_("Change Oscilloscope Settings"));
 }
 
 static void
@@ -3202,7 +3275,7 @@ _spectrum_menu_activate (GtkWidget *self, gpointer user_data) {
     else if (self == s->gap_10_item) {
         s->analyzer.bar_gap_denominator = 10;
     }
-    w_save ();
+    w_save_with_action (_("Change Spectrum Settings"));
 }
 
 static void
@@ -3576,7 +3649,7 @@ w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s
 static void
 on_hvbox_expand (GtkMenuItem *menuitem, gpointer user_data) {
     w_append ((ddb_gtkui_widget_t *)user_data, w_create ("placeholder"));
-    w_save ();
+    w_save_with_action (_("Expand Box"));
 }
 
 static void
@@ -3592,7 +3665,7 @@ on_hvbox_shrink (GtkMenuItem *menuitem, gpointer user_data) {
     if (!w->children) {
         w_append (w, w_create ("placeholder"));
     }
-    w_save ();
+    w_save_with_action (_("Shrink Box"));
 }
 
 static void
@@ -3600,7 +3673,7 @@ on_hvbox_toggle_homogeneous (GtkCheckMenuItem *checkmenuitem, gpointer user_data
     w_hvbox_t *w = user_data;
     gboolean hmg = gtk_box_get_homogeneous (GTK_BOX (((w_hvbox_t *)w)->box));
     gtk_box_set_homogeneous (GTK_BOX (((w_hvbox_t *)w->box)), hmg ? FALSE : TRUE);
-    w_save ();
+    w_save_with_action (_("Toggle Homogeneous"));
 }
 
 static void
@@ -3632,7 +3705,7 @@ on_hvbox_child_toggle_expand (GtkCheckMenuItem *checkmenuitem, gpointer user_dat
     GtkPackType packtype;
     gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
     gtk_box_set_child_packing (GTK_BOX (box->box), w->widget, !expand, fill, padding, packtype);
-    w_save ();
+    w_save_with_action (_("Toggle Expand"));
 }
 
 static void
@@ -3644,7 +3717,7 @@ on_hvbox_child_toggle_fill (GtkCheckMenuItem *checkmenuitem, gpointer user_data)
     GtkPackType packtype;
     gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
     gtk_box_set_child_packing (GTK_BOX (box->box), w->widget, expand, !fill, padding, packtype);
-    w_save ();
+    w_save_with_action (_("Toggle Fill"));
 }
 
 static void
@@ -4047,7 +4120,7 @@ on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
             }
 
             w_button_init (user_data);
-            w_save ();
+            w_save_with_action (_("Configure Button"));
         }
         if (response == GTK_RESPONSE_APPLY) {
             continue;
@@ -4291,7 +4364,7 @@ w_volumebar_dbscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w) {
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item))) {
         ddb_volumebar_set_scale (bar, DDB_VOLUMEBAR_SCALE_DB);
         ddb_volumebar_update (bar);
-        w_save ();
+        w_save_with_action (_("Change Volume Scale"));
     }
 }
 
@@ -4301,7 +4374,7 @@ w_volumebar_linearscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w)
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item))) {
         ddb_volumebar_set_scale (bar, DDB_VOLUMEBAR_SCALE_LINEAR);
         ddb_volumebar_update (bar);
-        w_save ();
+        w_save_with_action (_("Change Volume Scale"));
     }
 }
 
@@ -4311,7 +4384,7 @@ w_volumebar_cubicscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w) 
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item))) {
         ddb_volumebar_set_scale (bar, DDB_VOLUMEBAR_SCALE_CUBIC);
         ddb_volumebar_update (bar);
-        w_save ();
+        w_save_with_action (_("Change Volume Scale"));
     }
 }
 

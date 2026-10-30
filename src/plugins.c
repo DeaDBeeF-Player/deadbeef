@@ -187,6 +187,38 @@ _undo_execute_buffer (struct ddb_undobuffer_s *undobuffer) {
     ddb_undobuffer_execute (undobuffer, ddb_undomanager_get_buffer(ddb_undomanager_shared()));
 }
 
+typedef struct {
+    ddb_undo_operation_t _super;
+    void *ctx;
+    void (*perform)(void *ctx);
+    void (*deinit)(void *ctx);
+} _undo_custom_operation_t;
+
+static void
+_undo_custom_operation_perform (ddb_undobuffer_t *undobuffer, ddb_undo_operation_t *_op) {
+    _undo_custom_operation_t *op = (_undo_custom_operation_t *)_op;
+    op->perform (op->ctx);
+}
+
+static void
+_undo_custom_operation_deinit (ddb_undo_operation_t *_op) {
+    _undo_custom_operation_t *op = (_undo_custom_operation_t *)_op;
+    if (op->deinit != NULL) {
+        op->deinit (op->ctx);
+    }
+}
+
+static void
+_undo_append_custom_operation (void *ctx, void (*perform)(void *ctx), void (*deinit)(void *ctx)) {
+    _undo_custom_operation_t *op = calloc (1, sizeof (_undo_custom_operation_t));
+    op->_super.perform = _undo_custom_operation_perform;
+    op->_super.deinit = _undo_custom_operation_deinit;
+    op->ctx = ctx;
+    op->perform = perform;
+    op->deinit = deinit;
+    ddb_undobuffer_append_operation (ddb_undomanager_get_buffer (ddb_undomanager_shared ()), &op->_super);
+}
+
 static ddb_undo_interface_t _undo_interface = {
     ._size = sizeof (_undo_interface),
     .group_begin = _undo_group_begin,
@@ -194,6 +226,7 @@ static ddb_undo_interface_t _undo_interface = {
     .set_action_name = _undo_set_action_name,
     .free_buffer = _undo_free_buffer,
     .execute_buffer = _undo_execute_buffer,
+    .append_custom_operation = _undo_append_custom_operation,
 };
 
 static void

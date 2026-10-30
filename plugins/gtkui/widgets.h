@@ -38,8 +38,19 @@ w_init (void);
 void
 w_free (void);
 
+// Saves the layout to the config. If the layout has changed since the previous save,
+// registers an undo operation named "Change Layout".
 void
 w_save (void);
+
+// Same as w_save, with the name of the undo operation.
+void
+w_save_with_action (const char *action_name);
+
+// Remembers the current layout as the starting point for undo. To be called after the layout is loaded.
+void
+w_reset_undo_snapshot (void);
+
 
 ddb_gtkui_widget_t *
 w_get_rootwidget (void);
@@ -158,7 +169,7 @@ w_save_to_conf (const char *key, ddb_gtkui_widget_t *val);
 struct json_t *
 w_save_layout_to_json (void);
 
-// Replaces the current layout, and saves it to the config. Returns 0 on success.
+// Replaces the current layout, and saves it to the config (as undoable "Apply Layout"). Returns 0 on success.
 int
 w_load_layout_from_json (struct json_t *layout);
 
