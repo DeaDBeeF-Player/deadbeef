@@ -1,0 +1,7 @@
+{
+  "layout_cocoaui" : {
+    "type" : "PlaylistWithTabs"
+  },
+  "magic" : "ddblayout",
+  "version" : "1.0"
+}

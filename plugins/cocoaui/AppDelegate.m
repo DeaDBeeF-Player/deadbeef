@@ -25,6 +25,7 @@
 #include <deadbeef/common.h>
 #include <deadbeef/deadbeef.h>
 #include "../../plugins/artwork/artwork.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import "AppDelegate.h"
 #import "conf.h"
 #import "CoverManager.h"
@@ -39,6 +40,7 @@
 #import "KeyboardShortcuts/KeyboardShortcutManager+ViewController.h"
 #import "KeyboardShortcuts/KeyboardShortcutEditorViewController.h"
 #import "KeyboardShortcuts/KeyboardShortcutEditorWindowController.h"
+#import "LayoutManager.h"
 #import "LogWindowController.h"
 #import "NowPlayable.h"
 #import "NSMenu+ActionItems.h"
@@ -162,6 +164,7 @@ extern DB_functions_t *deadbeef;
 
 @property (weak) IBOutlet NSMenuItem *designModeMenuItem;
 @property DesignModeState *designModeState;
+@property (nonatomic) NSMenu *uiLayoutsMenu;
 
 @property (nonatomic) KeyboardShortcutEditorWindowController *keyboardShortcutEditorWindowController;
 @property (nonatomic) KeyboardShortcutEditorViewController *keyboardShortcutEditorViewController;
@@ -178,6 +181,10 @@ extern DB_functions_t *deadbeef;
     // initialize design mode, to avoid random background thread calls
     id<DesignModeStateProtocol> state = DesignModeState.sharedInstance;
     [state load];
+
+    NSString *configDir = @(deadbeef->get_system_dir (DDB_SYS_DIR_CONFIG));
+    LayoutManager.sharedInstance.userLayoutsDirectoryURL = [NSURL fileURLWithPath:[configDir stringByAppendingPathComponent:@"cocoaui_layouts"] isDirectory:YES];
+    [LayoutManager.sharedInstance reloadBuiltInLayouts];
 
     return self;
 }
@@ -279,6 +286,78 @@ static int file_added (ddb_fileadd_data_t *data, void *user_data) {
     [self.mainMenu addPluginActionItemsForSelectedTrack:NULL selectedCount:0 actionContext:DDB_ACTION_CTX_MAIN];
 
     self.designModeMenuItem.state = self.designModeState.enabled ? NSControlStateValueOn : NSControlStateValueOff;
+
+    [self initUILayoutsMenu];
+}
+
+// Adds "UI Layouts" submenu right below "Design Mode" in the View menu.
+- (void)initUILayoutsMenu {
+    NSMenu *viewMenu = self.designModeMenuItem.menu;
+    if (viewMenu == nil) {
+        return;
+    }
+
+    self.uiLayoutsMenu = [[NSMenu alloc] initWithTitle:@"UI Layouts"];
+    self.uiLayoutsMenu.delegate = self;
+    self.uiLayoutsMenu.autoenablesItems = NO;
+
+    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:@"UI Layouts" action:nil keyEquivalent:@""];
+    item.submenu = self.uiLayoutsMenu;
+    [viewMenu insertItem:item atIndex:[viewMenu indexOfItem:self.designModeMenuItem] + 1];
+}
+
+- (NSMenuItem *)disabledMenuItemWithTitle:(NSString *)title {
+    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
+    item.enabled = NO;
+    return item;
+}
+
+- (void)addLayoutEntries:(NSArray<LayoutManagerEntry *> *)entries toMenu:(NSMenu *)menu {
+    for (LayoutManagerEntry *entry in entries) {
+        NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:[@"  " stringByAppendingString:entry.name]
+                                                      action:@selector(applyLayoutPresetAction:)
+                                               keyEquivalent:@""];
+        item.target = self;
+        item.representedObject = entry.url;
+        [menu addItem:item];
+    }
+}
+
+- (void)updateUILayoutsMenu {
+    NSMenu *menu = self.uiLayoutsMenu;
+    [menu removeAllItems];
+
+    NSArray<LayoutManagerEntry *> *builtIn = LayoutManager.sharedInstance.builtInLayouts;
+    NSArray<LayoutManagerEntry *> *user = LayoutManager.sharedInstance.userLayouts;
+
+    if (builtIn.count == 0 && user.count == 0) {
+        [menu addItem:[self disabledMenuItemWithTitle:@"No layouts found"]];
+    }
+    if (builtIn.count != 0) {
+        [menu addItem:[self disabledMenuItemWithTitle:@"Built-in layouts:"]];
+        [self addLayoutEntries:builtIn toMenu:menu];
+    }
+    if (builtIn.count != 0 && user.count != 0) {
+        [menu addItem:NSMenuItem.separatorItem];
+    }
+    if (user.count != 0) {
+        [menu addItem:[self disabledMenuItemWithTitle:@"User layouts:"]];
+        [self addLayoutEntries:user toMenu:menu];
+    }
+
+    [menu addItem:NSMenuItem.separatorItem];
+
+    NSMenuItem *loadItem = [[NSMenuItem alloc] initWithTitle:@"Load from File…" action:@selector(loadLayoutFromFileAction:) keyEquivalent:@""];
+    loadItem.target = self;
+    [menu addItem:loadItem];
+
+    NSMenuItem *saveItem = [[NSMenuItem alloc] initWithTitle:@"Save to File…" action:@selector(saveLayoutToFileAction:) keyEquivalent:@""];
+    saveItem.target = self;
+    [menu addItem:saveItem];
+
+    NSMenuItem *browseItem = [[NSMenuItem alloc] initWithTitle:@"Browse User Layouts in Finder" action:@selector(browseUserLayoutsAction:) keyEquivalent:@""];
+    browseItem.target = self;
+    [menu addItem:browseItem];
 }
 
 - (BOOL)equalizerAvailable {
@@ -341,6 +420,7 @@ main_cleanup_and_quit (void);
 
         self.designModeState = nil;
         [DesignModeState freeSharedInstance];
+        [LayoutManager freeSharedInstance];
 
         deadbeef->unlisten_file_add_beginend(_listenerFileAddBeginAddIdentifier);
         deadbeef->unlisten_file_added(_listenerFileAddedIdentifier);
@@ -1132,6 +1212,80 @@ main_cleanup_and_quit (void);
     self.designModeMenuItem.state = self.designModeState.enabled ? NSControlStateValueOn : NSControlStateValueOff;
 }
 
+#pragma mark - UI Layouts
+
+- (void)showLayoutError:(NSError *)error messageText:(NSString *)messageText {
+    NSAlert *alert = [NSAlert new];
+    alert.messageText = messageText;
+    alert.informativeText = error.localizedDescription ?: @"";
+    alert.alertStyle = NSAlertStyleWarning;
+    [alert beginSheetModalForWindow:self.mainWindow.window completionHandler:nil];
+}
+
+- (void)applyLayoutFromURL:(NSURL *)url {
+    NSError *error;
+    NSDictionary *layout = [LayoutManager.sharedInstance layoutFromURL:url error:&error];
+    if (layout == nil) {
+        [self showLayoutError:error messageText:@"Failed to load the layout"];
+        return;
+    }
+    if (![self.designModeState applyLayoutDictionary:layout]) {
+        NSError *applyError = [NSError errorWithDomain:LayoutManagerErrorDomain code:LayoutManagerErrorInvalidFile userInfo:@{NSLocalizedDescriptionKey: @"The layout contains unknown or invalid widgets."}];
+        [self showLayoutError:applyError messageText:@"Failed to apply the layout"];
+    }
+}
+
+- (IBAction)applyLayoutPresetAction:(NSMenuItem *)sender {
+    NSURL *url = sender.representedObject;
+    if (url != nil) {
+        [self applyLayoutFromURL:url];
+    }
+}
+
+- (IBAction)loadLayoutFromFileAction:(id)sender {
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    panel.allowedContentTypes = @[[UTType typeWithFilenameExtension:LayoutManager.fileExtension]];
+    panel.allowsMultipleSelection = NO;
+    panel.canChooseDirectories = NO;
+
+    if ([panel runModal] == NSModalResponseOK && panel.URL != nil) {
+        [self applyLayoutFromURL:panel.URL];
+    }
+}
+
+- (IBAction)saveLayoutToFileAction:(id)sender {
+    NSDictionary *layout = [self.designModeState currentLayoutDictionary];
+    if (layout == nil) {
+        return;
+    }
+
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.allowedContentTypes = @[[UTType typeWithFilenameExtension:LayoutManager.fileExtension]];
+    panel.nameFieldStringValue = [@"Layout" stringByAppendingPathExtension:LayoutManager.fileExtension];
+
+    // New user layouts go to the config folder. The folder the user picks is not remembered.
+    NSURL *directoryURL = [LayoutManager.sharedInstance ensureUserLayoutsDirectory];
+    if (directoryURL != nil) {
+        panel.directoryURL = directoryURL;
+    }
+
+    if ([panel runModal] != NSModalResponseOK || panel.URL == nil) {
+        return;
+    }
+
+    NSError *error;
+    if (![LayoutManager.sharedInstance writeLayout:layout toURL:panel.URL error:&error]) {
+        [self showLayoutError:error messageText:@"Failed to save the layout"];
+    }
+}
+
+- (IBAction)browseUserLayoutsAction:(id)sender {
+    NSURL *directoryURL = [LayoutManager.sharedInstance ensureUserLayoutsDirectory];
+    if (directoryURL != nil) {
+        [NSWorkspace.sharedWorkspace openURL:directoryURL];
+    }
+}
+
 - (IBAction)displayTrackProperties:(id)sender {
     [TrackPropertiesManager.shared displayTrackProperties];
 }
@@ -1153,6 +1307,11 @@ main_cleanup_and_quit (void);
 #pragma mark - NSMenuDelegate
 
 - (void)menuNeedsUpdate:(NSMenu *)menu {
+    if (menu == self.uiLayoutsMenu) {
+        [self updateUILayoutsMenu];
+        return;
+    }
+
     self.scrollFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.followplayback", 1) ? NSControlStateValueOn : NSControlStateValueOff;
     self.cursorFollowsPlayback.state = deadbeef->conf_get_int ("playlist.scroll.cursorfollowplayback", 1) ? NSControlStateValueOn : NSControlStateValueOff;
 
