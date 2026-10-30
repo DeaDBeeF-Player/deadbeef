@@ -33,6 +33,15 @@
 #define DDB_SPLITTER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
             DDB_TYPE_SPLITTER, DdbSplitterPrivate))
 
+/* Signal identifiers */
+enum
+{
+    SIGNAL_DRAG_FINISHED,
+    N_SIGNALS,
+};
+
+static guint splitter_signals[N_SIGNALS];
+
 /* Property identifiers */
 enum
 {
@@ -200,6 +209,19 @@ ddb_splitter_class_init (DdbSplitterClass *klass)
     gtkwidget_class->motion_notify_event = ddb_splitter_motion;
     gtkwidget_class->grab_broken_event = ddb_splitter_grab_broken;
     gtkwidget_class->grab_notify = ddb_splitter_grab_notify;
+
+    /**
+     * DdbSplitter::drag-finished:
+     *
+     * Emitted when the user finishes dragging the divider.
+     **/
+    splitter_signals[SIGNAL_DRAG_FINISHED] = g_signal_new ("drag-finished",
+            G_TYPE_FROM_CLASS (klass),
+            G_SIGNAL_RUN_LAST,
+            0,
+            NULL, NULL,
+            g_cclosure_marshal_VOID__VOID,
+            G_TYPE_NONE, 0);
 
     gtkcontainer_class = GTK_CONTAINER_CLASS (klass);
     gtkcontainer_class->add = ddb_splitter_add;
@@ -447,6 +469,7 @@ stop_drag (DdbSplitter *splitter)
     splitter->priv->position_set = TRUE;
     gdk_display_pointer_ungrab (gtk_widget_get_display (GTK_WIDGET (splitter)),
             splitter->priv->grab_time);
+    g_signal_emit (splitter, splitter_signals[SIGNAL_DRAG_FINISHED], 0);
 }
 
 static void

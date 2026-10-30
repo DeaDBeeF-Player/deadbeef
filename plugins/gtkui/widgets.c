@@ -1399,6 +1399,7 @@ on_splitter_lock_c1_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data
         sp->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C1;
         sp->size1 = ddb_splitter_get_child1_size (DDB_SPLITTER (sp->box));
         ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_LOCK_C1);
+        w_save ();
     }
 }
 
@@ -1409,6 +1410,7 @@ on_splitter_lock_c2_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_data
         sp->locked = DDB_SPLITTER_SIZE_MODE_LOCK_C2;
         sp->size2 = ddb_splitter_get_child2_size (DDB_SPLITTER (sp->box));
         ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_LOCK_C2);
+        w_save ();
     }
 }
 
@@ -1418,7 +1420,13 @@ on_splitter_lock_prop_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_da
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem))) {
         sp->locked = DDB_SPLITTER_SIZE_MODE_PROP;
         ddb_splitter_set_size_mode (DDB_SPLITTER (sp->box), DDB_SPLITTER_SIZE_MODE_PROP);
+        w_save ();
     }
+}
+
+static void
+on_splitter_drag_finished (DdbSplitter *splitter, gpointer user_data) {
+    w_save ();
 }
 
 void
@@ -1536,6 +1544,7 @@ w_vsplitter_create (void) {
     w->box = ddb_splitter_new (GTK_ORIENTATION_VERTICAL);
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+    g_signal_connect ((gpointer)w->box, "drag-finished", G_CALLBACK (on_splitter_drag_finished), w);
     w_override_signals (w->base.widget, w);
 
     ddb_gtkui_widget_t *ph1, *ph2;
@@ -1568,6 +1577,7 @@ w_hsplitter_create (void) {
     w->box = ddb_splitter_new (GTK_ORIENTATION_HORIZONTAL);
     gtk_widget_show (w->box);
     gtk_container_add (GTK_CONTAINER (w->base.widget), w->box);
+    g_signal_connect ((gpointer)w->box, "drag-finished", G_CALLBACK (on_splitter_drag_finished), w);
     w_override_signals (w->base.widget, w);
 
     ddb_gtkui_widget_t *ph1, *ph2;
@@ -1726,6 +1736,7 @@ on_rename_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
     int res = gtk_dialog_run (GTK_DIALOG (dlg));
     if (res == GTK_RESPONSE_OK) {
         gtk_notebook_set_tab_label_text (GTK_NOTEBOOK (w->base.widget), child, gtk_entry_get_text (GTK_ENTRY (e)));
+        w_save ();
     }
     gtk_widget_destroy (dlg);
 }
@@ -1734,11 +1745,13 @@ static void
 on_remove_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
     w_tabs_t *w = user_data;
     tabs_remove_tab (w, w->clicked_page);
+    w_save ();
 }
 
 static void
 on_add_tab_activate (GtkMenuItem *menuitem, gpointer user_data) {
     tabs_add_tab (user_data);
+    w_save ();
 }
 
 static void
@@ -1793,6 +1806,7 @@ on_move_tab_left_activate (GtkMenuItem *menuitem, gpointer user_data) {
 #endif
             gtk_notebook_set_current_page (GTK_NOTEBOOK (w->base.widget), w->clicked_page - 1);
             w->clicked_page--;
+            w_save ();
             break;
         }
         prev = c;
@@ -2218,6 +2232,7 @@ on_playlist_showheaders_toggled (GtkCheckMenuItem *checkmenuitem, gpointer user_
     w_playlist_t *w = user_data;
     w->hideheaders = !gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (checkmenuitem));
     ddb_listview_show_header (DDB_LISTVIEW (w->listview), !w->hideheaders);
+    w_save ();
 }
 
 static void
@@ -2638,6 +2653,7 @@ _scope_menu_activate (GtkWidget *self, gpointer user_data) {
     else if (self == s->fragment_duration_500ms_item) {
         s->scope.fragment_duration = 500;
     }
+    w_save ();
 }
 
 static void
@@ -3186,6 +3202,7 @@ _spectrum_menu_activate (GtkWidget *self, gpointer user_data) {
     else if (self == s->gap_10_item) {
         s->analyzer.bar_gap_denominator = 10;
     }
+    w_save ();
 }
 
 static void
@@ -3559,6 +3576,7 @@ w_hvbox_replace (struct ddb_gtkui_widget_s *container, struct ddb_gtkui_widget_s
 static void
 on_hvbox_expand (GtkMenuItem *menuitem, gpointer user_data) {
     w_append ((ddb_gtkui_widget_t *)user_data, w_create ("placeholder"));
+    w_save ();
 }
 
 static void
@@ -3574,6 +3592,7 @@ on_hvbox_shrink (GtkMenuItem *menuitem, gpointer user_data) {
     if (!w->children) {
         w_append (w, w_create ("placeholder"));
     }
+    w_save ();
 }
 
 static void
@@ -3581,6 +3600,7 @@ on_hvbox_toggle_homogeneous (GtkCheckMenuItem *checkmenuitem, gpointer user_data
     w_hvbox_t *w = user_data;
     gboolean hmg = gtk_box_get_homogeneous (GTK_BOX (((w_hvbox_t *)w)->box));
     gtk_box_set_homogeneous (GTK_BOX (((w_hvbox_t *)w->box)), hmg ? FALSE : TRUE);
+    w_save ();
 }
 
 static void
@@ -3612,6 +3632,7 @@ on_hvbox_child_toggle_expand (GtkCheckMenuItem *checkmenuitem, gpointer user_dat
     GtkPackType packtype;
     gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
     gtk_box_set_child_packing (GTK_BOX (box->box), w->widget, !expand, fill, padding, packtype);
+    w_save ();
 }
 
 static void
@@ -3623,6 +3644,7 @@ on_hvbox_child_toggle_fill (GtkCheckMenuItem *checkmenuitem, gpointer user_data)
     GtkPackType packtype;
     gtk_box_query_child_packing (GTK_BOX (box->box), w->widget, &expand, &fill, &padding, &packtype);
     gtk_box_set_child_packing (GTK_BOX (box->box), w->widget, expand, !fill, padding, packtype);
+    w_save ();
 }
 
 static void
@@ -4025,6 +4047,7 @@ on_button_config (GtkMenuItem *menuitem, gpointer user_data) {
             }
 
             w_button_init (user_data);
+            w_save ();
         }
         if (response == GTK_RESPONSE_APPLY) {
             continue;
@@ -4268,6 +4291,7 @@ w_volumebar_dbscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w) {
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item))) {
         ddb_volumebar_set_scale (bar, DDB_VOLUMEBAR_SCALE_DB);
         ddb_volumebar_update (bar);
+        w_save ();
     }
 }
 
@@ -4277,6 +4301,7 @@ w_volumebar_linearscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w)
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item))) {
         ddb_volumebar_set_scale (bar, DDB_VOLUMEBAR_SCALE_LINEAR);
         ddb_volumebar_update (bar);
+        w_save ();
     }
 }
 
@@ -4286,6 +4311,7 @@ w_volumebar_cubicscale_activate (GtkWidget *item, struct ddb_gtkui_widget_s *w) 
     if (gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (item))) {
         ddb_volumebar_set_scale (bar, DDB_VOLUMEBAR_SCALE_CUBIC);
         ddb_volumebar_update (bar);
+        w_save ();
     }
 }
 
