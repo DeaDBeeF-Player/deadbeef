@@ -103,6 +103,8 @@ C / C++ / Obj-C common:
 - Always use braces, even for one-line bodies. No single-line `if`/loops/functions.
 - A space before the opening paren in C function calls and declarations: `foo (a, b)`, `sizeof (x)`, `if (`, `for (`.
   (Older/newer code is sometimes inconsistent; follow the file you're in.)
+  Exception: gettext macros are always written without the space: `_("text")`, never `_ ("text")`, even though
+  older code in the file may use the latter.
 - Return type on its own line for top-level C function definitions and prototypes:
   ```c
   static int
