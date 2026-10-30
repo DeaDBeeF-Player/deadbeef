@@ -28,6 +28,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <ctype.h>
 #include <unistd.h>
 #ifdef __linux__
 #    include <sys/prctl.h>
@@ -1008,6 +1009,34 @@ is_remote_stream (playItem_t *it) {
     return remote;
 }
 
+// Returns 1 if the uri is a URL (other than file://), and none of the vfs plugins support its scheme
+static int
+is_url_without_vfs_plugin (const char *uri) {
+    const char *sep = strstr (uri, "://");
+    if (!sep || !strncasecmp (uri, "file://", 7)) {
+        return 0;
+    }
+    for (const char *c = uri; c < sep; c++) {
+        if (*c != ':' && !isalpha (*c)) {
+            return 0; // not a URL
+        }
+    }
+
+    DB_vfs_t **plugs = plug_get_vfs_list ();
+    for (int i = 0; plugs[i]; i++) {
+        if (!plugs[i]->get_schemes) {
+            continue;
+        }
+        const char **schemes = plugs[i]->get_schemes ();
+        for (int n = 0; schemes[n]; n++) {
+            if (!strncasecmp (schemes[n], uri, strlen (schemes[n]))) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
 static DB_fileinfo_t *
 dec_open (DB_decoder_t *dec, uint32_t hints, playItem_t *it) {
     if (dec->plugin.api_vminor >= 7 && dec->open2) {
@@ -1139,7 +1168,19 @@ stream_track (playItem_t *it, int startpaused) {
         DB_FILE *fp = vfs_fopen (uri);
         trace ("\033[0;34mgetting content-type\033[37;0m\n");
         if (!fp) {
-            err = -1;
+            if (is_url_without_vfs_plugin (uri)) {
+                trace_err (
+                    "Failed to open stream %s: no plugin supports this URL scheme. Make sure the network streaming "
+                    "plugin (vfs_curl) is installed.\n",
+                    uri);
+            }
+
+            if (!startpaused) {
+                streamer_play_failed (it);
+            }
+            else {
+                err = -1;
+            }
             goto error;
         }
         streamer_file_vfs = fp->vfs;

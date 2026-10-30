@@ -1,0 +1,67 @@
+{
+  "layout_cocoaui" : {
+    "children" : [
+      {
+        "children" : [
+          {
+            "type" : "PlaylistWithTabs"
+          },
+          {
+            "settings" : {
+              "displayMode" : "selected"
+            },
+            "type" : "AlbumArt"
+          }
+        ],
+        "settings" : {
+          "holdingMode" : 2,
+          "isLocked" : false,
+          "position" : 337,
+          "thickDivider" : 0
+        },
+        "type" : "HSplitter"
+      },
+      {
+        "children" : [
+          {
+            "settings" : {
+              "fragmentDuration" : "50",
+              "renderMode" : "multichannel",
+              "scaleMode" : "auto",
+              "useCustomBackgroundColor" : false,
+              "useCustomColor" : false
+            },
+            "type" : "Scope"
+          },
+          {
+            "settings" : {
+              "barGranularity" : 2,
+              "distanceBetweenBars" : 3,
+              "mode" : "bands",
+              "useCustomBackgroundColor" : false,
+              "useCustomBarColor" : false,
+              "useCustomPeakColor" : false
+            },
+            "type" : "SpectrumAnalyzer"
+          }
+        ],
+        "settings" : {
+          "holdingMode" : 0,
+          "isLocked" : false,
+          "position" : 0.49806451612903224,
+          "thickDivider" : 0
+        },
+        "type" : "VSplitter"
+      }
+    ],
+    "settings" : {
+      "holdingMode" : 1,
+      "isLocked" : false,
+      "position" : 335.5,
+      "thickDivider" : 0
+    },
+    "type" : "VSplitter"
+  },
+  "magic" : "ddblayout",
+  "version" : "1.0"
+}

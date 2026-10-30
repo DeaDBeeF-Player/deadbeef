@@ -27,7 +27,7 @@
 #include <string.h>
 #include "../gtkui.h"
 #include <deadbeef/deadbeef.h>
-#include "../../artwork/artwork.h"
+#include "../covermanager/covermanager.h"
 #include "mainplaylist.h"
 #include "playlistcontroller.h"
 #include "plcommon.h"
@@ -36,34 +36,41 @@
 extern DB_functions_t *deadbeef;
 
 struct playlist_controller_s {
-    ddb_artwork_plugin_t *artwork_plugin;
     DdbListview *listview;
     gboolean is_search;
+    // Set when the owner is done with the controller. The callbacks scheduled earlier can still run after that,
+    // and must not touch the listview then.
+    gboolean detached;
     ddb_listview_datasource_t datasource;
     ddb_listview_renderer_t renderer;
     ddb_listview_delegate_t delegate;
 };
 
 static gboolean
-_dispatch_on_main_wrapper (void *context) {
-    void (^block)(void) = context;
-    block ();
-    Block_release(block);
-    return FALSE;
+_is_detached (DdbListview *listview) {
+    playlist_controller_t *ctl = listview->owner;
+    return ctl == NULL || ctl->detached;
 }
 
+// Schedules the callback with the listview as the argument. The listview is kept alive until the callback is done,
+// or until the callback is cancelled.
 static void
-_dispatch_on_main(void (^block)(void)) {
-    dispatch_block_t copy_block = Block_copy(block);
-    g_idle_add(_dispatch_on_main_wrapper, copy_block);
+_idle_add_listview (GSourceFunc func, DdbListview *listview) {
+    g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, func, g_object_ref (listview), g_object_unref);
 }
 
+// The listview uses the datasource, the delegate and the renderer until it's finalized,
+// so the controller memory can only be freed after that.
 static void
-_artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
-    _dispatch_on_main(^{
-        playlist_controller_t *ctl = user_data;
-        ddb_listview_reset_artwork (ctl->listview);
-    });
+_controller_destroy (void *owner) {
+    free (owner);
+}
+
+// Called on the main thread, after the covermanager has dropped its cached covers.
+static void
+_covermanager_did_reset (void *user_data) {
+    playlist_controller_t *ctl = user_data;
+    ddb_listview_reset_artwork (ctl->listview);
 }
 
 playlist_controller_t *
@@ -71,10 +78,8 @@ playlist_controller_new(DdbListview *listview, gboolean is_search) {
     playlist_controller_t *ctl = calloc (1, sizeof (playlist_controller_t));
     ctl->is_search = is_search;
 
-    ctl->artwork_plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id("artwork2");
-
-    if (ctl->artwork_plugin != NULL) {
-        ctl->artwork_plugin->add_listener(_artwork_listener, ctl);
+    if (covermanager_shared () != NULL) {
+        covermanager_add_listener (covermanager_shared (), _covermanager_did_reset, ctl);
     }
 
     g_object_ref_sink(listview);
@@ -83,6 +88,8 @@ playlist_controller_new(DdbListview *listview, gboolean is_search) {
     ctl->listview->delegate = &ctl->delegate;
     ctl->listview->datasource = &ctl->datasource;
     ctl->listview->renderer = &ctl->renderer;
+    ctl->listview->owner = ctl;
+    ctl->listview->owner_destroy = _controller_destroy;
 
     if (is_search) {
         search_init_listview_api(listview);
@@ -96,11 +103,19 @@ playlist_controller_new(DdbListview *listview, gboolean is_search) {
 
 void
 playlist_controller_free(playlist_controller_t *ctl) {
-    if (ctl->artwork_plugin) {
-        ctl->artwork_plugin->remove_listener(_artwork_listener, ctl);
+    if (covermanager_shared () != NULL) {
+        covermanager_remove_listener (covermanager_shared (), _covermanager_did_reset, ctl);
     }
+
+    ctl->detached = TRUE;
+
+    // Cancel the callbacks scheduled for the listview. This also releases the references they hold.
+    while (g_source_remove_by_user_data (ctl->listview)) {
+    }
+
+    // ctl itself is freed when the listview is finalized, see _controller_destroy,
+    // so it must not be used after this.
     g_object_unref(ctl->listview);
-    free (ctl);
 }
 
 typedef struct {
@@ -118,9 +133,20 @@ playlist_trackdata (DdbListview *listview, DB_playItem_t *track) {
     return td;
 }
 
+static void
+_trackdata_free (w_trackdata_t *d) {
+    g_object_unref(d->listview);
+    deadbeef->pl_item_unref (d->trk);
+    free (d);
+}
+
 static gboolean
 trackinfochanged_cb (gpointer data) {
     w_trackdata_t *d = data;
+    if (_is_detached (d->listview)) {
+        _trackdata_free (d);
+        return FALSE;
+    }
     int idx = deadbeef->pl_get_idx_of (d->trk);
     if (idx != -1) {
         ddb_listview_draw_row (d->listview, idx, d->trk);
@@ -133,6 +159,9 @@ trackinfochanged_cb (gpointer data) {
 
 static gboolean
 paused_cb (gpointer data) {
+    if (_is_detached (DDB_LISTVIEW(data))) {
+        return FALSE;
+    }
     DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         int idx = deadbeef->pl_get_idx_of (it);
@@ -141,12 +170,14 @@ paused_cb (gpointer data) {
         }
         deadbeef->pl_item_unref (it);
     }
-    g_object_unref(DDB_LISTVIEW(data));
     return FALSE;
 }
 
 static gboolean
 playlist_config_changed_cb (gpointer data) {
+    if (_is_detached (DDB_LISTVIEW(data))) {
+        return FALSE;
+    }
     ddb_listview_refresh (DDB_LISTVIEW(data), DDB_REFRESH_COLUMNS | DDB_REFRESH_LIST | DDB_REFRESH_CONFIG);
     return FALSE;
 }
@@ -154,6 +185,10 @@ playlist_config_changed_cb (gpointer data) {
 static gboolean
 songfinished_cb (gpointer data) {
     w_trackdata_t *d = data;
+    if (_is_detached (d->listview)) {
+        _trackdata_free (d);
+        return FALSE;
+    }
     int idx = deadbeef->pl_get_idx_of (d->trk);
     if (idx != -1) {
         ddb_listview_draw_row (d->listview, idx, d->trk);
@@ -168,6 +203,10 @@ songfinished_cb (gpointer data) {
 static gboolean
 songstarted_cb (gpointer data) {
     w_trackdata_t *d = data;
+    if (_is_detached (d->listview)) {
+        _trackdata_free (d);
+        return FALSE;
+    }
     int idx = deadbeef->pl_get_idx_of (d->trk);
     if (idx != -1) {
         if (!gtkui_listview_busy) {
@@ -206,6 +245,10 @@ playlist_set_cursor (DdbListview *listview, DB_playItem_t *it) {
 static gboolean
 cursor_moved_cb (gpointer data) {
     w_trackdata_t *d = data;
+    if (_is_detached (d->listview)) {
+        _trackdata_free (d);
+        return FALSE;
+    }
     playlist_set_cursor (d->listview, d->trk);
     g_object_unref(d->listview);
     deadbeef->pl_item_unref (d->trk);
@@ -215,6 +258,9 @@ cursor_moved_cb (gpointer data) {
 
 static gboolean
 focus_selection_cb (gpointer data) {
+    if (_is_detached (DDB_LISTVIEW(data))) {
+        return FALSE;
+    }
     DdbListview *listview = data;
     deadbeef->pl_lock ();
     DB_playItem_t *it = deadbeef->pl_get_first (PL_MAIN);
@@ -235,6 +281,9 @@ focus_selection_cb (gpointer data) {
 // Otherwise gtkui.c will handle it and send a PLAYLISTSWITCHED message
 static gboolean
 trackfocus_cb (gpointer data) {
+    if (_is_detached (DDB_LISTVIEW(data))) {
+        return FALSE;
+    }
     DB_playItem_t *it = deadbeef->streamer_get_playing_track_safe ();
     if (it) {
         deadbeef->pl_lock ();
@@ -252,24 +301,36 @@ trackfocus_cb (gpointer data) {
 
 static gboolean
 playlist_sort_reset_cb (gpointer data) {
+    if (_is_detached (DDB_LISTVIEW(data))) {
+        return FALSE;
+    }
     ddb_listview_col_sort_update (DDB_LISTVIEW(data));
     return FALSE;
 }
 
 static gboolean
 playlist_list_refresh_cb (gpointer data) {
+    if (_is_detached (DDB_LISTVIEW(data))) {
+        return FALSE;
+    }
     ddb_listview_refresh (DDB_LISTVIEW(data), DDB_REFRESH_LIST);
     return FALSE;
 }
 
 static gboolean
 playlist_header_refresh_cb (gpointer data) {
+    if (_is_detached (DDB_LISTVIEW(data))) {
+        return FALSE;
+    }
     ddb_listview_refresh (DDB_LISTVIEW(data), DDB_REFRESH_COLUMNS);
     return FALSE;
 }
 
 static gboolean
 playlist_setup_cb (gpointer data) {
+    if (_is_detached (DDB_LISTVIEW(data))) {
+        return FALSE;
+    }
     DdbListview *listview = DDB_LISTVIEW(data);
     ddb_listview_clear_sort (listview);
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
@@ -303,7 +364,7 @@ void
 playlist_controller_init (playlist_controller_t *ctl, gboolean show_headers, int width) {
     ddb_listview_show_header (ctl->listview, show_headers);
     ddb_listview_init_autoresize (ctl->listview, width);
-    g_idle_add (playlist_setup_cb, ctl->listview);
+    _idle_add_listview (playlist_setup_cb, ctl->listview);
 }
 
 void
@@ -314,8 +375,7 @@ playlist_controller_message (playlist_controller_t *ctl, uint32_t id, uintptr_t 
 
     switch (id) {
     case DB_EV_PAUSED:
-        g_object_ref(ctl->listview);
-        g_idle_add (paused_cb, ctl->listview);
+        _idle_add_listview (paused_cb, ctl->listview);
         break;
     case DB_EV_SONGFINISHED:
         {
@@ -335,7 +395,7 @@ playlist_controller_message (playlist_controller_t *ctl, uint32_t id, uintptr_t 
         }
     case DB_EV_TRACKINFOCHANGED:
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
-            g_idle_add (playlist_sort_reset_cb, ctl->listview);
+            _idle_add_listview (playlist_sort_reset_cb, ctl->listview);
         }
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT || (p1 == DDB_PLAYLIST_CHANGE_SELECTION && p2 != PL_MAIN) || p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
             ddb_event_track_t *ev = (ddb_event_track_t *)ctx;
@@ -348,17 +408,17 @@ playlist_controller_message (playlist_controller_t *ctl, uint32_t id, uintptr_t 
         if (p1 == DDB_PLAYLIST_CHANGE_CONTENT ||
             (p1 == DDB_PLAYLIST_CHANGE_SELECTION && (p2 != PL_MAIN || (DdbListview *)ctx != ctl->listview)) ||
             p1 == DDB_PLAYLIST_CHANGE_PLAYQUEUE) {
-            g_idle_add (playlist_list_refresh_cb, ctl->listview);
+            _idle_add_listview (playlist_list_refresh_cb, ctl->listview);
         }
         break;
     case DB_EV_PLAYLISTSWITCHED:
-        g_idle_add (playlist_setup_cb, ctl->listview);
+        _idle_add_listview (playlist_setup_cb, ctl->listview);
         break;
     case DB_EV_FOCUS_SELECTION:
-        g_idle_add (focus_selection_cb, ctl->listview);
+        _idle_add_listview (focus_selection_cb, ctl->listview);
         break;
     case DB_EV_TRACKFOCUSCURRENT:
-        g_idle_add (trackfocus_cb, ctl->listview);
+        _idle_add_listview (trackfocus_cb, ctl->listview);
         break;
     case DB_EV_CURSOR_MOVED:
         if (p1 != PL_MAIN) {
@@ -372,18 +432,18 @@ playlist_controller_message (playlist_controller_t *ctl, uint32_t id, uintptr_t 
         if (ctx) {
             char *conf_str = (char *)ctx;
             if (gtkui_listview_override_conf(conf_str) || gtkui_listview_font_conf(conf_str)) {
-                g_idle_add (playlist_config_changed_cb, ctl->listview);
+                _idle_add_listview (playlist_config_changed_cb, ctl->listview);
             }
             else if (gtkui_listview_colors_conf(conf_str)) {
-                g_idle_add (playlist_list_refresh_cb, ctl->listview);
-                g_idle_add (playlist_header_refresh_cb, ctl->listview);
+                _idle_add_listview (playlist_list_refresh_cb, ctl->listview);
+                _idle_add_listview (playlist_header_refresh_cb, ctl->listview);
             }
             else if (gtkui_listview_font_style_conf(conf_str) || !strcmp (conf_str, "playlist.pin.groups") ||
                      !strcmp (conf_str, "playlist.groups.spacing") ) {
-                g_idle_add (playlist_list_refresh_cb, ctl->listview);
+                _idle_add_listview (playlist_list_refresh_cb, ctl->listview);
             }
             else if (gtkui_tabstrip_override_conf(conf_str) || gtkui_tabstrip_colors_conf(conf_str)) {
-                g_idle_add (playlist_header_refresh_cb, ctl->listview);
+                _idle_add_listview (playlist_header_refresh_cb, ctl->listview);
             }
         }
         break;

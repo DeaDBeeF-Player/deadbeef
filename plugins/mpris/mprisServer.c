@@ -173,10 +173,29 @@ static void freeTfBytecode(DB_functions_t *deadbeef) {
     }
 }
 
+typedef struct {
+    char *cover_path;
+    struct MprisData *mprisData;
+} UpdateCoverData;
+
+static gboolean
+_update_cover_path (gpointer data) {
+    UpdateCoverData *updateCoverData = data;
+
+    free (updateCoverData->mprisData->artworkData.path);
+
+    updateCoverData->mprisData->artworkData.path = updateCoverData->cover_path;
+    emitMetadataChanged (-1, updateCoverData->mprisData);
+
+    free (updateCoverData);
+
+    return G_SOURCE_REMOVE;
+}
+
 static void coverartCallback(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover) {
     struct MprisData *mprisData = (struct MprisData*) query->user_data;
     if (query->flags != DDB_ARTWORK_FLAG_CANCELLED) {
-        char * cover_path = NULL;
+        char *cover_path = NULL;
         if (cover && cover->cover_found) {
             size_t prefix = strlen("file://");
             cover_path = malloc(strlen(cover->image_filename) + prefix + 1);
@@ -186,10 +205,14 @@ static void coverartCallback(int error, ddb_cover_query_t *query, ddb_cover_info
         }
 
         // Replace cover
-        char *old_cover = mprisData->artworkData.path;
-        mprisData->artworkData.path = cover_path;
-        free(old_cover);
-        emitMetadataChanged(-1, mprisData);
+        UpdateCoverData *data = calloc (1, sizeof (UpdateCoverData));
+        data->cover_path = cover_path;
+        data->mprisData = mprisData;
+        g_main_context_invoke(
+            g_main_loop_get_context(loop),
+            _update_cover_path,
+            data
+        );
     }
 
     if (cover) {

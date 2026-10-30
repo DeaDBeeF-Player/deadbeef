@@ -88,6 +88,7 @@ tar jcvf ../../portable_out/build/$OUTNAME\
     $PLUGDIR/converter_gtk2.so\
     $PLUGDIR/converter_gtk3.so\
     $PLUGDIR/convpresets\
+    $PLUGDIR/ui_layouts\
     $PLUGDIR/pulse.so\
     $PLUGDIR/ddb_out_pw.so\
     $PLUGDIR/ddb_dsp_libretro.so\

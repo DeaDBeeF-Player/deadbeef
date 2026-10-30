@@ -26,7 +26,9 @@
 
 #include "gtkui_api.h"
 
-#define DDB_GTKUI_CONF_LAYOUT "gtkui.layout.1.9.0"
+// Version of the layout format, major.minor.point. Used for the config key, and in the .ddblayout files.
+#define DDB_GTKUI_LAYOUT_VERSION "1.9.0"
+#define DDB_GTKUI_CONF_LAYOUT "gtkui.layout." DDB_GTKUI_LAYOUT_VERSION
 
 struct json_t;
 
@@ -151,5 +153,13 @@ w_create_from_conf (const char *key);
 
 int
 w_save_to_conf (const char *key, ddb_gtkui_widget_t *val);
+
+// Returns the current layout as a new json object, in the same format as saved to DDB_GTKUI_CONF_LAYOUT.
+struct json_t *
+w_save_layout_to_json (void);
+
+// Replaces the current layout, and saves it to the config. Returns 0 on success.
+int
+w_load_layout_from_json (struct json_t *layout);
 
 #endif

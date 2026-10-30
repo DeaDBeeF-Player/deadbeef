@@ -158,6 +158,12 @@ struct _DdbListview {
     ddb_listview_delegate_t *delegate;
     ddb_listview_renderer_t *renderer;
 
+    // The owner of the datasource, delegate and renderer. The listview keeps using them until it's finalized,
+    // which can happen after the owner is done with it, e.g. when pending callbacks hold references.
+    // owner_destroy is called at the very end of finalization.
+    void *owner;
+    void (*owner_destroy) (void *owner);
+
     // cached gtk/gdk object pointers
     GtkWidget *list;
     GtkWidget *header;

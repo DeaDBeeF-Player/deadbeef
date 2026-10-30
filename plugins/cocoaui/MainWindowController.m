@@ -122,6 +122,12 @@ extern DB_functions_t *deadbeef;
     }
 #endif
 
+    // Always show icons only, and hide the display mode menu from the toolbar's context menu
+    self.window.toolbar.displayMode = NSToolbarDisplayModeIconOnly;
+    if (@available(macOS 15.0, *)) {
+        self.window.toolbar.allowsDisplayModeCustomization = NO;
+    }
+
     self.playlistWithTabsView = self.splitViewController.bodyViewController.wrapperView;
     self.designableContainerView = self.splitViewController.bodyViewController.designableView;
 

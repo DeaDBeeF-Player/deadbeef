@@ -47,6 +47,11 @@ typedef struct {
     cover_completion_block_list_item_t *completion_blocks;
 } cover_request_t;
 
+typedef struct {
+    covermanager_listener_t callback;
+    void *ctx;
+} covermanager_listener_entry_t;
+
 struct covermanager_s {
     ddb_artwork_plugin_t *plugin;
     gobj_cache_t cache;
@@ -57,11 +62,17 @@ struct covermanager_s {
     GdkPixbuf *default_cover;
     gboolean is_terminating;
     int image_size;
+    GList *listeners; // covermanager_listener_entry_t
+    /// Incremented every time the cache is reset.
+    /// The requests started before the reset are stale, and their results must not be cached.
+    int generation;
 };
 
 typedef struct {
     covermanager_t *impl;
-    char *key;
+    char *key; // cache key
+    char *pending_key; // key in pending_requests
+    int generation;
 } query_userdata_t;
 
 static covermanager_t *_shared;
@@ -77,6 +88,17 @@ _cache_key_for_track (covermanager_t *impl, ddb_playItem_t *track) {
     char buffer[PATH_MAX];
     deadbeef->tf_eval (&ctx, impl->name_tf, buffer, sizeof (buffer));
     return strdup (buffer);
+}
+
+/// Requests are only squashed within the same generation and source, so that cancelling the queries of one consumer
+/// (@c cancel_queries_with_source_id) can't deliver an empty result to the other consumers, and stale results are not
+/// handed out after the settings change.
+static char *
+_pending_key (covermanager_t *impl, const char *key, int64_t source_id) {
+    size_t len = strlen (key) + 48;
+    char *pending_key = malloc (len);
+    snprintf (pending_key, len, "%d:%lld:%s", impl->generation, (long long)source_id, key);
+    return pending_key;
 }
 
 static void
@@ -100,9 +122,23 @@ _update_default_cover (covermanager_t *impl) {
 }
 
 static void
+_notify_listeners (covermanager_t *impl) {
+    // The callbacks may add or remove listeners
+    GList *copy = g_list_copy (impl->listeners);
+    for (GList *l = copy; l != NULL; l = l->next) {
+        covermanager_listener_entry_t *entry = l->data;
+        if (g_list_find (impl->listeners, entry) != NULL) {
+            entry->callback (entry->ctx);
+        }
+    }
+    g_list_free (copy);
+}
+
+static void
 _settings_did_change_for_track (covermanager_t *manager, ddb_playItem_t *track) {
     covermanager_t *impl = manager;
     if (track == NULL) {
+        impl->generation++;
         impl->image_size = deadbeef->conf_get_int ("artwork.image_size", 256);
         _update_default_cover (impl);
         gobj_cache_remove_all (impl->cache);
@@ -112,6 +148,7 @@ _settings_did_change_for_track (covermanager_t *manager, ddb_playItem_t *track) 
         gobj_cache_remove (impl->cache, key);
         free (key);
     }
+    _notify_listeners (impl);
 }
 
 static void
@@ -218,6 +255,7 @@ _cleanup_query (ddb_cover_query_t *query) {
     query_userdata_t *user_data = query->user_data;
 
     free (user_data->key);
+    free (user_data->pending_key);
     free (user_data);
 
     // Free the query -- it's fast, so it's OK to free it on main queue
@@ -235,11 +273,14 @@ _callback_and_cleanup (ddb_cover_query_t *query, ddb_cover_info_t *cover, GdkPix
         return;
     }
 
-    if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED)) {
+    // The settings could have changed while the cover was loading, e.g. when the option is toggled quickly.
+    // Don't let the stale image into the cache.
+    const gboolean is_stale = user_data->generation != impl->generation;
+    if (!(query->flags & DDB_ARTWORK_FLAG_CANCELLED) && !is_stale) {
         _add_cover_for_track (impl, user_data->key, query->track, img);
     }
 
-    cover_request_t *request = g_hash_table_lookup(user_data->impl->pending_requests, user_data->key);
+    cover_request_t *request = g_hash_table_lookup (impl->pending_requests, user_data->pending_key);
     if (request != NULL) {
         cover_completion_block_list_item_t *item = request->completion_blocks;
         while (item != NULL) {
@@ -258,7 +299,7 @@ _callback_and_cleanup (ddb_cover_query_t *query, ddb_cover_info_t *cover, GdkPix
         gobj_unref (img);
         img = NULL;
     }
-    g_hash_table_remove (user_data->impl->pending_requests, user_data->key);
+    g_hash_table_remove (impl->pending_requests, user_data->pending_key);
 
     _cleanup_query(query);
 
@@ -387,6 +428,9 @@ covermanager_free (covermanager_t *impl) {
         impl->pending_requests = NULL;
     }
 
+    g_list_free_full (impl->listeners, free);
+    impl->listeners = NULL;
+
     free (impl->default_cover_path);
     impl->default_cover_path = NULL;
 
@@ -440,10 +484,12 @@ _cover_for_track (
         return cover;
     }
 
-    gboolean is_new_request = _add_pending_request (impl, key, completion_block, want_default);
+    char *pending_key = _pending_key (impl, key, source_id);
+    gboolean is_new_request = _add_pending_request (impl, pending_key, completion_block, want_default);
 
     if (!is_new_request) {
         free (key);
+        free (pending_key);
         key = NULL;
         return NULL;
     }
@@ -456,6 +502,8 @@ _cover_for_track (
     query_userdata_t *data = calloc (1, sizeof (query_userdata_t));
     data->impl = impl;
     data->key = key; // transfer ownership here, no need to free
+    data->pending_key = pending_key; // same
+    data->generation = impl->generation;
     query->user_data = (void *)data;
     key = NULL;
 
@@ -519,6 +567,32 @@ covermanager_desired_size_for_image_size (
     a.height = image_size.height * scale;
 
     return a;
+}
+
+void
+covermanager_add_listener (covermanager_t *manager, covermanager_listener_t listener, void *ctx) {
+    if (manager == NULL) {
+        return;
+    }
+    covermanager_listener_entry_t *entry = calloc (1, sizeof (covermanager_listener_entry_t));
+    entry->callback = listener;
+    entry->ctx = ctx;
+    manager->listeners = g_list_append (manager->listeners, entry);
+}
+
+void
+covermanager_remove_listener (covermanager_t *manager, covermanager_listener_t listener, void *ctx) {
+    if (manager == NULL) {
+        return;
+    }
+    for (GList *l = manager->listeners; l != NULL; l = l->next) {
+        covermanager_listener_entry_t *entry = l->data;
+        if (entry->callback == listener && entry->ctx == ctx) {
+            manager->listeners = g_list_delete_link (manager->listeners, l);
+            free (entry);
+            break;
+        }
+    }
 }
 
 void

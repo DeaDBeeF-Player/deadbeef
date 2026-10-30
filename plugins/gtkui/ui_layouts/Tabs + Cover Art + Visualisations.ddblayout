@@ -1,0 +1,72 @@
+{
+  "layout_gtkui": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "playtb"
+          },
+          {
+            "type": "seekbar"
+          },
+          {
+            "settings": {
+              "scale": "db"
+            },
+            "type": "volumebar"
+          }
+        ],
+        "legacy_params": " expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0",
+        "type": "hbox"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "legacy_params": " hideheaders=0 width=980",
+                "type": "tabbed_playlist"
+              },
+              {
+                "settings": {
+                  "mode": "selected"
+                },
+                "type": "coverart"
+              }
+            ],
+            "legacy_params": " locked=2 ratio=0.726464 pos=0 size2=366",
+            "type": "hsplitter"
+          },
+          {
+            "children": [
+              {
+                "settings": {
+                  "fragmentDuration": "300",
+                  "renderMode": "multichannel",
+                  "scaleMode": "auto"
+                },
+                "type": "scope"
+              },
+              {
+                "settings": {
+                  "barGranularity": "2",
+                  "distanceBetweenBars": "3",
+                  "renderMode": "bands"
+                },
+                "type": "spectrum"
+              }
+            ],
+            "legacy_params": " locked=0 ratio=0.500000 pos=0 size2=0",
+            "type": "vsplitter"
+          }
+        ],
+        "legacy_params": " locked=1 ratio=0.409449 pos=364 size2=0",
+        "type": "vsplitter"
+      }
+    ],
+    "legacy_params": " expand=\"0 1\" fill=\"1 1\" homogeneous=0",
+    "type": "vbox"
+  },
+  "magic": "ddblayout",
+  "version": "1.9.0"
+}

@@ -2720,6 +2720,24 @@
 		2DF930511AB817310030C0CA /* wildmidi_lib.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304D1AB817310030C0CA /* wildmidi_lib.c */; };
 		2DF930521AB817310030C0CA /* wildmidiplug.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DF9304E1AB817310030C0CA /* wildmidiplug.c */; };
 		2DFD51681C97175F00961D19 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D2A14F019B64F2900AD1EB7 /* libz.dylib */; };
+		2DFF25303095218F004C03E7 /* LayoutManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF252F3095218F004C03E7 /* LayoutManager.h */; };
+		2DFF25413095219D004C03E7 /* LayoutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF25403095219D004C03E7 /* LayoutManager.m */; };
+		2DFF25513095219D004C03E7 /* UILayouts in Resources */ = {isa = PBXBuildFile; fileRef = 2DFF25503095219D004C03E7 /* UILayouts */; };
+		2DFF25533095219D004C03E7 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DFF25523095219D004C03E7 /* UniformTypeIdentifiers.framework */; };
+		2DFF2561309524A6004C03E7 /* LayoutManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF2560309524A6004C03E7 /* LayoutManagerTests.m */; };
+		2DFF25623095260AA04C03E7 /* LayoutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF25403095219D004C03E7 /* LayoutManager.m */; };
+		2DFF256D30952990004C03E7 /* GtkLayoutManagerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF256C30952990004C03E7 /* GtkLayoutManagerTests.cpp */; };
+		2DFF258430952A10004C03E7 /* layoutmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258030952A10004C03E7 /* layoutmanager.c */; };
+		2DFF258530952A10004C03E7 /* layoutmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258030952A10004C03E7 /* layoutmanager.c */; };
+		2DFF258630952A10004C03E7 /* layoutmanager.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258030952A10004C03E7 /* layoutmanager.c */; };
+		2DFF258730952A10004C03E7 /* layoutmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF258130952A10004C03E7 /* layoutmanager.h */; };
+		2DFF258830952A10004C03E7 /* layoutmanager.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF258130952A10004C03E7 /* layoutmanager.h */; };
+		2DFF258930952A10004C03E7 /* layoutmenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258230952A10004C03E7 /* layoutmenu.c */; };
+		2DFF258A30952A10004C03E7 /* layoutmenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 2DFF258230952A10004C03E7 /* layoutmenu.c */; };
+		2DFF258B30952A10004C03E7 /* layoutmenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF258330952A10004C03E7 /* layoutmenu.h */; };
+		2DFF258C30952A10004C03E7 /* layoutmenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DFF258330952A10004C03E7 /* layoutmenu.h */; };
+		2DFF258E30952A10004C03E7 /* ui_layouts in Resources */ = {isa = PBXBuildFile; fileRef = 2DFF258D30952A10004C03E7 /* ui_layouts */; };
+		2DFF258F30952A10004C03E7 /* ui_layouts in Resources */ = {isa = PBXBuildFile; fileRef = 2DFF258D30952A10004C03E7 /* ui_layouts */; };
 		4D0B0CEE20162D95004162DA /* FormatConversionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4D0B0CED20162D95004162DA /* FormatConversionTests.cpp */; };
 		4D1B3E7E18379829003E6066 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1B3E7D18379829003E6066 /* Cocoa.framework */; };
 		4D1B4A8F1837EC49003E6066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 4D1B3F831837EC44003E6066 /* main.c */; };
@@ -6479,7 +6497,7 @@
 		2D932AB13092896D00933201 /* DdbCocoaUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbCocoaUI.h; sourceTree = "<group>"; };
 		2D932AB33092896F00933201 /* DdbCocoaUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DdbCocoaUI.m; sourceTree = "<group>"; };
 		2D932AB53092913000933201 /* PluginWidget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginWidget.h; sourceTree = "<group>"; };
-		2D932AB73092913800933201 /* PluginWidget.m */ = {isa = PBXFileReference; path = PluginWidget.m; sourceTree = "<group>"; };
+		2D932AB73092913800933201 /* PluginWidget.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PluginWidget.m; sourceTree = "<group>"; };
 		2D95F6B829392884002D8499 /* artwork_ogg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = artwork_ogg.h; sourceTree = "<group>"; };
 		2D95F6B929392884002D8499 /* artwork_ogg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = artwork_ogg.c; sourceTree = "<group>"; };
 		2D95F6BF29392F17002D8499 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
@@ -7347,6 +7365,17 @@
 		2DF9304D1AB817310030C0CA /* wildmidi_lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wildmidi_lib.c; sourceTree = "<group>"; usesTabs = 1; };
 		2DF9304E1AB817310030C0CA /* wildmidiplug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wildmidiplug.c; path = plugins/wildmidi/wildmidiplug.c; sourceTree = "<group>"; };
 		2DFD50951C9715B800961D19 /* psf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = psf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		2DFF252F3095218F004C03E7 /* LayoutManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutManager.h; sourceTree = "<group>"; };
+		2DFF25403095219D004C03E7 /* LayoutManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LayoutManager.m; sourceTree = "<group>"; };
+		2DFF25503095219D004C03E7 /* UILayouts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = UILayouts; sourceTree = "<group>"; };
+		2DFF25523095219D004C03E7 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
+		2DFF2560309524A6004C03E7 /* LayoutManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LayoutManagerTests.m; sourceTree = "<group>"; };
+		2DFF256C30952990004C03E7 /* GtkLayoutManagerTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GtkLayoutManagerTests.cpp; sourceTree = "<group>"; };
+		2DFF258030952A10004C03E7 /* layoutmanager.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = layoutmanager.c; sourceTree = "<group>"; };
+		2DFF258130952A10004C03E7 /* layoutmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = layoutmanager.h; sourceTree = "<group>"; };
+		2DFF258230952A10004C03E7 /* layoutmenu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = layoutmenu.c; sourceTree = "<group>"; };
+		2DFF258330952A10004C03E7 /* layoutmenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = layoutmenu.h; sourceTree = "<group>"; };
+		2DFF258D30952A10004C03E7 /* ui_layouts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ui_layouts; sourceTree = "<group>"; };
 		4D0B0CED20162D95004162DA /* FormatConversionTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormatConversionTests.cpp; sourceTree = "<group>"; };
 		4D1B3E7A18379829003E6066 /* DeaDBeeF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeaDBeeF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D1B3E7D18379829003E6066 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -8420,6 +8449,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D2092502A9A82E600CDBB2B /* libjansson.dylib in Frameworks */,
+				2DFF25533095219D004C03E7 /* UniformTypeIdentifiers.framework in Frameworks */,
 				2DEE303529BC8F1000A293AD /* Quartz.framework in Frameworks */,
 				2DEE303329BC8EEC00A293AD /* Metal.framework in Frameworks */,
 				2DEE303129BC8ED900A293AD /* MediaPlayer.framework in Frameworks */,
@@ -9978,6 +10008,7 @@
 			isa = PBXGroup;
 			children = (
 				2DE5562426075B4200285BF9 /* Widgets */,
+				2DFF25503095219D004C03E7 /* UILayouts */,
 				2DDD76C625E152BF00FA6FE5 /* DesignModeDefs.h */,
 				2D9EBB6F25E45BAA00255592 /* DesignModeDeps.h */,
 				2D9EBB7025E45BAA00255592 /* DesignModeDeps.m */,
@@ -9985,6 +10016,8 @@
 				2D046F3825E2B17700F68459 /* DesignModeEventHandler.m */,
 				2D30D0B225E2A5DD0023A299 /* DesignModeState.h */,
 				2D30D0B325E2A5DD0023A299 /* DesignModeState.m */,
+				2DFF252F3095218F004C03E7 /* LayoutManager.h */,
+				2DFF25403095219D004C03E7 /* LayoutManager.m */,
 				2DDD789A25E15C9E00FA6FE5 /* WidgetBase.h */,
 				2DDD789B25E15C9E00FA6FE5 /* WidgetBase.m */,
 				2DDD778C25E153D000FA6FE5 /* WidgetFactory.h */,
@@ -12020,7 +12053,9 @@
 				2DA66ECA1EDF4F2C00E20989 /* fakeout.h */,
 				4D0B0CED20162D95004162DA /* FormatConversionTests.cpp */,
 				2D04C3D02433B3B9003C2AAC /* GrowableBufferTests.cpp */,
+				2DFF256C30952990004C03E7 /* GtkLayoutManagerTests.cpp */,
 				2D7F38021B2858AC00692A7B /* JunklibTests.cpp */,
+				2DFF2560309524A6004C03E7 /* LayoutManagerTests.m */,
 				2DA59D9025D00A8E00947C19 /* M3UTests.cpp */,
 				2DAA405A269B6308006D2754 /* MediaLibTests.m */,
 				2D0214072DA12CA300BAEA12 /* MetacacheTests.cpp */,
@@ -12727,6 +12762,7 @@
 				2DD81C2D25152D86008C716C /* pixmaps */,
 				2D60EAAA277109BD00C28A44 /* playlist */,
 				2D715BF826C833240022A8F0 /* prefwin */,
+				2DFF258D30952A10004C03E7 /* ui_layouts */,
 				2DCB18372515F95C0054BD06 /* about.txt */,
 				2DCB18F82515F9AB0054BD06 /* COPYING.GPLv2 */,
 				2DCB18F92515F9AB0054BD06 /* COPYING.LGPLv2.1 */,
@@ -12773,6 +12809,10 @@
 				2DE3B5AD2269BB4300AFF9AE /* hotkeys.h */,
 				2DE3B5872269BB4300AFF9AE /* interface.c */,
 				2DE3B5C72269BB4300AFF9AE /* interface.h */,
+				2DFF258030952A10004C03E7 /* layoutmanager.c */,
+				2DFF258130952A10004C03E7 /* layoutmanager.h */,
+				2DFF258230952A10004C03E7 /* layoutmenu.c */,
+				2DFF258330952A10004C03E7 /* layoutmenu.h */,
 				2DE3B6912269BB4300AFF9AE /* namedicons.c */,
 				2DE3B5BB2269BB4300AFF9AE /* namedicons.h */,
 				2D5C6AD32752B6930073632B /* plmenu.c */,
@@ -13072,6 +13112,7 @@
 		4D1B3E7C18379829003E6066 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2DFF25523095219D004C03E7 /* UniformTypeIdentifiers.framework */,
 				2DEE303429BC8F1000A293AD /* Quartz.framework */,
 				2DEE303229BC8EEC00A293AD /* Metal.framework */,
 				2DEE303029BC8ED900A293AD /* MediaPlayer.framework */,
@@ -14791,6 +14832,8 @@
 				2DC656702744289C00583E14 /* tfimport.h in Headers */,
 				2DC656712744289C00583E14 /* namedicons.h in Headers */,
 				2DC656722744289C00583E14 /* interface.h in Headers */,
+				2DFF258730952A10004C03E7 /* layoutmanager.h in Headers */,
+				2DFF258B30952A10004C03E7 /* layoutmenu.h in Headers */,
 				2DC656732744289C00583E14 /* ddbcellrenderertextmultiline.h in Headers */,
 				2DC656742744289C00583E14 /* gtkui.h in Headers */,
 				2DC656752744289C00583E14 /* clipboard.h in Headers */,
@@ -14883,6 +14926,8 @@
 				2DE3B7CA2269BF1300AFF9AE /* tfimport.h in Headers */,
 				2DE3B7E22269BF3100AFF9AE /* namedicons.h in Headers */,
 				2DE3B7E72269BF3100AFF9AE /* interface.h in Headers */,
+				2DFF258830952A10004C03E7 /* layoutmanager.h in Headers */,
+				2DFF258C30952A10004C03E7 /* layoutmenu.h in Headers */,
 				2DE3B7EF2269BF3100AFF9AE /* ddbcellrenderertextmultiline.h in Headers */,
 				2DE3B7CC2269BF1300AFF9AE /* gtkui.h in Headers */,
 				2DE3B7F72269BF3100AFF9AE /* clipboard.h in Headers */,
@@ -15390,6 +15435,7 @@
 				2DD377552741395D007AD315 /* SpectrumAnalyzerPreferencesWindowController.h in Headers */,
 				2D9EF30F2B6FAF5C0042F6D8 /* keyboard_shortcuts.h in Headers */,
 				2D9E905124F453960037D323 /* MediaLibraryPreferencesViewController.h in Headers */,
+				2DFF25303095218F004C03E7 /* LayoutManager.h in Headers */,
 				2DE55ACE26C5A47F008F33FF /* medialibmanager.h in Headers */,
 				2DD886522B6FD4C2000434FB /* KeyboardShortcutViewItem.h in Headers */,
 				2DE0072D1B30B5FE0016DA68 /* ConverterWindowController.h in Headers */,
@@ -17285,6 +17331,7 @@
 				2D92D24529B92DFA00218F1D /* README in Resources */,
 				2DE3B5762269B80900AFF9AE /* Images.xcassets in Resources */,
 				2D48DC2F2269B731002CACFD /* convpresets in Resources */,
+				2DFF258E30952A10004C03E7 /* ui_layouts in Resources */,
 				2DD5AC25227ECB52008AD4DF /* deadbeef.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17340,6 +17387,7 @@
 				2D92D24429B92DFA00218F1D /* README in Resources */,
 				2DC65740274428F200583E14 /* Images.xcassets in Resources */,
 				2DC65741274428F200583E14 /* convpresets in Resources */,
+				2DFF258F30952A10004C03E7 /* ui_layouts in Resources */,
 				2DC65742274428F200583E14 /* deadbeef.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17381,6 +17429,7 @@
 				2DD5262F2062F1DF002609C5 /* help-cocoa.txt in Resources */,
 				2DC655862741955A00583E14 /* ScopePreferencesViewController.xib in Resources */,
 				2DF622BB1B335FF100C70C7D /* convpresets in Resources */,
+				2DFF25513095219D004C03E7 /* UILayouts in Resources */,
 				2DC657C32746F67600583E14 /* RenameTabViewController.xib in Resources */,
 				2DB05EB8252E47A00090635E /* iconNetworkTemplate.pdf in Resources */,
 				2D17F8461AB3391A00AF2853 /* MainMenu.xib in Resources */,
@@ -18767,6 +18816,8 @@
 				2D15721623785BD900985E47 /* VfsCurlTests.cpp in Sources */,
 				4D6CF18B20EB783900811034 /* MP3ParserTests.cpp in Sources */,
 				2D78C5682756990B00F96F9D /* medialibfilesystem_stub.c in Sources */,
+				2DFF258630952A10004C03E7 /* layoutmanager.c in Sources */,
+				2DFF256D30952990004C03E7 /* GtkLayoutManagerTests.cpp in Sources */,
 				2DA66ECB1EDF4F2C00E20989 /* fakeout.c in Sources */,
 				2D0F90C21CCFF094003FA197 /* TaggingTests.mm in Sources */,
 				2DA66ECE1EDF501000E20989 /* fakein.c in Sources */,
@@ -18781,6 +18832,8 @@
 				2D0214082DA12CA900BAEA12 /* MetacacheTests.cpp in Sources */,
 				2D135EF4226E47CE00BAAE84 /* ScriptableTests.cpp in Sources */,
 				2DA80C7426C0708200E8EC7F /* CuesheetTests.cpp in Sources */,
+				2DFF25623095260AA04C03E7 /* LayoutManager.m in Sources */,
+				2DFF2561309524A6004C03E7 /* LayoutManagerTests.m in Sources */,
 				2DAA4C141AAF88FF00519559 /* TitleFormattingTests.cpp in Sources */,
 				2D5659C22AF7ACC10014443E /* AlbumNavigationTests.cpp in Sources */,
 				2DB521192AAC694700B6250A /* scriptable_tfquery.c in Sources */,
@@ -18838,6 +18891,8 @@
 				2DC656A42744289C00583E14 /* eq.c in Sources */,
 				2DC656A52744289C00583E14 /* deadbeefapp.c in Sources */,
 				2DC656A62744289C00583E14 /* interface.c in Sources */,
+				2DFF258430952A10004C03E7 /* layoutmanager.c in Sources */,
+				2DFF258930952A10004C03E7 /* layoutmenu.c in Sources */,
 				2DC656A72744289C00583E14 /* namedicons.c in Sources */,
 				2DC656A82744289C00583E14 /* prefwinplugins.c in Sources */,
 				2D5657012AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */,
@@ -18952,6 +19007,8 @@
 				2DE3B7C02269BF1300AFF9AE /* eq.c in Sources */,
 				2DE3B8022269BF3100AFF9AE /* deadbeefapp.c in Sources */,
 				2DE3B7C92269BF1300AFF9AE /* interface.c in Sources */,
+				2DFF258530952A10004C03E7 /* layoutmanager.c in Sources */,
+				2DFF258A30952A10004C03E7 /* layoutmenu.c in Sources */,
 				2DE3B8092269BF3100AFF9AE /* namedicons.c in Sources */,
 				2D715C1F26C83A010022A8F0 /* prefwinplugins.c in Sources */,
 				2D5657022AED13F50014443E /* gtkScriptableListEditViewController.c in Sources */,
@@ -19205,6 +19262,7 @@
 				2DB1641B24FAB13400034E11 /* MediaLibraryManager.m in Sources */,
 				2DAA4040269AF879006D2754 /* TrackPositionFormatter.m in Sources */,
 				2D5F05F225E306BC000A588C /* SpectrumAnalyzerWidget.m in Sources */,
+				2DFF25413095219D004C03E7 /* LayoutManager.m in Sources */,
 				2DDD789E25E15C9E00FA6FE5 /* WidgetBase.m in Sources */,
 				2DA2738A2406FBD800FB9BE1 /* DspPreferencesViewController.m in Sources */,
 				2DAB1A3126A5FB9C00EA8B8F /* PreferencesPluginEntry.m in Sources */,

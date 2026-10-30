@@ -1361,7 +1361,10 @@ convert2 (ddb_converter_settings_t *settings, DB_playItem_t *it, const char *out
         ext = "";
     }
 
-    if (bypass_conversion_on_same_format && !strcasecmp (ext, encoder_preset->ext)) {
+    // Copying the file as-is is not possible for subtracks (e.g. CUE), since they only cover a part of the file.
+    const int is_subtrack = (deadbeef->pl_get_item_flags (it) & DDB_IS_SUBTRACK) != 0;
+
+    if (bypass_conversion_on_same_format && !is_subtrack && !strcasecmp (ext, encoder_preset->ext)) {
         int res = _copy_file (fname, out);
         if (res) {
             return res;

@@ -120,4 +120,25 @@ static DesignModeState *_sharedInstance;
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
+- (NSDictionary *)currentLayoutDictionary {
+    return [self.deps.serializer saveWidgetToDictionary:self.rootWidget.childWidgets.firstObject];
+}
+
+- (BOOL)applyLayoutDictionary:(NSDictionary *)layout {
+    id<WidgetProtocol> newWidget = [self.deps.serializer loadFromDictionary:layout];
+    if (newWidget == nil) {
+        return NO;
+    }
+
+    id<WidgetProtocol> oldWidget = self.rootWidget.childWidgets.firstObject;
+    if (oldWidget != nil) {
+        [self.rootWidget removeChild:oldWidget];
+        [self cleanupWidget:oldWidget];
+    }
+    [self.rootWidget appendChild:newWidget];
+
+    [self layoutDidChange];
+    return YES;
+}
+
 @end

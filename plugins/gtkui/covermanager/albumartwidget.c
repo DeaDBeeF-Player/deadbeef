@@ -337,21 +337,18 @@ _free_serialized_keyvalues (ddb_gtkui_widget_t *w, char const **keyvalues) {
     free (keyvalues);
 }
 
+// Called on the main thread, after the covermanager has dropped its cached covers.
 static void
-_artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p1, int64_t p2) {
+_covermanager_did_reset (void *user_data) {
     w_albumart_t *w = (w_albumart_t *)user_data;
-    if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
-        gtkui_dispatch_on_main (^{
-            _throttled_update (w);
-        });
-    }
+    _throttled_update (w);
 }
 
 static void
 _destroy (ddb_gtkui_widget_t *base) {
     w_albumart_t *w = (w_albumart_t *)base;
     if (w->plugin != NULL) {
-        w->plugin->remove_listener (_artwork_listener, w);
+        covermanager_remove_listener (covermanager_shared (), _covermanager_did_reset, w);
     }
 }
 
@@ -381,7 +378,7 @@ w_albumart_create (void) {
     w->plugin = (ddb_artwork_plugin_t *)deadbeef->plug_get_for_id ("artwork2");
     if (w->plugin != NULL) {
         w->source_id = w->plugin->allocate_source_id ();
-        w->plugin->add_listener (_artwork_listener, w);
+        covermanager_add_listener (covermanager_shared (), _covermanager_did_reset, w);
     }
 
     g_signal_connect ((gpointer)w->base.widget, "button-press-event", G_CALLBACK (_button_press), w);

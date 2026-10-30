@@ -35,6 +35,10 @@ typedef struct covermanager_s covermanager_t;
 /// The @c img argument is not retained, and will be released after the block completes.
 typedef void (^covermanager_completion_block_t) (GdkPixbuf *img);
 
+/// Called on the main thread after the covermanager has dropped its cached covers, because the artwork settings have changed.
+/// The consumers should discard everything they derived from the covers, and request them again.
+typedef void (*covermanager_listener_t) (void *ctx);
+
 covermanager_t *
 covermanager_shared (void);
 
@@ -68,6 +72,15 @@ covermanager_create_scaled_image (covermanager_t *manager, GdkPixbuf *image, Gtk
 /// Calculate the desired image size for specified available size.
 GtkAllocation
 covermanager_desired_size_for_image_size (covermanager_t *manager, GtkAllocation image_size, GtkAllocation availableSize);
+
+/// Add a listener, which will be notified after the covers cache has been reset.
+/// Must be called on the main thread.
+void
+covermanager_add_listener (covermanager_t *manager, covermanager_listener_t listener, void *ctx);
+
+/// Must be called on the main thread.
+void
+covermanager_remove_listener (covermanager_t *manager, covermanager_listener_t listener, void *ctx);
 
 void
 covermanager_terminate (covermanager_t *manager);

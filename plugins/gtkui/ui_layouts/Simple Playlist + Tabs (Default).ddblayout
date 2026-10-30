@@ -1,0 +1,32 @@
+{
+  "layout_gtkui": {
+    "children": [
+      {
+        "children": [
+          {
+            "type": "playtb"
+          },
+          {
+            "type": "seekbar"
+          },
+          {
+            "settings": {
+              "scale": "db"
+            },
+            "type": "volumebar"
+          }
+        ],
+        "legacy_params": " expand=\"0 1 0\" fill=\"1 1 1\" homogeneous=0",
+        "type": "hbox"
+      },
+      {
+        "legacy_params": " hideheaders=0 width=1291",
+        "type": "tabbed_playlist"
+      }
+    ],
+    "legacy_params": " expand=\"0 1\" fill=\"1 1\" homogeneous=0",
+    "type": "vbox"
+  },
+  "magic": "ddblayout",
+  "version": "1.9.0"
+}

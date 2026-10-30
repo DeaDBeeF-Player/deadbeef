@@ -67,6 +67,7 @@
 #include "widgets.h"
 #include "wingeom.h"
 #include "plmenu.h"
+#include "layoutmenu.h"
 #include "covermanager/albumartwidget.h"
 #include "selpropertieswidget.h"
 #include "undostack.h"
@@ -1488,8 +1489,8 @@ gtkui_mainwin_drag_data_received (
 void
 gtkui_mainwin_init (void) {
     // register widget types
-    w_reg_widget (_ ("Playlist with tabs"), DDB_WF_SINGLE_INSTANCE, w_tabbed_playlist_create, "tabbed_playlist", NULL);
-    w_reg_widget (_ ("Playlist"), DDB_WF_SINGLE_INSTANCE, w_playlist_create, "playlist", NULL);
+    w_reg_widget (_ ("Playlist with tabs"), 0, w_tabbed_playlist_create, "tabbed_playlist", NULL);
+    w_reg_widget (_ ("Playlist"), 0, w_playlist_create, "playlist", NULL);
     w_reg_widget (NULL, 0, w_box_create, "box", NULL);
     w_reg_widget (NULL, 0, w_dummy_create, "dummy", NULL);
     w_reg_widget (_ ("Splitter (top and bottom)"), 0, w_vsplitter_create, "vsplitter", NULL);
@@ -1518,6 +1519,7 @@ gtkui_mainwin_init (void) {
 
     mainwin = create_mainwin ();
     refresh_undo_redo_menu ();
+    layoutmenu_init ();
 
 #if GTK_CHECK_VERSION(3, 10, 0) && USE_GTK_APPLICATION
     // This must be called before window is shown
@@ -1643,6 +1645,7 @@ gtkui_mainwin_free (void) {
     deadbeef->unlisten_file_add_beginend (fileadd_beginend_listener_id);
 
     w_free ();
+    layoutmenu_free ();
 
     if (refresh_timeout) {
         g_source_remove (refresh_timeout);

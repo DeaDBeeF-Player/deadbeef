@@ -661,6 +661,11 @@ ddb_listview_destroy (GObject *object) {
 
     draw_free (&priv->listctx);
     draw_free (&priv->grpctx);
+
+    // must be last, because the code above uses the datasource and the delegate
+    if (listview->owner_destroy != NULL) {
+        listview->owner_destroy (listview->owner);
+    }
 }
 
 void

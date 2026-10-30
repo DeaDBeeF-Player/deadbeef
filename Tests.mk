@@ -42,6 +42,7 @@ LDFLAGS=-L$(STATIC_ROOT)/lib -L$(STATIC_ROOT)/lib/x86_64-linux-gnu
 TEST_C_SOURCES=$(wildcard \
 	external/mp4p/src/*.c \
 	external/wcwidth/*.c \
+	plugins/gtkui/layoutmanager.c \
 	plugins/libparser/*.c \
 	plugins/m3u/*.c \
 	plugins/mp3/*.c \
@@ -86,7 +87,8 @@ VPATH=src \
 	shared/scriptable \
 	shared/undo \
 	shared/filereader \
-	Tests
+	Tests \
+	plugins/gtkui
 
 $(BUILD)/%.o: %.c
 	$(CC) -std=c99 $(CFLAGS) -c $< -o $@

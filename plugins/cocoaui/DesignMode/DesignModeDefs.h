@@ -61,6 +61,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)load;
 - (void)layoutDidChange;
 
+/// Layout of the main window, in the same format as saved to "cocoaui.layout".
+- (nullable NSDictionary *)currentLayoutDictionary;
+
+/// Replaces the current layout, and saves it to the config. Returns NO if the layout couldn't be created.
+- (BOOL)applyLayoutDictionary:(NSDictionary *)layout;
+
 @end
 
 @protocol WidgetSerializerProtocol
