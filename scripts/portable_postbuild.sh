@@ -110,6 +110,10 @@ cp ./icons/32x32/deadbeef.png $OUTDIR/
 # converter presets
 cp -r plugins/converter/convpresets $OUTDIR/plugins/
 
+# gtkui built-in ui layouts
+mkdir -p $OUTDIR/plugins/ui_layouts
+cp plugins/gtkui/ui_layouts/*.ddblayout $OUTDIR/plugins/ui_layouts/
+
 # sc68data
 cp -r plugins/sc68/.libs/in_sc68.so $OUTDIR/plugins/
 mkdir -p  $OUTDIR/plugins/data68/Replay
