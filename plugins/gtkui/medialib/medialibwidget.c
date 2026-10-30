@@ -821,13 +821,14 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
 
     w_medialib_viewer_t *mlv = ctx;
     if (mlv->is_reloading) {
+        gtk_tree_path_free (path);
         return NULL;
     }
     GtkTreeModel *model = GTK_TREE_MODEL (mlv->store);
 
     GtkTreeIter iter;
-    gtk_tree_model_get_iter (model, &iter, path);
-    if (!gtk_tree_model_iter_has_child (model, &iter)) {
+    if (!gtk_tree_model_get_iter (model, &iter, path) || !gtk_tree_model_iter_has_child (model, &iter)) {
+        gtk_tree_path_free (path);
         return NULL; // leaf
     }
 
@@ -843,14 +844,12 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     ddb_playItem_t *track = g_value_get_pointer (&value);
     g_value_unset (&value);
 
-    if (track == NULL) {
+    if (track == NULL || mlv->artwork_source_id == 0) {
+        gtk_tree_path_free (path);
         return mlv->folder_icon;
     }
 
-    if (mlv->artwork_source_id == 0) {
-        return mlv->folder_icon;
-    }
-
+    // The path is owned by the completion block, and is freed by it, or by _receive_cover.
     int64_t reload_index = mlv->reload_index;
     GdkPixbuf *cached_cover = covermanager_cover_for_track_no_default (
         covermanager_shared (),
@@ -860,10 +859,15 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
             if (reload_index == mlv->reload_index && img != NULL) {
                 _receive_cover (mlv, path, img);
             }
+            else {
+                gtk_tree_path_free (path);
+            }
         });
 
     if (cached_cover != NULL) {
+        // The completion block won't be called, and the cover is returned retained
         _receive_cover (mlv, path, cached_cover);
+        g_object_unref (cached_cover);
     }
     return mlv->folder_icon;
 }
