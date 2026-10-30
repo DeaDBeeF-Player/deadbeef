@@ -27,9 +27,11 @@
 #include <limits.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "mp4tagutil.h"
 #include <mp4p/mp4p.h>
 #include <deadbeef/strdupa.h>
+#include <deadbeef/common.h>
 
 #ifndef __linux__
 #define off64_t off_t
@@ -743,4 +745,159 @@ mp4_get_cover_atom (mp4p_atom_t *mp4file) {
         }
     }
     return NULL;
+}
+
+static mp4p_atom_t *
+_find_chapter_trak (mp4p_atom_t *mp4file, uint32_t track_id) {
+    for (mp4p_atom_t *trak_atom = mp4p_atom_find (mp4file, "moov/trak"); trak_atom; trak_atom = trak_atom->next) {
+        if (mp4p_atom_type_compare (trak_atom, "trak") || !mp4p_trak_has_chapters (trak_atom)) {
+            continue;
+        }
+        mp4p_atom_t *text_atom = mp4p_atom_find (trak_atom, "trak/mdia/minf/stbl/stsd/text");
+        mp4p_atom_t *tkhd_atom = mp4p_atom_find (trak_atom, "trak/tkhd");
+        if (text_atom && tkhd_atom) {
+            mp4p_tkhd_t *tkhd = tkhd_atom->data;
+            if (tkhd->track_id == track_id) {
+                return trak_atom;
+            }
+        }
+    }
+    return NULL;
+}
+
+mp4_chapter_t *
+mp4_load_chapters (mp4p_atom_t *mp4file, mp4p_atom_t *trak, DB_FILE *fp, int junk, int samplerate, int *num_chapters) {
+    *num_chapters = 0;
+
+    mp4p_atom_t *chap_atom = mp4p_atom_find (trak, "trak/tref/chap");
+    if (!chap_atom) {
+        return NULL;
+    }
+    mp4p_chap_t *chap = chap_atom->data;
+
+    for (int i = 0; i < chap->number_of_entries; i++) {
+        mp4p_atom_t *trak_atom = _find_chapter_trak (mp4file, chap->entries[i]);
+        if (!trak_atom) {
+            continue;
+        }
+
+        mp4p_atom_t *stts_atom = mp4p_atom_find (trak_atom, "trak/mdia/minf/stbl/stts");
+        mp4p_atom_t *mdhd_atom = mp4p_atom_find (trak_atom, "trak/mdia/mdhd");
+        mp4p_atom_t *stbl_atom = mp4p_atom_find (trak_atom, "trak/mdia/minf/stbl");
+        mp4p_atom_t *stsz_atom = mp4p_atom_find (stbl_atom, "stbl/stsz");
+        if (stts_atom == NULL || mdhd_atom == NULL || stbl_atom == NULL || stsz_atom == NULL) {
+            return NULL;
+        }
+
+        mp4p_mdhd_t *mdhd = mdhd_atom->data;
+        mp4p_stsz_t *stsz = stsz_atom->data;
+
+        if (mdhd->time_scale == 0 || stsz->number_of_entries == 0) {
+            return NULL;
+        }
+
+        mp4_chapter_t *chapters = calloc (stsz->number_of_entries, sizeof (mp4_chapter_t));
+        if (!chapters) {
+            return NULL;
+        }
+
+        int64_t curr_sample = 0;
+        for (uint32_t sample = 0; sample < stsz->number_of_entries; sample++) {
+            uint64_t offs = mp4p_sample_offset (stbl_atom, sample);
+            uint32_t size = mp4p_sample_size (stbl_atom, sample);
+
+            mp4_chapter_t *ch = &chapters[*num_chapters];
+
+            // chapter text sample: 16-bit big endian length, followed by the text
+            uint8_t *buffer = size >= 2 ? malloc (size) : NULL;
+            if (buffer) {
+                deadbeef->fseek (fp, offs + junk, SEEK_SET);
+                if (size == deadbeef->fread (buffer, 1, size, fp)) {
+                    int len = (buffer[0] << 8) | buffer[1];
+                    len = min (len, (int)size - 2);
+                    if (len > 0) {
+                        ch->title = strndup ((const char *)&buffer[2], len);
+                    }
+                }
+                free (buffer);
+            }
+
+            ch->startsample = curr_sample;
+            uint64_t duration = mp4p_stts_sample_duration (stts_atom, sample);
+            curr_sample += (int64_t)(duration * samplerate / mdhd->time_scale);
+            ch->endsample = curr_sample - 1;
+            (*num_chapters)++;
+        }
+        return chapters;
+    }
+    return NULL;
+}
+
+void
+mp4_chapters_free (mp4_chapter_t *chapters, int num_chapters) {
+    if (!chapters) {
+        return;
+    }
+    for (int i = 0; i < num_chapters; i++) {
+        free (chapters[i].title);
+    }
+    free (chapters);
+}
+
+DB_playItem_t *
+mp4_insert_with_chapters (
+    ddb_playlist_t *plt,
+    DB_playItem_t *after,
+    DB_playItem_t *origin,
+    const mp4_chapter_t *chapters,
+    int num_chapters,
+    const char *filetype,
+    int samplerate) {
+    deadbeef->pl_lock ();
+    DB_playItem_t *ins = after;
+    int untitled_count = 0; // only chapters without a (valid) title consume a number
+    for (int i = 0; i < num_chapters; i++) {
+        const char *uri = deadbeef->pl_find_meta_raw (origin, ":URI");
+        const char *dec = deadbeef->pl_find_meta_raw (origin, ":DECODER");
+        DB_playItem_t *it = deadbeef->pl_item_alloc_init (uri, dec);
+        deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
+        deadbeef->pl_set_meta_int (it, "TRACK", i);
+        // poor-man utf8 check
+        if (!chapters[i].title || deadbeef->junk_detect_charset (chapters[i].title)) {
+            char s[1000];
+            snprintf (s, sizeof (s), "Chapter %d", ++untitled_count);
+            deadbeef->pl_add_meta (it, "title", s);
+        }
+        else {
+            deadbeef->pl_add_meta (it, "title", chapters[i].title);
+        }
+        deadbeef->pl_item_set_startsample (it, chapters[i].startsample);
+        deadbeef->pl_item_set_endsample (it, chapters[i].endsample);
+        deadbeef->pl_replace_meta (it, ":FILETYPE", filetype);
+        float duration = (float)(chapters[i].endsample - chapters[i].startsample + 1) / samplerate;
+        deadbeef->plt_set_item_duration (plt, it, duration);
+        after = deadbeef->plt_insert_item (plt, after, it);
+        deadbeef->pl_item_unref (it);
+    }
+    deadbeef->pl_item_ref (after);
+
+    DB_playItem_t *first = deadbeef->pl_get_next (ins, PL_MAIN);
+
+    if (!first) {
+        first = deadbeef->plt_get_first (plt, PL_MAIN);
+    }
+
+    if (!first) {
+        deadbeef->pl_unlock ();
+        return NULL;
+    }
+    // copy metadata from embedded tags
+    uint32_t f = deadbeef->pl_get_item_flags (origin);
+    f |= DDB_IS_SUBTRACK;
+    deadbeef->pl_set_item_flags (origin, f);
+    deadbeef->pl_items_copy_junk (origin, first, after);
+    deadbeef->pl_item_unref (first);
+
+    deadbeef->pl_unlock ();
+    return after;
 }

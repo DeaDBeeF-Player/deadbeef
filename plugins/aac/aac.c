@@ -837,143 +837,6 @@ aac_seek (DB_fileinfo_t *_info, float t) {
     return aac_seek_sample64 (_info, (float)((double)t * (int64_t)_info->fmt.samplerate));
 }
 
-typedef struct {
-    char *title;
-    int64_t startsample;
-    int64_t endsample;
-} aac_chapter_t;
-
-static aac_chapter_t *
-aac_load_itunes_chapters (aac_info_t *info, mp4p_chap_t *chap, /* out */ int *num_chapters, int samplerate) {
-    *num_chapters = 0;
-
-    mp4p_atom_t *mp4 = info->mp4file;
-
-    for (int i = 0; i < chap->number_of_entries; i++)
-    {
-        mp4p_atom_t *text_atom = NULL;
-        mp4p_atom_t *trak_atom = mp4p_atom_find(mp4, "moov/trak");
-        while (trak_atom) {
-            text_atom = NULL;
-            if (!mp4p_atom_type_compare(trak_atom, "trak") && mp4p_trak_has_chapters(trak_atom)) {
-                text_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl/stsd/text");
-                mp4p_atom_t *tkhd_atom = mp4p_atom_find(trak_atom, "trak/tkhd");
-                if (text_atom && tkhd_atom) {
-                    mp4p_tkhd_t *tkhd = tkhd_atom->data;
-                    if (tkhd->track_id == chap->entries[i]) {
-                        break;
-                    }
-                }
-            }
-            trak_atom = trak_atom->next;
-        }
-
-        if (!text_atom) {
-            continue;
-        }
-
-        mp4p_atom_t *stts_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl/stts");
-        mp4p_atom_t *mdhd_atom = mp4p_atom_find(trak_atom, "trak/mdia/mdhd");
-        mp4p_atom_t *stbl_atom = mp4p_atom_find(trak_atom, "trak/mdia/minf/stbl");
-        mp4p_atom_t *stsz_atom = mp4p_atom_find(stbl_atom, "stbl/stsz");
-        if (stts_atom == NULL || mdhd_atom == NULL || stbl_atom == NULL || stsz_atom == NULL) {
-            return NULL;
-        }
-
-        mp4p_mdhd_t *mdhd = mdhd_atom->data;
-        mp4p_stsz_t *stsz = stsz_atom->data;
-
-        if (mdhd->time_scale == 0) {
-            return NULL;
-        }
-
-        aac_chapter_t *chapters = calloc (stsz->number_of_entries, sizeof (aac_chapter_t));
-        *num_chapters = 0;
-
-        int64_t curr_sample = 0;
-        for (int sample = 0; sample < stsz->number_of_entries; sample++)
-        {
-            unsigned char *buffer = NULL;
-
-            uint64_t offs = mp4p_sample_offset (stbl_atom, sample);
-            uint32_t size = mp4p_sample_size (stbl_atom, sample);
-
-            buffer = malloc (size);
-            deadbeef->fseek (info->file, offs+info->junk, SEEK_SET);
-            if (size != deadbeef->fread (buffer, 1, size, info->file)) {
-                free (buffer);
-                continue;
-            }
-            int len = (buffer[0] << 8) | buffer[1];
-            len = min (len, size - 2);
-            if (len > 0) {
-                chapters[*num_chapters].title = strndup ((const char *)&buffer[2], len);
-            }
-            chapters[*num_chapters].startsample = (int)curr_sample;
-            uint64_t samplecount = mp4p_stts_sample_duration(stts_atom, sample) / mdhd->time_scale * samplerate;
-            curr_sample += samplecount;
-            chapters[*num_chapters].endsample = (int)curr_sample - 1;
-            free (buffer);
-            (*num_chapters)++;
-        }
-        return chapters;
-    }
-    return NULL;
-}
-
-static DB_playItem_t *
-aac_insert_with_chapters (ddb_playlist_t *plt, DB_playItem_t *after, DB_playItem_t *origin, aac_chapter_t *chapters, int num_chapters, int64_t totalsamples, int samplerate) {
-    deadbeef->pl_lock ();
-    DB_playItem_t *ins = after;
-    for (int i = 0; i < num_chapters; i++) {
-        const char *uri = deadbeef->pl_find_meta_raw (origin, ":URI");
-        const char *dec = deadbeef->pl_find_meta_raw (origin, ":DECODER");
-        const char *ftype= "MP4 AAC";//pl_find_meta_raw (origin, ":FILETYPE");
-
-        DB_playItem_t *it = deadbeef->pl_item_alloc_init (uri, dec);
-        deadbeef->pl_set_meta_int (it, ":TRACKNUM", i);
-        deadbeef->pl_set_meta_int (it, "TRACK", i);
-        // poor-man utf8 check
-        if (!chapters[i].title || deadbeef->junk_detect_charset (chapters[i].title)) {
-            char s[1000];
-            snprintf (s, sizeof (s), "chapter %d", i+1);
-            deadbeef->pl_add_meta (it, "title", s);
-        }
-        else {
-            deadbeef->pl_add_meta (it, "title", chapters[i].title);
-        }
-        deadbeef->pl_item_set_startsample (it, chapters[i].startsample);
-        deadbeef->pl_item_set_endsample (it, chapters[i].endsample);
-        deadbeef->pl_replace_meta (it, ":FILETYPE", ftype);
-        float duration = (float)(chapters[i].endsample - chapters[i].startsample + 1) / samplerate;
-        deadbeef->plt_set_item_duration (plt, it, duration);
-        after = deadbeef->plt_insert_item (plt, after, it);
-        deadbeef->pl_item_unref (it);
-    }
-    deadbeef->pl_item_ref (after);
-    
-    DB_playItem_t *first = deadbeef->pl_get_next (ins, PL_MAIN);
-    
-    if (!first) {
-        first = deadbeef->plt_get_first (plt, PL_MAIN);
-    }
-
-    if (!first) {
-        deadbeef->pl_unlock ();
-        return NULL;
-    }
-    // copy metadata from embedded tags
-    uint32_t f = deadbeef->pl_get_item_flags (origin);
-    f |= DDB_IS_SUBTRACK;
-    deadbeef->pl_set_item_flags (origin, f);
-    deadbeef->pl_items_copy_junk (origin, first, after);
-    deadbeef->pl_item_unref (first);
-
-    deadbeef->pl_unlock ();
-    return after;
-}
-
-
 static int
 _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_t *plt) {
     mp4p_atom_t *mp4 = NULL;
@@ -1077,26 +940,13 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     }
 
     int num_chapters = 0;
-    aac_chapter_t *chapters = NULL;
-
-    mp4p_atom_t *chap_atom = mp4p_atom_find(info.trak, "trak/tref/chap");
-    if (chap_atom) {
-        mp4p_chap_t *chap = chap_atom->data;
-        if (chap->number_of_entries > 0) {
-            chapters = aac_load_itunes_chapters (&info, chap, &num_chapters, info.info.fmt.samplerate);
-        }
-    }
+    mp4_chapter_t *chapters = mp4_load_chapters (info.mp4file, info.trak, fp, info.junk, info.info.fmt.samplerate, &num_chapters);
 
     // embedded chapters
     deadbeef->pl_lock (); // FIXME: the lock can be eliminated, if subtracks are first appended "locally", and only appended to the real playlist at the end
     if (chapters && num_chapters > 0) {
-        DB_playItem_t *cue = aac_insert_with_chapters (plt, *after, it, chapters, num_chapters, totalsamples, info.info.fmt.samplerate);
-        for (int n = 0; n < num_chapters; n++) {
-            if (chapters[n].title) {
-                free (chapters[n].title);
-            }
-        }
-        free (chapters);
+        DB_playItem_t *cue = mp4_insert_with_chapters (plt, *after, it, chapters, num_chapters, ftype, info.info.fmt.samplerate);
+        mp4_chapters_free (chapters, num_chapters);
         chapters = NULL;
         if (cue) {
             mp4p_atom_free_list(info.mp4file);
@@ -1107,7 +957,7 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
             return 0;
         }
     }
-    free (chapters);
+    mp4_chapters_free (chapters, num_chapters);
     chapters = NULL;
     deadbeef->pl_unlock ();
 

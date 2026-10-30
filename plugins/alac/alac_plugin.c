@@ -409,6 +409,10 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     (void)deadbeef->junk_id3v1_read (it, fp);
 
     int64_t fsize = deadbeef->fgetlength (fp);
+
+    int num_chapters = 0;
+    mp4_chapter_t *chapters = mp4_load_chapters (info.mp4file, info.trak, fp, info.junk, samplerate, &num_chapters);
+
     deadbeef->fclose (fp);
 
     char s[100];
@@ -422,6 +426,21 @@ alacplug_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int br = (int)roundf(fsize / duration * 8 / 1000);
     snprintf (s, sizeof (s), "%d", br);
     deadbeef->pl_add_meta (it, ":BITRATE", s);
+
+    // embedded chapters
+    if (chapters && num_chapters > 0) {
+        mp4_load_tags (info.mp4file, it);
+        DB_playItem_t *chapter_last = mp4_insert_with_chapters (plt, after, it, chapters, num_chapters, ftype, samplerate);
+        mp4_chapters_free (chapters, num_chapters);
+        chapters = NULL;
+        if (chapter_last) {
+            mp4p_atom_free_list (info.mp4file);
+            deadbeef->pl_item_unref (it);
+            deadbeef->pl_item_unref (chapter_last);
+            return chapter_last;
+        }
+    }
+    mp4_chapters_free (chapters, num_chapters);
 
     // embedded cue
     const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
