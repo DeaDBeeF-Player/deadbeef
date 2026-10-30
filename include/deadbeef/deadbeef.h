@@ -592,7 +592,8 @@ enum pl_column_t {
     DB_COLUMN_PLAYING = 1,
     DB_COLUMN_ALBUM_ART = 8,
 #if (DDB_API_LEVEL >= 10)
-    DB_COLUMN_CUSTOM = 9
+    DB_COLUMN_CUSTOM = 9,
+    DB_COLUMN_TRACK_ART = 10,
 #endif
 };
 
