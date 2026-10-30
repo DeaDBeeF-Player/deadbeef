@@ -28,6 +28,24 @@
 extern DB_functions_t *deadbeef;
 static DB_mediasource_t *plugin;
 
+// values of the gtkui.show_medialib_covers setting
+enum {
+    MEDIALIB_ART_NONE = 0,
+    MEDIALIB_ART_FOLDERS = 1,
+    MEDIALIB_ART_TRACKS = 2,
+    MEDIALIB_ART_FOLDERS_AND_TRACKS = 3,
+};
+
+static int
+_art_mode_shows_folders (int mode) {
+    return mode == MEDIALIB_ART_FOLDERS || mode == MEDIALIB_ART_FOLDERS_AND_TRACKS;
+}
+
+static int
+_art_mode_shows_tracks (int mode) {
+    return mode == MEDIALIB_ART_TRACKS || mode == MEDIALIB_ART_FOLDERS_AND_TRACKS;
+}
+
 typedef struct {
     ddb_gtkui_widget_t base;
     gtkScriptableSelectViewController_t *selectViewController;
@@ -51,7 +69,11 @@ typedef struct {
     int64_t artwork_source_id;
     dispatch_queue_t background_queue;
 
-    int show_album_art;
+    int art_mode;
+
+    // Rows which already requested artwork since the last reload, including those without any,
+    // so redrawing doesn't query the artwork plugin again.
+    GHashTable *art_requested;
 } w_medialib_viewer_t;
 
 enum {
@@ -158,6 +180,7 @@ static void
 _reload_content (w_medialib_viewer_t *mlv) {
     // populate the tree
     mlv->reload_index++;
+    g_hash_table_remove_all (mlv->art_requested);
 
     GtkTreeStore *store = mlv->store;
 
@@ -422,6 +445,10 @@ w_medialib_viewer_destroy (struct ddb_gtkui_widget_s *w) {
     }
     free (mlv->search_text);
     mlv->search_text = NULL;
+    if (mlv->art_requested != NULL) {
+        g_hash_table_destroy (mlv->art_requested);
+        mlv->art_requested = NULL;
+    }
     if (mlv->folder_icon) {
         g_object_unref (mlv->folder_icon);
         mlv->folder_icon = NULL;
@@ -434,11 +461,17 @@ w_medialib_viewer_message (ddb_gtkui_widget_t *w, uint32_t id, uintptr_t ctx, ui
     switch (id) {
     case DB_EV_CONFIGCHANGED:
         {
-            int new_value = deadbeef->conf_get_int ("gtkui.show_medialib_covers", 1);
+            int new_value = deadbeef->conf_get_int ("gtkui.show_medialib_covers", MEDIALIB_ART_FOLDERS);
             gtkui_dispatch_on_main (^{
-                if (new_value != mlv->show_album_art) {
-                    mlv->show_album_art = new_value;
+                if (new_value != mlv->art_mode) {
+                    int old_value = mlv->art_mode;
+                    mlv->art_mode = new_value;
                     _setup_columns (mlv);
+                    if ((_art_mode_shows_folders (old_value) && !_art_mode_shows_folders (new_value))
+                        || (_art_mode_shows_tracks (old_value) && !_art_mode_shows_tracks (new_value))) {
+                        // reload to drop the thumbnails which are no longer shown
+                        _medialib_content_did_change (mlv);
+                    }
                 }
             });
         }
@@ -785,6 +818,7 @@ static void
 _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
     int reload_index = mlv->reload_index;
     g_object_ref (img);
+    int64_t reload_index = mlv->reload_index;
     dispatch_async (mlv->background_queue, ^{
         // scale
         GtkAllocation a;
@@ -809,6 +843,29 @@ _receive_cover (w_medialib_viewer_t *mlv, GtkTreePath *path, GdkPixbuf *img) {
     });
 }
 
+// Returns the first track of the album that the given track belongs to, so that all tracks of an album
+// request the same cover and the cover manager loads the image once per album instead of once per track.
+static ddb_playItem_t *
+_first_track_for_any_album_track (GtkTreeModel *model, GtkTreeIter *leaf, ddb_playItem_t *track) {
+    GtkTreeIter parent, first;
+    if (!gtk_tree_model_iter_parent (model, &parent, leaf) || !gtk_tree_model_iter_children (model, &first, &parent)) {
+        return track;
+    }
+    GValue value = { 0 };
+    gtk_tree_model_get_value (model, &first, COL_TRACK, &value);
+    ddb_playItem_t *first_track = g_value_get_pointer (&value);
+    g_value_unset (&value);
+    if (first_track == NULL || first_track == track) {
+        return track;
+    }
+    deadbeef->pl_lock ();
+    const char *a = deadbeef->pl_find_meta (track, "album");
+    const char *b = deadbeef->pl_find_meta (first_track, "album");
+    int same = a != NULL && b != NULL && !strcmp (a, b);
+    deadbeef->pl_unlock ();
+    return same ? first_track : track;
+}
+
 static GdkPixbuf *
 _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     if (pathstr == NULL) {
@@ -829,15 +886,31 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     GtkTreeIter iter;
     if (!gtk_tree_model_get_iter (model, &iter, path) || !gtk_tree_model_iter_has_child (model, &iter)) {
         gtk_tree_path_free (path);
+        return NULL;
+    }
+    gboolean is_folder = gtk_tree_model_iter_has_child (model, &iter);
+    if (is_folder) {
+        if (!_art_mode_shows_folders (mlv->art_mode)) {
+            gtk_tree_path_free (path);
+            return mlv->folder_icon;
+        }
+        // get first child
+        GtkTreePath *child_path = gtk_tree_path_copy (path);
+        gtk_tree_path_append_index (child_path, 0);
+        gtk_tree_model_get_iter (model, &iter, child_path);
+        gtk_tree_path_free (child_path);
+        child_path = NULL;
+    }
+    else if (!_art_mode_shows_tracks (mlv->art_mode)) {
+        gtk_tree_path_free (path);
         return NULL; // leaf
     }
 
-    // get first child
-    GtkTreePath *child_path = gtk_tree_path_copy (path);
-    gtk_tree_path_append_index (child_path, 0);
-    gtk_tree_model_get_iter (model, &iter, child_path);
-    gtk_tree_path_free (child_path);
-    child_path = NULL;
+    if (g_hash_table_contains (mlv->art_requested, pathstr)) {
+        gtk_tree_path_free (path);
+        return is_folder ? mlv->folder_icon : NULL;
+    }
+    g_hash_table_add (mlv->art_requested, g_strdup (pathstr));
 
     GValue value = { 0 };
     gtk_tree_model_get_value (model, &iter, COL_TRACK, &value);
@@ -869,7 +942,7 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
         _receive_cover (mlv, path, cached_cover);
         g_object_unref (cached_cover);
     }
-    return mlv->folder_icon;
+    return is_folder ? mlv->folder_icon : NULL;
 }
 
 static void
@@ -885,7 +958,7 @@ _setup_columns (w_medialib_viewer_t *mlv) {
     mlv->column = col;
     gtk_tree_view_append_column (mlv->tree, col);
     gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-    if (mlv->show_album_art) {
+    if (mlv->art_mode != MEDIALIB_ART_NONE) {
         GtkCellRenderer *rend_pixbuf = GTK_CELL_RENDERER (ml_cell_renderer_pixbuf_new (&mlv->pixbuf_cell_delegate));
         gtk_tree_view_column_pack_start (col, rend_pixbuf, FALSE);
         gtk_tree_view_column_add_attribute (col, rend_pixbuf, "path", COL_PATH);
@@ -906,7 +979,8 @@ w_medialib_viewer_create (void) {
     w->base.destroy = w_medialib_viewer_destroy;
     w->base.message = w_medialib_viewer_message;
 
-    w->show_album_art = deadbeef->conf_get_int ("gtkui.show_medialib_covers", 1);
+    w->art_mode = deadbeef->conf_get_int ("gtkui.show_medialib_covers", MEDIALIB_ART_FOLDERS);
+    w->art_requested = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
     gtk_widget_set_can_focus (w->base.widget, FALSE);
 
