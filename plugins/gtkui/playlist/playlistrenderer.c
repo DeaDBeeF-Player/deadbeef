@@ -206,12 +206,14 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
         if (avail_w > 0 && avail_h > 0) {
             // Key by album (folder + album tag), not by track: the cover manager caches per track,
             // so this way each album's cover is decoded and scaled once for all of its tracks.
+            char thumb_key[1024];
+            deadbeef->pl_lock ();
             const char *uri = deadbeef->pl_find_meta (track, ":URI");
             const char *album = deadbeef->pl_find_meta (track, "album");
             const char *slash = (uri && album) ? strrchr (uri, '/') : NULL;
             int dir_len = slash ? (int)(slash - uri) : (uri ? (int)strlen (uri) : 0);
-            char thumb_key[1024];
             snprintf (thumb_key, sizeof (thumb_key), "%dx%d:%.*s|%s", avail_w, avail_h, dir_len, uri ? uri : "", album ? album : "");
+            deadbeef->pl_unlock ();
 
             playlist_thumb_entry_t *entry = _playlist_thumb_cache_get (thumb_key);
             if (entry != NULL && !_playlist_thumb_is_image (entry->thumb) && g_get_monotonic_time () - entry->time > PLAYLIST_THUMB_RETRY_USEC) {
