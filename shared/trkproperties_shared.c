@@ -59,6 +59,7 @@ const char *trkproperties_hc_props[] = {
     ":HAS_EMBEDDED_CUESHEET", "Embedded Cuesheet",
     ":DECODER", "Codec",
     ":FILETYPE", "File Type",
+    ":CODEC_PROFILE", "Codec Profile",
     ":STARTSAMPLE", "Start Sample",
     ":ENDSAMPLE", "End Sample",
     ":FILE_SIZE", "File Size",

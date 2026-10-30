@@ -232,6 +232,60 @@ aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int64_t
     return 0;
 }
 
+// Returns the AAC profile name for the esds atom, or NULL if unknown.
+// Only explicitly signalled profiles are detected, implicit HE-AAC (SBR/PS signalled as LC) is reported as LC.
+static const char *
+_mp4_aac_profile (const mp4p_esds_t *esds) {
+    unsigned object_type = 0;
+    if (esds->asc && esds->asc_size >= 1) {
+        const uint8_t *asc = (const uint8_t *)esds->asc;
+        object_type = asc[0] >> 3;
+        if (object_type == 31 && esds->asc_size >= 2) {
+            object_type = 32 + (((asc[0] & 0x7) << 3) | (asc[1] >> 5));
+        }
+    }
+    else {
+        // fall back to the MPEG-2 object type indication
+        switch (esds->dc_audiotype) {
+        case 0x66:
+            object_type = 1;
+            break;
+        case 0x67:
+            object_type = 2;
+            break;
+        case 0x68:
+            object_type = 3;
+            break;
+        }
+    }
+
+    switch (object_type) {
+    case 1:
+        return "AAC Main";
+    case 2:
+        return "AAC LC";
+    case 3:
+        return "AAC SSR";
+    case 4:
+        return "AAC LTP";
+    case 5:
+        return "HE-AAC";
+    case 17:
+        return "ER AAC LC";
+    case 19:
+        return "ER AAC LTP";
+    case 23:
+        return "ER AAC LD";
+    case 29:
+        return "HE-AAC v2";
+    case 39:
+        return "ER AAC ELD";
+    case 42:
+        return "USAC";
+    }
+    return NULL;
+}
+
 static int
 aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     aac_info_t *info = (aac_info_t *)_info;
@@ -314,6 +368,11 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
         _info->fmt.samplerate = samplerate;
         _info->fmt.channels = channels;
+
+        const char *profile = _mp4_aac_profile (esds);
+        if (profile) {
+            deadbeef->pl_replace_meta (it, ":CODEC_PROFILE", profile);
+        }
     }
     else if (info->mp4file) {
         return -1; // mp4 but not aac
@@ -995,6 +1054,10 @@ _mp4_insert(DB_playItem_t **after, const char *fname, DB_FILE *fp, ddb_playlist_
     int br = (int)roundf(fsize / duration * 8 / 1000);
     snprintf (s, sizeof (s), "%d", br);
     deadbeef->pl_add_meta (it, ":BITRATE", s);
+    const char *profile = _mp4_aac_profile (esds);
+    if (profile) {
+        deadbeef->pl_add_meta (it, ":CODEC_PROFILE", profile);
+    }
 
     int num_chapters = 0;
     aac_chapter_t *chapters = NULL;
