@@ -28,9 +28,6 @@
 #include <string.h>
 #include <strings.h>
 #include <sys/stat.h>
-#ifdef _WIN32
-#    include <direct.h>
-#endif
 #include "layoutmanager.h"
 
 #define LAYOUT_MAGIC "ddblayout"
@@ -38,11 +35,8 @@
 
 static int
 _make_directory (const char *path) {
-#ifdef _WIN32
-    return mkdir (path);
-#else
+    // on Windows, mkdir is redefined by shared/windows/mingw32_layer.h
     return mkdir (path, 0755);
-#endif
 }
 
 int
