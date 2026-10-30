@@ -123,8 +123,11 @@ aac_open (uint32_t hints) {
     return (DB_fileinfo_t *)info;
 }
 
+static const char *
+_aac_profile_name (unsigned object_type);
+
 static int64_t
-parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration, int64_t *ptotalsamples)
+parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration, int64_t *ptotalsamples, const char **pprofile)
 {
     size_t framepos = deadbeef->ftell (fp);
     int64_t firstframepos = -1;
@@ -175,6 +178,10 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
             }
             if (firstframepos == -1) {
                 firstframepos = framepos;
+                // ADTS profile is the object type minus 1
+                if (pprofile) {
+                    *pprofile = _aac_profile_name (((buf[2] & 0xC0) >> 6) + 1);
+                }
             }
 //            if (fp->vfs->streaming) {
 //                *psamplerate = stream_sr;
@@ -217,7 +224,7 @@ parse_aac_stream(DB_FILE *fp, int *psamplerate, int *pchannels, float *pduration
 
 // returns -1 for error, 0 for aac
 static int
-aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int64_t *totalsamples) {
+aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int64_t *totalsamples, const char **profile) {
     deadbeef->rewind (fp);
     if (!fp->vfs->is_streaming ()) {
         int skip = deadbeef->junk_get_leading_size (fp);
@@ -226,10 +233,40 @@ aac_probe (DB_FILE *fp, float *duration, int *samplerate, int *channels, int64_t
         }
     }
 
-    if (parse_aac_stream (fp, samplerate, channels, duration, totalsamples) == -1) {
+    if (parse_aac_stream (fp, samplerate, channels, duration, totalsamples, profile) == -1) {
         return -1;
     }
     return 0;
+}
+
+// Returns the profile name for an MPEG-4 audio object type, or NULL if unknown.
+static const char *
+_aac_profile_name (unsigned object_type) {
+    switch (object_type) {
+    case 1:
+        return "AAC Main";
+    case 2:
+        return "AAC LC";
+    case 3:
+        return "AAC SSR";
+    case 4:
+        return "AAC LTP";
+    case 5:
+        return "HE-AAC";
+    case 17:
+        return "ER AAC LC";
+    case 19:
+        return "ER AAC LTP";
+    case 23:
+        return "ER AAC LD";
+    case 29:
+        return "HE-AAC v2";
+    case 39:
+        return "ER AAC ELD";
+    case 42:
+        return "USAC";
+    }
+    return NULL;
 }
 
 // Returns the AAC profile name for the esds atom, or NULL if unknown.
@@ -259,31 +296,7 @@ _mp4_aac_profile (const mp4p_esds_t *esds) {
         }
     }
 
-    switch (object_type) {
-    case 1:
-        return "AAC Main";
-    case 2:
-        return "AAC LC";
-    case 3:
-        return "AAC SSR";
-    case 4:
-        return "AAC LTP";
-    case 5:
-        return "HE-AAC";
-    case 17:
-        return "ER AAC LC";
-    case 19:
-        return "ER AAC LTP";
-    case 23:
-        return "ER AAC LD";
-    case 29:
-        return "HE-AAC v2";
-    case 39:
-        return "ER AAC ELD";
-    case 42:
-        return "USAC";
-    }
-    return NULL;
+    return _aac_profile_name (object_type);
 }
 
 static int
@@ -380,6 +393,7 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     else {
         int samplerate = -1;
         int channels = -1;
+        const char *profile = NULL;
         int64_t offs;
         if (!info->file->vfs->is_streaming ()) {
             if (info->junk >= 0) {
@@ -388,10 +402,10 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
             else {
                 deadbeef->rewind (info->file);
             }
-            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples);
+            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, &totalsamples, &profile);
         }
         else {
-            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL);
+            offs = parse_aac_stream (info->file, &samplerate, &channels, &duration, NULL, &profile);
         }
         if (offs == -1) {
             return -1;
@@ -427,6 +441,9 @@ aac_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
         }
         _info->fmt.samplerate = usamplerate;
         _info->fmt.channels = uchannels;
+        if (profile) {
+            deadbeef->pl_replace_meta (it, ":CODEC_PROFILE", profile);
+        }
     }
 
     _info->fmt.bps = 16;
@@ -1150,7 +1167,8 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
     int channels = 0;
     float duration = -1;
     int64_t totalsamples = 0;
-    int res = aac_probe (fp, &duration, &samplerate, &channels, &totalsamples);
+    const char *profile = NULL;
+    int res = aac_probe (fp, &duration, &samplerate, &channels, &totalsamples, &profile);
     if (res == -1) {
         deadbeef->fclose (fp);
         return NULL;
@@ -1180,6 +1198,9 @@ aac_insert (ddb_playlist_t *plt, DB_playItem_t *after, const char *fname) {
         int br = (int)roundf(fsize / duration * 8 / 1000);
         snprintf (s, sizeof (s), "%d", br);
         deadbeef->pl_add_meta (it, ":BITRATE", s);
+        if (profile) {
+            deadbeef->pl_add_meta (it, ":CODEC_PROFILE", profile);
+        }
         // embedded cue
         deadbeef->pl_lock ();
         const char *cuesheet = deadbeef->pl_find_meta (it, "cuesheet");
