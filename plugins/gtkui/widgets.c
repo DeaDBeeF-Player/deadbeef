@@ -179,6 +179,14 @@ typedef struct {
     uint32_t draw_color;
     uint32_t background_color;
 
+    gboolean use_custom_color;
+    gboolean use_custom_background_color;
+    // custom colors are remembered while the "use custom" option is off, if they were ever chosen
+    gboolean custom_color_set;
+    gboolean custom_background_color_set;
+    GdkColor custom_color;
+    GdkColor custom_background_color;
+
     cairo_surface_t *surf;
 
     gboolean updating_menu; // suppress menu event handlers
@@ -198,6 +206,8 @@ typedef struct {
     GtkWidget *fragment_duration_200ms_item;
     GtkWidget *fragment_duration_300ms_item;
     GtkWidget *fragment_duration_500ms_item;
+
+    GtkWidget *preferences_item;
 } w_scope_t;
 
 #define SpectrumVisXOffset 40
@@ -2496,12 +2506,112 @@ _gdk_color_convert_to_uint32 (const GdkColor *base_color) {
 static void
 _scope_update_preferences (w_scope_t *scope) {
     GdkColor base_color;
-    gtkui_get_vis_custom_base_color (&base_color);
+    if (scope->use_custom_color && scope->custom_color_set) {
+        base_color = scope->custom_color;
+    }
+    else {
+        gtkui_get_vis_custom_base_color (&base_color);
+    }
     scope->draw_color = _gdk_color_convert_to_uint32 (&base_color);
 
     GdkColor background_color;
-    gtkui_get_vis_custom_background_color (&background_color);
+    if (scope->use_custom_background_color && scope->custom_background_color_set) {
+        background_color = scope->custom_background_color;
+    }
+    else {
+        gtkui_get_vis_custom_background_color (&background_color);
+    }
     scope->background_color = _gdk_color_convert_to_uint32 (&background_color);
+}
+
+// A row of the visualization preferences dialog: "Use custom <color>" checkbox and a color button.
+// The dialog writes directly into `use_custom` and `color`, so the widget updates live.
+typedef struct {
+    const char *label;
+    gboolean *use_custom;
+    gboolean *color_set; // whether `color` holds a color chosen by the user
+    GdkColor *color;
+    GdkColor default_color; // shown while there is no custom color
+} vis_color_row_t;
+
+typedef struct {
+    GtkWidget *button;
+    vis_color_row_t *row;
+    gboolean *changed;
+} vis_color_row_ctx_t;
+
+static void
+_vis_color_check_toggled (GtkToggleButton *check, gpointer user_data) {
+    vis_color_row_ctx_t *ctx = user_data;
+    gboolean active = gtk_toggle_button_get_active (check);
+    gtk_widget_set_sensitive (ctx->button, active);
+    if (active && !*ctx->row->color_set) {
+        // start from the color currently shown on the button
+        gtk_color_button_get_color (GTK_COLOR_BUTTON (ctx->button), ctx->row->color);
+        *ctx->row->color_set = TRUE;
+    }
+    *ctx->row->use_custom = active;
+    *ctx->changed = TRUE;
+}
+
+static void
+_vis_color_button_set (GtkColorButton *button, gpointer user_data) {
+    vis_color_row_ctx_t *ctx = user_data;
+    gtk_color_button_get_color (button, ctx->row->color);
+    *ctx->row->color_set = TRUE;
+    *ctx->changed = TRUE;
+}
+
+// Shows the modal preferences dialog. Returns TRUE if anything was changed.
+static gboolean
+_vis_color_preferences_dialog (const char *title, vis_color_row_t *rows, int row_count) {
+    GtkWidget *dlg = gtk_dialog_new_with_buttons (
+        title,
+        GTK_WINDOW (mainwin),
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        _("Done"),
+        GTK_RESPONSE_OK,
+        NULL);
+    gtk_window_set_resizable (GTK_WINDOW (dlg), FALSE);
+
+    gboolean changed = FALSE;
+    vis_color_row_ctx_t *contexts = calloc (row_count, sizeof (vis_color_row_ctx_t));
+
+    GtkWidget *vbox = gtk_dialog_get_content_area (GTK_DIALOG (dlg));
+    gtk_box_set_spacing (GTK_BOX (vbox), 6);
+    gtk_container_set_border_width (GTK_CONTAINER (dlg), 8);
+
+    for (int i = 0; i < row_count; i++) {
+        vis_color_row_t *row = &rows[i];
+        vis_color_row_ctx_t *ctx = &contexts[i];
+
+        GtkWidget *hbox = gtk_hbox_new (FALSE, 12);
+        GtkWidget *check = gtk_check_button_new_with_label (row->label);
+        GtkWidget *button = gtk_color_button_new ();
+
+        gtk_color_button_set_color (GTK_COLOR_BUTTON (button), *row->color_set ? row->color : &row->default_color);
+        gtk_widget_set_sensitive (button, *row->use_custom);
+        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), *row->use_custom);
+
+        ctx->button = button;
+        ctx->row = row;
+        ctx->changed = &changed;
+
+        // connect after the initial state is set, so that opening the dialog doesn't count as a change
+        g_signal_connect (check, "toggled", G_CALLBACK (_vis_color_check_toggled), ctx);
+        g_signal_connect (button, "color-set", G_CALLBACK (_vis_color_button_set), ctx);
+
+        gtk_box_pack_start (GTK_BOX (hbox), check, TRUE, TRUE, 0);
+        gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+        gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+    }
+
+    gtk_widget_show_all (dlg);
+    gtk_dialog_run (GTK_DIALOG (dlg));
+    gtk_widget_destroy (dlg);
+    free (contexts);
+
+    return changed;
 }
 
 static void
@@ -2682,6 +2792,20 @@ _scope_button_press (GtkWidget *self, GdkEventButton *event, gpointer user_data)
     return TRUE;
 }
 
+static gboolean
+_scope_show_preferences (w_scope_t *s) {
+    GdkColor base_color;
+    gtkui_get_vis_custom_base_color (&base_color);
+    GdkColor background_color;
+    gtkui_get_vis_custom_background_color (&background_color);
+
+    vis_color_row_t rows[] = {
+        { _("Use custom color"), &s->use_custom_color, &s->custom_color_set, &s->custom_color, base_color },
+        { _("Use custom background color"), &s->use_custom_background_color, &s->custom_background_color_set, &s->custom_background_color, background_color },
+    };
+    return _vis_color_preferences_dialog (_("Scope Preferences"), rows, sizeof (rows) / sizeof (rows[0]));
+}
+
 static void
 _scope_menu_activate (GtkWidget *self, gpointer user_data) {
     w_scope_t *s = user_data;
@@ -2690,7 +2814,12 @@ _scope_menu_activate (GtkWidget *self, gpointer user_data) {
         return;
     }
 
-    if (self == s->mode_multichannel_item) {
+    if (self == s->preferences_item) {
+        if (!_scope_show_preferences (s)) {
+            return;
+        }
+    }
+    else if (self == s->mode_multichannel_item) {
         s->scope.mode = DDB_SCOPE_MULTICHANNEL;
     }
     else if (self == s->mode_mono_item) {
@@ -2729,14 +2858,57 @@ _scope_menu_activate (GtkWidget *self, gpointer user_data) {
     w_save_with_action (_("Change Oscilloscope Settings"));
 }
 
+// Colors are stored as "r g b a" with components in 0..1, same as in the macOS UI.
+static char *
+_vis_color_to_string (const GdkColor *color) {
+    char temp[64];
+    snprintf (temp, sizeof (temp), "%0.3f %0.3f %0.3f 1.000", color->red / 65535.f, color->green / 65535.f, color->blue / 65535.f);
+    return strdup (temp);
+}
+
+static gboolean
+_vis_color_from_string (const char *str, GdkColor *color) {
+    float c[4];
+    if (sscanf (str, "%f %f %f %f", &c[0], &c[1], &c[2], &c[3]) != 4) {
+        return FALSE;
+    }
+    for (int i = 0; i < 3; i++) {
+        c[i] = c[i] < 0 ? 0 : (c[i] > 1 ? 1 : c[i]);
+    }
+    color->red = (guint16)(c[0] * 65535.f + 0.5f);
+    color->green = (guint16)(c[1] * 65535.f + 0.5f);
+    color->blue = (guint16)(c[2] * 65535.f + 0.5f);
+    return TRUE;
+}
+
 static void
 _scope_deserialize_from_keyvalues (ddb_gtkui_widget_t *widget, const char **keyvalues) {
     w_scope_t *w = (w_scope_t *)widget;
     w->scope.mode = DDB_SCOPE_MULTICHANNEL;
     w->scale = SCOPE_SCALE_AUTO;
     w->scope.fragment_duration = 300;
+    w->use_custom_color = FALSE;
+    w->use_custom_background_color = FALSE;
+    w->custom_color_set = FALSE;
+    w->custom_background_color_set = FALSE;
     for (int i = 0; keyvalues[i]; i += 2) {
-        if (!strcmp (keyvalues[i], "renderMode")) {
+        // values of non-string json types are passed as NULL
+        if (keyvalues[i + 1] == NULL) {
+            continue;
+        }
+        if (!strcmp (keyvalues[i], "useCustomColor")) {
+            w->use_custom_color = !strcmp (keyvalues[i + 1], "1");
+        }
+        else if (!strcmp (keyvalues[i], "customColor")) {
+            w->custom_color_set = _vis_color_from_string (keyvalues[i + 1], &w->custom_color);
+        }
+        else if (!strcmp (keyvalues[i], "useCustomBackgroundColor")) {
+            w->use_custom_background_color = !strcmp (keyvalues[i + 1], "1");
+        }
+        else if (!strcmp (keyvalues[i], "customBackgroundColor")) {
+            w->custom_background_color_set = _vis_color_from_string (keyvalues[i + 1], &w->custom_background_color);
+        }
+        else if (!strcmp (keyvalues[i], "renderMode")) {
             if (!strcmp (keyvalues[i + 1], "mono")) {
                 w->scope.mode = DDB_SCOPE_MONO;
             }
@@ -2778,7 +2950,7 @@ _scope_deserialize_from_keyvalues (ddb_gtkui_widget_t *widget, const char **keyv
 static char const **
 _scope_serialize_to_keyvalues (ddb_gtkui_widget_t *widget) {
     w_scope_t *w = (w_scope_t *)widget;
-    char const **keyvalues = calloc (3 * 2 + 1, sizeof (char *));
+    char const **keyvalues = calloc (7 * 2 + 1, sizeof (char *));
     keyvalues[0] = "renderMode";
     switch (w->scope.mode) {
     case DDB_SCOPE_MONO:
@@ -2825,11 +2997,30 @@ _scope_serialize_to_keyvalues (ddb_gtkui_widget_t *widget) {
         keyvalues[5] = "300";
         break;
     }
+    int n = 6;
+    keyvalues[n++] = "useCustomColor";
+    keyvalues[n++] = w->use_custom_color ? "1" : "0";
+    if (w->custom_color_set) {
+        keyvalues[n++] = "customColor";
+        keyvalues[n++] = _vis_color_to_string (&w->custom_color);
+    }
+    keyvalues[n++] = "useCustomBackgroundColor";
+    keyvalues[n++] = w->use_custom_background_color ? "1" : "0";
+    if (w->custom_background_color_set) {
+        keyvalues[n++] = "customBackgroundColor";
+        keyvalues[n++] = _vis_color_to_string (&w->custom_background_color);
+    }
     return keyvalues;
 }
 
 static void
 _scope_free_serialized_keyvalues (ddb_gtkui_widget_t *widget, char const **keyvalues) {
+    // only the color values are allocated
+    for (int i = 0; keyvalues[i]; i += 2) {
+        if (!strcmp (keyvalues[i], "customColor") || !strcmp (keyvalues[i], "customBackgroundColor")) {
+            free ((char *)keyvalues[i + 1]);
+        }
+    }
     free (keyvalues);
 }
 
@@ -2926,17 +3117,17 @@ w_scope_create (void) {
     gtk_menu_shell_insert (GTK_MENU_SHELL (fragment_duration_menu), w->fragment_duration_300ms_item, 3);
     gtk_menu_shell_insert (GTK_MENU_SHELL (fragment_duration_menu), w->fragment_duration_500ms_item, 4);
 
-    //    GtkWidget *separator_item = gtk_separator_menu_item_new ();
-    //    gtk_widget_show(separator_item);
-    //
-    //    GtkWidget *preferences_item = gtk_menu_item_new_with_mnemonic(_("Preferences"));
-    //    gtk_widget_show(preferences_item);
+    GtkWidget *separator_item = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator_item);
+
+    w->preferences_item = gtk_menu_item_new_with_mnemonic (_("Preferences"));
+    gtk_widget_show (w->preferences_item);
 
     gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), rendering_mode_item, 0);
     gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), scale_item, 1);
     gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), fragment_duration_item, 2);
-    //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), separator_item, 3);
-    //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), preferences_item, 4);
+    gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), separator_item, 3);
+    gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), w->preferences_item, 4);
 
     gtk_check_menu_item_set_draw_as_radio (GTK_CHECK_MENU_ITEM (w->mode_multichannel_item), TRUE);
     gtk_check_menu_item_set_draw_as_radio (GTK_CHECK_MENU_ITEM (w->mode_mono_item), TRUE);
@@ -2963,6 +3154,7 @@ w_scope_create (void) {
     g_signal_connect ((gpointer)w->fragment_duration_200ms_item, "activate", G_CALLBACK (_scope_menu_activate), w);
     g_signal_connect ((gpointer)w->fragment_duration_300ms_item, "activate", G_CALLBACK (_scope_menu_activate), w);
     g_signal_connect ((gpointer)w->fragment_duration_500ms_item, "activate", G_CALLBACK (_scope_menu_activate), w);
+    g_signal_connect ((gpointer)w->preferences_item, "activate", G_CALLBACK (_scope_menu_activate), w);
 
     return (ddb_gtkui_widget_t *)w;
 }
