@@ -98,7 +98,7 @@ on_autosort_toggled (GtkMenuItem     *menuitem,
         return;
     }
     int enabled = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(menuitem));
-    deadbeef->plt_set_meta_int (current_playlist, "autosort_enabled", enabled);
+    deadbeef->plt_set_meta_int (current_playlist, user_data ? user_data : "autosort_enabled", enabled);
 }
 
 GtkWidget*
@@ -108,6 +108,7 @@ gtkui_create_pltmenu (ddb_playlist_t *playlist) {
     GtkWidget *remove_playlist1 = NULL;
     GtkWidget *add_new_playlist1 = NULL;
     GtkWidget *autosort = NULL;
+    GtkWidget *autosort_exclude_added = NULL;
     GtkWidget *separator11 = NULL;
 
     _set_playlist(playlist);
@@ -163,9 +164,17 @@ gtkui_create_pltmenu (ddb_playlist_t *playlist) {
             gtk_widget_set_sensitive (autosort, FALSE);
         }
 
+        autosort_exclude_added = gtk_check_menu_item_new_with_label (_("Exclude Added Files from Autosort"));
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (autosort_exclude_added),
+            deadbeef->plt_find_meta_int (current_playlist, "autosort_exclude_added", 0));
+        gtk_widget_set_tooltip_text (autosort_exclude_added,
+            _("Do not apply Autosort to newly added files (disabled by default)"));
+        gtk_widget_show (autosort_exclude_added);
+        gtk_menu_shell_insert (GTK_MENU_SHELL (menu), autosort_exclude_added, 4);
+
         separator11 = gtk_separator_menu_item_new ();
         gtk_widget_show (separator11);
-        gtk_menu_shell_insert(GTK_MENU_SHELL(menu), separator11, 4);
+        gtk_menu_shell_insert(GTK_MENU_SHELL(menu), separator11, 5);
         gtk_widget_set_sensitive (separator11, FALSE);
     }
 
@@ -183,6 +192,7 @@ gtkui_create_pltmenu (ddb_playlist_t *playlist) {
         g_signal_connect ((gpointer) autosort, "toggled",
                 G_CALLBACK (on_autosort_toggled),
                 NULL);
+        g_signal_connect (autosort_exclude_added, "toggled", G_CALLBACK (on_autosort_toggled), "autosort_exclude_added");
     }
 
     return menu;

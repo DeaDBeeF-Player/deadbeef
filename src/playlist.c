@@ -1883,6 +1883,7 @@ plt_insert_item (playlist_t *playlist, playItem_t *after, playItem_t *it) {
         }
     }
     it->in_playlist = 1;
+    it->added = playlist->files_adding;
 
     playlist->count[PL_MAIN]++;
 
@@ -3870,8 +3871,12 @@ plt_move_items (playlist_t *to, int iter, playlist_t *from, playItem_t *drop_bef
             if (drop_after == it) {
                 drop_after = it->prev[PL_MAIN];
             }
+            int was_added = it->added;
             plt_remove_item (from, it);
             plt_insert_item (to, drop_after, it);
+            if (to == from) {
+                it->added = was_added;
+            }
             pl_item_unref (it);
             drop_after = it;
             processed++;
@@ -4476,7 +4481,11 @@ plt_add_files_end (playlist_t *plt, int visibility) {
     }
     addfiles_playlist = NULL;
     messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    plt_autosort (plt);
     plt->files_adding = 0;
+    for (playItem_t *it = plt->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+        it->added = 0;
+    }
     pl_unlock ();
     ddb_fileadd_data_t d;
     memset (&d, 0, sizeof (d));
@@ -4486,8 +4495,6 @@ plt_add_files_end (playlist_t *plt, int visibility) {
         l->callback_end (&d, l->user_data);
     }
     background_job_decrement ();
-
-    plt_autosort (plt);
 }
 
 void

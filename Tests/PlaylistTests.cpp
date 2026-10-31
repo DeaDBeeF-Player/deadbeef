@@ -15,6 +15,7 @@
 #include "pltmeta.h"
 #include "plugins.h"
 #include "sort.h"
+#include <string.h>
 #include <string>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -135,6 +136,82 @@ TEST(PlaylistTests, test_PlaylistAutosort) {
     pl_item_unref(it_C);
 
     plt_unref(plt);
+}
+
+TEST(PlaylistTests, test_AutosortNewFiles) {
+    messagepump_init();
+    // -1 leaves the setting absent, exercising its default.
+    const struct { int enabled; int exclude_added; int ascending; const char *expected; } cases[] = {
+        {-1, -1, -1, "DBCA"}, // Autosort stays off by default.
+        { 0,  0, -1, "DBCA"}, // Including additions cannot enable Autosort.
+        { 0,  1, -1, "DBCA"},
+        { 1, -1, -1, "DBAC"}, // Autosort includes new additions by default.
+        { 1,  0, -1, "DBAC"},
+        { 1,  1, -1, "DBCA"}, // Excluding additions leaves them in insertion order.
+        { 1,  0,  0, "DBCA"}, // Honor the saved direction.
+    };
+    for (const auto &test : cases) {
+        playlist_t *plt = plt_alloc("test");
+        playlist_t *incoming = plt_alloc("incoming");
+        if (test.enabled != -1) {
+            plt_set_meta_int(plt, "autosort_enabled", test.enabled);
+        }
+        if (test.exclude_added != -1) {
+            plt_set_meta_int(plt, "autosort_exclude_added", test.exclude_added);
+        }
+        plt_add_meta(plt, "autosort_mode", "tf");
+        plt_add_meta(plt, "autosort_tf", "%path%");
+        plt_set_meta_int(plt, "autosort_ascending", test.ascending == -1 ? 1 : test.ascending);
+        playItem_t *items[5];
+        const char *paths[] = {"/music/D", "/music/B", "/music/C", "/music/A", "/music/0"};
+        for (int i = 0; i < 5; i++) {
+            items[i] = pl_item_alloc();
+            pl_add_meta(items[i], ":URI", paths[i]);
+        }
+        auto order = [&]() {
+            std::string result;
+            for (playItem_t *it = plt->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+                result += strrchr(pl_find_meta_raw(it, ":URI"), '/')[1];
+            }
+            return result;
+        };
+        plt_insert_item(plt, NULL, items[0]);
+        plt_insert_item(plt, items[0], items[1]);
+        EXPECT_EQ(0, plt_add_files_begin(plt, 0));
+        // Re-inserting an existing track in place must not make it part of the new batch.
+        uint32_t indices[] = {0};
+        plt_move_items(plt, PL_MAIN, plt, items[1], indices, 1);
+        plt_insert_item(incoming, NULL, items[2]);
+        plt_insert_item(incoming, items[2], items[3]);
+        plt_move_all_items(plt, incoming, items[1]);
+        if (test.enabled == 1 && test.exclude_added == 1) {
+            plt_autosort(plt); // The setting also applies to direct calls during an addition.
+            EXPECT_EQ("DBCA", order());
+        }
+        plt_add_files_end(plt, 0);
+        EXPECT_EQ(test.expected, order());
+        if (test.enabled == 1 && test.exclude_added == 1) {
+            plt_autosort(plt);
+            EXPECT_EQ("ABCD", order()); // Exclusion affects additions, not the main Autosort API.
+        }
+        if (test.enabled == 1 && test.exclude_added == -1) {
+            plt_move_items(plt, PL_MAIN, plt, items[1], indices, 1);
+            EXPECT_EQ("DBAC", order()); // A same-playlist move does not trigger Autosort.
+            // Later additions must leave the earlier batch alone.
+            EXPECT_EQ(0, plt_add_files_begin(plt, 0));
+            plt_insert_item(plt, plt->tail[PL_MAIN], items[4]);
+            plt_add_files_end(plt, 0);
+            EXPECT_EQ("DBAC0", order());
+            // The main Autosort API still sorts the whole playlist outside an addition.
+            plt_autosort(plt);
+            EXPECT_EQ("0ABCD", order());
+        }
+        plt_unref(incoming);
+        plt_unref(plt);
+        for (auto item : items) {
+            pl_item_unref(item);
+        }
+    }
 }
 
 TEST(PlaylistTests, test_MoveSelectedItemsToAnotherPlaylist_SelectionPlaybackTimeIsPreserved) {

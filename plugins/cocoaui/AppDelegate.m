@@ -713,25 +713,26 @@ main_cleanup_and_quit (void);
             NSString *text = [self.addLocationTextField.stringValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
             ddb_playlist_t *plt = deadbeef->plt_alloc ("add-location");
-            if (deadbeef->plt_add_files_begin (plt, 0) < 0) {
+            ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
+            if (deadbeef->plt_add_files_begin (plt_curr, 0) < 0) {
+                deadbeef->plt_unref (plt_curr);
                 deadbeef->plt_unref (plt);
                 return;
             }
 
-            ddb_playlist_t *plt_curr = deadbeef->plt_get_curr ();
             dispatch_queue_t aQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(aQueue, ^{
                 deadbeef->plt_insert_file2 (0, plt, NULL, text.UTF8String, NULL, NULL, NULL);
-                ddb_undo->set_action_name ("Add Location");
-                deadbeef->plt_add_files_end (plt, 0);
-                DB_playItem_t *tail = deadbeef->plt_get_tail_item (plt_curr, PL_MAIN);
-                deadbeef->plt_move_all_items(plt_curr, plt, tail);
-                if (tail != NULL) {
-                    deadbeef->pl_item_unref (tail);
-                }
-                deadbeef->pl_save_current ();
-
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    ddb_undo->set_action_name ("Add Location");
+                    DB_playItem_t *tail = deadbeef->plt_get_tail_item (plt_curr, PL_MAIN);
+                    deadbeef->plt_move_all_items(plt_curr, plt, tail);
+                    deadbeef->plt_add_files_end (plt_curr, 0);
+                    if (tail != NULL) {
+                        deadbeef->pl_item_unref (tail);
+                    }
+                    deadbeef->pl_save_current ();
+
                     deadbeef->plt_unref (plt);
                     deadbeef->plt_unref (plt_curr);
                 });

@@ -59,9 +59,16 @@ extern DB_functions_t *deadbeef;
             self.autosortPlaylistItem.toolTip = @"Re-apply the last sort you chose every time when adding new files to this playlist";
             [self updateEnableAutosort];
             [self insertItem:self.autosortPlaylistItem atIndex:2];
+            NSMenuItem *excludeAdded = [[NSMenuItem alloc] initWithTitle:@"Exclude Added Files from Autosort"
+                action:@selector(excludeAddedFromAutosortAction:) keyEquivalent:@""];
+            excludeAdded.target = self;
+            excludeAdded.toolTip = @"Do not apply Autosort to newly added files (disabled by default)";
+            excludeAdded.state = deadbeef->plt_find_meta_int(playlist, "autosort_exclude_added", 0)
+                ? NSControlStateValueOn : NSControlStateValueOff;
+            [self insertItem:excludeAdded atIndex:3];
         }
 
-        [self insertItem:NSMenuItem.separatorItem atIndex:3];
+        [self insertItem:NSMenuItem.separatorItem atIndex:4];
 
         [self addItem:NSMenuItem.separatorItem];
     }
@@ -116,6 +123,12 @@ extern DB_functions_t *deadbeef;
 
     NSRect rect = NSMakeRect(self.clickPoint.x, self.clickPoint.y, 1, 1);
     [self.renamePlaylistPopover showRelativeToRect:rect ofView:self.parentView preferredEdge:NSRectEdgeMaxY];
+}
+
+- (void)excludeAddedFromAutosortAction:(NSMenuItem *)sender {
+    BOOL enabled = sender.state == NSControlStateValueOff;
+    deadbeef->plt_set_meta_int(self.playlist, "autosort_exclude_added", enabled);
+    sender.state = enabled ? NSControlStateValueOn : NSControlStateValueOff;
 }
 
 - (void)enableAutosortAction:(NSMenuItem *)sender {
