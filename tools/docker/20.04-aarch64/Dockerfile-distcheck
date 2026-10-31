@@ -1,4 +1,4 @@
-FROM deadbeef-builder-player-clang-20.04
+FROM deadbeef-builder-player-clang-20.04-aarch64
 
 WORKDIR /usr/src/deadbeef
 COPY . /usr/src/deadbeef
@@ -6,6 +6,24 @@ ENV BUILD_OS_NAME=linux
 
 RUN apt-get -qq update
 RUN apt-get install -y -qq libjansson-dev
+
+# libdispatch is built from source, since there's no system package in the builder image
+RUN apt-get install -y -qq ca-certificates git ninja-build libblocksruntime-dev
+
+# libdispatch requires CMake 3.26+, but Ubuntu 20.04 ships 3.16, so use the official prebuilt binaries
+ARG CMAKE_VERSION=3.31.6
+RUN wget -q https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-aarch64.tar.gz -O /tmp/cmake.tar.gz \
+    && tar -xzf /tmp/cmake.tar.gz -C /usr/local --strip-components=1 \
+    && rm /tmp/cmake.tar.gz
+
+RUN git clone --depth 1 https://github.com/apple/swift-corelibs-libdispatch.git /tmp/swift-corelibs-libdispatch \
+    && mkdir /tmp/swift-corelibs-libdispatch/build \
+    && cd /tmp/swift-corelibs-libdispatch/build \
+    && CC=clang CXX=clang++ cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local .. \
+    && ninja \
+    && ninja install \
+    && ldconfig \
+    && rm -rf /tmp/swift-corelibs-libdispatch
 
 RUN rm -rf m4
 RUN rm ltmain.sh
