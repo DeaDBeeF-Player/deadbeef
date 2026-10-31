@@ -232,6 +232,17 @@ typedef struct {
     float bar_color[3];
     float background_color[3];
 
+    gboolean use_custom_peak_color;
+    gboolean use_custom_bar_color;
+    gboolean use_custom_background_color;
+    // custom colors are remembered while the "use custom" option is off, if they were ever chosen
+    gboolean custom_peak_color_set;
+    gboolean custom_bar_color_set;
+    gboolean custom_background_color_set;
+    GdkColor custom_peak_color;
+    GdkColor custom_bar_color;
+    GdkColor custom_background_color;
+
     cairo_surface_t *surf;
 
     gboolean updating_menu; // suppress menu event handlers
@@ -250,6 +261,8 @@ typedef struct {
     GtkWidget *gap_8_item;
     GtkWidget *gap_9_item;
     GtkWidget *gap_10_item;
+
+    GtkWidget *preferences_item;
 } w_spectrum_t;
 
 typedef struct {
@@ -3257,6 +3270,22 @@ _spectrum_update_preferences (w_spectrum_t *spectrum) {
     spectrum->background_color[0] = color.red / 65535.f;
     spectrum->background_color[1] = color.green / 65535.f;
     spectrum->background_color[2] = color.blue / 65535.f;
+
+    if (spectrum->use_custom_peak_color && spectrum->custom_peak_color_set) {
+        spectrum->peak_color[0] = spectrum->custom_peak_color.red / 65535.f;
+        spectrum->peak_color[1] = spectrum->custom_peak_color.green / 65535.f;
+        spectrum->peak_color[2] = spectrum->custom_peak_color.blue / 65535.f;
+    }
+    if (spectrum->use_custom_bar_color && spectrum->custom_bar_color_set) {
+        spectrum->bar_color[0] = spectrum->custom_bar_color.red / 65535.f;
+        spectrum->bar_color[1] = spectrum->custom_bar_color.green / 65535.f;
+        spectrum->bar_color[2] = spectrum->custom_bar_color.blue / 65535.f;
+    }
+    if (spectrum->use_custom_background_color && spectrum->custom_background_color_set) {
+        spectrum->background_color[0] = spectrum->custom_background_color.red / 65535.f;
+        spectrum->background_color[1] = spectrum->custom_background_color.green / 65535.f;
+        spectrum->background_color[2] = spectrum->custom_background_color.blue / 65535.f;
+    }
 }
 
 static void
@@ -3415,6 +3444,26 @@ _spectrum_button_press (GtkWidget *self, GdkEventButton *event, gpointer user_da
     return TRUE;
 }
 
+static gboolean
+_spectrum_show_preferences (w_spectrum_t *s) {
+    // the colors that are used when no custom color is chosen
+    GdkColor base_color;
+    gtkui_get_vis_custom_base_color (&base_color);
+    GdkColor peak_color = base_color;
+    peak_color.red += (65535 - peak_color.red) / 2;
+    peak_color.green += (65535 - peak_color.green) / 2;
+    peak_color.blue += (65535 - peak_color.blue) / 2;
+    GdkColor background_color;
+    gtkui_get_vis_custom_background_color (&background_color);
+
+    vis_color_row_t rows[] = {
+        { _("Use custom peak color"), &s->use_custom_peak_color, &s->custom_peak_color_set, &s->custom_peak_color, peak_color },
+        { _("Use custom bar color"), &s->use_custom_bar_color, &s->custom_bar_color_set, &s->custom_bar_color, base_color },
+        { _("Use custom background color"), &s->use_custom_background_color, &s->custom_background_color_set, &s->custom_background_color, background_color },
+    };
+    return _vis_color_preferences_dialog (_("Spectrum Analyzer Preferences"), rows, sizeof (rows) / sizeof (rows[0]));
+}
+
 static void
 _spectrum_menu_activate (GtkWidget *self, gpointer user_data) {
     w_spectrum_t *s = user_data;
@@ -3423,7 +3472,12 @@ _spectrum_menu_activate (GtkWidget *self, gpointer user_data) {
         return;
     }
 
-    if (self == s->mode_discrete_item) {
+    if (self == s->preferences_item) {
+        if (!_spectrum_show_preferences (s)) {
+            return;
+        }
+    }
+    else if (self == s->mode_discrete_item) {
         s->analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
         s->analyzer.mode_did_change = 1;
     }
@@ -3476,9 +3530,37 @@ _spectrum_deserialize_from_keyvalues (ddb_gtkui_widget_t *widget, const char **k
 
     s->analyzer.mode = DDB_ANALYZER_MODE_OCTAVE_NOTE_BANDS;
     s->analyzer.bar_gap_denominator = 3;
+    s->use_custom_peak_color = FALSE;
+    s->use_custom_bar_color = FALSE;
+    s->use_custom_background_color = FALSE;
+    s->custom_peak_color_set = FALSE;
+    s->custom_bar_color_set = FALSE;
+    s->custom_background_color_set = FALSE;
 
     for (int i = 0; keyvalues[i]; i += 2) {
-        if (!strcmp (keyvalues[i], "renderMode")) {
+        // values of non-string json types are passed as NULL
+        if (keyvalues[i + 1] == NULL) {
+            continue;
+        }
+        if (!strcmp (keyvalues[i], "useCustomPeakColor")) {
+            s->use_custom_peak_color = !strcmp (keyvalues[i + 1], "1");
+        }
+        else if (!strcmp (keyvalues[i], "useCustomBarColor")) {
+            s->use_custom_bar_color = !strcmp (keyvalues[i + 1], "1");
+        }
+        else if (!strcmp (keyvalues[i], "useCustomBackgroundColor")) {
+            s->use_custom_background_color = !strcmp (keyvalues[i + 1], "1");
+        }
+        else if (!strcmp (keyvalues[i], "customPeakColor")) {
+            s->custom_peak_color_set = _vis_color_from_string (keyvalues[i + 1], &s->custom_peak_color);
+        }
+        else if (!strcmp (keyvalues[i], "customBarColor")) {
+            s->custom_bar_color_set = _vis_color_from_string (keyvalues[i + 1], &s->custom_bar_color);
+        }
+        else if (!strcmp (keyvalues[i], "customBackgroundColor")) {
+            s->custom_background_color_set = _vis_color_from_string (keyvalues[i + 1], &s->custom_background_color);
+        }
+        else if (!strcmp (keyvalues[i], "renderMode")) {
             if (!strcmp (keyvalues[i + 1], "frequencies")) {
                 s->analyzer.mode = DDB_ANALYZER_MODE_FREQUENCIES;
             }
@@ -3496,7 +3578,7 @@ static char const **
 _spectrum_serialize_to_keyvalues (ddb_gtkui_widget_t *widget) {
     w_spectrum_t *s = (w_spectrum_t *)widget;
 
-    char const **keyvalues = calloc (7, sizeof (char *));
+    char const **keyvalues = calloc (9 * 2 + 1, sizeof (char *));
 
     keyvalues[0] = "renderMode";
     switch (s->analyzer.mode) {
@@ -3518,13 +3600,39 @@ _spectrum_serialize_to_keyvalues (ddb_gtkui_widget_t *widget) {
     snprintf (temp, sizeof (temp), "%d", s->analyzer.octave_bars_step);
     keyvalues[5] = strdup (temp);
 
+    int n = 6;
+    keyvalues[n++] = "useCustomPeakColor";
+    keyvalues[n++] = s->use_custom_peak_color ? "1" : "0";
+    if (s->custom_peak_color_set) {
+        keyvalues[n++] = "customPeakColor";
+        keyvalues[n++] = _vis_color_to_string (&s->custom_peak_color);
+    }
+    keyvalues[n++] = "useCustomBarColor";
+    keyvalues[n++] = s->use_custom_bar_color ? "1" : "0";
+    if (s->custom_bar_color_set) {
+        keyvalues[n++] = "customBarColor";
+        keyvalues[n++] = _vis_color_to_string (&s->custom_bar_color);
+    }
+    keyvalues[n++] = "useCustomBackgroundColor";
+    keyvalues[n++] = s->use_custom_background_color ? "1" : "0";
+    if (s->custom_background_color_set) {
+        keyvalues[n++] = "customBackgroundColor";
+        keyvalues[n++] = _vis_color_to_string (&s->custom_background_color);
+    }
+
     return keyvalues;
 }
 
 static void
 _spectrum_free_serialized_keyvalues (ddb_gtkui_widget_t *widget, char const **keyvalues) {
-    free ((char *)keyvalues[3]);
-    free ((char *)keyvalues[5]);
+    // only the numbers and the colors are allocated
+    for (int i = 0; keyvalues[i]; i += 2) {
+        if (!strcmp (keyvalues[i], "distanceBetweenBars") || !strcmp (keyvalues[i], "barGranularity")
+            || !strcmp (keyvalues[i], "customPeakColor") || !strcmp (keyvalues[i], "customBarColor")
+            || !strcmp (keyvalues[i], "customBackgroundColor")) {
+            free ((char *)keyvalues[i + 1]);
+        }
+    }
     free (keyvalues);
 }
 
@@ -3619,16 +3727,16 @@ w_spectrum_create (void) {
     gtk_menu_shell_insert (GTK_MENU_SHELL (gap_size_menu), w->gap_9_item, 8);
     gtk_menu_shell_insert (GTK_MENU_SHELL (gap_size_menu), w->gap_10_item, 9);
 
-    //    GtkWidget *separator_item = gtk_separator_menu_item_new ();
-    //    gtk_widget_show(separator_item);
-    //
-    //    GtkWidget *preferences_item = gtk_menu_item_new_with_mnemonic(_("Preferences"));
-    //    gtk_widget_show(preferences_item);
+    GtkWidget *separator_item = gtk_separator_menu_item_new ();
+    gtk_widget_show (separator_item);
+
+    w->preferences_item = gtk_menu_item_new_with_mnemonic (_("Preferences"));
+    gtk_widget_show (w->preferences_item);
 
     gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), rendering_mode_item, 0);
     gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), gap_size_item, 1);
-    //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), separator_item, 2);
-    //    gtk_menu_shell_insert (GTK_MENU_SHELL(w->menu), preferences_item, 3);
+    gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), separator_item, 2);
+    gtk_menu_shell_insert (GTK_MENU_SHELL (w->menu), w->preferences_item, 3);
 
     gtk_check_menu_item_set_draw_as_radio (GTK_CHECK_MENU_ITEM (w->mode_discrete_item), TRUE);
     gtk_check_menu_item_set_draw_as_radio (GTK_CHECK_MENU_ITEM (w->mode_12_item), TRUE);
@@ -3657,6 +3765,7 @@ w_spectrum_create (void) {
     g_signal_connect ((gpointer)w->gap_8_item, "activate", G_CALLBACK (_spectrum_menu_activate), w);
     g_signal_connect ((gpointer)w->gap_9_item, "activate", G_CALLBACK (_spectrum_menu_activate), w);
     g_signal_connect ((gpointer)w->gap_10_item, "activate", G_CALLBACK (_spectrum_menu_activate), w);
+    g_signal_connect ((gpointer)w->preferences_item, "activate", G_CALLBACK (_spectrum_menu_activate), w);
 
     w->input_data.fmt = &w->fmt;
 
