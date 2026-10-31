@@ -730,6 +730,74 @@
 		2D05A8D91B4BE63D004C913D /* sndfile.dylib in Copy Plugins */ = {isa = PBXBuildFile; fileRef = 2D05A8291B4BE59D004C913D /* sndfile.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		2D05A8DC1B4BE652004C913D /* libsndfilelib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D05A8311B4BE5BC004C913D /* libsndfilelib.a */; };
 		2D061F7A19E9685000CE6C29 /* DdbShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D061F7919E9685000CE6C29 /* DdbShared.m */; };
+		2D06573B309602FF00B72EF6 /* w_placeholder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06573A309602FF00B72EF6 /* w_placeholder.h */; };
+		2D06573C309602FF00B72EF6 /* w_placeholder.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06573A309602FF00B72EF6 /* w_placeholder.h */; };
+		2D06573E3096031400B72EF6 /* w_placeholder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06573D3096031400B72EF6 /* w_placeholder.c */; };
+		2D06573F3096031400B72EF6 /* w_placeholder.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06573D3096031400B72EF6 /* w_placeholder.c */; };
+		2D0657413096031400B72EF6 /* w_dummy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657403096031400B72EF6 /* w_dummy.h */; };
+		2D0657423096031400B72EF6 /* w_dummy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657403096031400B72EF6 /* w_dummy.h */; };
+		2D0657443096031500B72EF6 /* w_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657433096031500B72EF6 /* w_dummy.c */; };
+		2D0657453096031500B72EF6 /* w_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657433096031500B72EF6 /* w_dummy.c */; };
+		2D0657473096031500B72EF6 /* w_splitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657463096031500B72EF6 /* w_splitter.h */; };
+		2D0657483096031500B72EF6 /* w_splitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657463096031500B72EF6 /* w_splitter.h */; };
+		2D06574A3096031600B72EF6 /* w_splitter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657493096031600B72EF6 /* w_splitter.c */; };
+		2D06574B3096031600B72EF6 /* w_splitter.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657493096031600B72EF6 /* w_splitter.c */; };
+		2D06574D3096031600B72EF6 /* w_tabs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06574C3096031600B72EF6 /* w_tabs.h */; };
+		2D06574E3096031600B72EF6 /* w_tabs.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06574C3096031600B72EF6 /* w_tabs.h */; };
+		2D0657503096031700B72EF6 /* w_tabs.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06574F3096031700B72EF6 /* w_tabs.c */; };
+		2D0657513096031700B72EF6 /* w_tabs.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06574F3096031700B72EF6 /* w_tabs.c */; };
+		2D0657533096031700B72EF6 /* w_box.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657523096031700B72EF6 /* w_box.h */; };
+		2D0657543096031700B72EF6 /* w_box.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657523096031700B72EF6 /* w_box.h */; };
+		2D0657563096031700B72EF6 /* w_box.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657553096031700B72EF6 /* w_box.c */; };
+		2D0657573096031700B72EF6 /* w_box.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657553096031700B72EF6 /* w_box.c */; };
+		2D0657593096031A00B72EF6 /* w_tabstrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657583096031A00B72EF6 /* w_tabstrip.h */; };
+		2D06575A3096031A00B72EF6 /* w_tabstrip.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657583096031A00B72EF6 /* w_tabstrip.h */; };
+		2D06575C3096031A00B72EF6 /* w_tabstrip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06575B3096031A00B72EF6 /* w_tabstrip.c */; };
+		2D06575D3096031A00B72EF6 /* w_tabstrip.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06575B3096031A00B72EF6 /* w_tabstrip.c */; };
+		2D06575F3096031B00B72EF6 /* w_playlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06575E3096031B00B72EF6 /* w_playlist.h */; };
+		2D0657603096031B00B72EF6 /* w_playlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06575E3096031B00B72EF6 /* w_playlist.h */; };
+		2D0657623096031B00B72EF6 /* w_playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657613096031B00B72EF6 /* w_playlist.c */; };
+		2D0657633096031B00B72EF6 /* w_playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657613096031B00B72EF6 /* w_playlist.c */; };
+		2D0657653096031B00B72EF6 /* w_tabbed_playlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657643096031B00B72EF6 /* w_tabbed_playlist.h */; };
+		2D0657663096031B00B72EF6 /* w_tabbed_playlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657643096031B00B72EF6 /* w_tabbed_playlist.h */; };
+		2D0657683096031C00B72EF6 /* w_tabbed_playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657673096031C00B72EF6 /* w_tabbed_playlist.c */; };
+		2D0657693096031C00B72EF6 /* w_tabbed_playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657673096031C00B72EF6 /* w_tabbed_playlist.c */; };
+		2D06576B3096031C00B72EF6 /* w_scope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06576A3096031C00B72EF6 /* w_scope.h */; };
+		2D06576C3096031C00B72EF6 /* w_scope.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06576A3096031C00B72EF6 /* w_scope.h */; };
+		2D06576E3096031D00B72EF6 /* w_scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06576D3096031D00B72EF6 /* w_scope.c */; };
+		2D06576F3096031D00B72EF6 /* w_scope.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06576D3096031D00B72EF6 /* w_scope.c */; };
+		2D0657713096031D00B72EF6 /* w_spectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657703096031D00B72EF6 /* w_spectrum.h */; };
+		2D0657723096031D00B72EF6 /* w_spectrum.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657703096031D00B72EF6 /* w_spectrum.h */; };
+		2D0657743096031E00B72EF6 /* w_spectrum.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657733096031E00B72EF6 /* w_spectrum.c */; };
+		2D0657753096031E00B72EF6 /* w_spectrum.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657733096031E00B72EF6 /* w_spectrum.c */; };
+		2D0657773096031E00B72EF6 /* w_hvbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657763096031E00B72EF6 /* w_hvbox.h */; };
+		2D0657783096031E00B72EF6 /* w_hvbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657763096031E00B72EF6 /* w_hvbox.h */; };
+		2D06577A3096031F00B72EF6 /* w_hvbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657793096031F00B72EF6 /* w_hvbox.c */; };
+		2D06577B3096031F00B72EF6 /* w_hvbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657793096031F00B72EF6 /* w_hvbox.c */; };
+		2D06577D3096032100B72EF6 /* w_button.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06577C3096032100B72EF6 /* w_button.h */; };
+		2D06577E3096032100B72EF6 /* w_button.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06577C3096032100B72EF6 /* w_button.h */; };
+		2D0657803096032100B72EF6 /* w_button.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06577F3096032100B72EF6 /* w_button.c */; };
+		2D0657813096032100B72EF6 /* w_button.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06577F3096032100B72EF6 /* w_button.c */; };
+		2D0657833096032200B72EF6 /* w_seekbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657823096032200B72EF6 /* w_seekbar.h */; };
+		2D0657843096032200B72EF6 /* w_seekbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657823096032200B72EF6 /* w_seekbar.h */; };
+		2D0657863096032200B72EF6 /* w_seekbar.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657853096032200B72EF6 /* w_seekbar.c */; };
+		2D0657873096032200B72EF6 /* w_seekbar.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657853096032200B72EF6 /* w_seekbar.c */; };
+		2D0657893096032300B72EF6 /* w_playtb.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657883096032300B72EF6 /* w_playtb.h */; };
+		2D06578A3096032300B72EF6 /* w_playtb.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657883096032300B72EF6 /* w_playtb.h */; };
+		2D06578C3096032300B72EF6 /* w_playtb.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06578B3096032300B72EF6 /* w_playtb.c */; };
+		2D06578D3096032300B72EF6 /* w_playtb.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06578B3096032300B72EF6 /* w_playtb.c */; };
+		2D06578F3096032300B72EF6 /* w_volumebar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06578E3096032300B72EF6 /* w_volumebar.h */; };
+		2D0657903096032300B72EF6 /* w_volumebar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06578E3096032300B72EF6 /* w_volumebar.h */; };
+		2D0657923096032400B72EF6 /* w_volumebar.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657913096032400B72EF6 /* w_volumebar.c */; };
+		2D0657933096032400B72EF6 /* w_volumebar.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657913096032400B72EF6 /* w_volumebar.c */; };
+		2D0657953096032400B72EF6 /* w_ctvoices.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657943096032400B72EF6 /* w_ctvoices.h */; };
+		2D0657963096032400B72EF6 /* w_ctvoices.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0657943096032400B72EF6 /* w_ctvoices.h */; };
+		2D0657983096032500B72EF6 /* w_ctvoices.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657973096032500B72EF6 /* w_ctvoices.c */; };
+		2D0657993096032500B72EF6 /* w_ctvoices.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D0657973096032500B72EF6 /* w_ctvoices.c */; };
+		2D06579B3096032500B72EF6 /* w_logviewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06579A3096032500B72EF6 /* w_logviewer.h */; };
+		2D06579C3096032500B72EF6 /* w_logviewer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D06579A3096032500B72EF6 /* w_logviewer.h */; };
+		2D06579E3096032600B72EF6 /* w_logviewer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06579D3096032600B72EF6 /* w_logviewer.c */; };
+		2D06579F3096032600B72EF6 /* w_logviewer.c in Sources */ = {isa = PBXBuildFile; fileRef = 2D06579D3096032600B72EF6 /* w_logviewer.c */; };
 		2D0A002819C390E9006F7462 /* tf.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A002619C390E9006F7462 /* tf.h */; };
 		2D0A6B0B2376E12200252E6D /* TrackSwitchingTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.cpp */; };
 		2D0A6B1B237718DA00252E6D /* playmodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D0A6B19237718DA00252E6D /* playmodes.h */; };
@@ -5601,6 +5669,40 @@
 		2D05A8D51B4BE616004C913D /* sndfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sndfile.c; sourceTree = "<group>"; };
 		2D061F7919E9685000CE6C29 /* DdbShared.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DdbShared.m; sourceTree = "<group>"; };
 		2D061F7B19E9685E00CE6C29 /* DdbShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DdbShared.h; sourceTree = "<group>"; };
+		2D06573A309602FF00B72EF6 /* w_placeholder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_placeholder.h; sourceTree = "<group>"; };
+		2D06573D3096031400B72EF6 /* w_placeholder.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_placeholder.c; sourceTree = "<group>"; };
+		2D0657403096031400B72EF6 /* w_dummy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_dummy.h; sourceTree = "<group>"; };
+		2D0657433096031500B72EF6 /* w_dummy.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_dummy.c; sourceTree = "<group>"; };
+		2D0657463096031500B72EF6 /* w_splitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_splitter.h; sourceTree = "<group>"; };
+		2D0657493096031600B72EF6 /* w_splitter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_splitter.c; sourceTree = "<group>"; };
+		2D06574C3096031600B72EF6 /* w_tabs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_tabs.h; sourceTree = "<group>"; };
+		2D06574F3096031700B72EF6 /* w_tabs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_tabs.c; sourceTree = "<group>"; };
+		2D0657523096031700B72EF6 /* w_box.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_box.h; sourceTree = "<group>"; };
+		2D0657553096031700B72EF6 /* w_box.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_box.c; sourceTree = "<group>"; };
+		2D0657583096031A00B72EF6 /* w_tabstrip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_tabstrip.h; sourceTree = "<group>"; };
+		2D06575B3096031A00B72EF6 /* w_tabstrip.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_tabstrip.c; sourceTree = "<group>"; };
+		2D06575E3096031B00B72EF6 /* w_playlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_playlist.h; sourceTree = "<group>"; };
+		2D0657613096031B00B72EF6 /* w_playlist.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_playlist.c; sourceTree = "<group>"; };
+		2D0657643096031B00B72EF6 /* w_tabbed_playlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_tabbed_playlist.h; sourceTree = "<group>"; };
+		2D0657673096031C00B72EF6 /* w_tabbed_playlist.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_tabbed_playlist.c; sourceTree = "<group>"; };
+		2D06576A3096031C00B72EF6 /* w_scope.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_scope.h; sourceTree = "<group>"; };
+		2D06576D3096031D00B72EF6 /* w_scope.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_scope.c; sourceTree = "<group>"; };
+		2D0657703096031D00B72EF6 /* w_spectrum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_spectrum.h; sourceTree = "<group>"; };
+		2D0657733096031E00B72EF6 /* w_spectrum.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_spectrum.c; sourceTree = "<group>"; };
+		2D0657763096031E00B72EF6 /* w_hvbox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_hvbox.h; sourceTree = "<group>"; };
+		2D0657793096031F00B72EF6 /* w_hvbox.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_hvbox.c; sourceTree = "<group>"; };
+		2D06577C3096032100B72EF6 /* w_button.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_button.h; sourceTree = "<group>"; };
+		2D06577F3096032100B72EF6 /* w_button.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_button.c; sourceTree = "<group>"; };
+		2D0657823096032200B72EF6 /* w_seekbar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_seekbar.h; sourceTree = "<group>"; };
+		2D0657853096032200B72EF6 /* w_seekbar.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_seekbar.c; sourceTree = "<group>"; };
+		2D0657883096032300B72EF6 /* w_playtb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_playtb.h; sourceTree = "<group>"; };
+		2D06578B3096032300B72EF6 /* w_playtb.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_playtb.c; sourceTree = "<group>"; };
+		2D06578E3096032300B72EF6 /* w_volumebar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_volumebar.h; sourceTree = "<group>"; };
+		2D0657913096032400B72EF6 /* w_volumebar.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_volumebar.c; sourceTree = "<group>"; };
+		2D0657943096032400B72EF6 /* w_ctvoices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_ctvoices.h; sourceTree = "<group>"; };
+		2D0657973096032500B72EF6 /* w_ctvoices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_ctvoices.c; sourceTree = "<group>"; };
+		2D06579A3096032500B72EF6 /* w_logviewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = w_logviewer.h; sourceTree = "<group>"; };
+		2D06579D3096032600B72EF6 /* w_logviewer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = w_logviewer.c; sourceTree = "<group>"; };
 		2D0A002519C390E9006F7462 /* tf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tf.c; sourceTree = "<group>"; };
 		2D0A002619C390E9006F7462 /* tf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tf.h; sourceTree = "<group>"; };
 		2D0A6B0A2376E12200252E6D /* TrackSwitchingTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TrackSwitchingTests.cpp; sourceTree = "<group>"; };
@@ -9776,6 +9878,47 @@
 			path = plugins/sndfile;
 			sourceTree = "<group>";
 		};
+		2D065739309602FE00B72EF6 /* widgets */ = {
+			isa = PBXGroup;
+			children = (
+				2D0657553096031700B72EF6 /* w_box.c */,
+				2D0657523096031700B72EF6 /* w_box.h */,
+				2D06577F3096032100B72EF6 /* w_button.c */,
+				2D06577C3096032100B72EF6 /* w_button.h */,
+				2D0657973096032500B72EF6 /* w_ctvoices.c */,
+				2D0657943096032400B72EF6 /* w_ctvoices.h */,
+				2D0657433096031500B72EF6 /* w_dummy.c */,
+				2D0657403096031400B72EF6 /* w_dummy.h */,
+				2D0657793096031F00B72EF6 /* w_hvbox.c */,
+				2D0657763096031E00B72EF6 /* w_hvbox.h */,
+				2D06579D3096032600B72EF6 /* w_logviewer.c */,
+				2D06579A3096032500B72EF6 /* w_logviewer.h */,
+				2D06573D3096031400B72EF6 /* w_placeholder.c */,
+				2D06573A309602FF00B72EF6 /* w_placeholder.h */,
+				2D0657613096031B00B72EF6 /* w_playlist.c */,
+				2D06575E3096031B00B72EF6 /* w_playlist.h */,
+				2D06578B3096032300B72EF6 /* w_playtb.c */,
+				2D0657883096032300B72EF6 /* w_playtb.h */,
+				2D06576D3096031D00B72EF6 /* w_scope.c */,
+				2D06576A3096031C00B72EF6 /* w_scope.h */,
+				2D0657853096032200B72EF6 /* w_seekbar.c */,
+				2D0657823096032200B72EF6 /* w_seekbar.h */,
+				2D0657733096031E00B72EF6 /* w_spectrum.c */,
+				2D0657703096031D00B72EF6 /* w_spectrum.h */,
+				2D0657493096031600B72EF6 /* w_splitter.c */,
+				2D0657463096031500B72EF6 /* w_splitter.h */,
+				2D0657673096031C00B72EF6 /* w_tabbed_playlist.c */,
+				2D0657643096031B00B72EF6 /* w_tabbed_playlist.h */,
+				2D06574F3096031700B72EF6 /* w_tabs.c */,
+				2D06574C3096031600B72EF6 /* w_tabs.h */,
+				2D06575B3096031A00B72EF6 /* w_tabstrip.c */,
+				2D0657583096031A00B72EF6 /* w_tabstrip.h */,
+				2D0657913096032400B72EF6 /* w_volumebar.c */,
+				2D06578E3096032300B72EF6 /* w_volumebar.h */,
+			);
+			path = widgets;
+			sourceTree = "<group>";
+		};
 		2D0AC90D2856450200F6D56A /* IntegrationTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -12763,6 +12906,7 @@
 				2D60EAAA277109BD00C28A44 /* playlist */,
 				2D715BF826C833240022A8F0 /* prefwin */,
 				2DFF258D30952A10004C03E7 /* ui_layouts */,
+				2D065739309602FE00B72EF6 /* widgets */,
 				2DCB18372515F95C0054BD06 /* about.txt */,
 				2DCB18F82515F9AB0054BD06 /* COPYING.GPLv2 */,
 				2DCB18F92515F9AB0054BD06 /* COPYING.LGPLv2.1 */,
@@ -14842,6 +14986,23 @@
 				2D2556BA2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h in Headers */,
 				2D2C51592B6BE15900EAC44E /* undostack.h in Headers */,
 				2DC656772744289C00583E14 /* prefwinmisc.h in Headers */,
+				2D0657533096031700B72EF6 /* w_box.h in Headers */,
+				2D06577E3096032100B72EF6 /* w_button.h in Headers */,
+				2D0657953096032400B72EF6 /* w_ctvoices.h in Headers */,
+				2D0657423096031400B72EF6 /* w_dummy.h in Headers */,
+				2D0657783096031E00B72EF6 /* w_hvbox.h in Headers */,
+				2D06579C3096032500B72EF6 /* w_logviewer.h in Headers */,
+				2D06573C309602FF00B72EF6 /* w_placeholder.h in Headers */,
+				2D06575F3096031B00B72EF6 /* w_playlist.h in Headers */,
+				2D06578A3096032300B72EF6 /* w_playtb.h in Headers */,
+				2D06576B3096031C00B72EF6 /* w_scope.h in Headers */,
+				2D0657843096032200B72EF6 /* w_seekbar.h in Headers */,
+				2D0657713096031D00B72EF6 /* w_spectrum.h in Headers */,
+				2D0657473096031500B72EF6 /* w_splitter.h in Headers */,
+				2D0657663096031B00B72EF6 /* w_tabbed_playlist.h in Headers */,
+				2D06574D3096031600B72EF6 /* w_tabs.h in Headers */,
+				2D06575A3096031A00B72EF6 /* w_tabstrip.h in Headers */,
+				2D06578F3096032300B72EF6 /* w_volumebar.h in Headers */,
 				2DC656792744289C00583E14 /* widgets.h in Headers */,
 				2DC6567A2744289C00583E14 /* drawing.h in Headers */,
 				2DC6567B2744289C00583E14 /* deadbeefapp.h in Headers */,
@@ -14936,6 +15097,23 @@
 				2D2556BD2E47D30B00DA3757 /* gtkScriptablePropertySheetEditViewController.h in Headers */,
 				2D2C515A2B6BE15900EAC44E /* undostack.h in Headers */,
 				2D715C1226C836FE0022A8F0 /* prefwinmisc.h in Headers */,
+				2D0657543096031700B72EF6 /* w_box.h in Headers */,
+				2D06577D3096032100B72EF6 /* w_button.h in Headers */,
+				2D0657963096032400B72EF6 /* w_ctvoices.h in Headers */,
+				2D0657413096031400B72EF6 /* w_dummy.h in Headers */,
+				2D0657773096031E00B72EF6 /* w_hvbox.h in Headers */,
+				2D06579B3096032500B72EF6 /* w_logviewer.h in Headers */,
+				2D06573B309602FF00B72EF6 /* w_placeholder.h in Headers */,
+				2D0657603096031B00B72EF6 /* w_playlist.h in Headers */,
+				2D0657893096032300B72EF6 /* w_playtb.h in Headers */,
+				2D06576C3096031C00B72EF6 /* w_scope.h in Headers */,
+				2D0657833096032200B72EF6 /* w_seekbar.h in Headers */,
+				2D0657723096031D00B72EF6 /* w_spectrum.h in Headers */,
+				2D0657483096031500B72EF6 /* w_splitter.h in Headers */,
+				2D0657653096031B00B72EF6 /* w_tabbed_playlist.h in Headers */,
+				2D06574E3096031600B72EF6 /* w_tabs.h in Headers */,
+				2D0657593096031A00B72EF6 /* w_tabstrip.h in Headers */,
+				2D0657903096032300B72EF6 /* w_volumebar.h in Headers */,
 				2DE3B7E02269BF3100AFF9AE /* widgets.h in Headers */,
 				2DE3B7D32269BF1700AFF9AE /* drawing.h in Headers */,
 				2DE3B7D62269BF1700AFF9AE /* deadbeefapp.h in Headers */,
@@ -18944,6 +19122,23 @@
 				2D2556D12E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c in Sources */,
 				2D2556DE2E48A5D700DA3757 /* parser.c in Sources */,
 				2DC656CE2744289C00583E14 /* dspconfig.c in Sources */,
+				2D0657573096031700B72EF6 /* w_box.c in Sources */,
+				2D0657803096032100B72EF6 /* w_button.c in Sources */,
+				2D0657983096032500B72EF6 /* w_ctvoices.c in Sources */,
+				2D0657453096031500B72EF6 /* w_dummy.c in Sources */,
+				2D06577B3096031F00B72EF6 /* w_hvbox.c in Sources */,
+				2D06579E3096032600B72EF6 /* w_logviewer.c in Sources */,
+				2D06573F3096031400B72EF6 /* w_placeholder.c in Sources */,
+				2D0657623096031B00B72EF6 /* w_playlist.c in Sources */,
+				2D06578C3096032300B72EF6 /* w_playtb.c in Sources */,
+				2D06576F3096031D00B72EF6 /* w_scope.c in Sources */,
+				2D0657873096032200B72EF6 /* w_seekbar.c in Sources */,
+				2D0657743096031E00B72EF6 /* w_spectrum.c in Sources */,
+				2D06574B3096031600B72EF6 /* w_splitter.c in Sources */,
+				2D0657683096031C00B72EF6 /* w_tabbed_playlist.c in Sources */,
+				2D0657503096031700B72EF6 /* w_tabs.c in Sources */,
+				2D06575C3096031A00B72EF6 /* w_tabstrip.c in Sources */,
+				2D0657923096032400B72EF6 /* w_volumebar.c in Sources */,
 				2DC656CF2744289C00583E14 /* widgets.c in Sources */,
 				2D56580D2AEE64200014443E /* gtkScriptable.c in Sources */,
 				2DC656D02744289C00583E14 /* pluginconf.c in Sources */,
@@ -19060,6 +19255,23 @@
 				2D2556D32E47D3BA00DA3757 /* gtkScriptablePropertySheetEditWindowController.c in Sources */,
 				2D2556DB2E48A5D700DA3757 /* parser.c in Sources */,
 				2DE3B7DD2269BF3100AFF9AE /* dspconfig.c in Sources */,
+				2D0657563096031700B72EF6 /* w_box.c in Sources */,
+				2D0657813096032100B72EF6 /* w_button.c in Sources */,
+				2D0657993096032500B72EF6 /* w_ctvoices.c in Sources */,
+				2D0657443096031500B72EF6 /* w_dummy.c in Sources */,
+				2D06577A3096031F00B72EF6 /* w_hvbox.c in Sources */,
+				2D06579F3096032600B72EF6 /* w_logviewer.c in Sources */,
+				2D06573E3096031400B72EF6 /* w_placeholder.c in Sources */,
+				2D0657633096031B00B72EF6 /* w_playlist.c in Sources */,
+				2D06578D3096032300B72EF6 /* w_playtb.c in Sources */,
+				2D06576E3096031D00B72EF6 /* w_scope.c in Sources */,
+				2D0657863096032200B72EF6 /* w_seekbar.c in Sources */,
+				2D0657753096031E00B72EF6 /* w_spectrum.c in Sources */,
+				2D06574A3096031600B72EF6 /* w_splitter.c in Sources */,
+				2D0657693096031C00B72EF6 /* w_tabbed_playlist.c in Sources */,
+				2D0657513096031700B72EF6 /* w_tabs.c in Sources */,
+				2D06575D3096031A00B72EF6 /* w_tabstrip.c in Sources */,
+				2D0657933096032400B72EF6 /* w_volumebar.c in Sources */,
 				2DE3B80A2269BF3100AFF9AE /* widgets.c in Sources */,
 				2D56580E2AEE64210014443E /* gtkScriptable.c in Sources */,
 				2DE3B7D92269BF1700AFF9AE /* pluginconf.c in Sources */,

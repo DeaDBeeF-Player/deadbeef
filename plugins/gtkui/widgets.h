@@ -99,65 +99,72 @@ w_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 GtkWidget *
 w_get_container (ddb_gtkui_widget_t *w);
 
-ddb_gtkui_widget_t *
-w_hsplitter_create (void);
+// utility code for parsing keyvalues
+#define get_keyvalue(s, key, val)            \
+    {                                        \
+        s = gettoken_ext (s, key, "={}();"); \
+        if (!s) {                            \
+            return NULL;                     \
+        }                                    \
+        if (s && !strcmp (key, "{")) {       \
+            break;                           \
+        }                                    \
+        s = gettoken_ext (s, val, "={}();"); \
+        if (!s || strcmp (val, "=")) {       \
+            return NULL;                     \
+        }                                    \
+        s = gettoken_ext (s, val, "={}();"); \
+        if (!s) {                            \
+            return NULL;                     \
+        }                                    \
+    }
 
-ddb_gtkui_widget_t *
-w_vsplitter_create (void);
+// Helpers for the widget implementations, see widgets/
 
-ddb_gtkui_widget_t *
-w_box_create (void);
+void
+w_container_add (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 
-ddb_gtkui_widget_t *
-w_dummy_create (void);
-
-ddb_gtkui_widget_t *
-w_tabstrip_create (void);
-
-ddb_gtkui_widget_t *
-w_tabbed_playlist_create (void);
-
-ddb_gtkui_widget_t *
-w_playlist_create (void);
-
-ddb_gtkui_widget_t *
-w_placeholder_create (void);
-
-ddb_gtkui_widget_t *
-w_tabs_create (void);
-
-ddb_gtkui_widget_t *
-w_scope_create (void);
-
-ddb_gtkui_widget_t *
-w_spectrum_create (void);
-
-ddb_gtkui_widget_t *
-w_hbox_create (void);
-
-ddb_gtkui_widget_t *
-w_vbox_create (void);
-
-ddb_gtkui_widget_t *
-w_button_create (void);
-
-ddb_gtkui_widget_t *
-w_seekbar_create (void);
-
-ddb_gtkui_widget_t *
-w_playtb_create (void);
-
-ddb_gtkui_widget_t *
-w_volumebar_create (void);
-
-ddb_gtkui_widget_t *
-w_ctvoices_create (void);
-
-ddb_gtkui_widget_t *
-w_logviewer_create (void);
+void
+w_container_remove (ddb_gtkui_widget_t *cont, ddb_gtkui_widget_t *child);
 
 gboolean
-w_logviewer_is_present(void);
+w_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer user_data);
+
+gboolean
+w_draw_event (GtkWidget *widget, cairo_t *cr, gpointer user_data);
+
+// Returns the widget, and its children, as a new json object
+struct json_t *
+w_save_widget_to_json (ddb_gtkui_widget_t *w);
+
+// Returns the user visible title of the widget type, or NULL if the type is not exposed to the user
+const char *
+w_get_title (ddb_gtkui_widget_t *w);
+
+void
+w_add_menu_separator (GtkWidget *menu);
+
+// A row of the visualization preferences dialog: "Use custom <color>" checkbox and a color button.
+// The dialog writes directly into `use_custom` and `color`, so the widget updates live.
+typedef struct {
+    const char *label;
+    gboolean *use_custom;
+    gboolean *color_set; // whether `color` holds a color chosen by the user
+    GdkColor *color;
+    GdkColor default_color; // shown while there is no custom color
+} w_vis_color_row_t;
+
+// Shows the modal preferences dialog. Returns TRUE if anything was changed.
+gboolean
+w_vis_color_preferences_dialog (const char *title, w_vis_color_row_t *rows, int row_count);
+
+// Colors are stored as "r g b a" with components in 0..1, same as in the macOS UI.
+// The returned string must be freed by the caller.
+char *
+w_vis_color_to_string (const GdkColor *color);
+
+gboolean
+w_vis_color_from_string (const char *str, GdkColor *color);
 
 ddb_gtkui_widget_t *
 w_create_from_conf (const char *key);

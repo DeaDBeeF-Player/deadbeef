@@ -69,6 +69,23 @@ GTKUI_SOURCES = \
 	scriptable/gtkScriptableListEditViewController.c scriptable/gtkScriptableListEditViewController.h\
 	scriptable/gtkScriptableListEditWindowController.c scriptable/gtkScriptableListEditWindowController.h\
 	scriptable/gtkScriptableSelectViewController.c scriptable/gtkScriptableSelectViewController.h\
+	widgets/w_box.c widgets/w_box.h\
+	widgets/w_button.c widgets/w_button.h\
+	widgets/w_ctvoices.c widgets/w_ctvoices.h\
+	widgets/w_dummy.c widgets/w_dummy.h\
+	widgets/w_hvbox.c widgets/w_hvbox.h\
+	widgets/w_logviewer.c widgets/w_logviewer.h\
+	widgets/w_placeholder.c widgets/w_placeholder.h\
+	widgets/w_playlist.c widgets/w_playlist.h\
+	widgets/w_playtb.c widgets/w_playtb.h\
+	widgets/w_scope.c widgets/w_scope.h\
+	widgets/w_seekbar.c widgets/w_seekbar.h\
+	widgets/w_spectrum.c widgets/w_spectrum.h\
+	widgets/w_splitter.c widgets/w_splitter.h\
+	widgets/w_tabbed_playlist.c widgets/w_tabbed_playlist.h\
+	widgets/w_tabs.c widgets/w_tabs.h\
+	widgets/w_tabstrip.c widgets/w_tabstrip.h\
+	widgets/w_volumebar.c widgets/w_volumebar.h\
 	undostack.c undostack.h\
 	undointegration.c undointegration.h
 
