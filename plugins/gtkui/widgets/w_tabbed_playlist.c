@@ -31,6 +31,7 @@
 #include "../gtkui.h"
 #include "../playlist/ddblistview.h"
 #include "../playlist/playlistcontroller.h"
+#include "../support.h"
 #ifdef DDB_WARN_DEPRECATED
 #    undef DDB_WARN_DEPRECATED
 #endif

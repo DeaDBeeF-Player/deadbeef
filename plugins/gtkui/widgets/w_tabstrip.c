@@ -29,6 +29,7 @@
 #include "../ddbtabstrip.h"
 #include "../drawing.h"
 #include "../gtkui.h"
+#include "../support.h"
 #ifdef DDB_WARN_DEPRECATED
 #    undef DDB_WARN_DEPRECATED
 #endif

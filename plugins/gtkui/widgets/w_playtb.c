@@ -28,6 +28,7 @@
 #include <string.h>
 #include "../callbacks.h"
 #include "../gtkui.h"
+#include "../support.h"
 #ifdef DDB_WARN_DEPRECATED
 #    undef DDB_WARN_DEPRECATED
 #endif
