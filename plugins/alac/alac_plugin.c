@@ -117,7 +117,7 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
 
     info->mp4reader.ptrhandle = info->file;
     mp4_init_ddb_file_callbacks (&info->mp4reader);
-    info->mp4file = mp4p_open(&info->mp4reader);
+    info->mp4file = mp4p_open_ex (&info->mp4reader, MP4P_OPEN_PLAYBACK_ONLY);
 
     // iterate over tracks, find the ALAC one
     info->trak = mp4p_atom_find (info->mp4file, "moov/trak");
