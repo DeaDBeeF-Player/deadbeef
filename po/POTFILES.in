@@ -18,6 +18,7 @@ plugins/gtkui/gtk/menus.ui
 plugins/gtkui/gtkui.c
 plugins/gtkui/gtkui_deletefromdisk.c
 plugins/gtkui/interface.c
+plugins/gtkui/layoutmenu.c
 plugins/gtkui/medialib/medialibwidget.c
 plugins/gtkui/playlist/mainplaylist.c
 plugins/gtkui/playlist/plcommon.c
@@ -42,8 +43,18 @@ plugins/gtkui/scriptable/gtkScriptablePropertySheetEditWindowController.c
 plugins/gtkui/search.c
 plugins/gtkui/selpropertieswidget.c
 plugins/gtkui/trkproperties.c
+plugins/gtkui/trkproperties_artwork.c
 plugins/gtkui/undointegration.c
 plugins/gtkui/widgets.c
+plugins/gtkui/widgets/w_button.c
+plugins/gtkui/widgets/w_ctvoices.c
+plugins/gtkui/widgets/w_hvbox.c
+plugins/gtkui/widgets/w_playlist.c
+plugins/gtkui/widgets/w_scope.c
+plugins/gtkui/widgets/w_spectrum.c
+plugins/gtkui/widgets/w_splitter.c
+plugins/gtkui/widgets/w_tabs.c
+plugins/gtkui/widgets/w_volumebar.c
 plugins/lyrics/lyrics.c
 plugins/lyrics/support.c
 plugins/notify/notify.c
@@ -54,6 +65,7 @@ plugins/shellexecui/shellexecui.c
 plugins/shellexecui/support.c
 plugins/wildmidi/wildmidiplug.c
 src/actionhandlers.c
+src/actionhelp.c
 src/main.c
 src/playlist.c
 src/plugins.c
