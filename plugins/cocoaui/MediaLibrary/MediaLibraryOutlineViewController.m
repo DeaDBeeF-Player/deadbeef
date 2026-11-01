@@ -75,6 +75,9 @@ _album_art_mode_from_conf (void) {
 
 @property (nonatomic) MediaLibraryAlbumArtMode albumArtMode;
 
+// Incremented whenever the cover state is reset, so that the results of the requests made before it can be ignored
+@property (nonatomic) NSInteger artworkGeneration;
+
 @property (nonatomic) BOOL hasChangedSelection;
 
 @end
@@ -370,9 +373,14 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     }
 }
 
+- (void)invalidateArtwork {
+    self.artworkGeneration += 1;
+    [self resetArtworkForItem:self.medialibRootItem];
+}
+
 - (void)artworkEvent:(ddb_artwork_listener_event_t)event {
     if (event == DDB_ARTWORK_SETTINGS_DID_CHANGE) {
-        [self resetArtworkForItem:self.medialibRootItem];
+        [self invalidateArtwork];
         [self.albumArtCache removeAllObjects];
         [self.outlineView reloadData];
     }
@@ -494,7 +502,7 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
             if (albumArtMode != self.albumArtMode) {
                 self.albumArtMode = albumArtMode;
                 // Items which were requested under the previous mode may have no cover
-                [self resetArtworkForItem:self.medialibRootItem];
+                [self invalidateArtwork];
                 [self.outlineView reloadData];
             }
         });
@@ -645,19 +653,49 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     return image;
 }
 
+// Returns the first track of the album which the given track item belongs to, so that all the tracks of an album
+// request the same cover, instead of each track requesting its own.
+- (ddb_playItem_t *)firstTrackOfAlbumForItem:(MediaLibraryItem *)item {
+    ddb_playItem_t *track = item.playItem;
+    id parent = [self.outlineView parentForItem:item];
+    if (track == NULL || ![parent isKindOfClass:MediaLibraryItem.class]) {
+        return track;
+    }
+    MediaLibraryItem *parentItem = parent;
+    if (parentItem == self.medialibRootItem || parentItem.numberOfChildren == 0) {
+        return track;
+    }
+    ddb_playItem_t *firstTrack = [parentItem childAtIndex:0].playItem;
+    if (firstTrack == NULL || firstTrack == track) {
+        return track;
+    }
+    deadbeef->pl_lock ();
+    const char *album = deadbeef->pl_find_meta (track, "album");
+    const char *firstAlbum = deadbeef->pl_find_meta (firstTrack, "album");
+    BOOL sameAlbum = album != NULL && firstAlbum != NULL && !strcmp (album, firstAlbum);
+    deadbeef->pl_unlock ();
+    return sameAlbum ? firstTrack : track;
+}
+
 - (void)updateCoverForItem:(MediaLibraryItem *)item track:(ddb_playItem_t *)track {
+    NSInteger generation = self.artworkGeneration;
     void (^completionBlock)(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) = ^(ddb_cover_query_t *query, ddb_cover_info_t *cover, int error) {
         NSImage *image = [self getImage:query coverInfo:cover error:error];
 
         weakify(self);
         dispatch_async(dispatch_get_main_queue(), ^{
             strongify(self);
-            if (image != nil) {
+            BOOL isStale = self == nil || generation != self.artworkGeneration;
+            if (image != nil && !isStale) {
                 NSString *key = [self albumArtCacheKeyForTrack:query->track];
                 self.albumArtCache[key] = image;
             }
             deadbeef->pl_item_unref (query->track);
             free (query);
+            if (isStale) {
+                // The artwork settings have changed since the request, the item has requested the cover again
+                return;
+            }
             NSInteger row = [self.outlineView rowForItem:item];
             if (row == -1) {
                 return;
@@ -723,7 +761,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
                 it = [mlItem childAtIndex:0].playItem;
             }
             else {
-                it = mlItem.playItem;
+                it = [self firstTrackOfAlbumForItem:mlItem];
             }
 
             if (it) {
