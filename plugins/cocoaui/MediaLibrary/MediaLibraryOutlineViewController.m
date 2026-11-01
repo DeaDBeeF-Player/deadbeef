@@ -25,6 +25,23 @@ extern DB_functions_t *deadbeef;
 
 static void *kPresetCtx = &kPresetCtx;
 
+// Values of the cocoaui.show_medialib_covers setting
+typedef NS_ENUM(int, MediaLibraryAlbumArtMode) {
+    MediaLibraryAlbumArtModeNone = 0,
+    MediaLibraryAlbumArtModeFolders = 1,
+    MediaLibraryAlbumArtModeTracks = 2,
+    MediaLibraryAlbumArtModeFoldersAndTracks = 3,
+};
+
+static MediaLibraryAlbumArtMode
+_album_art_mode_from_conf (void) {
+    int mode = deadbeef->conf_get_int ("cocoaui.show_medialib_covers", MediaLibraryAlbumArtModeFolders);
+    if (mode < MediaLibraryAlbumArtModeNone || mode > MediaLibraryAlbumArtModeFoldersAndTracks) {
+        return MediaLibraryAlbumArtModeFolders;
+    }
+    return (MediaLibraryAlbumArtMode)mode;
+}
+
 @interface MediaLibraryOutlineViewController() <NSOutlineViewDataSource,MediaLibraryOutlineViewDelegate,TrackContextMenuDelegate,TrackPropertiesWindowControllerDelegate> {
     int64_t _modelListenerId;
 }
@@ -56,7 +73,7 @@ static void *kPresetCtx = &kPresetCtx;
 
 @property (nonatomic) NSImage *folderImage;
 
-@property (nonatomic) BOOL showAlbumArt;
+@property (nonatomic) MediaLibraryAlbumArtMode albumArtMode;
 
 @property (nonatomic) BOOL hasChangedSelection;
 
@@ -137,7 +154,7 @@ _model_listener (struct scriptableModel_t *model, void *user_data) {
     self.outlineView.target = self;
 
     self.albumArtCache = [NSMutableDictionary new];
-    self.showAlbumArt = deadbeef->conf_get_int ("cocoaui.show_medialib_covers", 1) ? YES : NO;
+    self.albumArtMode = _album_art_mode_from_conf ();
 
     self.selectedItems = [NSMutableArray new];
 
@@ -337,6 +354,14 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     [self updateMedialibStatusForView:view];
 }
 
+- (BOOL)showsAlbumArtOnFolders {
+    return self.albumArtMode == MediaLibraryAlbumArtModeFolders || self.albumArtMode == MediaLibraryAlbumArtModeFoldersAndTracks;
+}
+
+- (BOOL)showsAlbumArtOnTracks {
+    return self.albumArtMode == MediaLibraryAlbumArtModeTracks || self.albumArtMode == MediaLibraryAlbumArtModeFoldersAndTracks;
+}
+
 - (void)resetArtworkForItem:(MediaLibraryItem *)item {
     item.coverImage = nil;
     item.coverObtained = NO;
@@ -464,10 +489,12 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
 
 - (int)widgetMessage:(int)_id ctx:(uint64_t)ctx p1:(uint32_t)p1 p2:(uint32_t)p2 {
     if (_id == DB_EV_CONFIGCHANGED) {
-        BOOL showAlbumArt = deadbeef->conf_get_int ("cocoaui.show_medialib_covers", 1) ? YES : NO;
+        MediaLibraryAlbumArtMode albumArtMode = _album_art_mode_from_conf ();
         dispatch_async (dispatch_get_main_queue (), ^{
-            if (showAlbumArt != self.showAlbumArt) {
-                self.showAlbumArt = showAlbumArt;
+            if (albumArtMode != self.albumArtMode) {
+                self.albumArtMode = albumArtMode;
+                // Items which were requested under the previous mode may have no cover
+                [self resetArtworkForItem:self.medialibRootItem];
                 [self.outlineView reloadData];
             }
         });
@@ -661,12 +688,14 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
     NSTableCellView *view;
     if ([item isKindOfClass:MediaLibraryItem.class]) {
         MediaLibraryItem *mlItem = item;
-        ddb_playItem_t *it = NULL;
-        if (mlItem.numberOfChildren) {
-            it = [mlItem childAtIndex:0].playItem;
+        BOOL isFolder = mlItem.numberOfChildren != 0;
+        BOOL showArt = NO;
+        if (item != self.medialibRootItem) {
+            showArt = isFolder ? [self showsAlbumArtOnFolders] : [self showsAlbumArtOnTracks];
         }
+
         // Without album art use the text-only cell, so that no space is reserved for the image
-        if (item == self.medialibRootItem || !self.showAlbumArt) {
+        if (!showArt) {
             view = [outlineView makeViewWithIdentifier:@"TextCell" owner:self];
         }
         else {
@@ -678,14 +707,23 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
         else {
             view.textField.stringValue = mlItem.stringValue;
 
-            if (!self.showAlbumArt) {
+            if (!showArt) {
                 return view;
             }
 
             view.imageView.image = nil;
 
-            if (mlItem.coverImage == nil && mlItem.children.count != 0) {
+            if (mlItem.coverImage == nil && isFolder) {
                 view.imageView.image = self.folderImage;
+            }
+
+            // Folders get the cover of their first child, tracks get the cover of their album
+            ddb_playItem_t *it = NULL;
+            if (isFolder) {
+                it = [mlItem childAtIndex:0].playItem;
+            }
+            else {
+                it = mlItem.playItem;
             }
 
             if (it) {
