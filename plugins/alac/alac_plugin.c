@@ -167,7 +167,9 @@ alacplug_init (DB_fileinfo_t *_info, DB_playItem_t *it) {
     _info->fmt.bps = bps;
 
     info->_alac = create_alac (bps, channels);
-    alac_set_info (info->_alac, (char *)alac->asc);
+    if (alac_set_info (info->_alac, (char *)alac->asc) < 0) {
+        return -1;
+    }
 
     if (!info->file->vfs->is_streaming ()) {
         int64_t endsample = deadbeef->pl_item_get_endsample(it);

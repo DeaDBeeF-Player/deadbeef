@@ -98,11 +98,11 @@ struct alac_file
 };
 
 
-static void allocate_buffers(alac_file *alac)
+static int allocate_buffers(alac_file *alac)
 {
     size_t buf_size = (size_t)alac->setinfo_max_samples_per_frame * 4;
     if (buf_size / 4 != alac->setinfo_max_samples_per_frame) {
-        return;
+        return -1;
     }
 
     alac->predicterror_buffer_a = malloc(buf_size);
@@ -113,9 +113,18 @@ static void allocate_buffers(alac_file *alac)
 
     alac->uncompressed_bytes_buffer_a = malloc(buf_size);
     alac->uncompressed_bytes_buffer_b = malloc(buf_size);
+
+    if (!alac->predicterror_buffer_a || !alac->predicterror_buffer_b || !alac->outputsamples_buffer_a
+        || !alac->outputsamples_buffer_b || !alac->uncompressed_bytes_buffer_a
+        || !alac->uncompressed_bytes_buffer_b) {
+        // the remaining buffers are released by alac_file_free
+        return -1;
+    }
+
+    return 0;
 }
 
-void alac_set_info(alac_file *alac, char *inputbuffer)
+int alac_set_info(alac_file *alac, char *inputbuffer)
 {
   char *ptr = inputbuffer;
   ptr += 4; /* size */
@@ -163,8 +172,7 @@ void alac_set_info(alac_file *alac, char *inputbuffer)
   alac->samplesize = alac->setinfo_sample_size;
   alac->bytespersample = (alac->setinfo_sample_size / 8) * alac->numchannels;
 
-  allocate_buffers(alac);
-
+  return allocate_buffers(alac);
 }
 
 int

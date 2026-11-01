@@ -7,7 +7,7 @@ alac_file *create_alac(int samplesize, int numchannels);
 void decode_frame(alac_file *alac,
                   unsigned char *inbuffer, int insize,
                   void *outbuffer, int *outputsize);
-void alac_set_info(alac_file *alac, char *inputbuffer);
+int alac_set_info(alac_file *alac, char *inputbuffer);
 
 int alac_get_samplerate(alac_file *alac);
 int alac_get_bitspersample(alac_file *alac);
