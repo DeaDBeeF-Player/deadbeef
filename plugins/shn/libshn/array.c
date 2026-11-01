@@ -29,8 +29,19 @@ void *pmalloc(ulong size, shn_file *this_shn) {
 slong **long2d(ulong n0, ulong n1, shn_file *this_shn) {
   slong **array0 = NULL;
 
-  if((array0 = (slong**) pmalloc((ulong) (n0 * sizeof(slong*) +
-					 n0 * n1 * sizeof(slong)),this_shn)) != NULL ) {
+  size_t ptr_size = (size_t)n0 * sizeof(slong*);
+  size_t data_size = (size_t)n0 * (size_t)n1 * sizeof(slong);
+  if (n0 != 0 && data_size / n0 / sizeof(slong) != n1) {
+    shn_error_fatal(this_shn, "Integer overflow in long2d(%lu, %lu)", (unsigned long)n0, (unsigned long)n1);
+    return NULL;
+  }
+  size_t total = ptr_size + data_size;
+  if (total < ptr_size) {
+    shn_error_fatal(this_shn, "Integer overflow in long2d(%lu, %lu)", (unsigned long)n0, (unsigned long)n1);
+    return NULL;
+  }
+
+  if((array0 = (slong**) pmalloc((ulong) total, this_shn)) != NULL ) {
     slong *array1 = (slong*) (array0 + n0);
     int i;
 

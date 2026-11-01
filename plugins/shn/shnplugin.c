@@ -230,6 +230,10 @@ shn_init_decoder (shn_fileinfo_t *info) {
     }
 
     info->nchan = UINT_GET (CHANSIZE, info->shnfile);
+    if (info->nchan == 0 || info->nchan > 8) {
+        trace ("shn_init_decoder: invalid channel count: %d\n", info->nchan);
+        return -1;
+    }
 
     /* get blocksize if version > 0 */
     if (version > 0) {
@@ -244,6 +248,11 @@ shn_init_decoder (shn_fileinfo_t *info) {
     }
     else
         info->blocksize = DEFAULT_BLOCK_SIZE;
+
+    if (info->blocksize == 0 || info->blocksize > 65536) {
+        trace ("shn_init_decoder: invalid block size: %d\n", info->blocksize);
+        return -1;
+    }
 
     info->nwrap = MAX (NWRAP, info->maxnlpc);
 
