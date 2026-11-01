@@ -541,12 +541,18 @@ static int asf_parse_header(DB_FILE *fd, asf_waveformatex_t* wfx, DB_playItem_t 
                             wfx->audiostream = flags&0x7f;
                         } else if (wfx->codec_id == ASF_CODEC_ID_WMAPRO) {
                             /* wma pro decoder needs the extra-data */
+                            if (wfx->datalen > sizeof(wfx->data)) {
+                                return ASF_ERROR_INVALID_LENGTH;
+                            }
                             deadbeef->fread(wfx->data, wfx->datalen, 1, fd);
                             SKIP_BYTES(fd,current.size - 24 - 72 - wfx->datalen);
                             wfx->audiostream = flags&0x7f;
                             /* Correct codectype to redirect playback to the proper .codec */
                             codectype = AFMT_WMAPRO;
                         } else if (wfx->codec_id == ASF_CODEC_ID_WMAVOICE) {
+                            if (wfx->datalen > sizeof(wfx->data)) {
+                                return ASF_ERROR_INVALID_LENGTH;
+                            }
                             deadbeef->fread(wfx->data, wfx->datalen, 1, fd);
                             SKIP_BYTES(fd,current.size - 24 - 72 - wfx->datalen);
                             wfx->audiostream = flags&0x7f;
