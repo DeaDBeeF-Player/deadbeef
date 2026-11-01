@@ -127,16 +127,26 @@ init_decode_state (shn_file *this_shn) {
 
 #define SHN_MAX_NCHAN 8
 #define SHN_MAX_BLOCKSIZE 65536
+#define SHN_MAX_NLPC 1024
+#define SHN_MAX_NMEAN 1024
 
-// Returns 1 if the channel count and block size read from the bitstream are sane
+// Returns 1 if the stream parameters read from the bitstream are sane
 static int
-shn_validate_stream_params (int nchan, int blocksize) {
+shn_validate_stream_params (int nchan, int blocksize, int maxnlpc, int nmean) {
     if (nchan <= 0 || nchan > SHN_MAX_NCHAN) {
         trace ("shn: invalid channel count: %d\n", nchan);
         return 0;
     }
     if (blocksize <= 0 || blocksize > SHN_MAX_BLOCKSIZE) {
         trace ("shn: invalid block size: %d\n", blocksize);
+        return 0;
+    }
+    if (maxnlpc < 0 || maxnlpc > SHN_MAX_NLPC) {
+        trace ("shn: invalid max LPC order: %d\n", maxnlpc);
+        return 0;
+    }
+    if (nmean < 0 || nmean > SHN_MAX_NMEAN) {
+        trace ("shn: invalid nmean: %d\n", nmean);
         return 0;
     }
     return 1;
@@ -262,7 +272,7 @@ shn_init_decoder (shn_fileinfo_t *info) {
     else
         info->blocksize = DEFAULT_BLOCK_SIZE;
 
-    if (!shn_validate_stream_params (info->nchan, info->blocksize)) {
+    if (!shn_validate_stream_params (info->nchan, info->blocksize, info->maxnlpc, info->nmean)) {
         return -1;
     }
 
@@ -1302,7 +1312,7 @@ get_wave_header (shn_file *this_shn) {
     else
         blocksize = DEFAULT_BLOCK_SIZE;
 
-    if (!shn_validate_stream_params (nchan, blocksize)) {
+    if (!shn_validate_stream_params (nchan, blocksize, maxnlpc, nmean)) {
         retval = 0;
         goto got_enough_data;
     }
