@@ -15,6 +15,7 @@
 #include "pltmeta.h"
 #include "plugins.h"
 #include "sort.h"
+#include <string.h>
 #include <string>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -135,6 +136,152 @@ TEST(PlaylistTests, test_PlaylistAutosort) {
     pl_item_unref(it_C);
 
     plt_unref(plt);
+}
+
+class PlaylistAutosortTests: public ::testing::Test {
+protected:
+    playlist_t *plt;
+
+    void SetUp() override {
+        messagepump_init();
+        plt = plt_alloc("test");
+        plt_add_meta(plt, "autosort_mode", "tf");
+        plt_add_meta(plt, "autosort_tf", "%path%");
+        plt_set_meta_int(plt, "autosort_ascending", 1);
+        appendTrack(plt, "/music/D");
+        appendTrack(plt, "/music/B");
+    }
+
+    void TearDown() override {
+        plt_unref(plt);
+    }
+
+    void appendTrack(playlist_t *playlist, const char *path) {
+        playItem_t *it = pl_item_alloc();
+        pl_add_meta(it, ":URI", path);
+        plt_insert_item(playlist, playlist->tail[PL_MAIN], it);
+        pl_item_unref(it);
+    }
+
+    std::string order() {
+        std::string result;
+        for (playItem_t *it = plt->head[PL_MAIN]; it; it = it->next[PL_MAIN]) {
+            result += strrchr(pl_find_meta_raw(it, ":URI"), '/')[1];
+        }
+        return result;
+    }
+};
+
+TEST_F(PlaylistAutosortTests, test_AddFiles_AutosortOffByDefault_PreservesInsertionOrder) {
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    appendTrack(plt, "/music/C");
+    appendTrack(plt, "/music/A");
+    plt_add_files_end(plt, 0);
+
+    EXPECT_EQ("DBCA", order());
+}
+
+TEST_F(PlaylistAutosortTests, test_AddFiles_AutosortDisabled_PreservesInsertionOrder) {
+    plt_set_meta_int(plt, "autosort_enabled", 0);
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    appendTrack(plt, "/music/C");
+    appendTrack(plt, "/music/A");
+    plt_add_files_end(plt, 0);
+
+    EXPECT_EQ("DBCA", order());
+}
+
+TEST_F(PlaylistAutosortTests, test_AddFiles_AutosortEnabled_SortsOnlyAddedTracks) {
+    plt_set_meta_int(plt, "autosort_enabled", 1);
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    appendTrack(plt, "/music/C");
+    appendTrack(plt, "/music/A");
+    plt_add_files_end(plt, 0);
+
+    EXPECT_EQ("DBAC", order());
+}
+
+TEST_F(PlaylistAutosortTests, test_AddFiles_DescendingAutosort_SortsOnlyAddedTracks) {
+    plt_set_meta_int(plt, "autosort_enabled", 1);
+    plt_set_meta_int(plt, "autosort_ascending", 0);
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    appendTrack(plt, "/music/A");
+    appendTrack(plt, "/music/C");
+    plt_add_files_end(plt, 0);
+
+    EXPECT_EQ("DBCA", order());
+}
+
+TEST_F(PlaylistAutosortTests, test_MoveIncomingItemsDuringAddition_SortsIncomingTracks) {
+    plt_set_meta_int(plt, "autosort_enabled", 1);
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    playlist_t *incoming = plt_alloc("incoming");
+    appendTrack(incoming, "/music/C");
+    appendTrack(incoming, "/music/A");
+    plt_move_all_items(plt, incoming, plt->tail[PL_MAIN]);
+    plt_add_files_end(plt, 0);
+    plt_unref(incoming);
+
+    EXPECT_EQ("DBAC", order());
+}
+
+TEST_F(PlaylistAutosortTests, test_MoveExistingTrackDuringAddition_DoesNotIncludeItInAutosort) {
+    plt_set_meta_int(plt, "autosort_enabled", 1);
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    uint32_t indices[] = {0};
+    plt_move_items(plt, PL_MAIN, plt, NULL, indices, 1);
+    appendTrack(plt, "/music/C");
+    appendTrack(plt, "/music/A");
+    plt_add_files_end(plt, 0);
+
+    EXPECT_EQ("BDAC", order());
+}
+
+TEST_F(PlaylistAutosortTests, test_MoveItems_AutosortEnabled_DoesNotSortPlaylist) {
+    plt_set_meta_int(plt, "autosort_enabled", 1);
+    appendTrack(plt, "/music/C");
+    uint32_t indices[] = {1};
+    plt_move_items(plt, PL_MAIN, plt, NULL, indices, 1);
+
+    EXPECT_EQ("DCB", order());
+}
+
+TEST_F(PlaylistAutosortTests, test_AddFiles_AfterPreviousAddition_SortsOnlyLatestBatch) {
+    plt_set_meta_int(plt, "autosort_enabled", 1);
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    appendTrack(plt, "/music/C");
+    appendTrack(plt, "/music/A");
+    plt_add_files_end(plt, 0);
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    appendTrack(plt, "/music/F");
+    appendTrack(plt, "/music/0");
+    plt_add_files_end(plt, 0);
+
+    EXPECT_EQ("DBAC0F", order());
+}
+
+TEST_F(PlaylistAutosortTests, test_Autosort_AfterAddition_SortsEntirePlaylist) {
+    plt_set_meta_int(plt, "autosort_enabled", 1);
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    appendTrack(plt, "/music/C");
+    appendTrack(plt, "/music/A");
+    plt_add_files_end(plt, 0);
+
+    plt_autosort(plt);
+
+    EXPECT_EQ("ABCD", order());
+}
+
+TEST_F(PlaylistAutosortTests, test_ExplicitSort_DuringAddition_SortsEntirePlaylist) {
+    plt_set_meta_int(plt, "autosort_enabled", 1);
+    ASSERT_EQ(0, plt_add_files_begin(plt, 0));
+    appendTrack(plt, "/music/C");
+    appendTrack(plt, "/music/A");
+
+    plt_sort_v2(plt, PL_MAIN, -1, "%path%", DDB_SORT_DESCENDING);
+    plt_add_files_end(plt, 0);
+
+    EXPECT_EQ("DCBA", order());
 }
 
 TEST(PlaylistTests, test_MoveSelectedItemsToAnotherPlaylist_SelectionPlaybackTimeIsPreserved) {

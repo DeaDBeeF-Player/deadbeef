@@ -58,6 +58,11 @@ typedef struct playItem_s {
     struct playItem_s *next[PL_MAX_ITERATORS]; // next item in linked list
     struct playItem_s *prev[PL_MAX_ITERATORS]; // prev item in linked list
     struct DB_metaInfo_s *meta; // linked list storing metainfo
+    // True for tracks inserted into this playlist while a file-add operation is active.
+    // Used by added-only Autosort; plt_add_files_end clears it after the optional sort.
+    // Same-playlist moves preserve the value and do not trigger Autosort.
+    // Transient and not serialized; false outside a file-add operation.
+    unsigned added : 1;
     unsigned selected : 1;
     unsigned played : 1; // mark as played in shuffle mode
     unsigned in_playlist : 1; // 1 if item is in playlist
