@@ -100,14 +100,19 @@ struct alac_file
 
 static void allocate_buffers(alac_file *alac)
 {
-    alac->predicterror_buffer_a = malloc(alac->setinfo_max_samples_per_frame * 4);
-    alac->predicterror_buffer_b = malloc(alac->setinfo_max_samples_per_frame * 4);
+    size_t buf_size = (size_t)alac->setinfo_max_samples_per_frame * 4;
+    if (buf_size / 4 != alac->setinfo_max_samples_per_frame) {
+        return;
+    }
 
-    alac->outputsamples_buffer_a = malloc(alac->setinfo_max_samples_per_frame * 4);
-    alac->outputsamples_buffer_b = malloc(alac->setinfo_max_samples_per_frame * 4);
-	
-	alac->uncompressed_bytes_buffer_a = malloc(alac->setinfo_max_samples_per_frame * 4);
-	alac->uncompressed_bytes_buffer_b = malloc(alac->setinfo_max_samples_per_frame * 4);
+    alac->predicterror_buffer_a = malloc(buf_size);
+    alac->predicterror_buffer_b = malloc(buf_size);
+
+    alac->outputsamples_buffer_a = malloc(buf_size);
+    alac->outputsamples_buffer_b = malloc(buf_size);
+
+    alac->uncompressed_bytes_buffer_a = malloc(buf_size);
+    alac->uncompressed_bytes_buffer_b = malloc(buf_size);
 }
 
 void alac_set_info(alac_file *alac, char *inputbuffer)
