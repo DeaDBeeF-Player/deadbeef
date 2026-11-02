@@ -162,3 +162,19 @@ GTK UI: user-visible strings are wrapped in `_("...")` for gettext.
   `gtkui:`, `mp4:`, `osx:`, `build:`, `streamer:`). Append `(fixes #NNNN)` when closing an issue. Short single-line subjects.
 - The default branch is `master`. Big changes should be discussed first (see `CONTRIBUTING.md`).
 - Don't commit generated autotools output, `testbuild/`, `.DS_Store`, or vim `*.un~` files.
+
+## Writing the ChangeLog
+
+The `ChangeLog` file has one `version X.Y.Z` section per release, with tab-indented one-line entries, `Fixed:` entries
+first and then `Added:` entries. To generate a section, read all commits from the previous release tag to `HEAD`
+(`git log --format='%an | %s' <tag>..HEAD`) and follow these rules:
+
+- One line per entry. Group commits that work on the same feature or bug into a single entry.
+- Within `Fixed:` and `Added:` groups, order entries chronologically, oldest first.
+- Skip internal developer changes: `CLAUDE.md`, CI, build system and dependency updates (googletest, ffmpeg, ...),
+  compiler/IDE compatibility fixes, refactorings, and test-only changes.
+- Skip commits that only backport a feature to cocoaui. A real bug fix inside such a commit still gets an entry.
+- Mention the UI in the entry text without parentheses (`... in GTKUI`, `... in CocoaUI`). If a feature ends up in both
+  UIs, write a single entry and don't mention either UI.
+- Credit the commit author in parentheses at the end of the entry (`(Nick Shaforostoff)`). Don't credit commits authored
+  by the project owner (Oleksiy Yakovenko). If the author isn't clear from the commit, don't guess.
