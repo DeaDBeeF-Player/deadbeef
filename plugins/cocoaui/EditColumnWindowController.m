@@ -44,7 +44,7 @@
         return;
     }
 
-    int type = 10; // custom
+    int type = 11; // custom
     switch (self.type) {
     case DB_COLUMN_FILENUMBER:
         type = 0;
@@ -55,11 +55,14 @@
     case DB_COLUMN_ALBUM_ART:
         type = 2;
         break;
+    case DB_COLUMN_TRACK_ART:
+        type = 3;
+        break;
     }
 
     self.titleTextField.stringValue = self.title;
     [self.typePopUpButton selectItemAtIndex: type];
-    self.formatTextField.enabled = type == 10;
+    self.formatTextField.enabled = type == 11;
     self.formatTextField.stringValue = self.format;
     self.sortFormatTextField.stringValue = self.sortFormat;
     [self.alignmentPopUpButton selectItemAtIndex:self.alignment];
@@ -88,9 +91,13 @@
 }
 
 - (IBAction)addColumnTypeChanged:(id)sender {
-    BOOL isCustom = self.typePopUpButton.indexOfSelectedItem == 10;
+    BOOL isCustom = self.typePopUpButton.indexOfSelectedItem == 11;
     self.formatTextField.enabled =  isCustom;
     self.titleTextField.stringValue = self.typePopUpButton.selectedItem.title;
+    if (self.typePopUpButton.indexOfSelectedItem == 3) {
+        // track cover art thumbnails look best centered
+        [self.alignmentPopUpButton selectItemAtIndex:ColumnAlignmentCenter];
+    }
 }
 
 - (IBAction)addColumnSetColorChanged:(NSButton *)sender {

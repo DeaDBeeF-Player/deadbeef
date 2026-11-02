@@ -145,6 +145,9 @@ Gw
                                     <menuItem title="Album Art" id="WbB-tB-XdC">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                     </menuItem>
+                                    <menuItem title="Track Cover Art" id="Tc4-Ar-7Kq">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                    </menuItem>
                                     <menuItem title="Artist - Album" id="l8f-lJ-bWg" userLabel="Artist / Album">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                     </menuItem>

@@ -42,8 +42,24 @@
 #define CELL_HPADDING 4
 #define ART_PADDING_HORZ 8
 #define ART_PADDING_VERT 0
+#define TRACK_ART_DEFAULT_WIDTH 36
+#define TRACK_ART_PADDING_HORZ 2
+#define TRACK_ART_PADDING_VERT 1
+// "no art" and "pending" thumbnails are retried after this many seconds, in case a request was cancelled or art appeared later
+#define TRACK_ART_RETRY_SECONDS 60
+#define TRACK_ART_CACHE_MAX 1000
 
 extern DB_functions_t *deadbeef;
+
+// A scaled cover thumbnail for the Track Cover Art column. A nil image means "no art yet": either the request is
+// still in flight, or there is no cover.
+@interface TrackArtThumb : NSObject
+@property (nonatomic) NSImage *image;
+@property (nonatomic) time_t time;
+@end
+
+@implementation TrackArtThumb
+@end
 
 @interface PlaylistViewController() <DdbListviewDelegate,TrackContextMenuDelegate,CoverManagerListener>
 
@@ -54,6 +70,10 @@ extern DB_functions_t *deadbeef;
 @property (nonatomic) NSDictionary *cellSelectedTextAttrsDictionary;
 @property (nonatomic) NSDictionary *groupTextAttrsDictionary;
 @property (nonatomic) int menuColumn;
+
+@property (nonatomic) NSCache<NSString *, TrackArtThumb *> *thumbCache;
+// Incremented when the thumbnails are cleared, so that the covers requested before that are not cached
+@property (nonatomic) int thumbGeneration;
 
 @property (nonatomic) char *groupBytecode;
 @property (nonatomic) BOOL pinGroups;
@@ -364,33 +384,42 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     case 2:
         type = DB_COLUMN_ALBUM_ART;
         break;
-    case 3: // artist / album
+    case 3:
+        type = DB_COLUMN_TRACK_ART;
+        break;
+    case 4: // artist / album
         self.editColumnWindowController.formatTextField.stringValue = @"$if(%album artist%,%album artist%,Unknown Artist)[ - %album%]";
         break;
-    case 4: // artist
+    case 5: // artist
         self.editColumnWindowController.formatTextField.stringValue = @"$if(%artist%,%artist%,Unknown Artist)";
         break;
-    case 5: // album
+    case 6: // album
         self.editColumnWindowController.formatTextField.stringValue = @"%album%";
         break;
-    case 6: // title / track artist
+    case 7: // title / track artist
         self.editColumnWindowController.formatTextField.stringValue = @"%title%[ // %track artist%]";
         break;
-    case 7: // duration
+    case 8: // duration
         self.editColumnWindowController.formatTextField.stringValue = @"%length%";
         break;
-    case 8: // track number
+    case 9: // track number
         self.editColumnWindowController.formatTextField.stringValue = @"%tracknumber%";
         break;
-    case 9: // album artist
+    case 10: // album artist
         self.editColumnWindowController.formatTextField.stringValue = @"$if(%album artist%,%album artist%,Unknown Artist)";
         break;
+    }
+
+    int size = self.columns[idx].size;
+    if (type == DB_COLUMN_TRACK_ART && self.columns[idx].title == NULL) {
+        // newly added column
+        size = TRACK_ART_DEFAULT_WIDTH;
     }
 
     [self initColumnAtIndex:idx
                       title:self.editColumnWindowController.titleTextField.stringValue.UTF8String
                  identifier:(int)type
-                       size:self.columns[idx].size
+                       size:size
                      format:self.editColumnWindowController.formatTextField.stringValue.UTF8String
                  sortFormat:self.editColumnWindowController.sortFormatTextField.stringValue.UTF8String
                   alignment:(int)self.editColumnWindowController.alignmentPopUpButton.indexOfSelectedItem shouldSetColor:(self.editColumnWindowController.setColorButton.state == NSControlStateValueOn)
@@ -809,6 +838,11 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
         return;
     }
 
+    if (self.columns[col].type == DB_COLUMN_TRACK_ART) {
+        [self drawTrackArtForRow:(DB_playItem_t *)row inColumn:col rect:rect];
+        return;
+    }
+
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track_safe ();
 
     if (self.columns[col].type == DB_COLUMN_PLAYING && playing_track && (DB_playItem_t *)row == playing_track) {
@@ -1050,6 +1084,110 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
     }
 
     [image drawInRect:drawRect];
+}
+
+- (void)storeThumb:(NSImage *)image forKey:(NSString *)key {
+    if (self.thumbCache == nil) {
+        self.thumbCache = [NSCache new];
+        self.thumbCache.countLimit = TRACK_ART_CACHE_MAX;
+    }
+    TrackArtThumb *thumb = [TrackArtThumb new];
+    thumb.image = image;
+    thumb.time = time (NULL);
+    [self.thumbCache setObject:thumb forKey:key];
+}
+
+- (NSImage *)scaledThumbForImage:(NSImage *)image availableSize:(CGSize)availableSize {
+    if (image.size.width <= 0 || image.size.height <= 0) {
+        return nil;
+    }
+    CGSize size = [CoverManager.shared desiredSizeForImageSize:image.size availableSize:availableSize];
+    size.width = MAX (1, size.width);
+    size.height = MAX (1, size.height);
+    return [CoverManager.shared createScaledImage:image newSize:size];
+}
+
+- (void)drawThumb:(NSImage *)image inRect:(NSRect)rect column:(DdbListviewCol_t)col availableSize:(CGSize)availableSize {
+    CGSize desiredSize = [CoverManager.shared desiredSizeForImageSize:image.size availableSize:availableSize];
+    CGSize drawSize = [self.view convertSizeFromBacking:desiredSize];
+
+    CGFloat x = rect.origin.x + TRACK_ART_PADDING_HORZ;
+    switch (self.columns[col].alignment) {
+    case ColumnAlignmentCenter:
+        x = rect.origin.x + (rect.size.width - drawSize.width) / 2;
+        break;
+    case ColumnAlignmentRight:
+        x = NSMaxX (rect) - TRACK_ART_PADDING_HORZ - drawSize.width;
+        break;
+    default:
+        break;
+    }
+    CGFloat y = rect.origin.y + (rect.size.height - drawSize.height) / 2;
+
+    [image drawInRect:NSMakeRect (x, y, drawSize.width, drawSize.height)];
+}
+
+- (void)drawTrackArtForRow:(DB_playItem_t *)track inColumn:(DdbListviewCol_t)col rect:(NSRect)rect {
+    CGFloat availWidth = rect.size.width - TRACK_ART_PADDING_HORZ * 2;
+    CGFloat availHeight = rect.size.height - TRACK_ART_PADDING_VERT * 2;
+    if (availWidth < 1 || availHeight < 1) {
+        return;
+    }
+    CGSize availableSize = [self.view convertSizeToBacking:CGSizeMake (availWidth, availHeight)];
+
+    // Key by album (folder + album tag), not by track: the cover manager caches per track,
+    // so this way each album's cover is decoded and scaled once for all of its tracks.
+    char keyBuffer[2048];
+    deadbeef->pl_lock ();
+    const char *uri = deadbeef->pl_find_meta (track, ":URI");
+    const char *album = deadbeef->pl_find_meta (track, "album");
+    const char *slash = (uri && album) ? strrchr (uri, '/') : NULL;
+    int dirLen = slash ? (int)(slash - uri) : (uri ? (int)strlen (uri) : 0);
+    snprintf (keyBuffer, sizeof (keyBuffer), "%dx%d:%.*s|%s", (int)availableSize.width, (int)availableSize.height, dirLen, uri ? uri : "", album ? album : "");
+    deadbeef->pl_unlock ();
+
+    NSString *key = [NSString stringWithUTF8String:keyBuffer];
+    if (key == nil) {
+        return;
+    }
+
+    TrackArtThumb *thumb = [self.thumbCache objectForKey:key];
+    if (thumb != nil && thumb.image == nil && time (NULL) - thumb.time > TRACK_ART_RETRY_SECONDS) {
+        thumb = nil;
+    }
+    if (thumb != nil) {
+        if (thumb.image != nil) {
+            [self drawThumb:thumb.image inRect:rect column:col availableSize:availableSize];
+        }
+        return;
+    }
+
+    [self storeThumb:nil forKey:key];
+
+    int generation = self.thumbGeneration;
+    __weak PlaylistViewController *weakSelf = self;
+    // The cover manager holds its own reference to the track while the request is in flight.
+    NSImage *image = [CoverManager.shared coverForTrack:track sourceId:self.sourceId completionBlock:^(NSImage *img) {
+        PlaylistViewController *strongSelf = weakSelf;
+        // skip the cover if the thumbnails were cleared while it was loading
+        if (strongSelf == nil || generation != strongSelf.thumbGeneration) {
+            return;
+        }
+        NSImage *scaled = img != nil ? [strongSelf scaledThumbForImage:img availableSize:availableSize] : nil;
+        [strongSelf storeThumb:scaled forKey:key];
+        if (scaled != nil) {
+            ((PlaylistView *)strongSelf.view).contentView.needsDisplay = YES;
+        }
+    }];
+
+    if (image != nil) {
+        // the cover was cached: the block above is not called
+        NSImage *scaled = [self scaledThumbForImage:image availableSize:availableSize];
+        [self storeThumb:scaled forKey:key];
+        if (scaled != nil) {
+            [self drawThumb:scaled inRect:rect column:col availableSize:availableSize];
+        }
+    }
 }
 
 - (void)selectionChanged:(DdbListviewRow_t)row {
@@ -1705,6 +1843,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 #pragma mark - CoverManagerListener
 
 - (void)coverManagerDidReset {
+    self.thumbGeneration++;
+    [self.thumbCache removeAllObjects];
     PlaylistView *listview = (PlaylistView *)self.view;
     [listview.contentView coverManagerDidReset];
 }
