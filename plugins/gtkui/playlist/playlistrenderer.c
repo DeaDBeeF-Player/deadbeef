@@ -232,7 +232,8 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
             else {
                 _playlist_thumb_cache_put (thumb_key, SENTINEL_PENDING);
 
-                deadbeef->pl_item_ref (track);
+                // the cover manager holds its own reference to the track while the request is in flight, and
+                // drops the request without calling the block on shutdown, so don't keep a reference here
                 char *saved_key = strdup (thumb_key);
                 // cleared when the playlist is destroyed while the cover is loading
                 GtkWidget **listview_ref = g_new (GtkWidget *, 1);
@@ -241,7 +242,6 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
                 int generation = playlist_thumb_generation;
 
                 GdkPixbuf *image = covermanager_cover_for_track_no_default (covermanager_shared (), track, 0, ^(GdkPixbuf *img) {
-                    deadbeef->pl_item_unref (track);
                     GdkPixbuf *scaled = NULL;
                     // skip the cover if the cache was cleared while it was loading
                     if (generation == playlist_thumb_generation) {
@@ -261,7 +261,6 @@ pl_common_draw_column_data (DdbListview *listview, cairo_t *cr, DdbListviewIter 
 
                 if (image != NULL) {
                     // the cover was cached: the block above is not called
-                    deadbeef->pl_item_unref (track);
                     free (saved_key);
                     g_object_remove_weak_pointer (G_OBJECT (listview), (gpointer *)listview_ref);
                     g_free (listview_ref);
