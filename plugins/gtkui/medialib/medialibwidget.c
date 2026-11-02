@@ -564,8 +564,14 @@ _collect_selected_tracks (
     return count;
 }
 
-static void
-_append_tracks_to_playlist (ddb_playItem_t **tracks, int count, ddb_playlist_t *plt) {
+static int
+_append_tracks_to_playlist (ddb_playItem_t **tracks, int count, ddb_playlist_t *plt, int replace) {
+    if (deadbeef->plt_add_files_begin (plt, -1) < 0) {
+        return 0;
+    }
+    if (replace) {
+        deadbeef->plt_clear (plt);
+    }
     ddb_undo->group_begin ();
 
     ddb_playItem_t *prev = deadbeef->plt_get_tail_item (plt, PL_MAIN);
@@ -586,6 +592,8 @@ _append_tracks_to_playlist (ddb_playItem_t **tracks, int count, ddb_playlist_t *
         deadbeef->pl_item_unref (prev);
     }
     prev = NULL;
+    deadbeef->plt_add_files_end (plt, -1);
+    return count;
 }
 
 static ddb_playlist_t *
@@ -618,7 +626,6 @@ _treeview_row_did_activate (GtkTreeView *self, GtkTreePath *path, GtkTreeViewCol
     }
 
     deadbeef->plt_set_curr (curr_plt);
-    deadbeef->plt_clear (curr_plt);
 
     GtkTreeSelection *selection = gtk_tree_view_get_selection (self);
 
@@ -631,7 +638,7 @@ _treeview_row_did_activate (GtkTreeView *self, GtkTreePath *path, GtkTreeViewCol
         tracks = calloc (count, sizeof (ddb_playItem_t *));
         _collect_selected_tracks (model, selection, tracks, 0);
 
-        _append_tracks_to_playlist (tracks, count, curr_plt);
+        int added = _append_tracks_to_playlist (tracks, count, curr_plt, 1);
 
         for (int i = 0; i < count; i++) {
             deadbeef->pl_item_unref (tracks[i]);
@@ -639,8 +646,13 @@ _treeview_row_did_activate (GtkTreeView *self, GtkTreePath *path, GtkTreeViewCol
 
         free (tracks);
 
-        deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-        deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+        if (added > 0) {
+            deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+            deadbeef->sendmessage (DB_EV_PLAY_NUM, 0, 0, 0);
+        }
+    }
+    else {
+        _append_tracks_to_playlist (NULL, 0, curr_plt, 1);
     }
 
     deadbeef->plt_unref (curr_plt);
@@ -750,7 +762,7 @@ _treeview_row_mousedown (GtkWidget *self, GdkEventButton *event, gpointer user_d
         ddb_playlist_t *curr_plt = _get_target_playlist ();
         if (curr_plt != NULL) {
             deadbeef->plt_set_curr (curr_plt);
-            _append_tracks_to_playlist (tracks, count, curr_plt);
+            _append_tracks_to_playlist (tracks, count, curr_plt, 0);
             deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
         }
     }

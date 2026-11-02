@@ -198,8 +198,53 @@ qsort_cmp_func (const void *a, const void *b) {
     return pl_sort_compare_str (aa, bb);
 }
 
+// Sort incoming items in their existing slots, keeping all older items in place.
 static void
-plt_sort_random (playlist_t *playlist, int iter) {
+plt_sort_array (playItem_t **array, int count, int order, int added_only) {
+    playItem_t **items = array;
+    int n = count;
+    if (added_only) {
+        items = malloc (count * sizeof (*items));
+        if (items == NULL) {
+            return;
+        }
+        n = 0;
+        for (int i = 0; i < count; i++) {
+            if (array[i]->added) {
+                items[n++] = array[i];
+            }
+        }
+    }
+
+    if (order == DDB_SORT_RANDOM) {
+        for (int i = 0; i < n - 1; i++) {
+            int j = (int)(i + (rand () / (float)RAND_MAX * (n - i)));
+            playItem_t *tmp = items[i];
+            items[i] = items[j];
+            items[j] = tmp;
+        }
+    }
+    else {
+#if HAVE_MERGESORT
+        mergesort (items, n, sizeof (*items), qsort_cmp_func);
+#else
+        qsort (items, n, sizeof (*items), qsort_cmp_func);
+#endif
+    }
+
+    if (added_only) {
+        int j = 0;
+        for (int i = 0; i < count; i++) {
+            if (array[i]->added) {
+                array[i] = items[j++];
+            }
+        }
+        free (items);
+    }
+}
+
+static void
+plt_sort_random (playlist_t *playlist, int iter, int added_only) {
     if (!playlist->head[iter] || !playlist->head[iter]->next[iter]) {
         return;
     }
@@ -214,17 +259,7 @@ plt_sort_random (playlist_t *playlist, int iter) {
         array[idx] = it;
     }
 
-    //randomize array
-    for (int swap_a = 0; swap_a < playlist_count - 1; swap_a++) {
-        //select random item above swap_a-1
-        const int swap_b = (int)(swap_a + (rand() / (float)RAND_MAX * (playlist_count - swap_a)));
-
-        //swap a with b
-        playItem_t* const swap_temp = array[swap_a];
-        array[swap_a] = array[swap_b];
-        array[swap_b] = swap_temp;
-
-    }
+    plt_sort_array (array, playlist_count, DDB_SORT_RANDOM, added_only);
 
     playItem_t *prev = NULL;
     playlist->head[iter] = 0;
@@ -261,6 +296,7 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_
         return;
     }
 
+    int added_only = is_autosorting && playlist->files_adding;
     int ascending = order == DDB_SORT_DESCENDING ? 0 : 1;
 
     if (tf_bytecode == NULL) {
@@ -268,7 +304,7 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_
             if (!is_autosorting) {
                 plt_replace_meta (playlist, "autosort_mode", "random");
             }
-            plt_sort_random (playlist, iter);
+            plt_sort_random (playlist, iter, added_only);
             pl_unlock ();
             return;
         }
@@ -348,11 +384,8 @@ plt_sort_internal (playlist_t *playlist, int iter, int id, ddb_tf_context_t *tf_
         array[idx] = it;
     }
 
-#if HAVE_MERGESORT
-    mergesort (array, playlist->count[iter], sizeof (playItem_t *), qsort_cmp_func);
-#else
-    qsort (array, playlist->count[iter], sizeof (playItem_t *), qsort_cmp_func);
-#endif
+    plt_sort_array (array, playlist->count[iter],
+        ascending ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING, added_only);
     playItem_t *prev = NULL;
     playlist->head[iter] = 0;
     for (idx = 0; idx < playlist->count[iter]; idx++) {
@@ -453,13 +486,16 @@ sort_track_array (playlist_t *playlist, playItem_t **tracks, int num_tracks, con
 
 void
 plt_autosort (playlist_t *plt) {
+    pl_lock ();
     int autosort_enabled = plt_find_meta_int (plt, "autosort_enabled", 0);
     if (!autosort_enabled) {
+        pl_unlock ();
         return;
     }
 
     const char *autosort_mode = plt_find_meta (plt, "autosort_mode");
     if (!autosort_mode) {
+        pl_unlock ();
         return;
     }
 
@@ -467,6 +503,7 @@ plt_autosort (playlist_t *plt) {
         int ascending = plt_find_meta_int (plt, "autosort_ascending", 0);
         const char *fmt = plt_find_meta (plt, "autosort_tf");
         if (!fmt) {
+            pl_unlock ();
             return;
         }
         plt_sort_v2_internal (plt, PL_MAIN, -1, NULL, NULL, fmt, ascending ? DDB_SORT_ASCENDING : DDB_SORT_DESCENDING, 1);
@@ -478,4 +515,5 @@ plt_autosort (playlist_t *plt) {
     plt_save_config (plt);
 
     messagepump_push (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
+    pl_unlock ();
 }

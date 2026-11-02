@@ -417,7 +417,13 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     return curr_plt;
 }
 
-- (int)addSelectionToPlaylist:(ddb_playlist_t *)plt {
+- (int)addSelectionToPlaylist:(ddb_playlist_t *)plt replace:(BOOL)replace {
+    if (deadbeef->plt_add_files_begin (plt, -1) < 0) {
+        return 0;
+    }
+    if (replace) {
+        deadbeef->plt_clear (plt);
+    }
     MediaLibraryItem *item = [self selectedItem];
     NSMutableArray<MediaLibraryItem *> *items = [NSMutableArray new];
     [self arrayOfPlayableItemsForItem:item outputArray:items];
@@ -449,6 +455,7 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     }
     prev = NULL;
 
+    deadbeef->plt_add_files_end (plt, -1);
     deadbeef->plt_save_config (plt);
 
     return count;
@@ -466,9 +473,8 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     }
 
     deadbeef->plt_set_curr (curr_plt);
-    deadbeef->plt_clear(curr_plt);
 
-    int count = [self addSelectionToPlaylist:curr_plt];
+    int count = [self addSelectionToPlaylist:curr_plt replace:YES];
 
     deadbeef->plt_unref (curr_plt);
 
@@ -841,7 +847,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 
     deadbeef->plt_set_curr (curr_plt);
 
-    [self addSelectionToPlaylist:curr_plt];
+    [self addSelectionToPlaylist:curr_plt replace:NO];
 
     deadbeef->plt_unref (curr_plt);
 

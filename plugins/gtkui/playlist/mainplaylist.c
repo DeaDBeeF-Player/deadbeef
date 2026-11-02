@@ -110,8 +110,12 @@ main_drag_n_drop (DdbListviewIter before, DdbPlaylistHandle from_playlist, uint3
 
 void
 main_tracks_copy_drag_n_drop (DdbListviewIter before, DdbListviewIter *tracks, int count) {
-    deadbeef->pl_lock ();
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (deadbeef->plt_add_files_begin (plt, -1) < 0) {
+        deadbeef->plt_unref (plt);
+        return;
+    }
+    deadbeef->pl_lock ();
 
     ddb_playItem_t *prev = NULL;
     if (before != NULL) {
@@ -133,9 +137,10 @@ main_tracks_copy_drag_n_drop (DdbListviewIter before, DdbListviewIter *tracks, i
     if (prev) {
         deadbeef->pl_item_unref(prev);
     }
-    deadbeef->plt_unref (plt);
     deadbeef->pl_unlock ();
     ddb_undo->set_action_name (_("Add Files"));
+    deadbeef->plt_add_files_end (plt, -1);
+    deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 

@@ -1572,8 +1572,8 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
             if (after) {
                 deadbeef->pl_item_unref (after);
             }
-            deadbeef->plt_add_files_end (plt_curr, 0);
             if (abort) {
+                deadbeef->plt_add_files_end (plt_curr, 0);
                 deadbeef->plt_unref (plt);
                 deadbeef->plt_unref (plt_curr);
             }
@@ -1581,6 +1581,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
                 dispatch_async(dispatch_get_main_queue(), ^{
                     // move items to UI playlist
                     deadbeef->plt_move_all_items(plt_curr, plt, (ddb_playItem_t *)_after);
+                    deadbeef->plt_add_files_end (plt_curr, 0);
                     // TODO: set cursor to the first dropped item
 
                     deadbeef->plt_unref (plt);
@@ -1604,6 +1605,10 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
 - (void)dropPlayItems:(DdbListviewRow_t *)items before:(DdbListviewRow_t)before count:(int)count {
     ddb_playlist_t *plt = deadbeef->plt_get_curr ();
+    if (deadbeef->plt_add_files_begin (plt, -1) < 0) {
+        deadbeef->plt_unref (plt);
+        return;
+    }
 
     deadbeef->pl_lock ();
 
@@ -1621,6 +1626,7 @@ artwork_listener (ddb_artwork_listener_event_t event, void *user_data, int64_t p
 
     deadbeef->pl_unlock ();
 
+    deadbeef->plt_add_files_end (plt, -1);
     deadbeef->plt_save_config (plt);
     deadbeef->plt_unref (plt);
     deadbeef->sendmessage (DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
