@@ -70,6 +70,7 @@ _controller_destroy (void *owner) {
 static void
 _covermanager_did_reset (void *user_data) {
     playlist_controller_t *ctl = user_data;
+    pl_common_clear_thumb_cache ();
     ddb_listview_reset_artwork (ctl->listview);
 }
 

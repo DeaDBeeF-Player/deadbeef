@@ -395,6 +395,14 @@ on_column_id_changed (GtkComboBox *combobox, gpointer user_data) {
             editcolumn_title_changed = 0;
         }
     }
+
+    if (act == find_first_preset_column_type (DB_COLUMN_TRACK_ART)) {
+        GtkWidget *align = lookup_widget (toplevel, "align");
+        if (align) {
+            // alignment combo box entries: 0 = left, 1 = right, 2 = center
+            gtk_combo_box_set_active (GTK_COMBO_BOX (align), 2);
+        }
+    }
 }
 
 gboolean
