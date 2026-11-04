@@ -10,7 +10,6 @@
 #include <gio/gio.h>
 #include <gio/gdesktopappinfo.h>
 
-#define DDB_API_LEVEL 10
 #define DDB_WARN_DEPRECATED 1
 #include <deadbeef/deadbeef.h>
 #include "../artwork/artwork.h"

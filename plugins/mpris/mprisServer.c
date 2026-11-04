@@ -369,6 +369,9 @@ gboolean deadbeef_can_seek(DB_functions_t *deadbeef) {
 
 static gboolean deadbeef_hasselectedorplayingtrack(struct MprisData *userData, int offset) {
     DB_functions_t *deadbeef = ((struct MprisData *)userData)->deadbeef;
+    if (offset > 0 && deadbeef->streamer_get_repeat() != DDB_REPEAT_OFF) {
+        return TRUE;
+    }
     ddb_playlist_t *pl = NULL;
     DB_playItem_t *playing_track = deadbeef->streamer_get_playing_track();
     int idx;
