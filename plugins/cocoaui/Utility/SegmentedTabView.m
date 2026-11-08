@@ -29,7 +29,25 @@
     self.tabView.allowsTruncatedLabels = YES;
 
     self.segmentedControl = [[NSSegmentedControl alloc] initWithFrame:NSZeroRect];
+    CGFloat sideInset = 0;
+    CGFloat verticalInset = 0;
     self.segmentedControl.segmentStyle = NSSegmentStyleAutomatic;
+#if defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 260000
+    if (@available(macOS 26.0, *)) {
+        // Liquid glass capsule tab switcher.
+        self.segmentedControl.segmentStyle = NSSegmentStyleRounded;
+        self.segmentedControl.borderShape = NSControlBorderShapeCapsule;
+#    if __MAC_OS_X_VERSION_MAX_ALLOWED >= 270000
+        if (@available(macOS 27.0, *)) {
+            self.segmentedControl.role = NSSegmentedControlRoleTabs;
+        }
+#    endif
+        self.segmentedControl.controlSize = NSControlSizeLarge;
+        // Small margin around the capsule.
+        sideInset = 2;
+        verticalInset = 2;
+    }
+#endif
     self.segmentedControl.segmentDistribution = NSSegmentDistributionFillEqually;
 
     self.segmentedControl.action = @selector(segmentedControlAction:);
@@ -41,11 +59,12 @@
     self.segmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
     self.tabView.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [self.segmentedControl.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
-    [self.segmentedControl.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
-    [self.segmentedControl.topAnchor constraintEqualToAnchor:self.topAnchor].active = YES;
+    [self.segmentedControl.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:sideInset].active = YES;
+    [self.segmentedControl.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-sideInset].active = YES;
+    [self.segmentedControl.topAnchor constraintEqualToAnchor:self.topAnchor constant:verticalInset].active = YES;
 
-    [self.tabView.topAnchor constraintEqualToAnchor:self.segmentedControl.bottomAnchor].active = YES;
+    [self.tabView.topAnchor constraintEqualToAnchor:self.segmentedControl.bottomAnchor
+                                           constant:verticalInset].active = YES;
     [self.tabView.leadingAnchor constraintEqualToAnchor:self.leadingAnchor].active = YES;
     [self.tabView.trailingAnchor constraintEqualToAnchor:self.trailingAnchor].active = YES;
     [self.tabView.bottomAnchor constraintEqualToAnchor:self.bottomAnchor].active = YES;
