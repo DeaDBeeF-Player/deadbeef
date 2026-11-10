@@ -99,6 +99,7 @@ opus_file_open(DB_FILE *fp)
 static DB_fileinfo_t *
 opusdec_open (uint32_t hints) {
     opusdec_info_t *info = calloc (1, sizeof (opusdec_info_t));
+    info->set_bitrate = hints & DDB_DECODER_HINT_NEED_BITRATE;
     return &info->info;
 }
 
@@ -114,6 +115,7 @@ opusdec_open2 (uint32_t hints, DB_playItem_t *it) {
     }
 
     opusdec_info_t *info = calloc (1, sizeof (opusdec_info_t));
+    info->set_bitrate = hints & DDB_DECODER_HINT_NEED_BITRATE;
 
     info->info.file = fp;
     info->it = it;
