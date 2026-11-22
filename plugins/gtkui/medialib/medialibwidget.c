@@ -319,9 +319,10 @@ _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStor
     ddb_medialib_item_t *medialibItem = g_value_get_pointer (&value);
     g_value_unset (&value);
 
+    int expanded = 1; // the root row has no item, and is always expanded
     if (medialibItem != NULL) {
         int selected = plugin->is_tree_item_selected (mlv->source, medialibItem);
-        int expanded = plugin->is_tree_item_expanded (mlv->source, medialibItem);
+        expanded = plugin->is_tree_item_expanded (mlv->source, medialibItem);
 
         GtkTreePath *path = gtk_tree_model_get_path (model, iter);
         if (expanded) {
@@ -335,6 +336,11 @@ _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStor
         if (selected) {
             gtk_tree_selection_select_iter (selection, iter);
         }
+    }
+
+    // Rows below a collapsed row can't be expanded or selected in the view
+    if (!expanded) {
+        return;
     }
 
     GtkTreeIter child;
