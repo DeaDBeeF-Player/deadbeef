@@ -102,29 +102,36 @@ _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, const ddb_medialib_item
     int index = 0;
     while (child_item != NULL) {
         GtkTreeIter child;
-        gtk_tree_store_append (store, &child, iter);
-        int child_numchildren = plugin->tree_item_get_children_count (child_item);
-        const char *item_text = plugin->tree_item_get_text (child_item);
-        if (child_numchildren > 0) {
-            size_t len = strlen (item_text) + 20;
-            char *text = malloc (len + 20);
-            snprintf (text, len, "%s (%d)", item_text, child_numchildren);
-            gtk_tree_store_set (store, &child, COL_TITLE, text, -1);
-            free (text);
-        }
-        else {
-            gtk_tree_store_set (store, &child, COL_TITLE, item_text, -1);
-        }
-
-        ddb_playItem_t *track = plugin->tree_item_get_track (child_item);
-        gtk_tree_store_set (store, &child, COL_TRACK, track, -1);
-        gtk_tree_store_set (store, &child, COL_ITEM, child_item, -1);
-
         GtkTreePath *path = gtk_tree_path_copy (parent_path);
         gtk_tree_path_append_index (path, index++);
 
+        int child_numchildren = plugin->tree_item_get_children_count (child_item);
+        const char *item_text = plugin->tree_item_get_text (child_item);
+        char *text = NULL;
+        if (child_numchildren > 0) {
+            size_t len = strlen (item_text) + 20;
+            text = malloc (len);
+            snprintf (text, len, "%s (%d)", item_text, child_numchildren);
+        }
         gchar *strpath = gtk_tree_path_to_string (path);
-        gtk_tree_store_set (store, &child, COL_PATH, strpath, -1);
+
+        // Set all columns in one call: each change signal makes GtkTreeStore compute the row's path,
+        // which walks the preceding siblings of the row and of each of its ancestors.
+        gtk_tree_store_insert_with_values (
+            store,
+            &child,
+            iter,
+            -1,
+            COL_TITLE,
+            text != NULL ? text : item_text,
+            COL_TRACK,
+            plugin->tree_item_get_track (child_item),
+            COL_ITEM,
+            child_item,
+            COL_PATH,
+            strpath,
+            -1);
+        free (text);
         g_free (strpath);
 
         const ddb_medialib_item_t *child_children = plugin->tree_item_get_children (child_item);
