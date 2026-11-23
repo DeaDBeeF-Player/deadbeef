@@ -123,17 +123,24 @@ _create_sorted_tree(
             // Create new item
             memcpy(group_text, next_text, len+1);
 
+            char item_text[1000];
+            deadbeef->tf_eval(&ctx, text_tfs[level], item_text, sizeof (item_text));
+
+            // The path identifies the item in the stored selected/expanded state.
+            // Tracks are grouped by the group's text, so using it for a track would give all the tracks of
+            // a group the same path. Use the track's own text instead.
+            const char *path_text = is_leaf ? item_text : next_text;
+
             size_t parent_len = parent->path ? strlen(parent->path) : 0;
-            size_t node_len = strlen(next_text);
+            size_t node_len = strlen(path_text);
             size_t buffer_len = parent_len + node_len + 2;
             char *tree_path = malloc(buffer_len);
-            snprintf(tree_path, buffer_len, "%s/%s", parent->path ?: "", next_text);
+            snprintf(tree_path, buffer_len, "%s/%s", parent->path ?: "", path_text);
 
             group = _tree_item_alloc(tree_path);
             free (tree_path);
 
-            deadbeef->tf_eval(&ctx, text_tfs[level], next_text, sizeof (next_text));
-            group->text = deadbeef->metacache_add_string(next_text);
+            group->text = deadbeef->metacache_add_string(item_text);
             if (is_leaf) {
                 deadbeef->pl_item_ref (next);
                 group->track = next;
