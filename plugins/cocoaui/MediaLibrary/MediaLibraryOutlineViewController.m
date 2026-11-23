@@ -319,6 +319,12 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
         }
     }
 
+    // Rows below a collapsed row can't be expanded or selected in the view.
+    // The root is always expanded by filterChanged.
+    if (!expanded && item != self.medialibRootItem) {
+        return;
+    }
+
     for (NSUInteger i = 0; i < item.numberOfChildren; i++) {
         [self restoreSelectedExpandedStateForItem:item.children[i] selectedRows:selectedRows];
     }
