@@ -232,6 +232,12 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
 }
 
 - (void)initializeTreeView {
+    // Keep the selection across the reload, the same as refreshMediasource does
+    if (self.medialibRootItem != nil && self.hasChangedSelection) {
+        self.hasChangedSelection = NO;
+        [self saveSelectionStateWithItem:self.medialibRootItem];
+    }
+
     if (self.medialibItemTree) {
         self.medialibPlugin->free_item_tree (self.medialibSource, self.medialibItemTree);
         self.medialibItemTree = NULL;
