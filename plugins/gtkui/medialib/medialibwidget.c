@@ -91,8 +91,15 @@ _setup_columns (w_medialib_viewer_t *mlv);
 static void
 _covermanager_did_reset (void *user_data);
 
+// With fill_later, each group only gets an empty placeholder row, and its rows are added when it's
+// expanded, in _treeview_test_expand_row.
 static void
-_add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, const ddb_medialib_item_t *item, GtkTreePath *parent_path) {
+_add_items (
+    w_medialib_viewer_t *mlv,
+    GtkTreeIter *iter,
+    const ddb_medialib_item_t *item,
+    GtkTreePath *parent_path,
+    gboolean fill_later) {
     if (item == NULL) {
         return;
     }
@@ -102,34 +109,47 @@ _add_items (w_medialib_viewer_t *mlv, GtkTreeIter *iter, const ddb_medialib_item
     int index = 0;
     while (child_item != NULL) {
         GtkTreeIter child;
-        gtk_tree_store_append (store, &child, iter);
-        int child_numchildren = plugin->tree_item_get_children_count (child_item);
-        const char *item_text = plugin->tree_item_get_text (child_item);
-        if (child_numchildren > 0) {
-            size_t len = strlen (item_text) + 20;
-            char *text = malloc (len + 20);
-            snprintf (text, len, "%s (%d)", item_text, child_numchildren);
-            gtk_tree_store_set (store, &child, COL_TITLE, text, -1);
-            free (text);
-        }
-        else {
-            gtk_tree_store_set (store, &child, COL_TITLE, item_text, -1);
-        }
-
-        ddb_playItem_t *track = plugin->tree_item_get_track (child_item);
-        gtk_tree_store_set (store, &child, COL_TRACK, track, -1);
-        gtk_tree_store_set (store, &child, COL_ITEM, child_item, -1);
-
         GtkTreePath *path = gtk_tree_path_copy (parent_path);
         gtk_tree_path_append_index (path, index++);
 
+        int child_numchildren = plugin->tree_item_get_children_count (child_item);
+        const char *item_text = plugin->tree_item_get_text (child_item);
+        char *text = NULL;
+        if (child_numchildren > 0) {
+            size_t len = strlen (item_text) + 20;
+            text = malloc (len);
+            snprintf (text, len, "%s (%d)", item_text, child_numchildren);
+        }
         gchar *strpath = gtk_tree_path_to_string (path);
-        gtk_tree_store_set (store, &child, COL_PATH, strpath, -1);
+
+        // Set all columns in one call: each change signal makes GtkTreeStore compute the row's path,
+        // which walks the preceding siblings of the row and of each of its ancestors.
+        gtk_tree_store_insert_with_values (
+            store,
+            &child,
+            iter,
+            -1,
+            COL_TITLE,
+            text != NULL ? text : item_text,
+            COL_TRACK,
+            plugin->tree_item_get_track (child_item),
+            COL_ITEM,
+            child_item,
+            COL_PATH,
+            strpath,
+            -1);
+        free (text);
         g_free (strpath);
 
         const ddb_medialib_item_t *child_children = plugin->tree_item_get_children (child_item);
         if (child_children != NULL) {
-            _add_items (mlv, &child, child_item, path);
+            if (fill_later) {
+                GtkTreeIter placeholder;
+                gtk_tree_store_append (store, &placeholder, &child);
+            }
+            else {
+                _add_items (mlv, &child, child_item, path, FALSE);
+            }
         }
 
         gtk_tree_path_free (path);
@@ -215,7 +235,9 @@ _reload_content (w_medialib_viewer_t *mlv) {
     }
 
     GtkTreePath *root_path = gtk_tree_path_new_from_indices (0, -1);
-    _add_items (mlv, &mlv->root_iter, mlv->item_tree, root_path);
+    // Search results are expanded with open_all below, which doesn't emit test-expand-row for the
+    // rows it expands, so add all their rows now.
+    _add_items (mlv, &mlv->root_iter, mlv->item_tree, root_path, mlv->search_text == NULL);
 
     gtk_tree_view_expand_row (mlv->tree, root_path, mlv->search_text != NULL);
     gtk_tree_path_free (root_path);
@@ -312,9 +334,10 @@ _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStor
     ddb_medialib_item_t *medialibItem = g_value_get_pointer (&value);
     g_value_unset (&value);
 
+    int expanded = 1; // the root row has no item, and is always expanded
     if (medialibItem != NULL) {
         int selected = plugin->is_tree_item_selected (mlv->source, medialibItem);
-        int expanded = plugin->is_tree_item_expanded (mlv->source, medialibItem);
+        expanded = plugin->is_tree_item_expanded (mlv->source, medialibItem);
 
         GtkTreePath *path = gtk_tree_model_get_path (model, iter);
         if (expanded) {
@@ -328,6 +351,11 @@ _restore_selected_expanded_state_for_iter (w_medialib_viewer_t *mlv, GtkTreeStor
         if (selected) {
             gtk_tree_selection_select_iter (selection, iter);
         }
+    }
+
+    // Rows below a collapsed row can't be expanded or selected in the view
+    if (!expanded) {
+        return;
     }
 
     GtkTreeIter child;
@@ -505,6 +533,59 @@ _search_icon_pressed (GtkEntry *entry, GtkEntryIconPosition icon_pos, GdkEvent *
     }
 }
 
+// Replaces the placeholder row of a group that is about to be expanded with the group's rows.
+// All of the group's rows are added, so expanding it with open_all doesn't show placeholders.
+static gboolean
+_treeview_test_expand_row (GtkTreeView *tree_view, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
+    w_medialib_viewer_t *mlv = user_data;
+    GtkTreeModel *model = GTK_TREE_MODEL (mlv->store);
+
+    GtkTreeIter placeholder;
+    if (!gtk_tree_model_iter_children (model, &placeholder, iter)) {
+        return FALSE;
+    }
+
+    GValue value = { 0 };
+    gtk_tree_model_get_value (model, &placeholder, COL_ITEM, &value);
+    ddb_medialib_item_t *first_child_item = g_value_get_pointer (&value);
+    g_value_unset (&value);
+    if (first_child_item != NULL) {
+        return FALSE; // the rows were already added
+    }
+
+    gtk_tree_model_get_value (model, iter, COL_ITEM, &value);
+    ddb_medialib_item_t *item = g_value_get_pointer (&value);
+    g_value_unset (&value);
+    if (item == NULL) {
+        return FALSE;
+    }
+
+    // The rows are added after the placeholder, so their COL_PATH is right once it's removed
+    _add_items (mlv, iter, item, path, FALSE);
+    gtk_tree_store_remove (mlv->store, &placeholder);
+    return FALSE;
+}
+
+static int
+_collect_tracks_from_item (const ddb_medialib_item_t *item, ddb_playItem_t **tracks, int append_position) {
+    ddb_playItem_t *track = plugin->tree_item_get_track (item);
+    if (track) {
+        if (tracks != NULL) {
+            ddb_playItem_t *it = deadbeef->pl_item_alloc ();
+            deadbeef->pl_item_copy (it, track);
+            tracks[append_position] = it;
+        }
+        return 1;
+    }
+
+    int count = 0;
+    for (const ddb_medialib_item_t *child = plugin->tree_item_get_children (item); child != NULL;
+         child = plugin->tree_item_get_next (child)) {
+        count += _collect_tracks_from_item (child, tracks, append_position + count);
+    }
+    return count;
+}
+
 static int
 _collect_tracks_from_iter (GtkTreeModel *model, GtkTreeIter *iter, ddb_playItem_t **tracks, int append_position) {
     // is it a track?
@@ -520,6 +601,14 @@ _collect_tracks_from_iter (GtkTreeModel *model, GtkTreeIter *iter, ddb_playItem_
             tracks[append_position] = it;
         }
         return 1;
+    }
+
+    // A collapsed group may only have a placeholder row, so take its tracks from the medialib tree
+    gtk_tree_model_get_value (model, iter, COL_ITEM, &value);
+    ddb_medialib_item_t *item = g_value_get_pointer (&value);
+    g_value_unset (&value);
+    if (item != NULL) {
+        return _collect_tracks_from_item (item, tracks, append_position);
     }
 
     int count = 0;
@@ -897,17 +986,21 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
         return NULL;
     }
     gboolean is_folder = gtk_tree_model_iter_has_child (model, &iter);
+    ddb_playItem_t *folder_track = NULL;
     if (is_folder) {
         if (!_art_mode_shows_folders (mlv->art_mode)) {
             gtk_tree_path_free (path);
             return mlv->folder_icon;
         }
-        // get first child
-        GtkTreePath *child_path = gtk_tree_path_copy (path);
-        gtk_tree_path_append_index (child_path, 0);
-        gtk_tree_model_get_iter (model, &iter, child_path);
-        gtk_tree_path_free (child_path);
-        child_path = NULL;
+        // The folder's first child row may be a placeholder, so take the first child from the medialib tree
+        GValue value = { 0 };
+        gtk_tree_model_get_value (model, &iter, COL_ITEM, &value);
+        ddb_medialib_item_t *item = g_value_get_pointer (&value);
+        g_value_unset (&value);
+        const ddb_medialib_item_t *first_child = item != NULL ? plugin->tree_item_get_children (item) : NULL;
+        if (first_child != NULL) {
+            folder_track = plugin->tree_item_get_track (first_child);
+        }
     }
     else if (!_art_mode_shows_tracks (mlv->art_mode)) {
         gtk_tree_path_free (path);
@@ -920,12 +1013,15 @@ _pixbuf_cell_did_become_visible (void *ctx, const char *pathstr) {
     }
     g_hash_table_insert (mlv->art_requested, g_strdup (pathstr), GINT_TO_POINTER (1));
 
-    GValue value = { 0 };
-    gtk_tree_model_get_value (model, &iter, COL_TRACK, &value);
-    ddb_playItem_t *track = g_value_get_pointer (&value);
-    g_value_unset (&value);
-    if (track != NULL && !is_folder) {
-        track = _first_track_for_any_album_track (model, &iter, track);
+    ddb_playItem_t *track = folder_track;
+    if (!is_folder) {
+        GValue value = { 0 };
+        gtk_tree_model_get_value (model, &iter, COL_TRACK, &value);
+        track = g_value_get_pointer (&value);
+        g_value_unset (&value);
+        if (track != NULL) {
+            track = _first_track_for_any_album_track (model, &iter, track);
+        }
     }
 
     if (track == NULL || mlv->artwork_source_id == 0) {
@@ -1093,6 +1189,7 @@ w_medialib_viewer_create (void) {
     g_signal_connect ((gpointer)w->search_entry, "changed", G_CALLBACK (_search_text_did_change), w);
     g_signal_connect ((gpointer)w->search_entry, "icon-press", G_CALLBACK (_search_icon_pressed), w);
     g_signal_connect ((gpointer)w->tree, "row-activated", G_CALLBACK (_treeview_row_did_activate), w);
+    g_signal_connect ((gpointer)w->tree, "test-expand-row", G_CALLBACK (_treeview_test_expand_row), w);
     g_signal_connect ((gpointer)w->tree, "button_press_event", G_CALLBACK (_treeview_row_mousedown), w);
     g_signal_connect ((gpointer)configure_button, "clicked", G_CALLBACK (_configure_did_activate), w);
 
