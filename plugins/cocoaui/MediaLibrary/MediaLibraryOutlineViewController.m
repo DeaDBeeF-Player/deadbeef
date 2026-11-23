@@ -280,19 +280,21 @@ _medialib_listener (ddb_mediasource_event_type_t event, void *user_data) {
     [self.outlineView endUpdates];
 }
 
-- (void)saveSelectionStateWithItem:(MediaLibraryItem *)item rowIndex:(NSInteger)rowIndex {
+- (void)saveSelectionStateWithItem:(MediaLibraryItem *)item {
     const ddb_medialib_item_t *medialibItem = item.medialibItem;
     if (medialibItem == NULL) {
         return;
     }
 
-    BOOL selected = [self.outlineView isRowSelected:rowIndex];
+    // Rows hidden below a collapsed row have no row index (-1), and can't be selected.
+    NSInteger rowIndex = [self.outlineView rowForItem:item];
+    BOOL selected = rowIndex != -1 && [self.outlineView isRowSelected:rowIndex];
     BOOL expanded = [self.outlineView isItemExpanded:item];
     self.medialibPlugin->set_tree_item_selected (self.medialibSource, medialibItem, selected ? 1 : 0);
     self.medialibPlugin->set_tree_item_expanded (self.medialibSource, medialibItem, expanded ? 1 : 0);
 
     for (NSUInteger i = 0; i < item.numberOfChildren; i++) {
-        [self saveSelectionStateWithItem:item.children[i] rowIndex:i];
+        [self saveSelectionStateWithItem:item.children[i]];
     }
 }
 
@@ -806,7 +808,7 @@ static void cover_get_callback (int error, ddb_cover_query_t *query, ddb_cover_i
 - (void)refreshMediasource {
     if (self.hasChangedSelection) {
         self.hasChangedSelection = NO;
-        [self saveSelectionStateWithItem:self.medialibRootItem rowIndex: 0];
+        [self saveSelectionStateWithItem:self.medialibRootItem];
     }
     self.medialibPlugin->refresh(self.medialibSource);
 }
