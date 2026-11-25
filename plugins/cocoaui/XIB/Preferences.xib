@@ -266,7 +266,7 @@
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="mQR-r2-hgB">
                                         <rect key="frame" x="18" y="164" width="436" height="18"/>
-                                        <buttonCell key="cell" type="check" title="Close playlists with middle mouse button" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="vbQ-dU-f2J">
+                                        <buttonCell key="cell" type="check" title="Close playlist tabs with middle mouse button" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="vbQ-dU-f2J">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
