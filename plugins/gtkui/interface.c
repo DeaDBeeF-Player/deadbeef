@@ -1637,6 +1637,7 @@ create_prefwin (void)
   GtkWidget *enable_shift_jis_recoding;
   GtkWidget *enable_cp1251_recoding;
   GtkWidget *enable_cp936_recoding;
+  GtkWidget *id3v2_tpe2_album_artist;
   GtkWidget *enable_language_override;
   GtkWidget *hbox_language_override;
   GtkWidget *label_language_override;
@@ -2250,6 +2251,10 @@ create_prefwin (void)
   enable_cp936_recoding = gtk_check_button_new_with_mnemonic (_("Enable Chinese CP936 detection and recoding"));
   gtk_widget_show (enable_cp936_recoding);
   gtk_box_pack_start (GTK_BOX (vbox9), enable_cp936_recoding, FALSE, FALSE, 0);
+
+  id3v2_tpe2_album_artist = gtk_check_button_new_with_mnemonic (_("Treat ID3v2 TPE2 frame as album artist instead of band"));
+  gtk_widget_show (id3v2_tpe2_album_artist);
+  gtk_box_pack_start (GTK_BOX (vbox9), id3v2_tpe2_album_artist, FALSE, FALSE, 0);
 
   enable_language_override = gtk_check_button_new_with_mnemonic (_("Override language"));
   gtk_widget_show (enable_language_override);
@@ -3420,6 +3425,9 @@ create_prefwin (void)
   g_signal_connect ((gpointer) enable_cp936_recoding, "toggled",
                     G_CALLBACK (on_enable_cp936_recoding_toggled),
                     NULL);
+  g_signal_connect ((gpointer) id3v2_tpe2_album_artist, "toggled",
+                    G_CALLBACK (on_id3v2_tpe2_album_artist_toggled),
+                    NULL);
   g_signal_connect ((gpointer) enable_language_override, "toggled",
                     G_CALLBACK (on_enable_language_override_toggled),
                     NULL);
@@ -3729,6 +3737,7 @@ create_prefwin (void)
   GLADE_HOOKUP_OBJECT (prefwin, enable_shift_jis_recoding, "enable_shift_jis_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp1251_recoding, "enable_cp1251_recoding");
   GLADE_HOOKUP_OBJECT (prefwin, enable_cp936_recoding, "enable_cp936_recoding");
+  GLADE_HOOKUP_OBJECT (prefwin, id3v2_tpe2_album_artist, "id3v2_tpe2_album_artist");
   GLADE_HOOKUP_OBJECT (prefwin, enable_language_override, "enable_language_override");
   GLADE_HOOKUP_OBJECT (prefwin, hbox_language_override, "hbox_language_override");
   GLADE_HOOKUP_OBJECT (prefwin, label_language_override, "label_language_override");

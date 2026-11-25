@@ -154,6 +154,20 @@ static const char *frame_mapping[] = {
     NULL
 };
 
+// When enabled, the ID3v2 TPE2 frame is read and written as "album artist", and "band" goes to TXXX:BAND.
+// This is what foobar2000 (by default), iTunes, MusicBrainz Picard, Mp3tag and kid3 do.
+// When disabled, TPE2 is "band", and "album artist" goes to TXXX, which is the old foobar2000 layout.
+static int junk_tpe2_is_album_artist = 1;
+
+// Returns the deadbeef metadata key of the given frame_mapping row
+static const char *
+_frame_mapping_ddb_key (int idx) {
+    if (junk_tpe2_is_album_artist && !strcmp (frame_mapping[idx + MAP_DDB], "BAND")) {
+        return "album artist";
+    }
+    return frame_mapping[idx + MAP_DDB];
+}
+
 // replaygain key names in both id3v2.3+ TXX and APEv2
 static const char *tag_rg_names[] = {
     "REPLAYGAIN_ALBUM_GAIN",
@@ -4064,6 +4078,53 @@ junk_id3v2_add_genre (playItem_t *it, char *genre, int text_size, int version_ma
 }
 
 
+// Returns 1 if the tag has a TXXX "ALBUM ARTIST" frame with a value different from the given one.
+// When this is the case for TPE2, the tag was written in the old layout (by an earlier deadbeef, or by foobar2000 with
+// TPE2 as band), so TPE2 holds the band.
+static int
+_id3v2_has_different_txxx_album_artist (DB_id3v2_tag_t *id3v2_tag, const char *sb_charset, const char *value) {
+    int version_major = id3v2_tag->version[0];
+    const char *txxx_id = version_major == 2 ? "TXX" : "TXXX";
+    int res = 0;
+
+    for (DB_id3v2_frame_t *f = id3v2_tag->frames; f && !res; f = f->next) {
+        if (strcmp (f->id, txxx_id) || f->size < 2) {
+            continue;
+        }
+
+        int decoded_size;
+        char *txx = convstr_id3v2 (sb_charset, version_major, f->data[0], f->data + 1, f->size - 1, &decoded_size);
+        if (!txx) {
+            continue;
+        }
+
+        size_t desc_len = strlen (txx);
+        if (desc_len < (size_t)decoded_size && !strcasecmp (txx, "album artist")) {
+            const char *val = txx + desc_len + 1;
+            // skip utf8 BOM, same as junk_id3v2_load_txx
+            if (strlen (val) >= 3 && !memcmp (val, "\xEF\xBB\xBF", 3)) {
+                val += 3;
+            }
+            if (*val && strcmp (val, value)) {
+                res = 1;
+            }
+        }
+        free (txx);
+    }
+
+    return res;
+}
+
+// Returns the metadata key for a text frame mapped by the given frame_mapping row
+static const char *
+_id3v2_ddb_key_for_text_frame (DB_id3v2_tag_t *id3v2_tag, int idx, const char *sb_charset, const char *text) {
+    if (junk_tpe2_is_album_artist && !strcmp (frame_mapping[idx + MAP_DDB], "BAND")
+        && _id3v2_has_different_txxx_album_artist (id3v2_tag, sb_charset, text)) {
+        return "band";
+    }
+    return _frame_mapping_ddb_key (idx);
+}
+
 static int
 junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, DB_id3v2_frame_t *frame, const char *sb_charset, int *found_wmp_popm) {
     int added = 0;
@@ -4112,10 +4173,11 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                             junk_id3v2_add_genre (it, text, text_size, version_major);
                         }
                         else {
-                            if (version_major == 3 && _is_multivalue_field (frame_mapping[f+MAP_DDB])) {
+                            const char *key = _id3v2_ddb_key_for_text_frame (id3v2_tag, f, sb_charset, text);
+                            if (version_major == 3 && _is_multivalue_field (key)) {
                                 _split_multivalue (text, text_size+1);
                             }
-                            pl_append_meta_full (it, frame_mapping[f+MAP_DDB], text, text_size+1);
+                            pl_append_meta_full (it, key, text, text_size+1);
                         }
                         //                                if (text) {
                         //                                    trace ("%s = %s\n", frameid, text);
@@ -4207,10 +4269,11 @@ junk_id3v2_set_metadata_from_frame (playItem_t *it, DB_id3v2_tag_t *id3v2_tag, D
                             junk_id3v2_add_genre (it, text, text_size, version_major);
                         }
                         else {
-                            if (_is_multivalue_field (frame_mapping[f+MAP_DDB])) {
+                            const char *key = _id3v2_ddb_key_for_text_frame (id3v2_tag, f, sb_charset, text);
+                            if (_is_multivalue_field (key)) {
                                 _split_multivalue (text, text_size);
                             }
-                            pl_append_meta_full(it, frame_mapping[f+MAP_DDB], text, text_size+1);
+                            pl_append_meta_full(it, key, text, text_size+1);
                         }
                         free (text);
                     }
@@ -4913,7 +4976,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             int noremap = 0;
             int mapidx = -1;
             for (int i = 0; frame_mapping[i]; i += FRAME_MAPPINGS) {
-                if (!strcasecmp (meta->key, frame_mapping[i+MAP_DDB])) {
+                if (!strcasecmp (meta->key, _frame_mapping_ddb_key (i))) {
                     const char *frm_name = id3v2_version == 3 ? frame_mapping[i+MAP_ID3V23] : frame_mapping[i+MAP_ID3V24];
                     if (frm_name) {
                         // field is known and supported for this tag version
@@ -4970,6 +5033,9 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                 if (mapidx >= 0) {
                     trace ("remapping unsupported text frame to TXXX %s=%s\n", key, tag_value);
                     key = frame_mapping[mapidx];
+                } else if (junk_tpe2_is_album_artist && !strcasecmp (meta->key, "band")) {
+                    // TPE2 is used for album artist
+                    key = "BAND";
                 } else {
                     trace ("adding unknown/custom text frame as TXXX %s=%s\n", key, tag_value);
                     key = meta->key;
@@ -5284,6 +5350,7 @@ junk_configchanged (void) {
     int cp936 = conf_get_int ("junk.enable_cp936_detection", 0);
     int shift_jis = conf_get_int ("junk.enable_shift_jis_detection", 0);
     conf_get_str("junk.multivalue_fields", DEFAULT_MULTIVALUE_FIELDS, junk_multivalue_fields, sizeof (junk_multivalue_fields));
+    junk_tpe2_is_album_artist = conf_get_int ("junk.id3v2_tpe2_album_artist", 1);
     junk_enable_cp1251_detection (cp1251);
     junk_enable_cp936_detection (cp936);
     junk_enable_shift_jis_detection (shift_jis);

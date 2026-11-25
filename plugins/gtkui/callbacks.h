@@ -1081,6 +1081,10 @@ on_enable_cp936_recoding_toggled       (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
 void
+on_id3v2_tpe2_album_artist_toggled     (GtkToggleButton *togglebutton,
+                                        gpointer         user_data);
+
+void
 on_enable_language_override_toggled    (GtkToggleButton *togglebutton,
                                         gpointer         user_data);
 
