@@ -2230,6 +2230,75 @@ junk_id3v2_remove_txxx_frame (DB_id3v2_tag_t *tag, const char *key) {
     return 0;
 }
 
+// A list of field names as they exist in a tag that is about to be rewritten.
+// Used for preserving the case of custom field names, when the item only has the lowercase key.
+typedef struct {
+    char **names;
+    int count;
+} junk_field_names_t;
+
+static void
+junk_field_names_add (junk_field_names_t *list, const char *name) {
+    char **names = realloc (list->names, sizeof (char *) * (list->count + 1));
+    if (!names) {
+        return;
+    }
+    list->names = names;
+    char *copy = strdup (name);
+    if (!copy) {
+        return;
+    }
+    list->names[list->count++] = copy;
+}
+
+static void
+junk_field_names_free (junk_field_names_t *list) {
+    for (int i = 0; i < list->count; i++) {
+        free (list->names[i]);
+    }
+    free (list->names);
+    memset (list, 0, sizeof (junk_field_names_t));
+}
+
+// Returns the name in the list, which is equal to the key ignoring case (full length match), or NULL
+static const char *
+junk_field_names_find (const junk_field_names_t *list, const char *key) {
+    for (int i = 0; i < list->count; i++) {
+        if (!strcasecmp (list->names[i], key)) {
+            return list->names[i];
+        }
+    }
+    return NULL;
+}
+
+// Returns the name to write for a custom field:
+// the explicitly set original key, or the case used in the existing tag, or the original key as it is
+static const char *
+junk_custom_field_name (const junk_field_names_t *existing, const DB_metaInfo_t *meta) {
+    if (!meta->original_key) {
+        const char *name = junk_field_names_find (existing, meta->key);
+        if (name) {
+            return name;
+        }
+    }
+    return pl_meta_original_key (meta);
+}
+
+static void
+junk_id3v2_collect_txxx_descriptions (DB_id3v2_tag_t *tag, junk_field_names_t *list) {
+    for (DB_id3v2_frame_t *f = tag->frames; f; f = f->next) {
+        if (strcmp (f->id, "TXXX") || f->size < 2) {
+            continue;
+        }
+        char *txx = convstr_id3v2 (NULL, tag->version[0], f->data[0], f->data + 1, f->size - 1, NULL);
+        if (txx) {
+            // the description is terminated by the first zero byte
+            junk_field_names_add (list, txx);
+            free (txx);
+        }
+    }
+}
+
 int
 junk_id3v2_remove_all_txxx_frames (DB_id3v2_tag_t *tag) {
     DB_id3v2_frame_t *prev = NULL;
@@ -4834,6 +4903,11 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             }
         }
 
+        // remember the field names of the existing TXXX frames, to preserve their case
+        junk_field_names_t existing_txxx;
+        memset (&existing_txxx, 0, sizeof (existing_txxx));
+        junk_id3v2_collect_txxx_descriptions (&id3v2, &existing_txxx);
+
         junk_id3v2_remove_all_txxx_frames (&id3v2);
 
         pl_lock ();
@@ -4972,7 +5046,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                     key = frame_mapping[mapidx];
                 } else {
                     trace ("adding unknown/custom text frame as TXXX %s=%s\n", key, tag_value);
-                    key = meta->key;
+                    key = junk_custom_field_name (&existing_txxx, meta);
                 }
 
                 junk_id3v2_remove_txxx_frame (&id3v2, key);
@@ -4983,6 +5057,7 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             }
             meta = meta->next;
         }
+        junk_field_names_free (&existing_txxx);
 
         pl_lock ();
         {
@@ -5100,6 +5175,15 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
             memset (&apev2, 0, sizeof (apev2));
         }
 
+        // remember the field names of the existing text frames, to preserve their case
+        junk_field_names_t existing_apev2;
+        memset (&existing_apev2, 0, sizeof (existing_apev2));
+        for (DB_apev2_frame_t *f = apev2.frames; f; f = f->next) {
+            if (((f->flags >> 1) & 3) == 0) {
+                junk_field_names_add (&existing_apev2, f->key);
+            }
+        }
+
         // remove all text frames
         junk_apev2_remove_all_text_frames (&apev2);
 
@@ -5129,13 +5213,14 @@ junk_rewrite_tags (playItem_t *it, uint32_t junk_flags, int id3v2_version, const
                     && strcasecmp (meta->key, "numdiscs")
                ) {
                 if (key == NULL) {
-                    key = meta->key;
+                    key = junk_custom_field_name (&existing_apev2, meta);
                 }
                 trace ("apev2 writing unknown field: %s=%s\n", key, meta->value);
                 _apev2_append_combined_text_frame_from_meta (&apev2, key, meta);
             }
             meta = meta->next;
         }
+        junk_field_names_free (&existing_apev2);
 
         {
             pl_lock ();

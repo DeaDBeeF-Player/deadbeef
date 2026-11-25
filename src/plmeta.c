@@ -111,6 +111,11 @@ pl_meta_free_values (DB_metaInfo_t *meta) {
     meta->valuesize = 0;
 }
 
+const char *
+pl_meta_original_key (const DB_metaInfo_t *m) {
+    return m->original_key ? m->original_key : m->key;
+}
+
 DB_metaInfo_t *
 pl_add_empty_meta_for_key (playItem_t *it, const char *key) {
     // check if it's already set
@@ -147,6 +152,10 @@ pl_add_empty_meta_for_key (playItem_t *it, const char *key) {
     }
 
     m->key = metacache_add_string (lc_key);
+    if (strcmp (key, lc_key)) {
+        // preserve the original case, e.g. for writing custom tag fields
+        m->original_key = metacache_add_string (key);
+    }
 
     free (lc_key);
     lc_key = NULL;
@@ -375,6 +384,9 @@ pl_delete_meta (playItem_t *it, const char *key) {
                 it->meta = m->next;
             }
             metacache_remove_string (m->key);
+            if (m->original_key) {
+                metacache_remove_string (m->original_key);
+            }
             pl_meta_free_values(m);
             free (m);
             break;
@@ -472,6 +484,9 @@ pl_delete_metadata (playItem_t *it, DB_metaInfo_t *meta) {
                 it->meta = m->next;
             }
             metacache_remove_string (m->key);
+            if (m->original_key) {
+                metacache_remove_string (m->original_key);
+            }
             pl_meta_free_values(m);
             free (m);
             break;
@@ -500,6 +515,9 @@ pl_delete_all_meta (playItem_t *it) {
                 it->meta = next;
             }
             metacache_remove_string (m->key);
+            if (m->original_key) {
+                metacache_remove_string (m->original_key);
+            }
             pl_meta_free_values (m);
             free (m);
         }
@@ -579,7 +597,7 @@ pl_meta_exists_with_override (playItem_t *it, const char *key) {
 
 void
 pl_add_meta_copy (playItem_t *it, DB_metaInfo_t *meta) {
-    DB_metaInfo_t *m = pl_add_empty_meta_for_key(it, meta->key);
+    DB_metaInfo_t *m = pl_add_empty_meta_for_key (it, pl_meta_original_key (meta));
     if (!m) {
         return; // dupe
     }

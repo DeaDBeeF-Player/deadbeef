@@ -230,8 +230,57 @@ _mp4tagutil_file_editable (mp4p_atom_t *mp4file) {
 //    }
 //}
 
+// Names of the existing custom text fields, to preserve their case when rewriting
+typedef struct {
+    char **names;
+    int count;
+} _mp4_field_names_t;
+
 static void
-_mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
+_mp4_field_names_collect (mp4p_atom_t *ilst, _mp4_field_names_t *list) {
+    for (mp4p_atom_t *meta_atom = ilst->subatoms; meta_atom; meta_atom = meta_atom->next) {
+        mp4p_ilst_meta_t *meta = meta_atom->data;
+        if (!meta || !meta->custom || meta->data_version_flags != 1 || !meta->name) {
+            continue;
+        }
+        char **names = realloc (list->names, sizeof (char *) * (list->count + 1));
+        if (!names) {
+            return;
+        }
+        list->names = names;
+        char *copy = strdup (meta->name);
+        if (!copy) {
+            return;
+        }
+        list->names[list->count++] = copy;
+    }
+}
+
+static void
+_mp4_field_names_free (_mp4_field_names_t *list) {
+    for (int i = 0; i < list->count; i++) {
+        free (list->names[i]);
+    }
+    free (list->names);
+    memset (list, 0, sizeof (_mp4_field_names_t));
+}
+
+// The explicitly set original key wins, then the case of the existing field with the same name (full length match)
+static const char *
+_mp4_custom_field_name (const _mp4_field_names_t *existing, const DB_metaInfo_t *m) {
+    if (m->original_key) {
+        return m->original_key;
+    }
+    for (int i = 0; i < existing->count; i++) {
+        if (!strcasecmp (existing->names[i], m->key)) {
+            return existing->names[i];
+        }
+    }
+    return m->key;
+}
+
+static void
+_mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it, const _mp4_field_names_t *existing) {
     deadbeef->pl_lock ();
     DB_metaInfo_t *m = deadbeef->pl_get_metadata_head (it);
     while (m) {
@@ -266,7 +315,7 @@ _mp4tagutil_add_metadata_fields(mp4p_atom_t *ilst, DB_playItem_t *it) {
                 mp4p_atom_append(ilst, mp4p_ilst_create_int(_mp4_atom_map[i], (int32_t)(num + 0.5), int_size));
             }
             else if (!_mp4_atom_map[i] || strlen (_mp4_atom_map[i]) != 4) {
-                mp4p_atom_append(ilst, mp4p_ilst_create_custom(_mp4_atom_map[i] ? _mp4_atom_map[i] : m->key, value));
+                mp4p_atom_append(ilst, mp4p_ilst_create_custom(_mp4_atom_map[i] ? _mp4_atom_map[i] : _mp4_custom_field_name (existing, m), value));
             }
             else {
                 mp4p_atom_append(ilst, mp4p_ilst_create_text(_mp4_atom_map[i], value));
@@ -359,6 +408,8 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
 
     mp4p_atom_t *meta = NULL;
     mp4p_atom_t *ilst = NULL;
+    _mp4_field_names_t existing_names;
+    memset (&existing_names, 0, sizeof (existing_names));
 
     mp4p_atom_t *moov = mp4p_atom_find(mp4file, "moov");
     mp4p_atom_t *mdat = mp4p_atom_find(mp4file, "mdat");
@@ -394,10 +445,12 @@ mp4tagutil_modify_meta (mp4p_atom_t *mp4file, DB_playItem_t *it) {
     }
     else {
         // cleanup the pre-existing keyvalue list
+        _mp4_field_names_collect (ilst, &existing_names);
         _remove_known_fields (ilst);
     }
 
-    _mp4tagutil_add_metadata_fields(ilst, it);
+    _mp4tagutil_add_metadata_fields(ilst, it, &existing_names);
+    _mp4_field_names_free (&existing_names);
 
     // find first padding, if present
     mp4p_atom_t *padding = mp4p_atom_find(mp4file, "free");

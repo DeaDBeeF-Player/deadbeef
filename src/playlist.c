@@ -1966,6 +1966,9 @@ pl_item_free (playItem_t *it) {
             pl_meta_free_values (it->meta);
             DB_metaInfo_t *m = it->meta;
             it->meta = m->next;
+            if (m->original_key) {
+                metacache_remove_string (m->original_key);
+            }
             free (m);
         }
 

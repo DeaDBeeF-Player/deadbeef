@@ -66,6 +66,11 @@ pl_meta_exists (playItem_t *it, const char *key);
 int
 pl_meta_exists_with_override (playItem_t *it, const char *key);
 
+// Returns the key as originally provided (case preserved).
+// The returned string is owned by the meta item.
+const char *
+pl_meta_original_key (const DB_metaInfo_t *m);
+
 DB_metaInfo_t *
 pl_meta_for_key (playItem_t *it, const char *key);
 

@@ -1225,10 +1225,29 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
     } while (FLAC__metadata_iterator_next (iter));
 
+    // names of the existing fields, to preserve their case
+    char **existing_names = NULL;
+    int existing_names_count = 0;
+
     if (data) {
         // delete existing fields
         FLAC__StreamMetadata_VorbisComment *vc = &data->data.vorbis_comment;
         int vc_comments = vc->num_comments;
+
+        existing_names = calloc (vc_comments > 0 ? vc_comments : 1, sizeof (char *));
+        for (int i = 0; existing_names && i < vc_comments; i++) {
+            const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
+            const char *eq = memchr (c->entry, '=', c->length);
+            if (eq && eq != (const char *)c->entry) {
+                size_t name_len = eq - (const char *)c->entry;
+                char *name = calloc (1, name_len + 1);
+                if (name) {
+                    memcpy (name, c->entry, name_len);
+                    existing_names[existing_names_count++] = name;
+                }
+            }
+        }
+
         for (int i = 0; i < vc_comments; i++) {
             const FLAC__StreamMetadata_VorbisComment_Entry *c = &vc->comments[i];
             if (c->length > 0) {
@@ -1263,6 +1282,16 @@ cflac_write_metadata (DB_playItem_t *it) {
                 break;
             }
         }
+        // the explicitly set original key wins, then the case of the existing field with the same name
+        const char *custom_name = m->original_key ? m->original_key : m->key;
+        if (!m->original_key) {
+            for (int k = 0; k < existing_names_count; k++) {
+                if (!strcasecmp (existing_names[k], m->key)) {
+                    custom_name = existing_names[k];
+                    break;
+                }
+            }
+        }
         const char *val = m->value;
         if (val && *val) {
             const char *end = val + m->valuesize;
@@ -1270,7 +1299,7 @@ cflac_write_metadata (DB_playItem_t *it) {
                 size_t l = strlen (val);
                 if (l > 0) {
                     char s[100+l+1];
-                    int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : m->key);
+                    int n = snprintf (s, sizeof (s), "%s=", metainfo[i] ? metainfo[i] : custom_name);
                     strncpy (s+n, val, l);
                     *(s+n+l) = 0;
                     FLAC__StreamMetadata_VorbisComment_Entry ent = {
@@ -1284,6 +1313,11 @@ cflac_write_metadata (DB_playItem_t *it) {
         }
         m = m->next;
     }
+
+    for (int k = 0; k < existing_names_count; k++) {
+        free (existing_names[k]);
+    }
+    free (existing_names);
 
     static const char *tag_rg_names[] = {
         "REPLAYGAIN_ALBUM_GAIN",

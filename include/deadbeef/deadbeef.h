@@ -340,6 +340,13 @@ typedef struct DB_metaInfo_s {
 #if (DDB_API_LEVEL >= 10)
     int valuesize;
 #endif
+
+#if (DDB_API_LEVEL >= 20)
+    /// Key as originally provided (case preserved), or NULL if equal to `key`.
+    /// `key` is always lowercase (except for keys starting with ':'), use this field
+    /// when the key needs to be shown to the user, or written to a tag as a custom field name.
+    const char *original_key;
+#endif
 } DB_metaInfo_t;
 
 /// These flags should be used with `junk_rewrite_tags`

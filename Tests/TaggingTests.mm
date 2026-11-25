@@ -270,6 +270,402 @@ TEST_F(TaggingTests, test_WriteAPEv2MultiValueArtist_MatchingBinaryReference) {
     junk_apev2_free (&apev2);
 }
 
+#pragma mark - Custom field name case
+
+static bool
+file_contains (const char *path, const char *needle) {
+    NSData *data = [NSData dataWithContentsOfFile:@(path)];
+    return memmem (data.bytes, data.length, needle, strlen (needle)) != NULL;
+}
+
+// Number of TXXX frames with the description equal to `desc` ignoring case, and
+// number of those where the description matches exactly
+static void
+count_txxx_frames (const char *path, const char *desc, int *any_case, int *exact_case) {
+    *any_case = 0;
+    *exact_case = 0;
+    DB_FILE *fp = vfs_fopen (path);
+    DB_id3v2_tag_t id3v2;
+    memset (&id3v2, 0, sizeof (id3v2));
+    junk_id3v2_read_full (NULL, &id3v2, fp);
+    vfs_fclose (fp);
+    size_t l = strlen (desc);
+    for (DB_id3v2_frame_t *f = id3v2.frames; f; f = f->next) {
+        if (strcmp (f->id, "TXXX") || f->size < l + 2) {
+            continue;
+        }
+        if (!strncasecmp ((const char *)f->data + 1, desc, l) && f->data[1 + l] == 0) {
+            (*any_case)++;
+            if (!strncmp ((const char *)f->data + 1, desc, l)) {
+                (*exact_case)++;
+            }
+        }
+    }
+    junk_id3v2_free (&id3v2);
+}
+
+static void
+write_tag_with_txxx_a_and_b (const char *path, int version) {
+    // TXXX "ARTISTS"=A and TXXX "artists"=B followed by the audio data from empty.mp3
+    DB_id3v2_tag_t tag;
+    memset (&tag, 0, sizeof (tag));
+    tag.version[0] = version;
+    const char *descs[] = { "ARTISTS", "artists" };
+    const char *values[] = { "A", "B" };
+    DB_id3v2_frame_t *tail = NULL;
+    for (int i = 0; i < 2; i++) {
+        size_t l = strlen (descs[i]) + 1 + strlen (values[i]);
+        DB_id3v2_frame_t *f = (DB_id3v2_frame_t *)calloc (1, sizeof (DB_id3v2_frame_t) + l + 1);
+        strcpy (f->id, "TXXX");
+        f->size = (uint32_t)l + 1;
+        f->data[0] = 0;
+        memcpy (f->data + 1, descs[i], strlen (descs[i]));
+        memcpy (f->data + 1 + strlen (descs[i]) + 1, values[i], strlen (values[i]));
+        if (tail) {
+            tail->next = f;
+        }
+        else {
+            tag.frames = f;
+        }
+        tail = f;
+    }
+
+    char audio_path[PATH_MAX];
+    snprintf (audio_path, sizeof (audio_path), "%s/TestData/empty.mp3", dbplugindir);
+    NSData *audio = [NSData dataWithContentsOfFile:@(audio_path)];
+
+    FILE *fp = fopen (path, "w+b");
+    junk_id3v2_write (fp, &tag);
+    fwrite (audio.bytes, 1, audio.length, fp);
+    fclose (fp);
+    junk_id3v2_free (&tag);
+}
+
+TEST_F(TaggingTests, test_AddMetaMixedCaseKey_KeyIsLowercaseOriginalKeyPreserved) {
+    pl_add_meta (it, "MusicBrainz Album Id", "123");
+
+    DB_metaInfo_t *m = pl_meta_for_key (it, "musicbrainz album id");
+    ASSERT_TRUE (m);
+    EXPECT_STREQ (m->key, "musicbrainz album id");
+    EXPECT_STREQ (m->original_key, "MusicBrainz Album Id");
+    EXPECT_STREQ (pl_meta_original_key (m), "MusicBrainz Album Id");
+    EXPECT_EQ (pl_meta_for_key (it, "MUSICBRAINZ ALBUM ID"), m);
+    EXPECT_STREQ (pl_find_meta (it, "MusicBrainz Album Id"), "123");
+    EXPECT_EQ (pl_meta_for_cached_key (it, m->key, 1), m);
+}
+
+TEST_F(TaggingTests, test_AddMetaLowercaseKey_OriginalKeyIsNull) {
+    pl_add_meta (it, "musicbrainz album id", "123");
+
+    DB_metaInfo_t *m = pl_meta_for_key (it, "musicbrainz album id");
+    ASSERT_TRUE (m);
+    EXPECT_TRUE (m->original_key == NULL);
+    EXPECT_STREQ (pl_meta_original_key (m), "musicbrainz album id");
+}
+
+TEST_F(TaggingTests, test_AddMetaSameKeyDifferentCase_FirstCaseWins) {
+    pl_append_meta (it, "ARTISTS", "A");
+    pl_append_meta (it, "artists", "B");
+
+    DB_metaInfo_t *m = pl_meta_for_key (it, "artists");
+    ASSERT_TRUE (m);
+    EXPECT_STREQ (m->original_key, "ARTISTS");
+    const char refdata[] = "A\0B\0";
+    EXPECT_TRUE (m->valuesize == sizeof (refdata) - 1 && !memcmp (m->value, refdata, sizeof (refdata) - 1));
+}
+
+TEST_F(TaggingTests, test_CopyItemWithMixedCaseKey_OriginalKeyPreserved) {
+    pl_add_meta (it, "MusicBrainz Album Id", "123");
+
+    playItem_t *copy = pl_item_alloc ();
+    pl_item_copy (copy, it);
+    DB_metaInfo_t *m = pl_meta_for_key (copy, "musicbrainz album id");
+    ASSERT_TRUE (m);
+    EXPECT_STREQ (m->key, "musicbrainz album id");
+    EXPECT_STREQ (m->original_key, "MusicBrainz Album Id");
+    pl_item_unref (copy);
+}
+
+static void
+check_roundtrip_custom_key_id3v2 (playItem_t *it, int version) {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+    copy_file (path, TESTFILE);
+
+    pl_add_meta (it, "MusicBrainz Album Id", "123");
+    junk_rewrite_tags (it, JUNK_WRITE_ID3V2, version, NULL);
+
+    EXPECT_TRUE (file_contains (TESTFILE, "MusicBrainz Album Id"));
+    int any = 0;
+    int exact = 0;
+    count_txxx_frames (TESTFILE, "MusicBrainz Album Id", &any, &exact);
+    EXPECT_EQ (any, 1);
+    EXPECT_EQ (exact, 1);
+
+    playItem_t *it2 = pl_item_alloc_init (TESTFILE, "stdmpg");
+    DB_FILE *fp = vfs_fopen (TESTFILE);
+    junk_id3v2_read (it2, fp);
+    vfs_fclose (fp);
+    unlink (TESTFILE);
+
+    DB_metaInfo_t *m = pl_meta_for_key (it2, "musicbrainz album id");
+    ASSERT_TRUE (m);
+    EXPECT_STREQ (m->value, "123");
+    EXPECT_STREQ (m->original_key, "MusicBrainz Album Id");
+    pl_item_unref (it2);
+}
+
+TEST_F(TaggingTests, test_WriteID3v23CustomMixedCaseKey_TxxxDescriptionCasePreserved) {
+    check_roundtrip_custom_key_id3v2 (it, 3);
+}
+
+TEST_F(TaggingTests, test_WriteID3v24CustomMixedCaseKey_TxxxDescriptionCasePreserved) {
+    check_roundtrip_custom_key_id3v2 (it, 4);
+}
+
+TEST_F(TaggingTests, test_WriteAPEv2CustomMixedCaseKey_KeyCasePreserved) {
+    char path[PATH_MAX];
+    snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+    copy_file (path, TESTFILE);
+
+    pl_add_meta (it, "MusicBrainz Album Id", "123");
+    junk_rewrite_tags (it, JUNK_WRITE_APEV2, 3, NULL);
+
+    EXPECT_TRUE (file_contains (TESTFILE, "MusicBrainz Album Id"));
+    unlink (TESTFILE);
+}
+
+static void
+check_same_key_different_case_id3v2 (playItem_t *it, int version) {
+    write_tag_with_txxx_a_and_b (TESTFILE, version);
+
+    DB_FILE *fp = vfs_fopen (TESTFILE);
+    junk_id3v2_read (it, fp);
+    vfs_fclose (fp);
+
+    DB_metaInfo_t *m = pl_meta_for_key (it, "artists");
+    ASSERT_TRUE (m);
+    EXPECT_STREQ (m->original_key, "ARTISTS");
+    const char refdata[] = "A\0B\0";
+    EXPECT_TRUE (m->valuesize == sizeof (refdata) - 1 && !memcmp (m->value, refdata, sizeof (refdata) - 1));
+
+    junk_rewrite_tags (it, JUNK_WRITE_ID3V2, version, NULL);
+
+    int any = 0;
+    int exact = 0;
+    count_txxx_frames (TESTFILE, "ARTISTS", &any, &exact);
+    EXPECT_EQ (any, 1);
+    EXPECT_EQ (exact, 1);
+
+    playItem_t *it2 = pl_item_alloc_init (TESTFILE, "stdmpg");
+    fp = vfs_fopen (TESTFILE);
+    junk_id3v2_read (it2, fp);
+    vfs_fclose (fp);
+    unlink (TESTFILE);
+
+    m = pl_meta_for_key (it2, "artists");
+    ASSERT_TRUE (m);
+    EXPECT_STREQ (m->original_key, "ARTISTS");
+    if (version == 3) {
+        // ID3v2.3 has no multivalue support, the values are joined with " / "
+        EXPECT_STREQ (m->value, "A / B");
+    }
+    else {
+        EXPECT_TRUE (m->valuesize == sizeof (refdata) - 1 && !memcmp (m->value, refdata, sizeof (refdata) - 1));
+    }
+    pl_item_unref (it2);
+}
+
+#pragma mark - Preserving the case of the field names from the existing tag
+
+static void
+write_tag_with_single_txxx (const char *path, int version, const char *desc, const char *value) {
+    DB_id3v2_tag_t tag;
+    memset (&tag, 0, sizeof (tag));
+    tag.version[0] = version;
+    size_t l = strlen (desc) + 1 + strlen (value);
+    DB_id3v2_frame_t *f = (DB_id3v2_frame_t *)calloc (1, sizeof (DB_id3v2_frame_t) + l + 1);
+    strcpy (f->id, "TXXX");
+    f->size = (uint32_t)l + 1;
+    f->data[0] = 0;
+    memcpy (f->data + 1, desc, strlen (desc));
+    memcpy (f->data + 1 + strlen (desc) + 1, value, strlen (value));
+    tag.frames = f;
+
+    char audio_path[PATH_MAX];
+    snprintf (audio_path, sizeof (audio_path), "%s/TestData/empty.mp3", dbplugindir);
+    NSData *audio = [NSData dataWithContentsOfFile:@(audio_path)];
+
+    FILE *fp = fopen (path, "w+b");
+    junk_id3v2_write (fp, &tag);
+    fwrite (audio.bytes, 1, audio.length, fp);
+    fclose (fp);
+    junk_id3v2_free (&tag);
+}
+
+static void
+count_apev2_frames (const char *path, const char *name, int *any_case, int *exact_case) {
+    *any_case = 0;
+    *exact_case = 0;
+    DB_FILE *fp = vfs_fopen (path);
+    DB_apev2_tag_t apev2;
+    memset (&apev2, 0, sizeof (apev2));
+    junk_apev2_read_full (NULL, &apev2, fp);
+    vfs_fclose (fp);
+    for (DB_apev2_frame_t *f = apev2.frames; f; f = f->next) {
+        if (!strcasecmp (f->key, name)) {
+            (*any_case)++;
+            if (!strcmp (f->key, name)) {
+                (*exact_case)++;
+            }
+        }
+    }
+    junk_apev2_free (&apev2);
+}
+
+// Prepare TESTFILE with a single custom field `disc_name` (or no tag if NULL),
+// then rewrite it with `it`, which has the field `key`, and `original_key` (can be NULL).
+// version 0 means APEv2
+static void
+rewrite_with_disk_field (playItem_t *it, int version, const char *disk_name, const char *key) {
+    if (version == 0) {
+        char path[PATH_MAX];
+        snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+        copy_file (path, TESTFILE);
+        if (disk_name) {
+            playItem_t *src = pl_item_alloc_init (TESTFILE, "stdmpg");
+            pl_add_meta (src, disk_name, "123");
+            junk_rewrite_tags (src, JUNK_WRITE_APEV2, 3, NULL);
+            pl_item_unref (src);
+        }
+        pl_add_meta (it, key, "123");
+        junk_rewrite_tags (it, JUNK_WRITE_APEV2, 3, NULL);
+    }
+    else {
+        if (disk_name) {
+            write_tag_with_single_txxx (TESTFILE, version, disk_name, "123");
+        }
+        else {
+            char path[PATH_MAX];
+            snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+            copy_file (path, TESTFILE);
+        }
+        pl_add_meta (it, key, "123");
+        junk_rewrite_tags (it, JUNK_WRITE_ID3V2, version, NULL);
+    }
+}
+
+static void
+count_frames (int version, const char *name, int *any, int *exact) {
+    if (version == 0) {
+        count_apev2_frames (TESTFILE, name, any, exact);
+    }
+    else {
+        count_txxx_frames (TESTFILE, name, any, exact);
+    }
+}
+
+static void
+check_legacy_item_uses_disk_case (playItem_t *it, int version) {
+    rewrite_with_disk_field (it, version, "MusicBrainz Album Id", "musicbrainz album id");
+    int any = 0;
+    int exact = 0;
+    count_frames (version, "MusicBrainz Album Id", &any, &exact);
+    unlink (TESTFILE);
+    EXPECT_EQ (any, 1);
+    EXPECT_EQ (exact, 1);
+}
+
+static void
+check_explicit_original_key_wins (playItem_t *it, int version) {
+    rewrite_with_disk_field (it, version, "MusicBrainz Album Id", "MUSICBRAINZ ALBUM ID");
+    int any = 0;
+    int exact = 0;
+    count_frames (version, "MUSICBRAINZ ALBUM ID", &any, &exact);
+    unlink (TESTFILE);
+    EXPECT_EQ (any, 1);
+    EXPECT_EQ (exact, 1);
+}
+
+static void
+check_no_disk_match_writes_lowercase (playItem_t *it, int version) {
+    rewrite_with_disk_field (it, version, NULL, "musicbrainz album id");
+    int any = 0;
+    int exact = 0;
+    count_frames (version, "musicbrainz album id", &any, &exact);
+    unlink (TESTFILE);
+    EXPECT_EQ (any, 1);
+    EXPECT_EQ (exact, 1);
+}
+
+static void
+check_disk_prefix_match_not_used (playItem_t *it, int version) {
+    // "MYFIELDS" on disk must not influence the case of "myfield"
+    rewrite_with_disk_field (it, version, "MYFIELDS", "myfield");
+    int any = 0;
+    int exact = 0;
+    count_frames (version, "myfield", &any, &exact);
+    unlink (TESTFILE);
+    EXPECT_EQ (any, 1);
+    EXPECT_EQ (exact, 1);
+}
+
+TEST_F(TaggingTests, test_RewriteID3v23LegacyLowercaseItem_KeepsDiskCase) {
+    check_legacy_item_uses_disk_case (it, 3);
+}
+
+TEST_F(TaggingTests, test_RewriteID3v24LegacyLowercaseItem_KeepsDiskCase) {
+    check_legacy_item_uses_disk_case (it, 4);
+}
+
+TEST_F(TaggingTests, test_RewriteAPEv2LegacyLowercaseItem_KeepsDiskCase) {
+    check_legacy_item_uses_disk_case (it, 0);
+}
+
+TEST_F(TaggingTests, test_RewriteID3v23ExplicitOriginalKey_WinsOverDiskCase) {
+    check_explicit_original_key_wins (it, 3);
+}
+
+TEST_F(TaggingTests, test_RewriteID3v24ExplicitOriginalKey_WinsOverDiskCase) {
+    check_explicit_original_key_wins (it, 4);
+}
+
+TEST_F(TaggingTests, test_RewriteAPEv2ExplicitOriginalKey_WinsOverDiskCase) {
+    check_explicit_original_key_wins (it, 0);
+}
+
+TEST_F(TaggingTests, test_RewriteID3v23NoDiskMatch_WritesLowercaseKey) {
+    check_no_disk_match_writes_lowercase (it, 3);
+}
+
+TEST_F(TaggingTests, test_RewriteID3v24NoDiskMatch_WritesLowercaseKey) {
+    check_no_disk_match_writes_lowercase (it, 4);
+}
+
+TEST_F(TaggingTests, test_RewriteAPEv2NoDiskMatch_WritesLowercaseKey) {
+    check_no_disk_match_writes_lowercase (it, 0);
+}
+
+TEST_F(TaggingTests, test_RewriteID3v23DiskNameLongerThanKey_DiskCaseNotUsed) {
+    check_disk_prefix_match_not_used (it, 3);
+}
+
+TEST_F(TaggingTests, test_RewriteID3v24DiskNameLongerThanKey_DiskCaseNotUsed) {
+    check_disk_prefix_match_not_used (it, 4);
+}
+
+TEST_F(TaggingTests, test_RewriteAPEv2DiskNameLongerThanKey_DiskCaseNotUsed) {
+    check_disk_prefix_match_not_used (it, 0);
+}
+
+TEST_F(TaggingTests, test_ID3v23SameTxxxDifferentCase_OneEntryFirstCaseWinsRewriteKeepsOneFrame) {
+    check_same_key_different_case_id3v2 (it, 3);
+}
+
+TEST_F(TaggingTests, test_ID3v24SameTxxxDifferentCase_OneEntryFirstCaseWinsRewriteKeepsOneFrame) {
+    check_same_key_different_case_id3v2 (it, 4);
+}
+
 TEST_F(TaggingTests, test_ReadID3v2WithNonprintableChars_MatchingBinaryReference) {
     char path[PATH_MAX];
     snprintf (path, sizeof (path), "%s/TestData/tpe1_nonprintable_id3v2.mp3", dbplugindir);
