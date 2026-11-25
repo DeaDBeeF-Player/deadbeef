@@ -2334,7 +2334,7 @@ create_prefwin (void)
   gtk_container_add (GTK_CONTAINER (notebook5), vbox44);
   gtk_container_set_border_width (GTK_CONTAINER (vbox44), 12);
 
-  mmb_delete_playlist = gtk_check_button_new_with_mnemonic (_("Close playlists with middle mouse button"));
+  mmb_delete_playlist = gtk_check_button_new_with_mnemonic (_("Close playlist tabs with middle mouse button"));
   gtk_widget_show (mmb_delete_playlist);
   gtk_box_pack_start (GTK_BOX (vbox44), mmb_delete_playlist, FALSE, FALSE, 0);
 

@@ -4200,7 +4200,7 @@ Create new playlist each time</property>
 		    <widget class="GtkCheckButton" id="mmb_delete_playlist">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">Close playlists with middle mouse button</property>
+		      <property name="label" translatable="yes">Close playlist tabs with middle mouse button</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>

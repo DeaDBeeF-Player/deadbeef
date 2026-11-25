@@ -898,7 +898,7 @@ pltbrowser_disconnect (void) {
 }
 
 static const char pltbrowser_settings_dlg[] =
-    "property \"Close playlists with middle mouse button\" checkbox gtkui.pltbrowser.mmb_delete_playlist 0;\n"
+    "property \"Close playlists with middle mouse button in the Playlist Browser\" checkbox gtkui.pltbrowser.mmb_delete_playlist 0;\n"
     "property \"Highlight current playlist\" checkbox gtkui.pltbrowser.highlight_curr_plt 0;\n"
     "property \"Play on double-click\" checkbox gtkui.pltbrowser.play_on_double_click 1;\n"
 ;
