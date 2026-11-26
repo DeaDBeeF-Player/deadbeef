@@ -91,6 +91,9 @@ prefwin_init_gui_misc_tab (GtkWidget *_prefwin) {
     // enable cp936 recoding
     prefwin_set_toggle_button("enable_cp936_recoding", deadbeef->conf_get_int ("junk.enable_cp936_detection", 0));
 
+    // ID3v2 TPE2 as album artist
+    prefwin_set_toggle_button("id3v2_tpe2_album_artist", deadbeef->conf_get_int ("junk.id3v2_tpe2_album_artist", 1));
+
     // language override toggle
     int override_language = deadbeef->conf_get_int ("gtkui.override_language", 0);
     prefwin_set_toggle_button("enable_language_override", override_language);
@@ -274,6 +277,15 @@ on_enable_cp936_recoding_toggled       (GtkToggleButton *togglebutton,
 {
     int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
     deadbeef->conf_set_int ("junk.enable_cp936_detection", active);
+    deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+void
+on_id3v2_tpe2_album_artist_toggled     (GtkToggleButton *togglebutton,
+                                        gpointer         user_data)
+{
+    int active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+    deadbeef->conf_set_int ("junk.id3v2_tpe2_album_artist", active);
     deadbeef->sendmessage (DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

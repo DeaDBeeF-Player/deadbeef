@@ -22,7 +22,14 @@
 */
 
 #include "ConvertUTF.h"
+#include "conf.h"
 #include "junklib.h"
+#include "playlist.h"
+#include "plmeta.h"
+#include "vfs.h"
+#include <deadbeef/common.h>
+#include <fstream>
+#include <unistd.h>
 #include <gtest/gtest.h>
 
 extern "C" {
@@ -287,4 +294,184 @@ TEST(JunklibTests, test_junkMakeTdrcString_bufferTooSmallForDate_outputEmpty) {
     junk_make_tdrc_string(buffer, sizeof(buffer), 2022, 11, 7, 16, 55);
 
     EXPECT_TRUE(!strcmp(buffer, ""));
+}
+
+#define TPE2_TESTFILE "/tmp/ddb_tpe2_test.mp3"
+
+class JunklibTPE2Tests: public ::testing::Test {
+protected:
+    void SetUp() override {
+        conf_init ();
+        conf_enable_saving (0);
+
+        char path[PATH_MAX];
+        snprintf (path, sizeof (path), "%s/TestData/empty.mp3", dbplugindir);
+        std::ifstream src (path, std::ios::binary);
+        std::ofstream dst (TPE2_TESTFILE, std::ios::binary | std::ios::trunc);
+        dst << src.rdbuf ();
+        dst.close ();
+
+        it = pl_item_alloc_init (TPE2_TESTFILE, "stdmpg");
+    }
+
+    void TearDown() override {
+        pl_item_unref (it);
+        unlink (TPE2_TESTFILE);
+        conf_remove_items ("junk.id3v2_tpe2_album_artist");
+        junk_configchanged ();
+        conf_free ();
+    }
+
+    void setTPE2IsAlbumArtist (int enable) {
+        conf_set_int ("junk.id3v2_tpe2_album_artist", enable);
+        junk_configchanged ();
+    }
+
+    void writeTags (int id3v2_version) {
+        junk_rewrite_tags (it, JUNK_WRITE_ID3V2, id3v2_version, NULL);
+    }
+
+    // Reads the test file into a new track, which must be unref'd by the caller
+    playItem_t *readTags () {
+        playItem_t *res = pl_item_alloc_init (TPE2_TESTFILE, "stdmpg");
+        DB_FILE *fp = vfs_fopen (TPE2_TESTFILE);
+        junk_id3v2_read (res, fp);
+        vfs_fclose (fp);
+        return res;
+    }
+
+    // Returns the value of the TPE2 frame, or of the TXXX frame with the given description, as an ASCII string
+    std::string frameValue (const char *frame_id, const char *txxx_desc = nullptr) {
+        std::string res;
+        DB_id3v2_tag_t id3v2;
+        memset (&id3v2, 0, sizeof (id3v2));
+        DB_FILE *fp = vfs_fopen (TPE2_TESTFILE);
+        junk_id3v2_read_full (NULL, &id3v2, fp);
+        vfs_fclose (fp);
+        for (DB_id3v2_frame_t *f = id3v2.frames; f; f = f->next) {
+            if (strcmp (f->id, frame_id)) {
+                continue;
+            }
+            const char *text = (const char *)f->data + 1;
+            const char *end = (const char *)f->data + f->size;
+            if (txxx_desc) {
+                if (strcmp (text, txxx_desc)) {
+                    continue;
+                }
+                text += strlen (text) + 1;
+            }
+            res.assign (text, strnlen (text, end - text));
+            break;
+        }
+        junk_id3v2_free (&id3v2);
+        return res;
+    }
+
+    playItem_t *it;
+};
+
+TEST_F(JunklibTPE2Tests, test_writeAlbumArtistAndBand_tpe2IsAlbumArtist_writesAlbumArtistToTPE2AndBandToTXXX) {
+    setTPE2IsAlbumArtist (1);
+    pl_add_meta (it, "album artist", "Album Artist Value");
+    pl_add_meta (it, "band", "Band Value");
+    writeTags (4);
+
+    EXPECT_EQ(frameValue ("TPE2"), "Album Artist Value");
+    EXPECT_EQ(frameValue ("TXXX", "BAND"), "Band Value");
+    EXPECT_EQ(frameValue ("TXXX", "album artist"), "");
+}
+
+TEST_F(JunklibTPE2Tests, test_writeAlbumArtistAndBand_tpe2IsBand_writesBandToTPE2AndAlbumArtistToTXXX) {
+    setTPE2IsAlbumArtist (0);
+    pl_add_meta (it, "album artist", "Album Artist Value");
+    pl_add_meta (it, "band", "Band Value");
+    writeTags (4);
+
+    EXPECT_EQ(frameValue ("TPE2"), "Band Value");
+    EXPECT_EQ(frameValue ("TXXX", "album artist"), "Album Artist Value");
+    EXPECT_EQ(frameValue ("TXXX", "BAND"), "");
+}
+
+TEST_F(JunklibTPE2Tests, test_readTPE2_tpe2IsAlbumArtist_readsAsAlbumArtist) {
+    setTPE2IsAlbumArtist (0);
+    pl_add_meta (it, "band", "Value");
+    writeTags (3);
+
+    setTPE2IsAlbumArtist (1);
+    playItem_t *read = readTags ();
+    EXPECT_STREQ(pl_find_meta (read, "album artist"), "Value");
+    EXPECT_EQ(pl_find_meta (read, "band"), nullptr);
+    pl_item_unref (read);
+}
+
+TEST_F(JunklibTPE2Tests, test_readTPE2_tpe2IsBand_readsAsBand) {
+    setTPE2IsAlbumArtist (1);
+    pl_add_meta (it, "album artist", "Value");
+    writeTags (4);
+
+    setTPE2IsAlbumArtist (0);
+    playItem_t *read = readTags ();
+    EXPECT_STREQ(pl_find_meta (read, "band"), "Value");
+    EXPECT_EQ(pl_find_meta (read, "album artist"), nullptr);
+    pl_item_unref (read);
+}
+
+TEST_F(JunklibTPE2Tests, test_readTXXXBand_tpe2IsAlbumArtist_readsAsBand) {
+    setTPE2IsAlbumArtist (1);
+    pl_add_meta (it, "album artist", "Album Artist Value");
+    pl_add_meta (it, "band", "Band Value");
+    writeTags (3);
+
+    playItem_t *read = readTags ();
+    EXPECT_STREQ(pl_find_meta (read, "album artist"), "Album Artist Value");
+    EXPECT_STREQ(pl_find_meta (read, "band"), "Band Value");
+    pl_item_unref (read);
+}
+
+TEST_F(JunklibTPE2Tests, test_readOldLayoutWithDifferentTXXXAlbumArtist_tpe2IsAlbumArtist_readsTPE2AsBand) {
+    setTPE2IsAlbumArtist (0);
+    pl_add_meta (it, "album artist", "Album Artist Value");
+    pl_add_meta (it, "band", "Band Value");
+    writeTags (4);
+
+    setTPE2IsAlbumArtist (1);
+    playItem_t *read = readTags ();
+    DB_metaInfo_t *meta = pl_meta_for_key (read, "album artist");
+    ASSERT_NE(meta, nullptr);
+    EXPECT_STREQ(meta->value, "Album Artist Value");
+    EXPECT_EQ(meta->valuesize, (int)strlen ("Album Artist Value") + 1);
+    EXPECT_STREQ(pl_find_meta (read, "band"), "Band Value");
+    pl_item_unref (read);
+}
+
+TEST_F(JunklibTPE2Tests, test_readOldLayoutWithSameTXXXAlbumArtist_tpe2IsAlbumArtist_readsSingleAlbumArtist) {
+    setTPE2IsAlbumArtist (0);
+    pl_add_meta (it, "album artist", "Value");
+    pl_add_meta (it, "band", "Value");
+    writeTags (4);
+
+    setTPE2IsAlbumArtist (1);
+    playItem_t *read = readTags ();
+    DB_metaInfo_t *meta = pl_meta_for_key (read, "album artist");
+    ASSERT_NE(meta, nullptr);
+    EXPECT_STREQ(meta->value, "Value");
+    EXPECT_EQ(meta->valuesize, (int)strlen ("Value") + 1);
+    EXPECT_EQ(pl_find_meta (read, "band"), nullptr);
+    pl_item_unref (read);
+}
+
+TEST_F(JunklibTPE2Tests, test_rewriteOldLayout_tpe2IsAlbumArtist_convertsToNewLayout) {
+    setTPE2IsAlbumArtist (0);
+    pl_add_meta (it, "album artist", "Album Artist Value");
+    pl_add_meta (it, "band", "Band Value");
+    writeTags (4);
+
+    setTPE2IsAlbumArtist (1);
+    pl_item_unref (it);
+    it = readTags ();
+    writeTags (4);
+
+    EXPECT_EQ(frameValue ("TPE2"), "Album Artist Value");
+    EXPECT_EQ(frameValue ("TXXX", "BAND"), "Band Value");
+    EXPECT_EQ(frameValue ("TXXX", "album artist"), "");
 }
